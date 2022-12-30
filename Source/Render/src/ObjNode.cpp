@@ -1046,9 +1046,8 @@ void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPo
 	point.resize(bank->vb.NumberVertex);
 
 	polygon.resize(bank->ib_polygon);
-	sPolygon *IndexPolygon=gb_RenderDevice->LockIndexBuffer(bank->ib);
-	for(int i=0;i<polygon.size();i++)
-		polygon[i]=IndexPolygon[i];
+	sPolygon *IndexPolygon= reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(bank->ib, 0, bank->ib_polygon));
+    memcpy(polygon.data(), IndexPolygon, bank->ib_polygon * sizeof(sPolygon));
 	gb_RenderDevice->UnlockIndexBuffer(bank->ib);
 
 	int filled_point=0;

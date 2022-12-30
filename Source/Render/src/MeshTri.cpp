@@ -66,7 +66,7 @@ void cMeshTri::GetBoundingBox(Vect3f &Min,Vect3f &Max)
 }
 void cMeshTri::InvertTri()
 {
-	sPolygon *Polygon=gb_RenderDevice->LockIndexBuffer(*ib);
+	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(*ib, OffsetPolygon*sPolygon::PN, NumPolygon*sPolygon::PN));
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(*vb);
 	int i;
 	for(i=0;i<NumVertex;i++)
@@ -77,7 +77,7 @@ void cMeshTri::InvertTri()
 	}
 	for(i=0;i<NumPolygon;i++)
 	{
-		sPolygon &p=Polygon[i+OffsetPolygon];
+		sPolygon &p=Polygon[i];
 		int tmp=p.p1; p.p1=p.p2; p.p2=tmp;
 	}
 	gb_RenderDevice->UnlockVertexBuffer(*vb);
@@ -104,8 +104,8 @@ void cMeshTri::CalcBumpST()
 		return;
 	}
 
-	sVertexDot3 *v=(sVertexDot3*)gb_RenderDevice->LockVertexBuffer(*vb);
-	sPolygon *Polygon=gb_RenderDevice->LockIndexBuffer(*ib);
+	sVertexDot3 *v = static_cast<sVertexDot3*>(gb_RenderDevice->LockVertexBuffer(*vb));
+    sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(*ib, OffsetPolygon*sPolygon::PN, NumPolygon*sPolygon::PN));
 	int i;
 	for(i=0;i<NumVertex;i++)
 	{
@@ -117,7 +117,7 @@ void cMeshTri::CalcBumpST()
 	{
 		Vect3f cp;
 		Vect3f edge01,edge02;
-		sPolygon &p=Polygon[i+OffsetPolygon];
+		sPolygon &p=Polygon[i];
 		sVertexDot3 &v0=v[p.p1],&v1=v[p.p2],&v2=v[p.p3];
 
 		// x, s, t
@@ -198,12 +198,12 @@ bool cMeshTri::Intersect(const Vect3f& p0,const Vect3f& p1)
 //*
 	bool intersect=false;
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(*vb);
-	sPolygon* pIndex=gb_RenderDevice->LockIndexBuffer(*ib);
+    sPolygon* pIndex = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(*ib, OffsetPolygon*sPolygon::PN, NumPolygon*sPolygon::PN));
 	Vect3f pn=p1-p0;
 
 	for(int i=0;i<NumPolygon;i++)
 	{
-		sPolygon &p=pIndex[i+OffsetPolygon];
+		sPolygon &p=pIndex[i];
 		float t;
 		Vect3f a=GetPos(pVertex,p.p1);
 		Vect3f b=GetPos(pVertex,p.p2);

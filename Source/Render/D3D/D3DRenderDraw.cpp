@@ -113,6 +113,11 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);	// отраженное изображение
 }
 
+void cD3DRender::SetWorldMatrix(Mat4f* matrix) {
+    isOrthoSet = false;
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
+};
+
 void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 {
 	SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
@@ -206,127 +211,6 @@ void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wire
 	
 	if(wireframe) SetRenderState(D3DRS_FILLMODE,bWireFrame==0?D3DFILL_SOLID:D3DFILL_WIREFRAME);
 	SetRenderState( RS_ZWRITEENABLE, TRUE );
-}
-
-#undef FromHex
-
-inline int FromHex(char a)
-{
-	if(a>='0' && a<='9')
-		return a-'0';
-	if(a>='A' && a<='F')
-		return a-'A'+10;
-	if(a>='a' && a<='f')
-		return a-'a'+10;
-	return -1;
-}
-
-/*
-	Синтаксис строки 
-	string &FEAB89 string && fdsfsdgs
-	&FEAB89 - меняет цвет символа
-	&& - преобразуется к &
-*/
-/*
-void cD3DRender::ChangeTextColor(const char* &str,sColor4c& diffuse)
-{
-	if(*str!='&')return;
-	if(str[1]=='&')
-	{
-		str++;
-		return;
-	}
-
-	DWORD s=0;
-	for(int i=1;i<=6;i++)
-	{
-		int a=FromHex(str[i]);
-		if(a<0)return;
-		s=(s<<4)+a;
-	}
-
-	diffuse.RGBA()&=0xFF000000;
-	diffuse.RGBA()|=s;
-	str+=i;
-}
-*/
-void cD3DRender::ChangeTextColor(const char* &str,sColor4c& diffuse)
-{
-	while(*str=='&')
-	{
-		if(str[1]=='&')
-		{
-			str++;
-			return;
-		}
-
-		uint32_t s=0;
-		int i;
-		for(i=1;i<=6;i++)
-		{
-			int a=FromHex(str[i]);
-			if(a<0)return;
-			s=(s<<4)+a;
-		}
-
-        diffuse.ARGB((diffuse.a<<24)|s);
-		str+=i;
-	}
-}
-
-void cD3DRender::OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax)
-{
-	bmin.set(x,y);
-	bmax.set(x,y);
-	if(CurrentFont==0)
-	{
-		VISASSERT(0 && "Font not set");
-		return;
-	}
-
-	float xOfs=(float)x, yOfs=(float)y;
-	cFontInternal* cf=CurrentFont->GetInternal();
-	sColor4c diffuse(0,0,0,0);
-
-	float xSize = CurrentFont->GetScale().x*(1<<cf->GetTexture()->GetX()),
-		ySize = CurrentFont->GetScale().y*cf->FontHeight*(1<<cf->GetTexture()->GetY());
-
-	float v_add=cf->FontHeight+1/(double)(1<<cf->GetTexture()->GetY());
-	int nSymbol=0;
-	for( const char* str=string; *str; str++, yOfs+=ySize)
-	{
-		xOfs=(float)x;
-		if( align>=0 )
-		{
-			float StringWidth = GetFontLength( str );
-			if( align==0 )
-				xOfs -= xm::round(StringWidth * 0.5f);
-			else
-				xOfs -= xm::round(StringWidth);
-		}
-		for( ; *str!=10 ; str++ )
-		{
-			ChangeTextColor(str,diffuse);
-			if(*str==10)
-				break;
-
-			int c=(unsigned char)*str;
-			if( !c ) goto LABEL_DRAW;
-			if(c<32)continue;
-			Vect3f& size=cf->Font[c];
-
-			bmin.x=min(xOfs,bmin.x);
-			bmin.y=min(yOfs,bmin.y);
-			xOfs+=xSize*size.z-1;
-			bmax.x=max(xOfs,bmax.x);
-			bmax.y=max(yOfs+ySize,bmax.y);
-
-			nSymbol++;
-		}
-	}
-LABEL_DRAW:
-
-	return;
 }
 
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode)

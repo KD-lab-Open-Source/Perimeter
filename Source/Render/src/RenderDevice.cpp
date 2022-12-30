@@ -5,9 +5,12 @@
 #include "Font.h"
 #include "IRenderDevice.h"
 #include "EmptyRenderDevice.h"
+#include "DrawBuffer.h"
 #ifdef PERIMETER_SOKOL
 #include "sokol/SokolRender.h"
 #endif
+
+const size_t PERIMETER_RENDER_BUFFERS_SIZE = 1024;
 
 FILE* fRD= nullptr;
 
@@ -99,16 +102,14 @@ void RDWriteLog(char *exp,int size)
 #endif
 }
 
-void VertexBuffer::Destroy()
-{
+void VertexBuffer::Destroy() {
     if (buf && gb_RenderDevice) {
         gb_RenderDevice->DeleteVertexBuffer(*this);
     }
     buf = nullptr;
 }
 
-IndexBuffer::~IndexBuffer()
-{
+void IndexBuffer::Destroy() {
     if (buf && gb_RenderDevice) {
         gb_RenderDevice->DeleteIndexBuffer(*this);
     }
@@ -134,11 +135,16 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* wnd, int Re
     ScreenSize.y = yScr;
     RenderMode = mode;
     TexLibrary = new cTexLibrary();
+    drawBuffers.resize(VERTEX_FMT_MAX);
     return 0;
 }
 
 int cInterfaceRenderDevice::Done() {
     VISASSERT(CurrentFont == nullptr || CurrentFont == DefaultFont);
+    for (auto db : drawBuffers) {
+        delete db;
+    }
+    drawBuffers.clear();
     if (TexLibrary) {
         TexLibrary->Free();
         delete TexLibrary;
@@ -148,6 +154,16 @@ int cInterfaceRenderDevice::Done() {
         gb_RenderDevice = nullptr;
     }
     return 0;
+}
+
+DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt) {
+    lastDrawBuffer = drawBuffers[fmt];
+    if (!lastDrawBuffer) {
+        lastDrawBuffer = new DrawBuffer();
+        lastDrawBuffer->Create(PERIMETER_RENDER_BUFFERS_SIZE, PERIMETER_RENDER_BUFFERS_SIZE * 3, fmt, true);
+        drawBuffers[fmt] = lastDrawBuffer;
+    }
+    return lastDrawBuffer;
 }
 
 cTexture* cInterfaceRenderDevice::GetTexture(int n) {
@@ -168,21 +184,103 @@ void cInterfaceRenderDevice::SetDefaultFont(cFont *pFont)
 		CurrentFont=DefaultFont;
 }
 
-
-float cInterfaceRenderDevice::GetFontLength(const char *string)
+inline int FromHex(char a)
 {
+    if(a>='0' && a<='9')
+        return a-'0';
+    if(a>='A' && a<='F')
+        return a-'A'+10;
+    if(a>='a' && a<='f')
+        return a-'a'+10;
+    return -1;
+}
+
+/*
+	Синтаксис строки 
+	string &FEAB89 string && fdsfsdgs
+	&FEAB89 - меняет цвет символа
+	&& - преобразуется к &
+*/
+void cInterfaceRenderDevice::ChangeTextColor(const char* &str,sColor4c& diffuse)
+{
+    while(*str=='&')
+    {
+        if(str[1]=='&')
+        {
+            str++;
+            return;
+        }
+
+        uint32_t s=0;
+        int i;
+        for(i=1;i<=6;i++)
+        {
+            int a=FromHex(str[i]);
+            if(a<0)return;
+            s=(s<<4)+a;
+        }
+
+        diffuse.ARGB((diffuse.a<<24)|s);
+        str+=i;
+    }
+}
+
+void cInterfaceRenderDevice::OutTextRect(int x, int y, const char *string, int align, Vect2f& bmin, Vect2f& bmax) {
+    bmin.set(x,y);
+    bmax.set(x,y);
+    if (!CurrentFont) {
+        VISASSERT(0 && "Font not set");
+        return;
+    }
+
     cFontInternal* cf=CurrentFont->GetInternal();
-    float xOfs=0;
-    float xSize = CurrentFont->GetScale().x*(CurrentFont->GetTexture()?(1<<CurrentFont->GetTexture()->GetX()):1);
+    sColor4c diffuse(0,0,0,0);
+    
+    float xOfs;
+    float yOfs = static_cast<float>(y);
+    float xSize = CurrentFont->GetScale().x*static_cast<float>(cf->GetTexture()->GetWidth());
+    float ySize = CurrentFont->GetScale().y*cf->FontHeight*static_cast<float>(cf->GetTexture()->GetHeight());
+
+    for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
+        xOfs = static_cast<float>(x);
+        if (0 <= align) {
+            float StringWidth = GetFontLength(str);
+            xOfs -= static_cast<float>(xm::round(StringWidth * (align == 0 ? 0.5f : 1)));
+        }
+        for (; *str!=10; str++) {
+            ChangeTextColor(str, diffuse);
+            if (*str==10) break;
+
+            uint8_t c = *str;
+            if (!c) goto out;
+            if (c<32) continue;
+            Vect3f& size=cf->Font[c];
+
+            bmin.x=min(xOfs,bmin.x);
+            bmin.y=min(yOfs,bmin.y);
+            xOfs+=xSize*size.z-1;
+            bmax.x=max(xOfs,bmax.x);
+            bmax.y=max(yOfs+ySize,bmax.y);
+        }
+    }
+    
+out:
+    return;
+}
+
+float cInterfaceRenderDevice::GetFontLength(const char *string, size_t* count) {
+    cFontInternal* cf=CurrentFont->GetInternal();
+    float xOfs = 0;
+    float xSize = CurrentFont->GetScale().x*static_cast<float>(CurrentFont->GetTexture()?CurrentFont->GetTexture()->GetWidth():1);
     sColor4c diffuse(0,0,0,0);
 
-    for(const char* str=string;*str;str++)
-    {
-        ChangeTextColor(str,diffuse);
-        uint8_t c=(unsigned char)*str;
-        if(!c || c==10)break;
-        if(c<32)continue;
-        xOfs+=xSize*cf->Font[c].z-1;
+    for(const char* str=string;*str;str++) {
+        ChangeTextColor(str, diffuse);
+        uint8_t c = static_cast<uint8_t>(*str); 
+        if (!c || c==10) break;
+        if (c < 32) continue;
+        xOfs += xSize * cf->Font[c].z - 1;
+        if (count) *count += 1;
     }
 
     return xOfs;
@@ -196,7 +294,7 @@ float cInterfaceRenderDevice::GetCharLength(const char c)
     return GetFontLength(str);
 }
 
-size_t cInterfaceRenderDevice::GetSizeFromFormat(uint32_t fmt) const {
+size_t cInterfaceRenderDevice::GetSizeFromFormat(vertex_fmt_t fmt) const {
     size_t size=0;
     
     if (fmt&VERTEX_FMT_XYZ) size += sizeof(float) * 3;
@@ -376,7 +474,7 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 
 // cEmptyRender impl
 
-void cEmptyRender::CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic) {
+void cEmptyRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
     size_t size = GetSizeFromFormat(fmt);
 
     vb.VertexSize=size;
@@ -386,35 +484,44 @@ void cEmptyRender::CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, 
     vb.buf = malloc(NumberVertex * size);
 }
 
-void cEmptyRender::DeleteVertexBuffer(class VertexBuffer &vb) {
+void cEmptyRender::DeleteVertexBuffer(VertexBuffer &vb) {
     if (vb.buf) {
         free(vb.buf);
         vb.buf = nullptr;
     }
 }
 
-void* cEmptyRender::LockVertexBuffer(class VertexBuffer &vb) {
+void* cEmptyRender::LockVertexBuffer(VertexBuffer &vb) {
     return vb.buf;
 }
 
-void cEmptyRender::UnlockVertexBuffer(class VertexBuffer &vb) {
+void* cEmptyRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+    xassert(Start + Amount <= vb.NumberVertex);
+    return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
 }
 
-void cEmptyRender::CreateIndexBuffer(class IndexBuffer& ib, int NumberPolygons) {
-    ib.NumberPolygons = NumberPolygons;
-    ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
+void cEmptyRender::UnlockVertexBuffer(VertexBuffer &vb) {
+}
+
+void cEmptyRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices) {
+    ib.NumberIndices = NumberIndices;
     ib.buf = malloc(ib.NumberIndices * sizeof(indices_t));
 }
 
-void cEmptyRender::DeleteIndexBuffer(class IndexBuffer &ib) {
+void cEmptyRender::DeleteIndexBuffer(IndexBuffer &ib) {
     if (ib.buf) {
         free(ib.buf);
         ib.buf = nullptr;
     }
 }
 
-sPolygon* cEmptyRender::LockIndexBuffer(class IndexBuffer &ib) {
-    return static_cast<sPolygon*>(ib.buf);
+indices_t* cEmptyRender::LockIndexBuffer(class IndexBuffer &ib) {
+    return static_cast<indices_t*>(ib.buf);
+}
+
+indices_t* cEmptyRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+    xassert(Start + Amount <= ib.NumberIndices);
+    return &LockIndexBuffer(ib)[Start];
 }
 
 void cEmptyRender::UnlockIndexBuffer(class IndexBuffer &ib) {

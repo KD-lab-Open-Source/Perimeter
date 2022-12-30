@@ -43,6 +43,8 @@ private:
     bool isOrthoSet = false;
     
     virtual void Draw(class FieldDispatcher *rd, uint8_t transparent);
+    void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
+    void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 
 public:
     bool				bActiveScene;
@@ -113,14 +115,17 @@ public:
 	int Flush(bool wnd=false) override;
 	int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 	
-	void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) override;
+	void CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, uint8_t fmt, bool dynamic) override;
 	void DeleteVertexBuffer(VertexBuffer &vb) override;
 	void* LockVertexBuffer(VertexBuffer &vb) override;
+    void* LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) override;
 	void UnlockVertexBuffer(VertexBuffer &vb) override;
-	void CreateIndexBuffer(IndexBuffer& ib, int NumberPolygon) override;
+	void CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices) override;
 	void DeleteIndexBuffer(IndexBuffer &ib) override;
-	sPolygon* LockIndexBuffer(IndexBuffer &ib) override;
+    indices_t* LockIndexBuffer(IndexBuffer &ib) override;
+    indices_t* LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
 	void UnlockIndexBuffer(IndexBuffer &ib) override;
+    void SubmitDrawBuffer(class DrawBuffer* db) override;
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
 	int DeleteTexture(class cTexture *Texture) override;
 	void* LockTexture(class cTexture *Texture, int& Pitch) override;
@@ -155,15 +160,10 @@ public:
 	void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
 	void FlushPrimitive2D() override;
 
-    void ChangeTextColor(const char* &str,sColor4c& diffuse) override;
-
 	void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override;
-	void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax) override;
 	void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
 				cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase=0,float lerp_factor=1) override;
-	
-	void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) override;
-	void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0) override;
+
 	bool SetScreenShot(const char *fname) override;
 	void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
 		cTexture *Texture,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override;
@@ -185,6 +185,9 @@ public:
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
 
     void SetDrawTransform(class cCamera *DrawNode) override;
+    
+    void SetWorldMatrix(Mat4f* matrix) override;
+    
     void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
     void DrawPoint(const Vect3f &v1,sColor4c color) override;
     
@@ -193,7 +196,7 @@ public:
     // //// cInterfaceRenderDevice impls end ////
 
     //This converts flag based vertex format to D3D9 FVF format
-    static uint32_t GetD3DFVFFromFormat(uint32_t fmt) ;
+    static uint32_t GetD3DFVFFromFormat(vertex_fmt_t fmt) ;
     
 	FORCEINLINE void SetMatrix(int type, const MatXf &m) {
 		Mat4f mat;

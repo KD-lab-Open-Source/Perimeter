@@ -1,13 +1,13 @@
 #include "StdAfxRD.h"
 #include "xmath.h"
 #include "Umath.h"
-#include "VertexFormat.h"
 #include "sokol_gfx.h"
 #include "SokolResources.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
 #include "SokolRenderPipeline.h"
 #include "xerrhand.h"
+#include "DrawBuffer.h"
 #include "SokolShaders.h"
 
 cSokolRender::cSokolRender() = default;
@@ -30,8 +30,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     //Init some state
     activePipelineType = PIPELINE_TYPE_STANDARD;
     activePipelineBlend = ALPHA_NONE;
-    activePipelineCull = false;
-    activePipelineFaceCCW = false;
+    activePipelineCull = CULL_CCW;
     
     //Set some attributes before context creation
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -52,7 +51,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     {
         sg_desc desc = {};
         desc.pipeline_pool_size = PIPELINE_ID_MAX,
-        desc.shader_pool_size = 4,
+        desc.shader_pool_size = 8,
         desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
         desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
         desc.context.color_format = SG_PIXELFORMAT_RGBA8;
@@ -97,8 +96,8 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
 }
 
 int cSokolRender::UpdateRenderMode() {
-    orthoMat = Mat4f::ID;
-    SetOrthographic(orthoMat, ScreenSize.x, -ScreenSize.y, -10, 10);
+    orthoVP = Mat4f::ID;
+    SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, -10, 10);
     return 0;
 }
 
@@ -123,7 +122,7 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
     return -1;
 }
 
-void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, int NumberVertex, int fmt, int dynamic) {
+void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
     xassert(!vb.sg);
     size_t size = GetSizeFromFormat(fmt);
 
@@ -153,7 +152,12 @@ void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
     xassert(!vb.sg->locked);
     vb.sg->dirty = true;
     vb.sg->locked = true;
-    return static_cast<sPolygon*>(vb.sg->data);
+    return vb.sg->data;
+}
+
+void* cSokolRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+    xassert(Start + Amount <= vb.NumberVertex);
+    return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
 }
 
 void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
@@ -161,10 +165,9 @@ void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
     vb.sg->locked = false;
 }
 
-void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, int NumberPolygons) {
+void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices) {
     xassert(!ib.sg);
-    ib.NumberPolygons = NumberPolygons;
-    ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
+    ib.NumberIndices = NumberIndices;
     
     sg_buffer_desc desc = {};
     desc.size = ib.NumberIndices * sizeof(indices_t);
@@ -179,7 +182,7 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
     ib.sg = nullptr;
 }
 
-sPolygon* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
+indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
     if (!ib.sg) {
         xassert(0);
         return nullptr;
@@ -187,7 +190,12 @@ sPolygon* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
     xassert(!ib.sg->locked);
     ib.sg->dirty = true;
     ib.sg->locked = true;
-    return static_cast<sPolygon*>(ib.sg->data);
+    return static_cast<indices_t*>(ib.sg->data);
+}
+
+indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+    xassert(Start + Amount <= ib.NumberIndices);
+    return &LockIndexBuffer(ib)[Start];
 }
 
 void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
@@ -228,14 +236,13 @@ int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
 
 SokolCommand::SokolCommand() {
     Clear();
-    memset(textures, 0, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
 }
 
 SokolCommand::~SokolCommand() {
     Clear();
 }
 
-void SokolCommand::Clear() {
+void SokolCommand::ClearDrawData() {
     if (owned_buffers) {
         delete vertex_buffer;
         delete index_buffer;
@@ -243,12 +250,21 @@ void SokolCommand::Clear() {
     }
     vertex_buffer = nullptr;
     index_buffer = nullptr;
+    vertices = 0;
+    indices = 0;
+    
+}
+
+void SokolCommand::ClearMVP() {
     if (owned_mvp) {
         delete vs_mvp;
         owned_mvp = false;
     }
     vs_mvp = nullptr;
-    fs_mode = 0;
-    vertices = 0;
-    indices = 0;
+}
+
+void SokolCommand::Clear() {
+    ClearDrawData();
+    ClearMVP();
+    memset(textures, 0, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
 }

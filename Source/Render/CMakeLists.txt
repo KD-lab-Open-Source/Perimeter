@@ -49,6 +49,7 @@ SET(Render_SRCS
         src/VisGeneric.cpp
         src/VisGrid2d.cpp
         src/RenderDevice.cpp
+        src/DrawBuffer.cpp
 )
 
 IF (OPTION_D3D9)

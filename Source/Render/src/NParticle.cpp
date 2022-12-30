@@ -1456,7 +1456,7 @@ void cEmitterSpl::Draw(cCamera *pCamera)
         }
     */
         rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
-        rd->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
+        rd->SetRenderState( RS_CULLMODE, CULL_NONE );
         Vect3f CameraPos;
         if (relative)
         {

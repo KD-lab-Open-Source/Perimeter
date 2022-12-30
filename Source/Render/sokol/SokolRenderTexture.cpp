@@ -31,7 +31,8 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
         desc.pixel_format = SG_PIXELFORMAT_RGBA8;
         desc.num_mipmaps = Texture->GetNumberMipMap();
-        desc.min_filter = desc.mag_filter = desc.num_mipmaps ? SG_FILTER_NEAREST : SG_FILTER_NEAREST_MIPMAP_LINEAR;
+        //Filter must be linear for small font textures to not look unreadable
+        desc.min_filter = desc.mag_filter = desc.num_mipmaps ? SG_FILTER_LINEAR : SG_FILTER_LINEAR_MIPMAP_NEAREST;
 
         if (!FileImage) {
             desc.usage = SG_USAGE_DYNAMIC;

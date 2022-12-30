@@ -16,10 +16,9 @@ const uint32_t PIPELINE_ID_TYPE_MASK = 0xF;
 
 const uint32_t PIPELINE_ID_MODE_SHIFT = 0;
 const uint32_t PIPELINE_ID_MODE_CULL_SHIFT = 3;
-const uint32_t PIPELINE_ID_MODE_FACE_CCW_SHIFT = 4;
+const uint32_t PIPELINE_ID_MODE_MAX = 1 << 5;
 const uint32_t PIPELINE_ID_VERTEX_FMT_SHIFT = 8;
 const uint32_t PIPELINE_ID_TYPE_SHIFT = 16;
-const uint32_t PIPELINE_ID_MODE_MAX = 1 << PIPELINE_ID_MODE_FACE_CCW_SHIFT;
 const uint32_t PIPELINE_ID_MAX = PIPELINE_TYPE_MAX << PIPELINE_ID_TYPE_SHIFT;
 
 struct SokolPipeline {
@@ -27,6 +26,8 @@ struct SokolPipeline {
     pipeline_id_t id;
     //VERTEX_FMT_* flags used as index for this pipeline
     vertex_fmt_t vertex_fmt;
+    //Amount of bytes for this vertex fmt
+    size_t vertex_size;
     //Created pipeline for this
     sg_pipeline pipeline;
     //Shader functions to retrieve info

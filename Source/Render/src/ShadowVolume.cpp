@@ -32,7 +32,7 @@ bool ShadowVolume::Add(MatXf& mat,cMeshTri* pTri)
 	
 	int offset_poly=triangle.size();
 	triangle.resize(offset_poly+pTri->NumPolygon);
-	sPolygon *Polygon=gb_RenderDevice->LockIndexBuffer(*pTri->ib);
+	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(*pTri->ib));
 	for(i=0;i<pTri->NumPolygon;i++)
 	{
 		sPolygon &p=Polygon[i+pTri->OffsetPolygon];

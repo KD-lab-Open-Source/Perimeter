@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "Font.h"
 #include "files/files.h"
+#include "DrawBuffer.h"
 
 const int POLYGONMAX=1024;
 
@@ -54,7 +55,7 @@ cD3DRender::~cD3DRender()
     VISASSERT(ScreenSize.x==0&&ScreenSize.y==0);
 }
 
-uint32_t cD3DRender::GetD3DFVFFromFormat(uint32_t fmt) {
+uint32_t cD3DRender::GetD3DFVFFromFormat(vertex_fmt_t fmt) {
     switch (fmt) {
         case sVertexXYZ::fmt:
             return D3DFVF_XYZ;
@@ -1352,7 +1353,7 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	return 0;
 }
 
-void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, int NumberVertex, int format, int dynamic)
+void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t format, bool dynamic)
 {
     size_t size = GetSizeFromFormat(format);
 	xassert(NumberVertex>=0 || NumberVertex<=65536);
@@ -1410,7 +1411,6 @@ void cD3DRender::RestoreDynamicVertexBuffer()
 		}
 	}
 }
-
 void* cD3DRender::LockVertexBuffer(VertexBuffer &vb)
 {
 	void *p=0;
@@ -1418,16 +1418,22 @@ void* cD3DRender::LockVertexBuffer(VertexBuffer &vb)
 	RDCALL(vb.d3d->Lock(0,0,&p, vb.dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
 	return p;
 }
+void* cD3DRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+    xassert(Start + Amount <= vb.NumberVertex);
+    void *p=0;
+    VISASSERT( vb.d3d );
+    vb.d3d->Lock(Start * vb.VertexSize, Amount * vb.VertexSize, &p, vb.dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 );
+    return p;
+}
 void cD3DRender::UnlockVertexBuffer(VertexBuffer &vb)
 {
 	VISASSERT( vb.d3d );
 	RDCALL(vb.d3d->Unlock());
 }
-void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, int NumberPolygons)
+void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices)
 {
 	DeleteIndexBuffer(ib);
-    ib.NumberPolygons = NumberPolygons;
-    ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
+    ib.NumberIndices = NumberIndices;
     ib.buf = nullptr;
 	RDCALL(lpD3DDevice->CreateIndexBuffer(ib.NumberIndices * sizeof(indices_t), D3DUSAGE_WRITEONLY, PERIMETER_D3D_INDEX_FMT, D3DPOOL_MANAGED,&ib.d3d, NULL));
 }
@@ -1438,17 +1444,36 @@ void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib)
         ib.d3d = nullptr;
     }
 }
-sPolygon* cD3DRender::LockIndexBuffer(IndexBuffer &ib)
-{
-	void *p=0;
-	VISASSERT( ib.d3d );
-    ib.d3d->Lock(0,0,&p,0);
-	return (sPolygon*)p;
+indices_t* cD3DRender::LockIndexBuffer(IndexBuffer &ib) {
+    void *p=nullptr;
+    VISASSERT( ib.d3d );
+    ib.d3d->Lock(0, 0, &p, 0);
+    return static_cast<indices_t*>(p);
+}
+indices_t* cD3DRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+    xassert(Start + Amount <= ib.NumberIndices);
+    void *p=nullptr;
+    VISASSERT( ib.d3d );
+    ib.d3d->Lock(Start * sizeof(indices_t), Amount * sizeof(indices_t), &p, 0);
+    return static_cast<indices_t*>(p);
 }
 void cD3DRender::UnlockIndexBuffer(IndexBuffer &ib)
 {
 	VISASSERT( ib.d3d );
     ib.d3d->Unlock();
+}
+
+void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
+    SetFVF(db->vb.fmt);
+    SetStreamSource(db->vb);
+    SetIndices(db->ib);
+    size_t polys = static_cast<size_t>(xm::floor(db->ib.NumberIndices / 3.0));
+    RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
+            D3DPT_TRIANGLELIST,
+            0, 0, db->vb.NumberVertex,
+            0, polys
+    ));
+    NumberPolygon+=polys;
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)
@@ -1502,7 +1527,6 @@ int cD3DRender::KillFocus()
 
 bool cD3DRender::SetFocus(bool wait,bool focus_error)
 {
-    fprintf(stdout, "cD3DRender::SetFocus\n");
 	{
 		HRESULT hres=D3D_OK;
 		int imax=wait?10:1;
@@ -1676,16 +1700,20 @@ cVertexBufferInternal::cVertexBufferInternal()
 	numvertex=0;
 	cur_min_vertex=0;
 	start_vertex=0;
+    vb = new VertexBuffer();
 }
 
 void cVertexBufferInternal::Destroy()
 {
 	MTG();
-	vb.Destroy();
+    if (vb) vb->Destroy();
 }
 
 cVertexBufferInternal::~cVertexBufferInternal()
 {
+    Destroy();
+    delete vb;
+    vb = nullptr;
 }
 
 uint8_t* cVertexBufferInternal::Lock(int minvertex)
@@ -1693,10 +1721,10 @@ uint8_t* cVertexBufferInternal::Lock(int minvertex)
 	MTG();
 	void* min_index=NULL;
 
-    IDirect3DVertexBuffer9* pvb=gb_RenderDevice3D->GetVB(vb);
+    IDirect3DVertexBuffer9* pvb=gb_RenderDevice3D->GetVB(*vb);
 	if(GetSize()>minvertex)
 	{
-        short size = vb.VertexSize;
+        short size = vb->VertexSize;
 		RDCALL(pvb->Lock(cur_min_vertex*size,GetSize()*size,
 			&min_index,D3DLOCK_NOOVERWRITE));
 	}else
@@ -1712,7 +1740,7 @@ void cVertexBufferInternal::Unlock(int num_write_vertex)
 {
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
-	RDCALL(rd->GetVB(vb)->Unlock());
+	RDCALL(rd->GetVB(*vb)->Unlock());
 
 	start_vertex=cur_min_vertex;
 	cur_min_vertex+=num_write_vertex;
@@ -1724,7 +1752,7 @@ void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
 	MTG();
 	numvertex=bytesize/vertexsize;
 	fmt=_fmt;
-	gb_RenderDevice3D->CreateVertexBuffer(vb,numvertex,fmt,TRUE);
+	gb_RenderDevice3D->CreateVertexBuffer(*vb,numvertex,fmt,TRUE);
 }
 
 void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
@@ -1739,7 +1767,7 @@ void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
 	rd->SetFVF(fmt);
-	rd->SetStreamSource(vb);
+	rd->SetStreamSource(*vb);
 	RDCALL(rd->lpD3DDevice->DrawPrimitive((D3DPRIMITIVETYPE)Type,start_vertex,Count));
 }
 
@@ -1748,7 +1776,7 @@ void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
 	rd->SetFVF(fmt);
-	rd->SetStreamSource(vb);
+	rd->SetStreamSource(*vb);
 	rd->SetIndices(rd->GetStandartIB());
 	RDCALL(rd->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 		0, start_vertex, Count*2, (start_vertex>>2)*6, Count ));
@@ -1795,7 +1823,7 @@ void* cQuadBufferInternal::Get()
 		BeginDraw();
 	}
 
-	uint8_t* cur= start_vertex + vertex_index * vb.VertexSize;
+	uint8_t* cur= start_vertex + vertex_index * vb->VertexSize;
 	vertex_index+=4;
 	return cur;
 }
@@ -1844,13 +1872,16 @@ void DrawStripT2::End()
 
 void cD3DRender::InitStandartIB()
 {
-	CreateIndexBuffer(standart_ib,POLYGONMAX);
-	sPolygon* polygon=LockIndexBuffer(standart_ib);
+	CreateIndexBuffer(standart_ib,POLYGONMAX*sPolygon::PN);
+	indices_t* iptr=LockIndexBuffer(standart_ib);
 
 	for(int nPolygon=0; nPolygon<POLYGONMAX; nPolygon+=2 )
 	{
-		polygon[nPolygon+0].set(2*nPolygon+0,2*nPolygon+1,2*nPolygon+2);
-		polygon[nPolygon+1].set(2*nPolygon+2,2*nPolygon+1,2*nPolygon+3);
+        iptr[0] = 2*nPolygon;
+        iptr[1] = iptr[4] = 2*nPolygon + 1;
+        iptr[2] = iptr[3] = 2*nPolygon + 2;
+        iptr[5] = 2*nPolygon + 3;
+        iptr += 6;
 	}
 
 	UnlockIndexBuffer(standart_ib);

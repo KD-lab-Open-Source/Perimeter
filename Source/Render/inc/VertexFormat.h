@@ -4,7 +4,6 @@
 #pragma pack(push,1)
 #endif
 
-using vertex_fmt_t = uint8_t;
 const static vertex_fmt_t VERTEX_FMT_XYZ       = (1<<0);
 const static vertex_fmt_t VERTEX_FMT_NORMAL    = (1<<1);
 const static vertex_fmt_t VERTEX_FMT_DIFFUSE   = (1<<2);
@@ -26,12 +25,13 @@ struct sVertexXYZ
 };
 #ifdef PERIMETER_D3D9
 //For primitives
-struct sVertexXYZD : public sVertexXYZ
-#else
-struct sVertexXYZDT1 : public sVertexXYZ
-#endif
-{
+struct sVertexXYZD : public sVertexXYZ {
     sColor4c	diffuse;
+#else
+struct sVertexXYZDT1 : public sVertexXYZ {
+    sColor4c	diffuse;
+    float			uv[2];
+#endif
     inline int& xi()					{ return *((int*)&x); }
     inline int& yi()					{ return *((int*)&y); }
     inline int& zi()					{ return *((int*)&z); }
@@ -41,8 +41,8 @@ struct sVertexXYZDT1 : public sVertexXYZ
 };
 struct sVertexXYZDT1 : public sVertexXYZD
 {
-#endif
 	float			uv[2];
+#endif
 	inline float& u1()					{ return uv[0]; }
 	inline float& v1()					{ return uv[1]; }
 	inline Vect2f& GetTexel()			{ return *((Vect2f*)&uv[0]); }

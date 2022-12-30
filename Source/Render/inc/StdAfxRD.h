@@ -21,6 +21,8 @@
 #include <d3dx9.h>
 #endif
 
+#include "../inc/RenderTypes.h"
+
 #include "../inc/Umath.h"
 #include "../../PluginMAX/Src/BaseClass.h"
 #include "../inc/IVisGenericInternal.h"

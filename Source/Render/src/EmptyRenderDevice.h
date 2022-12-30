@@ -16,6 +16,7 @@ public:
     int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override { return -1; }
     int SetClipRect(int xmin,int ymin,int xmax,int ymax) override { return -1; }
     void SetDrawTransform(class cCamera *pDrawNode) override {}
+    void SetWorldMatrix(Mat4f* matrix) override {};
 
     int BeginScene() override { return -1; }
     int EndScene() override { return -1; }
@@ -32,14 +33,7 @@ public:
     void DrawPoint(const Vect3f &v1,sColor4c color) override { }
     void FlushPrimitive3D() override { }
 
-    /*Внутренний мтод. Использовать с крайней осторожностью.
-      Перед использованием посмотреть как используется внутри Render.
-    */
-    void ChangeTextColor(const char* &str,sColor4c& diffuse) override {}
-
-
     void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override { }
-    void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax) override { }
     void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
                          cTexture* pTexture,eColorMode mode,
                          Vect2f uv,//Координаты текстуры в точке x,y
@@ -50,8 +44,6 @@ public:
     ) override { }
 
 
-    void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) override { }
-    void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName/*="Arial"*/,int size=12,int bold=0,int italic=0,int underline=0) override { }
     bool SetScreenShot(const char *fname) override { return false; }
     int GetRenderState(eRenderStateOption option) { return 0; }
     int SetRenderState(eRenderStateOption option,int value) override { return -1; }
@@ -89,14 +81,17 @@ public:
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override {}
     void DrawIndexedPrimitive(class VertexBuffer &vb, int OfsVertex, int nVertex, const class IndexBuffer& ib, int nOfsPolygon, int nPolygon) override {}
 
-    void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) override;
+    void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) override;
     void DeleteVertexBuffer(class VertexBuffer &vb) override;
     void* LockVertexBuffer(class VertexBuffer &vb) override;
+    void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount) override;
     void UnlockVertexBuffer(class VertexBuffer &vb) override;
-    void CreateIndexBuffer(class IndexBuffer& ib, int NumberPolygon) override;
+    void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices) override;
     void DeleteIndexBuffer(class IndexBuffer &ib) override;
-    sPolygon* LockIndexBuffer(class IndexBuffer &ib) override;
+    indices_t* LockIndexBuffer(class IndexBuffer &ib) override;
+    indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
     void UnlockIndexBuffer(class IndexBuffer &ib) override;
+    void SubmitDrawBuffer(class DrawBuffer* db) override {}
 };
 
 #endif //PERIMETER_EMPTYRENDERDEVICE_H

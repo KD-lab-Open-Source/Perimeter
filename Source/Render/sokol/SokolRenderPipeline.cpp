@@ -15,10 +15,9 @@ struct SokolPipelineContext {
     struct shader_funcs* shader_funcs;
 };
 
-pipeline_id_t cSokolRender::GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, bool cull, bool face_ccw) {
+pipeline_id_t cSokolRender::GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, eCullMode cull) {
     uint8_t mode = blend & 0b111;
-    if (cull) mode |= 1 << PIPELINE_ID_MODE_CULL_SHIFT;
-    if (face_ccw) mode |= 1 << PIPELINE_ID_MODE_FACE_CCW_SHIFT;
+    mode |= (cull & 0b11) << PIPELINE_ID_MODE_CULL_SHIFT;
     return GetPipelineID(type, vertex_fmt, mode);
 }
 
@@ -29,12 +28,11 @@ pipeline_id_t cSokolRender::GetPipelineID(uint8_t type, uint8_t vertex_fmt, uint
     return id;
 }
 
-void cSokolRender::GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, bool* cull, bool* face_ccw) {
+void cSokolRender::GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, eCullMode* cull) {
     uint8_t mode = (id >> PIPELINE_ID_MODE_SHIFT) & PIPELINE_ID_MODE_MASK;
-    if (cull) *cull = (mode & (1 << PIPELINE_ID_MODE_CULL_SHIFT)) != 0;
-    if (face_ccw) *face_ccw = (mode & (1 << PIPELINE_ID_MODE_FACE_CCW_SHIFT)) != 0;
-    
     if (blend) *blend = static_cast<eBlendMode>(mode & 0b111);
+    if (cull) *cull = static_cast<eCullMode>((mode >> PIPELINE_ID_MODE_CULL_SHIFT) & 0b11);
+    
     if (vertex_fmt) *vertex_fmt = (id >> PIPELINE_ID_VERTEX_FMT_SHIFT) & PIPELINE_ID_VERTEX_FMT_MASK;
     if (type) *type = (id >> PIPELINE_ID_TYPE_SHIFT) & PIPELINE_ID_TYPE_MASK;
 }
@@ -81,18 +79,17 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
     
     //Extract info about this pipeline
     eBlendMode blendMode;
-    bool cull;
-    bool face_ccw;
-    GetPipelineIDParts(id, &ctx.pipeline_type, &ctx.vertex_fmt, &blendMode, &cull, &face_ccw);
+    eCullMode cull;
+    GetPipelineIDParts(id, &ctx.pipeline_type, &ctx.vertex_fmt, &blendMode, &cull);
 
     //Common part of pipeline desc
     desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
     desc.depth.write_enabled = true;
     desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
     desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32;
-    desc.cull_mode = cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
-    desc.face_winding = face_ccw ? SG_FACEWINDING_CCW : SG_FACEWINDING_CW;
-;
+    desc.cull_mode = CULL_NONE == cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
+    desc.face_winding = CULL_CCW == cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
+
     auto& blend0 = desc.colors[0].blend;
     blend0.enabled = ALPHA_NONE < blendMode;
     if (blend0.enabled) {
@@ -185,6 +182,7 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
     SokolPipeline* pipeline = new SokolPipeline {
         ctx.id,
         ctx.vertex_fmt,
+        GetSizeFromFormat(ctx.vertex_fmt),
         sg_make_pipeline(desc),
         ctx.shader_funcs
     };

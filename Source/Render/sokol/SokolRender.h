@@ -4,8 +4,6 @@
 #include "sokol_gfx.h"
 #include <SDL_video.h>
 
-using pipeline_id_t = uint32_t;
-
 const int PERIMETER_SOKOL_FS_MODE_NORMAL = 0;
 const int PERIMETER_SOKOL_FS_MODE_MOD_COLOR_ADD_ALPHA = 1;
 
@@ -15,10 +13,11 @@ struct SokolCommand {
     SokolCommand();
     ~SokolCommand();
     void Clear();
+    void ClearDrawData();
+    void ClearMVP();
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
     pipeline_id_t pipeline_id = 0;
-    size_t vertex_size = 0;
     size_t vertices = 0;
     size_t indices = 0;
     struct SokolTexture2D* textures[PERIMETER_SOKOL_TEXTURES];
@@ -44,7 +43,7 @@ private:
     std::vector<SokolCommand*> commands;
     Vect2i viewportPos;
     Vect2i viewportSize;
-    Mat4f orthoMat;
+    Mat4f orthoVP;
     
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;
@@ -53,26 +52,24 @@ private:
     std::map<std::string, sg_shader> shaders;
     std::vector<struct SokolPipeline*> pipelines;
     static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, uint8_t mode);
-    static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, bool cull, bool face_ccw);
-    static void GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, bool* cull, bool* face_ccw);
+    static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, eCullMode cull);
+    static void GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, eCullMode* cull);
     void ClearPipelines();
     void RegisterPipelines();
     void RegisterPipeline(pipeline_id_t id, struct shader_funcs* shader_funcs);
     
     //Active pipeline/command state
     SokolCommand activeCommand;
-    VertexBuffer vertexBuffer;
-    IndexBuffer indexBuffer;
     uint8_t activePipelineType = 0;
     eBlendMode activePipelineBlend = ALPHA_NONE;
-    bool activePipelineCull = false;
-    bool activePipelineFaceCCW = false;
+    eCullMode activePipelineCull = CULL_NONE;
+    Mat4f* activeCommandVP;
+    Mat4f* activeCommandW;
 
     //Commands handling
     void ClearCommands();
     void FinishCommand();
-    void PrepareBuffers(size_t NumberVertex, size_t NumberIndices, vertex_fmt_t vertex_fmt);
-    void SetVSUniformMatrix(Mat4f* mat, bool command_owned);
+    void SetVPMatrix(Mat4f* matrix);
     void SetFSUniformMode(int mode);
 
     //Updates internal state after init/resolution change
@@ -88,6 +85,8 @@ public:
         return DEVICE_SOKOL;
     }
     
+    class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt) override;
+    
     int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override;
     bool ChangeSize(int xScr,int yScr,int mode) override;
 
@@ -97,6 +96,7 @@ public:
     int Done() override;
 
     void SetDrawNode(cCamera *pDrawNode) override;
+    void SetWorldMatrix(Mat4f* matrix) override;
 
     int BeginScene() override;
     int EndScene() override;
@@ -105,14 +105,17 @@ public:
     
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 
-    void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) override;
-    void DeleteVertexBuffer(VertexBuffer &vb) override;
-    void* LockVertexBuffer(VertexBuffer &vb) override;
-    void UnlockVertexBuffer(VertexBuffer &vb) override;
-    void CreateIndexBuffer(IndexBuffer& ib, int NumberPolygon) override;
-    void DeleteIndexBuffer(IndexBuffer &ib) override;
-    sPolygon* LockIndexBuffer(IndexBuffer &ib) override;
-    void UnlockIndexBuffer(IndexBuffer &ib) override;
+    void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) override;
+    void DeleteVertexBuffer(class VertexBuffer &vb) override;
+    void* LockVertexBuffer(class VertexBuffer &vb) override;
+    void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount) override;
+    void UnlockVertexBuffer(class VertexBuffer &vb) override;
+    void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices) override;
+    void DeleteIndexBuffer(class IndexBuffer &ib) override;
+    indices_t* LockIndexBuffer(class IndexBuffer &ib) override;
+    indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
+    void UnlockIndexBuffer(class IndexBuffer &ib) override;
+    void SubmitDrawBuffer(class DrawBuffer* db) override;
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
     int DeleteTexture(class cTexture *Texture) override;
     void* LockTexture(class cTexture *Texture, int& Pitch) override;
@@ -149,17 +152,11 @@ public:
     void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
     void FlushPrimitive2D() override;
 
-    /*
-    void ChangeTextColor(const char* &str,sColor4c& diffuse) override;
-
     void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override;
-    void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax) override;
     void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
                  cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase=0,float lerp_factor=1) override;
 
-    void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) override;
-    void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0) override;
-    
+    /*
     bool SetScreenShot(const char *fname) override;
     */
 

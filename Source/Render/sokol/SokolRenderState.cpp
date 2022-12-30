@@ -12,10 +12,7 @@
 #include "SokolShaders.h"
 #include "VertexFormat.h"
 #include "Texture.h"
-
-const int PERIMETER_SOKOL_POLYGON_COUNT = 10240;
-const int PERIMETER_SOKOL_VERTEXES_COUNT = PERIMETER_SOKOL_POLYGON_COUNT * 4;
-static_assert(PERIMETER_SOKOL_VERTEXES_COUNT <= std::numeric_limits<indices_t>::max());
+#include "DrawBuffer.h"
 
 int cSokolRender::BeginScene() {
     if (ActiveScene) {
@@ -34,6 +31,7 @@ int cSokolRender::EndScene() {
     }
     ActiveScene = false;
 
+    //Make sure there is nothing left to send as command
     FinishCommand();
 
     //Begin pass
@@ -81,9 +79,9 @@ int cSokolRender::EndScene() {
             xxassert(0, "cSokolRender::EndScene missing index_buffer");
             continue;
         }
-        command->vertex_buffer->update(command->vertices * command->vertex_size);
-        bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
+        command->vertex_buffer->update(command->vertices * pipeline->vertex_size);
         command->index_buffer->update(command->indices * sizeof(indices_t));
+        bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
         bindings.index_buffer = command->index_buffer->buffer;
         
         //Bind images for samplers
@@ -150,8 +148,6 @@ int cSokolRender::EndScene() {
     //End pass
     sg_end_pass();
 
-    ClearCommands();
-
     return 1;
 }
 
@@ -179,73 +175,88 @@ int cSokolRender::Flush(bool wnd) {
 
     SDL_GL_SwapWindow(sdlWindow);
 
+    ClearCommands();
+
     return 0;
 }
 
 void cSokolRender::FinishCommand() {
-    if (!activeCommand.indices) {
+    if (!lastDrawBuffer) {
+        return;
+    }
+    if (!lastDrawBuffer->written_vertices) {
+        lastDrawBuffer = nullptr;
         return;
     }
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
     cmd->pipeline_id = GetPipelineID(
-        activePipelineType,
-        vertexBuffer.fmt,
-        activePipelineBlend,
-        activePipelineCull,
-        activePipelineFaceCCW
+            activePipelineType,
+            lastDrawBuffer->vb.fmt,
+            activePipelineBlend,
+            activePipelineCull
     );
-    cmd->vertices = activeCommand.vertices;
-    cmd->indices = activeCommand.indices;
-    cmd->vertex_size = vertexBuffer.VertexSize;
     memcpy(cmd->textures, activeCommand.textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
-    cmd->owned_mvp = activeCommand.owned_mvp;
-    cmd->vs_mvp = activeCommand.vs_mvp;
     cmd->fs_mode = activeCommand.fs_mode;
+    cmd->vertices = lastDrawBuffer->written_vertices;
+    cmd->indices = lastDrawBuffer->written_indices;
+    
+    //We copy the MVP if any
+    if (activeCommandVP) {
+        cmd->owned_mvp = true;
+        cmd->vs_mvp = new Mat4f(*activeCommandVP);
+        if (activeCommandW) {
+            *cmd->vs_mvp *= *activeCommandW;
+        }
+    }
     
     //Transfer buffers to command
     cmd->owned_buffers = true;
-    cmd->vertex_buffer = vertexBuffer.sg;
-    cmd->index_buffer = indexBuffer.sg;
-    vertexBuffer.sg = nullptr;
-    indexBuffer.sg = nullptr;
+    cmd->vertex_buffer = lastDrawBuffer->vb.sg;
+    cmd->index_buffer = lastDrawBuffer->ib.sg;
+    lastDrawBuffer->vb.sg = nullptr;
+    lastDrawBuffer->ib.sg = nullptr;
+    lastDrawBuffer->Recreate();
     
-    //Submit command and recreate active command 
+    //Submit command
     commands.emplace_back(cmd);
     
-    activeCommand.Clear();
-    CreateVertexBuffer(vertexBuffer, PERIMETER_SOKOL_VERTEXES_COUNT, vertexBuffer.fmt, true);
-    CreateIndexBuffer(indexBuffer, PERIMETER_SOKOL_POLYGON_COUNT);
+    lastDrawBuffer = nullptr;
 }
 
-void cSokolRender::PrepareBuffers(size_t NumberVertex, size_t NumberIndices, vertex_fmt_t vertex_fmt) {
-    if (indexBuffer.sg && vertexBuffer.sg
-    && vertexBuffer.fmt == vertex_fmt
-    && NumberVertex + activeCommand.vertices < vertexBuffer.NumberVertex
-    && NumberIndices + activeCommand.indices < indexBuffer.NumberIndices) {
-        //We can use current buffers
-        return;
-    }
-
-    FinishCommand();
-    
-    //Recreate buffers
-    if (!vertexBuffer.sg || vertexBuffer.fmt != vertex_fmt) {
-        DeleteVertexBuffer(vertexBuffer);
-        CreateVertexBuffer(vertexBuffer, PERIMETER_SOKOL_VERTEXES_COUNT, vertex_fmt, true);
-    }
-    if (!indexBuffer.sg) {
-        CreateIndexBuffer(indexBuffer, PERIMETER_SOKOL_POLYGON_COUNT);
-    }
-}
-
-void cSokolRender::SetVSUniformMatrix(Mat4f* mat, bool command_owned) {
-    if (activeCommand.vs_mvp != mat) {
+DrawBuffer* cSokolRender::GetDrawBuffer(vertex_fmt_t fmt) {
+    if (lastDrawBuffer && lastDrawBuffer->vb.fmt != fmt) {
+        //Submit previous buffer first
         FinishCommand();
     }
-    activeCommand.owned_mvp = command_owned;
-    activeCommand.vs_mvp = mat;
+    return cInterfaceRenderDevice::GetDrawBuffer(fmt);
+}
+
+void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
+    if (lastDrawBuffer != nullptr && lastDrawBuffer != db) {
+        //We need to submit internal render buffer first
+        FinishCommand();
+    }
+    lastDrawBuffer = db;
+    FinishCommand();
+}
+
+void cSokolRender::SetVPMatrix(Mat4f* matrix) {
+    if (activeCommandVP != matrix) {
+        FinishCommand();
+    }
+    activeCommandVP = matrix;
+    if (matrix == &orthoVP) {
+        activeCommandW = nullptr;
+    }
+}
+
+void cSokolRender::SetWorldMatrix(Mat4f* matrix) {
+    if (activeCommandW != matrix) {
+        FinishCommand();
+    }
+    activeCommandW = matrix;
 }
 
 void cSokolRender::SetFSUniformMode(int mode) {
@@ -355,11 +366,11 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     viewportPos.y = pDrawNode->vp.Y;
     viewportSize.x = pDrawNode->vp.Width;
     viewportSize.y = pDrawNode->vp.Height;
-    bool face_ccw = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) != 0;
-    if (!activePipelineCull || activePipelineFaceCCW != face_ccw) {
+    eCullMode cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
+    SetVPMatrix(&pDrawNode->matViewProj);
+    if (activePipelineCull != cull) {
         FinishCommand();
-        activePipelineCull = true;
-        activePipelineFaceCCW = face_ccw;
+        activePipelineCull = cull;
     }
 }
 
@@ -396,3 +407,4 @@ int cSokolRender::SetRenderState(eRenderStateOption option, int value) {
     }
     return 0;
 }
+

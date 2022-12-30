@@ -81,7 +81,7 @@ add_library(RenderSokol STATIC
     sokol/SokolRender.cpp
     sokol/SokolRenderTexture.cpp
     sokol/SokolRenderState.cpp
-    sokol/SokolRenderDraw.cpp
+    sokol/SokolRenderDraw2D.cpp
     sokol/SokolRenderPipeline.cpp
     sokol/SokolImpl.cpp
 )

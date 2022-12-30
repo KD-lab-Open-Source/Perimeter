@@ -207,7 +207,7 @@ void cMeshStatic::EndBuildMesh(bool bump)
         fmt = sVertexDot3::fmt;
     }
 #endif
-    gb_RenderDevice->CreateVertexBuffer(vb, n_vertex, fmt);
+    gb_RenderDevice->CreateVertexBuffer(vb, n_vertex, fmt, false);
 
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(vb);
     if (pVertex) {
@@ -217,8 +217,8 @@ void cMeshStatic::EndBuildMesh(bool bump)
         gb_RenderDevice->UnlockVertexBuffer(vb);
     }
 
-	gb_RenderDevice->CreateIndexBuffer(ib, n_polygon);
-	sPolygon *IndexPolygon=gb_RenderDevice->LockIndexBuffer(ib);
+	gb_RenderDevice->CreateIndexBuffer(ib, n_polygon * sPolygon::PN);
+	sPolygon *IndexPolygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(ib));
     if (IndexPolygon) {
         for (int i = 0; i < n_polygon; i++) {
             IndexPolygon[i] = temp->polygons[i];

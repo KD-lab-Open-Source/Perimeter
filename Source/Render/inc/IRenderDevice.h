@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include "Unknown.h"
+#include "RenderTypes.h"
 
 enum eRenderDeviceSelection {
     DEVICE_D3D9,
@@ -31,8 +32,8 @@ public:
 #endif
     };
     bool dynamic = false;
-    int fmt = 0;
-    int VertexSize = 0;
+    vertex_fmt_t fmt = 0;
+    uint8_t VertexSize = 0;
     int NumberVertex = 0;
     
     VertexBuffer() = default;
@@ -55,12 +56,15 @@ public:
         struct SokolBuffer* sg;
 #endif
     };
-    int NumberPolygons = 0;
-    int NumberIndices = 0;
+    uint32_t NumberIndices = 0;
     
     IndexBuffer() = default;
-    ~IndexBuffer();
+    ~IndexBuffer() {
+        Destroy();
+    }
     NO_COPY_CONSTRUCTOR(IndexBuffer)
+
+    void Destroy();
 };
 
 struct sTextureFormatData
@@ -128,7 +132,7 @@ enum eRenderStateOption
     RS_FILLMODE                 = 8,    /* FILL_POINT, FILL_WIREFRAME or FILL_SOLID */
     RS_ZWRITEENABLE             = 14,   /* TRUE to enable z writes */
     RS_ZFUNC                    = 23,   /* CMPFUNC */
-    RS_CULLMODE                 = 22,   /* D3DCULL */
+    RS_CULLMODE                 = 22,   /* Cull mode */
     RS_ALPHAREF                 = 24,   /* FIXED */
     RS_ALPHAFUNC				= 25,	/* CMPFUNC */
     RS_DITHERENABLE             = 26,   /* TRUE to enable dithering */
@@ -178,18 +182,18 @@ enum eBlendMode
     ALPHA_MUL,
 };
 
-using indices_t = uint16_t;
+enum eCullMode
+{
+    CULL_NONE,
+    CULL_CW,
+    CULL_CCW
+};
 
 struct sPolygon {
     static const size_t PN = 3;
     indices_t p1, p2, p3;
     inline void set(indices_t i1,indices_t i2,indices_t i3) { p1=i1; p2=i2; p3=i3; }
 };
-
-inline sPolygon* BufferSeekPolygon(sPolygon* p, size_t indices) {
-    indices_t* i = &reinterpret_cast<indices_t*>(p)[indices];
-    return reinterpret_cast<sPolygon*>(i);
-}
 
 class cFont;
 class cTexture;
@@ -205,6 +209,8 @@ protected:
     cCamera *DrawNode = nullptr;
     Vect2i ScreenSize = { 0, 0 };
     uint32_t RenderMode = 0;
+    class DrawBuffer* lastDrawBuffer = nullptr;
+    std::vector<class DrawBuffer*> drawBuffers;
 
 public:
     cInterfaceRenderDevice();
@@ -227,10 +233,12 @@ public:
 
     virtual void SetFont(cFont *pFont);
     virtual void SetDefaultFont(cFont *pFont);
-    virtual float GetFontLength(const char *string);
+    virtual float GetFontLength(const char *string, size_t* count = nullptr);
     virtual float GetCharLength(const char c);
 
-    virtual size_t GetSizeFromFormat(uint32_t fmt) const;
+    virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
+    
+    virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt);
 
     // Decl only methods
 
@@ -243,6 +251,7 @@ public:
     virtual int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) = 0;
     virtual int SetClipRect(int xmin,int ymin,int xmax,int ymax) = 0;
     virtual void SetDrawTransform(class cCamera *pDrawNode) = 0;
+    virtual void SetWorldMatrix(Mat4f* matrix) {};
 
     virtual int BeginScene() = 0;
     virtual int EndScene() = 0;
@@ -262,10 +271,11 @@ public:
     /*Внутренний мтод. Использовать с крайней осторожностью.
       Перед использованием посмотреть как используется внутри Render.
     */
-    virtual void ChangeTextColor(const char* &str,sColor4c& diffuse) = 0;
+    virtual void ChangeTextColor(const char* &str,sColor4c& diffuse);
 
+    virtual void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax);
+    
     virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) = 0;
-    virtual void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax) = 0;
     virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
                          cTexture* pTexture,eColorMode mode,
                          Vect2f uv,//Координаты текстуры в точке x,y
@@ -275,9 +285,6 @@ public:
                          float lerp_factor=1//0..1 Насколько сильно влияет pTexture
     ) = 0;
 
-
-    virtual void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) = 0;
-    virtual void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName/*="Arial"*/,int size=12,int bold=0,int italic=0,int underline=0) = 0;
     virtual bool SetScreenShot(const char *fname) = 0;
     virtual int GetRenderState(eRenderStateOption option) = 0;
     virtual int SetRenderState(eRenderStateOption option,int value) = 0;
@@ -318,14 +325,17 @@ public:
     virtual void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) = 0;
     virtual void DrawIndexedPrimitive(class VertexBuffer &vb, int OfsVertex, int nVertex, const class IndexBuffer& ib, int nOfsPolygon, int nPolygon) = 0;
 
-    virtual void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) = 0;
+    virtual void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) = 0;
     virtual void DeleteVertexBuffer(class VertexBuffer &vb) = 0;
     virtual void* LockVertexBuffer(class VertexBuffer &vb) = 0;
+    virtual void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount) = 0;
     virtual void UnlockVertexBuffer(class VertexBuffer &vb) = 0;
-    virtual void CreateIndexBuffer(class IndexBuffer& ib, int NumberPolygon) = 0;
+    virtual void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices) = 0;
     virtual void DeleteIndexBuffer(class IndexBuffer &ib) = 0;
-    virtual sPolygon* LockIndexBuffer(class IndexBuffer &ib) = 0;
+    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib) = 0;
+    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) = 0;
     virtual void UnlockIndexBuffer(class IndexBuffer &ib) = 0;
+    virtual void SubmitDrawBuffer(class DrawBuffer* db) = 0;
 };
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection);

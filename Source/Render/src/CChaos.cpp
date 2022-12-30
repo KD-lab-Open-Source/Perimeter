@@ -278,21 +278,18 @@ void cChaos::Draw(cCamera *DrawNode)
 void cChaos::CreateIB()
 {
 	gb_RenderDevice->CreateIndexBuffer(ib, size*size*2*sPolygon::PN);
-	sPolygon* p=gb_RenderDevice->LockIndexBuffer(ib);
+	indices_t* p = gb_RenderDevice->LockIndexBuffer(ib);
     if (!p) return;
 
 	int vbwidth=size+1;
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
             int i0 = x + y * vbwidth;
-            p->p1 = i0;
-            p->p2 = i0 + vbwidth;
-            p->p3 = i0 + 1;
-            p++;
-            p->p1 = i0 + 1;
-            p->p2 = i0 + vbwidth;
-            p->p3 = i0 + vbwidth + 1;
-            p++;
+            p[0] = i0;
+            p[1] = p[4] = i0 + vbwidth;
+            p[2] = p[3] = i0 + 1;
+            p[5] = i0 + vbwidth + 1;
+            p += 6;
         };
     }
 	

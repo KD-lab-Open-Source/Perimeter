@@ -12,8 +12,8 @@ public:
 	int pagenumber;
 	int curpage;
 
-	int GetNumIndices(){return (2*xsize+2)*ysize;}
-	void SetIB(sPolygon* pIndex);
+	int GetNumIndices() { return (sizeof(indices_t)*xsize+2)*ysize;}
+	void SetIB(indices_t* pIndex);
 };
 
 void cD3DRender::CreateFFDData(class FieldDispatcher *ffd)
@@ -24,7 +24,7 @@ void cD3DRender::CreateFFDData(class FieldDispatcher *ffd)
 	p->xsize = p->ysize = 1<<(ffd->tile_scale-ffd->scale);
 
 	CreateIndexBuffer(p->ib,p->GetNumIndices());
-	sPolygon* pIndex=LockIndexBuffer(p->ib);
+	indices_t* pIndex=LockIndexBuffer(p->ib);
 	p->SetIB(pIndex);
 	UnlockIndexBuffer(p->ib);
 
@@ -36,40 +36,40 @@ void cD3DRender::CreateFFDData(class FieldDispatcher *ffd)
 
 void cD3DRender::DeleteFFDData(FieldDispatcher* ffd)
 {
-	ffd->pDrawData->vb.Destroy();
-	if(ffd->pDrawData)
-		delete ffd->pDrawData;
-	ffd->pDrawData=NULL;
+	if(ffd->pDrawData) {
+        ffd->pDrawData->vb.Destroy();
+        delete ffd->pDrawData;
+    }
+	ffd->pDrawData = nullptr;
 }
 
-void FFDData::SetIB(sPolygon* pIndex)
+void FFDData::SetIB(indices_t* pIndex)
 {
 	#define RIDX(x,y) ((x)+xs*(y))
 
 	int xs = 1 + xsize;
 	int ys = ysize;
-
-    int16_t *ib=(int16_t*)pIndex;
+    indices_t* pib = pIndex;
 
 	for (int j = 0; j < ys; j++)
 	if (j & 1)
 	{
 		for (int i = xs-1; i >= 0; i--)
 		{
-			*ib++ = RIDX(i,j);
-			*ib++ = RIDX(i,j+1);
+			*pib++ = RIDX(i,j);
+			*pib++ = RIDX(i,j+1);
 		}
 	} else
 	{
 		for (int i = 0; i < xs; i++)
 		{
-			*ib++ = RIDX(i,j);
-			*ib++ = RIDX(i,j+1);
+			*pib++ = RIDX(i,j);
+			*pib++ = RIDX(i,j+1);
 		}
 	}
 	#undef RIDX
-#ifdef _DEBUG
-	int num=ib-(int16_t*)pIndex;
+#ifdef PERIMETER_DEBUG_ASSERT
+	size_t num=pib-pIndex;
 	VISASSERT(num==GetNumIndices());
 #endif //_DEBUG
 }
