@@ -15,6 +15,7 @@ public:
     bool ChangeSize(int xScr,int yScr,int mode) override {return false;};
     int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override { return -1; }
     int SetClipRect(int xmin,int ymin,int xmax,int ymax) override { return -1; }
+    void UseOrthographicProjection() override {};
     void SetDrawTransform(class cCamera *pDrawNode) override {}
     void SetWorldMatrix(Mat4f* matrix) override {};
 

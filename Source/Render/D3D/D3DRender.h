@@ -94,8 +94,6 @@ public:
     int GetStripBufferLen() { return Buffer.length(); }
     
     virtual void SaveStates(const char* fname="states.txt");
-    
-    void UseOrthographic();
 
     // //// cInterfaceRenderDevice impls start ////
 
@@ -184,6 +182,8 @@ public:
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
 
+
+    void UseOrthographicProjection() override;
     void SetDrawTransform(class cCamera *DrawNode) override;
     
     void SetWorldMatrix(Mat4f* matrix) override;

@@ -225,7 +225,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	sColor4c diffuse(color);
 	cFontInternal* cf=CurrentFont->GetInternal();
 
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 /*
 	SetNoMaterial(blend_mode,0,CurrentFont->GetTexture());
@@ -323,7 +323,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	sColor4c lerp(255*lerp_factor,255*lerp_factor,255*lerp_factor,255*(1-lerp_factor));
 	cFontInternal* cf=CurrentFont->GetInternal();
 
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 //	SetNoMaterial(blend_mode,phase,CurrentFont->GetTexture(),pTexture,mode);
 	SetNoMaterial(blend_mode,phase,pTexture,CurrentFont->GetTexture(),mode);

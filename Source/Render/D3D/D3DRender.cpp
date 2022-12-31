@@ -1037,7 +1037,7 @@ void cD3DRender::FlushPixel()
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 	int npoint=0;
 	sVertexXYZD* v=BufferXYZD.Lock();
@@ -1072,7 +1072,7 @@ void cD3DRender::FlushLine()
 {
 	if(lines.empty())return;
 	SetNoMaterial(ALPHA_BLEND);
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 	VISASSERT((lines.size()&1)==0);
 	int npoint=0;
@@ -1108,7 +1108,7 @@ void cD3DRender::FlushFilledRect()
 {
 	if(rectangles.empty())return;
 	SetNoMaterial(ALPHA_BLEND);
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 	int npoint=0;
 	sVertexXYZD* v=BufferXYZD.Lock();
@@ -1158,7 +1158,7 @@ void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float 
 	if(mode<=ALPHA_TEST && alpha)
 		mode=ALPHA_BLEND;
 	SetNoMaterial(mode,phase,Texture);
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 	sVertexXYZDT1* v=BufferXYZDT1.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=1;
@@ -1194,7 +1194,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	else
 		SetNoMaterial(blend_mode,phase,Tex1,Tex2,mode);
 
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 	sVertexXYZDT2* v=BufferXYZDT2.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
@@ -1236,7 +1236,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	else
 		SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
     
-    if (!isOrthoSet) UseOrthographic();
+    if (!isOrthoSet) UseOrthographicProjection();
 
 	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
@@ -2048,7 +2048,7 @@ void cD3DRender::SaveStates(const char* fname)
 	fclose(f);
 }
 
-void cD3DRender::UseOrthographic() {
+void cD3DRender::UseOrthographicProjection() {
     if (isOrthoSet) return;
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));

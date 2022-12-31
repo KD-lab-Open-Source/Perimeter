@@ -17,7 +17,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
     else if (y1 < 0 || y2 > ScreenSize.y) return;
 
     SetNoMaterial(ALPHA_BLEND);
-    SetVPMatrix(&orthoVP);
+    UseOrthographicProjection();
 
     /* TODO
     if (outline) {
@@ -84,7 +84,7 @@ void cSokolRender::DrawSprite(int x1, int y1, int dx, int dy, float u1, float v1
     if (mode <= ALPHA_TEST && alpha) mode = ALPHA_BLEND;
 
     SetNoMaterial(mode,phase,Texture);
-    SetVPMatrix(&orthoVP);
+    UseOrthographicProjection();
     
     auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
     sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
@@ -123,7 +123,7 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     }
     
     SetNoMaterial(blend_mode, phase, Tex1, Tex2, mode);
-    SetVPMatrix(&orthoVP);
+    UseOrthographicProjection();
     
     auto db = GetDrawBuffer(sVertexXYZDT2::fmt);
     sVertexXYZDT2* v = db->LockQuad<sVertexXYZDT2>(1);
@@ -168,7 +168,7 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     }
     
     SetNoMaterial(blend_mode, phase, Tex1, Tex2, mode);
-    SetVPMatrix(&orthoVP);
+    UseOrthographicProjection();
     SetFSUniformMode(PERIMETER_SOKOL_FS_MODE_MOD_COLOR_ADD_ALPHA); //Use special color mixing
 
     auto db = GetDrawBuffer(sVertexXYZDT2::fmt);
@@ -218,7 +218,7 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
     }
 
     SetNoMaterial(blend_mode, 0, CurrentFont->GetTexture());
-    SetVPMatrix(&orthoVP);
+    UseOrthographicProjection();
 
     auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
     for (const char* str=string; 0 != *str; str++, yOfs += ySize) {

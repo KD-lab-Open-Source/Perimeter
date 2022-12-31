@@ -247,9 +247,6 @@ void cSokolRender::SetVPMatrix(Mat4f* matrix) {
         FinishCommand();
     }
     activeCommandVP = matrix;
-    if (matrix == &orthoVP) {
-        activeCommandW = nullptr;
-    }
 }
 
 void cSokolRender::SetWorldMatrix(Mat4f* matrix) {
@@ -257,6 +254,14 @@ void cSokolRender::SetWorldMatrix(Mat4f* matrix) {
         FinishCommand();
     }
     activeCommandW = matrix;
+}
+
+void cSokolRender::UseOrthographicProjection() {
+    if (activeCommandVP != &orthoVP || activeCommandW != nullptr) {
+        FinishCommand();
+    }
+    activeCommandVP = &orthoVP;
+    activeCommandW = nullptr;
 }
 
 void cSokolRender::SetFSUniformMode(int mode) {

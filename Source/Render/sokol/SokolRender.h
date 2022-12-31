@@ -97,6 +97,7 @@ public:
 
     void SetDrawNode(cCamera *pDrawNode) override;
     void SetWorldMatrix(Mat4f* matrix) override;
+    void UseOrthographicProjection();
 
     int BeginScene() override;
     int EndScene() override;

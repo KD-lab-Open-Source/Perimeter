@@ -250,6 +250,7 @@ public:
     virtual bool ChangeSize(int xScr,int yScr,int mode) = 0;
     virtual int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) = 0;
     virtual int SetClipRect(int xmin,int ymin,int xmax,int ymax) = 0;
+    virtual void UseOrthographicProjection() = 0;
     virtual void SetDrawTransform(class cCamera *pDrawNode) = 0;
     virtual void SetWorldMatrix(Mat4f* matrix) {};
 

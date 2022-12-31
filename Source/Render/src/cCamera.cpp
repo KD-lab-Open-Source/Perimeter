@@ -1370,7 +1370,7 @@ void cCamera::DrawShadowDebug()
 
 				RenderDevice->SetNoMaterial(ALPHA_NONE,0);
 #ifdef PERIMETER_D3D9
-                gb_RenderDevice3D->UseOrthographic();
+                gb_RenderDevice3D->UseOrthographicProjection();
 				gb_VisGeneric->GetShaders()->pShowMap->Select();
 				gb_RenderDevice3D->SetTexture(0,gb_RenderDevice3D->dtAdvance->GetTZBuffer());
 
