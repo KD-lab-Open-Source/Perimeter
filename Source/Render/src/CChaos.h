@@ -1,6 +1,6 @@
 #pragma once
 
-class cChaos:public cIUnkObj
+class cChaos: public cIUnkObj
 {
 	cTexture    *pTex0;
 	cTexture    *pTex0_0,*pTex0_1;
@@ -12,6 +12,7 @@ class cChaos:public cIUnkObj
 
 	int size;
 
+#ifdef PERIMETER_D3D9
 	enum BUMP_TYPE
 	{
 		BUMP_NONE=0,
@@ -20,6 +21,7 @@ class cChaos:public cIUnkObj
 	};
 
 	BUMP_TYPE enablebump;
+#endif
 	float uvmul;
 
 	enum
@@ -27,9 +29,7 @@ class cChaos:public cIUnkObj
 		sub_div=5,
 	};
 
-	IndexBuffer ib;
-
-	VertexBuffer vb;
+	DrawBuffer* db;
 	Vect2f plane_size;
 
 #ifdef PERIMETER_D3D9
@@ -45,10 +45,10 @@ public:
 	virtual void PreDraw(cCamera *DrawNode);
 	virtual void Draw(cCamera *DrawNode);
 
+    void DrawD3D9(cCamera *DrawNode);
 	void RenderAllTexture();
 protected:
-	void CreateIB();
-	void CreateVB();
+	void SetupDB();
 
 	void RenderTexture();
 	void RenderTex0();

@@ -2,6 +2,7 @@
 #ifdef PERIMETER_D3D9
 #include "shader/shaders.h"
 #endif
+#include "DrawBuffer.h"
 #include "CChaos.h"
 #include "VertexFormat.h"
 
@@ -13,9 +14,10 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 	plane_size=g_size;
 	pTex0=NULL;
 	time=0;
+    db = new DrawBuffer();
 
-	enablebump=BUMP_NONE;
 #ifdef PERIMETER_D3D9
+	enablebump=BUMP_NONE;
 	pVS=nullptr;
 	pPS=nullptr;
 
@@ -37,14 +39,12 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 	pTex0=NULL;
 	pTexRender=NULL;
 	pTexBump=NULL;
+#ifdef PERIMETER_D3D9
 	if(enablebump==BUMP_PS14)
 	{
-#ifdef PERIMETER_D3D9
-		pVS=new VSChaos();
-		pVS->Restore();
+		pVS=new VSChaos();		pVS->Restore();
 		pPS=new PSChaos();
 		pPS->Restore();
-#endif
 		pTexBump=GetTexLibrary()->GetElement(str_bump,"NoMipMap NoBlur");
 	}
 
@@ -62,15 +62,15 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 			RELEASE(pTexRender);
 		}
 	}
-
+#endif
 
 	pTex0_0=gb_VisGeneric->CreateTexture(str_tex0);//"RESOURCE\\EFFECT\\WorldGround.tga");
 	pTex0_1=gb_VisGeneric->CreateTexture(str_tex1);//"RESOURCE\\EFFECT\\WorldGround01.tga");
 
 
 	size=tile*sub_div;
-	CreateVB();
-	CreateIB();
+    db->Create((size+1)*(size+1), size*size*2*sPolygon::PN, VTYPE::fmt, false);
+    SetupDB();
 }
 
 cChaos::~cChaos()
@@ -79,8 +79,7 @@ cChaos::~cChaos()
 	delete pVS;
 	delete pPS;
 #endif
-	gb_RenderDevice->DeleteIndexBuffer(ib);
-	gb_RenderDevice->DeleteVertexBuffer(vb);
+	db->Destroy();
 	RELEASE(pTex0);
 	RELEASE(pTexRender);
 	RELEASE(pTexBump);
@@ -96,6 +95,7 @@ void cChaos::Animate(float dt)
 
 void cChaos::RenderAllTexture()
 {
+#ifdef PERIMETER_D3D9
 	if(enablebump==BUMP_RENDERTARGET)
 	{
 		bool fog=gb_RenderDevice->GetRenderState(RS_FOGENABLE);
@@ -108,6 +108,7 @@ void cChaos::RenderAllTexture()
 		gb_RenderDevice->SetRenderState(RS_ZENABLE, zenable);
 		gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, zwriteenable); 
 	}
+#endif
 }
 
 void cChaos::PreDraw(cCamera *DrawNode)
@@ -115,13 +116,23 @@ void cChaos::PreDraw(cCamera *DrawNode)
 	DrawNode->AttachFirst(this);
 }
 
-void cChaos::Draw(cCamera *DrawNode)
-{
+void cChaos::Draw(cCamera *DrawNode) {
 #ifdef PERIMETER_D3D9
-	cD3DRender* rd= dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
-    if (!rd) {
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+        DrawD3D9(DrawNode);
         return;
     }
+#endif
+
+    //TODO we need to add bump texture too
+    gb_RenderDevice->SetNoMaterial(ALPHA_NONE,0,pTex0_0,pTex0_1,COLOR_ADD);
+    gb_RenderDevice->SetWorldMatXf(GetGlobalMatrix());
+    db->Draw();
+}
+
+#ifdef PERIMETER_D3D9
+void cChaos::DrawD3D9(cCamera *DrawNode) {
+	cD3DRender* rd= dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
 	bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 //	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 /*
@@ -129,11 +140,11 @@ void cChaos::Draw(cCamera *DrawNode)
 		rd->DrawSprite(0,0,512,512,
 						0,0,1,1,pTexBump);
 		rd->SetRenderState(D3DRS_FOGENABLE, TRUE);
-*/
 	if(false)
 	{
 		rd->SetNoMaterial(ALPHA_NONE,0,pTexBump);
 	}else
+*/
 	if(enablebump==BUMP_PS14)
 	{
 		for(int ss=0;ss<4;ss++)
@@ -255,7 +266,7 @@ void cChaos::Draw(cCamera *DrawNode)
 
     rd->SetWorldMatXf(GetGlobalMatrix());
 
-	rd->DrawIndexedPrimitive(vb,0,(size+1)*(size+1), ib,0,size*size*2);
+    db->Draw();
 
 	rd->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 	rd->SetTextureStageState( 1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
@@ -272,37 +283,13 @@ void cChaos::Draw(cCamera *DrawNode)
 	rd->SetTexture(NULL,0,3);
 	rd->SetVertexShader(NULL);
 	rd->SetPixelShader(NULL);
+}
 #endif
-}
 
-void cChaos::CreateIB()
-{
-	gb_RenderDevice->CreateIndexBuffer(ib, size*size*2*sPolygon::PN);
-	indices_t* p = gb_RenderDevice->LockIndexBuffer(ib);
-    if (!p) return;
-
-	int vbwidth=size+1;
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            int i0 = x + y * vbwidth;
-            p[0] = i0;
-            p[1] = p[4] = i0 + vbwidth;
-            p[2] = p[3] = i0 + 1;
-            p[5] = i0 + vbwidth + 1;
-            p += 6;
-        };
-    }
-	
-	gb_RenderDevice->UnlockIndexBuffer(ib);
-}
-
-void cChaos::CreateVB()
-{
-	gb_RenderDevice->CreateVertexBuffer(vb, (size+1)*(size+1), VTYPE::fmt, false);
-
-	VTYPE* pVertex=(VTYPE*)gb_RenderDevice->LockVertexBuffer(vb);
-    if (!pVertex) return;
-	xassert(sizeof(VTYPE)==vb.VertexSize);
+void cChaos::SetupDB() {
+    VTYPE* pVertex = nullptr;
+    indices_t* p;
+    db->LockAll(pVertex, p);
 
 	int smin=-(size/sub_div/2),smax=size/sub_div+smin;
 	int xmin=smin*plane_size.x,xmax=smax*plane_size.x,
@@ -312,9 +299,7 @@ void cChaos::CreateVB()
 	float du,dv;
 	du=dv=1.0f/sub_div;
 
-	Vect3f n(0,0,1),t(1,0,0),b;
-	b.cross(n,t);
-
+#ifdef PERIMETER_D3D9
 	if(enablebump==BUMP_RENDERTARGET)
 	{
 		for(int iy=0;iy<=size;iy++)
@@ -333,7 +318,8 @@ void cChaos::CreateVB()
 				vout->v2()=iy*dv*uvmul;
 			}
 		}
-	}else
+	} else
+#endif
 	{
 		for(int iy=0;iy<=size;iy++)
 		{
@@ -352,8 +338,20 @@ void cChaos::CreateVB()
 			}
 		}
 	}
-	
-	gb_RenderDevice->UnlockVertexBuffer(vb);
+
+    int vbwidth=size+1;
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
+            int i0 = x + y * vbwidth;
+            p[0] = i0;
+            p[1] = p[4] = i0 + vbwidth;
+            p[2] = p[3] = i0 + 1;
+            p[5] = i0 + vbwidth + 1;
+            p += 6;
+        };
+    }
+
+    db->Unlock();
 }
 
 void cChaos::RenderTexture()

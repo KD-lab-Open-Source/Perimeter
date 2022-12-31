@@ -170,14 +170,6 @@ public:
 	void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
 		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override;
 
-    void DrawIndexedPrimitive(VertexBuffer &vb, int OfsVertex, int nVertex, const IndexBuffer& ib, int nOfsPolygon, int nPolygon) override {
-        SetFVF(vb);
-        SetIndices(ib);
-        SetStreamSource(vb);
-        RDCALL(lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,0,OfsVertex,nVertex,3*nOfsPolygon,nPolygon));
-        NumberPolygon+=nPolygon;
-    }
-
     bool IsEnableSelfShadow() override;
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
