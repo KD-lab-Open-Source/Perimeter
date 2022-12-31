@@ -19,32 +19,77 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
     SetNoMaterial(ALPHA_BLEND);
     UseOrthographicProjection();
 
-    /* TODO
     if (outline) {
-        PrepareBuffers(8, 24, sVertexXYZD::fmt);
-        size_t vc = activeCommand.vertices;
+        const float w = static_cast<float>(ScreenSize.y * (1.5 / 800.0) / 2.0);
+        auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
+        sVertexXYZDT1* v;
+        indices_t* ib;
+        db->Lock<sVertexXYZDT1>(8, 24, v, ib);
 
-        sVertexXYZD* v = static_cast<sVertexXYZD*>(LockVertexBuffer(vertexBuffer));
-        v = &v[vc];
-        for (int i = 0; i < 8; ++i) {
-            v[i].z=0;
-            v[i].diffuse.v=color.ABGR();
-        }
-        v[0].x=v[1].x=static_cast<float>(x1);
-        v[3].x=v[2].x=static_cast<float>(x2);
-        v[0].y=v[2].y=static_cast<float>(y1);
-        v[1].y=v[3].y=static_cast<float>(y2);
-        UnlockVertexBuffer(vertexBuffer);
+        //Outer
 
-        sPolygon* p = BufferSeekPolygon(LockIndexBuffer(indexBuffer), activeCommand.indices);
-        p[0].set(vc + 0, vc + 1, vc + 2);
-        p[1].set(vc + 2, vc + 1, vc + 3);
-        UnlockIndexBuffer(indexBuffer);
+        v[0].z=v[1].z=v[2].z=v[3].z=0;
+        v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=color.ABGR();
+        v[0].x=v[1].x=static_cast<float>(x1) - w;
+        v[0].y=v[2].y=static_cast<float>(y1) - w;
+        v[3].x=v[2].x=static_cast<float>(x2) + w;
+        v[1].y=v[3].y=static_cast<float>(y2) + w;
 
-        activeCommand.vertices += 8;
-        activeCommand.indices += 24;
+        v[0].u1()=0.0f; v[0].v1()=0.0f;
+        v[1].u1()=0.0f; v[1].v1()=1.0f;
+        v[2].u1()=1.0f; v[2].v1()=0.0f;
+        v[3].u1()=1.0f; v[3].v1()=1.0f;
+
+        //Inner
+
+        v[4].z=v[5].z=v[6].z=v[7].z=0;
+        v[4].diffuse.v=v[5].diffuse.v=v[6].diffuse.v=v[7].diffuse.v=color.ABGR();
+        v[4].x=v[5].x=static_cast<float>(x1) + w;
+        v[4].y=v[6].y=static_cast<float>(y1) + w;
+        v[7].x=v[6].x=static_cast<float>(x2) - w;
+        v[5].y=v[7].y=static_cast<float>(y2) - w;
+
+        v[0].u1()=0.0f; v[0].v1()=0.0f;
+        v[1].u1()=0.0f; v[1].v1()=1.0f;
+        v[2].u1()=1.0f; v[2].v1()=0.0f;
+        v[3].u1()=1.0f; v[3].v1()=1.0f;
+
+        /* Join the dots, layout:
+         * 
+         *   0----------2
+         *   |\        /|
+         *   | 4------6 |
+         *   | |      | |
+         *   | 5------7 |
+         *   |/        \|
+         *   1----------3
+         */
+        
+        
+        size_t b = db->written_vertices;
+        //Top
+        ib[0] = b;
+        ib[1] = ib[4] = b + 4;
+        ib[2] = ib[3] = b + 2;
+        ib[5] = b + 6;
+        //Left
+        ib[6] = b;
+        ib[7] = ib[10] = b + 1;
+        ib[8] = ib[9] = b + 4;
+        ib[11] = b + 5;
+        //Right
+        ib[12] = b + 6;
+        ib[13] = ib[16] = b + 7;
+        ib[14] = ib[15] = b + 2;
+        ib[17] = b + 3;
+        //Bottom
+        ib[18] = b + 5;
+        ib[19] = ib[22] = b + 1;
+        ib[20] = ib[21] = b + 7;
+        ib[23] = b + 3;
+
+        db->Unlock();
     } else {
-    */
         auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
         sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
         
@@ -61,7 +106,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         v[3].u1()=1.0f; v[3].v1()=1.0f;
         
         db->Unlock();
-    //}
+    }
 }
 
 void cSokolRender::FlushPrimitive2D() {
