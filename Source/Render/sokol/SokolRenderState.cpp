@@ -242,14 +242,14 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
     FinishCommand();
 }
 
-void cSokolRender::SetVPMatrix(Mat4f* matrix) {
+void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
     if (activeCommandVP != matrix) {
         FinishCommand();
     }
     activeCommandVP = matrix;
 }
 
-void cSokolRender::SetWorldMatrix(Mat4f* matrix) {
+void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
     if (activeCommandW != matrix) {
         FinishCommand();
     }

@@ -29,7 +29,7 @@ void DrawTypeFixedPipeline::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
 {
 	SetPointLight(Mesh->GetRootNode()->GetLight());
 
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	gb_RenderDevice3D->SetWorldMatXf(Mesh->GetGlobalMatrix());
 	if(Data->mat&MAT_TEXMATRIX_STAGE1)
 	{
 		Mat4f mat;
@@ -71,7 +71,7 @@ void DrawTypeFixedPipeline::SetSimplyMaterialShadow(cObjMesh *Mesh,cTexture *Tex
 
 void DrawTypeFixedPipeline::DrawNoMaterialShadow(cObjMesh *Mesh)
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	gb_RenderDevice3D->SetWorldMatXf(Mesh->GetGlobalMatrix());
 	DrawPrimitive(Mesh);
 }
 

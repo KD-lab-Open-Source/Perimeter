@@ -931,7 +931,7 @@ void cD3DRender::FlushLine3D()
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_FOGENABLE,FALSE);
 	SetNoMaterial(ALPHA_BLEND);
-	SetMatrix(D3DTS_WORLD,MatXf::ID);
+    SetWorldMatXf(MatXf::ID);
 
 
 	VISASSERT((lines3d.size()&1)==0);
@@ -969,7 +969,7 @@ void cD3DRender::FlushPoint3D()
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_FOGENABLE,FALSE);
 	SetNoMaterial(ALPHA_BLEND);
-	SetMatrix(D3DTS_WORLD,MatXf::ID);
+    SetWorldMatXf(MatXf::ID);
 
 
 	int npoint=0;
@@ -1758,7 +1758,7 @@ void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
 void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
 {
 	MTG();
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,m);
+	gb_RenderDevice3D->SetWorldMatXf(m);
 	DrawPrimitive(Type,Count);
 }
 
@@ -1805,7 +1805,7 @@ void cQuadBufferInternal::Create(int vertexsize,int _fmt)
 
 void cQuadBufferInternal::SetMatrix(const MatXf &m)
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,m);
+	gb_RenderDevice3D->SetWorldMatXf(m);
 }
 
 void cQuadBufferInternal::BeginDraw()
@@ -1838,7 +1838,7 @@ void cQuadBufferInternal::EndDraw()
 
 void DrawStrip::Begin()
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,MatXf::ID);
+	gb_RenderDevice3D->SetWorldMatXf(MatXf::ID);
 	buf=gb_RenderDevice3D->GetBufferXYZDT1();
 	pointer=buf->Lock(8);
 	num=0;
@@ -1855,7 +1855,7 @@ void DrawStrip::End()
 
 void DrawStripT2::Begin(const MatXf& mat)
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,mat);
+	gb_RenderDevice3D->SetWorldMatXf(mat);
 	buf=gb_RenderDevice3D->GetBufferXYZDT2();
 	pointer=buf->Lock(8);
 	num=0;

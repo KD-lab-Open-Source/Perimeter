@@ -17,7 +17,7 @@ public:
     int SetClipRect(int xmin,int ymin,int xmax,int ymax) override { return -1; }
     void UseOrthographicProjection() override {};
     void SetDrawTransform(class cCamera *pDrawNode) override {}
-    void SetWorldMatrix(Mat4f* matrix) override {};
+    void SetWorldMat4f(const Mat4f* matrix) override {};
 
     int BeginScene() override { return -1; }
     int EndScene() override { return -1; }

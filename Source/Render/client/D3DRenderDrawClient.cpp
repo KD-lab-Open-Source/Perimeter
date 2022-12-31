@@ -100,7 +100,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 	VISASSERT(DrawNode && DrawNode->GetScene());
 	if(ffd->GetAttribute(ATTRUNKOBJ_WIREFRAME)) 
 		SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-	SetMatrix(D3DTS_WORLD, MatXf::ID);
+    gb_RenderDevice->SetWorldMatXf(MatXf::ID);
 
 	VISASSERT( ffd->GetTexture(0) && ffd->GetTexture(1) );
 	Vect3f uv[2];

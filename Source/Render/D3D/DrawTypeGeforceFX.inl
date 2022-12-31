@@ -208,7 +208,7 @@ void DrawTypeGeforceFX::SetSimplyMaterialShadow(cObjMesh *Mesh,cTexture *Texture
 
 void DrawTypeGeforceFX::DrawNoMaterialShadow(cObjMesh *Mesh)
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	gb_RenderDevice3D->SetWorldMatXf(Mesh->GetGlobalMatrix());
 	DrawPrimitive(Mesh);
 }
 

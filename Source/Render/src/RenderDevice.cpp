@@ -156,6 +156,13 @@ int cInterfaceRenderDevice::Done() {
     return 0;
 }
 
+void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
+    Mat4f mat;
+    Mat4fSetTransposedMatXf(mat, matrix);
+    SetWorldMat4f(&mat);
+}
+
+
 DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt) {
     lastDrawBuffer = drawBuffers[fmt];
     if (!lastDrawBuffer) {

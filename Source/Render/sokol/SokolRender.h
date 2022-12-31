@@ -63,13 +63,13 @@ private:
     uint8_t activePipelineType = 0;
     eBlendMode activePipelineBlend = ALPHA_NONE;
     eCullMode activePipelineCull = CULL_NONE;
-    Mat4f* activeCommandVP;
-    Mat4f* activeCommandW;
+    const Mat4f* activeCommandVP;
+    const Mat4f* activeCommandW;
 
     //Commands handling
     void ClearCommands();
     void FinishCommand();
-    void SetVPMatrix(Mat4f* matrix);
+    void SetVPMatrix(const Mat4f* matrix);
     void SetFSUniformMode(int mode);
 
     //Updates internal state after init/resolution change
@@ -96,8 +96,9 @@ public:
     int Done() override;
 
     void SetDrawNode(cCamera *pDrawNode) override;
-    void SetWorldMatrix(Mat4f* matrix) override;
+    void SetWorldMat4f(const Mat4f* matrix) override;
     void UseOrthographicProjection();
+    void SetDrawTransform(class cCamera *DrawNode) override;
 
     int BeginScene() override;
     int EndScene() override;
@@ -175,8 +176,7 @@ public:
     */
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
-
-    void SetDrawTransform(class cCamera *DrawNode) override;
+    
     /*
     void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
     void DrawPoint(const Vect3f &v1,sColor4c color) override;

@@ -113,14 +113,14 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);	// отраженное изображение
 }
 
-void cD3DRender::SetWorldMatrix(Mat4f* matrix) {
+void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
     isOrthoSet = false;
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
 };
 
 void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 {
-	SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	SetWorldMatXf(Mesh->GetGlobalMatrix());
 	if(Data->mat&MAT_TEXMATRIX_STAGE1)
 	{
 		Mat4f mat;
@@ -147,7 +147,7 @@ void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 
 void cD3DRender::DrawNoMaterialShadow(cObjMesh *Mesh)
 {
-	SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	SetWorldMatXf(Mesh->GetGlobalMatrix());
 	DrawNoMaterialShadowNoWorld(Mesh);
 }
 
@@ -203,7 +203,7 @@ void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wire
 	SetFVF(v->fmt);
 	SetRenderState( RS_ZWRITEENABLE, FALSE );
 	if(wireframe) SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-	SetMatrix(D3DTS_WORLD,Matrix);
+    SetWorldMatXf(Matrix);
 	SetNoMaterial(ALPHA_BLEND);
 
 	RDCALL(lpD3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,0,8,12,
@@ -501,7 +501,7 @@ void cD3DRender::Draw(class cScene *Scene)
 
 void cD3DRender::Draw(class ElasticSphere *es)
 {
-	SetMatrix(D3DTS_WORLD,es->GetGlobalMatrix());
+    SetWorldMatXf(es->GetGlobalMatrix());
 	
 	sVertexXYZDT2 *VertexFix=(sVertexXYZDT2*)&Buffer[0];
 	int is=es->theta_size,js=es->psi_size;

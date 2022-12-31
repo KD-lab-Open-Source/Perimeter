@@ -253,7 +253,7 @@ void cChaos::Draw(cCamera *DrawNode)
 //	rd->SetRenderState( D3DRS_FOGTABLEMODE,  D3DFOG_NONE ),
 //	rd->SetRenderState( D3DRS_FOGVERTEXMODE,  D3DFOG_LINEAR );
 
-	rd->SetMatrix(D3DTS_WORLD,GetGlobalMatrix());
+    rd->SetWorldMatXf(GetGlobalMatrix());
 
 	rd->DrawIndexedPrimitive(vb,0,(size+1)*(size+1), ib,0,size*size*2);
 

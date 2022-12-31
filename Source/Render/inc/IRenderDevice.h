@@ -230,6 +230,7 @@ public:
 
     inline cCamera* GetDrawNode() { return DrawNode; }
     virtual void SetDrawNode(cCamera* node) { DrawNode = node; };
+    virtual void SetWorldMatXf(const MatXf& matrix);
 
     virtual void SetFont(cFont *pFont);
     virtual void SetDefaultFont(cFont *pFont);
@@ -252,7 +253,7 @@ public:
     virtual int SetClipRect(int xmin,int ymin,int xmax,int ymax) = 0;
     virtual void UseOrthographicProjection() = 0;
     virtual void SetDrawTransform(class cCamera *pDrawNode) = 0;
-    virtual void SetWorldMatrix(Mat4f* matrix) {};
+    virtual void SetWorldMat4f(const Mat4f* matrix) = 0;
 
     virtual int BeginScene() = 0;
     virtual int EndScene() = 0;

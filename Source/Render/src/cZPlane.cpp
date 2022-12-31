@@ -141,7 +141,7 @@ void cZPlane::Draw(cCamera *DrawNode)
 	}
 
 	rd->SetFVF(v->fmt);
-	rd->SetMatrix(D3DTS_WORLD,GetGlobalMatrix());
+    rd->SetWorldMatXf(GetGlobalMatrix());
 	rd->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,nvertex-2,rd->GetStripBuffer(),sizeof(v[0]));
 
 	rd->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);

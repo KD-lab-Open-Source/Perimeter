@@ -185,8 +185,7 @@ public:
 
     void UseOrthographicProjection() override;
     void SetDrawTransform(class cCamera *DrawNode) override;
-    
-    void SetWorldMatrix(Mat4f* matrix) override;
+    void SetWorldMat4f(const Mat4f* matrix) override;
     
     void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
     void DrawPoint(const Vect3f &v1,sColor4c color) override;
@@ -198,23 +197,6 @@ public:
     //This converts flag based vertex format to D3D9 FVF format
     static uint32_t GetD3DFVFFromFormat(vertex_fmt_t fmt) ;
     
-	FORCEINLINE void SetMatrix(int type, const MatXf &m) {
-		Mat4f mat;
-        Mat4fSetTransposedMatXf(mat, m);
-        D3DTRANSFORMSTATETYPE tsType = static_cast<D3DTRANSFORMSTATETYPE>(type);
-		RDCALL(lpD3DDevice->SetTransform(tsType, reinterpret_cast<const D3DMATRIX*>(&mat)));
-        if (isOrthoSet) {
-            switch (tsType) {
-                case D3DTS_WORLD:
-                case D3DTS_VIEW:
-                case D3DTS_PROJECTION:
-                    isOrthoSet = false;
-                default:
-                    break;
-            }
-        }
-	}
-
 	void SetAdvance();//Вызывать при изменении Option_ShadowType Option_EnableBump
 
 	bool PossibleAnisotropic();

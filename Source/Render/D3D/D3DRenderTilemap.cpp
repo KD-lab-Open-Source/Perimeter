@@ -865,7 +865,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 		255 * TileMap->GetScale().z),
 		coord(0, 0, 0);
 
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD, MatXf::ID);
+	gb_RenderDevice->SetWorldMatXf(MatXf::ID);
 
 	// setup rendering
 	if(TileMap->GetShadowMap() && !shadow && Option_ShadowType==SHADOW_MAP && 
