@@ -1474,6 +1474,7 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
             0, polys
     ));
     NumberPolygon+=polys;
+    db->PostDraw();
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)

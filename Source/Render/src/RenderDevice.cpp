@@ -164,13 +164,17 @@ void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
 
 
 DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt) {
-    lastDrawBuffer = drawBuffers[fmt];
-    if (!lastDrawBuffer) {
-        lastDrawBuffer = new DrawBuffer();
-        lastDrawBuffer->Create(PERIMETER_RENDER_BUFFERS_SIZE, PERIMETER_RENDER_BUFFERS_SIZE * 3, fmt, true);
-        drawBuffers[fmt] = lastDrawBuffer;
+    DrawBuffer* db = drawBuffers[fmt];
+    if (!db) {
+        db = new DrawBuffer();
+        db->Create(PERIMETER_RENDER_BUFFERS_SIZE * 4, PERIMETER_RENDER_BUFFERS_SIZE * 6, fmt, true);
+        drawBuffers[fmt] = db;
     }
-    return lastDrawBuffer;
+    return db;
+}
+
+void cInterfaceRenderDevice::SetActiveDrawBuffer(DrawBuffer* db) {
+    activeDrawBuffer = db;
 }
 
 cTexture* cInterfaceRenderDevice::GetTexture(int n) {
@@ -550,17 +554,17 @@ cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection) {
 #ifdef PERIMETER_D3D9
             device = new cD3DRender();
 #endif
-            printf("Selected render: D3D9");
+            printf("Selected render: D3D9\n");
             break;
         case DEVICE_SOKOL:
 #ifdef PERIMETER_SOKOL
             device = new cSokolRender();
 #endif
-            printf("Selected render: Sokol");
+            printf("Selected render: Sokol\n");
             break;
         case DEVICE_HEADLESS:
             device = new cEmptyRender();
-            printf("Selected render: none");
+            printf("Selected render: none\n");
             break;
         default:
             break;

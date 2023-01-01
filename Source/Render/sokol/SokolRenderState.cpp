@@ -10,7 +10,6 @@
 #include "SokolRenderPipeline.h"
 #include "xerrhand.h"
 #include "SokolShaders.h"
-#include "VertexFormat.h"
 #include "Texture.h"
 #include "DrawBuffer.h"
 
@@ -29,10 +28,11 @@ int cSokolRender::EndScene() {
         xassert(0);
         return 1;
     }
-    ActiveScene = false;
 
     //Make sure there is nothing left to send as command
     FinishCommand();
+    
+    ActiveScene = false;
 
     //Begin pass
     sg_pass_action pass_action = {};
@@ -49,7 +49,9 @@ int cSokolRender::EndScene() {
     sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
 
     //Iterate each command
-    for (const auto& command : commands) {        
+    size_t cmdnum = 0;
+    for (auto& command : commands) {
+        cmdnum += 1;
         //Nothing to draw
         if (!command->vertices) {
             continue;
@@ -62,9 +64,23 @@ int cSokolRender::EndScene() {
             xxassert(0, "cSokolRender::EndScene missing pipeline for " + std::to_string(command->pipeline_id));
             continue;
         }
-        shader_funcs* shader = pipeline->shader_funcs;
+#if defined(PERIMETER_DEBUG) && 0
+        printf("[%d] id: 0x%X fmt: 0x%X vtx: %d idx: %d mode 0x%X\n",
+               cmdnum, command->pipeline_id, pipeline->vertex_fmt,
+               command->vertices, command->indices, command->fs_mode
+        );
+        printf("tex0 0x%X 0x%X tex1 0x%X 0x%X\n",
+               command->textures[0], command->textures[0]?command->textures[0]->image.id:0,
+               command->textures[1], command->textures[1]?command->textures[1]->image.id:0
+        );
+#endif
+        shader_funcs* shader_funcs = pipeline->shader_funcs;
 
         //Apply pipeline
+        if (sg_query_pipeline_state(pipeline->pipeline) != SG_RESOURCESTATE_VALID) {
+            xxassert(0, "cSokolRender::EndScene not valid state");
+            continue;
+        }
         sg_apply_pipeline(pipeline->pipeline);
         
         //Apply bindings
@@ -81,11 +97,19 @@ int cSokolRender::EndScene() {
         }
         command->vertex_buffer->update(command->vertices * pipeline->vertex_size);
         command->index_buffer->update(command->indices * sizeof(indices_t));
+        if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
+            xxassert(0, "cSokolRender::EndScene not valid state");
+            continue;
+        }
+        if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
+            xxassert(0, "cSokolRender::EndScene not valid state");
+            continue;
+        }
         bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
         bindings.index_buffer = command->index_buffer->buffer;
         
         //Bind images for samplers
-        int slot_tex0 = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
+        int slot_tex0 = shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
         if (0 <= slot_tex0) {
             SokolTexture2D* tex = emptyTexture;
             if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
@@ -93,28 +117,38 @@ int cSokolRender::EndScene() {
             }
             if (tex) {
                 if (tex->data) tex->update();
+                if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
+                    xxassert(0, "cSokolRender::EndScene not valid state");
+                    continue;
+                }
                 bindings.fs_images[slot_tex0] = tex->image;
             } else {
-                xxassert(0, "cSokolRender::EndScene missing texture0");
+                xxassert(0, "cSokolRender::EndScene missing");
                 continue;
             }
         }
-        if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-            SokolTexture2D* tex = command->textures[1];
-            xassert(tex);
+        int slot_tex1 = shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1");
+        if (0 <= slot_tex1) {
+            SokolTexture2D* tex = emptyTexture;
+            if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
+                tex = command->textures[1];
+            }
             if (tex) {
                 if (tex->data) tex->update();
-                int slot = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex1");
-                bindings.fs_images[slot] = tex->image;
+                if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
+                    xxassert(0, "cSokolRender::EndScene not valid state");
+                    continue;
+                }
+                bindings.fs_images[slot_tex1] = tex->image;
             } else {
-                xxassert(0, "cSokolRender::EndScene missing texture1");
+                xxassert(0, "cSokolRender::EndScene missing");
                 continue;
             }
         }
         sg_apply_bindings(&bindings);
         
         //Apply VS uniforms
-        int vs_params_slot = shader->uniformblock_slot(SG_SHADERSTAGE_VS, "vs_params");
+        int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "vs_params");
         if (0 <= vs_params_slot) {
             vs_params_t vs_params;
             //Camera/projection
@@ -132,7 +166,7 @@ int cSokolRender::EndScene() {
 
         //Apply FS uniforms, currently only for shader with 2 texures
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-            int fs_params_slot = shader->uniformblock_slot(SG_SHADERSTAGE_FS, "fs_params");
+            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "fs_params");
             if (0 <= fs_params_slot) {
                 fs_params_t fs_params;
                 fs_params.un_mode = command->fs_mode;
@@ -141,7 +175,8 @@ int cSokolRender::EndScene() {
             }
         }
 
-        //Draw
+        //Draw        
+        xassert(command->indices % 3 == 0);
         sg_draw(0, static_cast<int>(command->indices), 1);
     }
 
@@ -177,30 +212,38 @@ int cSokolRender::Flush(bool wnd) {
 
     ClearCommands();
 
+    xassert(!activeDrawBuffer);
+
     return 0;
 }
 
 void cSokolRender::FinishCommand() {
-    if (!lastDrawBuffer) {
+    if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
         return;
     }
-    if (!lastDrawBuffer->written_vertices) {
-        lastDrawBuffer = nullptr;
-        return;
+
+#ifdef PERIMETER_DEBUG
+    xassert(!activeDrawBuffer->locked_vertices);
+    if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX1) {
+        xassert(activeCommand.textures[0]);
     }
+    if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX2) {
+        xassert(activeCommand.textures[1]);
+    }
+#endif
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
     cmd->pipeline_id = GetPipelineID(
             activePipelineType,
-            lastDrawBuffer->vb.fmt,
+            activeDrawBuffer->vb.fmt,
             activePipelineBlend,
             activePipelineCull
     );
     memcpy(cmd->textures, activeCommand.textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
     cmd->fs_mode = activeCommand.fs_mode;
-    cmd->vertices = lastDrawBuffer->written_vertices;
-    cmd->indices = lastDrawBuffer->written_indices;
+    cmd->vertices = activeDrawBuffer->written_vertices;
+    cmd->indices = activeDrawBuffer->written_indices;
     
     //We copy the MVP if any
     if (activeCommandVP) {
@@ -212,21 +255,22 @@ void cSokolRender::FinishCommand() {
     }
     
     //Transfer buffers to command
-    cmd->owned_buffers = true;
-    cmd->vertex_buffer = lastDrawBuffer->vb.sg;
-    cmd->index_buffer = lastDrawBuffer->ib.sg;
-    lastDrawBuffer->vb.sg = nullptr;
-    lastDrawBuffer->ib.sg = nullptr;
-    lastDrawBuffer->Recreate();
+    cmd->owned_buffers = activeDrawBuffer->vb.dynamic;
+    cmd->vertex_buffer = activeDrawBuffer->vb.sg;
+    cmd->index_buffer = activeDrawBuffer->ib.sg;
+    if (cmd->owned_buffers) {
+        activeDrawBuffer->vb.sg = nullptr;
+        activeDrawBuffer->ib.sg = nullptr;
+    }
+    activeDrawBuffer->PostDraw();
+    activeDrawBuffer = nullptr;
     
     //Submit command
     commands.emplace_back(cmd);
-    
-    lastDrawBuffer = nullptr;
 }
 
 DrawBuffer* cSokolRender::GetDrawBuffer(vertex_fmt_t fmt) {
-    if (lastDrawBuffer && lastDrawBuffer->vb.fmt != fmt) {
+    if (activeDrawBuffer && activeDrawBuffer->vb.fmt != fmt) {
         //Submit previous buffer first
         FinishCommand();
     }
@@ -234,11 +278,11 @@ DrawBuffer* cSokolRender::GetDrawBuffer(vertex_fmt_t fmt) {
 }
 
 void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
-    if (lastDrawBuffer != nullptr && lastDrawBuffer != db) {
+    if (activeDrawBuffer != nullptr && activeDrawBuffer != db) {
         //We need to submit internal render buffer first
         FinishCommand();
     }
-    lastDrawBuffer = db;
+    activeDrawBuffer = db;
     FinishCommand();
 }
 
@@ -264,13 +308,6 @@ void cSokolRender::UseOrthographicProjection() {
     activeCommandW = nullptr;
 }
 
-void cSokolRender::SetFSUniformMode(int mode) {
-    if (activeCommand.fs_mode != mode) {
-        FinishCommand();
-    }
-    activeCommand.fs_mode = mode;
-}
-
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
     SokolTexture2D* tex0 = emptyTexture;
@@ -291,12 +328,15 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
         tex1 = Texture1->GetFrameImage(nFrame).sg;
     }
-    
+
+    int fs_mode = color_mode;    
     if (activePipelineBlend != blend
-     || tex0 != activeCommand.textures[0]
-     || tex1 != activeCommand.textures[1]) {
+     || activeCommand.fs_mode != fs_mode
+     || activeCommand.textures[0] != tex0
+     || activeCommand.textures[1] != tex1) {
         FinishCommand();
         activePipelineBlend = blend;
+        activeCommand.fs_mode = fs_mode;
         activeCommand.textures[0] = tex0;
         activeCommand.textures[1] = tex1;
     }
@@ -403,11 +443,12 @@ int cSokolRender::SetRenderState(eRenderStateOption option, int value) {
                 eCullMode cull = static_cast<eCullMode>(value);
                 if (cull != activePipelineCull) {
                     FinishCommand();
+                    activePipelineCull = cull;
                 }
-                activePipelineCull = cull;
             } 
             break;
         case RS_BILINEAR:
+            //Useless as we can't change globally
             break;
     }
     return 0;

@@ -78,8 +78,10 @@ void SokolBuffer::update(size_t len) {
     dirty = false;
     xassert(data);
     if (!data) return;
-    
-    if (len == 0 || len > data_len) len = data_len;
+
+    xassert(len && len <= data_len);
+    if (len == 0) return;
+    if (len > data_len) len = data_len;
     sg_range range = {data, len};
     sg_update_buffer(buffer, &range);
 }

@@ -1,11 +1,12 @@
 #ifndef PERIMETER_SOKOLRENDER_H
 #define PERIMETER_SOKOLRENDER_H
 
+#define PERIMETER_SOKOL_SHARE_SHADERS
+
 #include "sokol_gfx.h"
 #include <SDL_video.h>
 
-const int PERIMETER_SOKOL_FS_MODE_NORMAL = 0;
-const int PERIMETER_SOKOL_FS_MODE_MOD_COLOR_ADD_ALPHA = 1;
+const eColorMode PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA = static_cast<const eColorMode>(1 << 7);
 
 const int PERIMETER_SOKOL_TEXTURES = 2;
 
@@ -47,9 +48,12 @@ private:
     
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;
+    SokolTexture2D* testTexture = nullptr;
 
     //Pipelines
+#ifdef PERIMETER_SOKOL_SHARE_SHADERS
     std::map<std::string, sg_shader> shaders;
+#endif
     std::vector<struct SokolPipeline*> pipelines;
     static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, uint8_t mode);
     static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, eCullMode cull);
@@ -70,7 +74,6 @@ private:
     void ClearCommands();
     void FinishCommand();
     void SetVPMatrix(const Mat4f* matrix);
-    void SetFSUniformMode(int mode);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();

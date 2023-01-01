@@ -51,7 +51,11 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     {
         sg_desc desc = {};
         desc.pipeline_pool_size = PIPELINE_ID_MAX,
-        desc.shader_pool_size = 8,
+#ifdef PERIMETER_SOKOL_SHARE_SHADERS
+        desc.shader_pool_size = VERTEX_FMT_MAX,
+#else
+        desc.shader_pool_size = desc.pipeline_pool_size,
+#endif
         desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
         desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
         desc.context.color_format = SG_PIXELFORMAT_RGBA8;
@@ -65,13 +69,25 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
     desc.pixel_format = SG_PIXELFORMAT_RGBA8;
     desc.num_mipmaps = 1;
-    desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
+    desc.min_filter = desc.mag_filter = SG_FILTER_NEAREST;
     desc.usage = SG_USAGE_IMMUTABLE;
-    size_t buf_len = desc.height * desc.width * sokol_pixelformat_bytesize(desc.pixel_format);
+    size_t pixel_len = sokol_pixelformat_bytesize(desc.pixel_format);
+    size_t buf_len = desc.height * desc.width * pixel_len;
     uint8_t* buf = new uint8_t[buf_len];
     memset(buf, 0xFF, buf_len);
     desc.data.subimage[0][0] = { buf, buf_len };
     emptyTexture = new SokolTexture2D(desc);
+    
+    //Create test texture
+    desc.label = "TestTexture";
+    for (int i = 0; i < buf_len; i += pixel_len * 4) {
+        *reinterpret_cast<uint32_t*>(&buf[i]) = 0xFF0000FF;
+        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*2]) = 0xFF00FF00;
+        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*3]) = 0xFFFF0000;
+        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*4]) = 0xFFAAAAAA;
+    }
+    desc.data.subimage[0][0] = { buf, buf_len };
+    testTexture = new SokolTexture2D(desc);
     delete[] buf;
 
     //Register a pipeline for each vertex format in game
@@ -105,9 +121,13 @@ int cSokolRender::Done() {
     int ret = cInterfaceRenderDevice::Done();
     ClearCommands();
     ClearPipelines();
+#ifdef PERIMETER_SOKOL_SHARE_SHADERS
     shaders.clear();
+#endif
     delete emptyTexture;
     emptyTexture = nullptr;
+    delete testTexture;
+    testTexture = nullptr;
     sg_shutdown();
     if (sdlGlContext != nullptr) {
         SDL_GL_DeleteContext(sdlGlContext);
@@ -124,6 +144,7 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
 
 void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
     xassert(!vb.sg);
+    xassert(NumberVertex <= std::numeric_limits<indices_t>().max());
     size_t size = GetSizeFromFormat(fmt);
 
     sg_buffer_desc desc = {};
@@ -204,7 +225,7 @@ void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
 }
 
 void cSokolRender::ClearCommands() {
-    for (auto command : commands) {
+    for (SokolCommand* command : commands) {
         delete command;
     }
     commands.clear();

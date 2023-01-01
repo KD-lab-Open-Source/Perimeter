@@ -18,8 +18,6 @@ void DrawBuffer::Recreate() {
     if (!ib.buf) {
         gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices);
     }
-    locked_vertices = 0;
-    locked_indices = 0;
     written_vertices = 0;
     written_indices = 0;
 }
@@ -30,12 +28,12 @@ void DrawBuffer::Destroy() {
 }
 
 void DrawBuffer::Unlock() {
-    if (!locked_vertices) {
+    if (!locked_vertices && !locked_indices) {
         xassert(0);
         return;
     }
-    gb_RenderDevice->UnlockVertexBuffer(vb);
-    gb_RenderDevice->UnlockIndexBuffer(ib);
+    if (locked_vertices) gb_RenderDevice->UnlockVertexBuffer(vb);
+    if (locked_indices) gb_RenderDevice->UnlockIndexBuffer(ib);
     written_vertices += locked_vertices;
     written_indices += locked_indices;
     locked_vertices = 0;
@@ -43,7 +41,7 @@ void DrawBuffer::Unlock() {
 }
 
 void DrawBuffer::Draw() {
-    if (locked_vertices) {
+    if (locked_vertices || locked_indices) {
         xassert(0);
         Unlock();
     }
@@ -51,4 +49,41 @@ void DrawBuffer::Draw() {
         return;
     }
     gb_RenderDevice->SubmitDrawBuffer(this);
+}
+
+void DrawBuffer::PostDraw() {
+    if (vb.dynamic) {
+        if (vb.buf && ib.buf) {
+            written_vertices = 0;
+            written_indices = 0;
+        } else {
+            Recreate();
+        }
+    }
+}
+
+bool DrawBuffer::LockSetup(size_t vertices, size_t indices) {
+    if (vertices + written_vertices > vb.NumberVertex
+    || indices + written_indices > ib.NumberIndices) {
+        if (vb.dynamic) {
+            //Buffers are full, submit this and start from 0
+            Draw();
+        } else {
+            //Uhh, this is not dynamic buffer, so we shouldn't get here
+            xassert(0);
+            return false;
+        }
+    }
+    
+    //If is more than buffer can provide then just not lock
+    if (vertices > vb.NumberVertex || indices > ib.NumberIndices) {
+        xassert(0);
+        return false;
+    }
+    
+    //Tell renderer this is current active DB
+    gb_RenderDevice->SetActiveDrawBuffer(this);
+    
+    //Locking can go
+    return true;
 }

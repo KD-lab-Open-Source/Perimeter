@@ -130,12 +130,16 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
 
     //Get shader desc and make if not cached already
     const sg_shader_desc* shader_desc = ctx.shader_funcs->shader_desc(sg_query_backend());
+#ifdef PERIMETER_SOKOL_SHARE_SHADERS
     if (shaders.count(shader_desc->label)) {
         desc.shader = shaders[shader_desc->label];
     } else {
         desc.shader = sg_make_shader(shader_desc);
         shaders[shader_desc->label] = desc.shader;
     }
+#else
+    desc.shader = sg_make_shader(shader_desc);
+#endif
     desc.label = shader_desc->label;
 
     //Shader sanity checks

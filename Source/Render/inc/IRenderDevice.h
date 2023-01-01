@@ -33,8 +33,8 @@ public:
     };
     bool dynamic = false;
     vertex_fmt_t fmt = 0;
-    uint8_t VertexSize = 0;
-    int NumberVertex = 0;
+    uint16_t VertexSize = 0;
+    uint32_t NumberVertex = 0;
     
     VertexBuffer() = default;
     ~VertexBuffer() {
@@ -209,7 +209,7 @@ protected:
     cCamera *DrawNode = nullptr;
     Vect2i ScreenSize = { 0, 0 };
     uint32_t RenderMode = 0;
-    class DrawBuffer* lastDrawBuffer = nullptr;
+    class DrawBuffer* activeDrawBuffer = nullptr;
     std::vector<class DrawBuffer*> drawBuffers;
 
 public:
@@ -238,8 +238,9 @@ public:
     virtual float GetCharLength(const char c);
 
     virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
-    
+
     virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt);
+    virtual void SetActiveDrawBuffer(class DrawBuffer*);
 
     // Decl only methods
 

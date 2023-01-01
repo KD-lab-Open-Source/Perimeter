@@ -53,23 +53,32 @@ out vec4 frag_color;
 
 void main() {
     #if defined(SHADER_TEX_2)
-    switch (un_mode) {
+    vec4 tex0 = texture(un_tex0, fs_uv0);
+    if ((un_mode & (1 << 7)) != 0) { //PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA
+        float lerp = ((un_mode & 0xFF00) >> 8) / 255.0;
+        tex0 = (
+            tex0
+            * vec4(lerp, lerp, lerp, 1.0)
+            + vec4(1.0f - lerp, 1.0f - lerp, 1.0f - lerp, 0.0)
+        );
+    }
+    //eColorMode
+    switch (un_mode & 0xF) {
         default:
-        case 0: {
-            //Modulate each other, default
-            frag_color = texture(un_tex1, fs_uv1) * texture(un_tex0, fs_uv0) * fs_color;
+        case 0: { //COLOR_MOD Modulate
+            frag_color = texture(un_tex1, fs_uv1) * tex0 * fs_color;
             break;
         }
-        case 1: {
-            //"color" var channels in this mode
-            //R: RGB mod, G: A mod, B: Tex1 RGB mod, A: Tex1 RGB add
-            frag_color = (
-                texture(un_tex1, fs_uv1)
-                * vec4(fs_color.b, fs_color.b, fs_color.b, 1.0)
-                + vec4(fs_color.a, fs_color.a, fs_color.a, 0.0)
-            )
-            * texture(un_tex0, fs_uv0)
-            * vec4(fs_color.r, fs_color.r, fs_color.r, fs_color.g);
+        case 1: { //COLOR_ADD Add
+            frag_color = (texture(un_tex1, fs_uv1) + tex0) * fs_color;
+            break;
+        }
+        case 2: { //COLOR_MOD2 Modulate and mul x2
+            frag_color = texture(un_tex1, fs_uv1) * tex0 * 2 * fs_color;
+            break;
+        }
+        case 3: { //COLOR_MOD4 Modulate and mul x4
+            frag_color = texture(un_tex1, fs_uv1) * tex0 * 4 * fs_color;
             break;
         }
     };

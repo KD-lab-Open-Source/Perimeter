@@ -3,12 +3,12 @@
 
 class DrawBuffer {
 private:
-    size_t locked_vertices = 0;
-    size_t locked_indices = 0;
-
+    bool LockSetup(size_t vertices, size_t indices);
 public:
     VertexBuffer vb;
     IndexBuffer ib;
+    size_t locked_vertices = 0;
+    size_t locked_indices = 0;
     size_t written_vertices = 0;
     size_t written_indices = 0;
     
@@ -23,23 +23,22 @@ public:
     void Destroy();
     void Unlock();
     void Draw();
+    void PostDraw();
 
     template<class TVERTEX>
     void Lock(size_t vertices, size_t indices, TVERTEX*& vertex_buf, indices_t*& indices_buf) {
         //Make sure we are not locking with wrong vertex format
         xassert(TVERTEX::fmt == vb.fmt);
         xassert(!locked_vertices && !locked_indices);
-        if (vertices + written_vertices > vb.NumberVertex
-        || indices + written_indices > ib.NumberIndices) {
-            //Buffers are full, submit this and start from 0
-            Draw();
-            written_vertices = 0;
-            written_indices = 0;
+        if (!LockSetup(vertices, indices)) {
+            vertex_buf = nullptr;
+            indices_buf = nullptr;
+            return;
         }
-        locked_vertices = vertices;
-        locked_indices = indices;
         vertex_buf = static_cast<TVERTEX*>(gb_RenderDevice->LockVertexBuffer(vb, written_vertices, vertices));
+        if (vertex_buf) locked_vertices = vertices;
         indices_buf = gb_RenderDevice->LockIndexBuffer(ib, written_indices, indices);
+        if (indices_buf) locked_indices = indices;
     }
 
     template<class TVERTEX>
