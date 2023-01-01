@@ -221,6 +221,14 @@ void cSokolRender::FinishCommand() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
         return;
     }
+    
+    pipeline_id_t pipeline_id = GetPipelineID(
+            activePipelineType,
+            activeDrawBuffer->vb.fmt,
+            activePipelineBlend,
+            activePipelineCull
+    );
+ 
 
 #ifdef PERIMETER_DEBUG
     xassert(!activeDrawBuffer->locked_vertices);
@@ -234,12 +242,7 @@ void cSokolRender::FinishCommand() {
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
-    cmd->pipeline_id = GetPipelineID(
-            activePipelineType,
-            activeDrawBuffer->vb.fmt,
-            activePipelineBlend,
-            activePipelineCull
-    );
+    cmd->pipeline_id = pipeline_id;
     memcpy(cmd->textures, activeCommand.textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
     cmd->fs_mode = activeCommand.fs_mode;
     cmd->vertices = activeDrawBuffer->written_vertices;
@@ -255,7 +258,7 @@ void cSokolRender::FinishCommand() {
     }
     
     //Transfer buffers to command
-    cmd->owned_buffers = activeDrawBuffer->vb.dynamic;
+    cmd->owned_buffers = activeDrawBuffer->dynamic;
     cmd->vertex_buffer = activeDrawBuffer->vb.sg;
     cmd->index_buffer = activeDrawBuffer->ib.sg;
     if (cmd->owned_buffers) {

@@ -7,6 +7,7 @@ private:
 public:
     VertexBuffer vb;
     IndexBuffer ib;
+    bool dynamic = false;
     size_t locked_vertices = 0;
     size_t locked_indices = 0;
     size_t written_vertices = 0;

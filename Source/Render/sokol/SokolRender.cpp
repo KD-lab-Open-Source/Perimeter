@@ -186,14 +186,15 @@ void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
     vb.sg->locked = false;
 }
 
-void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices) {
+void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
     xassert(!ib.sg);
     ib.NumberIndices = NumberIndices;
+    ib.dynamic = dynamic;
     
     sg_buffer_desc desc = {};
     desc.size = ib.NumberIndices * sizeof(indices_t);
     desc.type = SG_BUFFERTYPE_INDEXBUFFER;
-    desc.usage = SG_USAGE_DYNAMIC;
+    desc.usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_DYNAMIC;
     desc.label = "CreateIndexBuffer";
     ib.sg = new SokolBuffer(desc);
 }

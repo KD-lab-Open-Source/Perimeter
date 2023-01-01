@@ -1430,8 +1430,9 @@ void cD3DRender::UnlockVertexBuffer(VertexBuffer &vb)
 	VISASSERT( vb.d3d );
 	RDCALL(vb.d3d->Unlock());
 }
-void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices)
+void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic)
 {
+    //Since is MANAGED I assume we don't need to care about dynamic arg?
 	DeleteIndexBuffer(ib);
     ib.NumberIndices = NumberIndices;
     ib.buf = nullptr;
@@ -1873,7 +1874,7 @@ void DrawStripT2::End()
 
 void cD3DRender::InitStandartIB()
 {
-	CreateIndexBuffer(standart_ib,POLYGONMAX*sPolygon::PN);
+	CreateIndexBuffer(standart_ib,POLYGONMAX*sPolygon::PN, false);
 	indices_t* iptr=LockIndexBuffer(standart_ib);
 
 	for(int nPolygon=0; nPolygon<POLYGONMAX; nPolygon+=2 )

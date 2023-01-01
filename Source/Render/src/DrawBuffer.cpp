@@ -1,22 +1,23 @@
 #include "StdAfxRD.h"
 #include "DrawBuffer.h"
 
-void DrawBuffer::Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool dynamic) {
+void DrawBuffer::Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool _dynamic) {
     Destroy();
+    this->dynamic = _dynamic;
     locked_vertices = 0;
     locked_indices = 0;
     written_vertices = 0;
     written_indices = 0;
     gb_RenderDevice->CreateVertexBuffer(vb, vertices, fmt, dynamic);
-    gb_RenderDevice->CreateIndexBuffer(ib, indices);
+    gb_RenderDevice->CreateIndexBuffer(ib, indices, dynamic);
 }
 
 void DrawBuffer::Recreate() {
     if (!vb.buf) {
-        gb_RenderDevice->CreateVertexBuffer(vb, vb.NumberVertex, vb.fmt, vb.dynamic);
+        gb_RenderDevice->CreateVertexBuffer(vb, vb.NumberVertex, vb.fmt, dynamic);
     }
     if (!ib.buf) {
-        gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices);
+        gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices, dynamic);
     }
     written_vertices = 0;
     written_indices = 0;
@@ -52,7 +53,7 @@ void DrawBuffer::Draw() {
 }
 
 void DrawBuffer::PostDraw() {
-    if (vb.dynamic) {
+    if (dynamic) {
         if (vb.buf && ib.buf) {
             written_vertices = 0;
             written_indices = 0;
@@ -65,7 +66,7 @@ void DrawBuffer::PostDraw() {
 bool DrawBuffer::LockSetup(size_t vertices, size_t indices) {
     if (vertices + written_vertices > vb.NumberVertex
     || indices + written_indices > ib.NumberIndices) {
-        if (vb.dynamic) {
+        if (dynamic) {
             //Buffers are full, submit this and start from 0
             Draw();
         } else {
@@ -82,7 +83,9 @@ bool DrawBuffer::LockSetup(size_t vertices, size_t indices) {
     }
     
     //Tell renderer this is current active DB
-    gb_RenderDevice->SetActiveDrawBuffer(this);
+    if (dynamic) {
+        gb_RenderDevice->SetActiveDrawBuffer(this);
+    }
     
     //Locking can go
     return true;

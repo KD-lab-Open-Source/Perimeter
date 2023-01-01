@@ -56,6 +56,7 @@ public:
         struct SokolBuffer* sg;
 #endif
     };
+    bool dynamic = false;
     uint32_t NumberIndices = 0;
     
     IndexBuffer() = default;
@@ -332,7 +333,7 @@ public:
     virtual void* LockVertexBuffer(class VertexBuffer &vb) = 0;
     virtual void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount) = 0;
     virtual void UnlockVertexBuffer(class VertexBuffer &vb) = 0;
-    virtual void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices) = 0;
+    virtual void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) = 0;
     virtual void DeleteIndexBuffer(class IndexBuffer &ib) = 0;
     virtual indices_t* LockIndexBuffer(class IndexBuffer &ib) = 0;
     virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) = 0;

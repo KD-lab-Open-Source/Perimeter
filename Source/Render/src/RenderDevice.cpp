@@ -514,7 +514,7 @@ void* cEmptyRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t 
 void cEmptyRender::UnlockVertexBuffer(VertexBuffer &vb) {
 }
 
-void cEmptyRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices) {
+void cEmptyRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
     ib.NumberIndices = NumberIndices;
     ib.buf = malloc(ib.NumberIndices * sizeof(indices_t));
 }

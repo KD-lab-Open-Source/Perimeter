@@ -115,6 +115,7 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 
 void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
     isOrthoSet = false;
+    if (!matrix) matrix = &Mat4f::ID;
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
 };
 

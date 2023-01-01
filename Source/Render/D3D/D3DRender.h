@@ -118,7 +118,7 @@ public:
 	void* LockVertexBuffer(VertexBuffer &vb) override;
     void* LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) override;
 	void UnlockVertexBuffer(VertexBuffer &vb) override;
-	void CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices) override;
+	void CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) override;
 	void DeleteIndexBuffer(IndexBuffer &ib) override;
     indices_t* LockIndexBuffer(IndexBuffer &ib) override;
     indices_t* LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;

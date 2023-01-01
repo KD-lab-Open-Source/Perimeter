@@ -23,7 +23,7 @@ void cD3DRender::CreateFFDData(class FieldDispatcher *ffd)
 
 	p->xsize = p->ysize = 1<<(ffd->tile_scale-ffd->scale);
 
-	CreateIndexBuffer(p->ib,p->GetNumIndices());
+	CreateIndexBuffer(p->ib,p->GetNumIndices(), true);
 	indices_t* pIndex=LockIndexBuffer(p->ib);
 	p->SetIB(pIndex);
 	UnlockIndexBuffer(p->ib);
