@@ -8,6 +8,8 @@
 #include "DrawBuffer.h"
 #ifdef PERIMETER_SOKOL
 #include "sokol/SokolRender.h"
+#include "RenderTracker.h"
+
 #endif
 
 const size_t PERIMETER_RENDER_BUFFERS_SIZE = 1024;
@@ -117,9 +119,11 @@ void IndexBuffer::Destroy() {
 }
 
 cInterfaceRenderDevice::cInterfaceRenderDevice() : cUnknownClass(KIND_UI_RENDERDEVICE) {
+    RenderSubmitEvent(RenderEvent::INIT, "Intf construct");
 }
 
 cInterfaceRenderDevice::~cInterfaceRenderDevice() {
+    RenderSubmitEvent(RenderEvent::DONE, "Intf destruct");
     //Subclasses must call Done before reaching this destructor or we will have problems due to deleted virtuals
     if (gb_RenderDevice) {
         xassert_s(gb_RenderDevice == nullptr, "RenderDevice not properly cleared");
@@ -136,6 +140,7 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* wnd, int Re
     RenderMode = mode;
     TexLibrary = new cTexLibrary();
     drawBuffers.resize(VERTEX_FMT_MAX);
+    RenderSubmitEvent(RenderEvent::INIT, "Intf done");
     return 0;
 }
 
@@ -153,10 +158,12 @@ int cInterfaceRenderDevice::Done() {
     if (gb_RenderDevice) {
         gb_RenderDevice = nullptr;
     }
+    RenderSubmitEvent(RenderEvent::DONE, "Intf done");
     return 0;
 }
 
 void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
+    RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX, "MatXf");
     Mat4f mat;
     Mat4fSetTransposedMatXf(mat, matrix);
     SetWorldMat4f(&mat);
@@ -174,6 +181,7 @@ DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt) {
 }
 
 void cInterfaceRenderDevice::SetActiveDrawBuffer(DrawBuffer* db) {
+    RenderSubmitEvent(RenderEvent::SET_ACTIVE_DRAW_BUFFER, "", db);
     activeDrawBuffer = db;
 }
 

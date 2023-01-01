@@ -9,6 +9,7 @@
 #include "xerrhand.h"
 #include "DrawBuffer.h"
 #include "SokolShaders.h"
+#include "RenderTracker.h"
 
 cSokolRender::cSokolRender() = default;
 
@@ -17,6 +18,7 @@ cSokolRender::~cSokolRender() {
 };
 
 int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
+    RenderSubmitEvent(RenderEvent::INIT, "Sokol start");
     int res = cInterfaceRenderDevice::Init(xScr, yScr, mode, wnd, RefreshRateInHz);
     if (res != 0) {
         return res;
@@ -93,6 +95,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     //Register a pipeline for each vertex format in game
     RegisterPipelines();
 
+    RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();
 }
 
@@ -112,12 +115,14 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
 }
 
 int cSokolRender::UpdateRenderMode() {
+    RenderSubmitEvent(RenderEvent::UPDATE_MODE);
     orthoVP = Mat4f::ID;
     SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, -10, 10);
     return 0;
 }
 
 int cSokolRender::Done() {
+    RenderSubmitEvent(RenderEvent::DONE, "Sokol start");
     int ret = cInterfaceRenderDevice::Done();
     ClearCommands();
     ClearPipelines();
@@ -133,6 +138,7 @@ int cSokolRender::Done() {
         SDL_GL_DeleteContext(sdlGlContext);
         sdlGlContext = nullptr;
     }
+    RenderSubmitEvent(RenderEvent::DONE, "Sokol done");
     return ret;
 }
 
@@ -143,6 +149,11 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
 }
 
 void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
+    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF,
+                      "Len: " + std::to_string(NumberVertex)
+                      + " Fmt: " + std::to_string(fmt)
+                      + " Dyn: " + std::to_string(dynamic),
+                      &vb);
     xassert(!vb.sg);
     xassert(NumberVertex <= std::numeric_limits<indices_t>().max());
     size_t size = GetSizeFromFormat(fmt);
@@ -161,11 +172,13 @@ void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, v
 }
 
 void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
+    RenderSubmitEvent(RenderEvent::DELETE_VERTEXBUF, "", &vb);
     delete vb.sg;
     vb.sg = nullptr;
 }
 
 void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "", &vb);
     if (!vb.sg) {
         xassert(0);
         return nullptr;
@@ -177,16 +190,22 @@ void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
 }
 
 void* cSokolRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount) , &vb);
     xassert(Start + Amount <= vb.NumberVertex);
     return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
 }
 
 void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
+    RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
     xassert(vb.sg->locked);
     vb.sg->locked = false;
 }
 
 void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
+    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF,
+                      "Len: " + std::to_string(NumberIndices)
+                      + " Dyn: " + std::to_string(dynamic),
+                      &ib);
     xassert(!ib.sg);
     ib.NumberIndices = NumberIndices;
     ib.dynamic = dynamic;
@@ -200,11 +219,13 @@ void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bo
 }
 
 void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
+    RenderSubmitEvent(RenderEvent::DELETE_INDEXBUF, "", &ib);
     delete ib.sg;
     ib.sg = nullptr;
 }
 
 indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "", &ib);
     if (!ib.sg) {
         xassert(0);
         return nullptr;
@@ -216,11 +237,13 @@ indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
 }
 
 indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount) , &ib);
     xassert(Start + Amount <= ib.NumberIndices);
     return &LockIndexBuffer(ib)[Start];
 }
 
 void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
+    RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
     xassert(ib.sg->locked);
     ib.sg->locked = false;
 }

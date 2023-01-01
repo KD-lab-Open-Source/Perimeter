@@ -8,8 +8,10 @@
 #include "SokolRender.h"
 #include "FileImage.h"
 #include "SokolResources.h"
+#include "RenderTracker.h"
 
 int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool enable_assert) {
+    RenderSubmitEvent(RenderEvent::CREATE_TEXTURE, "", Texture);
     bool is_alpha_test = false;
     bool is_alpha_blend = false;
     bool is_skin=Texture->skin_color.a==255;
@@ -125,6 +127,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
 }
 
 int cSokolRender::DeleteTexture(cTexture* Texture) {
+    RenderSubmitEvent(RenderEvent::DELETE_TEXTURE, "", Texture);
     for (auto frame : Texture->frames) {
         delete frame.sg;
         frame.ptr = nullptr;
@@ -133,6 +136,7 @@ int cSokolRender::DeleteTexture(cTexture* Texture) {
 }
 
 void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
+    RenderSubmitEvent(RenderEvent::LOCK_TEXTURE);
     SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
     xassert(!tex->locked);
     xassert(tex->data);
@@ -147,6 +151,7 @@ void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
 }
 
 void cSokolRender::UnlockTexture(cTexture* Texture) {
+    RenderSubmitEvent(RenderEvent::UNLOCK_TEXTURE);
     SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
     xassert(tex->locked);
     xassert(tex->data);

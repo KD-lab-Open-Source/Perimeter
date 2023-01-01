@@ -12,8 +12,10 @@
 #include "SokolShaders.h"
 #include "Texture.h"
 #include "DrawBuffer.h"
+#include "RenderTracker.h"
 
 int cSokolRender::BeginScene() {
+    RenderSubmitEvent(RenderEvent::BEGIN_SCENE, "Acv: " + std::to_string(ActiveScene));
     if (ActiveScene) {
         xassert(0);
         return 1;
@@ -24,6 +26,7 @@ int cSokolRender::BeginScene() {
 }
 
 int cSokolRender::EndScene() {
+    RenderSubmitEvent(RenderEvent::END_SCENE, "Acv: " + std::to_string(ActiveScene));
     if (!ActiveScene) {
         xassert(0);
         return 1;
@@ -187,6 +190,7 @@ int cSokolRender::EndScene() {
 }
 
 int cSokolRender::Fill(int r, int g, int b, int a) {
+    RenderSubmitEvent(RenderEvent::FILL);
     if (ActiveScene) {
         xassert(0);
         EndScene();
@@ -201,6 +205,7 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
 }
 
 int cSokolRender::Flush(bool wnd) {
+    RenderSubmitEvent(RenderEvent::FLUSH_SCENE);
     if (ActiveScene) {
         xassert(0);
         EndScene();
@@ -219,6 +224,7 @@ int cSokolRender::Flush(bool wnd) {
 
 void cSokolRender::FinishCommand() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
+        RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
         return;
     }
     
@@ -229,6 +235,9 @@ void cSokolRender::FinishCommand() {
             activePipelineCull
     );
  
+    RenderSubmitEvent(RenderEvent::FINISH_COMMAND,
+                      "Pipeline: " + std::to_string(pipeline_id)
+                      + " FSMode: " + std::to_string(activeCommand.fs_mode));
 
 #ifdef PERIMETER_DEBUG
     xassert(!activeDrawBuffer->locked_vertices);
@@ -270,6 +279,16 @@ void cSokolRender::FinishCommand() {
     
     //Submit command
     commands.emplace_back(cmd);
+
+    RenderSubmitEvent(RenderEvent::FINISH_COMMAND,
+                      "Submit - Pipeline: " + std::to_string(pipeline_id)
+                      + " FSMode: " + std::to_string(activeCommand.fs_mode)
+                      + " OBuf: " + std::to_string(cmd->owned_buffers)
+                      + " Vtxs: " + std::to_string(cmd->vertices)
+                      + " Idxs: " + std::to_string(cmd->indices)
+                      + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->textures[0]))
+                      + " Tex1: " + std::to_string(reinterpret_cast<size_t>(cmd->textures[1]))
+                      , cmd);
 }
 
 DrawBuffer* cSokolRender::GetDrawBuffer(vertex_fmt_t fmt) {
@@ -281,6 +300,7 @@ DrawBuffer* cSokolRender::GetDrawBuffer(vertex_fmt_t fmt) {
 }
 
 void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
+    RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
     if (activeDrawBuffer != nullptr && activeDrawBuffer != db) {
         //We need to submit internal render buffer first
         FinishCommand();
@@ -290,6 +310,7 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
 }
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
+    RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
     if (activeCommandVP != matrix) {
         FinishCommand();
     }
@@ -297,6 +318,7 @@ void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
 }
 
 void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
+    RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX);
     if (activeCommandW != matrix) {
         FinishCommand();
     }
@@ -304,6 +326,7 @@ void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
 }
 
 void cSokolRender::UseOrthographicProjection() {
+    RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX, "Orthographic");
     if (activeCommandVP != &orthoVP || activeCommandW != nullptr) {
         FinishCommand();
     }
@@ -410,6 +433,7 @@ void cSokolRender::SetDrawNode(cCamera *pDrawNode)
 
 void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
 {
+    RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
     viewportPos.x = pDrawNode->vp.X;
     viewportPos.y = pDrawNode->vp.Y;
     viewportSize.x = pDrawNode->vp.Width;

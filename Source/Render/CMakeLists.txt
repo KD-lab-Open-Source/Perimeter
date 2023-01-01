@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(
         "inc"
         "src"
         "client"
+        "tracker"
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
@@ -50,6 +51,7 @@ SET(Render_SRCS
         src/VisGrid2d.cpp
         src/RenderDevice.cpp
         src/DrawBuffer.cpp
+        tracker/RenderTracker.cpp
 )
 
 IF (OPTION_D3D9)

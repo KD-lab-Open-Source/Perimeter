@@ -209,7 +209,6 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
 }
 
 void cSokolRender::RegisterPipelines() {
-    printf("cSokolRender::RegisterPipelines\n");
     int total = 0;
     for (uint8_t mode = 0; mode < PIPELINE_ID_MODE_MAX; ++mode) {
         RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
@@ -218,5 +217,7 @@ void cSokolRender::RegisterPipelines() {
         //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TERRAIN,  sVertexXYZ::fmt,    mode), &shader_terrain);
         total += 4;
     }
+#ifdef PERIMETER_DEBUG
     printf("cSokolRender::RegisterPipelines done, total: %d\n", total);
+#endif
 }
