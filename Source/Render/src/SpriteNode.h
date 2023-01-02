@@ -1,19 +1,5 @@
 #pragma once
 
-class cSpriteNode : public cAnimUnkObj
-{
-	float	Intensity;
-public:
-	cSpriteNode();
-	virtual ~cSpriteNode();
-	// общие интерфейсные функции унаследованы от cUnkObj
-	virtual void Animate(float dt);
-	virtual void PreDraw(cCamera *UCamera);
-	virtual void Draw(cCamera *UCamera);
-	inline float& GetRadius() 						{ return Scale.z; }
-	inline float& GetIntensity()					{ return Intensity; }
-};
-
 class cSprite
 {
 public:

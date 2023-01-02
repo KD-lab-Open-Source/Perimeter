@@ -24,8 +24,6 @@ public:
 	virtual int GetTime();
 	// функции для работы с объектами
 	virtual cObjectNodeRoot* CreateObject(const char* fname,const char *TexturePath=NULL);
-	// функции для работы с объектами
-	virtual cIUnkClass* CreateSprite(const char* TexFName);
 	virtual cSpriteManager* CreateSpriteManager(const char* TexFName);
 	// функции для работы с источниками света, влияющими на освещение объектов текущей сцены
 	virtual cUnkLight* CreateLight(int Attribute=0, const char* TextureName = 0);

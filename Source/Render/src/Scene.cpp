@@ -426,13 +426,6 @@ cObjectNodeRoot* cScene::CreateObject(const char *fname,const char *TexturePath)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-cIUnkClass* cScene::CreateSprite(const char *TexFName)
-{
-	cSpriteNode *USprite=new cSpriteNode;
-	USprite->SetTexture(0,GetTexLibrary()->GetElement(TexFName));
-	AttachObj(USprite);
-	return USprite;
-}
 
 cSpriteManager* cScene::CreateSpriteManager(const char* TexFName)
 {
