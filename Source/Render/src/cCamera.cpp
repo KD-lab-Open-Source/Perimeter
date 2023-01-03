@@ -1088,7 +1088,7 @@ void cCamera::DrawShadowPlane()
 	pv[4].x=x2; pv[4].y=y2; pv[5].z=0.001f; pv[5].diffuse=diffuse;
 	const int npoint=6;
 	buf->Unlock(npoint);
-	buf->DrawPrimitive(PT_TRIANGLELIST,npoint/3);
+	buf->DrawPrimitive(PT_TRIANGLES, npoint / 3);
 
 //    rd->SetFVF( SHADOWVERTEX::FVF );
 //    rd->SetStreamSource( 0, m_pBigSquareVB, 0, sizeof(SHADOWVERTEX) );

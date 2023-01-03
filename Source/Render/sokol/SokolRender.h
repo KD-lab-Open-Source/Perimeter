@@ -5,6 +5,7 @@
 
 #include "sokol_gfx.h"
 #include <SDL_video.h>
+#include "SokolRenderPipeline.h"
 
 const eColorMode PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA = static_cast<const eColorMode>(1 << 7);
 
@@ -55,16 +56,17 @@ private:
     std::map<std::string, sg_shader> shaders;
 #endif
     std::vector<struct SokolPipeline*> pipelines;
-    static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, uint8_t mode);
-    static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, eCullMode cull);
-    static void GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, eCullMode* cull);
+    static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, uint8_t mode);
+    static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, eBlendMode blend, eCullMode cull);
+    static void GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, eBlendMode* blend, eCullMode* cull);
     void ClearPipelines();
     void RegisterPipelines();
     void RegisterPipeline(pipeline_id_t id, struct shader_funcs* shader_funcs);
     
     //Active pipeline/command state
     SokolCommand activeCommand;
-    uint8_t activePipelineType = 0;
+    PIPELINE_TYPE activePipelineType = PIPELINE_TYPE_DEFAULT;
+
     eBlendMode activePipelineBlend = ALPHA_NONE;
     eCullMode activePipelineCull = CULL_NONE;
     const Mat4f* activeCommandVP;
@@ -88,7 +90,7 @@ public:
         return DEVICE_SOKOL;
     }
     
-    class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt) override;
+    void SetActiveDrawBuffer(class DrawBuffer*) override;
     
     int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override;
     bool ChangeSize(int xScr,int yScr,int mode) override;

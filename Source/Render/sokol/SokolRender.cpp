@@ -30,7 +30,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     sdlWindow = static_cast<SDL_Window*>(wnd);
     
     //Init some state
-    activePipelineType = PIPELINE_TYPE_STANDARD;
+    activePipelineType = PIPELINE_TYPE_TRIANGLE;
     activePipelineBlend = ALPHA_NONE;
     activePipelineCull = CULL_CCW;
     
@@ -260,7 +260,6 @@ void cSokolRender::ClearPipelines() {
         delete pipeline;
     }
     pipelines.clear();
-    pipelines.resize(PIPELINE_ID_MAX);
 }
 
 int cSokolRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) {

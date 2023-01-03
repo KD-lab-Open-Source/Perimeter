@@ -54,6 +54,7 @@ int cSokolRender::EndScene() {
     //Iterate each command
     size_t cmdnum = 0;
     for (auto& command : commands) {
+        RenderSubmitEvent(RenderEvent::PROCESS_COMMAND, "", command);
         cmdnum += 1;
         //Nothing to draw
         if (!command->vertices) {
@@ -178,8 +179,25 @@ int cSokolRender::EndScene() {
             }
         }
 
-        //Draw        
-        xassert(command->indices % 3 == 0);
+        //Draw
+#ifdef PERIMETER_DEBUG_ASSERT
+        switch (pipeline->type) {
+            case PIPELINE_TYPE_TRIANGLE:
+                xassert(3 <= command->vertices);
+                xassert(3 <= command->indices);
+                xassert(command->indices % 3 == 0);
+                break;
+            case PIPELINE_TYPE_TRIANGLESTRIP:
+                xassert(3 <= command->vertices);
+                xassert(3 <= command->indices);
+                xassert(command->indices % 2 == 0);
+                break;
+            case PIPELINE_TYPE_TERRAIN:
+            case PIPELINE_TYPE_MAX:
+                xassert(0);
+                break;
+        }
+#endif
         sg_draw(0, static_cast<int>(command->indices), 1);
     }
 
@@ -217,7 +235,7 @@ int cSokolRender::Flush(bool wnd) {
 
     ClearCommands();
 
-    xassert(!activeDrawBuffer);
+    xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
 
     return 0;
 }
@@ -291,12 +309,15 @@ void cSokolRender::FinishCommand() {
                       , cmd);
 }
 
-DrawBuffer* cSokolRender::GetDrawBuffer(vertex_fmt_t fmt) {
-    if (activeDrawBuffer && activeDrawBuffer->vb.fmt != fmt) {
+void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
+    if (activeDrawBuffer && activeDrawBuffer != db) {
         //Submit previous buffer first
         FinishCommand();
     }
-    return cInterfaceRenderDevice::GetDrawBuffer(fmt);
+    cInterfaceRenderDevice::SetActiveDrawBuffer(db);
+    if (activeDrawBuffer) {
+        activePipelineType = getPipelineType(activeDrawBuffer->primitive);
+    }
 }
 
 void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
@@ -305,6 +326,7 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
         //We need to submit internal render buffer first
         FinishCommand();
     }
+    activePipelineType = getPipelineType(db->primitive);
     activeDrawBuffer = db;
     FinishCommand();
 }

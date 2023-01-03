@@ -1,9 +1,10 @@
 #include "StdAfxRD.h"
 #include "DrawBuffer.h"
 
-void DrawBuffer::Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool _dynamic) {
+void DrawBuffer::Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool _dynamic, ePrimitiveType _primitive) {
     Destroy();
     this->dynamic = _dynamic;
+    this->primitive = _primitive;
     locked_vertices = 0;
     locked_indices = 0;
     written_vertices = 0;
@@ -35,8 +36,10 @@ void DrawBuffer::Unlock() {
     }
     if (locked_vertices) gb_RenderDevice->UnlockVertexBuffer(vb);
     if (locked_indices) gb_RenderDevice->UnlockIndexBuffer(ib);
-    written_vertices += locked_vertices;
-    written_indices += locked_indices;
+    written_vertices += lock_written_vertices;
+    written_indices += lock_written_indices;
+    lock_written_vertices = 0;
+    lock_written_indices = 0;
     locked_vertices = 0;
     locked_indices = 0;
 }

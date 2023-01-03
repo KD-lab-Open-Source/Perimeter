@@ -173,7 +173,7 @@ void cParticle::Draw(cCamera *DrawNode)
             if(nVertex+6>=pBuf->GetSize())
             {
                 pBuf->Unlock(nVertex);
-                pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,GetGlobalMatrix());
+                pBuf->DrawPrimitive(PT_TRIANGLES, nVertex / 3, GetGlobalMatrix());
                 Vertex=pBuf->Lock();
                 nVertex=0;
             }
@@ -187,7 +187,7 @@ void cParticle::Draw(cCamera *DrawNode)
     if (pBuf) {
 	    pBuf->Unlock(nVertex);
 	    if(nVertex>0) {
-		    pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,GetGlobalMatrix());
+		    pBuf->DrawPrimitive(PT_TRIANGLES, nVertex / 3, GetGlobalMatrix());
         }
     }
 #endif

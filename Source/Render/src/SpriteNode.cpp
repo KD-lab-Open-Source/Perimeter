@@ -36,10 +36,10 @@ void cSpriteManager::Draw(cCamera *camera)
     
     if (sprites.empty()) return;
 
-    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     indices_t* ib;
     sVertexXYZDT1 *v;
-    db->Lock(sprites.size() * 4, sprites.size() * 6, v, ib);
+    db->Lock(sprites.size() * 4, sprites.size() * 6, v, ib, false);
     
     for (const cSprite& s : sprites) {
         if(s.ignore)

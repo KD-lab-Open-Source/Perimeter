@@ -196,6 +196,16 @@ struct sPolygon {
     inline void set(indices_t i1,indices_t i2,indices_t i3) { p1=i1; p2=i2; p3=i3; }
 };
 
+enum ePrimitiveType
+{
+    PT_TRIANGLES,
+    PT_TRIANGLESTRIP,
+#ifdef PERIMETER_D3D9
+    PT_POINTLIST,
+    PT_LINELIST,
+#endif
+};
+
 class cFont;
 class cTexture;
 class cTexLibrary;
@@ -240,7 +250,7 @@ public:
 
     virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
 
-    virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt);
+    virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive);
     virtual void SetActiveDrawBuffer(class DrawBuffer*);
 
     // Decl only methods

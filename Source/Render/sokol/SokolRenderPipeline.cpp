@@ -9,32 +9,32 @@
 
 struct SokolPipelineContext {
     pipeline_id_t id;
-    uint8_t pipeline_type;
+    PIPELINE_TYPE pipeline_type;
     vertex_fmt_t vertex_fmt;
     sg_pipeline_desc* desc;
     struct shader_funcs* shader_funcs;
 };
 
-pipeline_id_t cSokolRender::GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, eCullMode cull) {
+pipeline_id_t cSokolRender::GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, eBlendMode blend, eCullMode cull) {
     uint8_t mode = blend & 0b111;
     mode |= (cull & 0b11) << PIPELINE_ID_MODE_CULL_SHIFT;
     return GetPipelineID(type, vertex_fmt, mode);
 }
 
-pipeline_id_t cSokolRender::GetPipelineID(uint8_t type, uint8_t vertex_fmt, uint8_t mode) {
+pipeline_id_t cSokolRender::GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, uint8_t mode) {
     pipeline_id_t id = (mode & PIPELINE_ID_MODE_MASK) << PIPELINE_ID_MODE_SHIFT;
     id |= (vertex_fmt & PIPELINE_ID_VERTEX_FMT_MASK) << PIPELINE_ID_VERTEX_FMT_SHIFT;
     id |= (type & PIPELINE_ID_TYPE_MASK) << PIPELINE_ID_TYPE_SHIFT;
     return id;
 }
 
-void cSokolRender::GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, eCullMode* cull) {
+void cSokolRender::GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, eBlendMode* blend, eCullMode* cull) {
     uint8_t mode = (id >> PIPELINE_ID_MODE_SHIFT) & PIPELINE_ID_MODE_MASK;
     if (blend) *blend = static_cast<eBlendMode>(mode & 0b111);
     if (cull) *cull = static_cast<eCullMode>((mode >> PIPELINE_ID_MODE_CULL_SHIFT) & 0b11);
     
-    if (vertex_fmt) *vertex_fmt = (id >> PIPELINE_ID_VERTEX_FMT_SHIFT) & PIPELINE_ID_VERTEX_FMT_MASK;
-    if (type) *type = (id >> PIPELINE_ID_TYPE_SHIFT) & PIPELINE_ID_TYPE_MASK;
+    if (vertex_fmt) *vertex_fmt = static_cast<vertex_fmt_t>((id >> PIPELINE_ID_VERTEX_FMT_SHIFT) & PIPELINE_ID_VERTEX_FMT_MASK);
+    if (type) *type = static_cast<PIPELINE_TYPE>((id >> PIPELINE_ID_TYPE_SHIFT) & PIPELINE_ID_TYPE_MASK);
 }
 
 void bind_attr_slot(SokolPipelineContext& ctx, const char* attr_name, sg_vertex_format sokol_format) {
@@ -75,7 +75,7 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, uint32_t fmt_flag) {
 
 void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs) {
     sg_pipeline_desc desc = {};
-    SokolPipelineContext ctx = { id, 0, 0, &desc, shader_funcs };
+    SokolPipelineContext ctx = {id, PIPELINE_TYPE_DEFAULT, 0, &desc, shader_funcs };
     
     //Extract info about this pipeline
     eBlendMode blendMode;
@@ -85,7 +85,7 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
     //Common part of pipeline desc
     desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
     desc.depth.write_enabled = true;
-    desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+    desc.primitive_type = ctx.pipeline_type == PIPELINE_TYPE_TRIANGLESTRIP ? SG_PRIMITIVETYPE_TRIANGLE_STRIP : SG_PRIMITIVETYPE_TRIANGLES;
     desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32;
     desc.cull_mode = CULL_NONE == cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
     desc.face_winding = CULL_CCW == cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
@@ -185,6 +185,7 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
     //printf("RegisterPipeline: '%s' at '%d'\n", desc.label, id);
     SokolPipeline* pipeline = new SokolPipeline {
         ctx.id,
+        ctx.pipeline_type,
         ctx.vertex_fmt,
         GetSizeFromFormat(ctx.vertex_fmt),
         sg_make_pipeline(desc),
@@ -197,6 +198,9 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
     if (pipeline->vertex_fmt == 0) {
         xxassert(0, "RegisterPipeline: invalid pipeline vertex format " + std::string(desc.label));
         return;
+    }
+    if (pipeline->id >= pipelines.size()) {
+        pipelines.resize(pipeline->id + 1);
     }
     if (pipelines[pipeline->id] != nullptr) {
         fprintf(stderr, "RegisterPipeline: '%s' pipeline already registered at '%d'\n", desc.label, pipeline->id);
@@ -211,9 +215,11 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
 void cSokolRender::RegisterPipelines() {
     int total = 0;
     for (uint8_t mode = 0; mode < PIPELINE_ID_MODE_MAX; ++mode) {
-        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
-        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
-        //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZNT1::fmt, mode), &shader_normal);
+        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLESTRIP, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
+        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLESTRIP, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
+        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
+        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
+        //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZNT1::fmt, mode), &shader_normal);
         //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TERRAIN,  sVertexXYZ::fmt,    mode), &shader_terrain);
         total += 4;
     }

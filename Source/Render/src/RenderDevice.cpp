@@ -6,13 +6,12 @@
 #include "IRenderDevice.h"
 #include "EmptyRenderDevice.h"
 #include "DrawBuffer.h"
+#include "RenderTracker.h"
 #ifdef PERIMETER_SOKOL
 #include "sokol/SokolRender.h"
-#include "RenderTracker.h"
-
 #endif
 
-const size_t PERIMETER_RENDER_BUFFERS_SIZE = 1024;
+const size_t PERIMETER_RENDER_BUFFERS_QUADS_LEN = 4096;
 
 FILE* fRD= nullptr;
 
@@ -139,7 +138,7 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* wnd, int Re
     ScreenSize.y = yScr;
     RenderMode = mode;
     TexLibrary = new cTexLibrary();
-    drawBuffers.resize(VERTEX_FMT_MAX);
+    drawBuffers.resize(0xFF);
     RenderSubmitEvent(RenderEvent::INIT, "Intf done");
     return 0;
 }
@@ -170,13 +169,20 @@ void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
 }
 
 
-DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt) {
-    DrawBuffer* db = drawBuffers[fmt];
+DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive) {
+    uint16_t key = (fmt & VERTEX_FMT_MAX) | ((primitive & 0x3) << VERTEX_FMT_BITS);
+    DrawBuffer* db = nullptr;
+    if (key < drawBuffers.size()) {
+        db = drawBuffers[key];
+    } else {
+        drawBuffers.resize(key + 1);
+    }
     if (!db) {
         db = new DrawBuffer();
-        db->Create(PERIMETER_RENDER_BUFFERS_SIZE * 4, PERIMETER_RENDER_BUFFERS_SIZE * 6, fmt, true);
-        drawBuffers[fmt] = db;
+        db->Create(PERIMETER_RENDER_BUFFERS_QUADS_LEN * 4, PERIMETER_RENDER_BUFFERS_QUADS_LEN * 4, fmt, true, primitive);
+        drawBuffers[key] = db;
     }
+    RenderSubmitEvent(RenderEvent::GET_DRAW_BUFFER, "fmt: " + std::to_string(fmt) + " primitive " + std::to_string(primitive), db);
     return db;
 }
 

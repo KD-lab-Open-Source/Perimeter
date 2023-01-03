@@ -16,6 +16,7 @@ struct RenderEvent {
         FLUSH_SCENE,
         
         //PTR: DrawBuffer
+        GET_DRAW_BUFFER,
         SET_ACTIVE_DRAW_BUFFER,
         SUBMIT_DRAW_BUFFER,
         
@@ -46,6 +47,8 @@ struct RenderEvent {
         PROCESS_COMMAND,
 #endif
     } type;
+    RenderEvent() = default;
+    ~RenderEvent() = default;
     const char* call_file;
     unsigned int call_line;
     std::string label;
@@ -62,6 +65,7 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
         case RenderEvent::BEGIN_SCENE: return "BEGIN_SCENE";
         case RenderEvent::END_SCENE: return "END_SCENE";
         case RenderEvent::FLUSH_SCENE: return "FLUSH_SCENE";
+        case RenderEvent::GET_DRAW_BUFFER: return "GET_DRAW_BUFFER";
         case RenderEvent::SET_ACTIVE_DRAW_BUFFER: return "SET_ACTIVE_DRAW_BUFFER";
         case RenderEvent::SUBMIT_DRAW_BUFFER: return "SUBMIT_DRAW_BUFFER";
         case RenderEvent::CREATE_TEXTURE: return "CREATE_TEXTURE";
@@ -91,10 +95,6 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::INIT:
         case RenderEvent::DONE:
         case RenderEvent::UPDATE_MODE:
-        case RenderEvent::FILL:
-        case RenderEvent::BEGIN_SCENE:
-        case RenderEvent::END_SCENE:
-        case RenderEvent::FLUSH_SCENE:
         case RenderEvent::CREATE_TEXTURE:
         case RenderEvent::DELETE_TEXTURE:
         case RenderEvent::CREATE_VERTEXBUF:
@@ -103,11 +103,16 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::DELETE_INDEXBUF:
         default:
             return 0;
+        case RenderEvent::FILL:
+        case RenderEvent::BEGIN_SCENE:
+        case RenderEvent::END_SCENE:
+        case RenderEvent::FLUSH_SCENE:
 #ifdef PERIMETER_SOKOL
         case RenderEvent::FINISH_COMMAND:
         case RenderEvent::PROCESS_COMMAND:
 #endif
             return 1;
+        case RenderEvent::GET_DRAW_BUFFER:
         case RenderEvent::SET_ACTIVE_DRAW_BUFFER:
         case RenderEvent::SUBMIT_DRAW_BUFFER:
         case RenderEvent::LOCK_TEXTURE:
@@ -125,11 +130,11 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
 bool isRenderEventTypeVerbose(RenderEvent::RenderEventType type);
 const std::list<RenderEvent*>& GetRenderEvents();
 void RenderSubmitEventImpl(const char *file, unsigned int line, RenderEvent::RenderEventType type, const std::string& label = "", void* ptr = nullptr);
-#define RenderSubmitEvent(args...) RenderSubmitEventImpl(__FILE__, __LINE__, args)
+#define RenderSubmitEvent(...) RenderSubmitEventImpl(__FILE__, __LINE__, __VA_ARGS__)
 
 #else //PERIMETER_DEBUG
 
-#define RenderSubmitEvent(args...)
+#define RenderSubmitEvent(...)
 
 #endif //PERIMETER_DEBUG
 #endif //PERIMETER_RENDERTRACKER_H

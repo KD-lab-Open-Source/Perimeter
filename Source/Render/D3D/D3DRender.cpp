@@ -1130,7 +1130,7 @@ void cD3DRender::FlushFilledRect()
 		if(npoint>=BufferXYZD.GetSize()-6)
 		{
 			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
+			BufferXYZD.DrawPrimitive(PT_TRIANGLES, npoint / 3);
 			v=BufferXYZD.Lock();
 			npoint=0;
 		}
@@ -1138,7 +1138,7 @@ void cD3DRender::FlushFilledRect()
 
 	BufferXYZD.Unlock(npoint);
 	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
+		BufferXYZD.DrawPrimitive(PT_TRIANGLES, npoint / 3);
 
 	rectangles.clear();
 }
@@ -1422,7 +1422,7 @@ void* cD3DRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Am
     xassert(Start + Amount <= vb.NumberVertex);
     void *p=0;
     VISASSERT( vb.d3d );
-    vb.d3d->Lock(Start * vb.VertexSize, Amount * vb.VertexSize, &p, vb.dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 );
+    vb.d3d->Lock(Start * vb.VertexSize, Amount * vb.VertexSize, &p, vb.dynamic ? D3DLOCK_NOSYSLOCK : 0 );
     return p;
 }
 void cD3DRender::UnlockVertexBuffer(VertexBuffer &vb)
@@ -1468,10 +1468,20 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
     SetFVF(db->vb.fmt);
     SetStreamSource(db->vb);
     SetIndices(db->ib);
-    size_t polys = static_cast<size_t>(xm::floor(db->ib.NumberIndices / 3.0));
+    D3DPRIMITIVETYPE d3dType;
+    switch (db->primitive) {
+        default:
+        case PT_TRIANGLESTRIP:
+            d3dType = D3DPT_TRIANGLESTRIP;
+            break;
+        case PT_TRIANGLES:
+            d3dType = D3DPT_TRIANGLELIST;
+            break;
+    }
+    size_t polys = static_cast<size_t>(xm::floor(static_cast<double>(db->written_indices) / sPolygon::PN));
     RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
-            D3DPT_TRIANGLELIST,
-            0, 0, db->vb.NumberVertex,
+            d3dType,
+            0, 0, db->written_vertices,
             0, polys
     ));
     NumberPolygon+=polys;
@@ -1757,20 +1767,36 @@ void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
 	gb_RenderDevice3D->CreateVertexBuffer(*vb,numvertex,fmt,TRUE);
 }
 
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
+void cVertexBufferInternal::DrawPrimitive(ePrimitiveType Type, uint32_t Count, const MatXf &m)
 {
 	MTG();
 	gb_RenderDevice3D->SetWorldMatXf(m);
 	DrawPrimitive(Type,Count);
 }
 
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
+void cVertexBufferInternal::DrawPrimitive(ePrimitiveType Type, uint32_t Count)
 {
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
 	rd->SetFVF(fmt);
 	rd->SetStreamSource(*vb);
-	RDCALL(rd->lpD3DDevice->DrawPrimitive((D3DPRIMITIVETYPE)Type,start_vertex,Count));
+    D3DPRIMITIVETYPE d3dType;
+    switch (Type) {
+        default:
+        case PT_TRIANGLESTRIP:
+            d3dType = D3DPT_TRIANGLESTRIP;
+            break;
+        case PT_TRIANGLES:
+            d3dType = D3DPT_TRIANGLELIST;
+            break;
+        case PT_POINTLIST:
+            d3dType = D3DPT_POINTLIST;
+            break;
+        case PT_LINELIST:
+            d3dType = D3DPT_LINELIST;
+            break;
+    }
+	RDCALL(rd->lpD3DDevice->DrawPrimitive(d3dType,start_vertex,Count));
 }
 
 void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)

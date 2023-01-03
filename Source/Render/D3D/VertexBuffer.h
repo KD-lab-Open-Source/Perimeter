@@ -1,15 +1,5 @@
 #pragma once
 
-enum PRIMITIVETYPE
-{
-    PT_POINTLIST = 1,
-    PT_LINELIST = 2,
-    PT_LINESTRIP = 3,
-    PT_TRIANGLELIST = 4,
-    PT_TRIANGLESTRIP = 5,
-    PT_TRIANGLEFAN = 6,
-};
-
 class cVertexBufferInternal
 {
 protected:
@@ -27,8 +17,8 @@ public:
 	inline int GetSize(){return numvertex-cur_min_vertex;};
 
 	void Create(int bytesize,int vertexsize,int fmt);
-	void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m);
-	void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count);
+	void DrawPrimitive(ePrimitiveType Type, uint32_t Count, const MatXf &m);
+	void DrawPrimitive(ePrimitiveType Type, uint32_t Count);
 	void DrawIndexedPrimitive(uint32_t Count);
 };
 
@@ -48,12 +38,12 @@ public:
 		buf.Create(bytesize,sizeof(vertex),vertex::fmt);
 	}
 
-	inline void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
+	inline void DrawPrimitive(ePrimitiveType Type, uint32_t Count, const MatXf &m)
 	{
 		buf.DrawPrimitive(Type,Count,m);
 	}
 
-	inline void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
+	inline void DrawPrimitive(ePrimitiveType Type, uint32_t Count)
 	{
 		buf.DrawPrimitive(Type,Count);
 	}

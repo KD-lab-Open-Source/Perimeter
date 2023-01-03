@@ -313,7 +313,7 @@ void ShadowVolume::DrawVolume(cCamera *camera,const MatXf& mat,Vect3f light_dir,
                 if(nVertex+6>=pBuf->GetSize())
                 {
                     pBuf->Unlock(nVertex);
-                    pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,mat);
+                    pBuf->DrawPrimitive(PT_TRIANGLES, nVertex / 3, mat);
                     Vertex=pBuf->Lock();
                     nVertex=0;
                 }
@@ -340,7 +340,7 @@ void ShadowVolume::DrawVolume(cCamera *camera,const MatXf& mat,Vect3f light_dir,
         {
             pBuf->Unlock(nVertex);
             if(nVertex>0)
-                pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,mat);
+                pBuf->DrawPrimitive(PT_TRIANGLES, nVertex / 3, mat);
         }
     }
 #endif

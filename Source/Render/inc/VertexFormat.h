@@ -13,7 +13,8 @@ const static vertex_fmt_t VERTEX_FMT_TEX2      = (1<<4);
 const static vertex_fmt_t VERTEX_FMT_DOT3      = (1<<5);
 #endif
 
-const static vertex_fmt_t VERTEX_FMT_MAX       = (1<<6)-1;
+const static vertex_fmt_t VERTEX_FMT_BITS      = 6;
+const static vertex_fmt_t VERTEX_FMT_MAX       = (1<<VERTEX_FMT_BITS)-1;
 
 struct sVertexXYZ
 {

@@ -710,7 +710,7 @@ inline void AddTriangle(cVertexBuffer<sVertexXYZD>& buf,sVertexXYZD*& v,sVertexX
 	if((primitive+3)*3>=buf.GetSize())
 	{
 		buf.Unlock(primitive*3);
-		buf.DrawPrimitive(PT_TRIANGLELIST,primitive);
+		buf.DrawPrimitive(PT_TRIANGLES, primitive);
 		primitive=0;
 		v=buf.Lock();
 	}
@@ -858,7 +858,7 @@ void terExternalRegionShowColumnD3D(Column* column,sColor4c color)
 
 	buf.Unlock(primitive*3);
 	if(primitive)
-		buf.DrawPrimitive(PT_TRIANGLELIST,primitive);
+		buf.DrawPrimitive(PT_TRIANGLES, primitive);
 }
 #endif
 

@@ -21,10 +21,15 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
 
     if (outline) {
         const float w = static_cast<float>(ScreenSize.y * (1.5 / 800.0) / 2.0);
-        auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
-        sVertexXYZDT1* v;
-        indices_t* ib;
-        db->Lock<sVertexXYZDT1>(8, 24, v, ib);
+        auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        sVertexXYZDT1* v = nullptr;
+        indices_t* ib = nullptr;
+        db->Lock<sVertexXYZDT1>(8, 12, v, ib, true);
+
+        v[0].u1() = v[4].u1() = 0.0f; v[0].v1() = v[4].v1() =0.0f;
+        v[1].u1() = v[5].u1() = 0.0f; v[1].v1() = v[5].v1() =1.0f;
+        v[2].u1() = v[6].u1() = 1.0f; v[2].v1() = v[6].v1() =0.0f;
+        v[3].u1() = v[7].u1() = 1.0f; v[3].v1() = v[7].v1() =1.0f;
 
         //Outer
 
@@ -35,11 +40,6 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         v[3].x=v[2].x=static_cast<float>(x2) + w;
         v[1].y=v[3].y=static_cast<float>(y2) + w;
 
-        v[0].u1()=0.0f; v[0].v1()=0.0f;
-        v[1].u1()=0.0f; v[1].v1()=1.0f;
-        v[2].u1()=1.0f; v[2].v1()=0.0f;
-        v[3].u1()=1.0f; v[3].v1()=1.0f;
-
         //Inner
 
         v[4].z=v[5].z=v[6].z=v[7].z=0;
@@ -49,48 +49,43 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         v[7].x=v[6].x=static_cast<float>(x2) - w;
         v[5].y=v[7].y=static_cast<float>(y2) - w;
 
-        v[0].u1()=0.0f; v[0].v1()=0.0f;
-        v[1].u1()=0.0f; v[1].v1()=1.0f;
-        v[2].u1()=1.0f; v[2].v1()=0.0f;
-        v[3].u1()=1.0f; v[3].v1()=1.0f;
-
-        /* Join the dots, layout:
+        /* Join the dots using triangle strip, layout:
          * 
-         *   0----------2
-         *   |\        /|
-         *   | 4------6 |
-         *   | |      | |
-         *   | 5------7 |
-         *   |/        \|
-         *   1----------3
+         *   0---------2
+         *   |\   /   /|
+         *   | 4-----6 |
+         *   | |     | |
+         *   |\|     |\|
+         *   | |     | |
+         *   | 5-----7 |
+         *   |/   /   \|
+         *   1---------3
          */
         
         
         size_t b = db->written_vertices;
-        //Top
+        //Start degenerate triangle
         ib[0] = b;
-        ib[1] = ib[4] = b + 4;
-        ib[2] = ib[3] = b + 2;
-        ib[5] = b + 6;
+        //Top
+        ib[1] = b;
+        ib[2] = b + 4;
+        ib[3] = b + 2;
+        ib[4] = b + 6;
         //Left
-        ib[6] = b;
-        ib[7] = ib[10] = b + 1;
-        ib[8] = ib[9] = b + 4;
-        ib[11] = b + 5;
+        ib[5] = b + 3;
+        ib[6] = b + 7;
         //Right
-        ib[12] = b + 6;
-        ib[13] = ib[16] = b + 7;
-        ib[14] = ib[15] = b + 2;
-        ib[17] = b + 3;
+        ib[7] = b + 1;
+        ib[8] = b + 5;
         //Bottom
-        ib[18] = b + 5;
-        ib[19] = ib[22] = b + 1;
-        ib[20] = ib[21] = b + 7;
-        ib[23] = b + 3;
+        ib[9] = b;
+        ib[10] = b + 4;
+        //End degenerate triangle
+        ib[11] = b + 4;
 
         db->Unlock();
     } else {
-        auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
+        auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
         sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
         
         v[0].z=v[1].z=v[2].z=v[3].z=0;
@@ -131,7 +126,7 @@ void cSokolRender::DrawSprite(int x1, int y1, int dx, int dy, float u1, float v1
     SetNoMaterial(mode,phase,Texture);
     UseOrthographicProjection();
     
-    auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
+    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
 
     v[0].z=v[1].z=v[2].z=v[3].z=0;
@@ -170,7 +165,7 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     SetNoMaterial(blend_mode, phase, Tex1, Tex2, mode);
     UseOrthographicProjection();
     
-    auto db = GetDrawBuffer(sVertexXYZDT2::fmt);
+    auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
     sVertexXYZDT2* v = db->LockQuad<sVertexXYZDT2>(1);
     
     v[0].z=v[1].z=v[2].z=v[3].z=0;
@@ -216,7 +211,7 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     SetNoMaterial(blend_mode, phase, Tex2, Tex1,  static_cast<eColorMode>(extra_mode | mode));
     UseOrthographicProjection();
 
-    auto db = GetDrawBuffer(sVertexXYZDT2::fmt);
+    auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
     sVertexXYZDT2* v = db->LockQuad<sVertexXYZDT2>(1);
     
     v[0].z=v[1].z=v[2].z=v[3].z=0;
@@ -276,7 +271,7 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
             }
             Vect3f& size=cf->Font[c];
             
-            auto db = GetDrawBuffer(sVertexXYZDT1::fmt);
+            auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
             sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
             
             v[0].z=v[1].z=v[2].z=v[3].z=0;
@@ -322,7 +317,7 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
     SetNoMaterial(blend_mode, phase, pTexture, CurrentFont->GetTexture(), static_cast<eColorMode>(extra_mode | mode));
     UseOrthographicProjection();
 
-    auto db = GetDrawBuffer(sVertexXYZDT2::fmt);
+    auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
     for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
         xOfs = static_cast<float>(x);
         if (0 <= align) {
