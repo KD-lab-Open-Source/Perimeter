@@ -40,14 +40,12 @@
 #define execv _execv
 //Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
 #include <SDL_syswm.h>
+#include <commdlg.h>
 #endif
 
 //#define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN
 #define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN_DESKTOP
 
-#ifndef PERIMETER_EXODUS
-#include <commdlg.h>
-#endif
 #include "../HT/ht.h"
 #include "GraphicsOptions.h"
 #include "GameContent.h"
@@ -1001,7 +999,7 @@ int SDL_main(int argc, char *argv[])
         if (applicationIsGo()) {
             run = runtime_object->Quant();
         } else {
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
             //TODO is this necessary under SDL2 in Win32?
             WaitMessage();
 #endif
@@ -1210,7 +1208,7 @@ void setLogicFp()
 }
 
 //-------------------------------------------------
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 //TODO remove this ifdef block once dialog stuff is ported
 
 bool _setupFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title, bool save) {
@@ -1259,20 +1257,22 @@ bool _setupFileDialog(std::string& filename, const char* initialDir, const char*
 
 bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
 {
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
     return _setupFileDialog(filename, initialDir, extention, title, false);
 #else
 	//TODO
+    fprintf(stderr, "openFileDialog not implemented for this platform\n");
 	return false;
 #endif
 }
 
 bool saveFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
 {
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
     return _setupFileDialog(filename, initialDir, extention, title, true);
 #else
     //TODO
+    fprintf(stderr, "saveFileDialog not implemented for this platform\n");
     return false;
 #endif
 }
@@ -1282,7 +1282,7 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 	if(items.empty())
 		return 0;
 
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
@@ -1312,7 +1312,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 	if(items.empty())
 		return -1;
 
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
@@ -1341,7 +1341,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 
 //-----------------------------------------
 static std::string editTextString;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
@@ -1386,7 +1386,7 @@ static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPara
 const char* editText(const char* defaultValue)
 {
 	editTextString = defaultValue;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT),hWndVisGeneric,DialogProc);
 #else
     //TODO
@@ -1398,7 +1398,7 @@ const char* editText(const char* defaultValue)
 const char* editTextMultiLine(const char* defaultValue, void* hwnd)
 {
 	editTextString = defaultValue;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE), static_cast<HWND>(hwnd), DialogProc);
 #else
     //TODO

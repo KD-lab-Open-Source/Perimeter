@@ -595,7 +595,7 @@ cTexture* cVisGeneric::CreateTextureScreen()
 
 	int dx_plain_surface=dx;
 	int dy_plain_surface=dy;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	if(!gb_RenderDevice->IsFullScreen())
 	{
 		dx_plain_surface=GetSystemMetrics(SM_CXSCREEN);

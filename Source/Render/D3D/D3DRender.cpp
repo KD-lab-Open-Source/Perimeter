@@ -528,7 +528,7 @@ void cD3DRender::RestoreDeviceIfLost()
 	int hr;
 	while(FAILED(hr=lpD3DDevice->TestCooperativeLevel()))
     { // Test the cooperative level to see if it's okay to render
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
         if( D3DERR_DEVICELOST == hr )
 		{
 			MSG msg;
@@ -1303,7 +1303,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *FontName,int size,int bold,int italic,int underline)
 {
     if(hWnd==0) return;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	HDC hDC=0;
     HFONT hFont=CreateFontA(size,0,0,0,bold?FW_BOLD:FW_NORMAL,italic,underline,0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,VARIABLE_PITCH,FontName);
@@ -1326,7 +1326,7 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 {
 	if(hWnd==0) return;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	HDC hDC=GetDC(hWnd);
 	if(hDC==0) return;
 	SetTextColor(hDC,RGB(r,g,b));
@@ -1334,8 +1334,6 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 	RECT rect={xScrMin,yScrMin,xScrMax,yScrMax};
 	RDCALL(!ExtTextOutA(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlenA(string),0));
 	ReleaseDC(hWnd,hDC);
-#else
-    //TODO implement this
 #endif
 }
 

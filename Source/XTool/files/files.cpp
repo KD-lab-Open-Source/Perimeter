@@ -1,6 +1,6 @@
 #include "tweaks.h"
 
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 #define open _open
 #endif
 

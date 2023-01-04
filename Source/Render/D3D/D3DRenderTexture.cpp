@@ -185,7 +185,7 @@ int cD3DRender::DeleteTexture(cTexture *Texture)
 }
 bool cD3DRender::SetScreenShot(const char *fname)
 {
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	LPDIRECT3DSURFACE9 lpRenderSurface=0;
 	RDCALL(lpD3DDevice->GetRenderTarget(0,&lpRenderSurface));
 	HRESULT hr=D3DXSaveSurfaceToFileA(fname,D3DXIFF_BMP,lpRenderSurface,NULL,NULL);
