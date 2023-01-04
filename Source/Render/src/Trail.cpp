@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "particle.h"
 #include "Trail.h"
+#include "DrawBuffer.h"
 
 cTrail::cTrail(float fTimeLife) : cAnimUnkObj(KIND_PARTICLE)
 {
@@ -41,11 +42,11 @@ void cTrail::Draw(cCamera *DrawNode)
 	if(Particle.size()<2)
 		return;
 
-#ifdef PERIMETER_D3D9
-	DrawStrip strip;
 	gb_RenderDevice->SetNoMaterial(GetAttribute(ATTRUNKOBJ_ADDBLEND)?ALPHA_ADDBLEND:ALPHA_BLEND,0,GetTexture());
 
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 
 	sVertexXYZDT1 v1,v2;
 	Vect3f &PosCamera=DrawNode->GetPos(),Tangent(0,0,0);
@@ -89,11 +90,10 @@ void cTrail::Draw(cCamera *DrawNode)
 		v2.pos=Particle[i].pos+Orientation;
 		if(phase>=1)
 			break;
-		strip.Set(v1,v2);
+		db->AutoTriangleStripStep(v1,v2);
 	}
 
-	strip.End();
-#endif
+    db->DrawStrip();
 }
 void cTrail::SetData(const Vect3f* pPos,const Vect3f* pVelocity)
 {

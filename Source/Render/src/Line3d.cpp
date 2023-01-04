@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "Line3d.h"
+#include "DrawBuffer.h"
 
 cLine3d::cLine3d() : cAnimUnkObj(KIND_LINE3D)
 {
@@ -29,10 +30,6 @@ void cLine3d::Draw(cCamera *DrawNode)
 {
 	MTEnter mtlock(lock);
 	if(Vertex.size()<2) return;
-#ifdef PERIMETER_D3D9
-    //TODO
-    if (!gb_RenderDevice3D) return;
-	DrawStrip strip;
 	
 	if(DrawNode->GetCameraPass()==SCENENODE_OBJECTSORT_NOZ)
 		gb_RenderDevice->SetNoMaterial(GetAttribute(ATTRUNKOBJ_ADDBLEND)?ALPHA_ADDBLEND:ALPHA_BLEND,0,GetTexture(1));
@@ -41,7 +38,9 @@ void cLine3d::Draw(cCamera *DrawNode)
 
 //	float width=(DrawNode->GetCameraPass()==SCENENODE_OBJECTSORT_NOZ)?0.5f:1.0f;
 
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 	Vect3f Orientation;
 
 	sVertexXYZDT1 v0,v1;
@@ -69,11 +68,10 @@ void cLine3d::Draw(cCamera *DrawNode)
 		v0.u1()=   v1.u1()=Vertex[nVertex].v-GetFrame()->GetPhase();
 		v0.v1()=0; v1.v1()=1;
 		v0.diffuse=v1.diffuse=Vertex[nVertex].color;
-		strip.Set(v0,v1);
+		db->AutoTriangleStripStep(v0,v1);
 	}
 
-	strip.End();
-#endif
+    db->DrawStrip();
 }
 
 void cLine3d::UpdateVertex(int num_vertex, sVertexLine* varray)

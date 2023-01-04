@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "UnkLight.h"
+#include "DrawBuffer.h"
 
 cUnkLight::cUnkLight() : cUnkObj(KIND_LIGHT)
 {
@@ -42,8 +43,6 @@ void cUnkLight::Draw(cCamera *DrawNode)
 {
 	if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION)&&(GetGlobalMatrix().trans().z<DrawNode->GetHReflection()))
 		return;
-#ifdef PERIMETER_D3D9
-	DrawStrip strip;
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,0,GetTexture());
 
 	Vect3f pv0,pe0,pv,pe;
@@ -53,7 +52,9 @@ void cUnkLight::Draw(cCamera *DrawNode)
 					GetDiffuse().a*GetDiffuse().b,1);
 	float dr=2*GetRadius()/(NumberPlane+1);
 
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 	float tex=0;
 	Vect3f WorldK=DrawNode->GetPos()-GetPos();
 	FastNormalize(WorldK);
@@ -73,11 +74,10 @@ void cUnkLight::Draw(cCamera *DrawNode)
 			v1.pos=GetPos()+sx-sy-sz;
 		v0.GetTexel().set(tex,0); v1.GetTexel().set(tex,1);
 		v0.diffuse=v1.diffuse=Diffuse;
-		strip.Set(v0,v1);
+		db->AutoTriangleStripStep(v0,v1);
 	}
 
-	strip.End();
-#endif
+    db->DrawStrip();
 }
 const MatXf& cUnkLight::GetPosition() const
 {

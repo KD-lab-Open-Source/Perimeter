@@ -1868,40 +1868,6 @@ void cQuadBufferInternal::EndDraw()
 	start_vertex=NULL;
 }
 
-void DrawStrip::Begin()
-{
-	gb_RenderDevice3D->SetWorldMatXf(MatXf::ID);
-	buf=gb_RenderDevice3D->GetBufferXYZDT1();
-	pointer=buf->Lock(8);
-	num=0;
-}
-
-void DrawStrip::End()
-{
-	buf->Unlock(num);
-	if(num>=4)
-	{
-		buf->DrawPrimitive(PT_TRIANGLESTRIP,num-2);
-	}
-}
-
-void DrawStripT2::Begin(const MatXf& mat)
-{
-	gb_RenderDevice3D->SetWorldMatXf(mat);
-	buf=gb_RenderDevice3D->GetBufferXYZDT2();
-	pointer=buf->Lock(8);
-	num=0;
-}
-
-void DrawStripT2::End()
-{
-	buf->Unlock(num);
-	if(num>=4)
-	{
-		buf->DrawPrimitive(PT_TRIANGLESTRIP,num-2);
-	}
-}
-
 void cD3DRender::InitStandartIB()
 {
 	CreateIndexBuffer(standart_ib,POLYGONMAX*sPolygon::PN, false);

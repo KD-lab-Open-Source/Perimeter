@@ -10,6 +10,7 @@
 #include "ExternalShow.h"
 #include "../HT/ht.h"
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 
 #define ZFIX 2.0f
 
@@ -216,10 +217,9 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		bool selection = (circleColor.dotted == 4);
 
-#ifdef PERIMETER_D3D9
-		DrawStrip strip;
-		strip.Begin();
-#endif
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        db->Backwind();
 
 		float v_pos = 0;
 		sVertexXYZDT1 p1,p2;
@@ -249,16 +249,12 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			p2.u1() = selection ? v_pos : p1.u1();
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-#ifdef PERIMETER_D3D9
-			strip.Set(p1,p2);
-#endif
+            db->AutoTriangleStripStep(p1, p2);
 			a += da;
 			u+=du;
 		}
-#ifdef PERIMETER_D3D9
-		strip.End();
-#endif
-
+    
+        db->DrawStrip();
 	} else {
 		int num = xm::round(2.0f * r / region_show_spline_space);
 		if (num < 2) {
@@ -274,10 +270,9 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 		p2.diffuse = diffuse;
 		p2.v1() = 0.05f;
 
-#ifdef PERIMETER_D3D9
-		DrawStrip vertStrip;
-		vertStrip.Begin();
-#endif
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        db->Backwind();
 
 		float x1 = pos.x - width / 2.0f;
 		float x2 = x1 + width;
@@ -292,18 +287,11 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			p2.u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-#ifdef PERIMETER_D3D9
-			vertStrip.Set(p1,p2);
-#endif
+			db->AutoTriangleStripStep(p1,p2);
 			y += region_show_spline_space;
 		}
 
-#ifdef PERIMETER_D3D9
-		vertStrip.End();
-
-		DrawStrip horizStrip;
-		horizStrip.Begin();
-#endif
+        db->DrawStrip();
 
 		float y1 = pos.y - width / 2.0f;
 		float y2 = y1 + width;
@@ -318,15 +306,11 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			p2.u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-#ifdef PERIMETER_D3D9
-			horizStrip.Set(p1,p2);
-#endif
+			db->AutoTriangleStripStep(p1,p2);
 			x += region_show_spline_space;
 		}
 
-#ifdef PERIMETER_D3D9
-		horizStrip.End();
-#endif
+        db->DrawStrip();
 	}
 }
 
@@ -339,10 +323,8 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 	Vect2f tp,dn,pp1,pp2;
 	float z1,z2,z;
 
-#ifdef PERIMETER_D3D9
-    cQuadBuffer<sVertexXYZDT1>* quad=gb_RenderDevice3D ? gb_RenderDevice3D->GetQuadBufferXYZDT1() : nullptr;
-	if (quad && !(region->spline().empty())) {
-		quad->BeginDraw();
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+	if (!region->spline().empty()) {
 
 		dt = region->spline().suggest_dt(region_show_spline_space);
 
@@ -410,6 +392,9 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		bool first=true;
 		umap=0;
 		i=0;
+
+        indices_t* indices = nullptr;
+        sVertexXYZDT1* vertex_data = nullptr;
 		do{
 			tp = region->spline()(t);
 			dn = region->spline().inward_normal(t)*0.3f;
@@ -423,7 +408,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 
 			if(!first)
 			{
-				sVertexXYZDT1 *vertex_data=quad->Get();
+                db->AutoLockQuad(10, 1, vertex_data, indices);
 				vertex_data[0].pos=o1;
 				vertex_data[0].diffuse=color;
 				vertex_data[0].u1() = umap_old;
@@ -462,7 +447,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		}while((t += dt) < t_max);
 
 		{
-			sVertexXYZDT1 *vertex_data=quad->Get();
+            db->AutoLockQuad(10, 1, vertex_data, indices);
 			vertex_data[0].pos=o1;
 			vertex_data[0].diffuse=color;
 			vertex_data[0].u1() = umap_old;
@@ -484,9 +469,9 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 			vertex_data[3].v1() = 0.0f;
 		}
 
-		quad->EndDraw();
+        db->AutoUnlock();
+        db->Draw();
 	}
-#endif
 
 	Region::iterator i;
 	FOR_EACH(*region, i)
@@ -498,10 +483,9 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp,dn;
-#ifdef PERIMETER_D3D9
-		DrawStrip strip;
-		strip.Begin();
-#endif
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        db->Backwind();
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -528,14 +512,10 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 			p1.v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-#ifdef PERIMETER_D3D9
-			strip.Set(p0,p1);
-#endif
+			db->AutoTriangleStripStep(p0,p1);
 		} while((t += dt) < t_max);
 
-#ifdef PERIMETER_D3D9
-		strip.End();
-#endif
+        db->DrawStrip();
 	}
 
 	Region::iterator i;
@@ -548,12 +528,11 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp,dn;
-#ifdef PERIMETER_D3D9
-		DrawStrip strip;
-        strip.Begin();
-#endif
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        db->Backwind();
 
-		float v_pos = 0;
+        float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
@@ -581,14 +560,10 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 			p1.v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-#ifdef PERIMETER_D3D9
-			strip.Set(p0,p1);
-#endif
-		} while((t += dt) < t_max);
+            db->AutoTriangleStripStep(p0, p1);
+        } while((t += dt) < t_max);
 
-#ifdef PERIMETER_D3D9
-		strip.End();
-#endif
+        db->DrawStrip();
 	}
 
 	Region::iterator i;
@@ -602,10 +577,9 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp;
-#ifdef PERIMETER_D3D9
-		DrawStrip strip;
-		strip.Begin();
-#endif
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        db->Backwind();
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -635,14 +609,10 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 			p1.v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-#ifdef PERIMETER_D3D9
-			strip.Set(p0,p1);
-#endif
-		} while((t += dt) < t_max);
+            db->AutoTriangleStripStep(p0, p1);
+        } while((t += dt) < t_max);
 
-#ifdef PERIMETER_D3D9
-		strip.End();
-#endif
+        db->DrawStrip();
 	}
 
 	Region::iterator i;

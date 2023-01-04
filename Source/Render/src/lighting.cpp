@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "lighting.h"
+#include "DrawBuffer.h"
 
 LightingParameters::LightingParameters()
 {
@@ -58,7 +59,6 @@ void cLighting::Draw(cCamera *pCamera)
 
 void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 {
-#ifdef PERIMETER_D3D9
 /*
 	sColor4c color(255,255,255);
 	for(int i=1;i<position.size();i++)
@@ -72,8 +72,9 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 	float a=1-time;
 	sColor4c diffuse(255,255*a,255,a*255);
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLENDALPHA,0,pTexture);
-	DrawStrip strip;
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 	float size=5+time*15;
 	sVertexXYZDT1 v1,v2;
 	v1.diffuse=diffuse;
@@ -105,22 +106,21 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 
 		v1.u1()=v2.u1()=t;
 		v1.v1()=0;v2.v1()=1;
-		strip.Set(v1,v2);
+		db->AutoTriangleStripStep(v1,v2);
 	}
-	strip.End();
+    db->DrawStrip();
 /**/
 	float a=1-time;
 	sColor4c diffuse(255,255*a,255,a*255);
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLENDALPHA,0,parent->pTexture);
-	DrawStrip strip;
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 	float size=parent->param.strip_width_begin+time*parent->param.strip_width_time;
 	sVertexXYZDT1 v1,v2;
 	v1.diffuse=diffuse;
 	v2.diffuse=diffuse;
-	for(int i=0;i<strip_list.size();i++)
-	{
-		OneStrip& p=strip_list[i];
+	for (const OneStrip& p : strip_list) {
 		v1.pos=p.pos;
 		v2.pos=p.pos;
 		v1.pos-=size*p.n;
@@ -128,10 +128,9 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 
 		v1.u1()=v2.u1()=p.u;
 		v1.v1()=0;v2.v1()=1;
-		strip.Set(v1,v2);
+		db->AutoTriangleStripStep(v1,v2);
 	}
-	strip.End();
-#endif
+    db->DrawStrip();
 }
 
 void cLighting::Animate(float dt)

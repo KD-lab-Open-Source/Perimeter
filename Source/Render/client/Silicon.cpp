@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "Silicon.h"
+#include "DrawBuffer.h"
 #include <xutil.h>
 
 //#include "PrmEdit.h"
@@ -320,17 +321,13 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		return;
 	float dz = length/line_size;
 
-	
-#ifdef PERIMETER_D3D9
-    if (!gb_RenderDevice3D) return;
-	DrawStripT2 strip;
-
-	uint32_t old_cull;
-	old_cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
-	gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	uint32_t old_cull=gb_RenderDevice->GetRenderState(RS_CULLMODE);
+	gb_RenderDevice->SetRenderState(RS_CULLMODE, CULL_NONE);
 	gb_RenderDevice->SetNoMaterial(blendMode,GetFrame()->GetPhase(),GetTexture(),GetTexture2(),COLOR_MOD);
-	
-	strip.Begin(MatXf(Mat3f::ID,point1));
+
+    gb_RenderDevice->SetWorldMatXf(MatXf(Mat3f::ID,point1));
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 
 	sColor4c Diffuse(diffuse);
 	Vect3f Weight = 10*x_axis;
@@ -355,12 +352,11 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		vtx0.v1()=0; vtx1.v1()=1;
 		vtx0.u2()=   vtx1.u2()=(u2+=du2);
 		vtx0.v2()=(v2+=dv2);vtx1.v2()=v2+1;
-		strip.Set(vtx0,vtx1);
+		db->AutoTriangleStripStep(vtx0,vtx1);
 	}
 
-	strip.End();
-	gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE, old_cull);
-#endif
+	db->DrawStrip();
+	gb_RenderDevice->SetRenderState(RS_CULLMODE, old_cull);
 }
 
 
