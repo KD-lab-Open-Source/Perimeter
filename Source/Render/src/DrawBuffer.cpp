@@ -5,12 +5,9 @@ void DrawBuffer::Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool 
     Destroy();
     this->dynamic = _dynamic;
     this->primitive = _primitive;
-    locked_vertices = 0;
-    locked_indices = 0;
-    written_vertices = 0;
-    written_indices = 0;
     gb_RenderDevice->CreateVertexBuffer(vb, vertices, fmt, dynamic);
     gb_RenderDevice->CreateIndexBuffer(ib, indices, dynamic);
+    Backwind();
 }
 
 void DrawBuffer::Recreate() {
@@ -20,6 +17,18 @@ void DrawBuffer::Recreate() {
     if (!ib.buf) {
         gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices, dynamic);
     }
+    Backwind();
+}
+
+void DrawBuffer::Backwind() {
+    if (IsLocked()) {
+        xassert(0);
+        Unlock();
+    }
+    locked_vertices = 0;
+    locked_indices = 0;
+    locked_vertices = 0;
+    locked_indices = 0;
     written_vertices = 0;
     written_indices = 0;
 }
@@ -30,7 +39,7 @@ void DrawBuffer::Destroy() {
 }
 
 void DrawBuffer::Unlock() {
-    if (!locked_vertices && !locked_indices) {
+    if (!IsLocked()) {
         xassert(0);
         return;
     }
@@ -44,8 +53,16 @@ void DrawBuffer::Unlock() {
     locked_indices = 0;
 }
 
+bool DrawBuffer::IsLocked() {
+    return locked_vertices || locked_indices;
+}
+
+void DrawBuffer::AutoUnlock() {
+    if (IsLocked()) Unlock();
+}
+
 void DrawBuffer::Draw() {
-    if (locked_vertices || locked_indices) {
+    if (IsLocked()) {
         xassert(0);
         Unlock();
     }
@@ -55,11 +72,23 @@ void DrawBuffer::Draw() {
     gb_RenderDevice->SubmitDrawBuffer(this);
 }
 
+void DrawBuffer::DrawStrip() {
+    if (IsLocked()) {
+        xassert(0);
+        Unlock();
+    }
+    if (written_vertices < 4) {
+        Backwind();
+        return;
+    }
+
+    Draw();
+}
+
 void DrawBuffer::PostDraw() {
     if (dynamic) {
         if (vb.buf && ib.buf) {
-            written_vertices = 0;
-            written_indices = 0;
+            Backwind();
         } else {
             Recreate();
         }
@@ -67,6 +96,12 @@ void DrawBuffer::PostDraw() {
 }
 
 bool DrawBuffer::LockSetup(size_t vertices, size_t indices) {
+    //If nothing to lock then just skip
+    if (!vertices && !indices) {
+        return false;
+    }
+    
+    //Check if there is enough available to lock
     if (vertices + written_vertices > vb.NumberVertex
     || indices + written_indices > ib.NumberIndices) {
         if (dynamic) {

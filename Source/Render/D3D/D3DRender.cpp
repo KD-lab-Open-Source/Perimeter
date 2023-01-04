@@ -1465,7 +1465,6 @@ void cD3DRender::UnlockIndexBuffer(IndexBuffer &ib)
 void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
     SetFVF(db->vb.fmt);
     SetStreamSource(db->vb);
-    SetIndices(db->ib);
     D3DPRIMITIVETYPE d3dType;
     switch (db->primitive) {
         default:
@@ -1476,13 +1475,20 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
             d3dType = D3DPT_TRIANGLELIST;
             break;
     }
-    size_t polys = static_cast<size_t>(xm::floor(static_cast<double>(db->written_indices) / sPolygon::PN));
-    RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
-            d3dType,
-            0, 0, db->written_vertices,
-            0, polys
-    ));
-    NumberPolygon+=polys;
+    if (db->written_indices) {
+        SetIndices(db->ib);
+        size_t polys = (db->primitive == PT_TRIANGLESTRIP 
+                ? (db->written_indices - 2)
+                : static_cast<size_t>(xm::floor(static_cast<double>(db->written_indices) / sPolygon::PN)));
+        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
+                d3dType,
+                0, 0, db->written_vertices,
+                0, polys
+        ));
+        NumberPolygon += polys;
+    } else {
+        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, 0, db->written_vertices));
+    }
     db->PostDraw();
 }
 

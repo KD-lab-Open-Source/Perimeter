@@ -37,9 +37,8 @@ void cSpriteManager::Draw(cCamera *camera)
     if (sprites.empty()) return;
 
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
-    indices_t* ib;
-    sVertexXYZDT1 *v;
-    db->Lock(sprites.size() * 4, sprites.size() * 6, v, ib, false);
+    indices_t* ib = nullptr;
+    sVertexXYZDT1 *v = nullptr;
     
     for (const cSprite& s : sprites) {
         if(s.ignore)
@@ -47,20 +46,19 @@ void cSpriteManager::Draw(cCamera *camera)
         if(!camera->TestVisible(s.pos,s.radius))
             continue;
 
-
         Vect3f sx=s.radius*camera->GetWorldI(),
                sy=s.radius*camera->GetWorldJ();
+
+        db->AutoLockQuad(100, 1, v, ib);
 
         v[0].pos=s.pos+sx+sy; v[0].u1()=0, v[0].v1()=0;
         v[1].pos=s.pos+sx-sy; v[1].u1()=0, v[1].v1()=1;
         v[2].pos=s.pos-sx+sy; v[2].u1()=1, v[2].v1()=0;
         v[3].pos=s.pos-sx-sy; v[3].u1()=1, v[3].v1()=1;
         v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=s.color;
-
-        db->WriteQuad(1, v, ib);
     }
 
-    db->Unlock();
+    db->AutoUnlock();
     db->Draw();
 }
 

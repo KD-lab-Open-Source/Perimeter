@@ -57,7 +57,8 @@ int cSokolRender::EndScene() {
         RenderSubmitEvent(RenderEvent::PROCESS_COMMAND, "", command);
         cmdnum += 1;
         //Nothing to draw
-        if (!command->vertices) {
+        if (3 > command->vertices) {
+            xassert(0);
             continue;
         }
         
@@ -79,6 +80,20 @@ int cSokolRender::EndScene() {
         );
 #endif
         shader_funcs* shader_funcs = pipeline->shader_funcs;
+        
+        //Check amount is correct
+        switch (pipeline->type) {
+            case PIPELINE_TYPE_TRIANGLE:
+                xassert(command->indices % 3 == 0);
+                break;
+            case PIPELINE_TYPE_TRIANGLESTRIP:
+                xassert(command->indices % 2 == 0);
+                break;
+            case PIPELINE_TYPE_TERRAIN:
+            case PIPELINE_TYPE_MAX:
+                xassert(0);
+                break;
+        }
 
         //Apply pipeline
         if (sg_query_pipeline_state(pipeline->pipeline) != SG_RESOURCESTATE_VALID) {
@@ -95,22 +110,24 @@ int cSokolRender::EndScene() {
             xxassert(0, "cSokolRender::EndScene missing vertex_buffer");
             continue;
         }
-        if (!command->index_buffer) {
-            xxassert(0, "cSokolRender::EndScene missing index_buffer");
-            continue;
-        }
         command->vertex_buffer->update(command->vertices * pipeline->vertex_size);
-        command->index_buffer->update(command->indices * sizeof(indices_t));
         if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene not valid state");
             continue;
         }
-        if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
-            xxassert(0, "cSokolRender::EndScene not valid state");
-            continue;
-        }
         bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
-        bindings.index_buffer = command->index_buffer->buffer;
+        if (command->indices) {
+            if (!command->index_buffer) {
+                xxassert(0, "cSokolRender::EndScene missing index_buffer");
+                continue;
+            }
+            command->index_buffer->update(command->indices * sizeof(indices_t));
+            if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
+                xxassert(0, "cSokolRender::EndScene not valid state");
+                continue;
+            }
+            bindings.index_buffer = command->index_buffer->buffer;
+        }
         
         //Bind images for samplers
         int slot_tex0 = shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
@@ -180,25 +197,7 @@ int cSokolRender::EndScene() {
         }
 
         //Draw
-#ifdef PERIMETER_DEBUG_ASSERT
-        switch (pipeline->type) {
-            case PIPELINE_TYPE_TRIANGLE:
-                xassert(3 <= command->vertices);
-                xassert(3 <= command->indices);
-                xassert(command->indices % 3 == 0);
-                break;
-            case PIPELINE_TYPE_TRIANGLESTRIP:
-                xassert(3 <= command->vertices);
-                xassert(3 <= command->indices);
-                xassert(command->indices % 2 == 0);
-                break;
-            case PIPELINE_TYPE_TERRAIN:
-            case PIPELINE_TYPE_MAX:
-                xassert(0);
-                break;
-        }
-#endif
-        sg_draw(0, static_cast<int>(command->indices), 1);
+        sg_draw(0, static_cast<int>(command->indices ? command->indices : command->vertices), 1);
     }
 
     //End pass

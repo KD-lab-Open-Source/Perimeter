@@ -125,6 +125,7 @@ void cChaos::Draw(cCamera *DrawNode) {
 #endif
 
     //TODO we need to add bump texture too
+    //TODO also implement shader equivalent for shader/Chaos/chaos.vsl to modify UVs at runtime
     gb_RenderDevice->SetNoMaterial(ALPHA_NONE,0,pTex0_0,pTex0_1,COLOR_ADD);
     gb_RenderDevice->SetWorldMatXf(GetGlobalMatrix());
     db->Draw();

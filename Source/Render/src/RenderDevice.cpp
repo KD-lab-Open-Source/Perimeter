@@ -298,6 +298,7 @@ float cInterfaceRenderDevice::GetFontLength(const char *string, size_t* count) {
     float xOfs = 0;
     float xSize = CurrentFont->GetScale().x*static_cast<float>(CurrentFont->GetTexture()?CurrentFont->GetTexture()->GetWidth():1);
     sColor4c diffuse(0,0,0,0);
+    if (count) *count = 0;
 
     for(const char* str=string;*str;str++) {
         ChangeTextColor(str, diffuse);

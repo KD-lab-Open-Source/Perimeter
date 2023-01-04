@@ -552,7 +552,11 @@ void CShellCursorManager::SetActiveCursor(int cursor, char bPermanent)
 
 void CShellCursorManager::OnWMSetCursor()
 {
+#ifdef PERIMETER_DEBUG
+    SDL_ShowCursor(SDL_TRUE);
+#else
     SDL_ShowCursor(SDL_FALSE);
+#endif
     
 	if(!m_pActiveCursor)
 		return;

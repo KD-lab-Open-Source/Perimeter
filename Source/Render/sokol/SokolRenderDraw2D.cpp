@@ -22,6 +22,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
     if (outline) {
         const float w = static_cast<float>(ScreenSize.y * (1.5 / 800.0) / 2.0);
         auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        db->Backwind();
         sVertexXYZDT1* v = nullptr;
         indices_t* ib = nullptr;
         db->Lock<sVertexXYZDT1>(8, 12, v, ib, true);
@@ -254,44 +255,47 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
     
     SetNoMaterial(blend_mode, 0, CurrentFont->GetTexture());
     UseOrthographicProjection();
-
-    for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
+    
+    indices_t* i = nullptr;
+    sVertexXYZDT1* v = nullptr;
+    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    for (const char* str = string; 0 != *str; str++, yOfs += ySize) {
         xOfs = static_cast<float>(x);
+        size_t chars;
+        float StringWidth = GetFontLength(str, &chars);
         if (0 <= align) {
-            float StringWidth = GetFontLength(str);
             xOfs -= static_cast<float>(xm::round(StringWidth * (align == 0 ? 0.5f : 1)));
         }
-        for (; *str!=10; str++) {
+        for (; *str != 10; str++) {
             ChangeTextColor(str, diffuse);
             uint8_t c = *str;
-            if (!c) goto out;
-            if (c==10) break;
-            if (c<32) {
-                continue;
-            }
-            Vect3f& size=cf->Font[c];
-            
-            auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
-            sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
-            
-            v[0].z=v[1].z=v[2].z=v[3].z=0;
-            v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=diffuse.ABGR();
-            v[0].x=v[1].x=static_cast<float>(xOfs);
-            v[0].y=v[2].y=static_cast<float>(yOfs);
-            xOfs+=xSize*size.z-1;
-            v[3].x=v[2].x=static_cast<float>(xOfs);
-            v[1].y=v[3].y=static_cast<float>(yOfs+ySize);
+            if (!c || c == 10) break;
+            if (c < 32) continue;
 
-            v[0].u1()=size.x;        v[0].v1()=size.y;
-            v[1].u1()=size.x;        v[1].v1()=size.y+v_add;
-            v[2].u1()=size.x+size.z; v[2].v1()=size.y;
-            v[3].u1()=size.x+size.z; v[3].v1()=size.y+v_add;
+            db->AutoLockQuad<sVertexXYZDT1>(std::min(chars, static_cast<size_t>(10)), 1, v, i);
+            
+            Vect3f& size = cf->Font[c];
 
-            db->Unlock();
+            v[0].z = v[1].z = v[2].z = v[3].z = 0;
+            v[0].diffuse.v = v[1].diffuse.v = v[2].diffuse.v = v[3].diffuse.v = diffuse.ABGR();
+            v[0].x = v[1].x = static_cast<float>(xOfs);
+            v[0].y = v[2].y = static_cast<float>(yOfs);
+            xOfs += xSize * size.z - 1;
+            v[3].x = v[2].x = static_cast<float>(xOfs);
+            v[1].y = v[3].y = static_cast<float>(yOfs + ySize);
+
+            v[0].u1() = size.x;
+            v[0].v1() = size.y;
+            v[1].u1() = size.x;
+            v[1].v1() = size.y + v_add;
+            v[2].u1() = size.x + size.z;
+            v[2].v1() = size.y;
+            v[3].u1() = size.x + size.z;
+            v[3].v1() = size.y + v_add;
         }
+        db->AutoUnlock();
+        if (*str == 0) break;
     }
-    out:
-    return;
 }
 
 void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
@@ -300,7 +304,6 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
         VISASSERT(0 && "Font not set");
         return;
     }
-    //OutText(x, y, string, color, align, blend_mode);
 
     duv.x *= 1024.0f / static_cast<float>(GetSizeX());
     duv.y *= 768.0f / static_cast<float>(GetSizeY());
@@ -317,23 +320,25 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
     SetNoMaterial(blend_mode, phase, pTexture, CurrentFont->GetTexture(), static_cast<eColorMode>(extra_mode | mode));
     UseOrthographicProjection();
 
+    indices_t* i = nullptr;
+    sVertexXYZDT2* v = nullptr;
     auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
     for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
         xOfs = static_cast<float>(x);
+        size_t chars;
+        float StringWidth = GetFontLength(str, &chars);
         if (0 <= align) {
-            float StringWidth = GetFontLength(str);
             xOfs -= static_cast<float>(xm::round(StringWidth * (align == 0 ? 0.5f : 1)));
         }
         for (; *str!=10; str++) {
             ChangeTextColor(str, diffuse);
             uint8_t c = *str;
-            if (!c) goto out;
-            if (c==10) break;
-            if (c<32) {
-                continue;
-            }
-            Vect3f& size=cf->Font[c];
-            sVertexXYZDT2* v = db->LockQuad<sVertexXYZDT2>(1);
+            if (!c || c == 10) break;
+            if (c < 32) continue;
+
+            Vect3f& size = cf->Font[c];
+
+            db->AutoLockQuad<sVertexXYZDT2>(std::min(chars, static_cast<size_t>(10)), 1, v, i);
 
             float x0, x1, y0, y1;
             x0 = xOfs;
@@ -359,11 +364,9 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
             v[2].v1() = v[3].v1() = (y1 - y) * duv.y + uv.y;
 
             xOfs = x1;
-
-            db->Unlock();
         }
+        db->AutoUnlock();
+        if (*str == 0) break;
     }
-    out:
-    return;
 }
 
