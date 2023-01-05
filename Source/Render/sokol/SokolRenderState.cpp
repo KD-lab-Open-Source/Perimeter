@@ -134,7 +134,7 @@ int cSokolRender::EndScene() {
         if (0 <= slot_tex0) {
             SokolTexture2D* tex = emptyTexture;
             if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
-                tex = command->textures[0];
+                tex = command->sokol_textures[0];
             }
             if (tex) {
                 if (tex->data) tex->update();
@@ -152,7 +152,7 @@ int cSokolRender::EndScene() {
         if (0 <= slot_tex1) {
             SokolTexture2D* tex = emptyTexture;
             if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-                tex = command->textures[1];
+                tex = command->sokol_textures[1];
             }
             if (tex) {
                 if (tex->data) tex->update();
@@ -259,31 +259,33 @@ void cSokolRender::FinishCommand() {
 #endif
 
 #ifdef PERIMETER_DEBUG
-    xassert(!activeDrawBuffer->locked_vertices);
+    xassert(!activeDrawBuffer->IsLocked());
     if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX1) {
-        xassert(activeCommand.textures[0]);
+        if (activeCommand.sokol_textures[0] != emptyTexture && activeCommand.sokol_textures[0] != testTexture) {
+            xassert(activeCommand.sokol_textures[0]);
+            xassert(activeCommand.texture_handles[0]);
+        }
+        
     }
     if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX2) {
-        xassert(activeCommand.textures[1]);
+        xassert(activeCommand.sokol_textures[1]);
+        xassert(activeCommand.texture_handles[1]);
     }
 #endif
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
     cmd->pipeline_id = pipeline_id;
-    memcpy(cmd->textures, activeCommand.textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
+    for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+        cmd->SetTexture(i, activeCommand.texture_handles[i], activeCommand.sokol_textures[i]);
+    }
     cmd->fs_mode = activeCommand.fs_mode;
     cmd->vertices = activeDrawBuffer->written_vertices;
     cmd->indices = activeDrawBuffer->written_indices;
     
-    //We copy the MVP if any
-    if (activeCommandVP) {
-        cmd->owned_mvp = true;
-        cmd->vs_mvp = new Mat4f(*activeCommandVP);
-        if (activeCommandW) {
-            *cmd->vs_mvp *= *activeCommandW;
-        }
-    }
+    //We copy the MVP
+    cmd->owned_mvp = true;
+    cmd->vs_mvp = new Mat4f(activeCommandVP * activeCommandW);
     
     //Transfer buffers to command
     cmd->owned_buffers = activeDrawBuffer->dynamic;
@@ -335,27 +337,29 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
-    if (activeCommandVP != matrix) {
+    if (!matrix) matrix = &Mat4f::ID;
+    if (!activeCommandVP.eq(*matrix, 0)) {
         FinishCommand();
     }
-    activeCommandVP = matrix;
+    activeCommandVP = *matrix;
 }
 
 void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
     RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX);
-    if (activeCommandW != matrix) {
+    if (!matrix) matrix = &Mat4f::ID;
+    if (!activeCommandW.eq(*matrix, 0)) {
         FinishCommand();
     }
-    activeCommandW = matrix;
+    activeCommandW = *matrix;
 }
 
 void cSokolRender::UseOrthographicProjection() {
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX, "Orthographic");
-    if (activeCommandVP != &orthoVP || activeCommandW != nullptr) {
+    if (!activeCommandVP.eq(orthoVP, 0) || activeCommandW != Mat4f::ID) {
         FinishCommand();
     }
-    activeCommandVP = &orthoVP;
-    activeCommandW = nullptr;
+    activeCommandVP = orthoVP;
+    activeCommandW = Mat4f::ID;
 }
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
@@ -382,13 +386,13 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
     int fs_mode = color_mode;    
     if (activePipelineBlend != blend
      || activeCommand.fs_mode != fs_mode
-     || activeCommand.textures[0] != tex0
-     || activeCommand.textures[1] != tex1) {
+     || activeCommand.sokol_textures[0] != tex0
+     || activeCommand.sokol_textures[1] != tex1) {
         FinishCommand();
         activePipelineBlend = blend;
         activeCommand.fs_mode = fs_mode;
-        activeCommand.textures[0] = tex0;
-        activeCommand.textures[1] = tex1;
+        activeCommand.SetTexture(0, Texture0, tex0);
+        activeCommand.SetTexture(1, Texture1, tex1);
     }
 }
 
@@ -486,6 +490,10 @@ int cSokolRender::GetRenderState(eRenderStateOption option) {
 int cSokolRender::SetRenderState(eRenderStateOption option, int value) {
     VISASSERT(ActiveScene);
     switch(option) {
+        case RS_ZWRITEENABLE:
+        case RS_ZFUNC:
+            //TODO?
+            break;
         case RS_FILLMODE:
             //TODO WireFrame = value == FILL_WIREFRAME;
             break;

@@ -110,18 +110,49 @@ public:
     void AutoLockQuad(size_t locked_quads, size_t quads, TVERTEX*& vertex_buf, indices_t*& indices_buf) {
         xassert(locked_quads);
         if ((locked_vertices && lock_written_vertices + quads * 4 >= locked_vertices)
-        ||  (locked_indices && lock_written_indices + quads * 6 >= locked_indices)) {
+        || (locked_indices && lock_written_indices + quads * 6 >= locked_indices)) {
             Unlock();
         }
         TVERTEX* empty = nullptr;
         bool was_locked = locked_vertices || locked_indices;
         if (!was_locked) {
             Lock(
-                    std::min(static_cast<size_t>(vb.NumberVertex), locked_quads * 4), 
-                    std::min(static_cast<size_t>(ib.NumberIndices), locked_quads * 6), 
+                    std::min(static_cast<size_t>(vb.NumberVertex), locked_quads * 4),
+                    std::min(static_cast<size_t>(ib.NumberIndices), locked_quads * 6),
                     vertex_buf, indices_buf, false);
         }
         WriteQuad(quads, was_locked ? vertex_buf : empty, indices_buf);
+    }
+
+    template<class TVERTEX>
+    void AutoLockTriangle(size_t locked_triangles, size_t triangles, TVERTEX*& vertex_buf, indices_t*& indices_buf) {
+        xassert(TVERTEX::fmt == vb.fmt);
+        xassert(primitive == PT_TRIANGLES);
+        xassert(locked_triangles);
+        if (!triangles) return;
+        if ((locked_vertices && lock_written_vertices + triangles * 3 >= locked_vertices)
+        ||  (locked_indices && lock_written_indices + triangles * 3 >= locked_indices)) {
+            Unlock();
+        }
+        bool was_locked = locked_vertices || locked_indices;
+        if (!was_locked) {
+            Lock(
+                    std::min(static_cast<size_t>(vb.NumberVertex), triangles * 3),
+                    std::min(static_cast<size_t>(ib.NumberIndices), triangles * 3),
+                    vertex_buf, indices_buf, false);
+        }
+        xassert(lock_written_vertices + triangles * 3 <= locked_vertices);
+        xassert(lock_written_indices + triangles * 3 <= locked_indices);
+        for (int i = 0; i < triangles; ++i) {
+            size_t b = written_vertices + lock_written_vertices;
+            indices_buf[0] = b;
+            indices_buf[1] = b + 1;
+            indices_buf[2] = b + 2;
+            indices_buf += 3;
+            lock_written_indices += 3;
+            lock_written_vertices += 3;
+        }
+        if (was_locked) vertex_buf += triangles * 3;
     }
     
     //Write* functions prewrite indices and advance vertex buffer automatically

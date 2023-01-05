@@ -49,7 +49,7 @@ void cSpriteManager::Draw(cCamera *camera)
         Vect3f sx=s.radius*camera->GetWorldI(),
                sy=s.radius*camera->GetWorldJ();
 
-        db->AutoLockQuad(100, 1, v, ib);
+        db->AutoLockQuad(std::min(sprites.size(), static_cast<size_t>(10)), 1, v, ib);
 
         v[0].pos=s.pos+sx+sy; v[0].u1()=0, v[0].v1()=0;
         v[1].pos=s.pos+sx-sy; v[1].u1()=0, v[1].v1()=1;

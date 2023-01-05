@@ -17,12 +17,15 @@ struct SokolCommand {
     void Clear();
     void ClearDrawData();
     void ClearMVP();
+    void SetTexture(size_t index, cTexture* texture, SokolTexture2D* sokol_texture);
+    void ClearTextures();
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
     pipeline_id_t pipeline_id = 0;
     size_t vertices = 0;
     size_t indices = 0;
-    struct SokolTexture2D* textures[PERIMETER_SOKOL_TEXTURES];
+    struct SokolTexture2D* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
+    class cTexture* texture_handles[PERIMETER_SOKOL_TEXTURES] = {};
     bool owned_buffers = false;
     struct SokolBuffer* vertex_buffer = nullptr;
     struct SokolBuffer* index_buffer = nullptr;
@@ -49,7 +52,9 @@ private:
     
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;
+#ifdef PERIMETER_DEBUG
     SokolTexture2D* testTexture = nullptr;
+#endif
 
     //Pipelines
 #ifdef PERIMETER_SOKOL_SHARE_SHADERS
@@ -69,8 +74,8 @@ private:
 
     eBlendMode activePipelineBlend = ALPHA_NONE;
     eCullMode activePipelineCull = CULL_NONE;
-    const Mat4f* activeCommandVP;
-    const Mat4f* activeCommandW;
+    Mat4f activeCommandVP;
+    Mat4f activeCommandW;
 
     //Commands handling
     void ClearCommands();

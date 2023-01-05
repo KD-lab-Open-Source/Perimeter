@@ -454,6 +454,17 @@ Mat4f& Mat4f::postmult(const Mat4f& M)
 	 return mult(N, M);
 }
 
+bool Mat4f::eq(const Mat4f& v, float delta) const {
+    if (delta == 0) {
+        return memcmp(array, v.array, sizeof(float) * 16) == 0;
+    }
+    for (int i = 0; i < 16; ++i) {
+        if (!(xm::abs(array[i] - v.array[i]) < delta)) {
+            return false;
+        } 
+    }
+    return true;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

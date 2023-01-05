@@ -437,21 +437,6 @@ cSpriteManager* cScene::CreateSpriteManager(const char* TexFName)
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-cIUnkClass* cScene::CreateZPlaneObj(const char* Tex0,const char* Tex1,float k0,float k1,int op,
-									float v0x,float v0y,float v1x,float v1y)
-{
-	cZPlane *PlaneObj=new cZPlane;
-
-	cTexture* pTex0=GetTexLibrary()->GetElement(Tex0);
-	cTexture* pTex1=GetTexLibrary()->GetElement(Tex1);
-	PlaneObj->SetTexture(pTex0,pTex1,k0,k1,op);
-	PlaneObj->SetSpeed(0,v0x,v0y);
-	PlaneObj->SetSpeed(1,v1x,v1y);
-
-	AttachObj(PlaneObj);
-	return PlaneObj; 
-}
-
 cChaos* cScene::CreateChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump)
 {
 	cChaos* p=new cChaos(size,str_tex0,str_tex1,str_bump,tile,enable_bump);

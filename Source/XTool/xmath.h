@@ -2152,11 +2152,16 @@ class Mat4f
 
 public:
 
-  // (stored in row-major order)
-  float xx, xy, xz, xw,
-       yx, yy, yz, yw,
-       zx, zy, zz, zw,
-       wx, wy, wz, ww;
+  union {
+      struct {
+          // (stored in row-major order)
+          float xx, xy, xz, xw,
+                yx, yy, yz, yw,
+                zx, zy, zz, zw,
+                wx, wy, wz, ww;
+      };
+      struct { float array[16];  };
+  };
 
   // constructors //////////////////////////////////////////////////////////////
 
@@ -2172,6 +2177,11 @@ public:
   xm_inline Mat4f(const Mat3f& rot) { set(rot); }
   xm_inline Mat4f(const Mat3f& rot, const Vect3f& trans) { set(rot, trans); }
   xm_inline Mat4f(const MatXf& X) { set(X); }
+
+  //  Logical operations  ////////////////////////////////
+  bool eq(const Mat4f& v, float delta = FLT_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const Mat4f& v) const { return eq(v); }
+  xm_inline int operator!= (const Mat4f& v) const { return !eq(v); }
 
   // setters / accessors ///////////////////////////////////////////////////////
   

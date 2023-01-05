@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "OcclusionQuery.h"
 
+#ifdef PERIMETER_D3D9_OCCLUSION
 cOcclusionQuery::cOcclusionQuery()
 {
 	draw=false;
@@ -100,3 +101,4 @@ bool cOcclusionQuery::IsVisible()
 
 	return point!=0;
 }
+#endif

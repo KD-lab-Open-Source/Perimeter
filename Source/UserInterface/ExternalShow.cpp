@@ -668,39 +668,21 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 }
 /*/
 
-#ifdef PERIMETER_D3D9
-inline void AddTriangle(cVertexBuffer<sVertexXYZD>& buf,sVertexXYZD*& v,sVertexXYZD p[3],int& primitive)
-{
-	v[0]=p[0];
-	v[1]=p[1];
-	v[2]=p[2];
-	v+=3;
-	primitive++;
-
-	if((primitive+3)*3>=buf.GetSize())
-	{
-		buf.Unlock(primitive*3);
-		buf.DrawPrimitive(PT_TRIANGLES, primitive);
-		primitive=0;
-		v=buf.Lock();
-	}
-}
-
-void terExternalRegionShowColumnD3D(Column* column,sColor4c color)
-{
+void terExternalRegionShowColumn(Column* column,sColor4c color) {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
-    
-	cVertexBuffer<sVertexXYZD>& buf=*gb_RenderDevice3D->GetBufferXYZD();
-	sVertexXYZD* v=buf.Lock();
+
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    db->Backwind();
 
 	float z=vMap.hZeroPlast-ZFIX;
-	int primitive=0;
 
-	int profile_num=0;
+    const size_t locked = 100;
+    const size_t v_len = sizeof(sVertexXYZDT1) * 3;
 
+    sVertexXYZDT1* vp = nullptr;
+    indices_t* ip = nullptr;
     std::vector<CellLine>::iterator it_line;
-	FOR_EACH(*column,it_line)
-	{
+	FOR_EACH(*column, it_line) {
 		CellLine* cell=&*it_line;
 		CellLine* next_cell=NULL;
 		CellLine* prev_cell=NULL;
@@ -729,119 +711,98 @@ void terExternalRegionShowColumnD3D(Column* column,sColor4c color)
 		if(prev_cell)
 			it_prev=prev_cell->begin();
 
-		FOR_EACH(*cell,it)
-		{
-			int i=0;
-			Cell& c=*it;
-			//Эмулируем triangle fan
-			sVertexXYZD p[3];
+		for (const Cell& c : *cell) {
+			//Emulate/Эмулируем triangle fan
+			sVertexXYZDT1 p[3];
+            p[0].u1()=0, p[0].v1()=0;
+            p[1].u1()=0, p[1].v1()=0;
+            p[2].u1()=0, p[2].v1()=0;
 			p[0].diffuse=p[1].diffuse=p[2].diffuse=color;
 
 			p[0].pos.set(c.xl,c.y,z);
 			p[2].pos.set(c.xl,c.y+1,z);
 
-			if(next_cell)
-			for(;it_next!=next_cell->end();it_next++)
-			{//Добавляем доп. точки из нижней линии.
-				Cell& cn=*it_next;
-				if(cn.xr<=c.xl)
-					continue;
-				if(cn.xl>=c.xr)
-					break;
-				xassert(c.y+1==cn.y);
+			if(next_cell) {
+                for (; it_next != next_cell->end(); it_next++) {
+                    //Добавляем доп. точки из нижней линии.
+                    //Add extra point from the bottom line
+                    Cell& cn = *it_next;
+                    if (cn.xr <= c.xl)
+                        continue;
+                    if (cn.xl >= c.xr)
+                        break;
+                    xassert(c.y + 1 == cn.y);
 
-				if(cn.xl>c.xl && cn.xl<c.xr)
-				{
-					p[1]=p[2];
-					p[2].pos.set(cn.xl,cn.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
+                    if (cn.xl > c.xl && cn.xl < c.xr) {
+                        p[1] = p[2];
+                        p[2].pos.set(cn.xl, cn.y, z);
+                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
 
-				if(cn.xr>c.xl && cn.xr<c.xr)
-				{
-					p[1]=p[2];
-					p[2].pos.set(cn.xr,cn.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
-			}
+                    if (cn.xr > c.xl && cn.xr < c.xr) {
+                        p[1] = p[2];
+                        p[2].pos.set(cn.xr, cn.y, z);
+                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
+                }
+            }
 
 			p[1]=p[2];
 			p[2].pos.set(c.xr,c.y+1,z);
-			AddTriangle(buf,v,p,primitive);
-			i++;
+            db->AutoLockTriangle(locked, 3, vp, ip);
+            memcpy(vp, p, v_len);
 
 			bool first=true;
-			if(prev_cell)
-			for(;it_prev!=prev_cell->end();it_prev++)
-			{//Добавляем доп. точки из верхней линии.
-				Cell& cn=*it_prev;
-				if(cn.xr<=c.xl)
-					continue;
-				if(cn.xl>=c.xr)
-					break;
-				xassert(c.y-1==cn.y);
+            if (prev_cell) {
+                for (; it_prev != prev_cell->end(); it_prev++) {
+                    //Добавляем доп. точки из верхней линии.
+                    //Add extra point from the top line
+                    Cell& cn = *it_prev;
+                    if (cn.xr <= c.xl)
+                        continue;
+                    if (cn.xl >= c.xr)
+                        break;
+                    xassert(c.y - 1 == cn.y);
 
-				if(cn.xl>c.xl && cn.xl<c.xr)
-				{
-					if(first)
-						first=false;
-					else
-						p[0]=p[1];
-					p[1].pos.set(cn.xl,c.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
+                    if (cn.xl > c.xl && cn.xl < c.xr) {
+                        if (first)
+                            first = false;
+                        else
+                            p[0] = p[1];
+                        p[1].pos.set(cn.xl, c.y, z);
+                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
 
-				if(cn.xr>c.xl && cn.xr<c.xr)
-				{
-					if(first)
-						first=false;
-					else
-						p[0]=p[1];
-					p[1].pos.set(cn.xr,c.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
-			}
+                    if (cn.xr > c.xl && cn.xr < c.xr) {
+                        if (first)
+                            first = false;
+                        else
+                            p[0] = p[1];
+                        p[1].pos.set(cn.xr, c.y, z);
+                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
+                }
+            }
 
-			if(first)
-			{
+			if(first) {
 				p[1]=p[2];
 				p[2].pos.set(c.xr,c.y,z);
-			}else
-			{
+			} else {
 				p[0]=p[1];
 				p[1].pos.set(c.xr,c.y,z);
 			}
 
-			AddTriangle(buf,v,p,primitive);
-			i++;
-
-			if(i>4)
-			{
-				profile_num++;
-			}
+            db->AutoLockTriangle(locked, 3, vp, ip);
+            memcpy(vp, p, v_len);
 		}
 	}
 
-	buf.Unlock(primitive*3);
-	if(primitive)
-		buf.DrawPrimitive(PT_TRIANGLES, primitive);
-}
-#endif
-
-void terExternalRegionShowColumn(Column* column, sColor4c color) {
-
-#ifdef PERIMETER_D3D9
-    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
-        terExternalRegionShowColumnD3D(column, color);
-        return;
-    }
-#endif
-    
-    //TODO implement using vertex+index system
+    db->AutoUnlock();
+    db->Draw();
 }
 
 terRegionColumnMain::terRegionColumnMain()

@@ -4,6 +4,7 @@
 #include "AnimChannel.h"
 #include "Scene.h"
 #include "MeshBank.h"
+#include "DrawBuffer.h"
 
 cObjLight::cObjLight():cObjectNode(KIND_LIGHT)
 { 
@@ -28,25 +29,26 @@ cObjLight::~cObjLight()
 
 void cObjLight::OcclusionTest()
 {
-#ifdef PERIMETER_D3D9
+    bool visible = true;
+#ifdef PERIMETER_D3D9_OCCLUSION
 	if(occlusion.IsInit())
 	{
-		bool occlude=occlusion.IsVisible();
-		double cur_time=clockf();
-		double dt=cur_time-prev_time;
-		prev_time=cur_time;
-		if(dt>0.1e3)
-			dt=0.1e3;
-		if(occlude)
-			fade+=dt*Option_InvOcclusionFadeTime;
-		else
-			fade-=dt*Option_InvOcclusionFadeTime;
-		if(fade<0)
-			fade=0;
-		if(fade>1)
-			fade=1;
+		visible=occlusion.IsVisible();
 	}
 #endif
+    double cur_time=clockf();
+    double dt=cur_time-prev_time;
+    prev_time=cur_time;
+    if(dt>0.1e3)
+        dt=0.1e3;
+    if(visible)
+        fade+=dt*Option_InvOcclusionFadeTime;
+    else
+        fade-=dt*Option_InvOcclusionFadeTime;
+    if(fade<0)
+        fade=0;
+    if(fade>1)
+        fade=1;
 }
 
 void cObjLight::PreDraw(cCamera *DrawNode)
@@ -81,44 +83,42 @@ void cObjLight::Draw(cCamera *DrawNode)
 
 	float alpha=255.0f*GetIntensity();
 
-#ifdef PERIMETER_D3D9
-    //TODO
-	uint32_t zfunc=0;
-    
-    if (gb_RenderDevice3D) {
-        zfunc = gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 
-        if (occlusion.IsInit() && !DrawNode->GetParent()) {
-            occlusion.Test(GetGlobalMatrix().trans());
-            alpha *= fade;
-            gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-        }
+#ifdef PERIMETER_D3D9_OCCLUSION
+    uint32_t zfunc = gb_RenderDevice->GetRenderState(RS_ZFUNC);
+    if (occlusion.IsInit())
+#endif
+    if (!DrawNode->GetParent()) {
+#ifdef PERIMETER_D3D9_OCCLUSION
+        occlusion.Test(GetGlobalMatrix().trans());
+        gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_ALWAYS);
+#endif
+        alpha *= fade;
     }
 
 	sColor4c Diffuse(xm::round(GetDiffuse().r * alpha), xm::round(GetDiffuse().g * alpha), xm::round(GetDiffuse().b * alpha),
                      xm::round(GetDiffuse().a * alpha));
 	float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
 
-    if (gb_RenderDevice3D) {
-        cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice3D->GetBufferXYZDT1();
-        sVertexXYZDT1 *v=buf->Lock(4);
-        Vect3f sx=radius*DrawNode->GetWorldI(),sy=radius*DrawNode->GetWorldJ();
-        v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
-        v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
-        v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
-        v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
-        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
-        buf->Unlock(4);
+    Vect3f sx=radius*DrawNode->GetWorldI(),sy=radius*DrawNode->GetWorldJ();
     
-        gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,GetPhase(),GetTexture());
-        buf->DrawPrimitive(PT_TRIANGLESTRIP,2,MatXf::ID);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    sVertexXYZDT1* v=db->LockQuad<sVertexXYZDT1>(1);
+    v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
+    v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
+    v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
+    v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
+    db->Unlock();
     
-        if(occlusion.IsInit()) {
-            gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, zfunc);
-        }
-    }
-#endif
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,GetPhase(),GetTexture());
+    db->Draw();
 
+#ifdef PERIMETER_D3D9_OCCLUSION
+    if (occlusion.IsInit())
+    gb_RenderDevice->SetRenderState(RS_ZFUNC, zfunc);
+#endif
 }
 
 void cObjLight::SetColor(const sColor4f *Ambient,const sColor4f *Diffuse,const sColor4f *Specular)

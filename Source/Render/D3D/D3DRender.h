@@ -431,7 +431,9 @@ protected:
 
 	IndexBuffer standart_ib;
 
+#ifdef PERIMETER_D3D9_OCCLUSION
 	std::vector<cOcclusionQuery*> occlusion_query;
+#endif
 
 	void InitVertexBuffers();
 

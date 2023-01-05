@@ -212,7 +212,9 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 		dtAdvanceOriginal=new DrawTypeRadeon8500;
 #endif
 
+#ifdef PERIMETER_D3D9_OCCLUSION
 	VISASSERT(occlusion_query.empty());
+#endif
 
 	SetAdvance();
 
@@ -1511,11 +1513,13 @@ int cD3DRender::KillFocus()
 {
 	if(lpD3DDevice==0) return 1;
 
+#ifdef PERIMETER_D3D9_OCCLUSION
 	{
 		std::vector<cOcclusionQuery*>::iterator it;
 		FOR_EACH(occlusion_query,it)
 			(*it)->Done();
 	}
+#endif
 
 	RELEASE(lpZBuffer);
 	RELEASE(lpBackBuffer);
@@ -2077,12 +2081,14 @@ bool cD3DRender::GetAnisotropic()
 bool cD3DRender::ReinitOcclusion()
 {
 	bool ok=true;
+#ifdef PERIMETER_D3D9_OCCLUSION
 	std::vector<cOcclusionQuery*>::iterator it;
 	FOR_EACH(occlusion_query,it)
 	{
 		bool b=(*it)->Init();
 		ok = ok && b;
 	}
+#endif
 
 	return ok;
 }
