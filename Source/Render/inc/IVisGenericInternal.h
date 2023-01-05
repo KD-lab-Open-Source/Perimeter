@@ -1,8 +1,8 @@
 #pragma once
-#include "Unknown.h"
 
 #include <xutil.h>
 #define VISASSERT(a)											xassert(a)
+#include "Unknown.h"
 #include "RenderMT.h"
 
 class cInterfaceRenderDevice;

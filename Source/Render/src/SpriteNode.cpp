@@ -7,13 +7,17 @@
 cSpriteManager::cSpriteManager()
 : cAnimUnkObj(0)
 {
+    sprites.resize(1000);
 	MTINIT(sprite_lock);
 }
 
 cSpriteManager::~cSpriteManager()
 {
 	MTDONE(sprite_lock);
-	VISASSERT(sprites.size()==0);
+    
+    for (const cSprite* sptr : sprites) {
+        VISASSERT(sptr == nullptr);
+    }
 }
 
 void cSpriteManager::Animate(float dt)
@@ -40,11 +44,14 @@ void cSpriteManager::Draw(cCamera *camera)
     indices_t* ib = nullptr;
     sVertexXYZDT1 *v = nullptr;
     
-    for (const cSprite& s : sprites) {
-        if(s.ignore)
+    for (const cSprite* sptr : sprites) {
+        if (sptr == nullptr) {
             continue;
-        if(!camera->TestVisible(s.pos,s.radius))
+        }
+        const cSprite& s = *sptr;
+        if (s.ignore || !camera->TestVisible(s.pos,s.radius)) {
             continue;
+        }
 
         Vect3f sx=s.radius*camera->GetWorldI(),
                sy=s.radius*camera->GetWorldJ();
@@ -59,36 +66,45 @@ void cSpriteManager::Draw(cCamera *camera)
     }
 
     db->AutoUnlock();
-    db->Draw();
+    //db->Draw();
 }
 
 cSprite* cSpriteManager::Create()
 {
 	MTEnter lock(sprite_lock);
-	sprites.emplace_back();
-	cSprite* p = &sprites.back();
+    cSprite* p = nullptr;
+    for (auto& sptr : sprites) {
+        if (sptr == nullptr) {
+            sptr = p = new cSprite();
+            break;
+        }
+    }
+    if (p == nullptr) {
+        p = new cSprite();
+        sprites.emplace_back(p);
+    }
 	p->manager=this;
 	return p;
 }
 
-void cSprite::Release()
+int cSprite::Release()
 {
-	manager->DeleteSprite(this);
+    if (GetRef() <= 1) {
+        manager->DeleteSprite(this);
+        return cUnknownClass::Release();
+    }
+    return DecRef();
 }
 
 void cSpriteManager::DeleteSprite(cSprite* sprite)
 {
 	MTEnter lock(sprite_lock);
-	std::list<cSprite>::iterator it;
-	FOR_EACH(sprites,it)
-	{
-		cSprite* s=&*it;
-		if(s==sprite)
-		{
-			sprites.erase(it);
-			return;
-		}
-	}
+    for (auto& i : sprites) {
+        if (i == sprite) {
+            i = nullptr;
+            return;
+        }
+    }
 
 	VISASSERT(0 && "Cannot found sprite to delete");
 }

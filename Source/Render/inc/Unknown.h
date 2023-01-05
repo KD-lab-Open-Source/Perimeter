@@ -45,7 +45,7 @@ enum eKindUnknownClass
 	KIND_MAX
 };
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 #define C_CHECK_DELETE
 #endif 
 
@@ -79,21 +79,16 @@ class cUnknownClass
 : public cCheckDelete
 #endif //C_CHECK_DELETE
 {	
-	int					m_cRef;
+	int					m_cRef = 1;
 	eKindUnknownClass	Kind;
 public:
-	cUnknownClass(int kind=KIND_NULL)
-	{ 
-		m_cRef=1; 
-		Kind=eKindUnknownClass(kind);
-	}
-	virtual ~cUnknownClass()								
-	{ 
-	}
+	cUnknownClass(int kind=KIND_NULL) : Kind(static_cast<eKindUnknownClass>(kind)) {}
+	virtual ~cUnknownClass() = default;
 	virtual int Release()
 	{ 
-		if(DecRef()>0) 
-			return m_cRef;
+		if (0 < DecRef()) {
+            return m_cRef;
+        }
 		delete this;
 		return 0;
 	}
@@ -101,7 +96,14 @@ public:
 	inline int GetKind() const										{ return Kind; }
 	inline int GetRef()	const										{ return m_cRef; }
 	inline int IncRef()												{ return ++m_cRef; }
-	inline int DecRef()												{ return --m_cRef; }
+	inline int DecRef() {
+        if (0 < m_cRef) {
+            return --m_cRef;
+        } else {
+            xassert(0);
+            return 0;
+        }
+    }
 };
 
 #define RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }

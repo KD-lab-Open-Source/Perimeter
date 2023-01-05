@@ -132,26 +132,26 @@ void terUniverse::clear() {
     enableEventChecking_ = false;
     
     clearLogList();
+
+    stream_interpolator.ClearData();
     
     select.DeselectAll();
 
-    PlayerVect::iterator pi;
-    FOR_EACH(Players, pi) {
-        (*pi)->killAllUnits();
+    for (terPlayer* p : Players) {
+        p->killAllUnits();
     }
     
-    FOR_EACH(Players, pi) {
-        (*pi)->removeUnits();
+    for (terPlayer* p : Players) {
+        p->removeUnits();
     }
     
     monks.Done();
     
     HTManager::instance()->ClearDeleteUnit(true);
     
-    FOR_EACH(Players, pi) {
-        delete *pi;
-    }
-    
+    for (terPlayer* p : Players) {
+        delete p;
+    }    
     Players.clear();
 
     active_player_ = nullptr;
@@ -160,7 +160,7 @@ void terUniverse::clear() {
 terUniverse::~terUniverse()
 {
 	DBGCHECK;
-    
+
     clear();
 
 	delete ai_tile_map;
