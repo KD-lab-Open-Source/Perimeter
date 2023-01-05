@@ -18,7 +18,7 @@ SET(Render_SRCS
         src/UnkLight.cpp
         src/UnkObj.cpp
         src/CChaos.cpp
-        src/cZPlane.cpp
+        src/cPlane.cpp
         src/lighting.cpp
         src/Line3d.cpp
         src/particle.cpp

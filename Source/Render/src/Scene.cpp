@@ -11,7 +11,7 @@
 #include "Trail.h"
 #include "Line3d.h"
 #include "ObjLibrary.h"
-#include "cZPlane.h"
+#include "cPlane.h"
 #include "CChaos.h"
 #include "../client/Silicon.h"
 
