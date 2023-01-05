@@ -116,7 +116,7 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLENDALPHA,0,parent->pTexture);
     gb_RenderDevice->SetWorldMat4f(nullptr);
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-    db->Backwind();
+    //db->Draw();
 	float size=parent->param.strip_width_begin+time*parent->param.strip_width_time;
 	sVertexXYZDT1 v1,v2;
 	v1.diffuse=diffuse;
@@ -131,7 +131,7 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 		v1.v1()=0;v2.v1()=1;
 		db->AutoTriangleStripStep(v1,v2);
 	}
-    db->DrawStrip();
+    db->EndTriangleStrip();
 }
 
 void cLighting::Animate(float dt)

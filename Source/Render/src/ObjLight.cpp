@@ -96,24 +96,26 @@ void cObjLight::Draw(cCamera *DrawNode)
         alpha *= fade;
     }
 
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND, GetPhase(), GetTexture());
+
 	sColor4c Diffuse(xm::round(GetDiffuse().r * alpha), xm::round(GetDiffuse().g * alpha), xm::round(GetDiffuse().b * alpha),
                      xm::round(GetDiffuse().a * alpha));
 	float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
 
-    Vect3f sx=radius*DrawNode->GetWorldI(),sy=radius*DrawNode->GetWorldJ();
-    
+    Vect3f sx = radius * DrawNode->GetWorldI();
+    Vect3f sy = radius * DrawNode->GetWorldJ();
+    Vect3f tr = GetGlobalMatrix().trans();
+
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     sVertexXYZDT1* v=db->LockQuad<sVertexXYZDT1>(1);
-    v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
-    v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
-    v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
-    v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
+    v[0].pos=tr+sx+sy; v[0].u1()=0, v[0].v1()=0; 
+    v[1].pos=tr+sx-sy; v[1].u1()=0, v[1].v1()=1;
+    v[2].pos=tr-sx+sy; v[2].u1()=1, v[2].v1()=0;
+    v[3].pos=tr-sx-sy; v[3].u1()=1, v[3].v1()=1;
     v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
     db->Unlock();
-    
-    gb_RenderDevice->SetWorldMat4f(nullptr);
-    gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,GetPhase(),GetTexture());
-    db->Draw();
+    //db->Draw();
 
 #ifdef PERIMETER_D3D9_OCCLUSION
     if (occlusion.IsInit())

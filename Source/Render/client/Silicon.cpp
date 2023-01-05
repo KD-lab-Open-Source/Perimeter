@@ -328,7 +328,6 @@ void ElasticLink::Draw(cCamera *DrawNode)
 
     gb_RenderDevice->SetWorldMatXf(MatXf(Mat3f::ID,point1));
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP);
-    db->Backwind();
 
 	sColor4c Diffuse(diffuse);
 	Vect3f Weight = 10*x_axis;
@@ -356,7 +355,6 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		db->AutoTriangleStripStep(vtx0,vtx1);
 	}
 
-	db->DrawStrip();
 	gb_RenderDevice->SetRenderState(RS_CULLMODE, old_cull);
 }
 

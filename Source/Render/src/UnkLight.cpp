@@ -55,7 +55,7 @@ void cUnkLight::Draw(cCamera *DrawNode)
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-    db->Backwind();
+    //db->Draw();
 	float tex=0;
 	Vect3f WorldK=DrawNode->GetPos()-GetPos();
 	FastNormalize(WorldK);
@@ -78,7 +78,7 @@ void cUnkLight::Draw(cCamera *DrawNode)
 		db->AutoTriangleStripStep(v0,v1);
 	}
 
-    db->DrawStrip();
+    db->EndTriangleStrip();
 }
 const MatXf& cUnkLight::GetPosition() const
 {

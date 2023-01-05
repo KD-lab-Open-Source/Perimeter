@@ -13,6 +13,7 @@
 
 void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
 {
+    FlushActiveDrawBuffer();
 	for( int nPasses=0; nPasses<nSupportTexture; nPasses++ ) 
 	{
 		lpD3DDevice->SetTexture( nPasses, CurrentTexture[nPasses]=0 );
@@ -34,6 +35,7 @@ void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
 
 void cD3DRender::RestoreRenderTarget()
 {
+    FlushActiveDrawBuffer();
 	RDCALL(lpD3DDevice->SetRenderTarget(0,lpBackBuffer));
 	RDCALL(lpD3DDevice->SetDepthStencilSurface(lpZBuffer));
 	SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
@@ -43,6 +45,7 @@ void cD3DRender::RestoreRenderTarget()
 void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 {
 	if (DrawNode==pDrawNode||lpD3DDevice==0) return;
+    FlushActiveDrawBuffer();
     cInterfaceRenderDevice::SetDrawNode(pDrawNode);
 	if(DrawNode->GetRenderTarget())
 	{
@@ -103,6 +106,7 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 
 void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 {
+    FlushActiveDrawBuffer();
     isOrthoSet = false;
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matProj)));
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matView)));
@@ -114,6 +118,7 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 }
 
 void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
+    FlushActiveDrawBuffer();
     isOrthoSet = false;
     if (!matrix) matrix = &Mat4f::ID;
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
@@ -154,6 +159,7 @@ void cD3DRender::DrawNoMaterialShadow(cObjMesh *Mesh)
 
 void cD3DRender::DrawNoMaterialShadowNoWorld(cObjMesh *Mesh)
 {
+    FlushActiveDrawBuffer();
 	cMeshTri *Tri=Mesh->GetTri();
 	RDCALL(lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 		0,

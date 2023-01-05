@@ -66,23 +66,23 @@ void DrawBuffer::Draw() {
         xassert(0);
         Unlock();
     }
-    if (!written_vertices) {
-        return;
+    
+    if (primitive == PT_TRIANGLESTRIP) {
+        if (written_vertices < 4) {
+            Backwind();
+            return;
+        }        
+    } else {
+        if (!written_vertices) {
+            return;
+        }
     }
     gb_RenderDevice->SubmitDrawBuffer(this);
 }
 
-void DrawBuffer::DrawStrip() {
-    if (IsLocked()) {
-        xassert(0);
-        Unlock();
-    }
-    if (written_vertices < 4) {
-        Backwind();
-        return;
-    }
-
-    Draw();
+void DrawBuffer::EndTriangleStrip() {
+    xassert(primitive == PT_TRIANGLESTRIP);
+    //Draw();
 }
 
 void DrawBuffer::PostDraw() {

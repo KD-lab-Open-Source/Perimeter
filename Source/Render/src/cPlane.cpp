@@ -28,6 +28,10 @@ void cPlane::PreDraw(cCamera *DrawNode)
 
 void cPlane::Draw(cCamera *DrawNode)
 {
+    gb_RenderDevice->SetRenderState(RS_BILINEAR,0);
+    gb_RenderDevice->SetNoMaterial(ALPHA_NONE,0,GetTexture());
+    gb_RenderDevice->SetWorldMatXf(GetGlobalMatrix());
+    
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES); 
 	sVertexXYZDT1* vertex=db->LockQuad<sVertexXYZDT1>(1);
 	vertex[0].pos.set(0,0,0);
@@ -50,11 +54,7 @@ void cPlane::Draw(cCamera *DrawNode)
 	vertex[3].uv[0]=umax;
 	vertex[3].uv[1]=vmax;
     db->Unlock();
-
-	gb_RenderDevice->SetRenderState(RS_BILINEAR,0);
-	gb_RenderDevice->SetNoMaterial(ALPHA_NONE,0,GetTexture());
-    gb_RenderDevice->SetWorldMatXf(GetGlobalMatrix());
-	db->Draw();
+    
 	gb_RenderDevice->SetRenderState(RS_BILINEAR,1);
 }
 

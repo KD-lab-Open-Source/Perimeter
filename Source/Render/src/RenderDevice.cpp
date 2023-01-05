@@ -11,7 +11,8 @@
 #include "sokol/SokolRender.h"
 #endif
 
-const size_t PERIMETER_RENDER_BUFFERS_QUADS_LEN = 4096;
+const size_t PERIMETER_RENDER_VERTEXBUF_LEN = 40960;
+const size_t PERIMETER_RENDER_INDEXBUF_LEN = PERIMETER_RENDER_VERTEXBUF_LEN * 2;
 
 FILE* fRD= nullptr;
 
@@ -179,7 +180,7 @@ DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveTy
     }
     if (!db) {
         db = new DrawBuffer();
-        db->Create(PERIMETER_RENDER_BUFFERS_QUADS_LEN * 4, PERIMETER_RENDER_BUFFERS_QUADS_LEN * 4, fmt, true, primitive);
+        db->Create(PERIMETER_RENDER_VERTEXBUF_LEN, PERIMETER_RENDER_INDEXBUF_LEN, fmt, true, primitive);
         drawBuffers[key] = db;
     }
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE

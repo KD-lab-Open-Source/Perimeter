@@ -779,7 +779,8 @@ int cD3DRender::BeginScene()
 int cD3DRender::EndScene()
 { 
 	if(lpD3DDevice==0) return -1;
-	if(!bActiveScene) return 1; 
+	if(!bActiveScene) return 1;
+    FlushActiveDrawBuffer();
 
 //	D3DVIEWPORT9 vpall={0,0,xScr,yScr,0.0f,1.0f};
 //	RDCALL(lpD3DDevice->SetViewport(&vpall));
@@ -847,6 +848,7 @@ int cD3DRender::SetRenderState(eRenderStateOption option,int value)
 			if(value<0) value=CurrentCullMode;
 			break;
 		case RS_BILINEAR:
+            FlushActiveDrawBuffer();
 			if(value)
 			{
 				SetSamplerState(0, D3DSAMP_MINFILTER, texture_interpolation );
@@ -1464,7 +1466,26 @@ void cD3DRender::UnlockIndexBuffer(IndexBuffer &ib)
     ib.d3d->Unlock();
 }
 
+void cD3DRender::FlushActiveDrawBuffer() {
+    if (activeDrawBuffer) {
+        DrawBuffer* db = activeDrawBuffer;
+        activeDrawBuffer = nullptr;
+        db->Draw();
+    }
+}
+
+void cD3DRender::SetActiveDrawBuffer(DrawBuffer* db) {
+    //printf("%p -> %p\n", activeDrawBuffer, db);
+    if (activeDrawBuffer && activeDrawBuffer != db) {
+        FlushActiveDrawBuffer();
+    }
+    cInterfaceRenderDevice::SetActiveDrawBuffer(db);
+}
+
 void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
+    if (activeDrawBuffer && activeDrawBuffer != db) {
+        FlushActiveDrawBuffer();
+    }
     SetFVF(db->vb.fmt);
     SetStreamSource(db->vb);
     D3DPRIMITIVETYPE d3dType;

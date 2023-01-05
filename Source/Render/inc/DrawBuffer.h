@@ -30,7 +30,7 @@ public:
     bool IsLocked();
     void AutoUnlock();
     void Draw();
-    void DrawStrip();
+    void EndTriangleStrip();
     void PostDraw();
 
     template<class TVERTEX>
@@ -97,7 +97,7 @@ public:
         Unlock();
 
         if (written_indices + 2 >= ib.NumberIndices) {
-            DrawStrip();
+            Draw();
             
             Lock(2, 2, vptr, iptr, true);
             vptr[0] = v0; vptr[1] = v1;

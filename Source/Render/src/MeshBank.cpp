@@ -44,9 +44,9 @@ cMeshStatic::~cMeshStatic()
 {
 	if(temp)delete temp;
 
-	std::vector<cMeshTri*>::iterator it;
-	FOR_EACH(meshes,it)
-		delete *it;
+    for (auto mesh : meshes) {
+        delete mesh;
+    }
 }
 
 void cMeshStatic::BeginBuildMesh()

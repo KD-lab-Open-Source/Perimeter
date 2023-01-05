@@ -219,7 +219,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        db->Backwind();
+        //db->Draw();
 
 		float v_pos = 0;
 		sVertexXYZDT1 p1,p2;
@@ -254,7 +254,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			u+=du;
 		}
     
-        db->DrawStrip();
+        db->EndTriangleStrip();
 	} else {
 		int num = xm::round(2.0f * r / region_show_spline_space);
 		if (num < 2) {
@@ -272,7 +272,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        db->Backwind();
+        //db->Draw();
 
 		float x1 = pos.x - width / 2.0f;
 		float x2 = x1 + width;
@@ -291,7 +291,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			y += region_show_spline_space;
 		}
 
-        db->DrawStrip();
+        db->EndTriangleStrip();
 
 		float y1 = pos.y - width / 2.0f;
 		float y2 = y1 + width;
@@ -310,7 +310,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			x += region_show_spline_space;
 		}
 
-        db->DrawStrip();
+        db->EndTriangleStrip();
 	}
 }
 
@@ -470,7 +470,6 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		}
 
         db->AutoUnlock();
-        db->Draw();
 	}
 
 	Region::iterator i;
@@ -485,7 +484,7 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 		Vect2f tp,dn;
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        db->Backwind();
+        //db->Draw();
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -515,7 +514,7 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 			db->AutoTriangleStripStep(p0,p1);
 		} while((t += dt) < t_max);
 
-        db->DrawStrip();
+        db->EndTriangleStrip();
 	}
 
 	Region::iterator i;
@@ -530,7 +529,7 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 		Vect2f tp,dn;
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        db->Backwind();
+        //db->Draw();
 
         float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -563,7 +562,7 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
             db->AutoTriangleStripStep(p0, p1);
         } while((t += dt) < t_max);
 
-        db->DrawStrip();
+        db->EndTriangleStrip();
 	}
 
 	Region::iterator i;
@@ -579,7 +578,7 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 		Vect2f tp;
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        db->Backwind();
+        //db->Draw();
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -612,7 +611,7 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
             db->AutoTriangleStripStep(p0, p1);
         } while((t += dt) < t_max);
 
-        db->DrawStrip();
+        db->EndTriangleStrip();
 	}
 
 	Region::iterator i;
@@ -672,7 +671,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
 
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
-    db->Backwind();
+    //db->Draw();
 
 	float z=vMap.hZeroPlast-ZFIX;
 
@@ -802,7 +801,6 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 	}
 
     db->AutoUnlock();
-    db->Draw();
 }
 
 terRegionColumnMain::terRegionColumnMain()

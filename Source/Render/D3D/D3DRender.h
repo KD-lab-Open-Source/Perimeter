@@ -123,6 +123,7 @@ public:
     indices_t* LockIndexBuffer(IndexBuffer &ib) override;
     indices_t* LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
 	void UnlockIndexBuffer(IndexBuffer &ib) override;
+    void SetActiveDrawBuffer(class DrawBuffer* db) override;
     void SubmitDrawBuffer(class DrawBuffer* db) override;
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
 	int DeleteTexture(class cTexture *Texture) override;
@@ -205,6 +206,8 @@ public:
 		VISASSERT( dwStage<nSupportTexture );
 		return CurrentTexture[dwStage];
 	}
+    
+    void FlushActiveDrawBuffer();
 
 	inline void SetTexture(cTexture *Texture,float Phase,int dwStage=0)
 	{
@@ -229,14 +232,17 @@ public:
 	inline void SetTexture(uint32_t dwStage, IDirect3DBaseTexture9 *pTexture)
 	{
 		VISASSERT(dwStage<TEXTURE_MAX);
-		if(CurrentTexture[dwStage]!=pTexture)
-			RDCALL(lpD3DDevice->SetTexture(dwStage,CurrentTexture[dwStage]=pTexture));
+		if(CurrentTexture[dwStage]!=pTexture) {
+            FlushActiveDrawBuffer();
+            RDCALL(lpD3DDevice->SetTexture(dwStage, CurrentTexture[dwStage] = pTexture));
+        }
 	}
 
 	inline void SetVertexShader(IDirect3DVertexShader9 * Handle)
 	{
 		if(Handle!=CurrentVertexShader)
 		{
+            FlushActiveDrawBuffer();
 			RDCALL(lpD3DDevice->SetVertexShader(CurrentVertexShader=Handle));
 		}
 	}
@@ -245,6 +251,7 @@ public:
 	{
 		if(Handle!=CurrentPixelShader)
 		{
+            FlushActiveDrawBuffer();
 			RDCALL(lpD3DDevice->SetPixelShader(CurrentPixelShader=Handle));
 		}
 	}
@@ -255,6 +262,7 @@ public:
         uint32_t fvf = GetD3DFVFFromFormat(handle);
 		if(fvf!=CurrentFVF)
 		{
+            FlushActiveDrawBuffer();
 			RDCALL(lpD3DDevice->SetFVF(CurrentFVF=fvf));
 		}
 	}
@@ -273,6 +281,7 @@ public:
 
 		if(ArrayRenderState[State]!=Value) 
 		{
+            FlushActiveDrawBuffer();
 			RDCALL(lpD3DDevice->SetRenderState(State,ArrayRenderState[State]=Value));
 		}
 	}
@@ -292,6 +301,7 @@ public:
 
 		if(ArrayTextureStageState[Stage][Type]!=Value) 
 		{
+            FlushActiveDrawBuffer();
 			RDCALL(lpD3DDevice->SetTextureStageState(Stage,Type,ArrayTextureStageState[Stage][Type]=Value));
 		}
 	}
@@ -307,6 +317,7 @@ public:
 		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
 		if(ArraytSamplerState[Stage][Type]!=Value)
 		{
+            FlushActiveDrawBuffer();
 			ArraytSamplerState[Stage][Type]=Value;
 			RDCALL(lpD3DDevice->SetSamplerState(Stage,Type,Value));
 		}
@@ -327,6 +338,7 @@ public:
 
 	inline void SetTextureTransform(int Stage,Mat4f *matTexSpace)
 	{
+        FlushActiveDrawBuffer();
 		float det=1;
 		Mat4f mat,matViewInv;	// matViewWorld=matWorld*matView=matView, because matWorld==ID
 		Mat4fInverse(&matViewInv,&det,&DrawNode->matView);
@@ -346,6 +358,7 @@ public:
 	{
 		if(CurrentIndexBuffer!=pIndexData)
 		{
+            FlushActiveDrawBuffer();
 			CurrentIndexBuffer=pIndexData;
 			RDCALL(lpD3DDevice->SetIndices(pIndexData));
 		}
@@ -355,6 +368,7 @@ public:
     
 	inline void SetStreamSource(const VertexBuffer& vb)
 	{
+        FlushActiveDrawBuffer();
 		RDCALL(lpD3DDevice->SetStreamSource(0,vb.d3d,0,vb.VertexSize));
 	}
 
