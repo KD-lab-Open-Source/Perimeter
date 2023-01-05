@@ -4,8 +4,6 @@
 #include "IVisGenericInternal.h"
 #include "../src/Scene.h"
 
-#include "../src/Trail.h"
-
 #include "../src/ObjLibrary.h"
 #include "../src/TexLibrary.h"
 

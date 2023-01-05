@@ -21,9 +21,7 @@ SET(Render_SRCS
         src/cPlane.cpp
         src/lighting.cpp
         src/Line3d.cpp
-        src/particle.cpp
         src/SpriteNode.cpp
-        src/Trail.cpp
         src/AnimChannel.cpp
         src/AnimChannelNode.cpp
         src/MeshBank.cpp

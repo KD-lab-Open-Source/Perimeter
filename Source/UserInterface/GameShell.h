@@ -3,7 +3,6 @@
 
 #include "InterfaceLogic.h"
 #include "Installer.h"
-//#include "ResourceDispatcher.h"
 #include "Save.h"
 #include "HotKey.h"
 #include "UserSingleProfile.h"

@@ -33,11 +33,8 @@ public:
 	//TexFNameZ - текстура которая видна после закрытия ландшафтом
 	virtual class cLine3d* CreateLine3d(const char* TexFName,
 							const char* TexFNameZ=NULL);
-	// функции для работы со следами
-	virtual class cTrail* CreateTrail(const char* TextureName,float TimeLife=1000.f);
     
 	// функции для работы с системой частиц
-    //TODO not used? virtual class cParticle* CreateParticle(const char* TextureName,float TimeLife=1000.f,Vect2f *vTexSize=&Vect2f(1,1));
     virtual cEffect* CreateEffect(EffectKey& el,cEmitter3dObject* models,float scale=1.0f,bool auto_delete_after_life=false);
 
 	//Берет размеры по модели

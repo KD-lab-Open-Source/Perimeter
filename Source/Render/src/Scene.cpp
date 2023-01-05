@@ -7,8 +7,6 @@
 #include "TileMap.h"
 #include "ObjNode.h"
 #include "SpriteNode.h"
-#include "particle.h"
-#include "Trail.h"
 #include "Line3d.h"
 #include "ObjLibrary.h"
 #include "cPlane.h"
@@ -68,12 +66,12 @@ void SaveKindObjNotFree()
 	}
 
 	FILE* f=fopen("obj_notfree.txt","wt");
-	typedef map<string,int> idmap;
+	typedef std::map<std::string,int> idmap;
 	idmap ids;
 	cCheckDelete* p;
 	for(p=cCheckDelete::GetDebugRoot();p;p=p->GetDebugNext())
 	{
-		const type_info& ti=typeid(*p);
+		const std::type_info& ti=typeid(*p);
 		ids[ti.name()]++;
 	}
 
@@ -461,22 +459,6 @@ cPlane* cScene::CreatePlaneObj()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-cTrail* cScene::CreateTrail(const char* TextureName,float TimeLife)
-{ 
-	cTrail *UObj=new cTrail(TimeLife);
-	UObj->SetTexture(0,GetTexLibrary()->GetElement(TextureName));
-	AttachObj(UObj);
-	return UObj;
-}
-/*
-cParticle* cScene::CreateParticle(const char* TextureName,float TimeLife,Vect2f *vTexSize)
-{ 
-	cParticle *UObj=new cParticle(TimeLife,*vTexSize);
-	UObj->SetTexture(0,GetTexLibrary()->GetElement(TextureName));
-	AttachObj(UObj);
-	return UObj;
-}
-*/
 
 cEffect* cScene::CreateEffect(EffectKey& el,cEmitter3dObject* models,float scale,bool auto_delete_after_life)
 {
