@@ -133,8 +133,10 @@ int cSokolRender::Done() {
 #endif
     delete emptyTexture;
     emptyTexture = nullptr;
+#ifdef PERIMETER_DEBUG
     delete testTexture;
     testTexture = nullptr;
+#endif
     sg_shutdown();
     if (sdlGlContext != nullptr) {
         SDL_GL_DeleteContext(sdlGlContext);

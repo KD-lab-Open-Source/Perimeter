@@ -1,8 +1,6 @@
 #pragma once
 
-#ifdef _MSC_VER
 #pragma pack(push,1)
-#endif
 
 const static vertex_fmt_t VERTEX_FMT_XYZ       = (1<<0);
 const static vertex_fmt_t VERTEX_FMT_NORMAL    = (1<<1);
@@ -90,6 +88,4 @@ struct sVertexDot3:public sVertexXYZNT1
 };
 #endif
 
-#ifdef _MSC_VER
 #pragma pack(pop)
-#endif

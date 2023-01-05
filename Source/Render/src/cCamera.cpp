@@ -1228,12 +1228,12 @@ eTestVisible cCamera::TestVisibleComplete(const Vect3f &min,const Vect3f &max)
 
 void cCamera::ClearZBuffer()
 {
+    if (GetRenderDevice()->GetRenderSelection() == DEVICE_D3D9) {
 #ifdef PERIMETER_D3D9
-	cD3DRender* render = dynamic_cast<cD3DRender*>(GetRenderDevice());
-    if (render) {
+        cD3DRender* render = dynamic_cast<cD3DRender*>(GetRenderDevice());
         RDCALL(render->lpD3DDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
-    }
 #endif
+    }
 }
 
 void cCamera::ShowClip()
@@ -1342,19 +1342,15 @@ void cCamera::DrawShadowDebug()
 {
 	if(Option_ShowRenderTextureDBG)
 	{
-		cCamera* pShadow=FindCildCamera((Option_ShowRenderTextureDBG!=2)?ATTRCAMERA_SHADOWMAP:ATTRCAMERA_SHADOW);
-		if(pShadow && pShadow->GetRenderTarget())
-		{
 #ifdef PERIMETER_D3D9
+		cCamera* pShadow=FindCildCamera((Option_ShowRenderTextureDBG!=2)?ATTRCAMERA_SHADOWMAP:ATTRCAMERA_SHADOW);
+		if (gb_RenderDevice3D && pShadow && pShadow->GetRenderTarget()) {
 			uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
 			RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
-#endif
 
 			if(Option_ShowRenderTextureDBG!=4)
 			{
-#ifdef PERIMETER_D3D9
 				gb_RenderDevice3D->SetPixelShader(NULL);
-#endif
 				const int size=256;
 				float mi=0.0f,ma=1.0f;
 				gb_RenderDevice->DrawSprite(0,60,size,size,
@@ -1369,7 +1365,6 @@ void cCamera::DrawShadowDebug()
 				float du=ma-mi,dv=ma-mi;
 
 				RenderDevice->SetNoMaterial(ALPHA_NONE,0);
-#ifdef PERIMETER_D3D9
                 gb_RenderDevice3D->UseOrthographicProjection();
 				gb_VisGeneric->GetShaders()->pShowMap->Select();
 				gb_RenderDevice3D->SetTexture(0,gb_RenderDevice3D->dtAdvance->GetTZBuffer());
@@ -1388,13 +1383,11 @@ void cCamera::DrawShadowDebug()
 				BufferXYZDT1.Unlock(4);
 
 				BufferXYZDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
-#endif
 			}
-#ifdef PERIMETER_D3D9
 			gb_RenderDevice3D->SetPixelShader(NULL);
 			RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
-#endif
 		}
+#endif
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "cPlane.h"
 #include "DrawBuffer.h"
+#include "VertexFormat.h"
 
 cPlane::cPlane()
 :cUnkObj(KIND_NULL)

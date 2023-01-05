@@ -98,7 +98,7 @@ size_t XBuffer::read(void* s, size_t len)
 void XBuffer::handleOutOfSize()
 {
 	if (automatic_realloc) {
-        this->realloc(size == 0 ? 256 : size * 2);
+        this->realloc(size == 0 ? XB_DEFSIZE : size * 2);
     } else {
 		xassert(0 && "Out of XBuffer");
 		ErrH.Abort("Out of XBuffer");
@@ -107,15 +107,16 @@ void XBuffer::handleOutOfSize()
 
 size_t XBuffer::write(const void* s, size_t len, bool bin_flag) 
 {	
-	while(offset + len > size) {
+	while(offset + len + (bin_flag ? 0 : 1) > size) {
         handleOutOfSize();
     }
 
 	memcpy(buf + offset, s, len);
 	offset += len;
 
-	if(!bin_flag)
-		buf[offset] = '\0';
+	if (!bin_flag) {
+        buf[offset] = '\0';
+    }
 
 	return len;
 }

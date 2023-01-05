@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "Line3d.h"
 #include "DrawBuffer.h"
+#include "VertexFormat.h"
 
 cLine3d::cLine3d() : cAnimUnkObj(KIND_LINE3D)
 {

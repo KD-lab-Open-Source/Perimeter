@@ -175,9 +175,7 @@ void GetDimTexture(int& dx,int& dy,int& count)
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cTGAImage
 //////////////////////////////////////////////////////////////////////////////////////////
-#if defined(_MSC_VER) || defined(__GNUC__)
 #pragma pack(push,1)
-#endif
 
 struct TGAHeader
 {
@@ -194,9 +192,8 @@ uint16_t height;
 uint8_t bitsPerPixel;
 uint8_t flags;
 };
-#if defined(_MSC_VER) || defined(__GNUC__)
+
 #pragma pack(pop)
-#endif
 
 bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel)
 {

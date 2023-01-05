@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "lighting.h"
 #include "DrawBuffer.h"
+#include "VertexFormat.h"
 
 LightingParameters::LightingParameters()
 {

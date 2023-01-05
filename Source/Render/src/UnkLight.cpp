@@ -1,6 +1,7 @@
 #include "StdAfxRD.h"
 #include "UnkLight.h"
 #include "DrawBuffer.h"
+#include "VertexFormat.h"
 
 cUnkLight::cUnkLight() : cUnkObj(KIND_LIGHT)
 {
