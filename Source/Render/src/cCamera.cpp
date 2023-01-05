@@ -88,7 +88,7 @@ cCamera::~cCamera()
 {
 	PreDrawScene();
 
-	delete pTestGrid;
+	delete[] pTestGrid;
 }
 
 //void TempDrawShadow(cCamera* p);
@@ -1278,7 +1278,7 @@ void cCamera::InitGridTest(int grid_dx,int grid_dy,int grid_size)
 	{
 		if(TestGridSize.x==grid_dx && TestGridSize.y==grid_dy)
 			return;
-		delete pTestGrid;
+		delete[] pTestGrid;
 	}
 
 	TestGridSize.x=grid_dx;

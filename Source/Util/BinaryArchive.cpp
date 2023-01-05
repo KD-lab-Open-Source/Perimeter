@@ -34,9 +34,9 @@ bool BinaryOArchive::close()
 	XStream ff(0);
 	if(ff.open(fileName_.c_str(), XS_IN)){
 		if(ff.size() == buffer_.tell()){
-			PtrHandle<char> buf = new char[ff.size()];
-			ff.read(buf, ff.size());
-			if(!memcmp(buffer_, buf, buffer_.tell()))
+            XBuffer buf = XBuffer(ff.size());
+            ff.read(buf.address(), ff.size());
+            if(!memcmp(buffer_.address(), buf.address(), ff.tell()))
 				return true;
 		}
 	}

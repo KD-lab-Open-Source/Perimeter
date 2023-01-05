@@ -181,7 +181,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	if(sz>=sizes_size)
 	{
 		for(i=0;i<256;i++)
-			delete chars[i].bits;
+			delete[] chars[i].bits;
 		ErrH.Abort("Couldn't find big enough image for this font", XERR_USER, sz, fontname);
 		return false;
 	}
@@ -228,7 +228,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	}
 
 	for(i=0;i<256;i++)
-		delete chars[i].bits;
+		delete[] chars[i].bits;
 
 	uint8_t* gray_out=new uint8_t[size.x * size.y];
 

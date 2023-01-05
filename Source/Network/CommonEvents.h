@@ -262,7 +262,7 @@ public:
 		in.read(pData_, dataSize_);
 	}
 	~netCommand4G_Region() override {
-		delete pData_;
+		delete[] pData_;
 		pData_= nullptr;
 	}
 	
@@ -342,8 +342,8 @@ public:
 		in.read(pGData_, GDataSize_);
 	}
 	~netCommand4H_BackGameInformation (void){
-		delete pVData_;
-		delete pGData_;
+		delete[] pVData_;
+		delete[] pGData_;
 	}
 	
 	void Write(XBuffer& out) const override {
@@ -466,7 +466,7 @@ public:
 		in.read(pDAData_, DASize_);
 	}
 	~netCommand4C_DisplayDistrincAreas(void){
-		delete pDAData_;
+		delete[] pDAData_;
 	}
 	
 	void Write(XBuffer& out) const override {
@@ -710,7 +710,7 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 		in.read(pData, sizeCommandBuf);
 	}
 	~netCommand4H_ResponceLastQuantsCommands(void){
-		delete pData;
+		delete[] pData;
 	}
 	void Write(XBuffer& out) const override {
 		out.write(&beginQuantCommandTransmit, sizeof(beginQuantCommandTransmit));

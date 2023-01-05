@@ -221,7 +221,7 @@ ElasticLink::~ElasticLink()
 	if(Texture) { Texture->Release(); Texture=0; }
 	if(Texture2) { Texture2->Release(); Texture2=0; }
 	if(Frame) { delete Frame; Frame=0; }
-	delete x_height;
+	delete[] x_height;
 }
 
 void ElasticLink::evolve()

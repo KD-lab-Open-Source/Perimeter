@@ -132,8 +132,8 @@ public:
 	~NormalsBox()
 	{
 		atan_table -= atan_max;
-		delete atan_table;
-		delete normals;
+		delete[] atan_table;
+		delete[] normals;
 	}
 	const Vect3f& operator()(int dz_x, int dz_y) const
 	{

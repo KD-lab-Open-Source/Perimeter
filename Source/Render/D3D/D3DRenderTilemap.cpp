@@ -460,15 +460,15 @@ cTileMapRender::cTileMapRender(cTileMap *pTileMap)
 cTileMapRender::~cTileMapRender()
 {
 	RELEASE(tilemapIB);
-	delete visMap;
-	delete vis_lod;
+	delete[] visMap;
+	delete[] vis_lod;
 
-	delete update_stat;
-	delete delta_buffer;
+	delete[] update_stat;
+	delete[] delta_buffer;
 
-	std::vector<sBumpTile*>::iterator it;
-	FOR_EACH(bumpTiles,it)
-		delete *it;
+    for (auto tile : bumpTiles) {
+        delete tile;
+    }
 	bumpTiles.clear();
 }
 

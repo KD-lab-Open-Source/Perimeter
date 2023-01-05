@@ -485,10 +485,10 @@ void vrtMap::worldPrepare(void)
 void vrtMap::worldFree(void)
 {
 	if(r_net_map) {
-		delete r_net_map;
-		delete m_net_map;
-		delete proto_m_net_map;
-		delete new_m_net_map;
+		delete[] r_net_map;
+		delete[] m_net_map;
+		delete[] proto_m_net_map;
+		delete[] new_m_net_map;
 	}
 	r_net_map = 0;
 }
@@ -523,12 +523,12 @@ void vrtMap::worldInit(void)
 
 void vrtMap::worldRelease(void)
 {
-	delete alt_map;
-	delete color_map;
-	delete temp_map;
-	delete surf_map;
-	delete proto_map;
-	delete current_map;
+	delete[] alt_map;
+	delete[] color_map;
+	delete[] temp_map;
+	delete[] surf_map;
+	delete[] proto_map;
+	delete[] current_map;
 	alt_map = color_map = temp_map = NULL;
 }
 

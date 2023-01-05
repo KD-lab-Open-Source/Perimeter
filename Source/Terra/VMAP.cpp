@@ -179,7 +179,7 @@ vrtMap::~vrtMap(void)
 {
 	cWorld = -1;
 
-	if(changedT) { delete changedT; changedT = NULL; }
+	if(changedT) { delete[] changedT; changedT = NULL; }
 	if(gridChAreas) { delete [] gridChAreas; gridChAreas = NULL; }
 	if(gridChAreas2) { delete [] gridChAreas2; gridChAreas2 = NULL;}
 
@@ -505,7 +505,7 @@ void vrtMap::setupGeneralVariable()
 
 void vrtMap::releaseChAreaBuf()
 {
-	if(changedT){ delete changedT; changedT = 0; }
+	if(changedT){ delete[] changedT; changedT = 0; }
 
 	if(gridChAreas) { delete [] gridChAreas; gridChAreas=0; }
 	if(gridChAreas2) { delete [] gridChAreas2; gridChAreas2=0; }

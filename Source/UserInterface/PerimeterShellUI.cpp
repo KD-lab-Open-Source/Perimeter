@@ -2157,6 +2157,7 @@ CUITabSheet::CUITabSheet(int id, CShellWindow* pParent, EVENTPROC p) : CShellWin
 	flashTimers.resize(5, -1);
 	m_squad_icon_list.resize(5);
 	m_page_numbers.resize(5);
+    tabAttrs.resize(5);
 	tabXs.resize(5);
 	tabYs.resize(5);
 	tabSXs.resize(5);
@@ -2357,7 +2358,7 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 
 	for (int i = 0; i < attr->pages.size(); i++) {
 		const sqshTabElement& page = attr->pages[i];
-		tabAttrs.push_back(&page);
+		tabAttrs[i] = &page;
 		tabTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.icon.image)).c_str());
 		tabHighlightTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.icon.image_h)).c_str());
 		tabCheckedTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.icon.image_check)).c_str());
@@ -2794,7 +2795,7 @@ CMapWindow::~CMapWindow()
 		_RELEASE(eventTx[i]);
 	}
 
-	delete m_bitmap;
+	delete[] m_bitmap;
 	_bitmap = 0;
 }
 
