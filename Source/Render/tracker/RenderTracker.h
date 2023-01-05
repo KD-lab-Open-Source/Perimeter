@@ -1,10 +1,20 @@
 #ifndef PERIMETER_RENDERTRACKER_H 
 #define PERIMETER_RENDERTRACKER_H
+
 #ifdef PERIMETER_DEBUG
+#define PERIMETER_RENDER_TRACKER
+//#define PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
+//#define PERIMETER_RENDER_TRACKER_RESOURCES
+//#define PERIMETER_RENDER_TRACKER_LOCKS
+#endif
 
-const int MAX_RENDER_EVENTS = 50; 
 
-struct RenderEvent {
+#ifdef PERIMETER_RENDER_TRACKER
+
+const int MAX_RENDER_EVENTS = 200; 
+
+class RenderEvent {
+public:
     enum RenderEventType {
         INIT,
         DONE,
@@ -16,27 +26,37 @@ struct RenderEvent {
         FLUSH_SCENE,
         
         //PTR: DrawBuffer
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         GET_DRAW_BUFFER,
         SET_ACTIVE_DRAW_BUFFER,
+#endif
         SUBMIT_DRAW_BUFFER,
         
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         //PTR: Texture
         CREATE_TEXTURE,
         DELETE_TEXTURE,
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_TEXTURE,
         UNLOCK_TEXTURE,
+#endif
         
         //PTR: VertexBuffer
         CREATE_VERTEXBUF,
         DELETE_VERTEXBUF,
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_VERTEXBUF,
         UNLOCK_VERTEXBUF,
+#endif
         
         //PTR: IndexBuffer
         CREATE_INDEXBUF,
         DELETE_INDEXBUF,
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_INDEXBUF,
         UNLOCK_INDEXBUF,
+#endif
+#endif
         
         SET_WORLD_MATRIX,
         SET_VIEWPROJ_MATRIX,
@@ -46,14 +66,14 @@ struct RenderEvent {
         FINISH_COMMAND,
         PROCESS_COMMAND,
 #endif
-    } type;
-    RenderEvent() = default;
-    ~RenderEvent() = default;
-    const char* call_file;
-    unsigned int call_line;
-    std::string label;
-    size_t count;
-    void* ptr;
+    } type = INIT;
+    RenderEvent();
+    ~RenderEvent();
+    const char* call_file = "";
+    unsigned int call_line = 0;
+    std::string label = "";
+    size_t count = 0;
+    void* ptr = nullptr;
 };
 
 static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
@@ -65,21 +85,35 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
         case RenderEvent::BEGIN_SCENE: return "BEGIN_SCENE";
         case RenderEvent::END_SCENE: return "END_SCENE";
         case RenderEvent::FLUSH_SCENE: return "FLUSH_SCENE";
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         case RenderEvent::GET_DRAW_BUFFER: return "GET_DRAW_BUFFER";
         case RenderEvent::SET_ACTIVE_DRAW_BUFFER: return "SET_ACTIVE_DRAW_BUFFER";
+#endif
         case RenderEvent::SUBMIT_DRAW_BUFFER: return "SUBMIT_DRAW_BUFFER";
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_TEXTURE: return "CREATE_TEXTURE";
         case RenderEvent::DELETE_TEXTURE: return "DELETE_TEXTURE";
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_TEXTURE: return "LOCK_TEXTURE";
         case RenderEvent::UNLOCK_TEXTURE: return "UNLOCK_TEXTURE";
+#endif
+#endif
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_VERTEXBUF: return "CREATE_VERTEXBUF";
         case RenderEvent::DELETE_VERTEXBUF: return "DELETE_VERTEXBUF";
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_VERTEXBUF: return "LOCK_VERTEXBUF";
         case RenderEvent::UNLOCK_VERTEXBUF: return "UNLOCK_VERTEXBUF";
+#endif
+#endif
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_INDEXBUF: return "CREATE_INDEXBUF";
         case RenderEvent::DELETE_INDEXBUF: return "DELETE_INDEXBUF";
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_INDEXBUF: return "LOCK_INDEXBUF";
         case RenderEvent::UNLOCK_INDEXBUF: return "UNLOCK_INDEXBUF";
+#endif
+#endif
         case RenderEvent::SET_WORLD_MATRIX: return "SET_WORLD_MATRIX";
         case RenderEvent::SET_VIEWPROJ_MATRIX: return "SET_VIEWPROJ_MATRIX";
 #ifdef PERIMETER_SOKOL
@@ -95,12 +129,14 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::INIT:
         case RenderEvent::DONE:
         case RenderEvent::UPDATE_MODE:
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_TEXTURE:
         case RenderEvent::DELETE_TEXTURE:
         case RenderEvent::CREATE_VERTEXBUF:
         case RenderEvent::DELETE_VERTEXBUF:
         case RenderEvent::CREATE_INDEXBUF:
         case RenderEvent::DELETE_INDEXBUF:
+#endif
         default:
             return 0;
         case RenderEvent::FILL:
@@ -112,15 +148,19 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::PROCESS_COMMAND:
 #endif
             return 1;
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         case RenderEvent::GET_DRAW_BUFFER:
         case RenderEvent::SET_ACTIVE_DRAW_BUFFER:
+#endif
         case RenderEvent::SUBMIT_DRAW_BUFFER:
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS 
         case RenderEvent::LOCK_TEXTURE:
         case RenderEvent::UNLOCK_TEXTURE:
         case RenderEvent::LOCK_VERTEXBUF:
         case RenderEvent::UNLOCK_VERTEXBUF:
         case RenderEvent::LOCK_INDEXBUF:
         case RenderEvent::UNLOCK_INDEXBUF:
+#endif
         case RenderEvent::SET_WORLD_MATRIX:
         case RenderEvent::SET_VIEWPROJ_MATRIX:
             return 2;
@@ -128,8 +168,8 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
 }
 
 bool isRenderEventTypeVerbose(RenderEvent::RenderEventType type);
-const std::list<RenderEvent*>& GetRenderEvents();
-void RenderSubmitEventImpl(const char *file, unsigned int line, RenderEvent::RenderEventType type, const std::string& label = "", void* ptr = nullptr);
+//const std::list<RenderEvent*>& GetRenderEvents();
+void RenderSubmitEventImpl(const char *file, unsigned int line, RenderEvent::RenderEventType type, const char* label = nullptr, void* ptr = nullptr);
 #define RenderSubmitEvent(...) RenderSubmitEventImpl(__FILE__, __LINE__, __VA_ARGS__)
 
 #else //PERIMETER_DEBUG

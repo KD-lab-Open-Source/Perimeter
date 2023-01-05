@@ -79,17 +79,19 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     memset(buf, 0xFF, buf_len);
     desc.data.subimage[0][0] = { buf, buf_len };
     emptyTexture = new SokolTexture2D(desc);
-    
+
+#ifdef PERIMETER_DEBUG
     //Create test texture
     desc.label = "TestTexture";
     for (int i = 0; i < buf_len; i += pixel_len * 4) {
         *reinterpret_cast<uint32_t*>(&buf[i]) = 0xFF0000FF;
-        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*2]) = 0xFF00FF00;
-        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*3]) = 0xFFFF0000;
-        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*4]) = 0xFFAAAAAA;
+        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*1]) = 0xFF00FF00;
+        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*2]) = 0xFFFF0000;
+        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*3]) = 0xFFAAAAAA;
     }
     desc.data.subimage[0][0] = { buf, buf_len };
     testTexture = new SokolTexture2D(desc);
+#endif
     delete[] buf;
 
     //Register a pipeline for each vertex format in game
@@ -149,11 +151,12 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
 }
 
 void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
-    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF,
-                      "Len: " + std::to_string(NumberVertex)
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    std::string label = "Len: " + std::to_string(NumberVertex)
                       + " Fmt: " + std::to_string(fmt)
-                      + " Dyn: " + std::to_string(dynamic),
-                      &vb);
+                      + " Dyn: " + std::to_string(dynamic);
+    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF, label.c_str(), &vb);
+#endif
     xassert(!vb.sg);
     xassert(NumberVertex <= std::numeric_limits<indices_t>().max());
     size_t size = GetSizeFromFormat(fmt);
@@ -172,13 +175,17 @@ void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, v
 }
 
 void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
     RenderSubmitEvent(RenderEvent::DELETE_VERTEXBUF, "", &vb);
+#endif
     delete vb.sg;
     vb.sg = nullptr;
 }
 
 void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "", &vb);
+#endif
     if (!vb.sg) {
         xassert(0);
         return nullptr;
@@ -190,22 +197,28 @@ void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
 }
 
 void* cSokolRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
-    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount) , &vb);
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, label.c_str(), &vb);
+#endif
     xassert(Start + Amount <= vb.NumberVertex);
     return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
 }
 
 void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
+#endif
     xassert(vb.sg->locked);
     vb.sg->locked = false;
 }
 
 void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
-    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF,
-                      "Len: " + std::to_string(NumberIndices)
-                      + " Dyn: " + std::to_string(dynamic),
-                      &ib);
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    std::string label = "Len: " + std::to_string(NumberIndices)
+                      + " Dyn: " + std::to_string(dynamic);
+    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF, label.c_str(), &ib);
+#endif
     xassert(!ib.sg);
     ib.NumberIndices = NumberIndices;
     ib.dynamic = dynamic;
@@ -219,13 +232,17 @@ void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bo
 }
 
 void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
     RenderSubmitEvent(RenderEvent::DELETE_INDEXBUF, "", &ib);
+#endif
     delete ib.sg;
     ib.sg = nullptr;
 }
 
 indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "", &ib);
+#endif
     if (!ib.sg) {
         xassert(0);
         return nullptr;
@@ -237,13 +254,18 @@ indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
 }
 
 indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
-    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount) , &ib);
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, label.c_str(), &ib);
+#endif
     xassert(Start + Amount <= ib.NumberIndices);
     return &LockIndexBuffer(ib)[Start];
 }
 
 void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
+#endif
     xassert(ib.sg->locked);
     ib.sg->locked = false;
 }
@@ -307,8 +329,27 @@ void SokolCommand::ClearMVP() {
     vs_mvp = nullptr;
 }
 
+void SokolCommand::ClearTextures() {
+    for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+        if (texture_handles[i]) texture_handles[i]->DecRef();
+        sokol_textures[i] = nullptr;
+        texture_handles[i] = nullptr;
+    }
+}
+
 void SokolCommand::Clear() {
     ClearDrawData();
     ClearMVP();
-    memset(textures, 0, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
+    ClearTextures();
+}
+
+void SokolCommand::SetTexture(size_t index, cTexture* texture, SokolTexture2D* sokol_texture) {
+    if (sokol_texture == nullptr) {
+        texture = nullptr;
+    }
+    if (texture) texture->IncRef();
+    cTexture* old_tex = texture_handles[index];
+    sokol_textures[index] = sokol_texture;
+    texture_handles[index] = texture;
+    if (old_tex) old_tex->DecRef();
 }

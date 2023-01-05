@@ -858,7 +858,13 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
 
     SavePrmBinary savePrmBinary;
 
-    if (binarySavePrmBinary.length()) {
+    size_t binSavePrm_len = binarySavePrmBinary.length();
+    if (binSavePrm_len) {
+        //Make sure is null terminated or XPrmIArchive will attempt out of bounds read
+        if (binarySavePrmBinary[binSavePrm_len - 1] != 0) {
+            binarySavePrmBinary.realloc(binSavePrm_len + 1);
+            binarySavePrmBinary[binSavePrm_len] = 0;
+        }
         XPrmIArchive ia;
         std::swap(ia.buffer(), binarySavePrmBinary);
         ia.reset();

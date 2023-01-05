@@ -293,8 +293,8 @@ public:
 		for(int i=0;i<length();i++)
 			if(Base[i]) 
 				delete Base[i];
-		if(Base) delete Base; 
-		Base=0; size=0;
+		delete[] Base; 
+		Base = nullptr; size=0;
 //		memset(this,0,sizeof(cBaseDynArrayPointer)); 
 	}
 	inline int& length()							{ return size; }

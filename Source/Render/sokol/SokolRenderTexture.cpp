@@ -11,7 +11,9 @@
 #include "RenderTracker.h"
 
 int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool enable_assert) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
     RenderSubmitEvent(RenderEvent::CREATE_TEXTURE, "", Texture);
+#endif
     bool is_alpha_test = false;
     bool is_alpha_blend = false;
     bool is_skin=Texture->skin_color.a==255;
@@ -127,7 +129,9 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
 }
 
 int cSokolRender::DeleteTexture(cTexture* Texture) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
     RenderSubmitEvent(RenderEvent::DELETE_TEXTURE, "", Texture);
+#endif
     for (auto frame : Texture->frames) {
         delete frame.sg;
         frame.ptr = nullptr;
@@ -136,7 +140,9 @@ int cSokolRender::DeleteTexture(cTexture* Texture) {
 }
 
 void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::LOCK_TEXTURE);
+#endif
     SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
     xassert(!tex->locked);
     xassert(tex->data);
@@ -151,7 +157,9 @@ void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
 }
 
 void cSokolRender::UnlockTexture(cTexture* Texture) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_TEXTURE);
+#endif
     SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
     xassert(tex->locked);
     xassert(tex->data);

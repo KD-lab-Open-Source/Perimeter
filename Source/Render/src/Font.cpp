@@ -28,7 +28,7 @@ public:
 	}
 	virtual ~cFontImage()
 	{
-		delete ImageData;
+		delete[] ImageData;
 	}
 
 	int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
@@ -50,7 +50,7 @@ public:
 		y=size.y;
 		bpp=8;
 
-		if(ImageData)delete ImageData;
+		if(ImageData) delete[] ImageData;
 		size_t sz2=size.x*size.y;
 		ImageData=new uint8_t[sz2];
 		for(int i=0;i<sz2;i++)

@@ -182,12 +182,17 @@ DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveTy
         db->Create(PERIMETER_RENDER_BUFFERS_QUADS_LEN * 4, PERIMETER_RENDER_BUFFERS_QUADS_LEN * 4, fmt, true, primitive);
         drawBuffers[key] = db;
     }
-    RenderSubmitEvent(RenderEvent::GET_DRAW_BUFFER, "fmt: " + std::to_string(fmt) + " primitive " + std::to_string(primitive), db);
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
+    std::string label = "fmt: " + std::to_string(fmt) + " primitive " + std::to_string(primitive);
+    RenderSubmitEvent(RenderEvent::GET_DRAW_BUFFER, label.c_str(), db);
+#endif
     return db;
 }
 
 void cInterfaceRenderDevice::SetActiveDrawBuffer(DrawBuffer* db) {
-    RenderSubmitEvent(RenderEvent::SET_ACTIVE_DRAW_BUFFER, "", db);
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
+    RenderSubmitEvent(RenderEvent::SET_ACTIVE_DRAW_BUFFER, nullptr, db);
+#endif
     activeDrawBuffer = db;
 }
 

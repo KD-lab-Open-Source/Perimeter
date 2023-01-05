@@ -2831,7 +2831,7 @@ void CMapWindow::Load(const sqshControl* attr)
 	map_xs = sx / vMap.H_SIZE;
 	map_ys = sy / vMap.V_SIZE; 
 
-	delete m_bitmap;
+	delete[] m_bitmap;
 	m_bitmap = new sColor4c[int(sx)*int(sy)];
 	_bitmap = m_bitmap;
 	_map_x1 = x;

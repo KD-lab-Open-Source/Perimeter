@@ -15,7 +15,7 @@
 #include "RenderTracker.h"
 
 int cSokolRender::BeginScene() {
-    RenderSubmitEvent(RenderEvent::BEGIN_SCENE, "Acv: " + std::to_string(ActiveScene));
+    RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     if (ActiveScene) {
         xassert(0);
         return 1;
@@ -26,7 +26,7 @@ int cSokolRender::BeginScene() {
 }
 
 int cSokolRender::EndScene() {
-    RenderSubmitEvent(RenderEvent::END_SCENE, "Acv: " + std::to_string(ActiveScene));
+    RenderSubmitEvent(RenderEvent::END_SCENE, ActiveScene ? "" : "NotActiveScene");
     if (!ActiveScene) {
         xassert(0);
         return 1;
@@ -251,10 +251,12 @@ void cSokolRender::FinishCommand() {
             activePipelineBlend,
             activePipelineCull
     );
- 
-    RenderSubmitEvent(RenderEvent::FINISH_COMMAND,
-                      "Pipeline: " + std::to_string(pipeline_id)
-                      + " FSMode: " + std::to_string(activeCommand.fs_mode));
+
+#ifdef PERIMETER_RENDER_TRACKER
+    std::string label = "Pipeline: " + std::to_string(pipeline_id)
+                        + " FSMode: " + std::to_string(activeCommand.fs_mode);
+    RenderSubmitEvent(RenderEvent::FINISH_COMMAND, label.c_str());
+#endif
 
 #ifdef PERIMETER_DEBUG
     xassert(!activeDrawBuffer->locked_vertices);
@@ -297,15 +299,16 @@ void cSokolRender::FinishCommand() {
     //Submit command
     commands.emplace_back(cmd);
 
-    RenderSubmitEvent(RenderEvent::FINISH_COMMAND,
-                      "Submit - Pipeline: " + std::to_string(pipeline_id)
-                      + " FSMode: " + std::to_string(activeCommand.fs_mode)
-                      + " OBuf: " + std::to_string(cmd->owned_buffers)
-                      + " Vtxs: " + std::to_string(cmd->vertices)
-                      + " Idxs: " + std::to_string(cmd->indices)
-                      + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->textures[0]))
-                      + " Tex1: " + std::to_string(reinterpret_cast<size_t>(cmd->textures[1]))
-                      , cmd);
+#ifdef PERIMETER_RENDER_TRACKER
+    label = "Submit - Pipeline: " + std::to_string(pipeline_id)
+            + " FSMode: " + std::to_string(activeCommand.fs_mode)
+            + " OBuf: " + std::to_string(cmd->owned_buffers)
+            + " Vtxs: " + std::to_string(cmd->vertices)
+            + " Idxs: " + std::to_string(cmd->indices)
+            + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))
+            + " Tex1: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[1]));
+    RenderSubmitEvent(RenderEvent::FINISH_COMMAND, label.c_str(), cmd);
+#endif
 }
 
 void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {

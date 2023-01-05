@@ -43,7 +43,7 @@ void terBuildingInstaller::Clear()
 	CancelObject();
 
 	if(BaseBuff)
-		delete BaseBuff;
+		delete[] BaseBuff;
 	BaseBuff = 0;
 	BaseBuffSX = BaseBuffSY = 0;
 
@@ -195,7 +195,7 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 
 		if(!BaseBuff || BaseBuffSX < (x1 - x0) || BaseBuffSY < (y1 - y0)){
 			if(BaseBuff)
-				delete BaseBuff;
+				delete[] BaseBuff;
 			BaseBuffSX = x1 - x0;
 			BaseBuffSY = y1 - y0;
 			BaseBuff = new char[BaseBuffSX * BaseBuffSY];

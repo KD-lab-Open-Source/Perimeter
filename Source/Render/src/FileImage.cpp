@@ -294,8 +294,8 @@ public:
 	virtual ~cTGAImage()										{ close(); }
 	virtual int close()
 	{
-		if(tga) { delete tga; tga=0; }
-		else if(ImageData) { delete ImageData; } ImageData=0;
+		if(tga) { delete[] tga; tga=0; }
+		else if(ImageData) { delete[] ImageData; } ImageData=0;
 		return 0;
 	}
 	virtual int load(const char *fname)
