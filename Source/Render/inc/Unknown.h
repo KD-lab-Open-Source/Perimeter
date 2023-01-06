@@ -46,7 +46,7 @@ enum eKindUnknownClass
 };
 
 #ifdef PERIMETER_DEBUG
-#define C_CHECK_DELETE
+//#define C_CHECK_DELETE
 #endif 
 
 #ifdef C_CHECK_DELETE

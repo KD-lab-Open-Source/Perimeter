@@ -219,7 +219,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        //db->Draw();
+        
 
 		float v_pos = 0;
 		sVertexXYZDT1 p1,p2;
@@ -272,7 +272,6 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        //db->Draw();
 
 		float x1 = pos.x - width / 2.0f;
 		float x2 = x1 + width;
@@ -484,7 +483,6 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 		Vect2f tp,dn;
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        //db->Draw();
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -529,7 +527,6 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 		Vect2f tp,dn;
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        //db->Draw();
 
         float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -578,7 +575,6 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 		Vect2f tp;
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        //db->Draw();
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -671,11 +667,10 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
 
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
-    //db->Draw();
 
 	float z=vMap.hZeroPlast-ZFIX;
 
-    const size_t locked = 100;
+    const size_t locked = 10;
     const size_t v_len = sizeof(sVertexXYZDT1) * 3;
 
     sVertexXYZDT1* vp = nullptr;
@@ -735,14 +730,14 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
                     if (cn.xl > c.xl && cn.xl < c.xr) {
                         p[1] = p[2];
                         p[2].pos.set(cn.xl, cn.y, z);
-                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
 
                     if (cn.xr > c.xl && cn.xr < c.xr) {
                         p[1] = p[2];
                         p[2].pos.set(cn.xr, cn.y, z);
-                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
                 }
@@ -750,7 +745,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 
 			p[1]=p[2];
 			p[2].pos.set(c.xr,c.y+1,z);
-            db->AutoLockTriangle(locked, 3, vp, ip);
+            db->AutoLockTriangle(locked, 1, vp, ip);
             memcpy(vp, p, v_len);
 
 			bool first=true;
@@ -771,7 +766,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
                         else
                             p[0] = p[1];
                         p[1].pos.set(cn.xl, c.y, z);
-                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
 
@@ -781,7 +776,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
                         else
                             p[0] = p[1];
                         p[1].pos.set(cn.xr, c.y, z);
-                        db->AutoLockTriangle(locked, 3, vp, ip);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
                 }
@@ -795,7 +790,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 				p[1].pos.set(c.xr,c.y,z);
 			}
 
-            db->AutoLockTriangle(locked, 3, vp, ip);
+            db->AutoLockTriangle(locked, 1, vp, ip);
             memcpy(vp, p, v_len);
 		}
 	}

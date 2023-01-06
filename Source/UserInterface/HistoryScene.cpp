@@ -93,8 +93,6 @@ void HistoryScene::init(cVisGeneric* visGeneric, bool bw, bool addBlendAlphaMode
 	logFnt = terVisGeneric->CreateGameFont("Arial", BRIEFING_LOG_FONT_SIZE);
 	m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
 
-	//TODO this crashes on resync? terVisGeneric->EnableOcclusion(false);
-
 	addBlendAlpha = addBlendAlphaMode;
 
 	scene = visGeneric->CreateScene();

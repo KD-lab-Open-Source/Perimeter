@@ -114,7 +114,7 @@ public:
             Unlock();
         }
         TVERTEX* empty = nullptr;
-        bool was_locked = locked_vertices || locked_indices;
+        bool was_locked = IsLocked();
         if (!was_locked) {
             Lock(
                     std::min(static_cast<size_t>(vb.NumberVertex), locked_quads * 4),
@@ -134,11 +134,11 @@ public:
         ||  (locked_indices && lock_written_indices + triangles * 3 >= locked_indices)) {
             Unlock();
         }
-        bool was_locked = locked_vertices || locked_indices;
+        bool was_locked = IsLocked();
         if (!was_locked) {
             Lock(
-                    std::min(static_cast<size_t>(vb.NumberVertex), triangles * 3),
-                    std::min(static_cast<size_t>(ib.NumberIndices), triangles * 3),
+                    std::min(static_cast<size_t>(vb.NumberVertex), locked_triangles * 3),
+                    std::min(static_cast<size_t>(ib.NumberIndices), locked_triangles * 3),
                     vertex_buf, indices_buf, false);
         }
         xassert(lock_written_vertices + triangles * 3 <= locked_vertices);

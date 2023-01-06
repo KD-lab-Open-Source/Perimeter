@@ -22,7 +22,6 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
     if (outline) {
         const float w = static_cast<float>(ScreenSize.y * (1.5 / 800.0) / 2.0);
         auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-        //db->Draw();
         sVertexXYZDT1* v = nullptr;
         indices_t* ib = nullptr;
         db->Lock<sVertexXYZDT1>(8, 12, v, ib, true);

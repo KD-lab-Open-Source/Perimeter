@@ -55,7 +55,7 @@ void cUnkLight::Draw(cCamera *DrawNode)
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-    //db->Draw();
+    
 	float tex=0;
 	Vect3f WorldK=DrawNode->GetPos()-GetPos();
 	FastNormalize(WorldK);

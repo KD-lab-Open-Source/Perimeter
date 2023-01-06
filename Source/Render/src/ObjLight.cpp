@@ -115,7 +115,6 @@ void cObjLight::Draw(cCamera *DrawNode)
     v[3].pos=tr-sx-sy; v[3].u1()=1, v[3].v1()=1;
     v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
     db->Unlock();
-    //db->Draw();
 
 #ifdef PERIMETER_D3D9_OCCLUSION
     if (occlusion.IsInit())

@@ -87,7 +87,6 @@ int cSokolRender::EndScene() {
                 xassert(command->indices % 3 == 0);
                 break;
             case PIPELINE_TYPE_TRIANGLESTRIP:
-                xassert(command->indices % 2 == 0);
                 break;
             case PIPELINE_TYPE_TERRAIN:
             case PIPELINE_TYPE_MAX:
@@ -213,10 +212,17 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
         EndScene();
     }
 
-    fill_color.r = r / 255.f;
-    fill_color.g = g / 255.f;
-    fill_color.b = b / 255.f;
-    fill_color.a = a / 255.f;
+#ifdef PERIMETER_DEBUG
+    if (r == 0 && g == 0 && b == 0) {
+        r = 32; 
+        g = b = 24;
+    }
+#endif
+
+    fill_color.r = static_cast<float>(r) / 255.f;
+    fill_color.g = static_cast<float>(g) / 255.f;
+    fill_color.b = static_cast<float>(b) / 255.f;
+    fill_color.a = static_cast<float>(a) / 255.f;
 
     return 0;
 }

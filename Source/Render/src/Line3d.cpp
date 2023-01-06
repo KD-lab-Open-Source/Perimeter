@@ -41,7 +41,6 @@ void cLine3d::Draw(cCamera *DrawNode)
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
-    //db->Draw();
 	Vect3f Orientation;
 
 	sVertexXYZDT1 v0,v1;

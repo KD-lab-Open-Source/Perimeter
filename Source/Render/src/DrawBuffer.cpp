@@ -43,6 +43,8 @@ void DrawBuffer::Unlock() {
         xassert(0);
         return;
     }
+    xassert(lock_written_vertices <= locked_vertices);
+    xassert(lock_written_indices <= locked_indices);
     if (locked_vertices) gb_RenderDevice->UnlockVertexBuffer(vb);
     if (locked_indices) gb_RenderDevice->UnlockIndexBuffer(ib);
     written_vertices += lock_written_vertices;
@@ -82,7 +84,13 @@ void DrawBuffer::Draw() {
 
 void DrawBuffer::EndTriangleStrip() {
     xassert(primitive == PT_TRIANGLESTRIP);
-    //Draw();
+#if 0
+    if (4 <= written_vertices && 4 <= written_indices) {
+        indices_t* iptr = gb_RenderDevice->LockIndexBuffer(ib, written_indices, 2);
+        iptr[0] = written_vertices - 1; iptr[1] = written_vertices - 1;
+        gb_RenderDevice->UnlockIndexBuffer(ib);
+    }
+#endif
 }
 
 void DrawBuffer::PostDraw() {

@@ -66,7 +66,6 @@ void cSpriteManager::Draw(cCamera *camera)
     }
 
     db->AutoUnlock();
-    //db->Draw();
 }
 
 cSprite* cSpriteManager::Create()
