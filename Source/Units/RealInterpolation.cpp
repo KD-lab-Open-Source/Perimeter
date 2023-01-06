@@ -112,7 +112,7 @@ void terInterpolationReal::Start()
 		sColorInterpolate c;
 		c.color=color;
 		c.add_color=add_color;
-		color_=c;
+		color_.set(c);
 
 		ObjectPoint->ClearAttr(ATTRUNKOBJ_IGNORE);//perfomance warning
 
@@ -181,7 +181,7 @@ void terInterpolationReal::interpolate()
 		sColorInterpolate c;
 		c.color=color;
 		c.add_color=add_color;
-		color_=c;
+		color_.set(c);
 		color_(ObjectPoint);
 
 		PhaseListType::iterator pi;
@@ -368,9 +368,9 @@ terRealPhaseControllerType::terRealPhaseControllerType(cObjectNode* object)
 {
 	ObjectPoint = object;
 
-	phase_ = 0;
-	angle_x_ = 0;
-	angle_z_ = 0;
+	phase_.set(0);
+	angle_x_.set(0);
+	angle_z_.set(0);
 }
 
 void terRealPhaseControllerType::SetChain(const char* name)
@@ -406,8 +406,8 @@ terSoundController::terSoundController(const char* name,int cycled)
 
 	needStart_ = isPlaying_ = false;
 
-	volume_ = 0;
-	frequency_ = 0;
+	volume_.set(0);
+	frequency_.set(0);
 	cycled_ = cycled;
 }
 
@@ -420,8 +420,8 @@ terSoundController::terSoundController(const SoundControllerSetup& setup)
 
 	needStart_ = isPlaying_ = false;
 
-	volume_ = 1;
-	frequency_ = 1;
+	volume_.set(1);
+	frequency_.set(1);
 
 	cycled_ = setup.cycled;
 }
@@ -858,7 +858,7 @@ void terInterpolationCore::Start()
 	sColor4f color = sColor4f(0,1.0f,0,1.0f) * protection_parameter_;
 	color += Owner->Player->unitColor() * (1 - protection_parameter_);
 	color.a *= sight_;
-	protection_color_=color;
+	protection_color_.set(color);
 
 	if(HideFlag)
 		ProtectionPoint->SetAttr(ATTRUNKOBJ_IGNORE);
@@ -918,7 +918,7 @@ void terInterpolationCore::interpolate()
 			color += Owner->Player->unitColor() * (1 - protection_parameter_);
 			color.a *= sight_;
 
-			protection_color_=color;
+			protection_color_.set(color);
 			protection_color_(ProtectionPoint);
 			ProtectionPoint->ClearAttr(ATTRUNKOBJ_IGNORE);
 		}

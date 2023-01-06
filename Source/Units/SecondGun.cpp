@@ -67,7 +67,7 @@ public:
 		value_ = valueDefault_ = 0.0f;
 		speed_ = XM_PI * 0.2f;
 		valuePrecision_ = XM_PI * 0.001f;
-		valueInterpolator_ = 0;
+		valueInterpolator_.set(0);
 
 		valueMin_ = 0.0f;
 		valueMax_ = XM_PI * 2.0f;
@@ -92,7 +92,7 @@ public:
 	void setValue(float angle)
 	{ 
 		value_ = AngleLimitOp()(angle,valueMin_,valueMax_); 
-		valueInterpolator_ = AngleValueConvertOp()(value_);
+		valueInterpolator_.set(AngleValueConvertOp()(value_));
 	}
 
 	void setDefaultValue(float angle){ valueDefault_ = angle; }
@@ -153,7 +153,7 @@ public:
 
 	void avatarQuant()
 	{
-		valueInterpolator_ = AngleValueConvertOp()(value_);
+		valueInterpolator_.set(AngleValueConvertOp()(value_));
 	}
 
 	void avatarInterpolation(eAxis axis)

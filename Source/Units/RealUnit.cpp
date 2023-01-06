@@ -1239,7 +1239,7 @@ terEffectController::terEffectController(const terUnitEffectData* setup,cEffect*
 	effect_(effect)
 {
 	xassert(setup_);
-	effectRate_ = 0.0f;
+	effectRate_.set(0.0f);
 }
 
 terEffectController::~terEffectController()
@@ -1272,7 +1272,7 @@ void terEffectController::avatarQuant(terUnitReal* owner)
 		}
 	}
 
-	effectRate_ = rate;
+	effectRate_.set(rate);
 }
 
 void terEffectController::quant(terUnitReal* owner)
@@ -1297,7 +1297,7 @@ void terEffectController::quant(terUnitReal* owner)
         break;
 	}
 
-	effectPose_=pos;
+	effectPose_.set(pos);
 }
 
 void terEffectController::avatarInterpolation()
