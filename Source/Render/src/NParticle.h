@@ -603,20 +603,6 @@ public:
 
 		Vect3f normal;
 		std::vector<Vect3f> plume_pos;
-/*
-		void PutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
-								const KeyParticleInt& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								const cEmitterInt* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float trace_size);
-		void ZPutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
-								const KeyParticleInt& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								cEmitterZ* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float trace_size);
-*/
 	};
 protected:
 	BackVector<nParticle>	Particle;
@@ -640,17 +626,6 @@ public:
 protected:
 	bool use_light;
 	cObjMaterial material;
-/*	void PutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime );
-	void ZPutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime );
-*/
 	void SetKeys(std::vector<KeyParticleInt>& k);
 
 	void EmitInstantly(float tmin,float tmax);
@@ -748,13 +723,6 @@ class cEmitterSpl:public cEmitterBase
 		float angle0,angle_dir;
 		//color0,size0 - константы
 		float begin_size;
-/*		void PutToBuf(const float& dtime_global, HeritKey& k, const KeyParticleSpl& k0, 
-								const KeyParticleSpl& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								cEmitterSpl* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float& trace_size, const float& htime);
-*/
 	};
 
 	BackVector<nParticle>	Particle;
@@ -771,12 +739,6 @@ public:
 
 	void SetEmitterKey(EmitterKeySpl& k,cEmitter3dObject* models);
 protected:
-//	friend cEmitterSpl::nParticle;
-/*	void PutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime);*/
 	void SetKeys(std::vector<KeyParticleSpl>& k);
 
 	void EmitInstantly(float tmin,float tmax);

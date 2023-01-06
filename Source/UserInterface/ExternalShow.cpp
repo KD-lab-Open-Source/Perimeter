@@ -619,20 +619,14 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 void terExternalRegionShowColumn(Column* column,sColor4c color)
 {//Для дебага
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
-	cQuadBuffer<sVertexXYZDT1>& quad=*terRenderDevice->GetQuadBufferXYZDT1();
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
 
-	quad.BeginDraw();
 	float z=vMap.hZeroPlast-ZFIX;
-
-	vector<CellLine>::iterator it_line;
-	FOR_EACH(*column,it_line)
-	{
-		CellLine& cell=*it_line;
-		list<Cell>::iterator it;
-		FOR_EACH(cell,it)
-		{
-			Cell& c=*it;
-			sVertexXYZDT1* p=quad.Get();
+    indices_t* i;
+    sVertexXYZDT1* p;
+	for (CellLine& cell : *column) {
+		for (Cell& c : cell) {
+            db->AutoLockQuad<sVertexXYZDT1>(50, 1, p, i);
 			p[0].pos.x=c.xl;
 			p[0].pos.y=c.y;
 			p[0].pos.z=z;
@@ -656,10 +650,11 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 			p[3].pos.z=z;
 			p[3].diffuse=color;
 			p[3].u1()=p[0].v1()=0;
+            break;
 		}
+        break;
 	}
-
-	quad.EndDraw();
+    db->AutoUnlock();
 }
 /*/
 
@@ -670,7 +665,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 
 	float z=vMap.hZeroPlast-ZFIX;
 
-    const size_t locked = 10;
+    const size_t locked = 100;
     const size_t v_len = sizeof(sVertexXYZDT1) * 3;
 
     sVertexXYZDT1* vp = nullptr;
@@ -797,6 +792,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color) {
 
     db->AutoUnlock();
 }
+//*/
 
 terRegionColumnMain::terRegionColumnMain()
 {

@@ -477,7 +477,7 @@ void cD3DRender::Draw(class cScene *Scene)
 		return;
 
 	SetNoMaterial(ALPHA_ADDBLEND);
-	cQuadBuffer<sVertexXYZDT1>* quad=GetQuadBufferXYZDT1();
+	cQuadBuffer<sVertexXYZDT1>* quad=&QuadBufferXYZDT1;
 
 	int i;
 	for(i=0;i<light.size();i++)

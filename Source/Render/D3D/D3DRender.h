@@ -83,10 +83,7 @@ public:
 
     //Used for sprites, light, particles and shadow volume, debug shadow drawing
     virtual cVertexBuffer<sVertexXYZDT1>* GetBufferXYZDT1() { return &BufferXYZDT1; }
-    //Used for elastic links in psychosphere
-    virtual cVertexBuffer<sVertexXYZDT2>* GetBufferXYZDT2() { return &BufferXYZDT2; }
     
-    cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() {return &QuadBufferXYZDT1 ;}
     //Used for drawing terraform filling and primitive drawing
     cVertexBuffer<sVertexXYZD>* GetBufferXYZD() { return &BufferXYZD; }
     
