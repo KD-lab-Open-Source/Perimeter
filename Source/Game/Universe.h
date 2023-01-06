@@ -54,7 +54,7 @@ public:
 
 	bool soundEvent(SoundEventID event_id);
 
-	void checkEvent(const class Event& event);
+    void checkEvent(const class Event* event);
 
 	void ShowInfo();
 

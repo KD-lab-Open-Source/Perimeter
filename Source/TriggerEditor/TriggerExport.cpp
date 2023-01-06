@@ -35,7 +35,7 @@ bool ConditionSwitcher::check(AIPlayer& aiPlayer)
 	}
 }
 
-void ConditionSwitcher::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionSwitcher::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
     FOR_EACH_AUTO(conditions, ci)
 		if(ci->condition)

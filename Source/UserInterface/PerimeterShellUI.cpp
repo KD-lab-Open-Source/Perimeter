@@ -518,7 +518,8 @@ bool CShellWindow::actionPerformed(InterfaceEventCode code, int param) {
 		&&	((state & SQSH_VISIBLE) || !checkHotKeyVisibility)	) {
 
 		if (universe()) {
-			universe()->checkEvent(EventClickOnButton( (ShellControlID)ID) );
+            EventClickOnButton ev(static_cast<ShellControlID>(ID));
+			universe()->checkEvent(&ev);
 		}
 
 		m_handler(this, code, param);

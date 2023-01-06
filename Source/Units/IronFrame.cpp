@@ -67,9 +67,9 @@ installer_(1)
 
 	underTeleportation_ = false;
 
-	antigravConsumer_.attach(Player, attr().antigravConsumption);
-	movementConsumption_.attach(Player, attr().movementConsumption);
-	repairConsumption_.attach(Player, attr().repairConsumption);
+	antigravConsumer_.attach(Player, attr()->antigravConsumption);
+	movementConsumption_.attach(Player, attr()->movementConsumption);
+	repairConsumption_.attach(Player, attr()->repairConsumption);
 	
 	static ConsumptionData spiralData;
 	spiralData.energy = gameShell->manualData().spiralChargingEnergy;
@@ -79,9 +79,9 @@ installer_(1)
 	if(gameShell->manualData().spiralChargingEnergy > 0)
 		spiralConsumer_.attach(Player, spiralData);
 
-	addAccumulatedEnergy(attr().accumulatedEnergyInitial*attr().energyCapacity);
+	addAccumulatedEnergy(attr()->accumulatedEnergyInitial*attr()->energyCapacity);
 
-	installer_.InitObject(&attr());
+	installer_.InitObject(attr());
 
 	spiralLevelPrev_ = 0;
 
@@ -114,7 +114,7 @@ void terFrame::setPose(const Se3f& pose, bool initPose)
 	terUnitReal::setPose(pose, initPose);
 	if(initPose){
 		Se3f poseShifted = pose;
-		poseShifted.trans() += to3D(SquadPoint->attr().homePositionOffsetFactor*radius(), 0);
+		poseShifted.trans() += to3D(SquadPoint->attr()->homePositionOffsetFactor*radius(), 0);
 		SquadPoint->setPose(poseShifted, initPose);
 		SquadPoint->setHomePosition(poseShifted.trans());
 	}
@@ -144,8 +144,8 @@ void terFrame::MoveQuant()
 		}
 	}
 
-	BodyPoint->setForwardVelocity(!underTeleportation() ? attr().normalVelocity 
-		: attr().teleportationVelocity);
+	BodyPoint->setForwardVelocity(!underTeleportation() ? attr()->normalVelocity 
+		: attr()->teleportationVelocity);
 
 	terUnitReal::MoveQuant();
 }
@@ -290,7 +290,7 @@ void terFrame::Quant()
 				terFrameSlot& frameSlot = frameSlots_[safe_cast<terFrameChild*>(slot.UnitPoint)->slotNumber()];
 				frameSlot.UnitPoint = 0;
 				frameSlot.status_ = terFrameSlot::STATUS_COMPLETE;
-				if(frameSlot.ProductionID == slot.UnitPoint->attr().ID){
+				if(frameSlot.ProductionID == slot.UnitPoint->attr()->ID){
 					frameSlot.ProductionID = UNIT_ATTRIBUTE_NONE;
 					finishIO();
 				}
@@ -324,7 +324,7 @@ void terFrame::Quant()
 	}
 
 	if(spiralConsumer_.attached()){
- 		if(attached() && powered() && Player->energyData().accumulated() > attr().energyReserveToChargeSpiral)
+ 		if(attached() && powered() && Player->energyData().accumulated() > attr()->energyReserveToChargeSpiral)
 			spiralConsumer_.requestCharge();
 
 		if(spiralLevelPrev_ == spiralLevel() && spiralLevel() < 1.f)
@@ -348,13 +348,13 @@ void terFrame::Quant()
 	if(!attached() && !underTeleportation()){
 		antigravConsumer_.requestCharge();
 		if(!antigravConsumer_.charged())
-			setDamage(attr().fallDamage, 0);
+			setDamage(attr()->fallDamage, 0);
 	}
 
 	if(powered() && damageMolecula().needRepair()){
 		repairConsumption_.requestCharge();
 		if(repairConsumption_.charged())
-			damageMoleculaRepair(attr().repairElementsPerQuant); 
+			damageMoleculaRepair(attr()->repairElementsPerQuant); 
 	}
 
 	if(ValidStatus == ISOLATED && powered())
@@ -488,11 +488,11 @@ void terFrame::executeCommand(const UnitCommand& command)
 		case COMMAND_ID_BUILD_MASTER_INC:
 		case COMMAND_ID_TERRAIN_MASTER_INC: {
 			terFrameSlot& slot = frameSlots_[command.commandData()];
-			if(slot.status_ == terFrameSlot::STATUS_BUSY && slot.UnitPoint && slot.UnitPoint->attr().ID != (command.commandID() == COMMAND_ID_TERRAIN_MASTER_INC ? UNIT_ATTRIBUTE_TERRAIN_MASTER : UNIT_ATTRIBUTE_BUILD_MASTER))
+			if(slot.status_ == terFrameSlot::STATUS_BUSY && slot.UnitPoint && slot.UnitPoint->attr()->ID != (command.commandID() == COMMAND_ID_TERRAIN_MASTER_INC ? UNIT_ATTRIBUTE_TERRAIN_MASTER : UNIT_ATTRIBUTE_BUILD_MASTER))
 				slot.UnitPoint->executeCommand(UnitCommand(COMMAND_ID_OBJECT, this, 0));
 			if(slot.status_ == terFrameSlot::STATUS_FREE){
 				slot.status_ = terFrameSlot::STATUS_PRODUCTION;
-				slot.productionConsumption_.attach(Player, attr().productionConsumption);
+				slot.productionConsumption_.attach(Player, attr()->productionConsumption);
 				soundEvent(SOUND_VOICE_UNIT_PRODUCTION_STARTED);
 			}
 			slot.ProductionID = command.commandID() == COMMAND_ID_TERRAIN_MASTER_INC ? UNIT_ATTRIBUTE_TERRAIN_MASTER : UNIT_ATTRIBUTE_BUILD_MASTER;
@@ -615,9 +615,9 @@ void terFrame::ChangeUnitOwner(terPlayer* player)
 	movementConsumption_.detach();
 	repairConsumption_.detach();
 
-	antigravConsumer_.attach(Player, attr().antigravConsumption);
-	movementConsumption_.attach(Player, attr().movementConsumption);
-	repairConsumption_.attach(Player, attr().repairConsumption);
+	antigravConsumer_.attach(Player, attr()->antigravConsumption);
+	movementConsumption_.attach(Player, attr()->movementConsumption);
+	repairConsumption_.attach(Player, attr()->repairConsumption);
 }
 
 //------------------------------------------------
@@ -637,7 +637,7 @@ SaveUnitData* terFrame::universalSave(SaveUnitData* baseData)
 
 		if(slot.UnitPoint && slot.UnitPoint->isDocked()){
 			data->frameSlots[i] = 0;
-			data->slotsData[i].productionID = slot.UnitPoint->attr().ID != slot.ProductionID ? slot.ProductionID : UNIT_ATTRIBUTE_NONE;
+			data->slotsData[i].productionID = slot.UnitPoint->attr()->ID != slot.ProductionID ? slot.ProductionID : UNIT_ATTRIBUTE_NONE;
 			data->slotsData[i].status = terFrameSlot::STATUS_COMPLETE;
 			data->slotsData[i].progress = 1;
 		}
@@ -693,7 +693,7 @@ void terFrame::universalLoad(SaveUnitData* baseData)
 
 			slot.status_ = terFrameSlot::STATUS_BUSY;
 			slot.UnitPoint = unit;
-			slot.ProductionID = unit->attr().ID;
+			slot.ProductionID = unit->attr()->ID;
 		}
 		
 		SaveFrameSlotData& slotData = data->slotsData[i];
@@ -701,13 +701,13 @@ void terFrame::universalLoad(SaveUnitData* baseData)
 			slot.status_ = (terFrameSlot::Status)slotData.status;
 			slot.ProductionID = slotData.productionID;
 			if(slot.status_ == terFrameSlot::STATUS_PRODUCTION)
-				slot.productionConsumption_.attach(Player, attr().productionConsumption);
+				slot.productionConsumption_.attach(Player, attr()->productionConsumption);
 			slot.productionConsumption_.setProgress(slotData.progress);
 		}
 	}
 
 	//if(!accumulatedEnergy())
-	//	addAccumulatedEnergy(attr().accumulatedEnergyInitial*attr().energyCapacity);
+	//	addAccumulatedEnergy(attr()->accumulatedEnergyInitial*attr()->energyCapacity);
 }
 
 //---------------------------------------------
@@ -734,7 +734,7 @@ void terFrame::GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[
 			case terFrameSlot::STATUS_BUSY:
 				phase[i] = 100;
 				xassert(frameSlots_[i].UnitPoint);
-				id[i] = frameSlots_[i].UnitPoint->attr().ID;
+				id[i] = frameSlots_[i].UnitPoint->attr()->ID;
 				unit[i] = frameSlots_[i].UnitPoint;
 				break;
             default:
@@ -856,7 +856,7 @@ bool terFrame::canTeleportate() const
 
 	terCorridor* corridor = safe_cast<terCorridor*>(universe()->findCorridor());
 	if(corridor && corridor->readyToTeleportate() && corridor->position2D().distance2(position2D()) 
-		< sqr(corridor->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA ? gameShell->manualData().alphaActivationDistance : gameShell->manualData().omegaActivationDistance))
+		< sqr(corridor->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA ? gameShell->manualData().alphaActivationDistance : gameShell->manualData().omegaActivationDistance))
 		return true;
 
 	return false;
@@ -868,7 +868,7 @@ bool terFrame::analyzeTerrain()
 	int x0 = (int) xm::round(position().x) >> kmGrid;
 	int y0 = (int) xm::round(position().y) >> kmGrid;
 	int z0 = vMap.hZeroPlast;
-	int dzMax = attr().heightMax;
+	int dzMax = attr()->heightMax;
 	for(int y = -D; y <= D; y++)
 		for(int x = -D; x <= D; x++){
 			if(xm::abs(vMap.GVBuf[vMap.offsetGBufC(x + x0, y + y0)] - z0) > dzMax)

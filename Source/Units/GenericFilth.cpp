@@ -82,7 +82,7 @@ bool terCheckFilthChaos(const Vect3f& pos)
 
 terFilthSpot::terFilthSpot(const UnitTemplate& data) : terUnitBase(data)
 {
-	radius_ = attr().boundRadius;
+	radius_ = attr()->boundRadius;
 
 	sleep_ = false;
 	first_sleep_time=0;
@@ -682,8 +682,9 @@ void terFilthSpot::setActivity(bool activate)
 { 
 	sleep_ = !activate; 
 	if(activate){
-		sleep_timer.start(first_sleep_time*1000); 
-		universe()->checkEvent(EventActivateSpot(false));
+		sleep_timer.start(first_sleep_time*1000);
+        EventActivateSpot ev(false);
+		universe()->checkEvent(&ev);
 	}
 } 
 

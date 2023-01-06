@@ -40,7 +40,7 @@ protected:
 
 	bool findTarget();
 	bool needAttackTarget() const {	
-		return !attr().checkWeaponFlag(WEAPON_DISABLE_DEFENCIVE_ATTACK) 
+		return !attr()->checkWeaponFlag(WEAPON_DISABLE_DEFENCIVE_ATTACK) 
 			&& ((!attackTarget_ && wayPoints().empty()) || (!manualAttackTarget_ && attackTarget_ && attackTarget_->possibleDamage() > attackTarget_->damageMolecula().aliveElementCount() + estimatedDamage())); 
 	}
 };

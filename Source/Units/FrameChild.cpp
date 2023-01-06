@@ -94,7 +94,7 @@ void terFrameChild::Quant()
 Vect2f terFrameChild::homePosition() 
 {
 	float a = (2*XM_PI*slotNumber_)/5;
-	float r = FramePoint->attr().mmpHomePositionRadius;
+	float r = FramePoint->attr()->mmpHomePositionRadius;
 	return FramePoint->position2D() + Vect2f(r*xm::cos(a), r*xm::sin(a));
 }
 
@@ -111,7 +111,7 @@ void terFrameChild::executeCommand(const UnitCommand& command)
 			alarmStatus_ = true;
 			setTargetUnit(0);
 		}
-		else if(targetUnit() && (targetUnit()->Player != Player || !targetUnit()->attr().isBuilding()))
+		else if(targetUnit() && (targetUnit()->Player != Player || !targetUnit()->attr()->isBuilding()))
 			setTargetUnit(0);
 		break;
 
@@ -191,7 +191,7 @@ void terFrameChild::setDockSlot(terDockingSlot* slot)
 int terFrameChild::GetInterfaceLegionMode()
 {
 	if(alarmStatus() || DockSlot)
-		return attr().ID == FramePoint->slot(slotNumber()).ProductionID ?
+		return attr()->ID == FramePoint->slot(slotNumber()).ProductionID ?
 			INTERFACE_LEGION_MODE_BACK_TO_FRAME : INTERFACE_LEGION_MODE_EXCHANGE;
 
 	if(!wayPoints().empty())

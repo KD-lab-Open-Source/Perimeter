@@ -19,23 +19,23 @@ terUnitBase::terUnitBase(const UnitTemplate& data)
 
 	radius_ = 1;
 	
-	damageMolecula_ = attr().damageMolecula;
+	damageMolecula_ = attr()->damageMolecula;
 
-	avatar_ = terCreateUnitInterpolation(attr().InterpolationType, this);
+	avatar_ = terCreateUnitInterpolation(attr()->InterpolationType, this);
 
 	setPose(Se3f::ID, false);
 
 	RealCollisionCount = 0;
 	MapUpdatedCount = 0;
 
-	collisionGroup_ = attr().CollisionGroup;
+	collisionGroup_ = attr()->CollisionGroup;
 
 	possibleDamage_ = 0;
 
 	repairRequested_ = 0;
 
 	selected_ = marked_ = false; 
-	unitClass_ = attr().UnitClass;
+	unitClass_ = attr()->UnitClass;
 
 	includingCluster_ = 0;
 }
@@ -75,14 +75,14 @@ void terUnitBase::ShowCircles()
 
 bool terUnitBase::selectAble() const 
 { 
-	return gameShell->missionEditor() || attr().SelectAble; 
+	return gameShell->missionEditor() || attr()->SelectAble; 
 }
 
 bool terUnitBase::isEnemy(const terUnitBase* unit) const 
 { 
 	return Player->clan() != unit->Player->clan() ? 
-		(!unit->Player->isWorld() || unit->attr().enemyWorld) :
-	(Player->isWorld() && attr().enemyWorld && !unit->attr().enemyWorld);
+		(!unit->Player->isWorld() || unit->attr()->enemyWorld) :
+	(Player->isWorld() && attr()->enemyWorld && !unit->attr()->enemyWorld);
 }
 
 bool terUnitBase::isHarmful(const terUnitBase* unit) const 
@@ -96,17 +96,20 @@ void terUnitBase::setDamage(const DamageData& damage,terUnitBase* agressor)
 	int shield = 0;
 	bool wasAlive = damageMolecula_.isAlive();
 	damageMolecula_.hit(damage.width,damage.power,damage.attackFilter,damage.damageFilter,shield);
-	if(wasAlive && !damageMolecula_.isAlive())
-		universe()->checkEvent(EventUnitMyUnitEnemy(Event::KILL_OBJECT, this, agressor));
+	if(wasAlive && !damageMolecula_.isAlive()) {
+        EventUnitMyUnitEnemy ev(Event::KILL_OBJECT, this, agressor);
+        universe()->checkEvent(&ev);
+    }
 
 	if(damageMolecula_.isAlive()){
-		if(attr().isBuilding())
+		if(attr()->isBuilding())
 			soundEvent(SOUND_VOICE_BUILDING_UNDER_ATTACK);
 		else
 			soundEvent(SOUND_VOICE_UNIT_UNDER_ATTACK);
 	}
-
-	universe()->checkEvent(EventUnitMyUnitEnemy(Event::ATTACK_OBJECT, this, agressor));
+    
+    EventUnitMyUnitEnemy ev(Event::ATTACK_OBJECT, this, agressor);
+	universe()->checkEvent(&ev);
 }
 
 void terUnitBase::setPose(const Se3f& pose, bool initPose) 
@@ -267,7 +270,7 @@ void terUnitBase::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_EXPLODE_UNIT: {
 		DamageData damage;
 		damage.clear();
-		if(attr().ID != UNIT_ATTRIBUTE_SQUAD){
+		if(attr()->ID != UNIT_ATTRIBUTE_SQUAD){
 			damage.width = damageMolecula().elementCount();
 			damage.power = damage.width*2;
 		}
@@ -291,8 +294,8 @@ const UnitCommand* terUnitBase::findCommand(CommandID commandID) const
 
 bool terUnitBase::soundEvent(SoundEventID event_id)
 {
-	if(attr().hasSoundSetup()){
-		if(const SoundEventSetup* ev = attr().soundSetup.findEvent(event_id))
+	if(attr()->hasSoundSetup()){
+		if(const SoundEventSetup* ev = attr()->soundSetup.findEvent(event_id))
 			return soundEvent(ev);
 	}
 
@@ -323,7 +326,7 @@ SaveUnitData* terUnitBase::universalSave(SaveUnitData* data)
 {
 	if(!data)
 		data = new SaveUnitData;
-	data->attributeID = attr().ID;
+	data->attributeID = attr()->ID;
 	data->position = position();
 	data->orientaion = orientation();
 	data->label = label_;

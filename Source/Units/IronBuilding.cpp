@@ -108,9 +108,9 @@ void terBuilding::setRealModel(int modelIndex, float scale)
 
     terUnitReal::setRealModel(isConstructed() ? 0 : 1, 1);
 
-	if(attr().hasAnimationSetup()){
+	if(attr()->hasAnimationSetup()){
 		if(!isConstructed()){
-			if(attr().MakingChainNum != -1)
+			if(attr()->MakingChainNum != -1)
 				realAvatar()->setChain(CHAIN_BUILD1);
 		}
 	}
@@ -138,7 +138,7 @@ int terBuilding::repairRequest() const
 	if(!(buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION)){
 		int element_count = damageMolecula().deadElementCount();
 		if(element_count){
-			element_count = xm::round(float(element_count) / attr().constructionSpeedCoeff + 0.5f) - repairRequested();
+			element_count = xm::round(float(element_count) / attr()->constructionSpeedCoeff + 0.5f) - repairRequested();
 			return (element_count > 0) ? element_count : 0;
 		}
 	}
@@ -154,7 +154,7 @@ void terBuilding::Quant()
 
 	if(isConstructed()){
 		if(realAvatar()->chainID() != CHAIN_NONE){
-			if(isConnected() || attr().disconnectAnimation)
+			if(isConnected() || attr()->disconnectAnimation)
 				realAvatar()->setAnimationSpeed(1.0f);
 			else 
 				realAvatar()->setAnimationSpeed(0.0f);
@@ -188,7 +188,7 @@ void terBuilding::Quant()
 	else
 		setBuildingStatus(buildingStatus() & ~BUILDING_STATUS_MOUNTED);
 
-	bool condition = ((buildingStatus() & BUILDING_STATUS_CONSTRUCTED) || !attr().ConnectionRadius)
+	bool condition = ((buildingStatus() & BUILDING_STATUS_CONSTRUCTED) || !attr()->ConnectionRadius)
 		&& !(buildingStatus() & BUILDING_STATUS_CONNECTED) && !Player->isWorld();
 	if(changePlayerTimer_(condition, globalAttr().changePlayerDelay))
 		universe()->changeOwner(this, universe()->worldPlayer());
@@ -206,8 +206,8 @@ ChainID terBuilding::chainRequest() const
 		return CHAIN_SWITCHED_ON;
 	}
 	else {
-		if(!attr().isUpgrade && attr().MakingChainNum != -1){
-			int chain_index = xm::floor(damageMolecula().phase() * float(attr().MakingChainNum));
+		if(!attr()->isUpgrade && attr()->MakingChainNum != -1){
+			int chain_index = xm::floor(damageMolecula().phase() * float(attr()->MakingChainNum));
 			return ChainID(CHAIN_BUILD1 + chain_index);
 		}
 		else
@@ -220,7 +220,7 @@ terBuilding* terBuilding::upgrade()
 	if(!isConstructed())
 		return 0;
 
-	terUnitAttributeID upID = attr().Upgrade;
+	terUnitAttributeID upID = attr()->Upgrade;
 	if(upID != UNIT_ATTRIBUTE_NONE){
 		Kill();
 		terBuilding* building = safe_cast<terBuilding*>(Player->buildUnit(upID));
@@ -240,7 +240,7 @@ terBuilding* terBuilding::upgrade()
 
 terBuilding* terBuilding::downgrade()
 {
-	terUnitAttributeID downID = attr().downgrade();
+	terUnitAttributeID downID = attr()->downgrade();
 	if(downID != UNIT_ATTRIBUTE_NONE){
 		Kill();
 		terBuilding* building = safe_cast<terBuilding*>(Player->buildUnit(downID));
@@ -257,7 +257,7 @@ terBuilding* terBuilding::downgrade()
 float terBuilding::upgradePhase() const
 {
 	if(int alive_elements = damageMolecula().aliveElementCount()){
-		terUnitAttributeID down_id = attr().downgrade();
+		terUnitAttributeID down_id = attr()->downgrade();
 		if(down_id != UNIT_ATTRIBUTE_NONE){
 			const AttributeBase* attr = Player->unitAttribute(down_id);
 			xassert(attr);
@@ -280,7 +280,7 @@ void terBuilding::MapUpdateHit(float x0,float y0,float x1,float y1)
 
 int terBuilding::damageMoleculaRepair(int element_count)
 {
-	element_count = xm::round(float(element_count) * attr().constructionSpeedCoeff);
+	element_count = xm::round(float(element_count) * attr()->constructionSpeedCoeff);
 	int ret = terUnitGeneric::damageMoleculaRepair(element_count);
 
 	if(!isConstructed()){
@@ -288,18 +288,18 @@ int terBuilding::damageMoleculaRepair(int element_count)
 			setBuildingStatus((buildingStatus() | BUILDING_STATUS_CONSTRUCTED) & ~BUILDING_STATUS_UPGRADING);
 			setRealModel(0, 1);
 
-			if(!attr().ConnectionRadius && isConnected())
+			if(!attr()->ConnectionRadius && isConnected())
 				Player->burnZeroplast();
 
-			universe()->checkEvent(EventUnitPlayer(Event::COMPLETE_BUILDING, this, Player));
+            EventUnitPlayer ev(Event::COMPLETE_BUILDING, this, Player);
+			universe()->checkEvent(&ev);
 
 			clearRepairRequest();
 
-			if(attr().isUpgrade)
+			if(attr()->isUpgrade)
 				soundEvent(SOUND_VOICE_BUILDING_UPGRADE_FINISHED);
 			else
 				soundEvent(SOUND_VOICE_BUILDING_READY);
-
 			soundEvent(SOUND_EVENT_BUILDING_READY);
 		}
 	}
@@ -347,7 +347,7 @@ void terBuilding::executeCommand(const UnitCommand& command)
 
 void terBuilding::uninstall()
 {
-	Player->energyData().addReturned(attr().buildEnergy()*globalAttr().sellBuildingEfficiency*life());
+	Player->energyData().addReturned(attr()->buildEnergy()*globalAttr().sellBuildingEfficiency*life());
 
 	terBuildingUninstall* p = safe_cast<terBuildingUninstall*>(Player->buildUnit(UNIT_ATTRIBUTE_BUILDING_UNINSTALL));
 	p->setParent(this);
@@ -482,18 +482,18 @@ void terBuilding::ShowInfo()
 	connection_icon_.quant();
 	energy_icon_.quant();
 	
-	if(isConstructed() && attr().iconDistanceFactor && visible_){
+	if(isConstructed() && attr()->iconDistanceFactor && visible_){
 		if(buildingStatus() & BUILDING_STATUS_CONNECTED){
 			int flag = BUILDING_STATUS_POWERED | BUILDING_STATUS_ENABLED;
 			if((buildingStatus() & flag) != flag){
 				MatXf m = avatar()->matrix();
-				m.trans().z += radius()*attr().iconDistanceFactor;
+				m.trans().z += radius()*attr()->iconDistanceFactor;
 				energy_icon_.show(m.trans());
 			}
 		}
 		else{
 			MatXf m = avatar()->matrix();
-			m.trans().z += radius()*attr().iconDistanceFactor;
+			m.trans().z += radius()*attr()->iconDistanceFactor;
 			connection_icon_.show(m.trans());
 		}
 	}
@@ -501,7 +501,7 @@ void terBuilding::ShowInfo()
 
 void terBuilding::explode()
 {
-	if(isConstructed() || attr().isUpgrade)
+	if(isConstructed() || attr()->isUpgrade)
 		terUnitReal::explode();
 }
 
@@ -568,9 +568,9 @@ void terFallStructure::setParent(terUnitBase* p)
 	terUnitCorpse::setParent(p);
 
 	terUnitReal* b = safe_cast<terUnitReal*>(p);
-	fallSpeed_ = b->attr().FallSpeed;
-	fallDelay_ = b->attr().FallDelay;
-	fallAcceleration_ = b->attr().FallAcceleration;
+	fallSpeed_ = b->attr()->FallSpeed;
+	fallDelay_ = b->attr()->FallDelay;
+	fallAcceleration_ = b->attr()->FallAcceleration;
 
 	setPose(p->pose(), true);
 }
@@ -590,8 +590,8 @@ void terBuildingHologram::Start()
 	if(MasterPoint){
 		setPose(MasterPoint->pose(), true);
 
-		avatar()->SetModel(MasterPoint->attr().buildModelName(), MasterPoint->GetScale()*1.1f);
-		avatar()->SetChain(MasterPoint->attr().PrevChainName);
+		avatar()->SetModel(MasterPoint->attr()->buildModelName(), MasterPoint->GetScale()*1.1f);
+		avatar()->SetChain(MasterPoint->attr()->PrevChainName);
 
 		AvatarQuant();
 		avatar()->Start();
@@ -640,7 +640,7 @@ bool terBuilding::canUpgrade() const
 	if(!isConstructed())
 		return false;
 
-	if(attr().Upgrade != UNIT_ATTRIBUTE_NONE)
+	if(attr()->Upgrade != UNIT_ATTRIBUTE_NONE)
 		return true;
 	else
 		return false; 
@@ -656,12 +656,12 @@ void terBuilding::ChangeUnitOwner(terPlayer* player)
 //------------------------------------------
 void terBuildingPowered::checkConnection()
 {
-	xassert(attr().InstallBound);
+	xassert(attr()->InstallBound);
 
 	MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-	std::vector<Vect2i> points(attr().BasementPoints.size());
+	std::vector<Vect2i> points(attr()->BasementPoints.size());
 	for(int i = 0; i < points.size(); i++)
-		points[i] = mx2*attr().BasementPoints[i];
+		points[i] = mx2*attr()->BasementPoints[i];
 
 	GenShapeLineOp op;
 	scanPolyByLineOp(&points[0], points.size(), op);
@@ -715,8 +715,8 @@ void terBuildingUninstall::setParent(terBuilding* p)
 	avatar()->SetModelPoint(pModel);
 	avatar()->setPose(p->pose());
 
-	if(const terUnitEffectData* eff_data = p->attr().getEffectData(EFFECT_ID_BUILDING_UNINSTALL)){
-		if(EffectKey* key = p->attr().getEffect(eff_data->effectName)){
+	if(const terUnitEffectData* eff_data = p->attr()->getEffectData(EFFECT_ID_BUILDING_UNINSTALL)){
+		if(EffectKey* key = p->attr()->getEffect(eff_data->effectName)){
 			cEffect* eff = terScene->CreateScaledEffect(*key,p->avatar()->GetModelPoint(),true);
 
 			MatXf pos = (eff_data->needOrientation) ? p->avatar()->matrix() : MatXf(Mat3f::ID,p->avatar()->matrix().trans());
@@ -724,8 +724,8 @@ void terBuildingUninstall::setParent(terBuilding* p)
 		}
 	}
 
-	setLifeTime(attr().LifeTime);
-	xassert(attr().LifeTime);
+	setLifeTime(attr()->LifeTime);
+	xassert(attr()->LifeTime);
 }
 
 void terBuildingUninstall::Start()
@@ -738,7 +738,7 @@ void terBuildingUninstall::Quant()
 {
 	terUnitBase::Quant();
 
-	sight_ = float(lifeTimer_())/float(attr().LifeTime);
+	sight_ = float(lifeTimer_())/float(attr()->LifeTime);
 
 	terInterpolationUninstall* p = safe_cast<terInterpolationUninstall*>(avatar());
 	p->setSight(sight_);

@@ -181,7 +181,7 @@ void AttributeBase::init()
 
 	EffectLib = effectsData.effects.size() ? effectLibraryDispatcher().register_library(effectsData.libraryFileName) : 0;
 
-	initGeometryAttribute(modelData, *this);
+	initGeometryAttribute(modelData, this);
 }
 
 EffectKey* AttributeBase::getEffect(terEffectID effect_id) const
@@ -230,7 +230,7 @@ GeometryAttribute::GeometryAttribute()
 	logicObjectBound = logicObjectBoundOriginal;
 }
 
-void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const AttributeBase& attribute)
+void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const AttributeBase* attribute)
 {
 	float modelScaleOld = modelScale;
 
@@ -249,11 +249,11 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
     logic->Release();
 
 	modelScale = 1;
-	if(attribute.ID == UNIT_ATTRIBUTE_FRAME || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)
+	if(attribute->ID == UNIT_ATTRIBUTE_FRAME || attribute->ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || attribute->ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)
 		modelScale *= debuScales.frame;
-	else if(attribute.MilitaryUnit)
+	else if(attribute->MilitaryUnit)
 		modelScale *= debuScales.legion;
-	else if(attribute.isBuilding())
+	else if(attribute->isBuilding())
 		modelScale *= debuScales.buildins;
 	else
 		modelScale *= debuScales.other;
@@ -274,8 +274,8 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute.InstallBound || modelScaleOld != modelScale) {
-		cObjectNodeRoot* model = createObject(modelData.modelName, attribute.belligerent);
+	if(attribute->InstallBound || modelScaleOld != modelScale) {
+		cObjectNodeRoot* model = createObject(modelData.modelName, attribute->belligerent);
 
 		int vertex_num = 0;
 		int index_num = 0;

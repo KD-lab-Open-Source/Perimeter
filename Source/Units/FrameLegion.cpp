@@ -29,7 +29,7 @@ void terBuildingCommandCenter::setPose(const Se3f& pose, bool initPose)
 	terBuildingPowered::setPose(pose, initPose);
 	if(initPose){
 		Se3f poseShifted = pose;
-		poseShifted.trans() += to3D(SquadPoint->attr().homePositionOffsetFactor*radius(), 0);
+		poseShifted.trans() += to3D(SquadPoint->attr()->homePositionOffsetFactor*radius(), 0);
 		SquadPoint->setPose(poseShifted, initPose);
 		SquadPoint->setHomePosition(poseShifted.trans());
 	}

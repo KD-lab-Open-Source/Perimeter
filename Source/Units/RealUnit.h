@@ -118,8 +118,8 @@ public:
 	terUnitReal(const UnitTemplate& data);
 	virtual ~terUnitReal();
 
-	const AttributeReal& attr() const override {
-		return safe_cast_ref<const AttributeReal&>(terUnitGeneric::attr());
+	const AttributeReal* attr() const override {
+		return safe_cast<const AttributeReal*>(terUnitGeneric::attr());
 	}
 
 	void Start();

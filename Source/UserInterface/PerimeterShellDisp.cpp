@@ -1786,7 +1786,8 @@ int CShellIconManager::OnLButtonDown(float x, float y)
 		}
 		(m_pLastClicked = m_pFocus = pWnd)->OnLButtonDown(x, y);
 		if (universe()) {
-			universe()->checkEvent(EventClickOnButton((ShellControlID)pWnd->ID));
+            EventClickOnButton ev((ShellControlID)pWnd->ID);
+			universe()->checkEvent(&ev);
 		}
 		m_fTimePressed = frame_time();
 		r = 1;
@@ -2383,7 +2384,7 @@ void CShellIconManager::draw()
 					}
 //					else if(_pUnitHover && (_pUnitHover->playerID() == universe()->activePlayer()->playerID()))
 					else if (_pUnitHover())
-						FormatUnitPopup(&_pUnitHover->attr(), cbPopupBuffer, false, _pUnitHover());
+						FormatUnitPopup(_pUnitHover->attr(), cbPopupBuffer, false, _pUnitHover());
 //					else if(_pShellDispatcher->m_pUnitInfo)
 //						FormatUnitPopup(_pShellDispatcher->m_pUnitInfo, cbPopupBuffer, false, 0);
 
@@ -2566,7 +2567,7 @@ float GetUnitBuildProgress(terUnitBase* p) {
 	return res > 0 ? res : FLT_EPS;
 }
 
-float GetUnitUpgradeProgress(terBuilding* p) {
+float GetUnitUpgradeProgress(const terBuilding* p) {
 	if(p->isConstructed())
 		return 1.0f;
 
@@ -3301,18 +3302,18 @@ void CShellIconManager::UpdateActionStatus(terUnitBase* pUnit)
 //		pBtn->SetCheck(safe_cast<terUnitSquad*>(pUnit)->GetInterfaceOffensiveMode() == 0);
 //	}
 }
-void CShellIconManager::ShowUpgradeBuildProcessIcons(terUnitBase* pUnit)
+void CShellIconManager::ShowUpgradeBuildProcessIcons(const terUnitBase* pUnit)
 {
-	if(pUnit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ||
-		pUnit->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER)
+	if(pUnit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ||
+		pUnit->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER)
 		return;
 
-	if (pUnit->attr().isUpgrade || pUnit->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)	{
-		GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Enable(false);
-		_shellIconManager.GetWnd(SQSH_SELPANEL_SELL_ID)->Show(pUnit->attr().ID != UNIT_ATTRIBUTE_CORRIDOR_OMEGA);
-		_shellIconManager.GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Show(TRUE);
-		terBuilding* b = safe_cast<terBuilding*>(pUnit);
-		updateButtonLabel(pUnit->attr().interfacePrm.upgrading_button_id, 0, GetUnitUpgradeProgress(b), b->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION, true);
+	if (pUnit->attr()->isUpgrade || pUnit->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)	{
+		GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Enable(false);
+		_shellIconManager.GetWnd(SQSH_SELPANEL_SELL_ID)->Show(pUnit->attr()->ID != UNIT_ATTRIBUTE_CORRIDOR_OMEGA);
+		_shellIconManager.GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Show(TRUE);
+		const terBuilding* b = safe_cast<const terBuilding*>(pUnit);
+		updateButtonLabel(pUnit->attr()->interfacePrm.upgrading_button_id, 0, GetUnitUpgradeProgress(b), b->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION, true);
 	} else {
 		ShellControlID ids[] = { SQSH_SELPANEL_SELL_ID };
 		ShowControls(TRUE, ids, sizeof(ids)/sizeof(ShellControlID));
@@ -3346,7 +3347,7 @@ void CShellIconManager::UpdateSelectionIcons()
 	const UnitInterfacePrm* unit_prm = 0;
 	UnitInterfaceActions    actions;
 
-	terUnitBase*          pUnit = 0;
+	terUnitBase*          pUnit = nullptr;
 	const AttributeBase* attr = 0;
 
 	actions.set();
@@ -3359,10 +3360,9 @@ void CShellIconManager::UpdateSelectionIcons()
 		if(list_units.empty())
 			return;
 
-		FOR_EACH(list_units, i_unit)
-		{
-			pUnit = *i_unit;
-			attr = &(pUnit->attr());
+		for (terUnitBase* unit : list_units) {
+            pUnit = unit;
+			attr = pUnit->attr();
 
 	/*		if(framePowered_)
 			{
@@ -3382,11 +3382,11 @@ void CShellIconManager::UpdateSelectionIcons()
 			}
 	*/
 
-			switch(pUnit->attr().ID)
+			switch(pUnit->attr()->ID)
 			{
 			case UNIT_ATTRIBUTE_SQUAD:
 				{
-					terUnitSquad* sq = safe_cast<terUnitSquad*>(pUnit);
+					const terUnitSquad* sq = safe_cast<const terUnitSquad*>(pUnit);
 					if(sq->Empty())
 					{
 						attr = 0;
@@ -3415,8 +3415,9 @@ void CShellIconManager::UpdateSelectionIcons()
 				break;
 
 			case UNIT_ATTRIBUTE_FRAME:
-				if(safe_cast<terFrame*>(pUnit)->frameStatus() == terFrame::MOBILE)
-					unit_prm = &interface_frame_uninstalled;
+				if(safe_cast<const terFrame*>(pUnit)->frameStatus() == terFrame::MOBILE) {
+                    unit_prm = &interface_frame_uninstalled;
+                }
 
 				if (pUnit != universe()->activePlayer()->frame()) {
 					unit_prm = 0;
@@ -3659,7 +3660,7 @@ void CShellIconManager::UpdateSquadIcons()
         bool disableTogetherBtn = false;
         bool showTogetherBtn = false;
 		if (	(_pShellDispatcher->GetSelectedUnitsCount() > 1) && 
-				(_pShellDispatcher->GetSelectedUnit()->attr().ID == UNIT_ATTRIBUTE_SQUAD)
+				(_pShellDispatcher->GetSelectedUnit()->attr()->ID == UNIT_ATTRIBUTE_SQUAD)
 			) {
 			terUnitBase* b = _pShellDispatcher->GetSelectedUnit();
 
@@ -4075,7 +4076,7 @@ void LogicUpdater::updateSlotsData() {
 
 			slotData->unit = (terUnitReal*) units[i];
 			slotData->productionPhase = phase[i] / 100.0f;
-			slotData->isBrig = !units[i] || (units[i]->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER);
+			slotData->isBrig = !units[i] || (units[i]->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER);
 			slotData->enabled = (id[i] < 0) || units[i];
 			slotData->isInChanging = units[i] && (units[i]->GetInterfaceLegionMode() & INTERFACE_LEGION_MODE_EXCHANGE);
 			slotData->requestedAttr = id[i];
@@ -4409,18 +4410,18 @@ void LogicUpdater::updateMiniMap() {
 					color = player->unitColor();
 					pos = (*ui)->position2D();
 				} else if (	(unitClass & (UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH) ) 
-							&& (*ui)->attr().ID != UNIT_ATTRIBUTE_FILTH_VOLCANO
+							&& (*ui)->attr()->ID != UNIT_ATTRIBUTE_FILTH_VOLCANO
 							) {
 					color = filthMapColor;
 					pos = (*ui)->position2D();
 				} else if ( unitClass & UNIT_CLASS_CORRIDOR && !(*ui)->isUnseen()) {
 					color = player->unitColor();
 					pos = (*ui)->position2D();
-					if ((*ui)->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) {
+					if ((*ui)->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) {
 						safe_cast<terCorridorAlpha*>(*ui)->putPath(logicData->alphaPath);
 					}
 				} else {
-					switch ((*ui)->attr().ClassID) {
+					switch ((*ui)->attr()->ClassID) {
 						case UNIT_CLASS_ID_TERRAIN_MASTER:
 						case UNIT_CLASS_ID_BUILD_MASTER:
 							color = player->unitColor();

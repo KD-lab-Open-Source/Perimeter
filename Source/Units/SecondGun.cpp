@@ -278,14 +278,14 @@ template<class AimType>
 class WeaponDerivedBase : public terWeapon
 {
 public:
-	WeaponDerivedBase(terUnitReal* owner) : terWeapon(owner), aimController_(owner), turnSuggestPrm_(NULL){ turnSuggestPrm_ = owner->attr().weaponSetup.turnSuggestPrm; }
+	WeaponDerivedBase(terUnitReal* owner) : terWeapon(owner), aimController_(owner), turnSuggestPrm_(NULL){ turnSuggestPrm_ = owner->attr()->weaponSetup.turnSuggestPrm; }
 	~WeaponDerivedBase(){ }
 
 	bool init(){
-		xassert(owner()->attr().weaponSetup.enabled());
+		xassert(owner()->attr()->weaponSetup.enabled());
 
 		if(!terWeapon::init()) return false;
-		return aimController_.init(owner()->LogicObjectPoint,owner()->avatar()->GetModelPoint(),owner()->attr().weaponSetup.controllerSetup);
+		return aimController_.init(owner()->LogicObjectPoint,owner()->avatar()->GetModelPoint(),owner()->attr()->weaponSetup.controllerSetup);
 	}
 
 	void updateLogic(){ if(isEnabled()) aimController_.updateLogic(); }
@@ -769,9 +769,9 @@ bool AimControllerDirectional::getTargetingPosition(Vect3f& targeting0,Vect3f& t
 terWeapon::terWeapon(terUnitReal* owner) : owner_(owner),
 	fireController_(NULL),
 	fireTarget_(NULL),
-	setup_(owner_->attr().weaponSetup)
+	setup_(owner_->attr()->weaponSetup)
 {
-	xassert(owner_ && owner_->attr().weaponSetup.enabled());
+	xassert(owner_ && owner_->attr()->weaponSetup.enabled());
 
 	missileCount_ = 0;
 
@@ -1372,7 +1372,7 @@ bool terWeaponLaser::fireTest(const Vect3f& to,terUnitBase* target,int& status) 
 int terWeaponLaser::estimatedDamage() const
 {
 	xassert(owner());
-	return owner()->attr().estimatedDamage();
+	return owner()->attr()->estimatedDamage();
 }
 
 void terWeaponLaser::disable()
@@ -1847,10 +1847,10 @@ void terWeaponLeech::quant()
 			switchOff();
 
 		if(owner()->realAvatar()->chainID() == CHAIN_FIRE){
-			xassert(owner() && owner()->attr().productionConsumption.enabled());
+			xassert(owner() && owner()->attr()->productionConsumption.enabled());
 
 			if(!weaponConsumption_.attached())
-				weaponConsumption_.attach(target_->Player, owner()->attr().productionConsumption);
+				weaponConsumption_.attach(target_->Player, owner()->attr()->productionConsumption);
 
 			weaponConsumption_.requestCharge();
 
@@ -2251,7 +2251,7 @@ bool terWeaponLighting::fireTest(const Vect3f& to,terUnitBase* target,int& statu
 int terWeaponLighting::estimatedDamage() const
 {
 	xassert(owner());
-	return owner()->attr().estimatedDamage();
+	return owner()->attr()->estimatedDamage();
 }
 	
 void terWeaponLighting::destroyLink()

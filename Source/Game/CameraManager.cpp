@@ -574,7 +574,7 @@ void terCameraType::SetCameraFollow(terUnitBase* unit, int transitionTime)
 void terCameraType::destroyLink()
 {
 	if(unit_follow && (!unit_follow->alive() 
-	  || (unit_follow->attr().ID == UNIT_ATTRIBUTE_SQUAD && safe_cast<terUnitSquad*>(unit_follow)->Empty()))){
+	  || (unit_follow->attr()->ID == UNIT_ATTRIBUTE_SQUAD && safe_cast<terUnitSquad*>(unit_follow)->Empty()))){
 		SetCameraFollow(0);
 	}
 }

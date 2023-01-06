@@ -56,16 +56,16 @@ void cSelectManager::Quant()
 
 int cSelectManager::getUnitSelectionPriority(terUnitBase* p) 
 {
-	if (p->GetSquadPoint() && (p->attr().MilitaryUnit || p->GetSquadPoint() == p)){
+	if (p->GetSquadPoint() && (p->attr()->MilitaryUnit || p->GetSquadPoint() == p)){
 		//сквад
 		return 1;
-	} else if (p->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER){
+	} else if (p->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER){
 		//прорабы, бригадиры
 		return 2;
-	} else if (p->attr().ID == UNIT_ATTRIBUTE_CORE){
+	} else if (p->attr()->ID == UNIT_ATTRIBUTE_CORE){
 		//ядро
 		return 3;
-	} else if (p->attr().MilitaryUnit && p->attr().isBuilding()){
+	} else if (p->attr()->MilitaryUnit && p->attr()->isBuilding()){
 		//стац. орудие
 		return 4;
 	} else {
@@ -129,7 +129,7 @@ void cSelectManager::areaToSelection(float x0, float y0, float x1, float y1, int
 void cSelectManager::unitToSelection(terUnitBase* p, int mode, bool passSquad) {
 	cancelActions();
 	CSELECT_AUTOLOCK();
-	if (p->alive() && p->selectAble() && p->playerID() == player->playerID() && (passSquad || p->attr().ID != UNIT_ATTRIBUTE_SQUAD)) {
+	if (p->alive() && p->selectAble() && p->playerID() == player->playerID() && (passSquad || p->attr()->ID != UNIT_ATTRIBUTE_SQUAD)) {
 		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty() && (mode & COMMAND_SELECTED_MODE_NEGATIVE)) {
             mode ^= COMMAND_SELECTED_MODE_NEGATIVE;
         }
@@ -137,7 +137,7 @@ void cSelectManager::unitToSelection(terUnitBase* p, int mode, bool passSquad) {
 		clear(TEMP_SELECTION_GROUP_NUMBER);
         if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
             int unitPriority = getUnitSelectionPriority(p);
-            if (p->GetSquadPoint() && p->attr().MilitaryUnit) {
+            if (p->GetSquadPoint() && p->attr()->MilitaryUnit) {
                 p = p->GetSquadPoint();
             }
             UnitList::iterator unitIter = findInSelection(p);
@@ -177,7 +177,7 @@ void cSelectManager::grade(terUnitBase* from, terUnitBase* to) {
 			to->alive()
 		&&	to->selectAble()
 		&&	to->playerID() == player->playerID()
-		&&	to->attr().ID != UNIT_ATTRIBUTE_SQUAD) {
+		&&	to->attr()->ID != UNIT_ATTRIBUTE_SQUAD) {
 
 		//deselect and clear temp
 		clear(TEMP_SELECTION_GROUP_NUMBER);
@@ -188,7 +188,7 @@ void cSelectManager::grade(terUnitBase* from, terUnitBase* to) {
 			addUnitOrSquadToSelection(to);
 		} else {
 			int unitPriority = getUnitSelectionPriority(to);
-			if (to->GetSquadPoint() && to->attr().MilitaryUnit) {
+			if (to->GetSquadPoint() && to->attr()->MilitaryUnit) {
 				to = to->GetSquadPoint();
 			}
 			if (unitPriority == selectedGroupPriority) {
@@ -251,13 +251,13 @@ void cSelectManager::selectInAreaAndCurrentSelection(float x0, float y0, float x
 void cSelectManager::selectUnitAndCurrentSelection(terUnitBase* p, int mode) {
 	cancelActions();
 	CSELECT_AUTOLOCK();
-	if (p->alive() && p->selectAble() && p->playerID() == player->playerID() && p->attr().ID != UNIT_ATTRIBUTE_SQUAD) {
+	if (p->alive() && p->selectAble() && p->playerID() == player->playerID() && p->attr()->ID != UNIT_ATTRIBUTE_SQUAD) {
 		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty() && (mode & COMMAND_SELECTED_MODE_NEGATIVE)) {
 			mode ^= COMMAND_SELECTED_MODE_NEGATIVE;
 		}
         if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
             int unitPriority = getUnitSelectionPriority(p);
-            if (p->GetSquadPoint() && p->attr().MilitaryUnit) {
+            if (p->GetSquadPoint() && p->attr()->MilitaryUnit) {
                 p = p->GetSquadPoint();
             }
             if (findInSelection(p) != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
@@ -297,7 +297,7 @@ void cSelectManager::allLikeUnitToSelection(terUnitBase* p) {
 		selectedGroupPriority = getUnitSelectionPriority(p);
 		clear(TEMP_SELECTION_GROUP_NUMBER);
 		clear();
-		if ( p->GetSquadPoint() && p->attr().MilitaryUnit ) {
+		if ( p->GetSquadPoint() && p->attr()->MilitaryUnit ) {
 			SquadList::iterator sq_it;
 			FOR_EACH (player->squadList(), sq_it) {
 				if(*sq_it)
@@ -305,11 +305,11 @@ void cSelectManager::allLikeUnitToSelection(terUnitBase* p) {
 			}
 		} else {
 			CUNITS_LOCK(player);
-			int unitIDToAdd = p->attr().ID;
+			int unitIDToAdd = p->attr()->ID;
 			const UnitList& unit_list=player->units();
 			UnitList::const_iterator un_it;
 			FOR_EACH (unit_list, un_it) {
-				if ( (*un_it)->attr().ID == unitIDToAdd ) {
+				if ( (*un_it)->attr()->ID == unitIDToAdd ) {
 					SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].push_back(*un_it);
 				}
 			}
@@ -320,7 +320,7 @@ void cSelectManager::allLikeUnitToSelection(terUnitBase* p) {
 }
 
 void cSelectManager::addUnitOrSquadToSelection(terUnitBase* p) {
-	if ( p->GetSquadPoint() && p->attr().MilitaryUnit ) {
+	if ( p->GetSquadPoint() && p->attr()->MilitaryUnit ) {
 		addToSelection( p->GetSquadPoint() );
 	} else {
 		addToSelection(p);
@@ -491,7 +491,7 @@ void cSelectManager::MakeSelectionList(float x0, float y0, float x1, float y1, U
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list,ui){
 		terUnitBase* p = *ui;
-		if(p->alive() && p->selectAble() && p->attr().ID != UNIT_ATTRIBUTE_SQUAD){
+		if(p->alive() && p->selectAble() && p->attr()->ID != UNIT_ATTRIBUTE_SQUAD){
 //		if(p->alive() && p->selectAble()){
 			if(terObjectBoxTest(p->position(),PlaneClip))
 				out_list.push_back(p);
@@ -510,7 +510,7 @@ void cSelectManager::filterSelectionList(UnitList& unit_list, int priority) {
 		UnitList::iterator i_unit1 = unit_list.begin();
 		while (i_unit1 != unit_list.end()) {
 			terUnitBase* p = (*i_unit1)->GetSquadPoint();
-			if (p && (*i_unit1)->attr().MilitaryUnit ) {
+			if (p && (*i_unit1)->attr()->MilitaryUnit ) {
 				UnitList::iterator i_unit2;
 				FOR_EACH (squad_list,i_unit2) {
 					if (*i_unit2 == p) {
@@ -677,7 +677,7 @@ void cSelectManager::copyGroup(unsigned int groupSource, unsigned int groupDesti
 bool cSelectManager::CanAttackUnit(terUnitBase* pUnit, terUnitBase* pTarget) {
 	bool res = false;
 
-	if (pUnit->attr().ID == UNIT_ATTRIBUTE_SQUAD) {
+	if (pUnit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
 		terUnitSquad* squad = safe_cast<terUnitSquad*>(pUnit);
 		terPlayer* player = pUnit->Player;
 		int attackClass = UNIT_CLASS_IGNORE;
@@ -705,7 +705,7 @@ bool cSelectManager::CanAttackUnit(terUnitBase* pUnit, terUnitBase* pTarget) {
 			res = true;
 		}
 	} else if (pUnit->isBuildingPowerOn()) {
-		const AttributeBase* attr = &(pUnit->attr());
+		const AttributeBase* attr = pUnit->attr();
 		if (pTarget) {
 			if (attr->AttackClass & pTarget->unitClass()) {
 				float d2 = pUnit->position().distance2(pTarget->position());

@@ -1629,7 +1629,7 @@ class CShellIconManager
 	bool handleEvent(const iEvent* ev);
 
 	//icons status
-	void ShowUpgradeBuildProcessIcons(terUnitBase* pUnit);
+	void ShowUpgradeBuildProcessIcons(const terUnitBase* pUnit);
 	void ShowActionIcons(const UnitInterfacePrm& intf_prm, const UnitInterfaceActions& actions, terUnitBase* pUnit);
 	void UpdateActionStatus(terUnitBase* pUnit);
 	void UpdateIcons();

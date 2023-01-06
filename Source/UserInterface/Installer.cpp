@@ -225,8 +225,8 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 				const UnitList& unit_list=player->units();
 				UnitList::const_iterator ui;
 				FOR_EACH(unit_list, ui)
-					if((*ui)->attr().ConnectionRadius && ((*ui)->isBuildingEnable() || (*ui)->attr().ID == UNIT_ATTRIBUTE_FRAME) &&
-					  (*ui)->position2D().distance2(position) < sqr((*ui)->attr().ConnectionRadius))
+					if((*ui)->attr()->ConnectionRadius && ((*ui)->isBuildingEnable() || (*ui)->attr()->ID == UNIT_ATTRIBUTE_FRAME) &&
+					  (*ui)->position2D().distance2(position) < sqr((*ui)->attr()->ConnectionRadius))
 						connected = true;
 			}
 

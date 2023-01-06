@@ -245,13 +245,13 @@ void terPlayer::UpdatePowering()
 	// Перерасчет запасов
 	EnergyData.clearCapacity();
 	EnergyData.clearAccumulated();
-	EnergyData.addCapacity(frame()->attr().energyCapacity);
+	EnergyData.addCapacity(frame()->attr()->energyCapacity);
 	EnergyData.addAccumulated(frame()->accumulatedEnergy());
 	terBuildingList::iterator bi;
 	FOR_EACH(accums, bi){
 		if((*bi)->isConstructed()){
 			EnergyData.addAccumulated((*bi)->accumulatedEnergy());
-			EnergyData.addCapacity((*bi)->attr().energyCapacity);
+			EnergyData.addCapacity((*bi)->attr()->energyCapacity);
 		}
 	}
 
@@ -336,8 +336,8 @@ void terPlayer::CalcStructureRegion()
 	float area = 0;
 	if(frame()) {
 		if(frame()->attached()){
-			const AttributeBase& attr = frame()->attr();
-			area = sqr(attr.ZeroLayerRadius)*XM_PI;
+			const AttributeBase* attr = frame()->attr();
+			area = sqr(attr->ZeroLayerRadius)*XM_PI;
 			frame()->placeZeroLayer(false);
 		} else {
             frame()->freeZeroLayer();
@@ -348,8 +348,8 @@ void terPlayer::CalcStructureRegion()
 	FOR_EACH(BuildingList[UNIT_ATTRIBUTE_CORE], bi){
 		terBuilding& b = **bi;
 		if(b.isBuildingEnable()){
-			const AttributeBase& attr = b.attr();
-			area += sqr(attr.ZeroLayerRadius)*XM_PI;
+			const AttributeBase* attr = b.attr();
+			area += sqr(attr->ZeroLayerRadius)*XM_PI;
 			b.placeZeroLayer(false);
 		}
 		else
@@ -404,10 +404,10 @@ public:
 
 	void operator()(terUnitBase* p)
 	{
-		if(!p->alive() || !p->attr().ConnectionRadius)
+		if(!p->alive() || !p->attr()->ConnectionRadius)
 			return;
 
-		if(p->attr().ID != UNIT_ATTRIBUTE_FRAME){ // Ядра и трансмиттеры
+		if(p->attr()->ID != UNIT_ATTRIBUTE_FRAME){ // Ядра и трансмиттеры
 			if(p->playerID() == playerID_){
 				if(p->includingCluster() && FieldCluster::get_player_id(p->includingCluster()) != playerID_)
 					return; // Мои под вражеским полем
@@ -420,9 +420,9 @@ public:
 			if(b->buildingStatus() & (BUILDING_STATUS_CONSTRUCTED | BUILDING_STATUS_UPGRADING) && !b->isConnected()){
 				terUnitBase* b_min = closestBuilding(b);
 				if(b_min){
-					if(b->attr().ID == UNIT_ATTRIBUTE_CORE && b_min->attr().ID == UNIT_ATTRIBUTE_FRAME){
+					if(b->attr()->ID == UNIT_ATTRIBUTE_CORE && b_min->attr()->ID == UNIT_ATTRIBUTE_FRAME){
 						powered_ = true;
-						if(b->position2D().distance2(b_min->position2D()) < sqr(b_min->attr().ConnectionRadius - safe_cast<terFrame*>(b_min)->attr().oneStepMovement))
+						if(b->position2D().distance2(b_min->position2D()) < sqr(b_min->attr()->ConnectionRadius - safe_cast<terFrame*>(b_min)->attr()->oneStepMovement))
 							restorePosition_ = false;
 					}
 
@@ -430,7 +430,7 @@ public:
 						universe()->changeOwner(b, player_);
 
 					b->setBuildingStatus(b->buildingStatus() | BUILDING_STATUS_CONNECTED | BUILDING_STATUS_ENABLED);
-					if(b->attr().MakeEnergy > 0)
+					if(b->attr()->MakeEnergy > 0)
 						b->setBuildingStatus(b->buildingStatus() | BUILDING_STATUS_POWERED);
 
 					if(b->readyToConnect() && b_min->readyToConnect()){
@@ -442,7 +442,7 @@ public:
 				}
 			}
 		}
-		else if(p->attr().ID == UNIT_ATTRIBUTE_FRAME && player_->frame() != p){
+		else if(p->attr()->ID == UNIT_ATTRIBUTE_FRAME && player_->frame() != p){
 			terFrame* frame = safe_cast<terFrame*>(p);
 			terUnitBase* b_min = closestBuilding(p);
 			if(b_min){
@@ -470,10 +470,10 @@ public:
 		terUnitBase* b_min = 0;
 		List::iterator i;
 		FOR_EACH(CurrentList, i){
-			if(b->attr().ID == UNIT_ATTRIBUTE_RELAY && (*i)->attr().ID == UNIT_ATTRIBUTE_FRAME)
+			if(b->attr()->ID == UNIT_ATTRIBUTE_RELAY && (*i)->attr()->ID == UNIT_ATTRIBUTE_FRAME)
 				continue;
 			float d = (*i)->position2D().distance2(b->position2D());
-			if(d_min > d && d < sqr((*i)->attr().ConnectionRadius)){
+			if(d_min > d && d < sqr((*i)->attr()->ConnectionRadius)){
 				d_min = d;
 				b_min = *i;
 			}
@@ -488,7 +488,7 @@ public:
 			List::iterator i;
 			FOR_EACH(CurrentList, i){
 				Vect2f pos = (*i)->position2D();
-				UnitGrid.Scan(pos.x, pos.y, (*i)->attr().ConnectionRadius, *this); 
+				UnitGrid.Scan(pos.x, pos.y, (*i)->attr()->ConnectionRadius, *this); 
 			}
 
 			std::swap(NewList, CurrentList);
@@ -630,7 +630,7 @@ void terPlayer::updateField()
 	FOR_EACH(cores, gi){
 		terProtector* core = safe_cast<terProtector*>(*gi);
 		if(core->canStartOrJoinToField()){
-			core_column_.operateByCircle(core->position2D(), core->attr().FieldRadius + core->radius(), 1);
+			core_column_.operateByCircle(core->position2D(), core->attr()->FieldRadius + core->radius(), 1);
 			freeGenerators.push_back(core);
 		}
 	}
@@ -640,8 +640,8 @@ void terPlayer::updateField()
 		terBuildingList::iterator bi;
 		FOR_EACH(BuildingList[i],bi){
 			Vect2f pos = (*bi)->position2D();
-			if((*bi)->attr().ID == UNIT_ATTRIBUTE_CORE && safe_cast<terProtector*>(*bi)->canStartOrJoinToField())
-				field_region_.getEditColumn().operateByCircle(pos,(*bi)->attr().FieldRadius, 1);
+			if((*bi)->attr()->ID == UNIT_ATTRIBUTE_CORE && safe_cast<terProtector*>(*bi)->canStartOrJoinToField())
+				field_region_.getEditColumn().operateByCircle(pos,(*bi)->attr()->FieldRadius, 1);
 			else if(core_column_.filled(pos.xi(),pos.yi()))
 				field_region_.getEditColumn().operateByCircle(pos,(*bi)->radius(), 1);
 		}
@@ -811,7 +811,7 @@ void Cluster::startField()
 
 float Cluster::velocityFactor() const
 {
-	return (fieldPrm.monksPerCore*length_)/(2*XM_PI*generators().front()->attr().FieldRadius*monks_.size());
+	return (fieldPrm.monksPerCore*length_)/(2*XM_PI*generators().front()->attr()->FieldRadius*monks_.size());
 }
 
 bool Cluster::destroyLinks()

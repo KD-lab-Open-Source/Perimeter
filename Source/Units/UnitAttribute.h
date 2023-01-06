@@ -1422,7 +1422,7 @@ struct GeometryAttribute: SerializeVirtual
 
 	GeometryAttribute();
 
-	void initGeometryAttribute(const ModelData& modelData, const AttributeBase& attribute);
+	void initGeometryAttribute(const ModelData& modelData, const AttributeBase* attribute);
 
 	VIRTUAL_SERIALIZE(ar) {
 		ar & WRAP_OBJECT(BasementMin);

@@ -186,7 +186,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 					UnitList::const_iterator ui;
 					FOR_EACH(select_list, ui){
 						terUnitBase* unit1 = *ui;
-						if(unit1->attr().ID == unit->attr().ID){
+						if(unit1->attr()->ID == unit->attr()->ID){
 							if(unit1 != unit){
 								SaveUnitData* data1 = unit1->universalSave(0);
 								*data = *data1; // pos, ori, rad, label
@@ -509,11 +509,11 @@ const char* MissionEditor::info()
         } else {
             info_ += "Object: ";
         }
-        info_ += convertToCodepage(unit->attr().internalName(false), locale);
+        info_ += convertToCodepage(unit->attr()->internalName(false), locale);
         if (russian) {
             //Most alt names are in russian anyway
             info_ += " - ";
-            info_ += convertToCodepage(unit->attr().internalName(true), locale);
+            info_ += convertToCodepage(unit->attr()->internalName(true), locale);
         }
         info_ += "\n";
 		if (unit->GetModelName()) {
@@ -573,7 +573,7 @@ void MissionEditor::copyUnit()
 	if(!unit)
 		return;
 
-	copiedID_ = unit->attr().ID;
+	copiedID_ = unit->attr()->ID;
 	if(copiedData_){
 		delete copiedData_;
 		copiedData_ = 0;

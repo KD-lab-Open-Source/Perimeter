@@ -35,8 +35,8 @@ class terCorridor : public terBuildingPowered
 public:
 	terCorridor(const UnitTemplate& data);
 
-	const AttributeCorridor& attr() const {
-		return safe_cast_ref<const AttributeCorridor&>(terUnitReal::attr());
+	const AttributeCorridor* attr() const override {
+		return safe_cast<const AttributeCorridor*>(terBuildingPowered::attr());
 	}
 
 	virtual bool readyToTeleportate() const = 0;

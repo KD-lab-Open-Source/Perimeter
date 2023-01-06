@@ -698,7 +698,7 @@ bool GameShell::showEnergy() const
 		else {
 			UnitList::const_iterator ui;
 			FOR_EACH(select,ui)
-				if((*ui)->attr().MakeEnergy > 0)
+				if((*ui)->attr()->MakeEnergy > 0)
 					return true;
 		}
 	}
@@ -1852,7 +1852,8 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		return;
 
 	if (universe()) {
-		universe()->checkEvent(Event(Event::MOUSE_CLICK));
+        Event ev(Event::MOUSE_CLICK);
+		universe()->checkEvent(&ev);
 	}
 
 	if (autoSwitchAIEnabled) {
@@ -2337,7 +2338,7 @@ bool CShellLogicDispatcher::ShowTerraform() const
 		FOR_EACH(select_list, ui)
 		{
 			terUnitBase* unit=*ui;
-			if(unit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER)
+			if(unit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER)
 				return true;
 		}
 	}

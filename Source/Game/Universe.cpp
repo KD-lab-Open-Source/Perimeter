@@ -274,7 +274,8 @@ void terUniverse::Quant()
 	FOR_EACH(changeOwnerList,iChange)
 		if(iChange->unit_->alive()){
 			iChange->unit_->ChangeUnitOwner(iChange->player_);
-			checkEvent(EventUnitPlayer(Event::CAPTURE_BUILDING, iChange->unit_, iChange->player_));
+            EventUnitPlayer ev(Event::CAPTURE_BUILDING, iChange->unit_, iChange->player_);
+			checkEvent(&ev);
 		}
 	changeOwnerList.clear();
 
@@ -498,7 +499,7 @@ terUnitBase* terUniverse::TraceUnit(const Vect2f& pos, terUnitID* unit_filter)
                 continue;
             }
 			//if(unit->alive() && unit->selectAble() && (unit->collisionGroup() & (COLLISION_GROUP_ENEMY | COLLISION_GROUP_SELECTED)))
-			if(unit->alive() && unit->selectAble() && unit->attr().ID != UNIT_ATTRIBUTE_SQUAD){
+			if(unit->alive() && unit->selectAble() && unit->attr()->ID != UNIT_ATTRIBUTE_SQUAD){
 				if(unit->avatar() && unit->avatar()->GetModelPoint()){
 					//safe_cast<cObjectNodeRoot*>(unit->avatar()->GetModelPoint())->Update();
 					if(safe_cast<cObjectNode*>(unit->avatar()->GetModelPoint())->Intersect(v0,v1) &&
@@ -1493,7 +1494,7 @@ terUnitBase* terUniverse::findCorridor() const
 	return 0;
 }
 
-void terUniverse::checkEvent(const Event& event)
+void terUniverse::checkEvent(const Event* event)
 {
 	if(!enableEventChecking_)
 		return;

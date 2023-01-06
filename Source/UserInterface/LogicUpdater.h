@@ -27,7 +27,7 @@ class LogicUpdater {
 		void updateSlotsData();
 		void updateSquadsData();
 
-		void checkEvent(const Event& event);
+		void checkEvent(const Event* event);
 
 		void lock();
 		void unlock();

@@ -129,7 +129,7 @@ struct Condition : ShareHandleBaseSerializeVirtual // Не выполняетс�
 	bool checkDebug(AIPlayer& aiPlayer) { 
 		return state_ = check(aiPlayer); 
 	}
-	virtual_ void checkEvent(AIPlayer& aiPlayer, const class Event& event) {}
+	virtual_ void checkEvent(AIPlayer& aiPlayer, const class Event* event) {}
 	virtual_ void clear() {}
 	virtual_ void writeInfo(XBuffer& buffer, std::string offset) const {}
 
@@ -199,7 +199,7 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 	}
 
 	bool check(AIPlayer& aiPlayer);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	void clear();
 	void writeInfo(XBuffer& buffer, std::string offset) const;
 
@@ -384,7 +384,7 @@ public:
 	void initialize();
 
 	void quant(AIPlayer& aiPlayer, TriggerChain& triggerChain);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	void activate(AIPlayer& aiPlayer, TriggerChain& triggerChain);
 	bool removeLinkByChild(Trigger* child);
 
@@ -531,7 +531,7 @@ public:
 
 	void buildLinks();
 	void quant(AIPlayer& aiPlayer);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	Trigger* find(const char* name);
 
 	bool removeLink(int parentIndex, int childIndex);

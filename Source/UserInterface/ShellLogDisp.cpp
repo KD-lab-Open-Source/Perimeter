@@ -406,7 +406,7 @@ void SoundOnSetUnitTarget(terUnitBase* p)
 {
 	if(p)
 	{
-		switch(p->attr().ID)
+		switch(p->attr()->ID)
 		{
 		case UNIT_ATTRIBUTE_SQUAD:
 //			SND2DPlaySound("squad_moves");
@@ -442,7 +442,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 					universe()->select.makeCommandWithCanAttackFilter(_pUnitHover());
 //				else if (_pShellDispatcher->m_nPickData == 1) { // Стреляет по земле
 				else { // Стреляет по земле
-					if (pUnit->attr().ID == UNIT_ATTRIBUTE_SQUAD) {
+					if (pUnit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
 						universe()->select.makeCommandWithCanAttackFilter(v);
 					} else {
 						universe()->select.makeCommand2DWithCanAttackFilter(v);
@@ -461,7 +461,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 	case SHELL_PICK_UNIT_PATROL:
 		{
 			terUnitBase* pUnit = GetSelectedUnit();
-			if(pUnit == 0 || pUnit->attr().ID != UNIT_ATTRIBUTE_SQUAD)
+			if(pUnit == 0 || pUnit->attr()->ID != UNIT_ATTRIBUTE_SQUAD)
 			{
 				m_nPickAction = SHELL_PICK_NONE;
 				setArrowCursor();
@@ -640,7 +640,7 @@ int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 //			if (_pUnitHover() && _pUnitHover->Attribute.ID != UNIT_ATTRIBUTE_STATIC_NATURE && (_pUnitHover->playerID() != pPlayer->playerID())) {
             CommandSelectionMode mode = isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE;
             if (isControlPressed()) mode = static_cast<CommandSelectionMode>(mode | COMMAND_SELECTED_MODE_OVERRIDE);
-			if (_pUnitHover() && _pUnitHover->attr().ID != UNIT_ATTRIBUTE_STATIC_NATURE) {
+			if (_pUnitHover() && _pUnitHover->attr()->ID != UNIT_ATTRIBUTE_STATIC_NATURE) {
 				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), mode);
  				//SoundOnSetUnitEnemy(pSelected);
 			} else if (GetSelectedUnit() && !GetSelectedUnit()->isBuilding()) {
@@ -675,17 +675,17 @@ void CShellLogicDispatcher::SoundOnUnitPick(terUnitBase* p)
 {
 	if(!p)
 		return;
-	if (p->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER) {
+	if (p->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER) {
 		return;
 	}
 
-	if(p->GetSquadPoint() && p->attr().MilitaryUnit)
+	if(p->GetSquadPoint() && p->attr()->MilitaryUnit)
 	{
 		p->soundEvent(SOUND_VOICE_SQUAD_SELECTED);
 		return;
 	}
 
-	if(p->attr().ID == UNIT_ATTRIBUTE_FRAME){
+	if(p->attr()->ID == UNIT_ATTRIBUTE_FRAME){
 		terFrame* fp = safe_cast<terFrame*>(p);
 		if(fp->powered())
 			fp->soundEvent(SOUND_EVENT_SELECT_ALTERNATE);
@@ -713,7 +713,7 @@ int CShellLogicDispatcher::GetSelectedUnitsCount(int TypeID)
 	const UnitList& select_list=universe()->select.GetSelectList();
 	UnitList::const_iterator i;
 	FOR_EACH(select_list, i)
-		if((*i)->attr().ID == TypeID)
+		if((*i)->attr()->ID == TypeID)
 			n++;
 
 	return n;

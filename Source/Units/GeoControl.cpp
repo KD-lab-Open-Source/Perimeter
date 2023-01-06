@@ -72,9 +72,9 @@ void terGeoControl::Start()
 {
 	terUnitBase::Start();
 	sleep_timer.start(first_sleep_time*1e3f);
-	if(attr().SoundName[0] && attr().SoundCycled)
+	if(attr()->SoundName[0] && attr()->SoundCycled)
 	{
-		sound.Init(attr().SoundName);
+		sound.Init(attr()->SoundName);
 		sound.SetPos(To3D(position()));
 	}
 }
@@ -101,14 +101,14 @@ void terGeoControl::Quant()
 			if(!sleep_timer()){
 				float attack_time=(attack_period+terLogicRND(delta_attack_periond))*1e3f;
 
-				if(attr().SoundCycled)
+				if(attr()->SoundCycled)
 				{
 					sound.Play();
 				}else
 				{
-					if(attr().SoundName[0]) {
+					if(attr()->SoundName[0]) {
                         Vect3f p = To3D(position());
-                        SND3DPlaySound(attr().SoundName, &p);
+                        SND3DPlaySound(attr()->SoundName, &p);
                     }
 				}
 
@@ -138,8 +138,9 @@ void terGeoControl::setActivity(bool activate)
 { 
 	sleep_ = !activate; 
 	if(activate){
-		sleep_timer.start(first_sleep_time*1000); 
-		universe()->checkEvent(EventActivateSpot(false));
+		sleep_timer.start(first_sleep_time*1000);
+        EventActivateSpot ev(false);
+		universe()->checkEvent(&ev);
 	}
 } 
 
@@ -160,12 +161,12 @@ void terGeoControl::ShowInfo()
         const std::string& locale = getLocale();
         if (startsWith(locale, "russian")) {
             text = convertToCodepage("Гео: ", locale);
-            text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr().ID), locale);
+            text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr()->ID), locale);
             text += "\n";
         } else {
             text = "Geo:\n";
         }
-        text += getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(attr().ID);
+        text += getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(attr()->ID);
 		if(selected())
 		{
 			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 1.0f));

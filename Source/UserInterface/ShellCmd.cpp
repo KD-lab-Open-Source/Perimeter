@@ -42,7 +42,7 @@ void CheckBuildTerrainUnit(terUnitAttributeID nAttrID)
 	for(int k=0;k<5;k++)
 	{
 		terUnitBase* p = slots[k].unit;
-		if(p && p->attr().ID==nAttrID)
+		if(p && p->attr()->ID==nAttrID)
 		{
 			count_unit++;
 		}
@@ -331,7 +331,7 @@ void CShellLogicDispatcher::OnOverUnit(terUnitBase* p)
 		OnOverFriend(p);
 	else
 	{
-		switch(p->attr().ID)
+		switch(p->attr()->ID)
 		{
 		case UNIT_ATTRIBUTE_FRAME:
 			OnOverFrame();
@@ -1485,7 +1485,7 @@ void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	{
 		CSELECT_AUTOLOCK();
 		const UnitList& selList=universe()->select.GetSelectList();
-		if (selList.empty() || !(selList.front()->attr().ID == UNIT_ATTRIBUTE_SQUAD)) {
+		if (selList.empty() || !(selList.front()->attr()->ID == UNIT_ATTRIBUTE_SQUAD)) {
 			return;
 		}
 		UnitList::const_iterator selIt;
@@ -1547,13 +1547,13 @@ void OnButtonAttack(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		terUnitBase* pUnit = _pShellDispatcher->GetSelectedUnit();
 		if (pUnit) {
 			const AttributeBase* attr = 0;
-			if (pUnit->attr().ID == UNIT_ATTRIBUTE_SQUAD) {
+			if (pUnit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
 				terUnitAttributeID id = safe_cast<terUnitSquad*>(pUnit)->currentMutation();
 				if (id != UNIT_ATTRIBUTE_NONE) {
 					attr = pUnit->Player->unitAttribute(id);
 				}
 			} else {
-				attr = &(pUnit->attr());
+				attr = pUnit->attr();
 			}
 
 //			if (attr && (attr->AttackClass & UNIT_CLASS_GROUND)) {
@@ -1714,7 +1714,7 @@ void OnButtonBrigadierChange(CShellWindow* pWnd, InterfaceEventCode code, int pa
 				TerrainButtonData* slotData = &(gameShell->getLogicUpdater().getLogicData()->slots[i]);
 				if(slotData->unit == pUnit){
 					universe()->activePlayer()->ClusterPick(
-						pUnit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ? COMMAND_ID_BUILD_MASTER_INC : COMMAND_ID_TERRAIN_MASTER_INC, i);
+						pUnit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ? COMMAND_ID_BUILD_MASTER_INC : COMMAND_ID_TERRAIN_MASTER_INC, i);
 
 					universe()->activePlayer()->soundEvent(SOUND_VOICE_MMP_CONVERT_COMMAND);
 					break;
