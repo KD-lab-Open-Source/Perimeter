@@ -1062,13 +1062,6 @@ void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPo
 	Update();
 }
 
-void cObjectNodeRoot::OcclusionTest()
-{
-	std::vector<cObjLight*>::iterator it;
-	FOR_EACH(light_child,it)
-		(*it)->OcclusionTest();
-}
-
 ////////////////////////////cObjectGroup//////////////////////
 cObjectGroup::cObjectGroup()
 {

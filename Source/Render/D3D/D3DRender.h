@@ -22,8 +22,6 @@ enum
 inline uint32_t F2DW( float f ) { return *((uint32_t*)&f); }
 
 #include "PoolManager.h"
-#include "OcclusionQuery.h"
-
 
 class cD3DRender : public cInterfaceRenderDevice
 {
@@ -389,9 +387,6 @@ public:
 		return pTexture;
 	}
 
-	bool ReinitOcclusion();
-	bool PossibilityOcclusion();
-
 	void RestoreShader();
 
 protected:
@@ -438,13 +433,7 @@ protected:
 	cQuadBuffer<sVertexXYZDT1>	 QuadBufferXYZDT1;
 	cQuadBuffer<sVertexXYZDT2>	 QuadBufferXYZDT2;
 
-	cVertexBuffer<sVertexXYZ>	 BufferXYZOcclusion;
-
 	IndexBuffer standart_ib;
-
-#ifdef PERIMETER_D3D9_OCCLUSION
-	std::vector<cOcclusionQuery*> occlusion_query;
-#endif
 
 	void InitVertexBuffers();
 
@@ -470,7 +459,6 @@ protected:
 	D3DFORMAT GetBackBufferFormat(int Mode);
 
 	friend class cTileMapRender;
-	friend class cOcclusionQuery;
 };
 
 int GetTextureFormatSize(D3DFORMAT f);

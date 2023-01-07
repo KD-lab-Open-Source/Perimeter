@@ -8,12 +8,6 @@ class cObjLight : public cObjectNode
 
 	cTexture		*Texture;
 	sColor4f		Diffuse;
-
-	double fade;
-	double prev_time;
-#ifdef PERIMETER_D3D9_OCCLUSION
-	cOcclusionQuery occlusion;
-#endif
 public:
 	cObjLight();
 	virtual ~cObjLight();
@@ -39,7 +33,5 @@ public:
 	void SetTextureLight(cTexture *pTexture,int attr=0);
 
 	virtual void ChangeBank(cAllMeshBank* new_root);
-
-	void OcclusionTest();
 };
 

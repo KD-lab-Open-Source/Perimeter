@@ -547,20 +547,10 @@ bool cVisGeneric::GetAnisotropic()
 void cVisGeneric::EnableOcclusion(bool b)
 {
 	Option_EnableOcclusion=b;
-#ifdef PERIMETER_D3D9
-	if (gb_RenderDevice3D && !gb_RenderDevice3D->ReinitOcclusion()) {
-        Option_EnableOcclusion=false;
-	}
-#endif
 }
 
-bool cVisGeneric::PossibilityOcclusion()
-{
-#ifdef PERIMETER_D3D9
-	return gb_RenderDevice3D ? gb_RenderDevice3D->PossibilityOcclusion() : false;
-#else
-    return false;
-#endif
+bool cVisGeneric::PossibilityOcclusion() {
+    return true;
 }
 
 bool cVisGeneric::IsEnableOcclusion()

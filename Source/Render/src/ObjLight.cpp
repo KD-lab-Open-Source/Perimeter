@@ -13,9 +13,6 @@ cObjLight::cObjLight():cObjectNode(KIND_LIGHT)
 
 	AnimChannelMat=NULL;
 	Texture=NULL;
-
-	fade=0;
-	prev_time=0;
 }
 cObjLight::~cObjLight()
 {
@@ -26,30 +23,6 @@ cObjLight::~cObjLight()
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cUnkObj
 //////////////////////////////////////////////////////////////////////////////////////////
-
-void cObjLight::OcclusionTest()
-{
-    bool visible = true;
-#ifdef PERIMETER_D3D9_OCCLUSION
-	if(occlusion.IsInit())
-	{
-		visible=occlusion.IsVisible();
-	}
-#endif
-    double cur_time=clockf();
-    double dt=cur_time-prev_time;
-    prev_time=cur_time;
-    if(dt>0.1e3)
-        dt=0.1e3;
-    if(visible)
-        fade+=dt*Option_InvOcclusionFadeTime;
-    else
-        fade-=dt*Option_InvOcclusionFadeTime;
-    if(fade<0)
-        fade=0;
-    if(fade>1)
-        fade=1;
-}
 
 void cObjLight::PreDraw(cCamera *DrawNode)
 { 
@@ -83,43 +56,42 @@ void cObjLight::Draw(cCamera *DrawNode)
 
 	float alpha=255.0f*GetIntensity();
 
-
-#ifdef PERIMETER_D3D9_OCCLUSION
-    uint32_t zfunc = gb_RenderDevice->GetRenderState(RS_ZFUNC);
-    if (occlusion.IsInit())
-#endif
-    if (!DrawNode->GetParent()) {
-#ifdef PERIMETER_D3D9_OCCLUSION
-        occlusion.Test(GetGlobalMatrix().trans());
-        gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_ALWAYS);
-#endif
-        alpha *= fade;
+    bool move_forward = false;
+    Vect3f pos = GetCenterObject();
+    
+    if (gb_VisGeneric->IsEnableOcclusion()) {
+        Vect3f posLight = pos;
+        Vect3f posParent = GetRootNode() ? GetRootNode()->GetCenterObject() : pos;
+        Vect3f posCamera = DrawNode->GetPos();
+        //First make sure is not too close to center, to avoid going off and on when rotating camera around object
+        //Then if light is closer to camera pos than object center, move it a bit forward so the mesh won't intersect with light quad
+        move_forward = 5.0f <= Vect2f(posLight).distance2(posParent)
+                   && posCamera.distance2(posLight) <= posCamera.distance2(posParent);
     }
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
     gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND, GetPhase(), GetTexture());
 
-	sColor4c Diffuse(xm::round(GetDiffuse().r * alpha), xm::round(GetDiffuse().g * alpha), xm::round(GetDiffuse().b * alpha),
+    sColor4c Diffuse(xm::round(GetDiffuse().r * alpha), xm::round(GetDiffuse().g * alpha), xm::round(GetDiffuse().b * alpha),
                      xm::round(GetDiffuse().a * alpha));
-	float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
+                     
+    float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
 
     Vect3f sx = radius * DrawNode->GetWorldI();
     Vect3f sy = radius * DrawNode->GetWorldJ();
-    Vect3f tr = GetGlobalMatrix().trans();
+
+    if (move_forward) {
+        pos -= (radius / 4.0f) * DrawNode->GetWorldK();
+    }
 
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     sVertexXYZDT1* v=db->LockQuad<sVertexXYZDT1>(1);
-    v[0].pos=tr+sx+sy; v[0].u1()=0, v[0].v1()=0; 
-    v[1].pos=tr+sx-sy; v[1].u1()=0, v[1].v1()=1;
-    v[2].pos=tr-sx+sy; v[2].u1()=1, v[2].v1()=0;
-    v[3].pos=tr-sx-sy; v[3].u1()=1, v[3].v1()=1;
-    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
+    v[0].pos = pos + sx + sy; v[0].u1()=0, v[0].v1()=0;
+    v[1].pos = pos + sx - sy; v[1].u1()=0, v[1].v1()=1;
+    v[2].pos = pos - sx + sy; v[2].u1()=1, v[2].v1()=0;
+    v[3].pos = pos - sx - sy; v[3].u1()=1, v[3].v1()=1;
+    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=Diffuse.v;
     db->Unlock();
-
-#ifdef PERIMETER_D3D9_OCCLUSION
-    if (occlusion.IsInit())
-    gb_RenderDevice->SetRenderState(RS_ZFUNC, zfunc);
-#endif
 }
 
 void cObjLight::SetColor(const sColor4f *Ambient,const sColor4f *Diffuse,const sColor4f *Specular)

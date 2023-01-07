@@ -301,8 +301,6 @@ public:
 
 	void ChangeBank(cAllMeshBank* new_root);
 
-	void OcclusionTest();
-
 protected:
 	virtual void SetCopy(cIUnkObj* UObj);
 	void BuildChild();

@@ -212,10 +212,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 		dtAdvanceOriginal=new DrawTypeRadeon8500;
 #endif
 
-#ifdef PERIMETER_D3D9_OCCLUSION
-	VISASSERT(occlusion_query.empty());
-#endif
-
 	SetAdvance();
 
 	InitStandartIB();
@@ -466,7 +462,6 @@ int cD3DRender::Done()
 	BufferXYZD.Destroy();
 	QuadBufferXYZDT1.Destroy();
 	QuadBufferXYZDT2.Destroy();
-	BufferXYZOcclusion.Destroy();
 /*
 	for(int i=0;i<LibVB.size();i++)
 	{
@@ -1534,14 +1529,6 @@ int cD3DRender::KillFocus()
 {
 	if(lpD3DDevice==0) return 1;
 
-#ifdef PERIMETER_D3D9_OCCLUSION
-	{
-		std::vector<cOcclusionQuery*>::iterator it;
-		FOR_EACH(occlusion_query,it)
-			(*it)->Done();
-	}
-#endif
-
 	RELEASE(lpZBuffer);
 	RELEASE(lpBackBuffer);
 	dtFixed->DeleteShadowTexture();
@@ -1609,7 +1596,6 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 	RestoreDynamicVertexBuffer();
 	RestoreTilemapPool();
 
-	ReinitOcclusion();
 	return true;
 }
 
@@ -1731,7 +1717,6 @@ void cD3DRender::InitVertexBuffers()
 	BufferXYZD.Create(sizemin);
 	QuadBufferXYZDT1.Create();
 	QuadBufferXYZDT2.Create();
-	BufferXYZOcclusion.Create(sizemin);
 }
 
 ////////////////////////////////////////////////////////////
@@ -2097,30 +2082,6 @@ void cD3DRender::SetAnisotropic(bool enable)
 bool cD3DRender::GetAnisotropic()
 {
 	return texture_interpolation==D3DTEXF_ANISOTROPIC;
-}
-
-bool cD3DRender::ReinitOcclusion()
-{
-	bool ok=true;
-#ifdef PERIMETER_D3D9_OCCLUSION
-	std::vector<cOcclusionQuery*>::iterator it;
-	FOR_EACH(occlusion_query,it)
-	{
-		bool b=(*it)->Init();
-		ok = ok && b;
-	}
-#endif
-
-	return ok;
-}
-
-bool cD3DRender::PossibilityOcclusion()
-{
-	HRESULT hr;
-	IDirect3DQuery9* pQuery=NULL;
-	hr=gb_RenderDevice3D->lpD3DDevice->CreateQuery(D3DQUERYTYPE_OCCLUSION,&pQuery);
-	RELEASE(pQuery);
-	return SUCCEEDED(hr);
 }
 
 #ifndef _FINAL_VERSION_

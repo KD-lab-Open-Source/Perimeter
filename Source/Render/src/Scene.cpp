@@ -226,15 +226,6 @@ void cScene::Draw(cCamera *DrawNode)
 
 	DrawNode->DrawScene();
 
-	for(i=0;i<grid.size();i++)
-	{
-		cIUnkClass* obj=grid[i];
-		if(obj && obj->GetKind(KIND_OBJ_NODE_ROOT)) 
-		{
-			((cObjectNodeRoot*)obj)->OcclusionTest();
-		}
-	}
-
 	gb_RenderDevice->SetClipRect(0,0,gb_RenderDevice->GetSizeX(),gb_RenderDevice->GetSizeY());
 }
 

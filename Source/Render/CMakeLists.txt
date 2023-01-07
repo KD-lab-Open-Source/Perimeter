@@ -65,7 +65,6 @@ IF (OPTION_D3D9)
         D3D/D3DRenderTexture.cpp
         D3D/D3DRenderTilemap.cpp
         D3D/DrawType.cpp
-        D3D/OcclusionQuery.cpp
         D3D/PoolManager.cpp
         D3D/clip/ClippingMesh.cpp
     )
