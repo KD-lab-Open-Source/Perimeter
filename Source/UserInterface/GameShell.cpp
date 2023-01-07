@@ -2179,7 +2179,7 @@ void terGameShellShowRegionMain()
 	{
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[0];
-		terExternalRegionShowLineZeroplast(region.data(),sColor4c(RegionMain.line_color));
+		terExternalRegionShowLineZeroplast(region.data(),gb_RenderDevice->ConvertColor(sColor4c(RegionMain.line_color)));
 	}
 }
 
@@ -2189,9 +2189,9 @@ void terGameShellShowRegionMainAlpha()
 	{
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[0];
-		terExternalRegionShowLineZeroplastVertical(region.data(),sColor4c(RegionMain.vertical_color));
+		terExternalRegionShowLineZeroplastVertical(region.data(),gb_RenderDevice->ConvertColor(sColor4c(RegionMain.vertical_color)));
 		Column& c=region->getRasterizeColumn();
-		terExternalRegionShowColumn(&c,sColor4c(RegionMain.area_color));
+		terExternalRegionShowColumn(&c,gb_RenderDevice->ConvertColor(sColor4c(RegionMain.area_color)));
 	}
 }
 
@@ -2201,7 +2201,7 @@ void terGameShellShowRegionAbyss()
 	{
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[1];
-		terExternalRegionShowUniform(region.data(),sColor4c(255,255,255));
+		terExternalRegionShowUniform(region.data(),gb_RenderDevice->ConvertColor(sColor4c(255,255,255)));
 	}
 }
 
@@ -2213,7 +2213,7 @@ void terGameShellShowEnergy()
 		terPlayer* player=universe()->activePlayer();
 		terUniverse* tu=universe();
 		MTAuto lock(universe()->EnergyRegionLocker());
-		terExternalRegionShowLine(&player->energyRegion(),sColor4c(255,255,255));
+		terExternalRegionShowLine(&player->energyRegion(),gb_RenderDevice->ConvertColor(sColor4c(255,255,255)));
 	}
 }
 

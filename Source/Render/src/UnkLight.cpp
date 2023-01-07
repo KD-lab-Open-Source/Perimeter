@@ -74,7 +74,7 @@ void cUnkLight::Draw(cCamera *DrawNode)
 			v0.pos=GetPos()+sx+sy-sz,
 			v1.pos=GetPos()+sx-sy-sz;
 		v0.GetTexel().set(tex,0); v1.GetTexel().set(tex,1);
-		v0.diffuse=v1.diffuse=Diffuse;
+		v0.diffuse=v1.diffuse=gb_RenderDevice->ConvertColor(Diffuse);
 		db->AutoTriangleStripStep(v0,v1);
 	}
 

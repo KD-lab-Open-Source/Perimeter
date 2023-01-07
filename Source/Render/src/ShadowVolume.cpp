@@ -237,7 +237,7 @@ void ShadowVolume::DrawVolume(cCamera *camera,const MatXf& mat,Vect3f light_dir,
         cVertexBuffer<sVertexXYZDT1>* pBuf= nullptr;
         sVertexXYZDT1 *Vertex= nullptr;
         int nVertex=0;
-        sColor4c color(0,0,0,128);
+        uint32_t color = gb_RenderDevice->ConvertColor(sColor4c(0,0,0,128));
     
         if(!line) {
             cD3DRender* rd = dynamic_cast<cD3DRender*>(camera->GetRenderDevice());

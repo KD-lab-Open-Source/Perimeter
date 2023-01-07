@@ -1079,13 +1079,15 @@ void cCamera::DrawShadowPlane()
 	sVertexXYZD* pv=buf->Lock();
 	int x1=vp.X,y1=vp.Y;
 	int x2=x1+vp.Width,y2=y1+vp.Height;
-	pv[0].x=x1; pv[0].y=y1; pv[0].z=0.001f; pv[0].diffuse=diffuse;
-	pv[2].x=x1; pv[2].y=y2; pv[1].z=0.001f; pv[1].diffuse=diffuse;
-	pv[1].x=x2; pv[1].y=y1; pv[2].z=0.001f; pv[2].diffuse=diffuse;
+    pv[0].diffuse=pv[1].diffuse=pv[2].diffuse=
+    pv[3].diffuse=pv[4].diffuse=pv[5].diffuse=gb_RenderDevice->ConvertColor(diffuse);
+	pv[0].x=x1; pv[0].y=y1; pv[0].z=0.001f;
+	pv[2].x=x1; pv[2].y=y2; pv[1].z=0.001f;
+	pv[1].x=x2; pv[1].y=y1; pv[2].z=0.001f;
 
-	pv[3].x=x2; pv[3].y=y1; pv[3].z=0.001f; pv[3].diffuse=diffuse;
-	pv[5].x=x1; pv[5].y=y2; pv[4].z=0.001f; pv[4].diffuse=diffuse;
-	pv[4].x=x2; pv[4].y=y2; pv[5].z=0.001f; pv[5].diffuse=diffuse;
+	pv[3].x=x2; pv[3].y=y1; pv[3].z=0.001f;
+	pv[5].x=x1; pv[5].y=y2; pv[4].z=0.001f;
+	pv[4].x=x2; pv[4].y=y2; pv[5].z=0.001f;
 	const int npoint=6;
 	buf->Unlock(npoint);
 	buf->DrawPrimitive(PT_TRIANGLES, npoint / 3);
@@ -1373,7 +1375,7 @@ void cCamera::DrawShadowDebug()
 				cVertexBuffer<sVertexXYZDT1>& BufferXYZDT1=*gb_RenderDevice3D->GetBufferXYZDT1();
 				sVertexXYZDT1* v=BufferXYZDT1.Lock(4);
 				v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-				v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
+				v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(ColorMul);
 				v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 				v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
 				v[0].u1()=u1;    v[0].v1()=v1;

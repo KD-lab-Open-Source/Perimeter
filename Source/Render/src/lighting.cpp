@@ -119,8 +119,7 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
     
 	float size=parent->param.strip_width_begin+time*parent->param.strip_width_time;
 	sVertexXYZDT1 v1,v2;
-	v1.diffuse=diffuse;
-	v2.diffuse=diffuse;
+	v1.diffuse=v2.diffuse=gb_RenderDevice->ConvertColor(diffuse);
 	for (const OneStrip& p : strip_list) {
 		v1.pos=p.pos;
 		v2.pos=p.pos;

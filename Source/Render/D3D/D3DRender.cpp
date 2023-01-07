@@ -5,12 +5,15 @@
 
 const int POLYGONMAX=1024;
 
+static uint32_t ColorConvertARGB(const sColor4c& c) { return CONVERT_COLOR_TO_ARGB(c.v); };
+
 cD3DRender *gb_RenderDevice3D = nullptr;
 
 void IsDeleteAllDefaultTextures();
 
 cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 {
+    ConvertColor = ColorConvertARGB;
     NumberPolygon=0;
     NumDrawObject=0;
     Buffer.New(600000);//-> Buffer=600000,MaxVertexSize=10*4,VertexNumMin=Buffer/MaxVertexSize=600000/40=15000
@@ -1001,7 +1004,7 @@ void cD3DRender::DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color)
 	VISASSERT(bActiveScene);
 	sVertexXYZD v;
 	v.pos=v1;
-	v.diffuse=color;
+	v.diffuse=ConvertColor(color);
 	lines3d.push_back(v);
 	v.pos=v2;
 	lines3d.push_back(v);
@@ -1012,7 +1015,7 @@ void cD3DRender::DrawPoint(const Vect3f &v1,sColor4c color)
 	VISASSERT(bActiveScene);
 	sVertexXYZD v;
 	v.pos=v1;
-	v.diffuse=color;
+	v.diffuse=ConvertColor(color);
 	points3d.push_back(v);
 }
 
@@ -1048,7 +1051,7 @@ void cD3DRender::FlushPixel()
 		cv.x=p.x;
 		cv.y=p.y;
 		cv.z=0.001f;
-		cv.diffuse=p.diffuse;
+		cv.diffuse=ConvertColor(p.diffuse);
 
 		npoint++;
 		if(npoint>=BufferXYZD.GetSize())
@@ -1084,7 +1087,7 @@ void cD3DRender::FlushLine()
 		cv.x=p.x;
 		cv.y=p.y;
 		cv.z=0.001f;
-		cv.diffuse=p.diffuse;
+		cv.diffuse=ConvertColor(p.diffuse);
 
 		npoint++;
 		if(((npoint&1)==0) && npoint>=BufferXYZD.GetSize()-2)
@@ -1117,13 +1120,16 @@ void cD3DRender::FlushFilledRect()
 		RectStruct& p=*it;
 
 		sVertexXYZD* pv=v+npoint;
-		pv[0].x=p.x1; pv[0].y=p.y1; pv[0].z=0.001f; pv[0].diffuse=p.diffuse;
-		pv[1].x=p.x1; pv[1].y=p.y2; pv[1].z=0.001f; pv[1].diffuse=p.diffuse;
-		pv[2].x=p.x2; pv[2].y=p.y1; pv[2].z=0.001f; pv[2].diffuse=p.diffuse;
+        pv[0].diffuse=pv[1].diffuse=pv[2].diffuse=
+        pv[3].diffuse=pv[4].diffuse=pv[5].diffuse=ConvertColor(p.diffuse);
+                
+		pv[0].x=p.x1; pv[0].y=p.y1; pv[0].z=0.001f;
+		pv[1].x=p.x1; pv[1].y=p.y2; pv[1].z=0.001f;
+		pv[2].x=p.x2; pv[2].y=p.y1; pv[2].z=0.001f;
 
-		pv[3].x=p.x2; pv[3].y=p.y1; pv[3].z=0.001f; pv[3].diffuse=p.diffuse;
-		pv[4].x=p.x1; pv[4].y=p.y2; pv[4].z=0.001f; pv[4].diffuse=p.diffuse;
-		pv[5].x=p.x2; pv[5].y=p.y2; pv[5].z=0.001f; pv[5].diffuse=p.diffuse;
+		pv[3].x=p.x2; pv[3].y=p.y1; pv[3].z=0.001f;
+		pv[4].x=p.x1; pv[4].y=p.y2; pv[4].z=0.001f;
+		pv[5].x=p.x2; pv[5].y=p.y2; pv[5].z=0.001f;
 
 		npoint+=6;
 		if(npoint>=BufferXYZD.GetSize()-6)
@@ -1161,7 +1167,7 @@ void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float 
 
 	sVertexXYZDT1* v=BufferXYZDT1.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=1;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
+	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(ColorMul);
 	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
 	v[0].u1()=u1;    v[0].v1()=v1;
@@ -1197,7 +1203,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
 	sVertexXYZDT2* v=BufferXYZDT2.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
+	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(ColorMul);
 	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
 
@@ -1260,7 +1266,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
 	sVertexXYZDT2* v=BufferXYZDT2.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
+	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(ColorMul);
 	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
 

@@ -90,7 +90,7 @@ void cObjLight::Draw(cCamera *DrawNode)
     v[1].pos = pos + sx - sy; v[1].u1()=0, v[1].v1()=1;
     v[2].pos = pos - sx + sy; v[2].u1()=1, v[2].v1()=0;
     v[3].pos = pos - sx - sy; v[3].u1()=1, v[3].v1()=1;
-    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=Diffuse.v;
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(Diffuse);
     db->Unlock();
 }
 

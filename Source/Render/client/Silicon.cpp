@@ -347,7 +347,7 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		Vect3f v = x*x_axis + z*z_axis;
 		vtx0.pos = v-Weight;
 		vtx1.pos = v+Weight;
-		vtx0.diffuse=vtx1.diffuse=Diffuse;
+		vtx0.diffuse=vtx1.diffuse=gb_RenderDevice->ConvertColor(Diffuse);
 		vtx0.u1()=   vtx1.u1()=(u1+=du1);
 		vtx0.v1()=0; vtx1.v1()=1;
 		vtx0.u2()=   vtx1.u2()=(u2+=du2);

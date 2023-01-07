@@ -34,7 +34,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         //Outer
 
         v[0].z=v[1].z=v[2].z=v[3].z=0;
-        v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=color.ABGR();
+        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(color);
         v[0].x=v[1].x=static_cast<float>(x1) - w;
         v[0].y=v[2].y=static_cast<float>(y1) - w;
         v[3].x=v[2].x=static_cast<float>(x2) + w;
@@ -43,7 +43,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         //Inner
 
         v[4].z=v[5].z=v[6].z=v[7].z=0;
-        v[4].diffuse.v=v[5].diffuse.v=v[6].diffuse.v=v[7].diffuse.v=color.ABGR();
+        v[4].diffuse=v[5].diffuse=v[6].diffuse=v[7].diffuse=gb_RenderDevice->ConvertColor(color);
         v[4].x=v[5].x=static_cast<float>(x1) + w;
         v[4].y=v[6].y=static_cast<float>(y1) + w;
         v[7].x=v[6].x=static_cast<float>(x2) - w;
@@ -89,7 +89,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
         
         v[0].z=v[1].z=v[2].z=v[3].z=0;
-        v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=color.ABGR();
+        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(color);
         v[0].x=v[1].x=static_cast<float>(x1);
         v[0].y=v[2].y=static_cast<float>(y1);
         v[3].x=v[2].x=static_cast<float>(x2);
@@ -130,7 +130,7 @@ void cSokolRender::DrawSprite(int x1, int y1, int dx, int dy, float u1, float v1
     sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
 
     v[0].z=v[1].z=v[2].z=v[3].z=0;
-    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=ColorMul.ABGR();
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(ColorMul);
     v[0].x=v[1].x=static_cast<float>(x1);
     v[0].y=v[2].y=static_cast<float>(y1);
     v[3].x=v[2].x=static_cast<float>(x2);
@@ -169,7 +169,7 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     sVertexXYZDT2* v = db->LockQuad<sVertexXYZDT2>(1);
     
     v[0].z=v[1].z=v[2].z=v[3].z=0;
-    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=ColorMul.ABGR();
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(ColorMul);
     v[0].x=v[1].x=static_cast<float>(x1);
     v[0].y=v[2].y=static_cast<float>(y1);
     v[3].x=v[2].x=static_cast<float>(x2);
@@ -215,7 +215,7 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     sVertexXYZDT2* v = db->LockQuad<sVertexXYZDT2>(1);
     
     v[0].z=v[1].z=v[2].z=v[3].z=0;
-    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=diffuse.ABGR();
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);
     v[0].x=v[1].x=static_cast<float>(x1);
     v[0].y=v[2].y=static_cast<float>(y1);
     v[3].x=v[2].x=static_cast<float>(x2);
@@ -276,7 +276,7 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
             Vect3f& size = cf->Font[c];
 
             v[0].z = v[1].z = v[2].z = v[3].z = 0;
-            v[0].diffuse.v = v[1].diffuse.v = v[2].diffuse.v = v[3].diffuse.v = diffuse.ABGR();
+            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);
             v[0].x = v[1].x = static_cast<float>(xOfs);
             v[0].y = v[2].y = static_cast<float>(yOfs);
             xOfs += xSize * size.z - 1;
@@ -350,7 +350,7 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
             v[2].y = v[3].y = y1;
 
             v[0].z=v[1].z=v[2].z=v[3].z=0;
-            v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=diffuse.ABGR();            
+            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);          
             
             v[1].u2() = v[3].u2() = size.x;
             v[1].v2() = v[0].v2() = size.y;

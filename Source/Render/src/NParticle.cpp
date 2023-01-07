@@ -510,7 +510,7 @@ cEmitterInt::~cEmitterInt()
 
 template<class nParticle> FORCEINLINE int ParticlePutToBuf(cEmitterBase* emitter, nParticle& p, Vect3f& npos, float& dt,
                                                                  DrawBuffer* db, sVertexXYZDT1*& v, indices_t*& ib,
-                                                                 const sColor4c& color, const Vect3f& PosCamera,
+                                                                 const uint32_t& color, const Vect3f& PosCamera,
                                                                  const float& size, const cTextureAviScale::RECT& rt,
                                                                  const uint8_t mode, MatXf* iGM = nullptr)
 
@@ -727,8 +727,10 @@ void cEmitterInt::Draw(cCamera *pCamera)
         mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
         mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-        sColor4c color(xm::round(fcolor.r * p.begin_color.r), xm::round(fcolor.g * p.begin_color.g),
-                       xm::round(fcolor.b * p.begin_color.b), xm::round(fcolor.a));
+        uint32_t color = rd->ConvertColor(sColor4c(
+                xm::round(fcolor.r * p.begin_color.r), xm::round(fcolor.g * p.begin_color.g),
+                xm::round(fcolor.b * p.begin_color.b), xm::round(fcolor.a)
+        ));
         const cTextureAviScale::RECT& rt = texture?
                         ((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
                         cTextureAviScale::RECT::ID;	
@@ -1309,7 +1311,7 @@ void cEmitterSpl::Draw(cCamera *pCamera)
         mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
         mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-        sColor4c color(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a));
+        uint32_t color = rd->ConvertColor(sColor4c(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a)));
         const cTextureAviScale::RECT& rt = texture ?
             ((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
                         cTextureAviScale::RECT::ID;	
@@ -3476,7 +3478,7 @@ void cEmitterZ::Draw(cCamera *pCamera)
             mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
         }
 
-        sColor4c color(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a));
+        uint32_t color = rd->ConvertColor(sColor4c(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a)));
         const cTextureAviScale::RECT& rt = texture ?
                         ((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
                         cTextureAviScale::RECT::ID;	

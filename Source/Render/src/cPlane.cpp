@@ -35,22 +35,22 @@ void cPlane::Draw(cCamera *DrawNode)
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES); 
 	sVertexXYZDT1* vertex=db->LockQuad<sVertexXYZDT1>(1);
 	vertex[0].pos.set(0,0,0);
-    vertex[0].diffuse.v=0xFFFFFFFF;
+    vertex[0].diffuse=0xFFFFFFFF;
 	vertex[0].uv[0]=umin;
 	vertex[0].uv[1]=vmin;
 
 	vertex[1].pos.set(0,GetScale().y,0);
-    vertex[1].diffuse.v=0xFFFFFFFF;
+    vertex[1].diffuse=0xFFFFFFFF;
 	vertex[1].uv[0]=umin;
 	vertex[1].uv[1]=vmax;
 
 	vertex[2].pos.set(GetScale().x,0,0);
-    vertex[2].diffuse.v=0xFFFFFFFF;
+    vertex[2].diffuse=0xFFFFFFFF;
 	vertex[2].uv[0]=umax;
 	vertex[2].uv[1]=vmin;
 
 	vertex[3].pos.set(GetScale().x,GetScale().y,0);
-    vertex[3].diffuse.v=0xFFFFFFFF;
+    vertex[3].diffuse=0xFFFFFFFF;
 	vertex[3].uv[0]=umax;
 	vertex[3].uv[1]=vmax;
     db->Unlock();

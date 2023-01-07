@@ -211,6 +211,8 @@ class cTexture;
 class cTexLibrary;
 class cCamera;
 
+using ColorConversionFunc = uint32_t (*)(const sColor4c&);
+
 class cInterfaceRenderDevice : public cUnknownClass
 {
 protected:
@@ -254,6 +256,8 @@ public:
     virtual void SetActiveDrawBuffer(class DrawBuffer*);
 
     // Decl only methods
+
+    ColorConversionFunc ConvertColor = nullptr;
 
     virtual eRenderDeviceSelection GetRenderSelection() const = 0;
 

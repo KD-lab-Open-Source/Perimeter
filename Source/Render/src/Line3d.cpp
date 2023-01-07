@@ -67,7 +67,7 @@ void cLine3d::Draw(cCamera *DrawNode)
 		v1.pos=Vertex[nVertex].pos-Orientation;
 		v0.u1()=   v1.u1()=Vertex[nVertex].v-GetFrame()->GetPhase();
 		v0.v1()=0; v1.v1()=1;
-		v0.diffuse=v1.diffuse=Vertex[nVertex].color;
+		v0.diffuse=v1.diffuse=gb_RenderDevice->ConvertColor(Vertex[nVertex].color);
 		db->AutoTriangleStripStep(v0,v1);
 	}
 

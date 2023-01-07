@@ -84,7 +84,7 @@ void DrawBuffer::Draw() {
 
 void DrawBuffer::EndTriangleStrip() {
     xassert(primitive == PT_TRIANGLESTRIP);
-#if 0
+#if 1
     if (4 <= written_vertices && 4 <= written_indices) {
         indices_t* iptr = gb_RenderDevice->LockIndexBuffer(ib, written_indices, 2);
         iptr[0] = written_vertices - 1; iptr[1] = written_vertices - 1;

@@ -223,9 +223,8 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		float v_pos = 0;
 		sVertexXYZDT1 p1,p2;
-		p1.diffuse = diffuse;
+		p1.diffuse = p2.diffuse = gb_RenderDevice->ConvertColor(diffuse);
 		p1.v1() = selection ? terExternalEnergyTextureEnd : 1.0f;
-		p2.diffuse = diffuse;
 		p2.v1() = selection ? terExternalEnergyTextureStart : 0.05f;
 
 		for(int i = 0;i <= num_da;i++)
@@ -265,9 +264,8 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		sVertexXYZDT1 p1,p2;
 
-		p1.diffuse = diffuse;
+		p1.diffuse = p2.diffuse = gb_RenderDevice->ConvertColor(diffuse);
 		p1.v1() = 1.0f;
-		p2.diffuse = diffuse;
 		p2.v1() = 0.05f;
 
         gb_RenderDevice->SetWorldMat4f(nullptr);
@@ -314,7 +312,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 }
 
 
-void terExternalRegionShowUniform(Region* region,sColor4c color)
+void terExternalRegionShowUniform(Region* region,uint32_t color)
 {
 	float dt;
 	float t;
@@ -476,7 +474,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		terExternalRegionShowUniform(*i,color);
 }
 
-void terExternalRegionShowLine(Region* region,sColor4c diffuse)
+void terExternalRegionShowLine(Region* region,uint32_t diffuse)
 {
 	if(!(region->spline().empty()))
 	{
@@ -520,7 +518,7 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 		terExternalRegionShowLine(*i,diffuse);
 }
 
-void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
+void terExternalRegionShowLineZeroplast(Region* region,uint32_t diffuse)
 {
 	if(!(region->spline().empty()))
 	{
@@ -567,7 +565,7 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 		terExternalRegionShowLineZeroplast(*i,diffuse);
 }
 
-void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
+void terExternalRegionShowLineZeroplastVertical(Region* region,uint32_t diffuse)
 {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
 	if(!(region->spline().empty()))
@@ -658,7 +656,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 }
 /*/
 
-void terExternalRegionShowColumn(Column* column,sColor4c color) {
+void terExternalRegionShowColumn(Column* column,uint32_t color) {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
 
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);

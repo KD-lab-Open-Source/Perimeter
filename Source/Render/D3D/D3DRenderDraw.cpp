@@ -186,14 +186,9 @@ void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wire
 	v[5].pos.set(max.x,min.y,max.z);
 	v[6].pos.set(min.x,max.y,max.z);
 	v[7].pos.set(max.x,max.y,max.z);
-	v[0].diffuse=diffuse;
-	v[1].diffuse=diffuse;
-	v[2].diffuse=diffuse;
-	v[3].diffuse=diffuse;
-	v[4].diffuse=diffuse;
-	v[5].diffuse=diffuse;
-	v[6].diffuse=diffuse;
-	v[7].diffuse=diffuse;
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=
+    v[3].diffuse=v[4].diffuse=v[5].diffuse=
+    v[6].diffuse=v[7].diffuse=ConvertColor(diffuse);
 	sPolygon *p=(sPolygon*)&Buffer[BytePerVertex];
 	p[0].p1=1, p[0].p2=2, p[0].p3=0;
 	p[1].p1=1, p[1].p2=3, p[1].p3=2;
@@ -304,7 +299,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 			v1.v1()=v2.v1()=size.y;
 			v3.u1()=v2.u1()=v1.u1()+size.z;
 			v3.v1()=v4.v1()=v1.v1()+v_add;
-			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=diffuse;
+			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=ConvertColor(diffuse);
 			v1.z=v2.z=v3.z=v4.z=0.001f;
 		}
 	}
@@ -404,7 +399,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 			v1.v1()=v2.v1()=size.y;
 			v3.u1()=v2.u1()=v1.u1()+size.z;
 			v3.v1()=v4.v1()=v1.v1()+v_add;
-			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=diffuse;
+			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=ConvertColor(diffuse);
 			v1.z=v2.z=v3.z=v4.z=0.001f;
 
 			v1.u2()=v4.u2()=(x0-x)*duv.x+uv.x;
@@ -499,7 +494,7 @@ void cD3DRender::Draw(class cScene *Scene)
 			v[2].pos.x=p.x+r; v[2].pos.y=p.y-r; v[2].pos.z=p.z; v[2].u1()=1; v[2].v1()=0;
 			v[3].pos.x=p.x+r; v[3].pos.y=p.y+r; v[3].pos.z=p.z; v[3].u1()=1; v[3].v1()=1;
 			
-			v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
+			v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(Diffuse);
 		}
 		quad->EndDraw();
 	}
@@ -525,7 +520,7 @@ void cD3DRender::Draw(class ElasticSphere *es)
 	int cull=GetRenderState(D3DRS_CULLMODE);
 	SetRenderState(D3DRS_CULLMODE,D3DCULL_CW);
 
-	sColor4c Diffuse(es->GetDiffuse());
+	uint32_t Diffuse = ConvertColor(es->GetDiffuse());
 	float dv=0.5f-es->GetFrame()->GetPhase();
 	int i;
 	for(i=0;i<=is;i++)

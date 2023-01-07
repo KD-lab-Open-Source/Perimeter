@@ -11,6 +11,8 @@
 #include "sokol/SokolRender.h"
 #endif
 
+static uint32_t ColorConvertABGR(const sColor4c& c) { return CONVERT_COLOR_TO_ABGR(c.v); };
+
 const size_t PERIMETER_RENDER_VERTEXBUF_LEN = 40960;
 const size_t PERIMETER_RENDER_INDEXBUF_LEN = PERIMETER_RENDER_VERTEXBUF_LEN * 2;
 
@@ -119,6 +121,7 @@ void IndexBuffer::Destroy() {
 }
 
 cInterfaceRenderDevice::cInterfaceRenderDevice() : cUnknownClass(KIND_UI_RENDERDEVICE) {
+    ConvertColor = ColorConvertABGR;
     RenderSubmitEvent(RenderEvent::INIT, "Intf construct");
 }
 

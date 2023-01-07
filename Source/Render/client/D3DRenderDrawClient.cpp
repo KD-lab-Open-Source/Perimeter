@@ -189,11 +189,11 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 					sVertexXYZDT2& v = *pv++;
 					v.pos.set(xw, yw, zw);
 					if(cell.cluster && v.pos.z > FieldCluster::ZeroGround && cell.cluster->GetTT() == transparent){
-                        v.diffuse.v = cell.cluster->GetColor(); 
+                        v.diffuse = cell.cluster->GetColor(); 
 						flDraw = 1;
-					}
-					else
-                        v.diffuse.v = 0x00000000;
+					} else {
+                        v.diffuse = 0x00000000;
+                    }
 					const Vect3f& n = !cell.specified() ? ffd->normal(xm,ym) : cell.specify_normal;
 					v.GetTexel().set(n.dot(uv[0]) + 0.5f, n.dot(uv[1]) + 0.5f);
 					v.GetTexel2().set((n.y + 1)*0.5f, (n.z + 1)*0.5f - phase);

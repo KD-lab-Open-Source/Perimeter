@@ -25,10 +25,10 @@ struct sVertexXYZ
 #ifdef PERIMETER_D3D9
 //For primitives
 struct sVertexXYZD : public sVertexXYZ {
-    sColor4c	diffuse;
+    uint32_t 	diffuse;
 #else
 struct sVertexXYZDT1 : public sVertexXYZ {
-    sColor4c	diffuse;
+    uint32_t	diffuse;
     float			uv[2];
 #endif
     inline int& xi()					{ return *((int*)&x); }
