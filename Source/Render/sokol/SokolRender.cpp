@@ -148,7 +148,7 @@ int cSokolRender::Done() {
 
 int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
     //TODO
-    printf("cSokolRender::SetGamma not implemented!\n");
+    fprintf(stderr, "cSokolRender::SetGamma not implemented!\n");
     return -1;
 }
 
@@ -298,6 +298,17 @@ int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
     viewportSize.x = xmax-xmin;
     viewportSize.y = ymax-ymin;
     return 0;
+}
+
+bool cSokolRender::SetScreenShot(const char *fname) {
+    //TODO
+    fprintf(stderr, "cSokolRender::SetScreenShot not implemented!\n");
+    return false;
+}
+
+bool cSokolRender::IsEnableSelfShadow() {
+    //TODO
+    return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

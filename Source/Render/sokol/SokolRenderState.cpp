@@ -519,3 +519,11 @@ int cSokolRender::SetRenderState(eRenderStateOption option, int value) {
     return 0;
 }
 
+
+void cSokolRender::SetGlobalFog(const sColor4f &color,const Vect2f &v) {
+    //TODO implement this
+}
+
+void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *Diffuse, sColor4f *Specular) {
+    //TODO implement this
+}

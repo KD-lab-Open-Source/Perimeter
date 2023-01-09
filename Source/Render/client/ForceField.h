@@ -309,7 +309,13 @@ private:
 
 	float interpolation_factor;
 
-	friend class cD3DRender;
+	friend class cInterfaceRenderDevice;
+#ifdef PERIMETER_D3D9
+    friend class cD3DRender;
+#endif
+#ifdef PERIMETER_SOKOL
+    friend class cSokolRender;
+#endif
 };
 
 extern FieldDispatcher* field_dispatcher;

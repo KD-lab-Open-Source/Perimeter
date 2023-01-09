@@ -1,11 +1,32 @@
 #include "StdAfxRD.h"
+#include "xmath.h"
 #include "VertexFormat.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
 #include "DrawBuffer.h"
 #include "Font.h"
 
+float cSokolRender::getThinLineWidth() {
+    return static_cast<float>(ScreenSize.y * (1.5 / 800.0) / 2.0);
+}
+
 // 2D primitives
+
+void cSokolRender::DrawLine(int x1,int y1,int x2,int y2,sColor4c color)
+{
+    VISASSERT(ActiveScene);
+    if (x1 <= x2) { if (x2<0 || x1>ScreenSize.x) return; }
+    else if (x1 < 0 || x2 > ScreenSize.x) return;
+    if (y1 <= y2) { if (y2<0 || y1>ScreenSize.y) return; }
+    else if (y1 < 0 || y2 > ScreenSize.y) return;
+    float w = getThinLineWidth();
+
+    float phi = xm::atan2(static_cast<float>(x2 - x1), static_cast<float>(y2 - y1));
+    
+    float x = w * xm::cos(phi);
+    float y = w * xm::sin(phi);
+}
+
 
 void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool outline) {
     VISASSERT(ActiveScene);
@@ -20,7 +41,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
     UseOrthographicProjection();
 
     if (outline) {
-        const float w = static_cast<float>(ScreenSize.y * (1.5 / 800.0) / 2.0);
+        float w = getThinLineWidth();
         auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
         sVertexXYZDT1* v = nullptr;
         indices_t* ib = nullptr;
@@ -102,6 +123,10 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         
         db->Unlock();
     }
+}
+
+void cSokolRender::DrawPixel(int x1, int y1,sColor4c color) {
+    DrawRectangle(x1, y1, 1, 1, color, false);
 }
 
 void cSokolRender::FlushPrimitive2D() {
@@ -237,135 +262,20 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
 // Text render
 
-void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode) {
-    if (!CurrentFont) {
-        VISASSERT(0 && "Font not set");
-        return;
-    }
-
-    sColor4c diffuse(color);
-    cFontInternal* cf=CurrentFont->GetInternal();
-
-    float xOfs;
-    float yOfs = static_cast<float>(y);
-    float xSize = CurrentFont->GetScale().x*static_cast<float>(cf->GetTexture()->GetWidth());
-    float ySize = CurrentFont->GetScale().y*cf->FontHeight*static_cast<float>(cf->GetTexture()->GetHeight());
-    float v_add = static_cast<float>(cf->FontHeight + 1.0 / static_cast<double>(cf->GetTexture()->GetHeight()));
-    
+void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode) {    
     SetNoMaterial(blend_mode, 0, CurrentFont->GetTexture());
-    UseOrthographicProjection();
-    
-    indices_t* i = nullptr;
-    sVertexXYZDT1* v = nullptr;
-    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
-    for (const char* str = string; 0 != *str; str++, yOfs += ySize) {
-        xOfs = static_cast<float>(x);
-        size_t chars;
-        float StringWidth = GetFontLength(str, &chars);
-        if (0 <= align) {
-            xOfs -= static_cast<float>(xm::round(StringWidth * (align == 0 ? 0.5f : 1)));
-        }
-        for (; *str != 10; str++) {
-            ChangeTextColor(str, diffuse);
-            uint8_t c = *str;
-            if (!c || c == 10) break;
-            if (c < 32) continue;
 
-            db->AutoLockQuad<sVertexXYZDT1>(std::min(chars, static_cast<size_t>(10)), 1, v, i);
-            
-            Vect3f& size = cf->Font[c];
-
-            v[0].z = v[1].z = v[2].z = v[3].z = 0;
-            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);
-            v[0].x = v[1].x = static_cast<float>(xOfs);
-            v[0].y = v[2].y = static_cast<float>(yOfs);
-            xOfs += xSize * size.z - 1;
-            v[3].x = v[2].x = static_cast<float>(xOfs);
-            v[1].y = v[3].y = static_cast<float>(yOfs + ySize);
-
-            v[0].u1() = size.x;
-            v[0].v1() = size.y;
-            v[1].u1() = size.x;
-            v[1].v1() = size.y + v_add;
-            v[2].u1() = size.x + size.z;
-            v[2].v1() = size.y;
-            v[3].u1() = size.x + size.z;
-            v[3].v1() = size.y + v_add;
-        }
-        db->AutoUnlock();
-        if (*str == 0) break;
-    }
+    cInterfaceRenderDevice::OutText(x, y, string, color, align, blend_mode);
 }
 
 void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
                          cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase,float lerp_factor) {
-    if (!CurrentFont) {
-        VISASSERT(0 && "Font not set");
-        return;
-    }
-
-    duv.x *= 1024.0f / static_cast<float>(GetSizeX());
-    duv.y *= 768.0f / static_cast<float>(GetSizeY());
-    sColor4c diffuse(color);
-    cFontInternal* cf=CurrentFont->GetInternal();
-
-    float xOfs;
-    float yOfs = static_cast<float>(y);
-    float xSize = CurrentFont->GetScale().x*static_cast<float>(cf->GetTexture()->GetWidth());
-    float ySize = CurrentFont->GetScale().y*cf->FontHeight*static_cast<float>(cf->GetTexture()->GetHeight());
-    float v_add = static_cast<float>(cf->FontHeight + 1.0 / static_cast<double>(cf->GetTexture()->GetHeight()));
-
+    
     int extra_mode = (static_cast<int>(lerp_factor * 255) << 8) | PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA;
-    SetNoMaterial(blend_mode, phase, pTexture, CurrentFont->GetTexture(), static_cast<eColorMode>(extra_mode | mode));
-    UseOrthographicProjection();
+    mode = static_cast<eColorMode>(extra_mode | mode);
+    
+    SetNoMaterial(blend_mode, phase, pTexture, CurrentFont->GetTexture(), mode);
 
-    indices_t* i = nullptr;
-    sVertexXYZDT2* v = nullptr;
-    auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
-    for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
-        xOfs = static_cast<float>(x);
-        size_t chars;
-        float StringWidth = GetFontLength(str, &chars);
-        if (0 <= align) {
-            xOfs -= static_cast<float>(xm::round(StringWidth * (align == 0 ? 0.5f : 1)));
-        }
-        for (; *str!=10; str++) {
-            ChangeTextColor(str, diffuse);
-            uint8_t c = *str;
-            if (!c || c == 10) break;
-            if (c < 32) continue;
-
-            Vect3f& size = cf->Font[c];
-
-            db->AutoLockQuad<sVertexXYZDT2>(std::min(chars, static_cast<size_t>(10)), 1, v, i);
-
-            float x0, x1, y0, y1;
-            x0 = xOfs;
-            x1 = xOfs + xSize * size.z - 1;
-            y0 = yOfs;
-            y1 = yOfs + ySize;
-            v[1].x = v[3].x = x0;
-            v[1].y = v[0].y = y0;
-            v[2].x = v[0].x = x1;
-            v[2].y = v[3].y = y1;
-
-            v[0].z=v[1].z=v[2].z=v[3].z=0;
-            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);          
-            
-            v[1].u2() = v[3].u2() = size.x;
-            v[1].v2() = v[0].v2() = size.y;
-            v[2].u2() = v[0].u2() = v[1].u2() + size.z;
-            v[2].v2() = v[3].v2() = v[1].v2() + v_add;
-
-            v[1].u1() = v[3].u1() = (x0 - x) * duv.x + uv.x;
-            v[1].v1() = v[0].v1() = (y0 - y) * duv.y + uv.y;
-            v[2].u1() = v[0].u1() = (x1 - x) * duv.x + uv.x;
-            v[2].v1() = v[3].v1() = (y1 - y) * duv.y + uv.y;
-
-            xOfs = x1;
-        }
-        db->AutoUnlock();
-        if (*str == 0) break;
-    }
+    cInterfaceRenderDevice::OutText(x, y, string, color, align, blend_mode, pTexture, mode, uv, duv, phase, lerp_factor);
 }
 

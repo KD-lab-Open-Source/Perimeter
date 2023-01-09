@@ -39,8 +39,8 @@ private:
     
     Mat4f ortho;
     bool isOrthoSet = false;
-    
-    virtual void Draw(class FieldDispatcher *rd, uint8_t transparent);
+
+    void Draw(class FieldDispatcher *rd, uint8_t transparent) override;
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 
@@ -85,9 +85,6 @@ public:
     //Used for drawing terraform filling and primitive drawing
     cVertexBuffer<sVertexXYZD>* GetBufferXYZD() { return &BufferXYZD; }
     
-    void* GetStripBuffer() { return &Buffer[0]; }
-    int GetStripBufferLen() { return Buffer.length(); }
-    
     virtual void SaveStates(const char* fname="states.txt");
 
     // //// cInterfaceRenderDevice impls start ////
@@ -131,19 +128,9 @@ public:
     void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,
                         sColor4f *Diffuse = nullptr, sColor4f *Specular = nullptr) override;
 
-	void Draw(class cScene *Scene) override;
-	void Draw(class FieldDispatcher *rd) override;
-	void CreateFFDData(class FieldDispatcher *rd) override;
-	void DeleteFFDData(class FieldDispatcher *rd) override;
-
     void Draw(class ElasticSphere *es) override;
 
     void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c &Color=sColor4c(255,255,255,255)) override;
-
-	int Create(class cTileMap *TileMap) override;
-	void PreDraw(cTileMap *TileMap) override;
-	void Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow) override;
-	int Delete(class cTileMap *TileMap) override;
     
     int GetRenderState(eRenderStateOption option) override;
 	int SetRenderState(eRenderStateOption option,int value) override;

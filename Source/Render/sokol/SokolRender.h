@@ -34,9 +34,7 @@ struct SokolCommand {
     int fs_mode = 0;
 };
 
-//TODO once implemented all use inherit from cInterfaceRenderDevice and remove this include
-#include "EmptyRenderDevice.h"
-class cSokolRender: public cEmptyRender {
+class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
     SDL_Window* sdlWindow = nullptr;
@@ -84,7 +82,9 @@ private:
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
-    
+
+    float getThinLineWidth();
+
 public:
     cSokolRender();
     ~cSokolRender() override;
@@ -107,7 +107,7 @@ public:
 
     void SetDrawNode(cCamera *pDrawNode) override;
     void SetWorldMat4f(const Mat4f* matrix) override;
-    void UseOrthographicProjection();
+    void UseOrthographicProjection() override;
     void SetDrawTransform(class cCamera *DrawNode) override;
 
     int BeginScene() override;
@@ -133,34 +133,16 @@ public:
     void* LockTexture(class cTexture *Texture, int& Pitch) override;
     void UnlockTexture(class cTexture *Texture) override;
 
-    /*
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override;
 
     void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,
                         sColor4f *Diffuse = nullptr, sColor4f *Specular = nullptr) override;
 
-    void Draw(class cScene *Scene) override;
-    void Draw(class FieldDispatcher *rd) override;
-    void CreateFFDData(class FieldDispatcher *rd) override;
-    void DeleteFFDData(class FieldDispatcher *rd) override;
-
-    void Draw(class ElasticSphere *es) override;
-
-    void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c &Color=sColor4c(255,255,255,255)) override;
-
-    int Create(class cTileMap *TileMap) override;
-    void PreDraw(cTileMap *TileMap) override;
-    void Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow) override;
-    int Delete(class cTileMap *TileMap) override;
-    */
-
     int GetRenderState(eRenderStateOption option) override;
     int SetRenderState(eRenderStateOption option,int value) override;
 
-    /*
     void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
     void DrawPixel(int x1,int y1,sColor4c color) override;
-    */
     void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
     void FlushPrimitive2D() override;
 
@@ -168,9 +150,7 @@ public:
     void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
                  cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase=0,float lerp_factor=1) override;
 
-    /*
     bool SetScreenShot(const char *fname) override;
-    */
 
     void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                     cTexture *Texture,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override;
@@ -179,18 +159,15 @@ public:
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                      cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override;
 
-    /*
     bool IsEnableSelfShadow() override;
-    */
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
     
-    /*
     void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
     void DrawPoint(const Vect3f &v1,sColor4c color) override;
 
     void FlushPrimitive3D() override;
-    */
+
     // //// cInterfaceRenderDevice impls end ////
 };
 

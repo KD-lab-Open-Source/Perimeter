@@ -8,210 +8,18 @@
 #include <set>
 #include <climits>
 
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-// non-standard header
-#include <slist>
-#endif
 #include "clip/ClippingMesh.h"
+
+#include "TilemapRender.h"
 
 #define BUMP_VTXTYPE   sVertexXYZT1
 #define BUMP_VTXFORMAT (BUMP_VTXTYPE::fmt)
 #define BUMP_VTXSIZE   sizeof(BUMP_VTXTYPE)
-#define BUMP_IDXTYPE   unsigned short
+#define BUMP_IDXTYPE   indices_t
 #define BUMP_IDXSIZE   sizeof(BUMP_IDXTYPE)
 #define BUMP_IDXFMT    PERIMETER_D3D_INDEX_FMT
 
-static int bumpGeoScale[TILEMAP_LOD] = { 1, 2, 3, 4, 5 };
-static int bumpTexScale[TILEMAP_LOD] = { 0, 0, 1, 2, 3 };
-
 const int texture_border=1;
-
-struct sPlayerIB
-{
-	IndexPoolPage index;
-	int nindex;
-	int player;
-};
-
-struct VectDelta:public Vect2i
-{
-	int delta2;
-	Vect2i delta;
-	char player;
-
-	enum
-	{
-		FIX_RIGHT=1,
-		FIX_BOTTOM=2,
-		FIX_FIXED=4,
-		FIX_FIXEMPTY=8,
-	};
-	char fix;
-
-	void copy_no_fix(const VectDelta& p)
-	{
-		x=p.x;
-		y=p.y;
-		delta2=p.delta2;
-		delta=p.delta;
-		player=p.player;
-	}
-};
-
-struct sBumpTile
-{
-	//Only to read
-	VertexPoolPage vtx;
-	std::vector<sPlayerIB> index;
-	Vect2i tile_pos;
-
-	bool init;
-	int age, LOD;
-	int texPool, texPage;
-
-	enum
-	{
-		U_LEFT=0,
-		U_RIGHT=1,
-		U_TOP=2,
-		U_BOTTOM=3,
-		U_ALL=4,
-	};
-
-	char border_lod[U_ALL];
-protected:
-	float vStart, vStep, uStart, uStep;
-public:
-	sBumpTile(cTileMap *TileMap, int lod,int xpos,int ypos);
-	~sBumpTile();
-	D3DLOCKED_RECT *LockTex();
-	uint8_t *LockVB();
-	void UnlockTex();
-	void UnlockVB();
-	void Calc(cTileMap *TileMap,bool update_texture);
-
-	void FindFreeTexture(int& Pool,int& Page,int tex_width,int tex_height);
-
-	inline Vect2f GetUVStart(){return Vect2f(uStart,vStart);};
-	inline Vect2f GetUVStep()
-	{
-		float div=1/(float)(1 << bumpGeoScale[LOD]);
-		return Vect2f(uStep * div,vStep*div);
-	};
-
-	inline bool IsZeroplast()
-	{
-		int sz=index.size();
-		if(sz>1)
-			return true;
-		if(sz==1)
-			return index[0].player>=0;
-		return false;
-	}
-
-	inline bool IsOnlyZeroplast()
-	{
-		return index.size()==1 && index[0].player>=0;
-	}
-protected:
-	void CalcTexture(cTileMap *TileMap);
-	void CalcPoint(cTileMap *TileMap);
-
-	int FixLine(VectDelta* points,int ddv,cTileMap *TileMap);
-
-	inline float SetVertexZ(TerraInterface* terra,int x,int y);
-	void DeleteIndex();
-};
-
-class sTilemapTexturePool
-{
-	LPDIRECT3DTEXTURE9 texture;
-	cD3DRender *renderer;
-	int tileWidth, tileHeight;
-	int tileRealWidth, tileRealHeight;
-	int freePages;
-	int *freePagesList;
-
-	int texture_width,texture_height;
-	std::vector<Vect2i> Pages;//x-xmin, y-ymin
-	float ustep,vstep;
-public:
-	std::vector<sBumpTile*> tileRenderList;
-
-	sTilemapTexturePool(cD3DRender *aRenderer, int w, int h);
-	~sTilemapTexturePool();
-	int allocPage();
-	void freePage(int page);
-	D3DLOCKED_RECT *lockPage(int page);
-	void unlockPage(int page);
-	Vect2f getUVStart(int page);
-	inline float getVStep(){return vstep;};
-	inline float getUStep(){return ustep;};
-
-	inline int GetTileWidth(){return tileWidth;}
-	inline int GetTileHeight(){return tileHeight;}
-	inline int IsFree(){return freePages;}
-	inline LPDIRECT3DTEXTURE9 GetTexture(){return texture;}
-
-	void GetTextureMemory(int &total,int& free);
-protected:
-	void CalcPagesPos();
-};
-
-class cTileMapRender
-{
-	cTileMap *TileMap;
-	std::vector<sBumpTile*> bumpTiles;
-	std::vector<int> bumpDyingTiles;
-	IDirect3DIndexBuffer9* tilemapIB;
-	int index_offset[TILEMAP_LOD];
-	int index_size[TILEMAP_LOD];
-
-	uint8_t* visMap;
-	char* vis_lod;
-
-	char* update_stat;
-	bool update_in_frame;
-
-	void SaveUpdateStat();
-
-	VectDelta* delta_buffer;
-	std::vector<std::vector<sPolygon> > index_buffer;
-public:
-	void IncUpdate(sBumpTile* pbump);
-
-	cTileMapRender(cTileMap *pTileMap);
-	~cTileMapRender();
-
-	void ClearTilemapPool();
-	void RestoreTilemapPool();
-
-	int bumpNumIndex(int lod){return index_size[lod];};
-	int bumpIndexOffset(int lod){return index_offset[lod];};
-
-	int bumpNumVertices(int lod);
-	void bumpCreateIB(sPolygon* ib, int lod);
-	int bumpTileValid(int id);
-	int bumpTileAlloc(int lod,int xpos,int ypos);
-	void bumpTileFree(int id);
-	void bumpTilesDeath();
-
-	void PreDraw(cCamera* DrawNode);
-	void DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow);
-
-	sBumpTile* GetTile(int k,int n)
-	{
-		VISASSERT(k>=0 && k<TileMap->GetTileNumber().x);
-		VISASSERT(n>=0 && n<TileMap->GetTileNumber().y);
-		int bumpTileID = TileMap->GetTile(k, n).bumpTileID;
-		if(bumpTileID>=0)
-			return bumpTiles[bumpTileID];
-		return NULL;
-	}
-	
-	VectDelta* GetDeltaBuffer(){return delta_buffer;};
-	std::vector<std::vector<sPolygon> >& GetIndexBuffer(){return index_buffer;};
-};
 
 static std::vector<sTilemapTexturePool*> bumpTexPools;
 
@@ -368,15 +176,6 @@ void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& d
 	box=calcBoundInDirection(cmesh,direction);
 }
 
-int cD3DRender::Create(class cTileMap *TileMap)
-{
-	cTileMapRender* p=new cTileMapRender(TileMap);
-	TileMap->SetTilemapRender(p);
-	p->RestoreTilemapPool();
-	tilemaps.push_back(p);
-	return 0;
-}
-
 void cD3DRender::GetTilemapTextureMemory(int& total,int& free)
 {
 	std::vector<sTilemapTexturePool*>::iterator it;
@@ -394,32 +193,6 @@ void sTilemapTexturePool::GetTextureMemory(int &total,int& free)
 {
 	total=texture_width*texture_height*4;
 	free=freePages*tileWidth*tileHeight*4;
-}
-
-int cD3DRender::Delete(class cTileMap *TileMap)
-{
-	cTileMapRender* p=TileMap->GetTilemapRender();
-	if(p==NULL)
-		return true;
-	
-	p->ClearTilemapPool();
-	for(int i=0;i<tilemaps.size();i++)
-	{
-		if(tilemaps[i]==p)
-		{
-			tilemaps.erase(tilemaps.begin()+i);
-			delete p;
-			return true;
-		}
-	}
-
-	VISASSERT(0);
-	return false;
-}
-
-void cD3DRender::Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow)
-{
-	TileMap->GetTilemapRender()->DrawBump(DrawNode,MatMode,tile_draw,shadow);
 }
 
 void cD3DRender::ClearTilemapPool()
@@ -619,10 +392,9 @@ void cTileMapRender::bumpTilesDeath()
 
 
 ///////////////////////////sTilemapTexturePool/////////////////////////////////
-sTilemapTexturePool::sTilemapTexturePool(cD3DRender *aRenderer, int w, int h)
+sTilemapTexturePool::sTilemapTexturePool(int w, int h)
 {
 	texture_width=texture_height=512;
-	renderer = aRenderer;
 	tileWidth = w;
 	tileHeight = h;
 
@@ -638,7 +410,7 @@ sTilemapTexturePool::sTilemapTexturePool(cD3DRender *aRenderer, int w, int h)
 	for (int i = 0; i < Pages.size(); i++)
 		freePagesList[i] = i;
 
-	RDCALL(renderer->lpD3DDevice->CreateTexture(
+	RDCALL(gb_RenderDevice3D->lpD3DDevice->CreateTexture(
 		texture_width, texture_height, 1,
 		0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture,NULL));
 /* Этот кусок теоретически лучше, но надо проверить на Geforce 2
@@ -780,8 +552,7 @@ void sBumpTile::FindFreeTexture(int& Pool,int& Page,int tex_width,int tex_height
 			i = bumpTexPools.size();
 			bumpTexPools.push_back(NULL);
 		}
-		bumpTexPools[i] = new sTilemapTexturePool((cD3DRender*)gb_RenderDevice,
-			tex_width, tex_height);
+		bumpTexPools[i] = new sTilemapTexturePool(tex_width, tex_height);
 	}
 
 	Pool = i;
@@ -844,11 +615,6 @@ void sBumpTile::Calc(cTileMap *TileMap,bool update_texture)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void cD3DRender::PreDraw(cTileMap *TileMap)
-{
-	TileMap->GetTilemapRender()->PreDraw(DrawNode);
-}
-
 static bool save=false;
 
 void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow)

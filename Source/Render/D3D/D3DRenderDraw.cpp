@@ -222,16 +222,8 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 		VISASSERT(CurrentFont!=0);
 		return;
 	}
-	
-	float xOfs=(float)x, yOfs=(float)y;
-	sColor4c diffuse(color);
-	cFontInternal* cf=CurrentFont->GetInternal();
-
-    if (!isOrthoSet) UseOrthographicProjection();
-
-/*
-	SetNoMaterial(blend_mode,0,CurrentFont->GetTexture());
-/*/
+    FlushActiveDrawBuffer();
+    
 	SetTexture(CurrentFont->GetTexture(),0,0);
 	SetTexture(NULL,0,1);
 	SetTexture(NULL,0,2);
@@ -250,255 +242,62 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_DISABLE );
 	SetTextureStageState( 2, D3DTSS_COLOROP, D3DTOP_DISABLE );
 
-/**/
-
 	if(CurrentFont->GetScale().x>1.01f || CurrentFont->GetScale().y>1.01f)
 		SetRenderState(RS_BILINEAR,1);
 	else
 		SetRenderState(RS_BILINEAR,0);
-
-	float xSize = CurrentFont->GetScale().x*cf->GetTexture()->GetWidth(),
-		  ySize = CurrentFont->GetScale().y*cf->FontHeight*cf->GetTexture()->GetHeight();
-
-	float v_add=cf->FontHeight+1/(double)(1<<cf->GetTexture()->GetY());
-
-	QuadBufferXYZDT1.BeginDraw();
-
-	for( const char* str=string; *str; str++, yOfs+=ySize)
-	{
-		xOfs=(float)x;
-		if( align>=0 )
-		{
-			float StringWidth = GetFontLength( str );
-			if( align==0 )
-				xOfs -= xm::round(StringWidth * 0.5f);
-			else
-				xOfs -= xm::round(StringWidth);
-		}
-		for( ; *str!=10 ; str++ )
-		{
-			ChangeTextColor(str,diffuse);
-			if(*str==10)
-				break;
-
-			int c=(unsigned char)*str;
-			if( !c ) goto LABEL_DRAW;
-			if(c<32)continue;
-			Vect3f& size=cf->Font[c];
-
-			sVertexXYZDT1* v=QuadBufferXYZDT1.Get();
-			sVertexXYZDT1 &v1=v[1],&v2=v[0],
-						   &v3=v[2],&v4=v[3];
-
-			v1.x=v4.x=xOfs;
-			v1.y=v2.y=yOfs;
-			xOfs+=xSize*size.z-1;
-			v3.x=v2.x=xOfs;
-			v3.y=v4.y=yOfs+ySize;
-			v1.u1()=v4.u1()=size.x;
-			v1.v1()=v2.v1()=size.y;
-			v3.u1()=v2.u1()=v1.u1()+size.z;
-			v3.v1()=v4.v1()=v1.v1()+v_add;
-			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=ConvertColor(diffuse);
-			v1.z=v2.z=v3.z=v4.z=0.001f;
-		}
-	}
-LABEL_DRAW:
-
-	QuadBufferXYZDT1.EndDraw();
+    
+    cInterfaceRenderDevice::OutText(x,y,string,color,align,blend_mode);
+    FlushActiveDrawBuffer();
 }
 
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
-			cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase,float lerp_factor)
-{
-	VISASSERT(pTexture);
-	if(CurrentFont==0)
-	{
-		VISASSERT(CurrentFont!=0);
-		return;
-	}
-	
-	duv.x*=1024.0f/GetSizeX();
-	duv.y*=768.0f/GetSizeY();
-	float xOfs=(float)x, yOfs=(float)y;
-	sColor4c diffuse(color);
-	sColor4c lerp(255*lerp_factor,255*lerp_factor,255*lerp_factor,255*(1-lerp_factor));
-	cFontInternal* cf=CurrentFont->GetInternal();
+                         cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase,float lerp_factor) {
+    FlushActiveDrawBuffer();
+    
+    SetNoMaterial(blend_mode, phase, pTexture, CurrentFont->GetTexture(), mode);
+    
+    uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
+    SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
+    SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,1);
 
-    if (!isOrthoSet) UseOrthographicProjection();
+    SetRenderState(RS_BILINEAR,0);
 
-//	SetNoMaterial(blend_mode,phase,CurrentFont->GetTexture(),pTexture,mode);
-	SetNoMaterial(blend_mode,phase,pTexture,CurrentFont->GetTexture(),mode);
-//	SetNoMaterial(blend_mode,phase,pTexture);
+    sColor4c lerp(255*lerp_factor,255*lerp_factor,255*lerp_factor,255*(1-lerp_factor));
+    SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
+    SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
+    SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
+    SetRenderState(D3DRS_TEXTUREFACTOR, ConvertColor(lerp));
 
-	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
-	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,1);
-	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,0);
-	SetRenderState(RS_BILINEAR,0);
+    SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
+    SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);
+    SetTextureStageState(1,D3DTSS_ALPHAARG2,D3DTA_DIFFUSE);
 
-	{
-		SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
-		SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
-		SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
-		SetRenderState(D3DRS_TEXTUREFACTOR, lerp.ARGB());
+	SetTextureStageState(1,D3DTSS_COLOROP,D3DTOP_MODULATE);
+    SetTextureStageState(1,D3DTSS_COLORARG1,D3DTA_DIFFUSE);
+    SetTextureStageState(1,D3DTSS_COLORARG2,D3DTA_CURRENT);
 
-		SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
-		SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);
-		SetTextureStageState(1,D3DTSS_ALPHAARG2,D3DTA_DIFFUSE);
+    cInterfaceRenderDevice::OutText(x,y,string,color,align,blend_mode,pTexture,mode,uv,duv,phase,lerp_factor);
+    FlushActiveDrawBuffer();
 
-//		SetTextureStageState(1,D3DTSS_COLOROP,D3DTOP_MODULATE);
-		SetTextureStageState(1,D3DTSS_COLORARG1,D3DTA_DIFFUSE);
-		SetTextureStageState(1,D3DTSS_COLORARG2,D3DTA_CURRENT);
-//	   DWORD dwNumPasses;
-//	   RDCALL(lpD3DDevice->ValidateDevice( &dwNumPasses ));
-	}
+    SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
+    SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,index1);
 
+    SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
+    SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
-	float xSize = CurrentFont->GetScale().x*cf->GetTexture()->GetWidth(),
-		  ySize = CurrentFont->GetScale().y*cf->FontHeight*cf->GetTexture()->GetHeight();
+    SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
+    SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 
-	float v_add=cf->FontHeight+1/(double)(1<<cf->GetTexture()->GetY());
+    SetTextureStageState( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
+    SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT );
 
-	QuadBufferXYZDT2.BeginDraw();
-
-	for( const char* str=string; *str; str++, yOfs+=ySize)
-	{
-		xOfs=(float)x;
-		if( align>=0 )
-		{
-			float StringWidth = GetFontLength( str );
-			if( align==0 )
-				xOfs -= xm::round(StringWidth * 0.5f);
-			else
-				xOfs -= xm::round(StringWidth);
-		}
-		for( ; *str!=10 ; str++ )
-		{
-			ChangeTextColor(str,diffuse);
-
-			int c=(unsigned char)*str;
-			if( !c ) goto LABEL_DRAW;
-			if(c==10)break;
-			if(c<32)continue;
-			Vect3f& size=cf->Font[c];
-
-			sVertexXYZDT2* v=QuadBufferXYZDT2.Get();
-			sVertexXYZDT2 &v1=v[1],&v2=v[0],
-						   &v3=v[2],&v4=v[3];
-
-			float x0,x1,y0,y1;
-			x0=xOfs;
-			x1=xOfs+xSize*size.z-1;
-			y0=yOfs;
-			y1=yOfs+ySize;
-			v1.x=v4.x=x0;
-			v1.y=v2.y=y0;
-			v3.x=v2.x=x1;
-			v3.y=v4.y=y1;
-			v1.u1()=v4.u1()=size.x;
-			v1.v1()=v2.v1()=size.y;
-			v3.u1()=v2.u1()=v1.u1()+size.z;
-			v3.v1()=v4.v1()=v1.v1()+v_add;
-			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=ConvertColor(diffuse);
-			v1.z=v2.z=v3.z=v4.z=0.001f;
-
-			v1.u2()=v4.u2()=(x0-x)*duv.x+uv.x;
-			v1.v2()=v2.v2()=(y0-y)*duv.y+uv.y;
-			v3.u2()=v2.u2()=(x1-x)*duv.x+uv.x;
-			v3.v2()=v4.v2()=(y1-y)*duv.y+uv.y;
-
-			xOfs=x1;
-		}
-	}
-LABEL_DRAW:
-
-	QuadBufferXYZDT2.EndDraw();
-	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
-	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,index1);
-
-	SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
-	SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-
-	SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
-	SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-
-	SetTextureStageState( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
-	SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT );
-
-	SetTextureStageState( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
-	SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-}
-
-struct LightByTexture
-{
-	cTexture* texture;
-	std::vector<cUnkLight*> light;
-};
-
-void cD3DRender::Draw(class cScene *Scene)
-{ 
-	std::vector<LightByTexture> light;
-	for(int i=0;i<Scene->GetNumberLight();i++)
-	{
-		cUnkLight* ULight=Scene->GetLight(i);
-		if(ULight && ULight->GetAttr(ATTRLIGHT_SPHERICAL))
-		{
-			cTexture* pTexture=ULight->GetTexture();
-
-			LightByTexture* pl=NULL;
-			for(int j=0;j<light.size();j++)
-			if(light[j].texture==pTexture)
-			{
-				pl=&light[j];
-				break;
-			}
-			
-			if(!pl)
-			{
-				light.push_back(LightByTexture());
-				pl=&light.back();
-				pl->texture=pTexture;
-			}
-
-			pl->light.push_back(ULight);
-		}
-	}
-
-	if(light.empty())
-		return;
-
-	SetNoMaterial(ALPHA_ADDBLEND);
-	cQuadBuffer<sVertexXYZDT1>* quad=&QuadBufferXYZDT1;
-
-	int i;
-	for(i=0;i<light.size();i++)
-	{
-		LightByTexture& pl=light[i];
-		quad->BeginDraw();
-		SetTexture(pl.texture,0,0);
-		
-		for(int j=0;j<pl.light.size();j++)
-		{
-			cUnkLight* ULight=pl.light[j];
-			//sColor4c Diffuse(255,255,255,255);//Непонятно почему была такая строчка
-			sColor4c Diffuse(ULight->GetDiffuse()); 
-			sVertexXYZDT1 *v=quad->Get();
-			Vect3f& p=ULight->GetPos();
-			float r=ULight->GetRadius();
-			v[0].pos.x=p.x-r; v[0].pos.y=p.y-r; v[0].pos.z=p.z; v[0].u1()=0; v[0].v1()=0;
-			v[1].pos.x=p.x-r; v[1].pos.y=p.y+r; v[1].pos.z=p.z; v[1].u1()=0; v[1].v1()=1;
-			v[2].pos.x=p.x+r; v[2].pos.y=p.y-r; v[2].pos.z=p.z; v[2].u1()=1; v[2].v1()=0;
-			v[3].pos.x=p.x+r; v[3].pos.y=p.y+r; v[3].pos.z=p.z; v[3].u1()=1; v[3].v1()=1;
-			
-			v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(Diffuse);
-		}
-		quad->EndDraw();
-	}
-
+    SetTextureStageState( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
+    SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 }
 
 void cD3DRender::Draw(class ElasticSphere *es)

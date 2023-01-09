@@ -224,6 +224,9 @@ protected:
     uint32_t RenderMode = 0;
     class DrawBuffer* activeDrawBuffer = nullptr;
     std::vector<class DrawBuffer*> drawBuffers;
+    std::vector<class cTileMapRender*> tilemaps;
+
+    virtual void Draw(class FieldDispatcher *ffd, uint8_t transparent);
 
 public:
     cInterfaceRenderDevice();
@@ -254,6 +257,34 @@ public:
 
     virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive);
     virtual void SetActiveDrawBuffer(class DrawBuffer*);
+
+    /*Внутренний мтод. Использовать с крайней осторожностью.
+      Перед использованием посмотреть как используется внутри Render.
+    */
+    virtual void ChangeTextColor(const char* &str,sColor4c& diffuse);
+
+    virtual void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax);
+
+    virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND);
+    virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
+                         cTexture* pTexture,eColorMode mode,
+                         Vect2f uv,//Координаты текстуры в точке x,y
+                         Vect2f duv,//du,dv на один логический пиксель 
+            //(лог пиксель равен графическому в разрешении 1024x768)
+                         float phase=0,
+                         float lerp_factor=1//0..1 Насколько сильно влияет pTexture
+    );
+
+    virtual void CreateFFDData(class FieldDispatcher *rd);
+    virtual void DeleteFFDData(class FieldDispatcher *rd);
+
+    virtual int Create(class cTileMap *TileMap);
+    virtual int Delete(class cTileMap *TileMap);
+
+    virtual void Draw(class ElasticSphere *es);
+    virtual void Draw(class cScene *Scene);
+    virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255));
+    virtual void Draw(class FieldDispatcher *ffd);
 
     // Decl only methods
 
@@ -286,32 +317,9 @@ public:
     virtual void DrawPoint(const Vect3f &v1,sColor4c color) = 0;
     virtual void FlushPrimitive3D() = 0;
 
-    /*Внутренний мтод. Использовать с крайней осторожностью.
-      Перед использованием посмотреть как используется внутри Render.
-    */
-    virtual void ChangeTextColor(const char* &str,sColor4c& diffuse);
-
-    virtual void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax);
-    
-    virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) = 0;
-    virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
-                         cTexture* pTexture,eColorMode mode,
-                         Vect2f uv,//Координаты текстуры в точке x,y
-                         Vect2f duv,//du,dv на один логический пиксель 
-            //(лог пиксель равен графическому в разрешении 1024x768)
-                         float phase=0,
-                         float lerp_factor=1//0..1 Насколько сильно влияет pTexture
-    ) = 0;
-
     virtual bool SetScreenShot(const char *fname) = 0;
     virtual int GetRenderState(eRenderStateOption option) = 0;
     virtual int SetRenderState(eRenderStateOption option,int value) = 0;
-    virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) = 0;
-
-    virtual int Create(class cTileMap *TileMap) = 0;
-    virtual void PreDraw(cTileMap *TileMap) = 0;
-    virtual void Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow) = 0;
-    virtual int Delete(class cTileMap *TileMap) = 0;
     
     virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) = 0;
@@ -321,13 +329,6 @@ public:
                              cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                              cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
-    
-    virtual void Draw(class cScene *Scene) = 0;
-
-    virtual void Draw(class FieldDispatcher *ffd) = 0;
-    virtual void CreateFFDData(class FieldDispatcher *rd) = 0;
-    virtual void DeleteFFDData(class FieldDispatcher *rd) = 0;
-    virtual void Draw(class ElasticSphere *es) = 0;
 
     virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) = 0;
     virtual int DeleteTexture(class cTexture *Texture) = 0;

@@ -15,6 +15,7 @@ SET(Render_SRCS
         src/VisError.cpp
         src/Frame.cpp
         src/TileMap.cpp
+        src/TilemapRender.cpp
         src/UnkLight.cpp
         src/UnkObj.cpp
         src/CChaos.cpp
@@ -50,6 +51,8 @@ SET(Render_SRCS
         src/RenderDevice.cpp
         src/DrawBuffer.cpp
         tracker/RenderTracker.cpp
+        src/RenderDeviceDraw.cpp
+        client/RenderDrawClient.cpp
 )
 
 IF (OPTION_D3D9)
@@ -57,7 +60,6 @@ IF (OPTION_D3D9)
         "D3D"
     )
     SET(Render_SRCS ${Render_SRCS}
-        client/D3DRenderDrawClient.cpp
         shader/shaders.cpp
         D3D/AdapterMode.cpp
         D3D/D3DRender.cpp

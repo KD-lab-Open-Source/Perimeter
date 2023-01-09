@@ -172,7 +172,6 @@ void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
     SetWorldMat4f(&mat);
 }
 
-
 DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive) {
     uint16_t key = (fmt & VERTEX_FMT_MAX) | ((primitive & 0x3) << VERTEX_FMT_BITS);
     DrawBuffer* db = nullptr;

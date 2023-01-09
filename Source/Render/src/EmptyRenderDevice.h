@@ -51,8 +51,6 @@ public:
     void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
 
     int Create(class cTileMap *TileMap) override { return -1; }
-    void PreDraw(cTileMap *TileMap) override {}
-    void Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow) override {}
     int Delete(class cTileMap *TileMap) override { return -1; }
 
     void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
@@ -61,11 +59,13 @@ public:
                              cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE)	override { }
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                              cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override { }
+    
     void Draw(class cScene *Scene) override { }
     
-    void Draw(class FieldDispatcher *ffd) override { }
+    void Draw(class FieldDispatcher *ffd, uint8_t transparent) override { }
     void CreateFFDData(class FieldDispatcher *rd) override { }
     void DeleteFFDData(class FieldDispatcher *rd) override { }
+    
     void Draw(class ElasticSphere *es) override { }
 
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override { return 0; }

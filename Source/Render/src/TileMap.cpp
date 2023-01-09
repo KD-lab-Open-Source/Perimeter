@@ -4,6 +4,7 @@
 #include "ObjLibrary.h"
 #include "../../Game/Region.h"
 #include "Font.h"
+#include "TilemapRender.h"
 
 #ifdef PERIMETER_D3D9
 //D3D9 specific render code
@@ -157,7 +158,9 @@ void cTileMap::PreDraw(cCamera *DrawNode)
 	BuildRegionPoint();
 
 	DrawNode->Attach(SCENENODE_OBJECT_TILEMAP,this);
-	gb_RenderDevice->PreDraw(this);
+#ifdef PERIMETER_D3D9
+    GetTilemapRender()->PreDraw(DrawNode);
+#endif
 }
 
 void cTileMap::Draw(cCamera *DrawNode)
@@ -165,33 +168,36 @@ void cTileMap::Draw(cCamera *DrawNode)
 	if(!Option_ShowType[SHOW_TILEMAP])
 		return;
 
+#ifdef PERIMETER_D3D9
+    cTileMapRender* render = GetTilemapRender();
+
 	if(DrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 	{
         gb_RenderDevice->Draw(GetScene()); // рисовать источники света
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_SHADOWMAP))
 	{
-		if(Option_ShadowType==SHADOW_MAP_SELF)
-			gb_RenderDevice->Draw(this, ALPHA_TEST, TILEMAP_ALL, true);
+		if(Option_ShadowType==SHADOW_MAP_SELF) {
+            render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_ALL, true);
+        }
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION))
 	{ // рисовать отражение
 		gb_RenderDevice->SetRenderState(RS_ALPHAREF, 254/*GetRefSurface()*/);
 		gb_RenderDevice->SetRenderState(RS_ALPHAFUNC, CMP_GREATER);
-		gb_RenderDevice->Draw(this, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
+        render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
 		gb_RenderDevice->SetRenderState(RS_ALPHAFUNC, CMP_GREATER);
 		gb_RenderDevice->SetRenderState(RS_ALPHAREF, 0);
 	}else
 	{
-		if(GetAttribute(ATTRUNKOBJ_REFLECTION))
-		{ // рисовать прямое изображение
+		if(GetAttribute(ATTRUNKOBJ_REFLECTION)) {
+		    // рисовать прямое изображение
 			gb_RenderDevice->SetRenderState(RS_ALPHAREF, 1);
-			gb_RenderDevice->Draw(this, ALPHA_BLEND, TILEMAP_ZEROPLAST, false);
-			gb_RenderDevice->Draw(this, ALPHA_NONE, TILEMAP_NOZEROPLAST, false);
+			render->DrawBump(DrawNode, ALPHA_BLEND, TILEMAP_ZEROPLAST, false);
+			render->DrawBump(DrawNode, ALPHA_NONE, TILEMAP_NOZEROPLAST, false);
 			gb_RenderDevice->SetRenderState(RS_ALPHAREF, 0);
-		}else
-		{
-			gb_RenderDevice->Draw(this, ALPHA_NONE, TILEMAP_ALL, false);
+		} else {
+			render->DrawBump(DrawNode, ALPHA_NONE, TILEMAP_ALL, false);
 		}
 	}
 
@@ -227,6 +233,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 		gb_RenderDevice->SetFont(NULL);
 		pFont->Release();
 	}
+#endif
 
 	DrawLines();
 }
