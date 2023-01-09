@@ -828,13 +828,37 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	lpD3DDevice->LightEnable(0,TRUE);
 }
 int cD3DRender::GetRenderState(eRenderStateOption option) {
-    return GetRenderState((D3DRENDERSTATETYPE)option);
+    int value = GetRenderState(static_cast<D3DRENDERSTATETYPE>(option));
+    switch (option) {
+        default:
+            break;
+        case RS_CULLMODE:
+            switch (value) {
+                default:
+                    break;
+                case D3DCULL_NONE:
+                    value = CULL_NONE;
+                    break;
+                case D3DCULL_CW:
+                    value = CULL_CW;
+                    break;
+                case D3DCULL_CCW:
+                    value = CULL_CCW;
+                    break;
+            }
+            break;
+    }
+    return value;
 }
 int cD3DRender::SetRenderState(eRenderStateOption option,int value)
 { 
-    if(lpD3DDevice==0||!bActiveScene) return 1;
-	switch(option)
-	{
+    if(lpD3DDevice==0||!bActiveScene) {
+        xassert(0);
+        return 1;
+    }
+	switch (option) {
+        default:
+            break;
 		case RS_FILLMODE:
 			bWireFrame=(value==FILL_WIREFRAME);
 			break;
@@ -843,7 +867,22 @@ int cD3DRender::SetRenderState(eRenderStateOption option,int value)
 			else SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
 			break;
 		case RS_CULLMODE:
-			if(value<0) value=CurrentCullMode;
+            switch (value) {
+                default:
+                    if (value<0) {
+                        value=CurrentCullMode;
+                    }
+                    break;
+                case CULL_NONE:
+                    value = D3DCULL_NONE;
+                    break;
+                case CULL_CW:
+                    value = D3DCULL_CW;
+                    break;
+                case CULL_CCW:
+                    value = D3DCULL_CCW;
+                    break;
+            }
 			break;
 		case RS_BILINEAR:
             FlushActiveDrawBuffer();
@@ -860,7 +899,7 @@ int cD3DRender::SetRenderState(eRenderStateOption option,int value)
 			}
 			return 0;
 	}
-	SetRenderState((D3DRENDERSTATETYPE)option,value);
+	SetRenderState(static_cast<D3DRENDERSTATETYPE>(option),value);
 	return 0; 
 }
 
