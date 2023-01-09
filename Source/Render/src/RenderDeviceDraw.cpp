@@ -236,75 +236,83 @@ void cInterfaceRenderDevice::Draw(class cScene *Scene) {
 }
 
 void cInterfaceRenderDevice::Draw(ElasticSphere *es) {
-    /*(
     SetWorldMatXf(es->GetGlobalMatrix());
-
-    sVertexXYZDT2 *VertexFix=(sVertexXYZDT2*)&Buffer[0];
-    int is=es->theta_size,js=es->psi_size;
-    int BytePerVertex=((is+1)*(js+1)+(is+2)*(js-1)-1)*sizeof(VertexFix[0]);
-    VISASSERT(BytePerVertex<Buffer.length());
+    
+    int is = es->theta_size;
+    int js = es->psi_size;
+    size_t points = (is+1) * (js+1) + (is+2) * (js-1);
+    
     Vect3f uv[2];
     Mat3f &mC=DrawNode->GetMatrix().rot();
-    uv[0].set(	0.5f*mC[0][0],0.5f*mC[0][1],0.5f*mC[0][2]);
-    uv[1].set(	0.5f*mC[1][0],0.5f*mC[1][1],0.5f*mC[1][2]);
+    uv[0].set(0.5f * mC[0][0], 0.5f * mC[0][1], 0.5f * mC[0][2]);
+    uv[1].set(0.5f * mC[1][0], 0.5f * mC[1][1], 0.5f * mC[1][2]);
     VISASSERT(es->GetTexture(0));
+    
     SetNoMaterial(es->blendMode,es->GetFrame()->GetPhase(),es->GetTexture(0),es->GetTexture(1),COLOR_MOD);
-    SetFVF(VertexFix->fmt);
 
-    int cull=GetRenderState(D3DRS_CULLMODE);
-    SetRenderState(D3DRS_CULLMODE,D3DCULL_CW);
+    int cull=GetRenderState(RS_CULLMODE);
+    SetRenderState(RS_CULLMODE,CULL_CW);
+
+    DrawBuffer* db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP);
+    indices_t* ib = nullptr;
+    sVertexXYZDT2* vb = nullptr;
+    db->Lock(points, points, vb, ib, false);
+    if (!vb || !ib) {
+        xassert(0);
+        return;
+    }
 
     uint32_t Diffuse = ConvertColor(es->GetDiffuse());
     float dv=0.5f-es->GetFrame()->GetPhase();
     int i;
-    for(i=0;i<=is;i++)
-    {
-        sVertexXYZDT2 &v=VertexFix[2*i];
+    for (i=0; i<=is; i++) {
         const Vect3f &n=es->normal(0,i);
-        v.pos=es->point(0,i);
-        v.GetTexel().set(0/(float)es->psi_size,i/(float)es->theta_size);
-        v.GetTexel2().set(n.y*0.5f+0.5f,n.z*0.5f+dv);
-        v.diffuse=Diffuse;
+        vb->pos=es->point(0,i);
+        vb->GetTexel().set(static_cast<float>(0) / static_cast<float>(es->psi_size),
+                          static_cast<float>(i) / static_cast<float>(es->theta_size));
+        vb->GetTexel2().set(n.y*0.5f+0.5f, n.z*0.5f+dv);
+        vb->diffuse=Diffuse;
+        
+        ib[2*i] = db->lock_written_vertices;
+        db->lock_written_indices++;
+        db->lock_written_vertices++;
+        vb++;
     }
     int j;
-    for(j=0;j<js;j++)
-        if(j&1)
-            for(i=0;i<=is;i++)
-            {
-                sVertexXYZDT2 &v=VertexFix[(2*is+3)*j+2*i+1];
-                const Vect3f &n=es->normal(j+1,is-i);
-                v.pos=es->point(j+1,is-i);
-                v.GetTexel().set((j+1)/(float)es->psi_size,(is-i)/(float)es->theta_size);
-                v.GetTexel2().set(n.y*0.5f+0.5f,n.z*0.5f+dv);
-                v.diffuse=Diffuse;
-            }
-        else
-            for(i=0;i<=is;i++)
-            {
-                sVertexXYZDT2 &v=VertexFix[(2*is+3)*j+2*i+1];
-                const Vect3f &n=es->normal(j+1,i);
-                v.pos=es->point(j+1,i);
-                v.GetTexel().set((j+1)/(float)es->psi_size,i/(float)es->theta_size);
-                v.GetTexel2().set(n.y*0.5f+0.5f,n.z*0.5f+dv);
-                v.diffuse=Diffuse;
-            }
-    for(j=0;j<js-1;j++)
-        if(j&1)
-        {
-            for(i=0;i<=is;i++)
-                VertexFix[(2*is+3)*(j+1)+2*(is-i)+0]=VertexFix[(2*is+3)*j+2*i+1];
-            VertexFix[(2*is+3)*j+2*is+2]=VertexFix[(2*is+3)*j+2*is+1];
-        }
-        else
-        {
-            for(i=0;i<=is;i++)
-                VertexFix[(2*is+3)*(j+1)+2*(is-i)+0]=VertexFix[(2*is+3)*j+2*i+1];
-            VertexFix[(2*is+3)*j+2*is+2]=VertexFix[(2*is+3)*j+2*is+1];
-        }
-    DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,(is+1)*(js+1)+(is+2)*(js-1)-1-2,VertexFix,sizeof(VertexFix[0]));
-    NumberPolygon+=(is+1)*(js+1)+(is+2)*(js-1)-1-2;
-    NumDrawObject++;
+    for (j = 0; j < js; j++) {
+        for (i = 0; i <= is; i++) {
+            int isi = j & 1 ? (is - i) : i;
+            const Vect3f& n = es->normal(j + 1, isi);
+            vb->pos = es->point(j + 1, isi);
+            vb->GetTexel().set(static_cast<float>(j + 1) / static_cast<float>(es->psi_size),
+                               static_cast<float>(isi) / static_cast<float>(es->theta_size));
+            vb->GetTexel2().set(n.y * 0.5f + 0.5f, n.z * 0.5f + dv);
+            vb->diffuse = Diffuse;
 
-    SetRenderState(D3DRS_CULLMODE,cull);
-    */
+            size_t s = (2 * is + 3) * j + 2 * i + 1;
+            xassert(s < points);
+            ib[s] = db->lock_written_vertices;
+            db->lock_written_indices++;
+            db->lock_written_vertices++;
+            vb++;
+        }
+    }
+    for (j = 0; j < js - 1; j++) {
+        for (i = 0; i <= is; i++) {
+            size_t s = (2 * is + 3) * j + 2 * i + 1;
+            size_t d = (2 * is + 3) * (j + 1) + 2 * (is - i) + 0;
+            xassert(s < points && d < points);
+            ib[d] = ib[s];
+            db->lock_written_indices++;
+        }
+        size_t s = (2 * is + 3) * j + 2 * is + 1;
+        size_t d = (2 * is + 3) * j + 2 * is + 2;
+        xassert(s < points && d < points);
+        ib[d] = ib[s];
+        db->lock_written_indices++;
+    }
+    db->AutoUnlock();
+    db->Draw();
+
+    SetRenderState(RS_CULLMODE,cull);
 }

@@ -151,20 +151,24 @@ void ElasticSphere::evolve()
 
 void ElasticSphere::prepare()
 {
-	int psi;
-	for(psi = 0; psi < psi_size; psi++)
-		for(int theta = 0; theta < theta_size; theta++)
-			points_map[psi][theta].scale(unit_sphere[psi][theta], height_map[psi][theta]);
+	for(int psi = 0; psi < psi_size; psi++) {
+        for (int theta = 0; theta < theta_size; theta++) {
+            points_map[psi][theta].scale(unit_sphere[psi][theta], height_map[psi][theta]);
+        }
+    }
 
-	for(psi = 0; psi < psi_size; psi++)
-		for(int theta = 0; theta < theta_size; theta++){
-			normals_map[psi][theta].cross(point(psi - 1, theta) - point(psi + 1, theta), point(psi, theta + 1) - point(psi, theta - 1));
-			normals_map[psi][theta].Normalize();
-			}
-	for(psi = 0; psi < psi_size; psi++){
-		normals_map[psi][0] = Vect3f::K;
-		normals_map[psi][theta_size - 1] = Vect3f::K_;
-		}
+	for(int psi = 0; psi < psi_size; psi++) {
+        for (int theta = 0; theta < theta_size; theta++) {
+            normals_map[psi][theta].cross(point(psi - 1, theta) - point(psi + 1, theta),
+                                          point(psi, theta + 1) - point(psi, theta - 1));
+            normals_map[psi][theta].Normalize();
+        }
+    }
+    
+	for (auto& psi : normals_map) {
+		psi[0] = Vect3f::K;
+		psi[theta_size - 1] = Vect3f::K_;
+    }
 }
 
 void ElasticSphere::getAngles(const Vect3f& point, int& psi, int& theta)

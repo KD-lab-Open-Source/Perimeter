@@ -300,75 +300,11 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
     SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 }
 
-void cD3DRender::Draw(class ElasticSphere *es)
-{
-    SetWorldMatXf(es->GetGlobalMatrix());
-	
-	sVertexXYZDT2 *VertexFix=(sVertexXYZDT2*)&Buffer[0];
-	int is=es->theta_size,js=es->psi_size;
-	int BytePerVertex=((is+1)*(js+1)+(is+2)*(js-1)-1)*sizeof(VertexFix[0]);
-	VISASSERT(BytePerVertex<Buffer.length());
-	Vect3f uv[2];
-	Mat3f &mC=DrawNode->GetMatrix().rot();
-	uv[0].set(	0.5f*mC[0][0],0.5f*mC[0][1],0.5f*mC[0][2]);
-	uv[1].set(	0.5f*mC[1][0],0.5f*mC[1][1],0.5f*mC[1][2]);
-	VISASSERT(es->GetTexture(0));
-	SetNoMaterial(es->blendMode,es->GetFrame()->GetPhase(),es->GetTexture(0),es->GetTexture(1),COLOR_MOD);
-	SetFVF(VertexFix->fmt);
+void cD3DRender::Draw(class ElasticSphere *es) {
+    cInterfaceRenderDevice::Draw(es);
 
-	int cull=GetRenderState(D3DRS_CULLMODE);
-	SetRenderState(D3DRS_CULLMODE,D3DCULL_CW);
-
-	uint32_t Diffuse = ConvertColor(es->GetDiffuse());
-	float dv=0.5f-es->GetFrame()->GetPhase();
-	int i;
-	for(i=0;i<=is;i++)
-	{
-		sVertexXYZDT2 &v=VertexFix[2*i];
-		const Vect3f &n=es->normal(0,i);
-		v.pos=es->point(0,i);
-		v.GetTexel().set(0/(float)es->psi_size,i/(float)es->theta_size);
-		v.GetTexel2().set(n.y*0.5f+0.5f,n.z*0.5f+dv);
-		v.diffuse=Diffuse;
-	}
-	int j;
-	for(j=0;j<js;j++)
-		if(j&1)
-			for(i=0;i<=is;i++)
-			{
-				sVertexXYZDT2 &v=VertexFix[(2*is+3)*j+2*i+1];
-				const Vect3f &n=es->normal(j+1,is-i);
-				v.pos=es->point(j+1,is-i);
-				v.GetTexel().set((j+1)/(float)es->psi_size,(is-i)/(float)es->theta_size);
-				v.GetTexel2().set(n.y*0.5f+0.5f,n.z*0.5f+dv);
-				v.diffuse=Diffuse;
-			}
-		else
-			for(i=0;i<=is;i++)
-			{
-				sVertexXYZDT2 &v=VertexFix[(2*is+3)*j+2*i+1];
-				const Vect3f &n=es->normal(j+1,i);
-				v.pos=es->point(j+1,i);
-				v.GetTexel().set((j+1)/(float)es->psi_size,i/(float)es->theta_size);
-				v.GetTexel2().set(n.y*0.5f+0.5f,n.z*0.5f+dv);
-				v.diffuse=Diffuse;
-			}
-	for(j=0;j<js-1;j++)
-		if(j&1)
-		{
-			for(i=0;i<=is;i++)
-				VertexFix[(2*is+3)*(j+1)+2*(is-i)+0]=VertexFix[(2*is+3)*j+2*i+1];
-			VertexFix[(2*is+3)*j+2*is+2]=VertexFix[(2*is+3)*j+2*is+1];
-		}
-		else
-		{
-			for(i=0;i<=is;i++)
-				VertexFix[(2*is+3)*(j+1)+2*(is-i)+0]=VertexFix[(2*is+3)*j+2*i+1];
-			VertexFix[(2*is+3)*j+2*is+2]=VertexFix[(2*is+3)*j+2*is+1];
-		}
-	DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,(is+1)*(js+1)+(is+2)*(js-1)-1-2,VertexFix,sizeof(VertexFix[0]));
-	NumberPolygon+=(is+1)*(js+1)+(is+2)*(js-1)-1-2;
+    int is = es->theta_size;
+    int js = es->psi_size;
+    NumberPolygon += (is+1) * (js+1) + (is+2) * (js-1) - 2;
 	NumDrawObject++;
-
-	SetRenderState(D3DRS_CULLMODE,cull);
 }

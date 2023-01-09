@@ -22,8 +22,8 @@ public:
 	void evolve();
 	void prepare(); // call before point() & normal()
 
-	const Vect3f& point(int psi, int theta){ return points_map[psi & psi_mask][theta & theta_mask]; } 
-	const Vect3f& normal(int psi, int theta){ return normals_map[psi & psi_mask][theta & theta_mask]; } 
+	const Vect3f& point(int psi, int theta) { return points_map[psi & psi_mask][theta & theta_mask]; } 
+	const Vect3f& normal(int psi, int theta) { return normals_map[psi & psi_mask][theta & theta_mask]; } 
 	Vect3f& position(){ return GlobalMatrix.trans(); } 
 	void getAngles(const Vect3f& point, int& psi, int& theta);
 	void getPoint(int psi, int theta, Vect3f& point);
