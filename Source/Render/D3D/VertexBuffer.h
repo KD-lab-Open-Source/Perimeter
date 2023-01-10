@@ -48,39 +48,3 @@ public:
 		buf.DrawPrimitive(Type,Count);
 	}
 };
-
-class cQuadBufferInternal:protected cVertexBufferInternal
-{
-	uint8_t* start_vertex;
-	int vertex_index;
-public:
-	cQuadBufferInternal();
-	~cQuadBufferInternal();
-
-	void Destroy();
-	void Create(int vertexsize,int fmt);
-
-	void SetMatrix(const MatXf &m);
-	void BeginDraw();
-	void* Get();
-	void EndDraw();
-};
-
-template <class vertex>
-class cQuadBuffer
-{
-	cQuadBufferInternal buf;
-public:
-
-	inline void Destroy(){buf.Destroy();}
-	inline void Create()
-	{
-		buf.Create(sizeof(vertex),vertex::fmt);
-	}
-
-	inline void BeginDraw(const MatXf &m=MatXf::ID){buf.SetMatrix(m);buf.BeginDraw();};
-	//Возвращает указатель на 4 вершины
-	inline vertex* Get(){return (vertex*)buf.Get();}
-	inline void EndDraw(){buf.EndDraw();};
-};
-

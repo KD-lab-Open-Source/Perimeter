@@ -78,12 +78,6 @@ public:
 
     VertexPoolManager* GetVertexPool() { return &vertex_pool_manager; }
     IndexPoolManager* GetIndexPool() { return &index_pool_manager; }
-
-    //Used for sprites, light, particles and shadow volume, debug shadow drawing
-    virtual cVertexBuffer<sVertexXYZDT1>* GetBufferXYZDT1() { return &BufferXYZDT1; }
-    
-    //Used for drawing terraform filling and primitive drawing
-    cVertexBuffer<sVertexXYZD>* GetBufferXYZD() { return &BufferXYZD; }
     
     virtual void SaveStates(const char* fname="states.txt");
 
@@ -417,8 +411,6 @@ protected:
 	cVertexBuffer<sVertexXYZDT1> BufferXYZDT1;
 	cVertexBuffer<sVertexXYZDT2> BufferXYZDT2;
 	cVertexBuffer<sVertexXYZD>	 BufferXYZD;
-	cQuadBuffer<sVertexXYZDT1>	 QuadBufferXYZDT1;
-	cQuadBuffer<sVertexXYZDT2>	 QuadBufferXYZDT2;
 
 	IndexBuffer standart_ib;
 

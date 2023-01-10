@@ -6,6 +6,8 @@
 #include <algorithm>
 #include "TileMap.h"
 #include "Font.h"
+#include "VertexFormat.h"
+#include "DrawBuffer.h"
 
 class CameraShader
 {
@@ -91,7 +93,7 @@ cCamera::~cCamera()
 	delete[] pTestGrid;
 }
 
-//void TempDrawShadow(cCamera* p);
+void TempDrawShadow(cCamera* p);
 
 void cCamera::DrawScene()
 {
@@ -252,10 +254,8 @@ void cCamera::DrawScene()
 
 	RenderDevice->FlushPrimitive3D();
 
-#if 0
 	if(Option_ShowRenderTextureDBG==3)
 		TempDrawShadow(this);
-#endif
 	
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
 
@@ -1074,23 +1074,26 @@ void cCamera::DrawShadowPlane()
     rd->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_KEEP );
 
     // Draw a big, gray square
-	sColor4c diffuse(0,0,0,0x7f);
-	cVertexBuffer<sVertexXYZD>* buf=rd->GetBufferXYZD();
-	sVertexXYZD* pv=buf->Lock();
+	sColor4c diffuse(250,0,0,0x7f);
+	DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    sVertexXYZDT1* v= db->LockQuad<sVertexXYZDT1>(1);
 	int x1=vp.X,y1=vp.Y;
 	int x2=x1+vp.Width,y2=y1+vp.Height;
-    pv[0].diffuse=pv[1].diffuse=pv[2].diffuse=
-    pv[3].diffuse=pv[4].diffuse=pv[5].diffuse=gb_RenderDevice->ConvertColor(diffuse);
-	pv[0].x=x1; pv[0].y=y1; pv[0].z=0.001f;
-	pv[2].x=x1; pv[2].y=y2; pv[1].z=0.001f;
-	pv[1].x=x2; pv[1].y=y1; pv[2].z=0.001f;
 
-	pv[3].x=x2; pv[3].y=y1; pv[3].z=0.001f;
-	pv[5].x=x1; pv[5].y=y2; pv[4].z=0.001f;
-	pv[4].x=x2; pv[4].y=y2; pv[5].z=0.001f;
-	const int npoint=6;
-	buf->Unlock(npoint);
-	buf->DrawPrimitive(PT_TRIANGLES, npoint / 3);
+    v[0].z=v[1].z=v[2].z=v[3].z=0;
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);
+    v[0].x=v[1].x=static_cast<float>(x1);
+    v[0].y=v[2].y=static_cast<float>(y1);
+    v[3].x=v[2].x=static_cast<float>(x2);
+    v[1].y=v[3].y=static_cast<float>(y2);
+
+    v[0].u1()=0; v[0].v1()=0;
+    v[1].u1()=0; v[1].v1()=1;
+    v[2].u1()=1; v[2].v1()=0;
+    v[3].u1()=1; v[3].v1()=1;
+    
+	db->Unlock();
+	db->Draw();
 
 //    rd->SetFVF( SHADOWVERTEX::FVF );
 //    rd->SetStreamSource( 0, m_pBigSquareVB, 0, sizeof(SHADOWVERTEX) );
@@ -1266,7 +1269,6 @@ void cCamera::DrawObjectFirst()
 		GetDraw(SCENENODE_OBJECTFIRST,nObj)->Draw(this);
 }
 
-#include "TileMap.h"
 void cCamera::EnableGridTest(int grid_dx,int grid_dy,int grid_size)
 {
 	InitGridTest(grid_dx,grid_dy,grid_size);
@@ -1342,54 +1344,59 @@ void cCamera::AttachChild(cCamera *c)
 
 void cCamera::DrawShadowDebug()
 {
-	if(Option_ShowRenderTextureDBG)
-	{
-#ifdef PERIMETER_D3D9
+	if (Option_ShowRenderTextureDBG) {
 		cCamera* pShadow=FindCildCamera((Option_ShowRenderTextureDBG!=2)?ATTRCAMERA_SHADOWMAP:ATTRCAMERA_SHADOW);
-		if (gb_RenderDevice3D && pShadow && pShadow->GetRenderTarget()) {
-			uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
-			RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
+        if (pShadow && pShadow->GetRenderTarget()) {
+            uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
+            RenderDevice->SetRenderState(RS_FOGENABLE, FALSE);
+#ifdef PERIMETER_D3D9
+            if (RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+                cD3DRender* rd3d = reinterpret_cast<cD3DRender*>(RenderDevice);
 
-			if(Option_ShowRenderTextureDBG!=4)
-			{
-				gb_RenderDevice3D->SetPixelShader(NULL);
-				const int size=256;
-				float mi=0.0f,ma=1.0f;
-				gb_RenderDevice->DrawSprite(0,60,size,size,
-						mi,mi,ma-mi,ma-mi,pShadow->GetRenderTarget());
-			}else
-			{
-				const int size=256;
-				float mi=0.0f,ma=1.0f;
-				int x1=0,y1=60;
-				int x2=x1+size,y2=y1+size;
-				float u1=mi,v1=mi;
-				float du=ma-mi,dv=ma-mi;
+                if (Option_ShowRenderTextureDBG != 4) {
+                    rd3d->SetPixelShader(NULL);
+                    const int size = 256;
+                    float mi = 0.0f, ma = 1.0f;
+                    RenderDevice->DrawSprite(0, 60, size, size,
+                                             mi, mi, ma - mi, ma - mi, pShadow->GetRenderTarget());
+                } else {
+                    const int size = 256;
+                    float mi = 0.0f, ma = 1.0f;
+                    int x1 = 0, y1 = 60;
+                    int x2 = x1 + size, y2 = y1 + size;
+                    float u1 = mi, v1 = mi;
+                    float du = ma - mi, dv = ma - mi;
 
-				RenderDevice->SetNoMaterial(ALPHA_NONE,0);
-                gb_RenderDevice3D->UseOrthographicProjection();
-				gb_VisGeneric->GetShaders()->pShowMap->Select();
-				gb_RenderDevice3D->SetTexture(0,gb_RenderDevice3D->dtAdvance->GetTZBuffer());
+                    RenderDevice->SetNoMaterial(ALPHA_NONE, 0);
+                    RenderDevice->UseOrthographicProjection();
+                    gb_VisGeneric->GetShaders()->pShowMap->Select();
+                    rd3d->SetTexture(0, rd3d->dtAdvance->GetTZBuffer());
 
-				sColor4c ColorMul=sColor4c(255,255,255,255);
-				cVertexBuffer<sVertexXYZDT1>& BufferXYZDT1=*gb_RenderDevice3D->GetBufferXYZDT1();
-				sVertexXYZDT1* v=BufferXYZDT1.Lock(4);
-				v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-				v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(ColorMul);
-				v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
-				v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
-				v[0].u1()=u1;    v[0].v1()=v1;
-				v[1].u1()=u1;    v[1].v1()=v1+dv;
-				v[2].u1()=u1+du; v[2].v1()=v1;
-				v[3].u1()=u1+du; v[3].v1()=v1+dv;
-				BufferXYZDT1.Unlock(4);
-
-				BufferXYZDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
-			}
-			gb_RenderDevice3D->SetPixelShader(NULL);
-			RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
-		}
+                    sColor4c ColorMul = sColor4c(255, 255, 255, 255);
+                    DrawBuffer* db = RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+                    sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
+                    v[0].z = v[1].z = v[2].z = v[3].z = 0.001f;
+                    v[0].diffuse = v[1].diffuse = v[2].diffuse = v[3].diffuse = RenderDevice->ConvertColor(ColorMul);
+                    v[0].x = v[1].x = -0.5f + (float) x1;
+                    v[0].y = v[2].y = -0.5f + (float) y1;
+                    v[3].x = v[2].x = -0.5f + (float) x2;
+                    v[1].y = v[3].y = -0.5f + (float) y2;
+                    v[0].u1() = u1;
+                    v[0].v1() = v1;
+                    v[1].u1() = u1;
+                    v[1].v1() = v1 + dv;
+                    v[2].u1() = u1 + du;
+                    v[2].v1() = v1;
+                    v[3].u1() = u1 + du;
+                    v[3].v1() = v1 + dv;
+                    db->Unlock();
+                    db->Draw();
+                }
+                rd3d->SetPixelShader(NULL);
+            }
 #endif
+            RenderDevice->SetRenderState(RS_FOGENABLE, fogenable);
+        }
 	}
 }
 
@@ -1483,38 +1490,42 @@ void cCameraPlanarLight::DrawScene()
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
 }
 
-#if 0 
-//TODO remove this?
 void TempDrawShadow(cCamera* camera)
 {
 	if(!camera->GetAttribute(ATTRCAMERA_SHADOWMAP))
 		return;
 
-	gb_RenderDevice3D->SetPixelShader(NULL);
-	gb_RenderDevice3D->SetVertexShader(NULL);
-	gb_RenderDevice3D->SetFVF(sVertexXYZD::fmt);
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+        cD3DRender* rd3d = reinterpret_cast<cD3DRender*>(gb_RenderDevice);
+        rd3d->SetPixelShader(NULL);
+        rd3d->SetVertexShader(NULL);
+    }
+#endif
 
-	gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE,FALSE);
-	gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC,D3DCMP_GREATER);
+	gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, FALSE);
+	gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_GREATER);
 
-	for(int c=255;c>=0;c-=4)
-	{
-		sVertexXYZD Vertex[4];
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    sVertexXYZDT1* Vertex = nullptr;
+    indices_t* ib = nullptr;
+	for (int c=255;c>=0;c-=4) {
+        uint32_t diffuse = gb_RenderDevice->ConvertColor(sColor4c(c,c,c,255));
+        db->AutoLockQuad<sVertexXYZDT1>(16, 1, Vertex, ib);
 		float xOfs=0,yOfs=0;
-		const int size=camera->vp.Width;
+		const float size = static_cast<float>(camera->vp.Width);
 		Vertex[0].x=xOfs;     Vertex[0].y=yOfs;     
 		Vertex[1].x=xOfs;     Vertex[1].y=yOfs+size;
 		Vertex[2].x=xOfs+size;Vertex[2].y=yOfs;     
 		Vertex[3].x=xOfs+size;Vertex[3].y=yOfs+size;
-		for(int i=0;i<4;i++)
-		{
-			Vertex[i].z=Vertex[i].w=c/256.0f;
-			Vertex[i].diffuse.set(c,c,c,255);
+		for (int i=0;i<4;i++) {
+			Vertex[i].z=c/256.0f;
+			Vertex[i].diffuse = diffuse;
 		}
-		gb_RenderDevice3D->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,2,Vertex,sizeof(Vertex[0]));
 	}
+    db->AutoUnlock();
+    db->Draw();
 
-	gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
-	gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL );
+    gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, TRUE);
+    gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_LESSEQUAL);
 }
-#endif

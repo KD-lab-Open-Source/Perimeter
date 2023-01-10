@@ -463,8 +463,6 @@ int cD3DRender::Done()
 	BufferXYZDT1.Destroy();
 	BufferXYZDT2.Destroy();
 	BufferXYZD.Destroy();
-	QuadBufferXYZDT1.Destroy();
-	QuadBufferXYZDT2.Destroy();
 /*
 	for(int i=0;i<LibVB.size();i++)
 	{
@@ -1760,8 +1758,6 @@ void cD3DRender::InitVertexBuffers()
 	BufferXYZDT1.Create(size);
 	BufferXYZDT2.Create(sizemin);
 	BufferXYZD.Create(sizemin);
-	QuadBufferXYZDT1.Create();
-	QuadBufferXYZDT2.Create();
 }
 
 ////////////////////////////////////////////////////////////
@@ -1867,60 +1863,6 @@ void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)
 	rd->SetIndices(rd->GetStandartIB());
 	RDCALL(rd->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 		0, start_vertex, Count*2, (start_vertex>>2)*6, Count ));
-}
-
-/////////////////////////cQuadBufferInternal///////////////////////////////
-
-cQuadBufferInternal::cQuadBufferInternal()
-{
-	start_vertex=NULL;
-}
-
-cQuadBufferInternal::~cQuadBufferInternal()
-{
-}
-
-void cQuadBufferInternal::Destroy()
-{
-	cVertexBufferInternal::Destroy();
-}
-
-void cQuadBufferInternal::Create(int vertexsize,int _fmt)
-{
-	cVertexBufferInternal::Create(vertexsize*POLYGONMAX*2,vertexsize,_fmt);
-}
-
-void cQuadBufferInternal::SetMatrix(const MatXf &m)
-{
-	gb_RenderDevice3D->SetWorldMatXf(m);
-}
-
-void cQuadBufferInternal::BeginDraw()
-{
-	VISASSERT(start_vertex==NULL);
-	start_vertex=cVertexBufferInternal::Lock(4);
-	vertex_index=0;
-}
-
-void* cQuadBufferInternal::Get()
-{
-	if(vertex_index+4>=GetSize())
-	{
-		EndDraw();
-		BeginDraw();
-	}
-
-	uint8_t* cur= start_vertex + vertex_index * vb->VertexSize;
-	vertex_index+=4;
-	return cur;
-}
-
-void cQuadBufferInternal::EndDraw()
-{
-	Unlock(vertex_index);
-	if(vertex_index>0)
-		DrawIndexedPrimitive(vertex_index>>1);
-	start_vertex=NULL;
 }
 
 void cD3DRender::InitStandartIB()
