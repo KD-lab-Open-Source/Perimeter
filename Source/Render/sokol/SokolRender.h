@@ -47,7 +47,6 @@ private:
     std::vector<SokolCommand*> commands;
     Vect2i viewportPos;
     Vect2i viewportSize;
-    Mat4f orthoVP;
     
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;

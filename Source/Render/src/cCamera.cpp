@@ -8,6 +8,7 @@
 #include "Font.h"
 #include "VertexFormat.h"
 #include "DrawBuffer.h"
+#include "SafeCast.h"
 
 class CameraShader
 {
@@ -346,53 +347,12 @@ void cCamera::Update()
         float zf = zPlane.y;
         if (GetAttribute(ATTRCAMERA_PERSPECTIVE)) {
             float zc = zf / (zf - zn);
-            if (1||gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
-                matProj.zz = zc;
-                matProj.wz = -zc * zn;
-                
-                matProj.zx = 0;
-                matProj.zy = 0;
-                matProj.zw = 1;
-            } else {
-                /*/
-                float Right = 0, Bottom = 0;
-                float Left = RenderSize.x, Top = RenderSize.y;
-                zn = 10.0f; zf = -10.0f;
-                matProj[0][0] = 2.0f / (Right - Left);
-                matProj[1][1] = 2.0f / (Top - Bottom);
-                matProj[2][2] = 2.0f / (zn - zf);
-                matProj[3][3] = 1.0f;
-                matProj[0][3] = (Left + Right) / (Left - Right);
-                matProj[1][3] = (Bottom + Top) / (Bottom - Top);
-                matProj[2][3] = (zf + zn) / (zn - zf);
-                //*/
-                
-                /*/
-                matProj.xx = 2.0 * zn / RenderSize.x;
-                matProj.yy = 2.0 * zn / RenderSize.y;
-                /*/
-                float co = 1.73205066;
-                matProj.xx = co / (RenderSize.x / RenderSize.y);
-                matProj.yy = co;
-                //*/
-
-                //*/
-                //matProj.zz = zc;
-                //matProj.wz = zn * zc;
-                //matProj.zw = 1;
-                /*/
-                matProj.wz = -1.0f;
-                matProj.zz = (zn + zf) / (zn - zf);
-                matProj.zw = (2.0f * zn * zf) / (zn - zf);
-                //*/
-                
-                matProj.zz = zc;
-                matProj.wz = -zc * zn;
-
-                matProj.zx = 0;
-                matProj.zy = 0;
-                matProj.zw = 1;
-            }
+            matProj.zz = zc;
+            matProj.wz = -zc * zn;
+            
+            matProj.zx = 0;
+            matProj.zy = 0;
+            matProj.zw = 1;
         } else {
             matProj.zz = 1 / (zf - zn);
             matProj.wz = zn / (zn - zf);
@@ -1047,31 +1007,26 @@ void cCamera::DrawSortMaterialShadowStrencilOneSide()
 
 void cCamera::DrawShadowPlane()
 {
-#ifdef PERIMETER_D3D9
-    cD3DRender* rd = dynamic_cast<cD3DRender*>(GetRenderDevice());
-    if (!rd) return;
-	uint32_t fog=rd->GetRenderState(D3DRS_FOGENABLE);
+    cInterfaceRenderDevice* rd = GetRenderDevice();
+	uint32_t fog=rd->GetRenderState(RS_FOGENABLE);
     // Set renderstates (disable z-buffering, enable stencil, disable fog, and
     // turn on alphablending)
-    rd->SetRenderState( D3DRS_ZENABLE,          FALSE );
-    rd->SetRenderState( D3DRS_STENCILENABLE,    TRUE );
-    rd->SetRenderState( D3DRS_FOGENABLE,        FALSE );
-    rd->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-    rd->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-    rd->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-    rd->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-    rd->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-    rd->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-    rd->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-    rd->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-    rd->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+    rd->SetNoMaterial(ALPHA_BLEND);
+    rd->SetRenderState( RS_ZENABLE, false);
+    rd->SetRenderState( RS_STENCILENABLE, true);
+    rd->SetRenderState( RS_FOGENABLE, false);
+    rd->SetRenderState( RS_ALPHABLENDENABLE, true);
 
     // Only write where stencil val >= 1 (count indicates # of shadows that
     // overlap that pixel)
-    rd->SetRenderState( D3DRS_STENCILREF,  0x1 );
-    rd->SetRenderState( D3DRS_STENCILFUNC, D3DCMP_LESSEQUAL);
-    rd->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_KEEP );
+#ifdef PERIMETER_D3D9
+    if (rd->GetRenderSelection() == DEVICE_D3D9) {
+        cD3DRender* rd3d = safe_cast<cD3DRender*>(rd);
+        rd3d->SetRenderState(D3DRS_STENCILREF, 0x1);
+        rd3d->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_LESSEQUAL);
+        rd3d->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+    }
+#endif
 
     // Draw a big, gray square
 	sColor4c diffuse(250,0,0,0x7f);
@@ -1095,16 +1050,11 @@ void cCamera::DrawShadowPlane()
 	db->Unlock();
 	db->Draw();
 
-//    rd->SetFVF( SHADOWVERTEX::FVF );
-//    rd->SetStreamSource( 0, m_pBigSquareVB, 0, sizeof(SHADOWVERTEX) );
-//    rd->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
-
     // Restore render states
-    rd->SetRenderState( D3DRS_ZENABLE,          TRUE );
-    rd->SetRenderState( D3DRS_STENCILENABLE,    FALSE );
-    rd->SetRenderState( D3DRS_FOGENABLE,        fog );
-    rd->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
-#endif
+    rd->SetRenderState( RS_ZENABLE,          true );
+    rd->SetRenderState( RS_STENCILENABLE,    false );
+    rd->SetRenderState( RS_FOGENABLE,        fog );
+    rd->SetRenderState( RS_ALPHABLENDENABLE, false );
 }
 
 void cCamera::AttachFirst(cIUnkClass* zpalne)
@@ -1235,7 +1185,7 @@ void cCamera::ClearZBuffer()
 {
     if (GetRenderDevice()->GetRenderSelection() == DEVICE_D3D9) {
 #ifdef PERIMETER_D3D9
-        cD3DRender* render = dynamic_cast<cD3DRender*>(GetRenderDevice());
+        cD3DRender* render = safe_cast<cD3DRender*>(GetRenderDevice());
         RDCALL(render->lpD3DDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
 #endif
     }
@@ -1348,10 +1298,10 @@ void cCamera::DrawShadowDebug()
 		cCamera* pShadow=FindCildCamera((Option_ShowRenderTextureDBG!=2)?ATTRCAMERA_SHADOWMAP:ATTRCAMERA_SHADOW);
         if (pShadow && pShadow->GetRenderTarget()) {
             uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
-            RenderDevice->SetRenderState(RS_FOGENABLE, FALSE);
+            RenderDevice->SetRenderState(RS_FOGENABLE, false);
 #ifdef PERIMETER_D3D9
             if (RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
-                cD3DRender* rd3d = reinterpret_cast<cD3DRender*>(RenderDevice);
+                cD3DRender* rd3d = safe_cast<cD3DRender*>(RenderDevice);
 
                 if (Option_ShowRenderTextureDBG != 4) {
                     rd3d->SetPixelShader(NULL);
@@ -1497,13 +1447,13 @@ void TempDrawShadow(cCamera* camera)
 
 #ifdef PERIMETER_D3D9
     if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
-        cD3DRender* rd3d = reinterpret_cast<cD3DRender*>(gb_RenderDevice);
+        cD3DRender* rd3d = safe_cast<cD3DRender*>(gb_RenderDevice);
         rd3d->SetPixelShader(NULL);
         rd3d->SetVertexShader(NULL);
     }
 #endif
 
-	gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, FALSE);
+	gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, false);
 	gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_GREATER);
 
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);

@@ -119,7 +119,7 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
 int cSokolRender::UpdateRenderMode() {
     RenderSubmitEvent(RenderEvent::UPDATE_MODE);
     orthoVP = Mat4f::ID;
-    SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, -10, 10);
+    SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, 10, -10);
     return 0;
 }
 

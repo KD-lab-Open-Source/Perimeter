@@ -386,8 +386,8 @@ void cD3DRender::UpdateRenderMode()
 		TexFmtData[SURFMT_U16V16].Set(4, 16,16,16,16, 0,0,0,16,D3DFMT_V16U16);
 	}
 
-    ortho = Mat4f::ZERO;
-    SetOrthographic(ortho, ScreenSize.x, -ScreenSize.y, 10, -10);
+    orthoVP = Mat4f::ZERO;
+    SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, 10, -10);
 }
 
 bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
@@ -2093,7 +2093,7 @@ void cD3DRender::UseOrthographicProjection() {
     if (isOrthoSet) return;
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
-    RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&ortho)));
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&orthoVP)));
     isOrthoSet = true;
 }
 

@@ -37,7 +37,6 @@ private:
     int							NumberPolygon,NumDrawObject;
     int                         xScrMin,yScrMin,xScrMax,yScrMax;
     
-    Mat4f ortho;
     bool isOrthoSet = false;
 
     void Draw(class FieldDispatcher *rd, uint8_t transparent) override;

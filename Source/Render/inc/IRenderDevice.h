@@ -132,6 +132,7 @@ enum eRenderStateOption
     RS_ZENABLE                  = 7,    /* or TRUE/FALSE for legacy */
     RS_FILLMODE                 = 8,    /* FILL_POINT, FILL_WIREFRAME or FILL_SOLID */
     RS_ZWRITEENABLE             = 14,   /* TRUE to enable z writes */
+    RS_ALPHATESTENABLE          = 15,   /* Alpha testing */
     RS_ZFUNC                    = 23,   /* CMPFUNC */
     RS_CULLMODE                 = 22,   /* Cull mode */
     RS_ALPHAREF                 = 24,   /* FIXED */
@@ -225,6 +226,7 @@ protected:
     class DrawBuffer* activeDrawBuffer = nullptr;
     std::vector<class DrawBuffer*> drawBuffers;
     std::vector<class cTileMapRender*> tilemaps;
+    Mat4f orthoVP;
 
     virtual void Draw(class FieldDispatcher *ffd, uint8_t transparent);
 
