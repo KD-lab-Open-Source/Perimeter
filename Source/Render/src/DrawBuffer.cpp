@@ -1,21 +1,21 @@
 #include "StdAfxRD.h"
 #include "DrawBuffer.h"
 
-void DrawBuffer::Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool _dynamic, ePrimitiveType _primitive) {
+void DrawBuffer::Create(size_t vertices, bool dynamic_vertices, size_t indices, bool dynamic_indices, vertex_fmt_t fmt, ePrimitiveType _primitive) {
     Destroy();
-    this->dynamic = _dynamic;
     this->primitive = _primitive;
-    gb_RenderDevice->CreateVertexBuffer(vb, vertices, fmt, dynamic);
-    gb_RenderDevice->CreateIndexBuffer(ib, indices, dynamic);
+    gb_RenderDevice->CreateVertexBuffer(vb, vertices, fmt, dynamic_vertices);
+    gb_RenderDevice->CreateIndexBuffer(ib, indices, dynamic_indices);
+    set_as_active = dynamic_vertices || dynamic_indices;
     Backwind();
 }
 
 void DrawBuffer::Recreate() {
     if (!vb.buf) {
-        gb_RenderDevice->CreateVertexBuffer(vb, vb.NumberVertex, vb.fmt, dynamic);
+        gb_RenderDevice->CreateVertexBuffer(vb, vb.NumberVertex, vb.fmt, vb.dynamic);
     }
     if (!ib.buf) {
-        gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices, dynamic);
+        gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices, ib.dynamic);
     }
     Backwind();
 }
@@ -25,12 +25,16 @@ void DrawBuffer::Backwind() {
         xassert(0);
         Unlock();
     }
-    locked_vertices = 0;
-    locked_indices = 0;
-    locked_vertices = 0;
-    locked_indices = 0;
-    written_vertices = 0;
-    written_indices = 0;
+    if (vb.dynamic) {
+        locked_vertices = 0;
+        lock_written_vertices = 0;
+        written_vertices = 0;
+    }
+    if (ib.dynamic) {
+        locked_indices = 0;
+        lock_written_indices = 0;
+        written_indices = 0;
+    }
 }
 
 void DrawBuffer::Destroy() {
@@ -94,7 +98,7 @@ void DrawBuffer::EndTriangleStrip() {
 }
 
 void DrawBuffer::PostDraw() {
-    if (dynamic) {
+    if (vb.dynamic || ib.dynamic) {
         if (vb.buf && ib.buf) {
             Backwind();
         } else {
@@ -110,9 +114,18 @@ bool DrawBuffer::LockSetup(size_t vertices, size_t indices) {
     }
     
     //Check if there is enough available to lock
-    if (vertices + written_vertices > vb.NumberVertex
-    || indices + written_indices > ib.NumberIndices) {
-        if (dynamic) {
+    if (vertices + written_vertices > vb.NumberVertex) {
+        if (vb.dynamic) {
+            //Buffers are full, submit this and start from 0
+            Draw();
+        } else {
+            //Uhh, this is not dynamic buffer, so we shouldn't get here
+            xassert(0);
+            return false;
+        }
+    }
+    if (indices + written_indices > ib.NumberIndices) {
+        if (ib.dynamic) {
             //Buffers are full, submit this and start from 0
             Draw();
         } else {
@@ -129,7 +142,7 @@ bool DrawBuffer::LockSetup(size_t vertices, size_t indices) {
     }
     
     //Tell renderer this is current active DB
-    if (dynamic) {
+    if (set_as_active) {
         gb_RenderDevice->SetActiveDrawBuffer(this);
     }
     

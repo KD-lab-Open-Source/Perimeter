@@ -8,13 +8,13 @@ public:
     ePrimitiveType primitive;
     VertexBuffer vb;
     IndexBuffer ib;
-    bool dynamic = false;
     size_t locked_vertices = 0;
     size_t locked_indices = 0;
     size_t lock_written_vertices = 0;
     size_t lock_written_indices = 0;
     size_t written_vertices = 0;
     size_t written_indices = 0;
+    bool set_as_active = false;
     
     DrawBuffer() = default;
     ~DrawBuffer() {
@@ -22,7 +22,7 @@ public:
     }
     NO_COPY_CONSTRUCTOR(DrawBuffer)
 
-    void Create(size_t vertices, size_t indices, vertex_fmt_t fmt, bool dynamic, ePrimitiveType primitive);
+    void Create(size_t vertices, bool dynamic_vertices, size_t indices, bool dynamic_indices, vertex_fmt_t fmt, ePrimitiveType primitive);
     void Recreate();
     void Backwind();
     void Destroy();
@@ -43,13 +43,22 @@ public:
             indices_buf = nullptr;
             return;
         }
-        vertex_buf = static_cast<TVERTEX*>(gb_RenderDevice->LockVertexBuffer(vb, written_vertices, vertices));
-        if (vertex_buf) locked_vertices = vertices;
-        if (indices) {
-            indices_buf = gb_RenderDevice->LockIndexBuffer(ib, written_indices, indices);
+        //Set as null if no amount requested, lock whole if all was requested, else lock region
+        if (vertices == 0) {
+            vertex_buf = nullptr;
+        } else if (written_vertices == 0 && vertices == vb.NumberVertex) {
+            vertex_buf = static_cast<TVERTEX*>(gb_RenderDevice->LockVertexBuffer(vb));
         } else {
-            indices_buf = nullptr;
+            vertex_buf = static_cast<TVERTEX*>(gb_RenderDevice->LockVertexBuffer(vb, written_vertices, vertices));
         }
+        if (indices == 0) {
+            indices_buf = nullptr;
+        } else if (written_indices == 0 && indices == ib.NumberIndices) {
+            indices_buf = gb_RenderDevice->LockIndexBuffer(ib);
+        } else {
+            indices_buf = gb_RenderDevice->LockIndexBuffer(ib, written_indices, indices);
+        }
+        if (vertex_buf) locked_vertices = vertices;
         if (indices_buf) locked_indices = indices;
         if (increment_written) {
             lock_written_vertices = locked_vertices;
@@ -184,25 +193,31 @@ public:
         if (!quads) return;
         size_t line_points = quads + 1;
         size_t points = line_points * (rows + 1);
-        xassert(lock_written_vertices + points <= locked_vertices);
+        if (vertex_buf) xassert(lock_written_vertices + points <= locked_vertices);
+        int vi = 0;
         xassert(lock_written_indices + points <= locked_indices);
-        for (int y = 0; y <= rows; ++y) {
-            size_t b = written_vertices + lock_written_vertices;
+        for (int y = 0; y < rows; ++y) {
+            size_t b = written_vertices + vi;
             //Start degenerate triangle
             indices_buf[0] = b;
             indices_buf += 1;
-            for (int x = 0; x < quads; ++x) {
+            for (int x = 0; x < line_points; ++x) {
                 indices_buf[0] = b + x;
                 indices_buf[1] = b + x + line_points;
                 indices_buf += 2;
             }
-            lock_written_indices += line_points;
-            lock_written_vertices += line_points;
             //End degenerate triangle
-            indices_buf[0] = written_vertices + lock_written_vertices - 1;
+            indices_buf[0] = b + line_points * 2 - 1;
             indices_buf += 1;
+            lock_written_indices += line_points * 2 + 2;
+            vi += line_points;
         }
-        if (vertex_buf) vertex_buf += points;
+        vi += line_points;
+        xassert(vi == points);
+        if (vertex_buf) {
+            vertex_buf += points;
+            lock_written_vertices += points;
+        }
     }
 };
 

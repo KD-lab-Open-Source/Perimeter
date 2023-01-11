@@ -1475,6 +1475,7 @@ void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool
     //Since is MANAGED I assume we don't need to care about dynamic arg?
 	DeleteIndexBuffer(ib);
     ib.NumberIndices = NumberIndices;
+    ib.dynamic = dynamic;
     ib.buf = nullptr;
 	RDCALL(lpD3DDevice->CreateIndexBuffer(ib.NumberIndices * sizeof(indices_t), D3DUSAGE_WRITEONLY, PERIMETER_D3D_INDEX_FMT, D3DPOOL_MANAGED,&ib.d3d, NULL));
 }
@@ -1521,8 +1522,17 @@ void cD3DRender::SetActiveDrawBuffer(DrawBuffer* db) {
 }
 
 void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
-    if (activeDrawBuffer && activeDrawBuffer != db) {
-        FlushActiveDrawBuffer();
+    if (activeDrawBuffer) {
+        if (activeDrawBuffer == db) {
+            //Avoid drawing twice
+            activeDrawBuffer = nullptr;
+        } else {
+            FlushActiveDrawBuffer();
+        }
+    }
+    if (!db->written_vertices) {
+        xassert(0);
+        return;
     }
     SetFVF(db->vb.fmt);
     SetStreamSource(db->vb);
@@ -1548,6 +1558,7 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
         ));
         NumberPolygon += polys;
     } else {
+        xassert(0);
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, 0, db->written_vertices));
     }
     db->PostDraw();

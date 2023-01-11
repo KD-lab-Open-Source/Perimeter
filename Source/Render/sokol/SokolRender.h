@@ -26,7 +26,8 @@ struct SokolCommand {
     size_t indices = 0;
     struct SokolTexture2D* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
     class cTexture* texture_handles[PERIMETER_SOKOL_TEXTURES] = {};
-    bool owned_buffers = false;
+    bool owned_vertex_buffer = false;
+    bool owned_index_buffer = false;
     struct SokolBuffer* vertex_buffer = nullptr;
     struct SokolBuffer* index_buffer = nullptr;
     bool owned_mvp = false;

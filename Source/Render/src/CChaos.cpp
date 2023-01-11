@@ -69,7 +69,7 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 
 
 	size=tile*sub_div;
-    db->Create((size+1)*(size+1), size*size*2*sPolygon::PN, VTYPE::fmt, false, PT_TRIANGLES);
+    db->Create((size+1)*(size+1), false, size*size*2*sPolygon::PN, false, VTYPE::fmt, PT_TRIANGLES);
     SetupDB();
 }
 

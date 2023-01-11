@@ -294,11 +294,14 @@ void cSokolRender::FinishCommand() {
     cmd->vs_mvp = new Mat4f(activeCommandVP * activeCommandW);
     
     //Transfer buffers to command
-    cmd->owned_buffers = activeDrawBuffer->dynamic;
+    cmd->owned_vertex_buffer = activeDrawBuffer->vb.dynamic;
+    cmd->owned_index_buffer = activeDrawBuffer->ib.dynamic;
     cmd->vertex_buffer = activeDrawBuffer->vb.sg;
     cmd->index_buffer = activeDrawBuffer->ib.sg;
-    if (cmd->owned_buffers) {
+    if (cmd->owned_vertex_buffer) {
         activeDrawBuffer->vb.sg = nullptr;
+    }
+    if (cmd->owned_index_buffer) {
         activeDrawBuffer->ib.sg = nullptr;
     }
     activeDrawBuffer->PostDraw();
@@ -310,7 +313,8 @@ void cSokolRender::FinishCommand() {
 #ifdef PERIMETER_RENDER_TRACKER
     label = "Submit - Pipeline: " + std::to_string(pipeline_id)
             + " FSMode: " + std::to_string(activeCommand.fs_mode)
-            + " OBuf: " + std::to_string(cmd->owned_buffers)
+            + " OwVB: " + std::to_string(cmd->owned_vertex_buffer)
+            + " OwIB: " + std::to_string(cmd->owned_index_buffer)
             + " Vtxs: " + std::to_string(cmd->vertices)
             + " Idxs: " + std::to_string(cmd->indices)
             + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))

@@ -322,10 +322,13 @@ SokolCommand::~SokolCommand() {
 }
 
 void SokolCommand::ClearDrawData() {
-    if (owned_buffers) {
+    if (owned_vertex_buffer) {
         delete vertex_buffer;
+        owned_vertex_buffer = false;
+    }
+    if (owned_index_buffer) {
         delete index_buffer;
-        owned_buffers = false;
+        owned_index_buffer = false;
     }
     vertex_buffer = nullptr;
     index_buffer = nullptr;

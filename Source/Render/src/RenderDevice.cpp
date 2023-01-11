@@ -182,7 +182,7 @@ DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveTy
     }
     if (!db) {
         db = new DrawBuffer();
-        db->Create(PERIMETER_RENDER_VERTEXBUF_LEN, PERIMETER_RENDER_INDEXBUF_LEN, fmt, true, primitive);
+        db->Create(PERIMETER_RENDER_VERTEXBUF_LEN, true, PERIMETER_RENDER_INDEXBUF_LEN, true, fmt, primitive);
         drawBuffers[key] = db;
     }
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
