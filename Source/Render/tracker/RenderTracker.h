@@ -3,6 +3,7 @@
 
 #ifdef PERIMETER_DEBUG
 #define PERIMETER_RENDER_TRACKER
+//#define PERIMETER_RENDER_TRACKER_PRINT
 //#define PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
 //#define PERIMETER_RENDER_TRACKER_RESOURCES
 //#define PERIMETER_RENDER_TRACKER_LOCKS
@@ -32,30 +33,34 @@ public:
 #endif
         SUBMIT_DRAW_BUFFER,
         
-#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         //PTR: Texture
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         CREATE_TEXTURE,
         DELETE_TEXTURE,
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_TEXTURE,
         UNLOCK_TEXTURE,
 #endif
         
         //PTR: VertexBuffer
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         CREATE_VERTEXBUF,
         DELETE_VERTEXBUF,
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_VERTEXBUF,
         UNLOCK_VERTEXBUF,
 #endif
         
         //PTR: IndexBuffer
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         CREATE_INDEXBUF,
         DELETE_INDEXBUF,
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_INDEXBUF,
         UNLOCK_INDEXBUF,
-#endif
 #endif
         
         SET_WORLD_MATRIX,
@@ -93,26 +98,26 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_TEXTURE: return "CREATE_TEXTURE";
         case RenderEvent::DELETE_TEXTURE: return "DELETE_TEXTURE";
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_TEXTURE: return "LOCK_TEXTURE";
         case RenderEvent::UNLOCK_TEXTURE: return "UNLOCK_TEXTURE";
 #endif
-#endif
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_VERTEXBUF: return "CREATE_VERTEXBUF";
         case RenderEvent::DELETE_VERTEXBUF: return "DELETE_VERTEXBUF";
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_VERTEXBUF: return "LOCK_VERTEXBUF";
         case RenderEvent::UNLOCK_VERTEXBUF: return "UNLOCK_VERTEXBUF";
 #endif
-#endif
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_INDEXBUF: return "CREATE_INDEXBUF";
         case RenderEvent::DELETE_INDEXBUF: return "DELETE_INDEXBUF";
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_INDEXBUF: return "LOCK_INDEXBUF";
         case RenderEvent::UNLOCK_INDEXBUF: return "UNLOCK_INDEXBUF";
-#endif
 #endif
         case RenderEvent::SET_WORLD_MATRIX: return "SET_WORLD_MATRIX";
         case RenderEvent::SET_VIEWPROJ_MATRIX: return "SET_VIEWPROJ_MATRIX";

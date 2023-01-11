@@ -9,30 +9,6 @@
 MTSection log_lock;
 std::list<RenderEvent*> events;
 
-bool isRenderEventTypeVerbose(RenderEvent::RenderEventType type) {
-    switch (type) {
-#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
-        case RenderEvent::CREATE_TEXTURE:
-        case RenderEvent::DELETE_TEXTURE:
-        case RenderEvent::CREATE_VERTEXBUF:
-        case RenderEvent::DELETE_VERTEXBUF:
-        case RenderEvent::CREATE_INDEXBUF:
-        case RenderEvent::DELETE_INDEXBUF:
-#endif
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-        case RenderEvent::LOCK_TEXTURE:
-        case RenderEvent::UNLOCK_TEXTURE:
-        case RenderEvent::LOCK_VERTEXBUF:
-        case RenderEvent::UNLOCK_VERTEXBUF:
-        case RenderEvent::LOCK_INDEXBUF:
-        case RenderEvent::UNLOCK_INDEXBUF:
-#endif
-            return true;
-        default:
-            return false;
-    }
-}
-
 MTSection* GetRenderEventsLock() {
     return &log_lock;
 }
@@ -42,16 +18,15 @@ const std::list<RenderEvent*>& GetRenderEvents() {
     return events;
 }
 
-#if 0
+#ifdef PERIMETER_RENDER_TRACKER_PRINT
 void PrintEvent(const RenderEvent* ev) {
-    if (!isRenderEventTypeVerbose(ev->type)) {
-        std::string padding = "- ";
-        for (int i = 0; i < getRenderEventTypeDepth(ev->type); ++i) {
-            padding += "    ";
-        }
-        std::string printlabel = ev->label;
-        printf("%s(%u) [%p] [%s] %s (%s:%d)\n", padding.c_str(), ev->count, ev->ptr, getRenderEventTypeStr(ev->type), printlabel.c_str(), ev->call_file, ev->call_line);
+    std::string padding = "- ";
+    for (int i = 0; i < getRenderEventTypeDepth(ev->type); ++i) {
+        padding += "    ";
     }
+    std::string printlabel = ev->label;
+    fprintf(stdout, "%s(%u) [%p] [%s] %s (%s:%d)\n", padding.c_str(), ev->count, ev->ptr, getRenderEventTypeStr(ev->type), printlabel.c_str(), ev->call_file, ev->call_line);
+    fflush(stdout);
 }
 #else
 #define PrintEvent(...)

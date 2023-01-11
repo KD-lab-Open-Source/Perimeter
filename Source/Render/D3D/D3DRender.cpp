@@ -2,6 +2,7 @@
 #include "Font.h"
 #include "files/files.h"
 #include "DrawBuffer.h"
+#include "RenderTracker.h"
 
 const int POLYGONMAX=1024;
 
@@ -82,7 +83,8 @@ uint32_t cD3DRender::GetD3DFVFFromFormat(vertex_fmt_t fmt) {
 }
 
 int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
-{ 
+{
+    RenderSubmitEvent(RenderEvent::INIT, "D3D9 start");
     int ret = cInterfaceRenderDevice::Init(xscr, yscr, Mode, wnd, RefreshRateInHz);
     if (ret != 0) return ret;
     if (wnd == nullptr) return 1;
@@ -227,6 +229,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
     
     gb_RenderDevice3D = this;
 
+    RenderSubmitEvent(RenderEvent::INIT, "D3D9 end");
 	return 0;
 }
 
@@ -443,6 +446,7 @@ bool cD3DRender::IsEnableSelfShadow()
 
 int cD3DRender::Done()
 {
+    RenderSubmitEvent(RenderEvent::DONE, "D3D9 start");
 	KillFocus();
 
 	if(dtFixed)
@@ -482,7 +486,8 @@ int cD3DRender::Done()
 	hWnd=0;	RenderMode=0;
     
     gb_RenderDevice3D=nullptr;
-    
+
+    RenderSubmitEvent(RenderEvent::DONE, "D3D9 end");
 	return ret;
 }
 int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
@@ -1393,8 +1398,13 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	return 0;
 }
 
-void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t format, bool dynamic)
-{
+void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t format, bool dynamic) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    std::string label = "Len: " + std::to_string(NumberVertex)
+                      + " Fmt: " + std::to_string(format)
+                      + " Dyn: " + std::to_string(dynamic);
+    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF, label.c_str(), &vb);
+#endif
     size_t size = GetSizeFromFormat(format);
 	xassert(NumberVertex>=0 || NumberVertex<=65536);
     
@@ -1415,8 +1425,10 @@ void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, ver
     }
 }
 
-void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb)
-{
+void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    RenderSubmitEvent(RenderEvent::DELETE_VERTEXBUF, "", &vb);
+#endif
 	MTG();
     if (vb.d3d) {
         vb.d3d->Release();
@@ -1451,27 +1463,39 @@ void cD3DRender::RestoreDynamicVertexBuffer()
 		}
 	}
 }
-void* cD3DRender::LockVertexBuffer(VertexBuffer &vb)
-{
+void* cD3DRender::LockVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "", &vb);
+#endif
 	void *p=0;
 	VISASSERT( vb.d3d );
 	RDCALL(vb.d3d->Lock(0,0,&p, vb.dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
 	return p;
 }
 void* cD3DRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, label.c_str(), &vb);
+#endif
     xassert(Start + Amount <= vb.NumberVertex);
     void *p=0;
     VISASSERT( vb.d3d );
     vb.d3d->Lock(Start * vb.VertexSize, Amount * vb.VertexSize, &p, vb.dynamic ? D3DLOCK_NOSYSLOCK : 0 );
     return p;
 }
-void cD3DRender::UnlockVertexBuffer(VertexBuffer &vb)
-{
+void cD3DRender::UnlockVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
+#endif
 	VISASSERT( vb.d3d );
 	RDCALL(vb.d3d->Unlock());
 }
-void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic)
-{
+void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    std::string label = "Len: " + std::to_string(NumberIndices)
+                      + " Dyn: " + std::to_string(dynamic);
+    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF, label.c_str(), &ib);
+#endif
     //Since is MANAGED I assume we don't need to care about dynamic arg?
 	DeleteIndexBuffer(ib);
     ib.NumberIndices = NumberIndices;
@@ -1479,28 +1503,39 @@ void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool
     ib.buf = nullptr;
 	RDCALL(lpD3DDevice->CreateIndexBuffer(ib.NumberIndices * sizeof(indices_t), D3DUSAGE_WRITEONLY, PERIMETER_D3D_INDEX_FMT, D3DPOOL_MANAGED,&ib.d3d, NULL));
 }
-void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib)
-{
+void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    RenderSubmitEvent(RenderEvent::DELETE_INDEXBUF, "", &ib);
+#endif
     if (ib.d3d) {
         ib.d3d->Release();
         ib.d3d = nullptr;
     }
 }
 indices_t* cD3DRender::LockIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "", &ib);
+#endif
     void *p=nullptr;
     VISASSERT( ib.d3d );
     ib.d3d->Lock(0, 0, &p, 0);
     return static_cast<indices_t*>(p);
 }
 indices_t* cD3DRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, label.c_str(), &ib);
+#endif
     xassert(Start + Amount <= ib.NumberIndices);
     void *p=nullptr;
     VISASSERT( ib.d3d );
     ib.d3d->Lock(Start * sizeof(indices_t), Amount * sizeof(indices_t), &p, 0);
     return static_cast<indices_t*>(p);
 }
-void cD3DRender::UnlockIndexBuffer(IndexBuffer &ib)
-{
+void cD3DRender::UnlockIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
+#endif
 	VISASSERT( ib.d3d );
     ib.d3d->Unlock();
 }
