@@ -484,7 +484,7 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     }
 }
 
-int cSokolRender::GetRenderState(eRenderStateOption option) {
+uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
     switch(option) {
         case RS_FILLMODE:
             //TODO return WireFrame;
@@ -497,7 +497,7 @@ int cSokolRender::GetRenderState(eRenderStateOption option) {
     return 0;
 }
 
-int cSokolRender::SetRenderState(eRenderStateOption option, int value) {
+int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
     VISASSERT(ActiveScene);
     switch(option) {
         case RS_ZWRITEENABLE:

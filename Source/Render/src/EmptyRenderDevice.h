@@ -46,8 +46,8 @@ public:
 
 
     bool SetScreenShot(const char *fname) override { return false; }
-    int GetRenderState(eRenderStateOption option) { return 0; }
-    int SetRenderState(eRenderStateOption option,int value) override { return -1; }
+    uint32_t GetRenderState(eRenderStateOption option) { return 0; }
+    int SetRenderState(eRenderStateOption option,uint32_t value) override { return 0; }
     void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
 
     int Create(class cTileMap *TileMap) override { return -1; }

@@ -125,8 +125,8 @@ public:
 
     void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c &Color=sColor4c(255,255,255,255)) override;
     
-    int GetRenderState(eRenderStateOption option) override;
-	int SetRenderState(eRenderStateOption option,int value) override;
+    uint32_t GetRenderState(eRenderStateOption option) override;
+	int SetRenderState(eRenderStateOption option,uint32_t value) override;
 
 	// вспомогательные функции, могут быть не реализованы
 	void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
@@ -260,7 +260,7 @@ public:
 			RDCALL(lpD3DDevice->SetRenderState(State,ArrayRenderState[State]=Value));
 		}
 	}
-	inline unsigned int GetRenderState(D3DRENDERSTATETYPE State)
+	inline uint32_t GetRenderState(D3DRENDERSTATETYPE State)
 	{
 		VISASSERT(0<=State && State<RENDERSTATE_MAX);
 		return ArrayRenderState[State];

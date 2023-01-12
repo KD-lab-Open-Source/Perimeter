@@ -830,8 +830,8 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	lpD3DDevice->SetLight(0,&GlobalLight);
 	lpD3DDevice->LightEnable(0,TRUE);
 }
-int cD3DRender::GetRenderState(eRenderStateOption option) {
-    int value = GetRenderState(static_cast<D3DRENDERSTATETYPE>(option));
+uint32_t cD3DRender::GetRenderState(eRenderStateOption option) {
+    uint32_t value = GetRenderState(static_cast<D3DRENDERSTATETYPE>(option));
     switch (option) {
         default:
             break;
@@ -853,7 +853,7 @@ int cD3DRender::GetRenderState(eRenderStateOption option) {
     }
     return value;
 }
-int cD3DRender::SetRenderState(eRenderStateOption option,int value)
+int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
 { 
     if(lpD3DDevice==0||!bActiveScene) {
         xassert(0);

@@ -138,8 +138,8 @@ public:
     void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,
                         sColor4f *Diffuse = nullptr, sColor4f *Specular = nullptr) override;
 
-    int GetRenderState(eRenderStateOption option) override;
-    int SetRenderState(eRenderStateOption option,int value) override;
+    uint32_t GetRenderState(eRenderStateOption option) override;
+    int SetRenderState(eRenderStateOption option,uint32_t value) override;
 
     void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
     void DrawPixel(int x1,int y1,sColor4c color) override;

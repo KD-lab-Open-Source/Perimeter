@@ -320,8 +320,8 @@ public:
     virtual void FlushPrimitive3D() = 0;
 
     virtual bool SetScreenShot(const char *fname) = 0;
-    virtual int GetRenderState(eRenderStateOption option) = 0;
-    virtual int SetRenderState(eRenderStateOption option,int value) = 0;
+    virtual uint32_t GetRenderState(eRenderStateOption option) = 0;
+    virtual int SetRenderState(eRenderStateOption option,uint32_t value) = 0;
     
     virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) = 0;
