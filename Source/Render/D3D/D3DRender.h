@@ -39,7 +39,6 @@ private:
     
     bool isOrthoSet = false;
 
-    void Draw(class FieldDispatcher *rd, uint8_t transparent) override;
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 

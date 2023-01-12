@@ -56,7 +56,7 @@ public:
 
 	//SetTransparent,SetDiffuseColor - не правильно изменяет свойства при включенном куполе
 	void SetColor(const sColor4c& c) { Diffuse = c; }
-	int GetColor() const { return CurrentDiffuse.v; }
+    const sColor4c& GetColor() const { return CurrentDiffuse; }
 
 	void setTransparent(bool b) { is_transparent = b; }
 	bool isTransparent() const { return is_transparent || enable_transparency_; }
