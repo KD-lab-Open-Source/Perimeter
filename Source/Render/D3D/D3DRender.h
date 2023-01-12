@@ -376,7 +376,6 @@ protected:
 	IDirect3DVertexShader9* 	CurrentVertexShader;	// vertex shader
 	IDirect3DPixelShader9*		CurrentPixelShader;
 	uint32_t						CurrentFVF;
-	int							CurrentCullMode;
 	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
 
 	std::vector<VertexBuffer*>	LibVB;

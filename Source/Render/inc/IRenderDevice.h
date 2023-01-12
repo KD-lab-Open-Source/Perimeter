@@ -188,7 +188,8 @@ enum eCullMode
 {
     CULL_NONE,
     CULL_CW,
-    CULL_CCW
+    CULL_CCW,
+    CULL_CAMERA
 };
 
 struct sPolygon {
@@ -227,6 +228,7 @@ protected:
     std::vector<class DrawBuffer*> drawBuffers;
     std::vector<class cTileMapRender*> tilemaps;
     Mat4f orthoVP;
+    eCullMode CameraCullMode = CULL_NONE;
 
     virtual void Draw(class FieldDispatcher *ffd, uint8_t transparent);
 
@@ -235,6 +237,11 @@ public:
     ~cInterfaceRenderDevice() override;
     
     // Common methods
+
+    virtual int Init(int xScr,int yScr,int mode, void* wnd = nullptr, int RefreshRateInHz=0);
+    virtual int Done();
+    virtual int BeginScene();
+    virtual int EndScene();
 
     cTexLibrary* GetTexLibrary() { return TexLibrary; }
     cTexture* GetTexture(int n);
@@ -294,9 +301,6 @@ public:
 
     virtual eRenderDeviceSelection GetRenderSelection() const = 0;
 
-    virtual int Init(int xScr,int yScr,int mode, void* wnd = nullptr, int RefreshRateInHz=0);
-    virtual int Done();
-
     virtual bool ChangeSize(int xScr,int yScr,int mode) = 0;
     virtual int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) = 0;
     virtual int SetClipRect(int xmin,int ymin,int xmax,int ymax) = 0;
@@ -304,8 +308,6 @@ public:
     virtual void SetDrawTransform(class cCamera *pDrawNode) = 0;
     virtual void SetWorldMat4f(const Mat4f* matrix) = 0;
 
-    virtual int BeginScene() = 0;
-    virtual int EndScene() = 0;
     virtual int Fill(int r,int g,int b,int a=255) = 0;
     virtual int Flush(bool wnd=false) = 0;
     virtual int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) = 0;

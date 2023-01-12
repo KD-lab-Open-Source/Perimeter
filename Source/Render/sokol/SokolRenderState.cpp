@@ -22,7 +22,7 @@ int cSokolRender::BeginScene() {
     }
     ActiveScene = true;
 
-    return 1;
+    return cInterfaceRenderDevice::BeginScene();
 }
 
 int cSokolRender::EndScene() {
@@ -202,7 +202,7 @@ int cSokolRender::EndScene() {
     //End pass
     sg_end_pass();
 
-    return 1;
+    return cInterfaceRenderDevice::EndScene();
 }
 
 int cSokolRender::Fill(int r, int g, int b, int a) {
@@ -476,11 +476,11 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     viewportPos.y = pDrawNode->vp.Y;
     viewportSize.x = pDrawNode->vp.Width;
     viewportSize.y = pDrawNode->vp.Height;
-    eCullMode cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
+    CameraCullMode = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
     SetVPMatrix(&pDrawNode->matViewProj);
-    if (activePipelineCull != cull) {
+    if (CameraCullMode != activePipelineCull) {
         FinishCommand();
-        activePipelineCull = cull;
+        activePipelineCull = CameraCullMode;
     }
 }
 
@@ -507,15 +507,15 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
         case RS_FILLMODE:
             //TODO WireFrame = value == FILL_WIREFRAME;
             break;
-        case RS_CULLMODE:
-            if (0<=value) {
-                eCullMode cull = static_cast<eCullMode>(value);
-                if (cull != activePipelineCull) {
-                    FinishCommand();
-                    activePipelineCull = cull;
-                }
-            } 
+        case RS_CULLMODE: {
+            eCullMode cull = static_cast<eCullMode>(value);
+            if (cull >= CULL_CAMERA) cull = CameraCullMode;
+            if (cull != activePipelineCull) {
+                FinishCommand();
+                activePipelineCull = cull;
+            }
             break;
+        }
         case RS_BILINEAR:
             //Useless as we can't change globally
             break;

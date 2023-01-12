@@ -681,6 +681,9 @@ int cD3DRender::BeginScene()
 	if(lpD3DDevice==0) return -1;
 	if(bActiveScene) return 1; bActiveScene=1;
 	HRESULT hr=lpD3DDevice->BeginScene();
+    
+    int ret = cInterfaceRenderDevice::BeginScene();
+    if (ret) return ret;
 	
 	NumberPolygon=0;
 	NumDrawObject=0;
@@ -734,7 +737,6 @@ int cD3DRender::BeginScene()
 	SetRenderState(D3DRS_LASTPIXEL,TRUE);
 	SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
 	SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
-	SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
 	SetRenderState(D3DRS_ALPHAREF,0);
 	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER); //D3DCMP_ALWAYS
@@ -781,12 +783,16 @@ int cD3DRender::EndScene()
 { 
 	if(lpD3DDevice==0) return -1;
 	if(!bActiveScene) return 1;
+    
     FlushActiveDrawBuffer();
 
 //	D3DVIEWPORT9 vpall={0,0,xScr,yScr,0.0f,1.0f};
 //	RDCALL(lpD3DDevice->SetViewport(&vpall));
 	FlushPrimitive2D();
 	FlushPrimitive3D();
+
+    int ret = cInterfaceRenderDevice::EndScene();
+    if (ret) return ret;
 
 	bActiveScene=0;
 	HRESULT hr=lpD3DDevice->EndScene();
@@ -866,16 +872,18 @@ int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
 			bWireFrame=(value==FILL_WIREFRAME);
 			break;
 		case RS_ZWRITEENABLE:
-			if(value) SetRenderState(D3DRS_CULLMODE,CurrentCullMode);
-			else SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
+			if (value) {
+                SetRenderState(RS_CULLMODE, CameraCullMode);
+            } else {
+                SetRenderState(RS_CULLMODE, CULL_NONE);
+            }
 			break;
 		case RS_CULLMODE:
             switch (value) {
                 default:
-                    if (value<0) {
-                        value=CurrentCullMode;
-                    }
-                    break;
+                    xassert(0);
+                case CULL_CAMERA:
+                    return SetRenderState(RS_CULLMODE, CameraCullMode);
                 case CULL_NONE:
                     value = D3DCULL_NONE;
                     break;

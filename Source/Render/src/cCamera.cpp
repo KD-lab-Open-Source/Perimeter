@@ -228,11 +228,10 @@ void cCamera::DrawScene()
 					RenderDevice->SetRenderState(RS_FOGENABLE,fogenable2);
 				}
 
-				RenderDevice->SetRenderState( RS_CULLMODE, -1 );
+				RenderDevice->SetRenderState(RS_CULLMODE, CULL_CAMERA);
 			}
 		}
-	}else
-	{
+	} else {
 			int number_draw=GetNumberDraw(SCENENODE_OBJECT);
 			for( int nObj=0; nObj<number_draw; nObj++ )
 			if(GetDraw(SCENENODE_OBJECT,nObj)->GetKind()==KIND_TILEMAP)
@@ -250,7 +249,7 @@ void cCamera::DrawScene()
 		
 		for(int i=0;i<ShadowTestArray.size();i++)
 			ShadowTestArray[i]->DrawShadow(this);
-		RenderDevice->SetRenderState( RS_CULLMODE, -1 );
+		RenderDevice->SetRenderState( RS_CULLMODE, CULL_CAMERA);
 	}
 
 	RenderDevice->FlushPrimitive3D();

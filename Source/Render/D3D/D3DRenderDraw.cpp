@@ -111,10 +111,12 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matProj)));
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matView)));
 	RDCALL(lpD3DDevice->SetViewport((D3DVIEWPORT9*)&pDrawNode->vp));
-	if(pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION)==0)
-		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);	// прямое изображение
-	else
-		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);	// отраженное изображение
+    if (pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0) {
+        CameraCullMode = CULL_CW;    // прямое изображение
+    } else {
+        CameraCullMode = CULL_CCW;    // отраженное изображение
+    }
+    SetRenderState(RS_CULLMODE, CameraCullMode);
 }
 
 void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {

@@ -19,8 +19,6 @@ public:
     void SetDrawTransform(class cCamera *pDrawNode) override {}
     void SetWorldMat4f(const Mat4f* matrix) override {};
 
-    int BeginScene() override { return -1; }
-    int EndScene() override { return -1; }
     int Fill(int r,int g,int b,int a=255) override { return -1; }
     int Flush(bool wnd=false) override { return -1; }
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override { return -1; }

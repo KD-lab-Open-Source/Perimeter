@@ -165,6 +165,15 @@ int cInterfaceRenderDevice::Done() {
     return 0;
 }
 
+int cInterfaceRenderDevice::BeginScene() {
+    SetRenderState(RS_CULLMODE, CameraCullMode=CULL_CW);
+    return 0;
+}
+
+int cInterfaceRenderDevice::EndScene() {
+    return 0;
+}
+
 void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
     RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX, "MatXf");
     Mat4f mat;
