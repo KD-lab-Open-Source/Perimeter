@@ -22,7 +22,6 @@ cD3DRender::cD3DRender() : cInterfaceRenderDevice()
     xScrMin=yScrMin=xScrMax=yScrMax=0;
 
     bActiveScene=0;
-    bWireFrame=0;
     nSupportTexture=0;
 
     DrawNode=0;
@@ -729,21 +728,14 @@ int cD3DRender::BeginScene()
 
 //	SetRenderState(D3DRS_TEXTUREPERSPECTIVE,TRUE);
 //	SetRenderState(D3DRS_ANTIALIAS,D3DANTIALIAS_NONE);
-	SetRenderState(D3DRS_ZENABLE,D3DZB_TRUE);
-	SetRenderState(D3DRS_FILLMODE,bWireFrame==0?FILL_SOLID:FILL_WIREFRAME);
-	SetRenderState(D3DRS_SHADEMODE,D3DSHADE_GOURAUD);
-	SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
-	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
+    SetRenderState(D3DRS_SHADEMODE,D3DSHADE_GOURAUD);
 	SetRenderState(D3DRS_LASTPIXEL,TRUE);
-	SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
-	SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
-	SetRenderState(D3DRS_ALPHAREF,0);
-	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER); //D3DCMP_ALWAYS
-
-	bool hicolor=(RenderMode&RENDERDEVICE_MODE_RGB16)?true:false;
-	SetRenderState(D3DRS_DITHERENABLE,hicolor);
-	SetRenderState(D3DRS_ALPHABLENDENABLE,FALSE);
+    
+    SetRenderState(D3DRS_ZENABLE,D3DZB_TRUE);
+    SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
+    
+    bool hicolor=(RenderMode&RENDERDEVICE_MODE_RGB16)?true:false;
+    SetRenderState(D3DRS_DITHERENABLE,hicolor);    
 	SetRenderState(D3DRS_SPECULARENABLE,FALSE);
 	SetRenderState(D3DRS_DEPTHBIAS,0);
 	SetRenderState(D3DRS_TEXTUREFACTOR,0xFFFFFFFF);
@@ -837,9 +829,43 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	lpD3DDevice->LightEnable(0,TRUE);
 }
 uint32_t cD3DRender::GetRenderState(eRenderStateOption option) {
+
+    switch (option) {
+        default:
+            break;
+        case RS_WIREFRAME:
+            option = static_cast<eRenderStateOption>(D3DRS_FILLMODE);
+            break;
+        case RS_ALPHA_TEST_MODE:
+            option = static_cast<eRenderStateOption>(D3DRS_ALPHAREF);
+            break;
+    }
     uint32_t value = GetRenderState(static_cast<D3DRENDERSTATETYPE>(option));
     switch (option) {
         default:
+            break;
+        case RS_ALPHA_TEST_MODE:
+            if (GetRenderState(D3DRS_ALPHATESTENABLE)) {
+                value = ALPHATEST_NONE;
+            } else {
+                switch (value) {
+                    default:
+                        value = ALPHATEST_GT_0;
+                        break;
+                    case 1:
+                        value = ALPHATEST_GT_1;
+                        break;
+                    case 254:
+                        value = ALPHATEST_GT_254;
+                        break;
+                }
+            }
+            break;
+        case RS_ZENABLE:
+            value = value != D3DZB_FALSE;
+            break;
+        case RS_WIREFRAME:
+            value = value == D3DFILL_WIREFRAME;
             break;
         case RS_CULLMODE:
             switch (value) {
@@ -856,20 +882,59 @@ uint32_t cD3DRender::GetRenderState(eRenderStateOption option) {
                     break;
             }
             break;
+        case RS_ZFUNC:
+            switch (value) {
+                default:
+                    break;
+                case D3DCMP_LESSEQUAL:
+                    value = CMP_LESSEQUAL;
+                    break;
+                case D3DCMP_GREATER:
+                    value = CMP_GREATER;
+                    break;
+                case D3DCMP_GREATEREQUAL:
+                    value = CMP_GREATEREQUAL;
+                    break;
+                case D3DCMP_ALWAYS:
+                    value = CMP_ALWAYS;
+                    break;
+            }
+            break;
     }
     return value;
 }
 int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
 { 
-    if(lpD3DDevice==0||!bActiveScene) {
+    if(lpD3DDevice==0) {
         xassert(0);
         return 1;
     }
 	switch (option) {
         default:
             break;
-		case RS_FILLMODE:
-			bWireFrame=(value==FILL_WIREFRAME);
+        case RS_ALPHA_TEST_MODE:
+            SetRenderState(D3DRS_ALPHATESTENABLE, value != ALPHATEST_NONE);
+            option = static_cast<eRenderStateOption>(D3DRS_ALPHAREF);
+            switch (value) {
+                default:
+                case ALPHATEST_GT_0:
+                    value = 0;
+                    break;
+                case ALPHATEST_GT_1:
+                    value = 1;
+                    break;
+                case ALPHATEST_GT_254:
+                    value = 254;
+                    break;
+            }
+            break;
+        case RS_ZENABLE:
+            value = value ? D3DZB_TRUE : D3DZB_FALSE;
+            break;
+		case RS_WIREFRAME:
+            WireframeMode = value != 0;
+            option = static_cast<eRenderStateOption>(D3DRS_FILLMODE);
+            value = value ? D3DFILL_WIREFRAME : D3DFILL_SOLID;
 			break;
 		case RS_ZWRITEENABLE:
 			if (value) {
@@ -895,6 +960,24 @@ int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
                     break;
             }
 			break;
+        case RS_ZFUNC:
+            switch (value) {
+                default:
+                    break;
+                case CMP_LESSEQUAL:
+                    value = D3DCMP_LESSEQUAL;
+                    break;
+                case CMP_GREATER:
+                    value = D3DCMP_GREATER;
+                    break;
+                case CMP_GREATEREQUAL:
+                    value = D3DCMP_GREATEREQUAL;
+                    break;
+                case CMP_ALWAYS:
+                    value = D3DCMP_ALWAYS;
+                    break;
+            }
+            break;
 		case RS_BILINEAR:
             FlushActiveDrawBuffer();
 			if(value)
@@ -1087,7 +1170,6 @@ void cD3DRender::FlushPixel()
 	SetNoMaterial(ALPHA_BLEND);
 	SetRenderState(D3DRS_ZWRITEENABLE, FALSE); 
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
     if (!isOrthoSet) UseOrthographicProjection();
 

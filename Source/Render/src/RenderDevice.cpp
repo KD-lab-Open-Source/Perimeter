@@ -166,7 +166,14 @@ int cInterfaceRenderDevice::Done() {
 }
 
 int cInterfaceRenderDevice::BeginScene() {
+    SetNoMaterial(ALPHA_TEST);
+    SetRenderState(RS_ZWRITEENABLE, 1);
+    SetRenderState(RS_ZENABLE, 1);
+    SetRenderState(RS_WIREFRAME, WireframeMode);
+    SetRenderState(RS_ZFUNC, CMP_LESSEQUAL);
+    SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_NONE);
     SetRenderState(RS_CULLMODE, CameraCullMode=CULL_CW);
+    SetRenderState(RS_WIREFRAME, WireframeMode);
     return 0;
 }
 

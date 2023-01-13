@@ -63,7 +63,7 @@ void main() {
         );
     }
     //eColorMode
-    switch (un_mode & 0xF) {
+    switch (un_mode & 0x3) {
         default:
         case 0: { //COLOR_MOD Modulate
             frag_color = texture(un_tex1, fs_uv1) * tex0 * fs_color;
@@ -86,6 +86,27 @@ void main() {
     //Modulate each other, default
     frag_color = texture(un_tex0, fs_uv0) * fs_color;
     #endif //SHADER_TEX_2
+    //eAlphaTestMode
+    float alpharef = -1;
+    switch ((un_mode >> 2) & 0x3) {
+        default:
+        case 0: { //ALPHATEST_NONE
+            break;
+        }
+        case 1: { //ALPHATEST_GT_0
+            alpharef = 0.0;
+            break;
+        }
+        case 2: { //ALPHATEST_GT_1
+            alpharef = 1.0 / 255.0;
+            break;
+        }
+        case 3: { //ALPHATEST_GT_254
+            alpharef = 254.0 / 255.0;
+            break;
+        }
+    };
+    if (!(alpharef < frag_color.a)) discard;
 }
 @end
 

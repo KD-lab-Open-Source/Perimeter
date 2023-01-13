@@ -802,12 +802,12 @@ void GameShell::Show()
 			chaos->Draw();
 
 		if(showWireFrame_)
-			terRenderDevice->SetRenderState(RS_FILLMODE,FILL_WIREFRAME);
+			terRenderDevice->SetRenderState(RS_WIREFRAME,1);
 
 		terScene->Draw(terCamera->GetCamera());
 
 		if(showWireFrame_)
-			terRenderDevice->SetRenderState(RS_FILLMODE,FILL_SOLID);
+			terRenderDevice->SetRenderState(RS_WIREFRAME,0);
 
 		if(interfaceShowFlag_)
 			universe()->ShowInfo();

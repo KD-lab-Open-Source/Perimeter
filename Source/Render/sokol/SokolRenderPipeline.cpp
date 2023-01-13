@@ -15,24 +15,44 @@ struct SokolPipelineContext {
     struct shader_funcs* shader_funcs;
 };
 
-pipeline_id_t cSokolRender::GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, eBlendMode blend, eCullMode cull) {
-    uint8_t mode = blend & 0b111;
-    mode |= (cull & 0b11) << PIPELINE_ID_MODE_CULL_SHIFT;
-    return GetPipelineID(type, vertex_fmt, mode);
+sg_compare_func GetSokolCompareFunc(eCMPFUNC cmpfunc) {
+    switch (cmpfunc) {
+        case CMP_LESSEQUAL:
+            return SG_COMPAREFUNC_LESS_EQUAL;
+        case CMP_GREATER:
+            return SG_COMPAREFUNC_GREATER;
+        case CMP_GREATEREQUAL:
+            return SG_COMPAREFUNC_GREATER_EQUAL;
+        default:
+        case CMP_ALWAYS:
+            return SG_COMPAREFUNC_ALWAYS;
+    }
 }
 
-pipeline_id_t cSokolRender::GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, uint8_t mode) {
-    pipeline_id_t id = (mode & PIPELINE_ID_MODE_MASK) << PIPELINE_ID_MODE_SHIFT;
+pipeline_mode_value_t PIPELINE_MODE::GetValue() const {
+    pipeline_mode_value_t value = blend & 0b111;
+    value |= (depth_write & 0b1) << 3;
+    value |= (depth_cmp & 0b11) << 4;
+    value |= (cull & 0b11) << 6;
+    return value;
+}
+
+void PIPELINE_MODE::FromValue(pipeline_mode_value_t value) {
+    blend = static_cast<eBlendMode>(value & 0b111);
+    depth_write = static_cast<bool>((value >> 3) & 0b1);
+    depth_cmp = static_cast<eCMPFUNC>((value >> 4) & 0b11);
+    cull = static_cast<eCullMode>((value >> 6) & 0b11);
+}
+
+pipeline_id_t cSokolRender::GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, const PIPELINE_MODE& mode) {
+    pipeline_id_t id = (mode.GetValue() & PIPELINE_ID_MODE_MASK) << PIPELINE_ID_MODE_SHIFT;
     id |= (vertex_fmt & PIPELINE_ID_VERTEX_FMT_MASK) << PIPELINE_ID_VERTEX_FMT_SHIFT;
     id |= (type & PIPELINE_ID_TYPE_MASK) << PIPELINE_ID_TYPE_SHIFT;
     return id;
 }
 
-void cSokolRender::GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, eBlendMode* blend, eCullMode* cull) {
-    uint8_t mode = (id >> PIPELINE_ID_MODE_SHIFT) & PIPELINE_ID_MODE_MASK;
-    if (blend) *blend = static_cast<eBlendMode>(mode & 0b111);
-    if (cull) *cull = static_cast<eCullMode>((mode >> PIPELINE_ID_MODE_CULL_SHIFT) & 0b11);
-    
+void cSokolRender::GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, PIPELINE_MODE* mode) {
+    mode->FromValue((id >> PIPELINE_ID_MODE_SHIFT) & PIPELINE_ID_MODE_MASK);
     if (vertex_fmt) *vertex_fmt = static_cast<vertex_fmt_t>((id >> PIPELINE_ID_VERTEX_FMT_SHIFT) & PIPELINE_ID_VERTEX_FMT_MASK);
     if (type) *type = static_cast<PIPELINE_TYPE>((id >> PIPELINE_ID_TYPE_SHIFT) & PIPELINE_ID_TYPE_MASK);
 }
@@ -78,23 +98,22 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
     SokolPipelineContext ctx = {id, PIPELINE_TYPE_DEFAULT, 0, &desc, shader_funcs };
     
     //Extract info about this pipeline
-    eBlendMode blendMode;
-    eCullMode cull;
-    GetPipelineIDParts(id, &ctx.pipeline_type, &ctx.vertex_fmt, &blendMode, &cull);
+    PIPELINE_MODE mode;
+    GetPipelineIDParts(id, &ctx.pipeline_type, &ctx.vertex_fmt, &mode);
 
     //Common part of pipeline desc
-    desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
-    desc.depth.write_enabled = true;
+    desc.depth.compare = GetSokolCompareFunc(mode.depth_cmp);
+    desc.depth.write_enabled = mode.depth_write;
     desc.primitive_type = ctx.pipeline_type == PIPELINE_TYPE_TRIANGLESTRIP ? SG_PRIMITIVETYPE_TRIANGLE_STRIP : SG_PRIMITIVETYPE_TRIANGLES;
     desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32;
-    desc.cull_mode = CULL_NONE == cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
-    desc.face_winding = CULL_CCW == cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
+    desc.cull_mode = CULL_NONE == mode.cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
+    desc.face_winding = CULL_CCW == mode.cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
 
     auto& blend0 = desc.colors[0].blend;
-    blend0.enabled = ALPHA_NONE < blendMode;
+    blend0.enabled = ALPHA_NONE < mode.blend;
     if (blend0.enabled) {
         blend0.op_rgb = blend0.op_alpha = SG_BLENDOP_ADD;
-        switch (blendMode) {
+        switch (mode.blend) {
             case ALPHA_SUBBLEND:
                 //Probably unused
                 blend0.op_rgb = blend0.op_alpha = SG_BLENDOP_REVERSE_SUBTRACT;
@@ -214,7 +233,10 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
 
 void cSokolRender::RegisterPipelines() {
     int total = 0;
-    for (uint8_t mode = 0; mode < PIPELINE_ID_MODE_MAX; ++mode) {
+    PIPELINE_MODE mode;
+    //Build pipelines with all pipeline mode permutations
+    for (pipeline_mode_value_t mode_value = 0; mode_value < PIPELINE_ID_MODE_MAX; ++mode_value) {
+        mode.FromValue(mode_value);
         RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLESTRIP, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
         RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLESTRIP, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
         RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZDT1::fmt, mode), &shader_color_tex1);

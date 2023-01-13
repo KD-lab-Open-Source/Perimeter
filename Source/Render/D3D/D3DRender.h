@@ -44,7 +44,6 @@ private:
 
 public:
     bool				bActiveScene;
-    bool				bWireFrame;
     uint32_t				nSupportTexture;
 
     float				kShadow;

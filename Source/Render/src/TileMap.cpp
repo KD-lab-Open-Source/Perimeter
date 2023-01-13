@@ -159,7 +159,9 @@ void cTileMap::PreDraw(cCamera *DrawNode)
 
 	DrawNode->Attach(SCENENODE_OBJECT_TILEMAP,this);
 #ifdef PERIMETER_D3D9
-    GetTilemapRender()->PreDraw(DrawNode);
+    cTileMapRender* render = GetTilemapRender();
+    if (!render) return;
+    render->PreDraw(DrawNode);
 #endif
 }
 
@@ -170,6 +172,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 
 #ifdef PERIMETER_D3D9
     cTileMapRender* render = GetTilemapRender();
+    if (!render) return;
 
 	if(DrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 	{
@@ -183,19 +186,17 @@ void cTileMap::Draw(cCamera *DrawNode)
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION))
 	{ // рисовать отражение
-		gb_RenderDevice->SetRenderState(RS_ALPHAREF, 254/*GetRefSurface()*/);
-		gb_RenderDevice->SetRenderState(RS_ALPHAFUNC, CMP_GREATER);
+		gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_254/*GetRefSurface()*/);
         render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
-		gb_RenderDevice->SetRenderState(RS_ALPHAFUNC, CMP_GREATER);
-		gb_RenderDevice->SetRenderState(RS_ALPHAREF, 0);
+		gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_0);
 	}else
 	{
 		if(GetAttribute(ATTRUNKOBJ_REFLECTION)) {
 		    // рисовать прямое изображение
-			gb_RenderDevice->SetRenderState(RS_ALPHAREF, 1);
+			gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_1);
 			render->DrawBump(DrawNode, ALPHA_BLEND, TILEMAP_ZEROPLAST, false);
 			render->DrawBump(DrawNode, ALPHA_NONE, TILEMAP_NOZEROPLAST, false);
-			gb_RenderDevice->SetRenderState(RS_ALPHAREF, 0);
+			gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_0);
 		} else {
 			render->DrawBump(DrawNode, ALPHA_NONE, TILEMAP_ALL, false);
 		}

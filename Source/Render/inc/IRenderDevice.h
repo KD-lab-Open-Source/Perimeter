@@ -129,15 +129,13 @@ enum eModeRenderDevice
 
 enum eRenderStateOption
 {
+    RS_ALPHA_TEST_MODE,
+    RS_WIREFRAME,
+    //These enums must match value with D3DRS_* equivalent for now
     RS_ZENABLE                  = 7,    /* or TRUE/FALSE for legacy */
-    RS_FILLMODE                 = 8,    /* FILL_POINT, FILL_WIREFRAME or FILL_SOLID */
     RS_ZWRITEENABLE             = 14,   /* TRUE to enable z writes */
-    RS_ALPHATESTENABLE          = 15,   /* Alpha testing */
     RS_ZFUNC                    = 23,   /* CMPFUNC */
     RS_CULLMODE                 = 22,   /* Cull mode */
-    RS_ALPHAREF                 = 24,   /* FIXED */
-    RS_ALPHAFUNC				= 25,	/* CMPFUNC */
-    RS_DITHERENABLE             = 26,   /* TRUE to enable dithering */
     RS_ALPHABLENDENABLE         = 27,   /* TRUE to enable alpha blending */
     RS_FOGENABLE                = 28,   /* TRUE to enable fog blending */
     RS_FOGCOLOR                 = 34,   /* D3DCOLOR */
@@ -147,23 +145,19 @@ enum eRenderStateOption
     RS_BILINEAR					= 1024,	/* Change min/mag filter */
 };
 
-enum eFillMode
-{
-    FILL_POINT					= 1,
-    FILL_WIREFRAME				= 2,
-    FILL_SOLID					= 3,
+enum eAlphaTestMode {
+    ALPHATEST_NONE,
+    ALPHATEST_GT_0,
+    ALPHATEST_GT_1,
+    ALPHATEST_GT_254,
 };
 
 enum eCMPFUNC
 {
-    CMP_NEVER					= 1,
-    CMP_LESS					= 2,
-    CMP_EQUAL					= 3,
-    CMP_LESSEQUAL				= 4,
-    CMP_GREATER					= 5,
-    CMP_NOTEQUAL				= 6,
-    CMP_GREATEREQUAL			= 7,
-    CMP_ALWAYS					= 8,
+    CMP_LESSEQUAL,
+    CMP_GREATER,
+    CMP_GREATEREQUAL,
+    CMP_ALWAYS,
 };
 
 enum eColorMode
@@ -229,6 +223,7 @@ protected:
     std::vector<class cTileMapRender*> tilemaps;
     Mat4f orthoVP;
     eCullMode CameraCullMode = CULL_NONE;
+    bool WireframeMode = false;
 
     virtual void Draw(class FieldDispatcher *ffd, uint8_t transparent);
 

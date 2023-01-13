@@ -254,8 +254,7 @@ void cSokolRender::FinishCommand() {
     pipeline_id_t pipeline_id = GetPipelineID(
             activePipelineType,
             activeDrawBuffer->vb.fmt,
-            activePipelineBlend,
-            activePipelineCull
+            activePipelineMode
     );
 
 #ifdef PERIMETER_RENDER_TRACKER
@@ -393,13 +392,13 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
         tex1 = Texture1->GetFrameImage(nFrame).sg;
     }
 
-    int fs_mode = color_mode;    
-    if (activePipelineBlend != blend
+    int fs_mode = color_mode | (activeCommandAlphaTest << 2);    
+    if (activePipelineMode.blend != blend
      || activeCommand.fs_mode != fs_mode
      || activeCommand.sokol_textures[0] != tex0
      || activeCommand.sokol_textures[1] != tex1) {
         FinishCommand();
-        activePipelineBlend = blend;
+        activePipelineMode.blend = blend;
         activeCommand.fs_mode = fs_mode;
         activeCommand.SetTexture(0, Texture0, tex0);
         activeCommand.SetTexture(1, Texture1, tex1);
@@ -478,19 +477,22 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     viewportSize.y = pDrawNode->vp.Height;
     CameraCullMode = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
     SetVPMatrix(&pDrawNode->matViewProj);
-    if (CameraCullMode != activePipelineCull) {
+    if (CameraCullMode != activePipelineMode.cull) {
         FinishCommand();
-        activePipelineCull = CameraCullMode;
+        activePipelineMode.cull = CameraCullMode;
     }
 }
 
 uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
     switch(option) {
-        case RS_FILLMODE:
-            //TODO return WireFrame;
-            return 0;
+        case RS_WIREFRAME:
+            return WireframeMode;
+        case RS_ZWRITEENABLE:
+            return activePipelineMode.depth_write;
         case RS_CULLMODE:
-            return activePipelineCull;
+            return activePipelineMode.cull;
+        case RS_ALPHA_TEST_MODE:
+            return activeCommandAlphaTest;
         case RS_BILINEAR:
             return 1;
     }
@@ -500,22 +502,47 @@ uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
 int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
     VISASSERT(ActiveScene);
     switch(option) {
-        case RS_ZWRITEENABLE:
-        case RS_ZFUNC:
-            //TODO?
-            break;
-        case RS_FILLMODE:
-            //TODO WireFrame = value == FILL_WIREFRAME;
-            break;
-        case RS_CULLMODE: {
-            eCullMode cull = static_cast<eCullMode>(value);
-            if (cull >= CULL_CAMERA) cull = CameraCullMode;
-            if (cull != activePipelineCull) {
+        case RS_ZWRITEENABLE: {
+            if (value) {
+                SetRenderState(RS_CULLMODE, CameraCullMode);
+            } else {
+                SetRenderState(RS_CULLMODE, CULL_NONE);
+            }
+            bool state = value != 0;
+            if (state != activePipelineMode.depth_write) {
                 FinishCommand();
-                activePipelineCull = cull;
+                activePipelineMode.depth_write = state;
             }
             break;
         }
+        case RS_ZFUNC: {
+            eCMPFUNC depth_cmp = static_cast<eCMPFUNC>(value);
+            if (depth_cmp != activePipelineMode.depth_cmp) {
+                FinishCommand();
+                activePipelineMode.depth_cmp = depth_cmp;
+            }
+            break;
+        }
+        case RS_WIREFRAME: {
+            bool state = value != 0;
+            if (state != WireframeMode) {
+                FinishCommand();
+                WireframeMode = state;
+            }
+            break;
+        }
+        case RS_CULLMODE: {
+            eCullMode cull = static_cast<eCullMode>(value);
+            if (cull >= CULL_CAMERA) cull = CameraCullMode;
+            if (cull != activePipelineMode.cull) {
+                FinishCommand();
+                activePipelineMode.cull = cull;
+            }
+            break;
+        }
+        case RS_ALPHA_TEST_MODE:
+            activeCommandAlphaTest = static_cast<eAlphaTestMode>(value);
+            break;
         case RS_BILINEAR:
             //Useless as we can't change globally
             break;

@@ -59,9 +59,8 @@ private:
     std::map<std::string, sg_shader> shaders;
 #endif
     std::vector<struct SokolPipeline*> pipelines;
-    static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, uint8_t mode);
-    static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, eBlendMode blend, eCullMode cull);
-    static void GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, eBlendMode* blend, eCullMode* cull);
+    static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, const PIPELINE_MODE& mode);
+    static void GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, PIPELINE_MODE* mode);
     void ClearPipelines();
     void RegisterPipelines();
     void RegisterPipeline(pipeline_id_t id, struct shader_funcs* shader_funcs);
@@ -69,9 +68,8 @@ private:
     //Active pipeline/command state
     SokolCommand activeCommand;
     PIPELINE_TYPE activePipelineType = PIPELINE_TYPE_DEFAULT;
-
-    eBlendMode activePipelineBlend = ALPHA_NONE;
-    eCullMode activePipelineCull = CULL_NONE;
+    PIPELINE_MODE activePipelineMode;
+    eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
     Mat4f activeCommandVP;
     Mat4f activeCommandW;
 

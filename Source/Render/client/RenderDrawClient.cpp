@@ -84,10 +84,10 @@ void cInterfaceRenderDevice::Draw(FieldDispatcher *ffd, uint8_t transparent) {
 //	start_timer_auto(Draw_ForceField,1);
 
 	VISASSERT(DrawNode && DrawNode->GetScene());
-    uint32_t FillMode = 0; 
+    uint32_t Wireframe = 0; 
 	if (ffd->GetAttribute(ATTRUNKOBJ_WIREFRAME)) {
-        FillMode = GetRenderState(RS_FILLMODE);
-        SetRenderState(RS_FILLMODE, FILL_WIREFRAME);
+        Wireframe = GetRenderState(RS_WIREFRAME);
+        SetRenderState(RS_WIREFRAME, 1);
     }
     SetWorldMatXf(MatXf::ID);
 
@@ -102,8 +102,7 @@ void cInterfaceRenderDevice::Draw(FieldDispatcher *ffd, uint8_t transparent) {
 	float t=ffd->InterpolationFactor();
 	float t_=1-t;
 
-	uint32_t AlphaTest = GetRenderState(RS_ALPHATESTENABLE);
-	uint32_t AlphaRef = GetRenderState(RS_ALPHAREF);
+	uint32_t AlphaTest = GetRenderState(RS_ALPHA_TEST_MODE);
 	uint32_t zwrite = GetRenderState(RS_ZWRITEENABLE);
 	
 	if (transparent==FieldCluster::TT_TRANSPARENT_ADD) {
@@ -200,9 +199,8 @@ void cInterfaceRenderDevice::Draw(FieldDispatcher *ffd, uint8_t transparent) {
 #endif
 	
 	if (ffd->GetAttribute(ATTRUNKOBJ_WIREFRAME)) {
-        SetRenderState(RS_FILLMODE, FillMode);
+        SetRenderState(RS_WIREFRAME, Wireframe);
     }	
 	SetRenderState(RS_ZWRITEENABLE,zwrite);
-	SetRenderState(RS_ALPHATESTENABLE,AlphaTest);
-	SetRenderState(RS_ALPHAREF,AlphaRef);
+	SetRenderState(RS_ALPHA_TEST_MODE,AlphaTest);
 }

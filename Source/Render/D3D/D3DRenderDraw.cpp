@@ -206,14 +206,14 @@ void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wire
 	p[11].p1=2, p[11].p2=7, p[11].p3=6;
 	SetFVF(v->fmt);
 	SetRenderState( RS_ZWRITEENABLE, FALSE );
-	if(wireframe) SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+    if (wireframe) SetRenderState(RS_WIREFRAME, 1);
     SetWorldMatXf(Matrix);
 	SetNoMaterial(ALPHA_BLEND);
 
 	RDCALL(lpD3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,0,8,12,
 		p,PERIMETER_D3D_INDEX_FMT,v,sizeof(v[0])));
-	
-	if(wireframe) SetRenderState(D3DRS_FILLMODE,bWireFrame==0?D3DFILL_SOLID:D3DFILL_WIREFRAME);
+
+    if (wireframe) SetRenderState(RS_WIREFRAME, WireframeMode);
 	SetRenderState( RS_ZWRITEENABLE, TRUE );
 }
 

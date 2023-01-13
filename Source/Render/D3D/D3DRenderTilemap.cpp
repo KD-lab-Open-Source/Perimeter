@@ -703,8 +703,8 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 	{
 		if(DrawNode->GetAttribute(ATTRCAMERA_ZINVERT))
 		{
-			gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC,D3DCMP_GREATEREQUAL);
-			gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
+			gb_RenderDevice3D->SetRenderState(RS_ZFUNC,CMP_GREATEREQUAL);
+			gb_RenderDevice3D->SetRenderState(RS_CULLMODE,CULL_CCW);
 		}
 
 		gb_RenderDevice3D->dtAdvance->SetMaterialTilemapShadow();

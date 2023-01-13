@@ -5,10 +5,12 @@
 int cInterfaceRenderDevice::Create(cTileMap *TileMap)
 {
 #ifdef PERIMETER_D3D9
-    cTileMapRender* p=new cTileMapRender(TileMap);
-    TileMap->SetTilemapRender(p);
-    p->RestoreTilemapPool();
-    tilemaps.push_back(p);
+    if (gb_RenderDevice3D) {
+        cTileMapRender* p = new cTileMapRender(TileMap);
+        TileMap->SetTilemapRender(p);
+        p->RestoreTilemapPool();
+        tilemaps.push_back(p);
+    }
 #endif
     return 0;
 }

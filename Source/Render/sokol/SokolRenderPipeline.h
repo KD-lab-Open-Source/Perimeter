@@ -22,16 +22,27 @@ static PIPELINE_TYPE getPipelineType(const ePrimitiveType type) {
     }
 }
 
-const uint32_t PIPELINE_ID_MODE_MASK = 0xFF;
+using pipeline_mode_value_t = uint16_t;
+struct PIPELINE_MODE {
+    eBlendMode blend = ALPHA_NONE;
+    eCullMode cull = CULL_NONE;
+    eCMPFUNC depth_cmp = CMP_GREATER;
+    bool depth_write = true;
+    
+    pipeline_mode_value_t GetValue() const;
+    void FromValue(pipeline_mode_value_t value);
+};
+
+const uint32_t PIPELINE_ID_MODE_MASK = 0xFFFF;
+const uint32_t PIPELINE_ID_MODE_MAX = 1 << 8;
+static_assert((PIPELINE_ID_MODE_MAX - 1) < PIPELINE_ID_MODE_MASK);
 static_assert(sizeof(vertex_fmt_t) == 1); //Change vertex fmt mask if this fails 
 const uint32_t PIPELINE_ID_VERTEX_FMT_MASK = 0xFF;
 const uint32_t PIPELINE_ID_TYPE_MASK = 0xF;
 
 const uint32_t PIPELINE_ID_MODE_SHIFT = 0;
-const uint32_t PIPELINE_ID_MODE_CULL_SHIFT = 3;
-const uint32_t PIPELINE_ID_MODE_MAX = 1 << 5;
-const uint32_t PIPELINE_ID_VERTEX_FMT_SHIFT = 8;
-const uint32_t PIPELINE_ID_TYPE_SHIFT = 16;
+const uint32_t PIPELINE_ID_VERTEX_FMT_SHIFT = 16;
+const uint32_t PIPELINE_ID_TYPE_SHIFT = 24;
 const uint32_t PIPELINE_ID_MAX = PIPELINE_TYPE_MAX << PIPELINE_ID_TYPE_SHIFT;
 
 struct SokolPipeline {

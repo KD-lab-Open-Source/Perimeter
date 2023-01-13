@@ -31,8 +31,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     
     //Init some state
     activePipelineType = PIPELINE_TYPE_TRIANGLE;
-    activePipelineBlend = ALPHA_NONE;
-    activePipelineCull = CameraCullMode = CULL_CCW;
+    activePipelineMode.cull = CameraCullMode = CULL_CCW;
     
     //Set some attributes before context creation
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
