@@ -172,51 +172,6 @@ void cD3DRender::DrawNoMaterialShadowNoWorld(cObjMesh *Mesh)
 	NumDrawObject++;
 }
 
-void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe,const sColor4c &Color)
-{ 
-	VISASSERT(DrawNode);
-	int BytePerVertex=8*sizeof(sVertexXYZD);
-	int BytePerPolygon=12*sizeof(sPolygon);
-	VISASSERT((BytePerVertex+BytePerPolygon)<Buffer.length());
-	sVertexXYZD *v=(sVertexXYZD*)&Buffer[0];
-	sColor4c diffuse((150*Color.r)>>8,(155*Color.g)>>8,(155*Color.b)>>8,100);
-	v[0].pos.set(min.x,min.y,min.z);
-	v[1].pos.set(max.x,min.y,min.z);
-	v[2].pos.set(min.x,max.y,min.z);
-	v[3].pos.set(max.x,max.y,min.z);
-	v[4].pos.set(min.x,min.y,max.z);
-	v[5].pos.set(max.x,min.y,max.z);
-	v[6].pos.set(min.x,max.y,max.z);
-	v[7].pos.set(max.x,max.y,max.z);
-    v[0].diffuse=v[1].diffuse=v[2].diffuse=
-    v[3].diffuse=v[4].diffuse=v[5].diffuse=
-    v[6].diffuse=v[7].diffuse=ConvertColor(diffuse);
-	sPolygon *p=(sPolygon*)&Buffer[BytePerVertex];
-	p[0].p1=1, p[0].p2=2, p[0].p3=0;
-	p[1].p1=1, p[1].p2=3, p[1].p3=2;
-	p[2].p1=4, p[2].p2=6, p[2].p3=5;
-	p[3].p1=6, p[3].p2=7, p[3].p3=5;
-	p[4].p1=0, p[4].p2=6, p[4].p3=4;
-	p[5].p1=0, p[5].p2=2, p[5].p3=6;
-	p[6].p1=0, p[6].p2=4, p[6].p3=5;
-	p[7].p1=0, p[7].p2=5, p[7].p3=1;
-	p[8].p1=1, p[8].p2=7, p[8].p3=3;
-	p[9].p1=1, p[9].p2=5, p[9].p3=7;
-	p[10].p1=2, p[10].p2=3, p[10].p3=7;
-	p[11].p1=2, p[11].p2=7, p[11].p3=6;
-	SetFVF(v->fmt);
-	SetRenderState( RS_ZWRITEENABLE, FALSE );
-    if (wireframe) SetRenderState(RS_WIREFRAME, 1);
-    SetWorldMatXf(Matrix);
-	SetNoMaterial(ALPHA_BLEND);
-
-	RDCALL(lpD3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,0,8,12,
-		p,PERIMETER_D3D_INDEX_FMT,v,sizeof(v[0])));
-
-    if (wireframe) SetRenderState(RS_WIREFRAME, WireframeMode);
-	SetRenderState( RS_ZWRITEENABLE, TRUE );
-}
-
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode)
 {
 	if(CurrentFont==0)

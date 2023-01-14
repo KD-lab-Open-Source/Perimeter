@@ -17,7 +17,6 @@ cD3DRender::cD3DRender() : cInterfaceRenderDevice()
     ConvertColor = ColorConvertARGB;
     NumberPolygon=0;
     NumDrawObject=0;
-    Buffer.New(600000);//-> Buffer=600000,MaxVertexSize=10*4,VertexNumMin=Buffer/MaxVertexSize=600000/40=15000
     RenderMode=0;
     xScrMin=yScrMin=xScrMax=yScrMax=0;
 
@@ -52,7 +51,6 @@ cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 cD3DRender::~cD3DRender()
 {
 	Done();
-    Buffer.Delete();
     VISASSERT(RenderMode==0);
     VISASSERT(ScreenSize.x==0&&ScreenSize.y==0&&xScrMin==0&&yScrMin==0&&xScrMax==0&&yScrMax==0);
     VISASSERT(ScreenSize.x==0&&ScreenSize.y==0);

@@ -29,8 +29,6 @@ private:
     friend class DrawType;
 
     DrawTypeMixed dtMixed;
-    
-    cBaseDynArray<char>			Buffer;
 
     sTextureFormatData			TexFmtData[SURFMT_NUMBER];
 
@@ -120,8 +118,6 @@ public:
                         sColor4f *Diffuse = nullptr, sColor4f *Specular = nullptr) override;
 
     void Draw(class ElasticSphere *es) override;
-
-    void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c &Color=sColor4c(255,255,255,255)) override;
     
     uint32_t GetRenderState(eRenderStateOption option) override;
 	int SetRenderState(eRenderStateOption option,uint32_t value) override;
