@@ -2,16 +2,15 @@
 
 #pragma pack(push,1)
 
-const static vertex_fmt_t VERTEX_FMT_XYZ       = (1<<0);
-const static vertex_fmt_t VERTEX_FMT_NORMAL    = (1<<1);
-const static vertex_fmt_t VERTEX_FMT_DIFFUSE   = (1<<2);
-const static vertex_fmt_t VERTEX_FMT_TEX1      = (1<<3);
-const static vertex_fmt_t VERTEX_FMT_TEX2      = (1<<4);
+const static vertex_fmt_t VERTEX_FMT_NORMAL    = (1<<0);
+const static vertex_fmt_t VERTEX_FMT_DIFFUSE   = (1<<1);
+const static vertex_fmt_t VERTEX_FMT_TEX1      = (1<<2);
+const static vertex_fmt_t VERTEX_FMT_TEX2      = (1<<3);
 #ifdef PERIMETER_D3D9
-const static vertex_fmt_t VERTEX_FMT_DOT3      = (1<<5);
+const static vertex_fmt_t VERTEX_FMT_DOT3      = (1<<4);
 #endif
 
-const static vertex_fmt_t VERTEX_FMT_BITS      = 6;
+const static vertex_fmt_t VERTEX_FMT_BITS      = 5;
 const static vertex_fmt_t VERTEX_FMT_MAX       = (1<<VERTEX_FMT_BITS)-1;
 
 struct sVertexXYZ
@@ -20,7 +19,7 @@ struct sVertexXYZ
         Vect3f pos;
         struct { float x, y, z; };
     };
-	const static int fmt = VERTEX_FMT_XYZ;
+	const static int fmt = 0;
 };
 #ifdef PERIMETER_D3D9
 //For primitives

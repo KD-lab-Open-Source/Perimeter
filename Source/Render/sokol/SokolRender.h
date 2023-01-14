@@ -1,8 +1,6 @@
 #ifndef PERIMETER_SOKOLRENDER_H
 #define PERIMETER_SOKOLRENDER_H
 
-#define PERIMETER_SOKOL_SHARE_SHADERS
-
 #include "sokol_gfx.h"
 #include <SDL_video.h>
 #include "SokolRenderPipeline.h"
@@ -55,15 +53,12 @@ private:
 #endif
 
     //Pipelines
-#ifdef PERIMETER_SOKOL_SHARE_SHADERS
-    std::map<std::string, sg_shader> shaders;
-#endif
-    std::vector<struct SokolPipeline*> pipelines;
+    std::unordered_map<std::string, sg_shader> shaders;
+    std::unordered_map<pipeline_id_t, struct SokolPipeline*> pipelines;
     static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, const PIPELINE_MODE& mode);
     static void GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, PIPELINE_MODE* mode);
     void ClearPipelines();
-    void RegisterPipelines();
-    void RegisterPipeline(pipeline_id_t id, struct shader_funcs* shader_funcs);
+    void RegisterPipeline(pipeline_id_t id);
     
     //Active pipeline/command state
     SokolCommand activeCommand;

@@ -51,17 +51,16 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     //Init sokol gfx
     {
         sg_desc desc = {};
-        desc.pipeline_pool_size = PIPELINE_ID_MAX,
-#ifdef PERIMETER_SOKOL_SHARE_SHADERS
-        desc.shader_pool_size = VERTEX_FMT_MAX,
-#else
-        desc.shader_pool_size = desc.pipeline_pool_size,
-#endif
+        desc.pipeline_pool_size = PERIMETER_SOKOL_PIPELINES_MAX,
+        desc.shader_pool_size = 8,
         desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
         desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
         desc.context.color_format = SG_PIXELFORMAT_RGBA8;
         sg_setup(&desc);
     }
+#ifdef PERIMETER_DEBUG
+    printf("cSokolRender::Init sg_setup done\n");
+#endif
     
     //Create empty texture
     sg_image_desc desc = {};
@@ -92,9 +91,6 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     testTexture = new SokolTexture2D(desc);
 #endif
     delete[] buf;
-
-    //Register a pipeline for each vertex format in game
-    RegisterPipelines();
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();
@@ -127,9 +123,7 @@ int cSokolRender::Done() {
     int ret = cInterfaceRenderDevice::Done();
     ClearCommands();
     ClearPipelines();
-#ifdef PERIMETER_SOKOL_SHARE_SHADERS
     shaders.clear();
-#endif
     delete emptyTexture;
     emptyTexture = nullptr;
 #ifdef PERIMETER_DEBUG
@@ -280,7 +274,7 @@ void cSokolRender::ClearCommands() {
 
 void cSokolRender::ClearPipelines() {
     for (auto pipeline : pipelines) {
-        delete pipeline;
+        delete pipeline.second;
     }
     pipelines.clear();
 }

@@ -7,6 +7,9 @@ enum PIPELINE_TYPE {
     PIPELINE_TYPE_TRIANGLE,
     PIPELINE_TYPE_TRIANGLESTRIP,
     PIPELINE_TYPE_TERRAIN,
+#ifdef PERIMETER_DEBUG
+    PIPELINE_TYPE_LINE_STRIP,
+#endif
     PIPELINE_TYPE_MAX,
 };
 const PIPELINE_TYPE PIPELINE_TYPE_DEFAULT = PIPELINE_TYPE_TRIANGLE;
@@ -34,16 +37,17 @@ struct PIPELINE_MODE {
 };
 
 const uint32_t PIPELINE_ID_MODE_MASK = 0xFFFF;
-const uint32_t PIPELINE_ID_MODE_MAX = 1 << 8;
-static_assert((PIPELINE_ID_MODE_MAX - 1) < PIPELINE_ID_MODE_MASK);
-static_assert(sizeof(vertex_fmt_t) == 1); //Change vertex fmt mask if this fails 
-const uint32_t PIPELINE_ID_VERTEX_FMT_MASK = 0xFF;
+const uint32_t PIPELINE_ID_MODE_BITS = 8;
+static_assert((1 << PIPELINE_ID_MODE_BITS) - 1 < PIPELINE_ID_MODE_MASK);
+const uint32_t PIPELINE_ID_VERTEX_FMT_BITS = (VERTEX_FMT_BITS - 1); //Remove 1 dedicated for Dot3 flag in D3D
+const uint32_t PIPELINE_ID_VERTEX_FMT_MASK = (1 << PIPELINE_ID_VERTEX_FMT_BITS) - 1;
 const uint32_t PIPELINE_ID_TYPE_MASK = 0xF;
 
 const uint32_t PIPELINE_ID_MODE_SHIFT = 0;
 const uint32_t PIPELINE_ID_VERTEX_FMT_SHIFT = 16;
-const uint32_t PIPELINE_ID_TYPE_SHIFT = 24;
-const uint32_t PIPELINE_ID_MAX = PIPELINE_TYPE_MAX << PIPELINE_ID_TYPE_SHIFT;
+const uint32_t PIPELINE_ID_TYPE_SHIFT = PIPELINE_ID_VERTEX_FMT_SHIFT + PIPELINE_ID_VERTEX_FMT_BITS;
+
+const uint32_t PERIMETER_SOKOL_PIPELINES_MAX = 128;
 
 struct SokolPipeline {
     //Pipeline ID
@@ -58,6 +62,9 @@ struct SokolPipeline {
     sg_pipeline pipeline;
     //Shader functions to retrieve info
     struct shader_funcs* shader_funcs;
+    
+    SokolPipeline() = default;
+    ~SokolPipeline();
 };
 
 #endif //PERIMETER_SOKOLRENDERPIPELINE_H

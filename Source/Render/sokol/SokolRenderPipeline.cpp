@@ -71,9 +71,6 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, uint32_t fmt_flag) {
     if ((fmt & fmt_flag) == 0) return;
 
     switch (fmt_flag) {
-        case VERTEX_FMT_XYZ:
-            bind_attr_slot(ctx, "vs_position", SG_VERTEXFORMAT_FLOAT3);
-            break;
         case VERTEX_FMT_DIFFUSE:
             bind_attr_slot(ctx, "vs_color", SG_VERTEXFORMAT_UBYTE4N);
             break;
@@ -90,21 +87,66 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, uint32_t fmt_flag) {
             fprintf(stderr, "bind_vertex_fmt: unregistered fmt '%d'\n", fmt_flag);
             break;
     }
-
 }
 
-void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs) {
+void cSokolRender::RegisterPipeline(pipeline_id_t id) {
+    //Create sokol desc and context struct
     sg_pipeline_desc desc = {};
-    SokolPipelineContext ctx = {id, PIPELINE_TYPE_DEFAULT, 0, &desc, shader_funcs };
-    
+    SokolPipelineContext ctx = {id, PIPELINE_TYPE_DEFAULT, 0, &desc, nullptr };
+
     //Extract info about this pipeline
     PIPELINE_MODE mode;
     GetPipelineIDParts(id, &ctx.pipeline_type, &ctx.vertex_fmt, &mode);
+    
+    //Choose shader
+    switch (ctx.pipeline_type) {
+#ifdef PERIMETER_DEBUG
+        case PIPELINE_TYPE_LINE_STRIP:
+#endif
+        case PIPELINE_TYPE_TRIANGLE:
+        case PIPELINE_TYPE_TRIANGLESTRIP:
+            switch (ctx.vertex_fmt) {
+                case sVertexXYZDT1::fmt:
+                    ctx.shader_funcs = &shader_color_tex1;
+                    break;
+                case sVertexXYZDT2::fmt:
+                    ctx.shader_funcs = &shader_color_tex2;
+                    break;
+                case sVertexXYZNT1::fmt:
+                    ctx.shader_funcs = &shader_normal;
+                    break;
+                default:
+                    fprintf(stderr, "RegisterPipeline: unknown pipeline format '%d'\n", ctx.vertex_fmt);
+                    break;
+            }
+            break;
+        default:
+            fprintf(stderr, "RegisterPipeline: unknown pipeline type '%d'\n", ctx.pipeline_type);
+            break;
+    }
+    if (ctx.shader_funcs == nullptr) {
+        fprintf(stderr, "RegisterPipeline: no shader assigned to pipeline '%d'\n", id);
+        xassert(0);
+        return;
+    }
 
     //Common part of pipeline desc
     desc.depth.compare = GetSokolCompareFunc(mode.depth_cmp);
     desc.depth.write_enabled = mode.depth_write;
-    desc.primitive_type = ctx.pipeline_type == PIPELINE_TYPE_TRIANGLESTRIP ? SG_PRIMITIVETYPE_TRIANGLE_STRIP : SG_PRIMITIVETYPE_TRIANGLES;
+    switch (ctx.pipeline_type) {
+        default:
+        case PIPELINE_TYPE_TRIANGLE:
+            desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+            break;
+        case PIPELINE_TYPE_TRIANGLESTRIP:
+            desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+            break;
+#ifdef PERIMETER_DEBUG
+        case PIPELINE_TYPE_LINE_STRIP:
+            desc.primitive_type = SG_PRIMITIVETYPE_LINE_STRIP;
+            break;
+#endif
+    }
     desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32;
     desc.cull_mode = CULL_NONE == mode.cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
     desc.face_winding = CULL_CCW == mode.cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
@@ -149,16 +191,12 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
 
     //Get shader desc and make if not cached already
     const sg_shader_desc* shader_desc = ctx.shader_funcs->shader_desc(sg_query_backend());
-#ifdef PERIMETER_SOKOL_SHARE_SHADERS
     if (shaders.count(shader_desc->label)) {
         desc.shader = shaders[shader_desc->label];
     } else {
         desc.shader = sg_make_shader(shader_desc);
         shaders[shader_desc->label] = desc.shader;
     }
-#else
-    desc.shader = sg_make_shader(shader_desc);
-#endif
     desc.label = shader_desc->label;
 
     //Shader sanity checks
@@ -192,9 +230,11 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
             return;
         }
     }
+    
+    //Common attributes
+    bind_attr_slot(ctx, "vs_position", SG_VERTEXFORMAT_FLOAT3);
 
     //We bind required attributes into layout of pipeline if provided fmt needs so
-    bind_vertex_fmt(ctx, VERTEX_FMT_XYZ);
     bind_vertex_fmt(ctx, VERTEX_FMT_DIFFUSE);
     bind_vertex_fmt(ctx, VERTEX_FMT_TEX1);
     bind_vertex_fmt(ctx, VERTEX_FMT_TEX2);
@@ -218,34 +258,26 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id, shader_funcs* shader_funcs
         xxassert(0, "RegisterPipeline: invalid pipeline vertex format " + std::string(desc.label));
         return;
     }
-    if (pipeline->id >= pipelines.size()) {
-        pipelines.resize(pipeline->id + 1);
-    }
-    if (pipelines[pipeline->id] != nullptr) {
-        fprintf(stderr, "RegisterPipeline: '%s' pipeline already registered at '%d'\n", desc.label, pipeline->id);
+    if (0 != pipelines.count(pipeline->id)) {
+        fprintf(stderr, "RegisterPipeline: '%s' pipeline already registered with '%d'\n", desc.label, pipeline->id);
         xassert(0);
     }
-    pipelines[pipeline->id] = pipeline;
+    if (pipelines.size() + 1 > PERIMETER_SOKOL_PIPELINES_MAX) {
+        fprintf(stderr, "RegisterPipeline: reached maximum amount of registered pipelines '%d'\n", pipeline->id);
+        xassert(0);
+        while (pipelines.size() + 10 > PERIMETER_SOKOL_PIPELINES_MAX) {
+            auto it = pipelines.cbegin();
+            SokolPipeline* pipeline = it->second;
+            pipelines.erase(it);
+            delete pipeline;
+        }
+    }
+    pipelines.insert(std::make_pair(pipeline->id, pipeline));
 #ifdef PERIMETER_DEBUG
-    printf("RegisterPipeline: '%s' registered at '%d'\n", desc.label, pipeline->id);
+    printf("RegisterPipeline: '%s' registered with '%d'\n", desc.label, pipeline->id);
 #endif
 }
 
-void cSokolRender::RegisterPipelines() {
-    int total = 0;
-    PIPELINE_MODE mode;
-    //Build pipelines with all pipeline mode permutations
-    for (pipeline_mode_value_t mode_value = 0; mode_value < PIPELINE_ID_MODE_MAX; ++mode_value) {
-        mode.FromValue(mode_value);
-        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLESTRIP, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
-        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLESTRIP, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
-        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
-        RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
-        //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TRIANGLE, sVertexXYZNT1::fmt, mode), &shader_normal);
-        //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TERRAIN,  sVertexXYZ::fmt,    mode), &shader_terrain);
-        total += 4;
-    }
-#ifdef PERIMETER_DEBUG
-    printf("cSokolRender::RegisterPipelines done, total: %d\n", total);
-#endif
+SokolPipeline::~SokolPipeline() {
+    sg_destroy_pipeline(pipeline);
 }

@@ -63,7 +63,7 @@ int cSokolRender::EndScene() {
         }
         
         //Get pipeline
-        const SokolPipeline* pipeline = pipelines[command->pipeline_id];
+        const SokolPipeline* pipeline = pipelines.count(command->pipeline_id) ? pipelines[command->pipeline_id] : nullptr;
         if (pipeline == nullptr) {
             //Not implemented vertex format
             xxassert(0, "cSokolRender::EndScene missing pipeline for " + std::to_string(command->pipeline_id));
@@ -86,6 +86,9 @@ int cSokolRender::EndScene() {
             case PIPELINE_TYPE_TRIANGLE:
                 xassert(command->indices % 3 == 0);
                 break;
+#ifdef PERIMETER_DEBUG
+            case PIPELINE_TYPE_LINE_STRIP:
+#endif
             case PIPELINE_TYPE_TRIANGLESTRIP:
                 break;
             case PIPELINE_TYPE_TERRAIN:
@@ -251,11 +254,19 @@ void cSokolRender::FinishCommand() {
         return;
     }
     
+    PIPELINE_TYPE pipelineType = activePipelineType;
+#ifdef PERIMETER_DEBUG
+    if (WireframeMode) pipelineType = PIPELINE_TYPE_LINE_STRIP;
+#endif
+    
     pipeline_id_t pipeline_id = GetPipelineID(
-            activePipelineType,
+            pipelineType,
             activeDrawBuffer->vb.fmt,
             activePipelineMode
     );
+    if (pipelines.count(pipeline_id) == 0) {
+        RegisterPipeline(pipeline_id);
+    }
 
 #ifdef PERIMETER_RENDER_TRACKER
     std::string label = "Pipeline: " + std::to_string(pipeline_id)
