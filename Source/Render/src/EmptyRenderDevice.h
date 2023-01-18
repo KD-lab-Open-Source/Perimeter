@@ -23,13 +23,11 @@ public:
     int Flush(bool wnd=false) override { return -1; }
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override { return -1; }
 
-    // вспомогательные функции, могут быть не реализованы
-    void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override { }
-    void DrawPixel(int x1,int y1,sColor4c color) override { }
-    void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override { }
+    void DrawLine(int x1,int y1,int x2,int y2,const sColor4c& color, float width) override { }
+    void DrawRectangle(int x,int y,int dx,int dy,const sColor4c& color, float outline) override { }
     void FlushPrimitive2D() override { }
-    void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override { }
-    void DrawPoint(const Vect3f &v1,sColor4c color) override { }
+    void DrawBound(const MatXf &Matrix,const Vect3f &min,const Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
+    void DrawLine(const Vect3f &v1,const Vect3f &v2,const sColor4c& color) override { }
     void FlushPrimitive3D() override { }
 
     void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override { }
@@ -46,7 +44,6 @@ public:
     bool SetScreenShot(const char *fname) override { return false; }
     uint32_t GetRenderState(eRenderStateOption option) { return 0; }
     int SetRenderState(eRenderStateOption option,uint32_t value) override { return 0; }
-    void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
 
     int Create(class cTileMap *TileMap) override { return -1; }
     int Delete(class cTileMap *TileMap) override { return -1; }

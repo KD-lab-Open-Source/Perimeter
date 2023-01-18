@@ -1192,7 +1192,7 @@ void cCamera::ClearZBuffer()
 
 void cCamera::ShowClip()
 {
-	RenderDevice->DrawRectangle(vp.X,vp.Y,vp.Width-1,vp.Height-1, sColor4c(255,255,255,255),true);
+	RenderDevice->DrawRectangle(vp.X,vp.Y,vp.Width-1,vp.Height-1, sColor4c(255,255,255,255),1);
 }
 
 cCamera* cCamera::FindCildCamera(int AttributeCamera)

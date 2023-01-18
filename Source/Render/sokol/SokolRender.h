@@ -76,8 +76,6 @@ private:
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
 
-    float getThinLineWidth();
-
 public:
     cSokolRender();
     ~cSokolRender() override;
@@ -134,11 +132,6 @@ public:
     uint32_t GetRenderState(eRenderStateOption option) override;
     int SetRenderState(eRenderStateOption option,uint32_t value) override;
 
-    void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
-    void DrawPixel(int x1,int y1,sColor4c color) override;
-    void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
-    void FlushPrimitive2D() override;
-
     void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override;
     void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
                  cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase=0,float lerp_factor=1) override;
@@ -155,11 +148,6 @@ public:
     bool IsEnableSelfShadow() override;
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
-    
-    void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
-    void DrawPoint(const Vect3f &v1,sColor4c color) override;
-
-    void FlushPrimitive3D() override;
 
     // //// cInterfaceRenderDevice impls end ////
 };

@@ -28,8 +28,8 @@ void drawMark2d( cInterfaceRenderDevice *IRender, float x, float y, float phase,
 	float length = (health * markHealthWidthCoeffA + markHealthWidthCoeffB) * terRenderDevice->GetSizeX() * radiusFactor;
 	int half = length / 2.0f;
 
-	terRenderDevice->DrawRectangle(x - half - 1, y, length + 1, 2, colorBG, true);
-//	terRenderDevice->DrawRectangle(x - half - 1, y - 1, length + 1, 3, colorBG, true);
+	terRenderDevice->DrawRectangle(x - half - 1, y, length + 1, 2, colorBG, 1);
+//	terRenderDevice->DrawRectangle(x - half - 1, y - 1, length + 1, 3, colorBG, 1);
 //	terRenderDevice->DrawRectangle(x - half - 1, y - 1, length + 1, 3, colorBG);
 	terRenderDevice->DrawRectangle(x - half, y, length * phase, 2, color);
 }

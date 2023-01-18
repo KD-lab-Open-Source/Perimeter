@@ -48,13 +48,11 @@ void cLine3d::Draw(cCamera *DrawNode)
 	{
 		if(nVertex>0)
 		{
+            Orientation=Vertex[nVertex].pos-Vertex[nVertex-1].pos;
+            FastNormalize(Orientation);
 /*
-			Orientation=Vertex[nVertex].p-Vertex[nVertex-1].p;
-			FastNormalize(Orientation);
 			Orientation.precross(DrawNode->GetWorldK()*Vertex[nVertex].width);
 /*/
-			Orientation=Vertex[nVertex].pos-Vertex[nVertex-1].pos;
-			FastNormalize(Orientation);
 
 			Vect3f o1=(Vertex[nVertex].pos+Vertex[nVertex-1].pos)*0.5f-DrawNode->GetPos();
 			FastNormalize(o1);

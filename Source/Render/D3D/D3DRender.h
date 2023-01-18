@@ -122,10 +122,6 @@ public:
     uint32_t GetRenderState(eRenderStateOption option) override;
 	int SetRenderState(eRenderStateOption option,uint32_t value) override;
 
-	// вспомогательные функции, могут быть не реализованы
-	void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
-	void DrawPixel(int x1,int y1,sColor4c color) override;
-	void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
 	void FlushPrimitive2D() override;
 
 	void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override;
@@ -148,9 +144,6 @@ public:
     void UseOrthographicProjection() override;
     void SetDrawTransform(class cCamera *DrawNode) override;
     void SetWorldMat4f(const Mat4f* matrix) override;
-    
-    void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
-    void DrawPoint(const Vect3f &v1,sColor4c color) override;
     
     void FlushPrimitive3D() override;
 
@@ -402,7 +395,6 @@ protected:
 
 	cVertexBuffer<sVertexXYZDT1> BufferXYZDT1;
 	cVertexBuffer<sVertexXYZDT2> BufferXYZDT2;
-	cVertexBuffer<sVertexXYZD>	 BufferXYZD;
 
 	IndexBuffer standart_ib;
 

@@ -257,6 +257,13 @@ public:
     virtual float GetFontLength(const char *string, size_t* count = nullptr);
     virtual float GetCharLength(const char c);
 
+    //Back in the good-ish old days a line was just one pixel width and everybody was happy, over years due to
+    //technological progress the screen resolutions have become higher and higher each year such as a 2004 1 pixel line
+    //is too thin to be even noticed in super pro whatever 4k screen unless you stare close enough to feel the screen
+    //warmth in your face
+    //Therefore this function returns what width a thin line should have based on 2004 era screen and 1~px ratio
+    float getThinLineWidth() const;
+
     virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
 
     virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive);
@@ -287,8 +294,17 @@ public:
 
     virtual void Draw(class ElasticSphere *es);
     virtual void Draw(class cScene *Scene);
-    virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255));
+    virtual void DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe=0, const sColor4c& Color=sColor4c(255,255,255,255));
     virtual void Draw(class FieldDispatcher *ffd);
+    
+    virtual void DrawLine(int x1,int y1,int x2,int y2,const sColor4c& color, float width = 1.0);
+    virtual void DrawPixel(int x1,int y1, const sColor4c& color);
+    virtual void DrawRectangle(int x,int y,int dx,int dy,const sColor4c& color, float outline = 0.0);
+    virtual void FlushPrimitive2D();
+    
+    virtual void DrawLine(const Vect3f &v1,const Vect3f &v2,const sColor4c& color);
+    virtual void DrawPoint(const Vect3f &v1, const sColor4c& color);
+    virtual void FlushPrimitive3D();
 
     // Decl only methods
 
@@ -306,15 +322,6 @@ public:
     virtual int Fill(int r,int g,int b,int a=255) = 0;
     virtual int Flush(bool wnd=false) = 0;
     virtual int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) = 0;
-
-    // вспомогательные функции, могут быть не реализованы
-    virtual void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) = 0;
-    virtual void DrawPixel(int x1,int y1,sColor4c color) = 0;
-    virtual void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) = 0;
-    virtual void FlushPrimitive2D() = 0;
-    virtual void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) = 0;
-    virtual void DrawPoint(const Vect3f &v1,sColor4c color) = 0;
-    virtual void FlushPrimitive3D() = 0;
 
     virtual bool SetScreenShot(const char *fname) = 0;
     virtual uint32_t GetRenderState(eRenderStateOption option) = 0;

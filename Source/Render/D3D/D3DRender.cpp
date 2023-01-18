@@ -463,7 +463,6 @@ int cD3DRender::Done()
 	DeleteIndexBuffer(standart_ib);
 	BufferXYZDT1.Destroy();
 	BufferXYZDT2.Destroy();
-	BufferXYZD.Destroy();
 /*
 	for(int i=0;i<LibVB.size();i++)
 	{
@@ -778,8 +777,6 @@ int cD3DRender::EndScene()
 
 //	D3DVIEWPORT9 vpall={0,0,xScr,yScr,0.0f,1.0f};
 //	RDCALL(lpD3DDevice->SetViewport(&vpall));
-	FlushPrimitive2D();
-	FlushPrimitive3D();
 
     int ret = cInterfaceRenderDevice::EndScene();
     if (ret) return ret;
@@ -789,11 +786,9 @@ int cD3DRender::EndScene()
 	return hr;
 }
 
-void cD3DRender::FlushPrimitive2D()
-{
-	FlushPixel();
-	FlushLine();
-	FlushFilledRect();
+void cD3DRender::FlushPrimitive2D() {
+    VISASSERT(bActiveScene);
+    FlushActiveDrawBuffer();
 }
 
 void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffuse,sColor4f *Specular)
@@ -995,287 +990,9 @@ int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
 	return 0; 
 }
 
-void cD3DRender::DrawLine(int x1,int y1,int x2,int y2,sColor4c color)
-{ 
+void cD3DRender::FlushPrimitive3D() {
 	VISASSERT(bActiveScene);
-	if(x1<=x2) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(y1<=y2) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	PointStruct v;
-	v.x=(float)x1;
-	v.y=(float)y1;
-	v.diffuse=color;
-	lines.push_back(v);
-	v.x=(float)x2;
-	v.y=(float)y2;
-	lines.push_back(v);
-}
-
-void cD3DRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool outline)
-{ 
-   	VISASSERT(bActiveScene);
-	int x2=x1+dx,y2=y1+dy;
-	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(dy>=0) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	if(outline)
-	{
-		PointStruct v;
-		v.diffuse=color;
-		v.x=(float)x1; v.y=(float)y1; lines.push_back(v);
-		v.x=(float)x2; v.y=(float)y1; lines.push_back(v);
-
-		v.x=(float)x2; v.y=(float)y1; lines.push_back(v);
-		v.x=(float)x2; v.y=(float)y2; lines.push_back(v);
-
-		v.x=(float)x2; v.y=(float)y2; lines.push_back(v);
-		v.x=(float)x1; v.y=(float)y2; lines.push_back(v);
-
-		v.x=(float)x1; v.y=(float)y2; lines.push_back(v);
-		v.x=(float)x1; v.y=(float)y1; lines.push_back(v);
-	}else
-	{
-		RectStruct s;
-		s.x1=x1;s.x2=x2;
-		s.y1=y1;s.y2=y2;
-		s.diffuse=color;
-		rectangles.push_back(s);
-	}
-}
-
-void cD3DRender::FlushPrimitive3D()
-{
-	VISASSERT(bActiveScene);
-	FlushLine3D();
-	FlushPoint3D();
-}
-
-
-void cD3DRender::FlushLine3D()
-{
-	if(lines3d.empty())return;
-
-	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_FOGENABLE,FALSE);
-	SetNoMaterial(ALPHA_BLEND);
-    SetWorldMatXf(MatXf::ID);
-
-
-	VISASSERT((lines3d.size()&1)==0);
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<sVertexXYZD>::iterator it;
-	FOR_EACH(lines3d,it)
-	{
-		v[npoint]=*it;
-		npoint++;
-		if(((npoint&1)==0) && npoint>=BufferXYZD.GetSize()-2)
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
-
-	lines3d.clear();
-	SetRenderState(D3DRS_ZFUNC,prev_zfunc);
-	SetRenderState(D3DRS_FOGENABLE,prev_fog);
-}
-
-void cD3DRender::FlushPoint3D()
-{
-	if(points3d.empty())return;
-
-	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_FOGENABLE,FALSE);
-	SetNoMaterial(ALPHA_BLEND);
-    SetWorldMatXf(MatXf::ID);
-
-
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<sVertexXYZD>::iterator it;
-	FOR_EACH(points3d,it)
-	{
-		v[npoint]=*it;
-		npoint++;
-		if(npoint>=BufferXYZD.GetSize()-2)
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
-
-	points3d.clear();
-	SetRenderState(D3DRS_ZFUNC,prev_zfunc);
-	SetRenderState(D3DRS_FOGENABLE,prev_fog);
-}
-
-void cD3DRender::DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color)
-{
-	VISASSERT(bActiveScene);
-	sVertexXYZD v;
-	v.pos=v1;
-	v.diffuse=ConvertColor(color);
-	lines3d.push_back(v);
-	v.pos=v2;
-	lines3d.push_back(v);
-}
-
-void cD3DRender::DrawPoint(const Vect3f &v1,sColor4c color)
-{
-	VISASSERT(bActiveScene);
-	sVertexXYZD v;
-	v.pos=v1;
-	v.diffuse=ConvertColor(color);
-	points3d.push_back(v);
-}
-
-void cD3DRender::DrawPixel(int x1,int y1,sColor4c color)
-{ 
-    if(!bActiveScene) return;
-	if(x1<xScrMin||x1>xScrMax||y1<yScrMin||y1>yScrMax) return;
-	PointStruct v;
-	v.x=(float)x1;
-	v.y=(float)y1;
-	v.diffuse=color;
-	points.push_back(v);
-	return; 
-}
-
-void cD3DRender::FlushPixel()
-{
-	if(points.empty())return;
-	SetNoMaterial(ALPHA_BLEND);
-	SetRenderState(D3DRS_ZWRITEENABLE, FALSE); 
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
-    if (!isOrthoSet) UseOrthographicProjection();
-
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<PointStruct>::iterator it;
-	FOR_EACH(points,it)
-	{
-		PointStruct& p=*it;
-		sVertexXYZD& cv=v[npoint];
-		cv.x=p.x;
-		cv.y=p.y;
-		cv.z=0.001f;
-		cv.diffuse=ConvertColor(p.diffuse);
-
-		npoint++;
-		if(npoint>=BufferXYZD.GetSize())
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
-
-	points.clear();
-}
-
-void cD3DRender::FlushLine()
-{
-	if(lines.empty())return;
-	SetNoMaterial(ALPHA_BLEND);
-    if (!isOrthoSet) UseOrthographicProjection();
-
-	VISASSERT((lines.size()&1)==0);
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<PointStruct>::iterator it;
-	FOR_EACH(lines,it)
-	{
-		PointStruct& p=*it;
-		sVertexXYZD& cv=v[npoint];
-		cv.x=p.x;
-		cv.y=p.y;
-		cv.z=0.001f;
-		cv.diffuse=ConvertColor(p.diffuse);
-
-		npoint++;
-		if(((npoint&1)==0) && npoint>=BufferXYZD.GetSize()-2)
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
-
-	lines.clear();
-}
-
-void cD3DRender::FlushFilledRect()
-{
-	if(rectangles.empty())return;
-	SetNoMaterial(ALPHA_BLEND);
-    if (!isOrthoSet) UseOrthographicProjection();
-
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<RectStruct>::iterator it;
-	FOR_EACH(rectangles,it)
-	{
-		RectStruct& p=*it;
-
-		sVertexXYZD* pv=v+npoint;
-        pv[0].diffuse=pv[1].diffuse=pv[2].diffuse=
-        pv[3].diffuse=pv[4].diffuse=pv[5].diffuse=ConvertColor(p.diffuse);
-                
-		pv[0].x=p.x1; pv[0].y=p.y1; pv[0].z=0.001f;
-		pv[1].x=p.x1; pv[1].y=p.y2; pv[1].z=0.001f;
-		pv[2].x=p.x2; pv[2].y=p.y1; pv[2].z=0.001f;
-
-		pv[3].x=p.x2; pv[3].y=p.y1; pv[3].z=0.001f;
-		pv[4].x=p.x1; pv[4].y=p.y2; pv[4].z=0.001f;
-		pv[5].x=p.x2; pv[5].y=p.y2; pv[5].z=0.001f;
-
-		npoint+=6;
-		if(npoint>=BufferXYZD.GetSize()-6)
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_TRIANGLES, npoint / 3);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_TRIANGLES, npoint / 3);
-
-	rectangles.clear();
+    FlushActiveDrawBuffer();
 }
 
 void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float du,float dv,
@@ -1891,7 +1608,6 @@ void cD3DRender::InitVertexBuffers()
 	const int sizemin=8192;
 	BufferXYZDT1.Create(size);
 	BufferXYZDT2.Create(sizemin);
-	BufferXYZD.Create(sizemin);
 }
 
 ////////////////////////////////////////////////////////////

@@ -476,7 +476,7 @@ void HistoryScene::drawPopup() {
 		Vect2f va(pos_x - 2, delta_y);
 		Vect2f vb(va.x + v2.x - v1.x + 2, va.y + v2.y - v1.y + 2);
 
-		terRenderDevice->DrawRectangle(va.x, va.y, vb.x - va.x, vb.y - va.y, sColor4c(255, 255, 255, 255), true);
+		terRenderDevice->DrawRectangle(va.x, va.y, vb.x - va.x, vb.y - va.y, sColor4c(255, 255, 255, 255), 1);
 		terRenderDevice->FlushPrimitive2D();
 
 	}

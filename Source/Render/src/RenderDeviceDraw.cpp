@@ -45,7 +45,7 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
             Vect3f& size = cf->Font[c];
 
             v[0].z = v[1].z = v[2].z = v[3].z = 0;
-            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);
+            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(diffuse);
             v[0].x = v[1].x = static_cast<float>(xOfs);
             v[0].y = v[2].y = static_cast<float>(yOfs);
             xOfs += xSize * size.z - 1;
@@ -119,17 +119,6 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
             v[0].z=v[1].z=v[2].z=v[3].z=0;
             v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(diffuse);
 
-            /*
-            v[1].u1() = v[3].u1() = size.x;
-            v[1].v1() = v[0].v1() = size.y;
-            v[2].u1() = v[0].u1() = v[1].u1() + size.z;
-            v[2].v1() = v[3].v1() = v[1].v1() + v_add;
-
-            v[1].u2() = v[3].u2() = (x0 - x) * duv.x + uv.x;
-            v[1].v2() = v[0].v2() = (y0 - y) * duv.y + uv.y;
-            v[2].u2() = v[0].u2() = (x1 - x) * duv.x + uv.x;
-            v[2].v2() = v[3].v2() = (y1 - y) * duv.y + uv.y;
-            /*/
             v[1].u2() = v[3].u2() = size.x;
             v[1].v2() = v[0].v2() = size.y;
             v[2].u2() = v[0].u2() = v[1].u2() + size.z;
@@ -147,9 +136,151 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
     }
 }
 
-// Other render functions
+// 2D primitives
 
-void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe,const sColor4c &Color) {
+float cInterfaceRenderDevice::getThinLineWidth() const {
+    return static_cast<float>(ScreenSize.y * (1.0 / 768.0) / 2.0);
+}
+
+void cInterfaceRenderDevice::DrawLine(int x1,int y1,int x2,int y2,const sColor4c& color, float width) {    
+    if (x1 <= x2) { if (x2<0 || x1>ScreenSize.x) return; }
+    else if (x1 < 0 || x2 > ScreenSize.x) return;
+    if (y1 <= y2) { if (y2<0 || y1>ScreenSize.y) return; }
+    else if (y1 < 0 || y2 > ScreenSize.y) return;
+
+    SetNoMaterial(ALPHA_BLEND);
+    UseOrthographicProjection();
+    
+    float w = width * getThinLineWidth();
+    float phi = xm::atan2(static_cast<float>(x2 - x1), static_cast<float>(y2 - y1));
+    float vc = w * xm::cos(phi);
+    float vs = w * xm::sin(phi);
+
+    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
+
+    v[0].z=v[1].z=v[2].z=v[3].z=0;
+    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(color);
+    v[0].x = static_cast<float>(x1 + vc - vs);
+    v[0].y = static_cast<float>(y1 - vs - vc);
+    v[1].x = static_cast<float>(x1 - vc - vs);
+    v[1].y = static_cast<float>(y1 + vs - vc);
+    v[2].x = static_cast<float>(x2 + vc + vs);
+    v[2].y = static_cast<float>(y2 - vs + vc);
+    v[3].x = static_cast<float>(x2 - vc + vs);
+    v[3].y = static_cast<float>(y2 + vs + vc);
+
+    v[0].u1()=0.0f; v[0].v1()=0.0f;
+    v[1].u1()=0.0f; v[1].v1()=1.0f;
+    v[2].u1()=1.0f; v[2].v1()=0.0f;
+    v[3].u1()=1.0f; v[3].v1()=1.0f;
+
+    db->Unlock();
+}
+
+void cInterfaceRenderDevice::DrawRectangle(int x1,int y1,int dx,int dy,const sColor4c& color, float outline) {
+    int x2=x1+dx,y2=y1+dy;
+    if (0 <= dx) { if (x2<0 || x1>ScreenSize.x) return; }
+    else if (x1 < 0 || x2 > ScreenSize.x) return;
+    if (0 <= dy) { if (y2<0 || y1>ScreenSize.y) return; }
+    else if (y1 < 0 || y2 > ScreenSize.y) return;
+
+    SetNoMaterial(ALPHA_BLEND);
+    UseOrthographicProjection();
+    uint32_t diffuse = ConvertColor(color);
+
+    if (0 < outline) {
+        float w = outline * getThinLineWidth();
+        auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        sVertexXYZDT1* v = nullptr;
+        indices_t* ib = nullptr;
+        db->Lock<sVertexXYZDT1>(8, 10, v, ib, true);
+
+        v[0].u1() = v[4].u1() = 0.0f; v[0].v1() = v[4].v1() =0.0f;
+        v[1].u1() = v[5].u1() = 0.0f; v[1].v1() = v[5].v1() =1.0f;
+        v[2].u1() = v[6].u1() = 1.0f; v[2].v1() = v[6].v1() =0.0f;
+        v[3].u1() = v[7].u1() = 1.0f; v[3].v1() = v[7].v1() =1.0f;
+
+        //Outer
+
+        v[0].z=v[1].z=v[2].z=v[3].z=0;
+        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=diffuse;
+        v[0].x=v[1].x=static_cast<float>(x1) - w;
+        v[0].y=v[2].y=static_cast<float>(y1) - w;
+        v[3].x=v[2].x=static_cast<float>(x2) + w;
+        v[1].y=v[3].y=static_cast<float>(y2) + w;
+
+        //Inner
+
+        v[4].z=v[5].z=v[6].z=v[7].z=0;
+        v[4].diffuse=v[5].diffuse=v[6].diffuse=v[7].diffuse=diffuse;
+        v[4].x=v[5].x=static_cast<float>(x1) + w;
+        v[4].y=v[6].y=static_cast<float>(y1) + w;
+        v[7].x=v[6].x=static_cast<float>(x2) - w;
+        v[5].y=v[7].y=static_cast<float>(y2) - w;
+
+        /* Join the dots using triangle strip, layout:
+         * 
+         *   0---------2
+         *   |\   /   /|
+         *   | 4-----6 |
+         *   | |     | |
+         *   |\|     |\|
+         *   | |     | |
+         *   | 5-----7 |
+         *   |/   /   \|
+         *   1---------3
+         */
+
+
+        size_t b = db->written_vertices;
+        //Top
+        ib[0] = b;
+        ib[1] = b + 4;
+        ib[2] = b + 2;
+        ib[3] = b + 6;
+        //Left
+        ib[4] = b + 3;
+        ib[5] = b + 7;
+        //Right
+        ib[6] = b + 1;
+        ib[7] = b + 5;
+        //Bottom
+        ib[8] = b;
+        ib[9] = b + 4;
+
+        db->Unlock();
+        db->EndTriangleStrip();
+    } else {
+        auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+        sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
+
+        v[0].z=v[1].z=v[2].z=v[3].z=0;
+        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=diffuse;
+        v[0].x=v[1].x=static_cast<float>(x1);
+        v[0].y=v[2].y=static_cast<float>(y1);
+        v[3].x=v[2].x=static_cast<float>(x2);
+        v[1].y=v[3].y=static_cast<float>(y2);
+
+        v[0].u1()=0.0f; v[0].v1()=0.0f;
+        v[1].u1()=0.0f; v[1].v1()=1.0f;
+        v[2].u1()=1.0f; v[2].v1()=0.0f;
+        v[3].u1()=1.0f; v[3].v1()=1.0f;
+
+        db->Unlock();
+    }
+}
+
+void cInterfaceRenderDevice::DrawPixel(int x1, int y1, const sColor4c& color) {
+    DrawRectangle(x1, y1, 1, 1, color, 0);
+}
+
+void cInterfaceRenderDevice::FlushPrimitive2D() {
+}
+
+// 3D primitives
+
+void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe, const sColor4c &Color) {
     VISASSERT(DrawNode);
     
     uint32_t zwrite = GetRenderState(RS_ZWRITEENABLE);
@@ -195,6 +326,64 @@ void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &m
     SetRenderState(RS_ZWRITEENABLE, zwrite);
 }
 
+//Do a binary search until we find the closest point to camera
+void TraceVisiblePoint(const Mat4f& m, const Vect3f& start, Vect3f& end) {
+    Vect3f dir = end - start;
+    double step_size = 0.5;
+    double pos = step_size;
+    const float dist_per_extra_step = 100;
+    size_t steps = std::min(10, std::max(2, xm::round(end.distance2(start) / (dist_per_extra_step * dist_per_extra_step * 3))));
+    for (int i = 0; i < steps; ++i) {
+        Vect3f point = start + (dir * static_cast<float>(pos)); 
+        double z = m.xz * point.x + m.yz * point.y + m.zz * point.z + m.wz;
+        step_size /= 2.0;
+        if (z <= 0) {
+            pos -= step_size;
+        } else {
+            //This is ahead of camera position, save it as last position
+            pos += step_size;
+            end = point;
+        }
+    }
+}
+
+void cInterfaceRenderDevice::DrawLine(const Vect3f &v1,const Vect3f &v2, const sColor4c& color) {
+    VISASSERT(DrawNode);
+    if (!DrawNode) {
+        return;
+    }
+    static Vect3f p1v, p1e, p2v, p2e;
+    DrawNode->ConvertorWorldToViewPort(&v1, &p1v, &p1e);
+    DrawNode->ConvertorWorldToViewPort(&v2, &p2v, &p2e);
+    //Only draw if one of points is not behind camera
+    if (0 >= p1v.z && 0 >= p2v.z) return;
+    
+    if (p1v.z <= 0) {
+        //P2 is visible, calculate where P1 goes behind camera
+        Vect3f v1v = v1;
+        TraceVisiblePoint(DrawNode->matViewProjScr, v2, v1v);
+        DrawNode->ConvertorWorldToViewPort(&v1v, &p1v, &p1e);
+    } else if (p2v.z <= 0) {
+        //P1 is visible, calculate where P2 goes behind camera
+        Vect3f v2v = v2;
+        TraceVisiblePoint(DrawNode->matViewProjScr, v1, v2v);
+        DrawNode->ConvertorWorldToViewPort(&v2v, &p2v, &p2e);
+    }
+    //If still behind camera cancel it
+    if (0 >= p1v.z && 0 >= p2v.z) return;
+    
+    DrawLine(p1e.x, p1e.y, p2e.x, p2e.y, color, 2);
+}
+
+void cInterfaceRenderDevice::DrawPoint(const Vect3f &v1, const sColor4c& color) {
+    DrawBound(MatXf::ID, v1, v1 + Vect3f(1,1,1), false, color);
+}
+
+void cInterfaceRenderDevice::FlushPrimitive3D() {
+}
+
+// Other render functions
+
 void cInterfaceRenderDevice::Draw(class cScene *Scene) {
     std::map<cTexture*, std::vector<cUnkLight*>> lightsByTex;
     for(int i=0;i<Scene->GetNumberLight();i++) {
@@ -205,7 +394,7 @@ void cInterfaceRenderDevice::Draw(class cScene *Scene) {
             lights.emplace_back(ULight);
         }
     }
-
+    
     if (lightsByTex.empty()) {
         return;
     }
