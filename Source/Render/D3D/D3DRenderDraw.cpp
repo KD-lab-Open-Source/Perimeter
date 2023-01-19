@@ -126,52 +126,6 @@ void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
 };
 
-void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
-{
-	SetWorldMatXf(Mesh->GetGlobalMatrix());
-	if(Data->mat&MAT_TEXMATRIX_STAGE1)
-	{
-		Mat4f mat;
-		MatXf &m=Data->TexMatrix;
-		memset(&mat,0,sizeof(mat));
-		mat.xx = m.rot()[0][0],	mat.xy = m.rot()[0][1];
-		mat.yx = m.rot()[1][0],	mat.yy = m.rot()[1][1];
-		mat.zx = m.trans().x,	mat.zy = m.trans().y;
-		RDCALL(lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat)));
-	}
-
-	if(Data->mat&MAT_RENDER_SPHEREMAP)
-	{ // сферический мапинг
-		Mat4f mat;
-		memset(&mat,0,sizeof(mat));
-		mat.xx=mat.yy=mat.wx=mat.wy=0.5f;
-		RDCALL(lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat)));
-	}
-
-	if(Option_DrawMeshScreen)
-		DrawNoMaterialShadowNoWorld(Mesh);
-
-}
-
-void cD3DRender::DrawNoMaterialShadow(cObjMesh *Mesh)
-{
-	SetWorldMatXf(Mesh->GetGlobalMatrix());
-	DrawNoMaterialShadowNoWorld(Mesh);
-}
-
-void cD3DRender::DrawNoMaterialShadowNoWorld(cObjMesh *Mesh)
-{
-    FlushActiveDrawBuffer();
-	cMeshTri *Tri=Mesh->GetTri();
-	RDCALL(lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
-		0,
-		Tri->GetOffsetVertex(),Tri->GetNumberVertex(),
-		3*Tri->GetOffsetPolygon(),Tri->GetNumberPolygon()));
-
-	NumberPolygon+=Tri->GetNumberPolygon();
-	NumDrawObject++;
-}
-
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode)
 {
 	if(CurrentFont==0)

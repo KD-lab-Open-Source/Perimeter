@@ -329,10 +329,6 @@ public:
 		RDCALL(lpD3DDevice->SetStreamSource(0,vb.d3d,0,vb.VertexSize));
 	}
 
-	virtual void DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data);
-	virtual void DrawNoMaterialShadow(cObjMesh *Mesh);
-	virtual void DrawNoMaterialShadowNoWorld(cObjMesh *Mesh);
-
 	void SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer);
 	void RestoreRenderTarget();
 
