@@ -296,6 +296,15 @@ public:
     virtual void Draw(class cScene *Scene);
     virtual void DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe=0, const sColor4c& Color=sColor4c(255,255,255,255));
     virtual void Draw(class FieldDispatcher *ffd);
+
+    virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
+                            cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE);
+    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
+                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0);
+    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
+                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE);
+    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
+                             cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE);
     
     virtual void DrawLine(int x1,int y1,int x2,int y2,const sColor4c& color, float width = 1.0);
     virtual void DrawPixel(int x1,int y1, const sColor4c& color);
@@ -326,15 +335,6 @@ public:
     virtual bool SetScreenShot(const char *fname) = 0;
     virtual uint32_t GetRenderState(eRenderStateOption option) = 0;
     virtual int SetRenderState(eRenderStateOption option,uint32_t value) = 0;
-    
-    virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-                            cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) = 0;
-    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0);
-    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
-                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
-    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
-                             cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
 
     virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) = 0;
     virtual int DeleteTexture(class cTexture *Texture) = 0;

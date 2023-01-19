@@ -357,21 +357,11 @@ size_t cInterfaceRenderDevice::GetSizeFromFormat(vertex_fmt_t fmt) const {
     return size;
 }
 
-void cInterfaceRenderDevice::DrawSprite2(int x, int y, int dx, int dy, float u, float v, float du, float dv,
-                             cTexture *Tex1, cTexture *Tex2, const sColor4c &ColorMul, float phase)
+uint32_t ColorByNormal(Vect3f n)
 {
-    DrawSprite2(x, y, dx, dy,
-                u, v, du, dv,
-                u, v, du, dv,
-                Tex1, Tex2, ColorMul, phase,
-                COLOR_MOD, ALPHA_NONE);
-}
-
-unsigned int ColorByNormal(Vect3f n)
-{
-    unsigned int x=((n.x+1)*127.5f);
-    unsigned int y=((n.y+1)*127.5f);
-    unsigned int z=((n.z+1)*127.5f);
+    uint32_t x=static_cast<uint32_t>((n.x+1)*127.5f) & 0xFF;
+    uint32_t y=static_cast<uint32_t>((n.y+1)*127.5f) & 0xFF;
+    uint32_t z=static_cast<uint32_t>((n.z+1)*127.5f) & 0xFF;
 
     return z+(x<<8)+(y<<16);
 }
@@ -379,9 +369,9 @@ unsigned int ColorByNormal(Vect3f n)
 Vect3f NormalByColor(uint32_t d)
 {
     Vect3f v;
-    v.y = ((d>> 16) & 0xFF);
-    v.x = ((d>> 8) & 0xFF);
-    v.z = ((d) & 0xFF);
+    v.y = static_cast<float>((d>> 16) & 0xFF);
+    v.x = static_cast<float>((d>> 8) & 0xFF);
+    v.z = static_cast<float>((d) & 0xFF);
     v*= (1/127.5f);
     v-=Vect3f(1,1,1);
     return v;

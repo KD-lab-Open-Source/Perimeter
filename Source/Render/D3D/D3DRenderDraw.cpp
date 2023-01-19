@@ -257,6 +257,72 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
     SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 }
 
+void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
+                             float u0,float v0,float du0,float dv0,
+                             float u1,float v1,float du1,float dv1,
+                             cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha,float phase,
+                             eColorMode mode,eBlendMode blend_mode)
+{
+    if (!Tex1 || !Tex2) return;
+    VISASSERT(bActiveScene);
+    int x2=x1+dx,y2=y1+dy;
+    if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
+    else if(x1<xScrMin||x2>xScrMax) return;
+    if(dy>=0) { if(y2<yScrMin||y1>yScrMax) return; }
+    else if(y1<yScrMin||y2>yScrMax) return;
+
+    FlushActiveDrawBuffer();
+
+    if (blend_mode == ALPHA_NONE && alpha < 1.0f) {
+        blend_mode = ALPHA_BLEND;
+    }
+    SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
+
+    if (!isOrthoSet) UseOrthographicProjection();
+
+    uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
+    SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
+    SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,1);
+
+    sColor4c lerp(255*lerp_factor,255*lerp_factor,255*lerp_factor,255*(1-lerp_factor));
+
+    SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
+    SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
+    SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
+    SetRenderState(D3DRS_TEXTUREFACTOR, ConvertColor(lerp));
+
+    SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
+    SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);
+    SetTextureStageState(1,D3DTSS_ALPHAARG2,D3DTA_DIFFUSE);
+
+    SetTextureStageState(1,D3DTSS_COLOROP,D3DTOP_MODULATE);
+    SetTextureStageState(1,D3DTSS_COLORARG1,D3DTA_TEXTURE);
+    SetTextureStageState(1,D3DTSS_COLORARG2,D3DTA_CURRENT);
+
+    cInterfaceRenderDevice::DrawSprite2(x1, y1, dx, dy, u0, v0, du0, dv0, u1, v1, du1, dv1, Tex1, Tex2, lerp_factor, alpha, phase, mode, blend_mode);
+    FlushActiveDrawBuffer();
+
+    SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
+    SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,index1);
+
+    SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
+    SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+
+    SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
+    SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+
+    SetTextureStageState( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
+    SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT );
+
+    SetTextureStageState( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
+    SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+
+}
+
 void cD3DRender::Draw(class ElasticSphere *es) {
     cInterfaceRenderDevice::Draw(es);
 

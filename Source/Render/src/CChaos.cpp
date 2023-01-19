@@ -370,7 +370,7 @@ void cChaos::RenderTexture()
 	umin1=sfmod(time*stime_tex1.x,1.0f);
 	vmin1=sfmod(time*stime_tex1.y,1.0f);
 
-	rd->DrawSprite2(0,0,pTexRender->GetWidth(),pTexRender->GetHeight(),
+	gb_RenderDevice->DrawSprite2(0,0,pTexRender->GetWidth(),pTexRender->GetHeight(),
 					umin,vmin,1,1,
 					umin1,vmin1,1,1,
 					pTexBump,pTexBump,sColor4c(255,255,255,255),0,COLOR_ADD);
@@ -392,8 +392,8 @@ void cChaos::RenderTex0()
 
 	umin1= xm::fmod(time * 0.1f, 1.0f);
 	vmin1= xm::fmod(time * 0.2f, 1.0f);
-	
-	rd->DrawSprite2(0,0,pTexRender->GetWidth(),pTexRender->GetHeight(),
+
+    gb_RenderDevice->DrawSprite2(0,0,pTexRender->GetWidth(),pTexRender->GetHeight(),
 					umin,vmin,1,1,
 					umin1,vmin1,1,1,
 					pTex0_0,pTex0_1,sColor4c(255,255,255,255),0,COLOR_ADD);
