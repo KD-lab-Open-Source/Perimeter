@@ -3,7 +3,6 @@
 #include "../shader/shaders.h"
 #include "DrawType.h"
 #include "VertexFormat.h"
-#include "VertexBuffer.h"
 
 int RDWriteLog(HRESULT err,char *exp,char *file,int line);
 void RDWriteLog(char *exp,int size=-1);
@@ -337,8 +336,6 @@ public:
 	void SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer);
 	void RestoreRenderTarget();
 
-	IndexBuffer& GetStandartIB(){return standart_ib;}
-
 	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 	{
 		LPDIRECT3DTEXTURE9 pTexture=NULL;
@@ -353,9 +350,6 @@ public:
 	void RestoreShader();
 
 protected:
-	void FlushLine3D();
-	void FlushPoint3D();
-
     IDirect3DIndexBuffer9*		CurrentIndexBuffer;
 	IDirect3DVertexShader9* 	CurrentVertexShader;	// vertex shader
 	IDirect3DPixelShader9*		CurrentPixelShader;
@@ -371,35 +365,6 @@ protected:
 	VertexPoolManager vertex_pool_manager;
 	IndexPoolManager index_pool_manager;
 
-	struct PointStruct
-	{
-		float x,y;
-		sColor4c diffuse;
-	};
-	struct RectStruct
-	{
-		float x1,y1;
-		float x2,y2;
-		sColor4c diffuse;
-	};
-	std::vector<PointStruct> points;
-	std::vector<PointStruct> lines;
-	std::vector<RectStruct>	rectangles;
-
-	std::vector<sVertexXYZD> lines3d;
-	std::vector<sVertexXYZD> points3d;
-
-	cVertexBuffer<sVertexXYZDT1> BufferXYZDT1;
-	cVertexBuffer<sVertexXYZDT2> BufferXYZDT2;
-
-	IndexBuffer standart_ib;
-
-	void InitVertexBuffers();
-
-	void FlushPixel();
-	void FlushLine();
-	void FlushFilledRect();
-
 	void DeleteShader();
 
 	void DeleteDynamicVertexBuffer();
@@ -410,7 +375,6 @@ protected:
 	void ClearTilemapPool();
 	void RestoreTilemapPool();
 
-	void InitStandartIB();
 	void GetTilemapTextureMemory(int& total,int& free);
 
 	void UpdateRenderMode();

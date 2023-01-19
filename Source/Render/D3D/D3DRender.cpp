@@ -184,7 +184,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 	delete f;
 	delete lpBuffer;
 */
-	InitVertexBuffers();
 	Fill(0,0,0,255);
 	BeginScene();
 	DrawRectangle(0,0,ScreenSize.x-1,ScreenSize.y-1,sColor4c(0,0,0,255));
@@ -215,8 +214,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 #endif
 
 	SetAdvance();
-
-	InitStandartIB();
 
 	if(bSupportTableFog)
 	{
@@ -459,10 +456,6 @@ int cD3DRender::Done()
 		delete dtAdvanceOriginal;
 		dtAdvanceOriginal=NULL;
 	}
-
-	DeleteIndexBuffer(standart_ib);
-	BufferXYZDT1.Destroy();
-	BufferXYZDT2.Destroy();
 /*
 	for(int i=0;i<LibVB.size();i++)
 	{
@@ -1442,137 +1435,6 @@ void cD3DRender::SetNoMaterial(eBlendMode blend,float Phase,cTexture *Texture0,
 
 	SetTextureStageState( 2, D3DTSS_COLOROP, D3DTOP_DISABLE );
 }
-
-void cD3DRender::InitVertexBuffers()
-{
-	const int size=32768;
-	const int sizemin=8192;
-	BufferXYZDT1.Create(size);
-	BufferXYZDT2.Create(sizemin);
-}
-
-////////////////////////////////////////////////////////////
-cVertexBufferInternal::cVertexBufferInternal()
-{
-	MTG();
-	numvertex=0;
-	cur_min_vertex=0;
-	start_vertex=0;
-    vb = new VertexBuffer();
-}
-
-void cVertexBufferInternal::Destroy()
-{
-	MTG();
-    if (vb) vb->Destroy();
-}
-
-cVertexBufferInternal::~cVertexBufferInternal()
-{
-    Destroy();
-    delete vb;
-    vb = nullptr;
-}
-
-uint8_t* cVertexBufferInternal::Lock(int minvertex)
-{
-	MTG();
-	void* min_index=NULL;
-
-    IDirect3DVertexBuffer9* pvb=gb_RenderDevice3D->GetVB(*vb);
-	if(GetSize()>minvertex)
-	{
-        short size = vb->VertexSize;
-		RDCALL(pvb->Lock(cur_min_vertex*size,GetSize()*size,
-			&min_index,D3DLOCK_NOOVERWRITE));
-	}else
-	{
-		RDCALL(pvb->Lock(0,0,&min_index,D3DLOCK_DISCARD));
-		cur_min_vertex=0;
-	}
-
-	return (uint8_t*)min_index;
-}
-
-void cVertexBufferInternal::Unlock(int num_write_vertex)
-{
-	MTG();
-	cD3DRender* rd=gb_RenderDevice3D;
-	RDCALL(rd->GetVB(*vb)->Unlock());
-
-	start_vertex=cur_min_vertex;
-	cur_min_vertex+=num_write_vertex;
-	VISASSERT(cur_min_vertex<=numvertex);
-}
-
-void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
-{
-	MTG();
-	numvertex=bytesize/vertexsize;
-	fmt=_fmt;
-	gb_RenderDevice3D->CreateVertexBuffer(*vb,numvertex,fmt,TRUE);
-}
-
-void cVertexBufferInternal::DrawPrimitive(ePrimitiveType Type, uint32_t Count, const MatXf &m)
-{
-	MTG();
-	gb_RenderDevice3D->SetWorldMatXf(m);
-	DrawPrimitive(Type,Count);
-}
-
-void cVertexBufferInternal::DrawPrimitive(ePrimitiveType Type, uint32_t Count)
-{
-	MTG();
-	cD3DRender* rd=gb_RenderDevice3D;
-	rd->SetFVF(fmt);
-	rd->SetStreamSource(*vb);
-    D3DPRIMITIVETYPE d3dType;
-    switch (Type) {
-        default:
-        case PT_TRIANGLESTRIP:
-            d3dType = D3DPT_TRIANGLESTRIP;
-            break;
-        case PT_TRIANGLES:
-            d3dType = D3DPT_TRIANGLELIST;
-            break;
-        case PT_POINTLIST:
-            d3dType = D3DPT_POINTLIST;
-            break;
-        case PT_LINELIST:
-            d3dType = D3DPT_LINELIST;
-            break;
-    }
-	RDCALL(rd->lpD3DDevice->DrawPrimitive(d3dType,start_vertex,Count));
-}
-
-void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)
-{
-	MTG();
-	cD3DRender* rd=gb_RenderDevice3D;
-	rd->SetFVF(fmt);
-	rd->SetStreamSource(*vb);
-	rd->SetIndices(rd->GetStandartIB());
-	RDCALL(rd->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
-		0, start_vertex, Count*2, (start_vertex>>2)*6, Count ));
-}
-
-void cD3DRender::InitStandartIB()
-{
-	CreateIndexBuffer(standart_ib,POLYGONMAX*sPolygon::PN, false);
-	indices_t* iptr=LockIndexBuffer(standart_ib);
-
-	for(int nPolygon=0; nPolygon<POLYGONMAX; nPolygon+=2 )
-	{
-        iptr[0] = 2*nPolygon;
-        iptr[1] = iptr[4] = 2*nPolygon + 1;
-        iptr[2] = iptr[3] = 2*nPolygon + 2;
-        iptr[5] = 2*nPolygon + 3;
-        iptr += 6;
-	}
-
-	UnlockIndexBuffer(standart_ib);
-}
-
 
 void cD3DRender::SaveStates(const char* fname)
 {
