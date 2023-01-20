@@ -82,7 +82,8 @@ public:
     eRenderDeviceSelection GetRenderSelection() const override {
         return DEVICE_D3D9;
     }
-    
+
+    uint32_t GetWindowCreationFlags() const override;
 	int Init(int xScr,int yScr,int mode, void* wnd=0, int RefreshRateInHz=0) override;
 	bool ChangeSize(int xScr,int yScr,int mode) override;
 	int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override;

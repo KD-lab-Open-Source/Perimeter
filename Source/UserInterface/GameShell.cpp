@@ -1233,12 +1233,14 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		editParameters();
 		break;
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	case VK_RETURN | KBD_CTRL: 
 	case VK_RETURN | KBD_CTRL | KBD_SHIFT: {
 		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		//setUseAlternativeNames(true);
+#ifdef _WIN32
+        //TODO Port TriggerChain to ingame dev UI instead of using win32 stuff
 		static TriggerEditor triggerEditor(triggerInterface());
 		TriggerChain* triggerChain = universe()->activePlayer()->getStrategyToEdit();
 		if(triggerChain && triggerEditor.run(*triggerChain, hWndVisGeneric)){
@@ -1251,6 +1253,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			data.manualData = manualData();
 			CurrentMission.saveMission(data, false);
 		}
+#endif
 
 		terCamera->setFocus(HardwareCameraFocus);
         SDL_ShowCursor(SDL_FALSE);

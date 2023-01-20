@@ -10,7 +10,6 @@
 extern GameShell* gameShell;
 extern cInterfaceRenderDevice* terRenderDevice;
 extern cVisGeneric* terVisGeneric;
-extern HWND hWndVisGeneric;
 extern int terSoundEnable;
 extern float terSoundVolume;
 

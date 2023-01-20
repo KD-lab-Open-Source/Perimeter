@@ -10,12 +10,28 @@
 #include "DrawBuffer.h"
 #include "SokolShaders.h"
 #include "RenderTracker.h"
+#include <SDL_hints.h>
 
 cSokolRender::cSokolRender() = default;
 
 cSokolRender::~cSokolRender() {
     Done();
 };
+
+eRenderDeviceSelection cSokolRender::GetRenderSelection() const {
+    return DEVICE_SOKOL;
+}
+
+uint32_t cSokolRender::GetWindowCreationFlags() const {
+    uint32_t flags = cInterfaceRenderDevice::GetWindowCreationFlags();
+#ifdef SOKOL_GL
+    flags |= SDL_WINDOW_OPENGL;
+#endif
+#ifdef SOKOL_METAL
+    flags |= SDL_WINDOW_METAL;
+#endif
+    return flags;
+}
 
 int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
     RenderSubmitEvent(RenderEvent::INIT, "Sokol start");
@@ -33,62 +49,114 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     activePipelineType = PIPELINE_TYPE_TRIANGLE;
     activePipelineMode.cull = CameraCullMode = CULL_CCW;
     
-    //Set some attributes before context creation
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    //Prepare sokol gfx desc
+    sg_desc desc = {};
+    desc.pipeline_pool_size = PERIMETER_SOKOL_PIPELINES_MAX,
+    desc.shader_pool_size = 8,
+    desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
+    desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
+    desc.context.color_format = SG_PIXELFORMAT_RGBA8;
+    desc.context.depth_format = SG_PIXELFORMAT_DEPTH_STENCIL;
 
-    //Use OpenGL 3.2 Core
+    //OpenGL / OpenGLES
+#ifdef SOKOL_GL
+    //Setup some attributes before context creation
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+    //Fullscreen anti-aliasing
+    //TODO make this configurable, or maybe use sokol?
+    /*
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+    //*/
+
+#ifdef SOKOL_GLCORE33
+    //Use OpenGL 3.3 Core
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengl", SDL_HINT_OVERRIDE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#endif
 
+#if defined(SOKOL_GLES2) || defined(SOKOL_GLES3)
+    //Use OpenGLES
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#ifdef SOKOL_GLES2
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+#else
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles", SDL_HINT_OVERRIDE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+#endif
+#endif
+#endif
+
+#ifdef SOKOL_D3D11
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "direct3d", SDL_HINT_OVERRIDE);
+#endif
+    
+#ifdef SOKOL_METAL
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "metal", SDL_HINT_OVERRIDE);
+#endif
+
+    const char* render_driver = SDL_GetHint(SDL_HINT_RENDER_DRIVER);
+    printf("SDL render driver: %s\n", render_driver);
+
+#ifdef SOKOL_METAL
+    // Obtain Metal device by creating a SDL Metal View, also useful to retain the Metal device
+    sdlMetalView = SDL_Metal_CreateView(sdlWindow);
+    if (sdlMetalView == nullptr) {
+        ErrH.Abort("Error creating SDL Metal View", XERR_CRITICAL, 0, SDL_GetError());
+    }
+    sokol_metal_setup_desc(sdlMetalView, &desc);
+#endif
+
+#ifdef SOKOL_GL
     // Create an OpenGL context associated with the window.
     sdlGlContext = SDL_GL_CreateContext(sdlWindow);
     if (sdlGlContext == nullptr) {
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
+#endif
     
-    //Init sokol gfx
-    {
-        sg_desc desc = {};
-        desc.pipeline_pool_size = PERIMETER_SOKOL_PIPELINES_MAX,
-        desc.shader_pool_size = 8,
-        desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
-        desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
-        desc.context.color_format = SG_PIXELFORMAT_RGBA8;
-        sg_setup(&desc);
-    }
+    //Call sokol gfx setup
+    sg_setup(&desc);
 #ifdef PERIMETER_DEBUG
     printf("cSokolRender::Init sg_setup done\n");
 #endif
     
     //Create empty texture
-    sg_image_desc desc = {};
-    desc.label = "EmptySlotTexture";
-    desc.width = desc.height = 64;
-    desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
-    desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-    desc.num_mipmaps = 1;
-    desc.min_filter = desc.mag_filter = SG_FILTER_NEAREST;
-    desc.usage = SG_USAGE_IMMUTABLE;
-    size_t pixel_len = sokol_pixelformat_bytesize(desc.pixel_format);
-    size_t buf_len = desc.height * desc.width * pixel_len;
+    sg_image_desc imgdesc = {};
+    imgdesc.label = "EmptySlotTexture";
+    imgdesc.width = imgdesc.height = 64;
+    imgdesc.wrap_u = imgdesc.wrap_v = SG_WRAP_REPEAT;
+    imgdesc.pixel_format = SG_PIXELFORMAT_RGBA8;
+    imgdesc.num_mipmaps = 1;
+    imgdesc.min_filter = imgdesc.mag_filter = SG_FILTER_NEAREST;
+    imgdesc.usage = SG_USAGE_IMMUTABLE;
+    size_t pixel_len = sokol_pixelformat_bytesize(imgdesc.pixel_format);
+    size_t buf_len = imgdesc.height * imgdesc.width * pixel_len;
     uint8_t* buf = new uint8_t[buf_len];
     memset(buf, 0xFF, buf_len);
-    desc.data.subimage[0][0] = { buf, buf_len };
-    emptyTexture = new SokolTexture2D(desc);
+    imgdesc.data.subimage[0][0] = { buf, buf_len };
+    emptyTexture = new SokolTexture2D(imgdesc);
 
 #ifdef PERIMETER_DEBUG
     //Create test texture
-    desc.label = "TestTexture";
+    imgdesc.label = "TestTexture";
     for (int i = 0; i < buf_len; i += pixel_len * 4) {
         *reinterpret_cast<uint32_t*>(&buf[i]) = 0xFF0000FF;
         *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*1]) = 0xFF00FF00;
         *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*2]) = 0xFFFF0000;
         *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*3]) = 0xFFAAAAAA;
     }
-    desc.data.subimage[0][0] = { buf, buf_len };
-    testTexture = new SokolTexture2D(desc);
+    imgdesc.data.subimage[0][0] = { buf, buf_len };
+    testTexture = new SokolTexture2D(imgdesc);
 #endif
     delete[] buf;
 
@@ -130,11 +198,23 @@ int cSokolRender::Done() {
     delete testTexture;
     testTexture = nullptr;
 #endif
-    sg_shutdown();
+    if (sdlWindow) {
+        //Make sure is called only once, as it may crash in some backends/OSes
+        sg_shutdown();
+    }
+#ifdef SOKOL_METAL
+    if (sdlMetalView != nullptr) {
+        SDL_Metal_DestroyView(sdlMetalView);
+        sdlMetalView = nullptr;
+    }
+#endif
+#ifdef SOKOL_GL
     if (sdlGlContext != nullptr) {
         SDL_GL_DeleteContext(sdlGlContext);
         sdlGlContext = nullptr;
     }
+#endif
+    sdlWindow = nullptr;
     RenderSubmitEvent(RenderEvent::DONE, "Sokol done");
     return ret;
 }

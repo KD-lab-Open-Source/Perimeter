@@ -178,6 +178,8 @@ bool MissionEditor::keyPressed(const sKey& Key)
 				terRenderDevice->Flush(true);
                 SDL_ShowCursor(SDL_TRUE);
 				ShareHandle<SaveUnitData> data = unit->universalSave(0);
+#ifdef _WIN32
+                //TODO we should port editArchive to ingame UI and remove win32 window stuff
                 HWND hwnd = static_cast<HWND>(hWndVisGeneric);
 				EditArchive editArchive(hwnd, TreeControlSetup(0, 0, 500, 400, "editObjectPropsSetup"));
 				if(editArchive.edit(data)){
@@ -197,6 +199,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 						}												
 					}
 				}
+#endif
 				terCamera->setFocus(HardwareCameraFocus);
                 SDL_ShowCursor(SDL_FALSE);
 				RestoreFocus();

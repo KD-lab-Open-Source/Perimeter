@@ -136,7 +136,6 @@ cInterfaceRenderDevice::~cInterfaceRenderDevice() {
 }
 
 int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
-    Done();
     gb_RenderDevice = this;
     ScreenSize.x = xScr;
     ScreenSize.y = yScr;

@@ -109,7 +109,9 @@ bool applicationRestartFlag = false;
 std::vector<std::string> applicationRestartArgs;
 
 SDL_Window* sdlWindow = nullptr;
+#ifdef _WIN32
 HWND hWndVisGeneric = nullptr;
+#endif
 
 extern char _bMenuMode;
 
@@ -461,19 +463,8 @@ void PerimeterSetupDisplayMode() {
     SDL_GetWindowSize(sdlWindow, &terScreenSizeX, &terScreenSizeY);
 }
 
-void PerimeterCreateWindow(eRenderDeviceSelection deviceSelection) {
-    if (deviceSelection == DEVICE_HEADLESS) {
-        return;
-    }
-    Uint32 window_flags = SDL_WINDOW_HIDDEN;
-    if (deviceSelection == DEVICE_D3D9) {
-#ifndef _WIN32
-        //On non Windows we use dxvk-native which uses Vulkan
-        window_flags |= SDL_WINDOW_VULKAN;
-#endif
-    } else if (deviceSelection == DEVICE_SOKOL) {
-        window_flags |= SDL_WINDOW_OPENGL;
-    }
+void PerimeterCreateWindow(uint32_t window_flags) {
+    window_flags |= SDL_WINDOW_HIDDEN;
     if (terFullScreen) {
         window_flags |= WINDOW_FULLSCREEN_FLAG;
     }
@@ -542,18 +533,6 @@ void PerimeterCreateWindow(eRenderDeviceSelection deviceSelection) {
     if (terGrabInput && !terFullScreen) {
         SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
     }
-
-#ifdef _WIN32
-    //Get HWND from SDL window
-    SDL_SysWMinfo wm_info;
-	SDL_VERSION(&wm_info.version);
-	SDL_GetWindowWMInfo(sdlWindow, &wm_info);
-	
-    hWndVisGeneric = wm_info.info.win.window;
-#else
-    //dxvk-native uses HWND as SDL2 window handle, so this is allowed
-    hWndVisGeneric = static_cast<HWND>(sdlWindow);
-#endif
 }
 
 cInterfaceRenderDevice* SetGraph()
@@ -592,14 +571,27 @@ cInterfaceRenderDevice* SetGraph()
         ModeRender |= RENDERDEVICE_MODE_RGB16;
     }
 
-//	if(HTManager::instance()->IsUseHT())
-		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
+//	if(HTManager::instance()->IsUseHT()) 		
+        ModeRender |= RENDERDEVICE_MODE_MULTITHREAD;
 
-    PerimeterCreateWindow(deviceSelection);
+    if (deviceSelection != DEVICE_HEADLESS) {
+        PerimeterCreateWindow(IRenderDevice->GetWindowCreationFlags());
+    }
 
     void* wnd;
     if (deviceSelection == DEVICE_D3D9) {
-        wnd = hWndVisGeneric;
+#ifdef _WIN32
+        //Get HWND from SDL window
+        SDL_SysWMinfo wm_info;
+        SDL_VERSION(&wm_info.version);
+        SDL_GetWindowWMInfo(sdlWindow, &wm_info);
+        
+        wnd = wm_info.info.win.window;
+        hWndVisGeneric = wnd;
+#else
+        //dxvk-native uses HWND as SDL2 window handle, so this is allowed
+        wnd = static_cast<HWND>(sdlWindow);
+#endif
     } else {
         wnd = sdlWindow;
     }
@@ -717,7 +709,9 @@ void HTManager::finitGraphics()
         SDL_ShowCursor(SDL_TRUE);
         SDL_DestroyWindow(sdlWindow);
         sdlWindow = nullptr;
+#ifdef _WIN32
         hWndVisGeneric = nullptr;
+#endif
     }
 }
 
@@ -1185,7 +1179,9 @@ void app_event_poll() {
                 SDL_ShowCursor(SDL_TRUE);
                 SDL_DestroyWindow(sdlWindow);
                 sdlWindow = nullptr;
+#ifdef _WIN32
                 hWndVisGeneric = nullptr;
+#endif
             }
             break;
         }

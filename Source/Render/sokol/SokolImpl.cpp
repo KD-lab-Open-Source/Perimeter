@@ -1,11 +1,6 @@
 // This file imports sokol header with implementation def set
+#include <string>
+#include "xerrhand.h"
 #define SOKOL_IMPL
+#define SOKOL_ASSERT xassert
 #include <sokol_gfx.h>
-
-//Also implement shaders
-#include "xmath.h"
-#include "SokolShaders.h"
-SOKOL_SHADER_IMPL(color_tex1);
-SOKOL_SHADER_IMPL(color_tex2);
-SOKOL_SHADER_IMPL(normal);
-SOKOL_SHADER_IMPL(terrain);

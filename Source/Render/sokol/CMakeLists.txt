@@ -46,7 +46,8 @@ IF (OPTION_PROCESS_SHADERS)
                 TARGET sokol_shaders PRE_BUILD
                 COMMAND ${SOKOL_SHDC_BIN}
                 --input "${SHADER_FILE}.glsl" --output "${OUTPUT_FILE}.h" --slang "${PERIMETER_SHADER_LANG}"
-                --ifdef ${SHADER_DEFINES} --reflection --module "${OUTPUT_FILE}" --format=sokol
+                --format=sokol --reflection
+                --ifdef ${SHADER_DEFINES} --module "${OUTPUT_FILE}"
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Source/Render/sokol/shaders
                 VERBATIM
         )
@@ -58,32 +59,59 @@ IF (OPTION_PROCESS_SHADERS)
     PERIMETER_SOKOL_SHDC(terrain            terrain      "")
 ENDIF()
 
-#Use OpenGL Core 3.3 in Windows, Linux and MacOS
+#Select Sokol API per platform and options
+set(RenderSokol_SokolImpl sokol/SokolImpl.cpp)
 if (MACOS)
-    #TODO add switch to choose Metal in MacOS?
-    add_definitions(-DSOKOL_GLCORE33)
-    set(RenderSokol_LINK_LIBS
-            "-framework OpenGL"
-            )
+    set(RenderSokol_SokolImpl sokol/SokolImpl.mm)
+    if(OPTION_SOKOL_API MATCHES "GLCORE33")
+        message("Sokol API: OpenGL Core 3.3")
+        add_definitions(-DSOKOL_GLCORE33)
+        set(RenderSokol_LINK_LIBS "-framework OpenGL")
+    else()
+        message("Sokol API: Metal")
+        add_definitions(-DSOKOL_METAL)
+        set(RenderSokol_LINK_LIBS "-framework Foundation -framework QuartzCore -framework Metal -framework MetalKit")
+        #set(RenderSokol_LINK_LIBS "${RenderSokol_LINK_LIBS} -fobjc-arc -framework AudioToolbox")
+        #You may wanna use UIKit here instead when porting to iOS in far far future
+        set(RenderSokol_LINK_LIBS "${RenderSokol_LINK_LIBS} -framework Cocoa") 
+    endif()
 elseif(PERIMETER_WINDOWS)
-    add_definitions(-DSOKOL_GLCORE33)
-    #set(RenderSokol_LINK_LIBS opengl32)
+    if(OPTION_SOKOL_API MATCHES "GLCORE33")
+        message("Sokol API: OpenGL Core 3.3")
+        add_definitions(-DSOKOL_GLCORE33)
+        #set(RenderSokol_LINK_LIBS opengl32)
+    else()
+        message("Sokol API: DirectX 11")
+        add_definitions(-DSOKOL_D3D11)
+    endif()
 else()
-    add_definitions(-DSOKOL_GLCORE33)
-    set(RenderSokol_LINK_LIBS GL)
+    if(OPTION_SOKOL_API MATCHES "GLES2")
+        message("Sokol API: OpenGLES 2.0")
+        add_definitions(-DSOKOL_GLES2)
+        set(RenderSokol_LINK_LIBS GL)
+    elseif(OPTION_SOKOL_API MATCHES "GLES3")
+        message("Sokol API: OpenGLES 3.0")
+        add_definitions(-DSOKOL_GLES3)
+        set(RenderSokol_LINK_LIBS GL)
+    else()
+        message("Sokol API: OpenGL Core 3.3")
+        add_definitions(-DSOKOL_GLCORE33)
+        set(RenderSokol_LINK_LIBS GL)
+    endif()
 endif()
 
 #Required for SDL_GL_* funcs called during render init
-set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY})
+set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY} XTool)
 
 add_library(RenderSokol STATIC
+    ${RenderSokol_SokolImpl}
     sokol/SokolResources.cpp
     sokol/SokolRender.cpp
     sokol/SokolRenderTexture.cpp
     sokol/SokolRenderState.cpp
     sokol/SokolRenderDraw.cpp
     sokol/SokolRenderPipeline.cpp
-    sokol/SokolImpl.cpp
+    sokol/SokolShaders.cpp
 )
 
 IF (OPTION_PROCESS_SHADERS)

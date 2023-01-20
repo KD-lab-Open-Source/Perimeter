@@ -68,8 +68,8 @@ struct sKey {
 //TODO get rid of HWND once we have ingame dev UI
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-#endif
 extern HWND hWndVisGeneric;
+#endif
 
 // ---   Focus   ------------------------------
 extern SDL_Window* sdlWindow;

@@ -250,6 +250,7 @@ public:
     
     // Common methods
 
+    virtual uint32_t GetWindowCreationFlags() const { return 0; }
     virtual int Init(int xScr,int yScr,int mode, void* wnd = nullptr, int RefreshRateInHz=0);
     virtual int Done();
     virtual int BeginScene();

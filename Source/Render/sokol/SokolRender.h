@@ -1,13 +1,24 @@
 #ifndef PERIMETER_SOKOLRENDER_H
 #define PERIMETER_SOKOLRENDER_H
 
+#if defined(SOKOL_GLCORE33) || defined(SOKOL_GLES2) || defined(SOKOL_GLES3)
+#define SOKOL_GL (1)
+#endif
+
 #include "sokol_gfx.h"
 #include <SDL_video.h>
+#ifdef SOKOL_METAL
+#include <SDL_metal.h>
+#endif
 #include "SokolRenderPipeline.h"
 
 const eColorMode PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA = static_cast<const eColorMode>(1 << 7);
 
 const int PERIMETER_SOKOL_TEXTURES = 2;
+
+#ifdef SOKOL_METAL
+void sokol_metal_setup_desc(SDL_MetalView view, sg_desc* desc);
+#endif
 
 struct SokolCommand {
     SokolCommand();
@@ -37,7 +48,12 @@ class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
     SDL_Window* sdlWindow = nullptr;
+#ifdef SOKOL_GL
     SDL_GLContext sdlGlContext = nullptr;
+#endif
+#ifdef SOKOL_METAL
+    SDL_MetalView sdlMetalView = nullptr;
+#endif
     
     //Renderer state
     bool ActiveScene = false;
@@ -82,10 +98,9 @@ public:
 
     // //// cInterfaceRenderDevice impls start ////
 
-    eRenderDeviceSelection GetRenderSelection() const override {
-        return DEVICE_SOKOL;
-    }
-    
+    eRenderDeviceSelection GetRenderSelection() const override;
+
+    uint32_t GetWindowCreationFlags() const override;
     void SetActiveDrawBuffer(class DrawBuffer*) override;
     
     int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override;

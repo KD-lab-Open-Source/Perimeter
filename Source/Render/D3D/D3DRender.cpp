@@ -1,3 +1,7 @@
+#ifndef _WIN32
+//For SDL_WINDOW_VULKAN constant
+#include <SDL_video.h>
+#endif
 #include "StdAfxRD.h"
 #include "Font.h"
 #include "files/files.h"
@@ -76,9 +80,19 @@ uint32_t cD3DRender::GetD3DFVFFromFormat(vertex_fmt_t fmt) {
     }
 }
 
+uint32_t cD3DRender::GetWindowCreationFlags() const {
+    uint32_t flags = cInterfaceRenderDevice::GetWindowCreationFlags();
+#ifndef _WIN32
+    //On non Windows we use dxvk-native which uses Vulkan
+    flags |= SDL_WINDOW_VULKAN;
+#endif
+    return flags;
+}
+
 int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 {
     RenderSubmitEvent(RenderEvent::INIT, "D3D9 start");
+    Done();
     int ret = cInterfaceRenderDevice::Init(xscr, yscr, Mode, wnd, RefreshRateInHz);
     if (ret != 0) return ret;
     if (wnd == nullptr) return 1;
