@@ -34,7 +34,9 @@ void main() {
 @fs fs
 //Uniforms
 uniform fs_params {
-    int un_mode;
+    int un_color_mode;
+    float un_tex2_lerp;
+    float un_alpha_test;
 };
 uniform sampler2D un_tex0;
 #if defined(SHADER_TEX_2)
@@ -54,16 +56,15 @@ out vec4 frag_color;
 void main() {
     #if defined(SHADER_TEX_2)
     vec4 tex0 = texture(un_tex0, fs_uv0);
-    if ((un_mode & (1 << 7)) != 0) { //PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA
-        float lerp = ((un_mode & 0xFF00) >> 8) / 255.0;
+    if (0 <= un_tex2_lerp) { //Modulate color add alpha
         tex0 = (
             tex0
-            * vec4(lerp, lerp, lerp, 1.0)
-            + vec4(1.0f - lerp, 1.0f - lerp, 1.0f - lerp, 0.0)
+            * vec4(un_tex2_lerp, un_tex2_lerp, un_tex2_lerp, 1.0)
+            + vec4(1.0f - un_tex2_lerp, 1.0f - un_tex2_lerp, 1.0f - un_tex2_lerp, 0.0)
         );
     }
     //eColorMode
-    switch (un_mode & 0x3) {
+    switch (un_color_mode) {
         default:
         case 0: { //COLOR_MOD Modulate
             frag_color = texture(un_tex1, fs_uv1) * tex0 * fs_color;
@@ -86,27 +87,7 @@ void main() {
     //Modulate each other, default
     frag_color = texture(un_tex0, fs_uv0) * fs_color;
     #endif //SHADER_TEX_2
-    //eAlphaTestMode
-    float alpharef = -1;
-    switch ((un_mode >> 2) & 0x3) {
-        default:
-        case 0: { //ALPHATEST_NONE
-            break;
-        }
-        case 1: { //ALPHATEST_GT_0
-            alpharef = 0.0;
-            break;
-        }
-        case 2: { //ALPHATEST_GT_1
-            alpharef = 1.0 / 255.0;
-            break;
-        }
-        case 3: { //ALPHATEST_GT_254
-            alpharef = 254.0 / 255.0;
-            break;
-        }
-    };
-    if (!(alpharef < frag_color.a)) discard;
+    if (un_alpha_test >= frag_color.a) discard;
 }
 @end
 

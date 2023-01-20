@@ -54,7 +54,9 @@ int cSokolRender::EndScene() {
     //Iterate each command
     size_t cmdnum = 0;
     for (auto& command : commands) {
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         RenderSubmitEvent(RenderEvent::PROCESS_COMMAND, "", command);
+#endif
         cmdnum += 1;
         //Nothing to draw
         if (3 > command->vertices) {
@@ -70,9 +72,9 @@ int cSokolRender::EndScene() {
             continue;
         }
 #if defined(PERIMETER_DEBUG) && 0
-        printf("[%d] id: 0x%X fmt: 0x%X vtx: %d idx: %d mode 0x%X\n",
+        printf("[%d] id: 0x%X fmt: 0x%X vtx: %d idx: %d\n",
                cmdnum, command->pipeline_id, pipeline->vertex_fmt,
-               command->vertices, command->indices, command->fs_mode
+               command->vertices, command->indices
         );
         printf("tex0 0x%X 0x%X tex1 0x%X 0x%X\n",
                command->textures[0], command->textures[0]?command->textures[0]->image.id:0,
@@ -192,7 +194,23 @@ int cSokolRender::EndScene() {
             int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "fs_params");
             if (0 <= fs_params_slot) {
                 fs_params_t fs_params;
-                fs_params.un_mode = command->fs_mode;
+                fs_params.un_color_mode = static_cast<int>(command->fs_color_mode);
+                fs_params.un_tex2_lerp = command->fs_tex2_lerp;
+                switch (command->fs_alpha_test) {
+                    default:
+                    case ALPHATEST_NONE:
+                        fs_params.un_alpha_test = -1.0f;
+                        break;
+                    case ALPHATEST_GT_0:
+                        fs_params.un_alpha_test = 0.0f;
+                        break;
+                    case ALPHATEST_GT_1:
+                        fs_params.un_alpha_test = 1.0f;
+                        break;
+                    case ALPHATEST_GT_254:
+                        fs_params.un_alpha_test = 254.0f;
+                        break;
+                }
                 sg_range fs_params_range = SG_RANGE(fs_params);
                 sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, &fs_params_range);
             }
@@ -250,7 +268,9 @@ int cSokolRender::Flush(bool wnd) {
 
 void cSokolRender::FinishCommand() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
+#endif
         return;
     }
     
@@ -268,9 +288,8 @@ void cSokolRender::FinishCommand() {
         RegisterPipeline(pipeline_id);
     }
 
-#ifdef PERIMETER_RENDER_TRACKER
-    std::string label = "Pipeline: " + std::to_string(pipeline_id)
-                        + " FSMode: " + std::to_string(activeCommand.fs_mode);
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
+    std::string label = "Pipeline: " + std::to_string(pipeline_id);
     RenderSubmitEvent(RenderEvent::FINISH_COMMAND, label.c_str());
 #endif
 
@@ -295,7 +314,9 @@ void cSokolRender::FinishCommand() {
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
         cmd->SetTexture(i, activeCommand.texture_handles[i], activeCommand.sokol_textures[i]);
     }
-    cmd->fs_mode = activeCommand.fs_mode;
+    cmd->fs_color_mode = activeCommand.fs_color_mode;
+    cmd->fs_tex2_lerp = activeCommand.fs_tex2_lerp;
+    cmd->fs_alpha_test = activeCommand.fs_alpha_test;
     cmd->vertices = activeDrawBuffer->written_vertices;
     cmd->indices = activeDrawBuffer->written_indices;
     
@@ -320,9 +341,9 @@ void cSokolRender::FinishCommand() {
     //Submit command
     commands.emplace_back(cmd);
 
-#ifdef PERIMETER_RENDER_TRACKER
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
     label = "Submit - Pipeline: " + std::to_string(pipeline_id)
-            + " FSMode: " + std::to_string(activeCommand.fs_mode)
+            + " ColM: " + std::to_string(activeCommand.fs_color_mode)
             + " OwVB: " + std::to_string(cmd->owned_vertex_buffer)
             + " OwIB: " + std::to_string(cmd->owned_index_buffer)
             + " Vtxs: " + std::to_string(cmd->vertices)
@@ -345,7 +366,9 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
 }
 
 void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
     RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
+#endif
     if (activeDrawBuffer != nullptr && activeDrawBuffer != db) {
         //We need to submit internal render buffer first
         FinishCommand();
@@ -371,6 +394,13 @@ void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
         FinishCommand();
     }
     activeCommandW = *matrix;
+}
+
+void cSokolRender::SetTex2Lerp(float lerp) {
+    if (activeCommand.fs_tex2_lerp != lerp) {
+        FinishCommand();
+    }
+    activeCommand.fs_tex2_lerp = lerp;
 }
 
 void cSokolRender::UseOrthographicProjection() {
@@ -402,15 +432,14 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
         tex1 = Texture1->GetFrameImage(nFrame).sg;
     }
-
-    int fs_mode = color_mode | (activeCommandAlphaTest << 2);    
+    
     if (activePipelineMode.blend != blend
-     || activeCommand.fs_mode != fs_mode
+     || activeCommand.fs_color_mode != color_mode
      || activeCommand.sokol_textures[0] != tex0
      || activeCommand.sokol_textures[1] != tex1) {
         FinishCommand();
         activePipelineMode.blend = blend;
-        activeCommand.fs_mode = fs_mode;
+        activeCommand.fs_color_mode = color_mode;
         activeCommand.SetTexture(0, Texture0, tex0);
         activeCommand.SetTexture(1, Texture1, tex1);
     }
@@ -503,7 +532,7 @@ uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
         case RS_CULLMODE:
             return activePipelineMode.cull;
         case RS_ALPHA_TEST_MODE:
-            return activeCommandAlphaTest;
+            return activeCommand.fs_alpha_test;
         case RS_BILINEAR:
             return 1;
     }
@@ -552,7 +581,7 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
             break;
         }
         case RS_ALPHA_TEST_MODE:
-            activeCommandAlphaTest = static_cast<eAlphaTestMode>(value);
+            activeCommand.fs_alpha_test = static_cast<eAlphaTestMode>(value);
             break;
         case RS_BILINEAR:
             //Useless as we can't change globally

@@ -4,6 +4,7 @@
 #ifdef PERIMETER_DEBUG
 #define PERIMETER_RENDER_TRACKER
 //#define PERIMETER_RENDER_TRACKER_PRINT
+//#define PERIMETER_RENDER_TRACKER_COMMANDS
 //#define PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
 //#define PERIMETER_RENDER_TRACKER_RESOURCES
 //#define PERIMETER_RENDER_TRACKER_LOCKS
@@ -30,8 +31,8 @@ public:
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         GET_DRAW_BUFFER,
         SET_ACTIVE_DRAW_BUFFER,
-#endif
         SUBMIT_DRAW_BUFFER,
+#endif
         
         //PTR: Texture
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
@@ -67,9 +68,11 @@ public:
         SET_VIEWPROJ_MATRIX,
         
 #ifdef PERIMETER_SOKOL
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         //PTR: SokolCommand
         FINISH_COMMAND,
         PROCESS_COMMAND,
+#endif
 #endif
     } type = INIT;
     RenderEvent();
@@ -93,8 +96,8 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         case RenderEvent::GET_DRAW_BUFFER: return "GET_DRAW_BUFFER";
         case RenderEvent::SET_ACTIVE_DRAW_BUFFER: return "SET_ACTIVE_DRAW_BUFFER";
-#endif
         case RenderEvent::SUBMIT_DRAW_BUFFER: return "SUBMIT_DRAW_BUFFER";
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
         case RenderEvent::CREATE_TEXTURE: return "CREATE_TEXTURE";
         case RenderEvent::DELETE_TEXTURE: return "DELETE_TEXTURE";
@@ -122,8 +125,10 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
         case RenderEvent::SET_WORLD_MATRIX: return "SET_WORLD_MATRIX";
         case RenderEvent::SET_VIEWPROJ_MATRIX: return "SET_VIEWPROJ_MATRIX";
 #ifdef PERIMETER_SOKOL
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         case RenderEvent::FINISH_COMMAND: return "FINISH_COMMAND";
         case RenderEvent::PROCESS_COMMAND: return "PROCESS_COMMAND";
+#endif
 #endif
         default: return "?";
     }
@@ -149,15 +154,17 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::END_SCENE:
         case RenderEvent::FLUSH_SCENE:
 #ifdef PERIMETER_SOKOL
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         case RenderEvent::FINISH_COMMAND:
         case RenderEvent::PROCESS_COMMAND:
+#endif
 #endif
             return 1;
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         case RenderEvent::GET_DRAW_BUFFER:
         case RenderEvent::SET_ACTIVE_DRAW_BUFFER:
-#endif
         case RenderEvent::SUBMIT_DRAW_BUFFER:
+#endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS 
         case RenderEvent::LOCK_TEXTURE:
         case RenderEvent::UNLOCK_TEXTURE:

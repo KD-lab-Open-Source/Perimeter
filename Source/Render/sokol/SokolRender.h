@@ -12,8 +12,6 @@
 #endif
 #include "SokolRenderPipeline.h"
 
-const eColorMode PERIMETER_SOKOL_COLOR_MODE_MOD_COLOR_ADD_ALPHA = static_cast<const eColorMode>(1 << 7);
-
 const int PERIMETER_SOKOL_TEXTURES = 2;
 
 #ifdef SOKOL_METAL
@@ -41,7 +39,9 @@ struct SokolCommand {
     struct SokolBuffer* index_buffer = nullptr;
     bool owned_mvp = false;
     Mat4f* vs_mvp = nullptr;
-    int fs_mode = 0;
+    eColorMode fs_color_mode = COLOR_MOD;
+    float fs_tex2_lerp = -1;
+    eAlphaTestMode fs_alpha_test = ALPHATEST_NONE;
 };
 
 class cSokolRender: public cInterfaceRenderDevice {
@@ -80,7 +80,6 @@ private:
     SokolCommand activeCommand;
     PIPELINE_TYPE activePipelineType = PIPELINE_TYPE_DEFAULT;
     PIPELINE_MODE activePipelineMode;
-    eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
     Mat4f activeCommandVP;
     Mat4f activeCommandW;
 
@@ -88,6 +87,7 @@ private:
     void ClearCommands();
     void FinishCommand();
     void SetVPMatrix(const Mat4f* matrix);
+    void SetTex2Lerp(float lerp);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
