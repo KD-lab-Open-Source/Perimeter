@@ -53,12 +53,10 @@ void cObjMesh::Draw(cCamera *DrawNode)
 					attribute,
 					GetAmbient(),GetDiffuse(),GetSpecular(),Data);
 
-#ifdef PERIMETER_D3D9
-        if (gb_RenderDevice3D) {
-            gb_RenderDevice3D->dtFixed->SetSimplyMaterial(this, &Data);
-            gb_RenderDevice3D->dtFixed->DrawNoMaterial(this, &Data);
-        }
-#endif
+        gb_RenderDevice->BeginDrawMesh(true, false);
+        gb_RenderDevice->SetSimplyMaterialMesh(this, &Data);
+        gb_RenderDevice->DrawNoMaterialMesh(this, &Data);
+        gb_RenderDevice->EndDrawMesh();
 
 		if(Option_DrawMeshBound)
 			DrawNode->GetRenderDevice()->DrawBound(GetGlobalMatrix(),

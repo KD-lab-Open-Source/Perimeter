@@ -42,9 +42,6 @@ cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 
 	MaxTextureAspectRatio=0;
 
-	dtFixed=NULL;
-	dtAdvance=NULL;
-	dtAdvanceOriginal=NULL;
 	texture_interpolation=D3DTEXF_LINEAR;
 }
 

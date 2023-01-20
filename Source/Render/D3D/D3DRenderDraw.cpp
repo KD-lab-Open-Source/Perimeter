@@ -126,6 +126,60 @@ void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
 };
 
+void cD3DRender::BeginDrawMesh(bool obj_mesh, bool use_shadow) {
+    VISASSERT(!dtDrawActive);
+    FlushActiveDrawBuffer();
+    dtDrawActive = obj_mesh ? dtFixed : dtAdvance;
+    dtDrawActive->BeginDraw(use_shadow);
+}
+
+void cD3DRender::EndDrawMesh() {
+    VISASSERT(dtDrawActive);
+    if (!dtDrawActive) return;
+    dtDrawActive->EndDraw();
+    dtDrawActive = nullptr;
+    FlushActiveDrawBuffer();
+}
+
+void cD3DRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+    VISASSERT(dtDrawActive);
+    if (!dtDrawActive) return;
+    dtDrawActive->SetSimplyMaterial(mesh, data);
+}
+
+void cD3DRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+    VISASSERT(dtDrawActive);
+    if (!dtDrawActive) return;
+    dtDrawActive->DrawNoMaterial(mesh, data);
+}
+
+void cD3DRender::BeginDrawShadow(bool shadow_map) {
+    VISASSERT(!dtDrawShadowActive);
+    FlushActiveDrawBuffer();
+    dtDrawShadowActive = shadow_map ? dtAdvance : dtFixed;
+    dtDrawShadowActive->BeginDrawShadow();
+}
+
+void cD3DRender::EndDrawShadow() {
+    VISASSERT(dtDrawShadowActive);
+    if (!dtDrawShadowActive) return;
+    dtDrawShadowActive->EndDrawShadow();
+    dtDrawShadowActive = nullptr;
+    FlushActiveDrawBuffer();
+}
+
+void cD3DRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
+    VISASSERT(dtDrawShadowActive);
+    if (!dtDrawShadowActive) return;
+    dtDrawShadowActive->SetSimplyMaterialShadow(mesh, texture);
+}
+
+void cD3DRender::DrawNoMaterialShadow(cObjMesh* mesh) {
+    VISASSERT(dtDrawShadowActive);
+    if (!dtDrawShadowActive) return;
+    dtDrawShadowActive->DrawNoMaterialShadow(mesh);
+}
+
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode)
 {
 	if(CurrentFont==0)

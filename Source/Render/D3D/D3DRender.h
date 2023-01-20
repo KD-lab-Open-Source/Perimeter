@@ -47,9 +47,11 @@ public:
 
     D3DCAPS9					DeviceCaps;
 
-    DrawType*	dtFixed;
-    DrawType*	dtAdvance;
-    DrawType*	dtAdvanceOriginal;
+    DrawType*	dtFixed = nullptr;
+    DrawType*	dtAdvance = nullptr;
+    DrawType*	dtAdvanceOriginal = nullptr;
+    DrawType*   dtDrawActive = nullptr;
+    DrawType*   dtDrawShadowActive = nullptr;
 
     HWND						hWnd;
 
@@ -121,11 +123,13 @@ public:
     uint32_t GetRenderState(eRenderStateOption option) override;
 	int SetRenderState(eRenderStateOption option,uint32_t value) override;
 
-	void FlushPrimitive2D() override;
-
 	void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override;
 	void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
 				cTexture* pTexture,eColorMode mode,Vect2f uv,Vect2f duv,float phase=0,float lerp_factor=1) override;
+
+    void FlushPrimitive2D() override;
+
+    void FlushPrimitive3D() override;
 
 	bool SetScreenShot(const char *fname) override;
 	void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
@@ -139,10 +143,20 @@ public:
     void UseOrthographicProjection() override;
     void SetDrawTransform(class cCamera *DrawNode) override;
     void SetWorldMat4f(const Mat4f* matrix) override;
-    
-    void FlushPrimitive3D() override;
+
+    void BeginDrawMesh(bool obj_mesh, bool use_shadow) override;
+    void EndDrawMesh() override;
+    void SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) override;
+    void DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) override;
+
+    void BeginDrawShadow(bool shadow_map) override;
+    void EndDrawShadow() override;
+    void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override;
+    void DrawNoMaterialShadow(cObjMesh* mesh) override;
 
     // //// cInterfaceRenderDevice impls end ////
+    
+    //void DrawNoMaterialShadowNoWorld(cObjMesh *Mesh);
 
     //This converts flag based vertex format to D3D9 FVF format
     static uint32_t GetD3DFVFFromFormat(vertex_fmt_t fmt) ;

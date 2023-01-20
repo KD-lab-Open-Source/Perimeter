@@ -33,8 +33,6 @@ enum eTestVisible
 	VISIBLE_INSIDE=2,
 };
 
-struct IDirect3DSurface9;
-
 class cCamera : public cUnknownClass, public sAttribute
 {
 protected:
@@ -128,7 +126,7 @@ public:
 	inline const Vect3f& GetWorldK()							{ return WorldK; }
 
 	inline cTexture* GetRenderTarget()							{ return RenderTarget; }
-	inline IDirect3DSurface9* GetZBuffer()						{ return pZBuffer;}
+	inline struct IDirect3DSurface9* GetZBuffer()				{ return pZBuffer;}
 	void SetRenderTarget(cTexture *pTexture,IDirect3DSurface9* pZBuf);
 
 	void EnableGridTest(int grid_dx,int grid_dy,int grid_size);

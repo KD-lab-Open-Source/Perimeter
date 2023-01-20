@@ -207,6 +207,23 @@ class cTexture;
 class cTexLibrary;
 class cCamera;
 
+struct sDataRenderMaterial
+{
+    sColor4f	Ambient;
+    sColor4f	Diffuse;
+    sColor4f	Specular;
+    sColor4f	Emissive;
+    float		Power;
+
+    float Phase;
+    int			mat;//eMaterialMode
+    cTexture	*Tex[2];
+    MatXf		TexMatrix;
+    float		MaterialAnimPhase;
+
+    sDataRenderMaterial()			{ Phase=0; MaterialAnimPhase=0; }
+};
+
 using ColorConversionFunc = uint32_t (*)(const sColor4c&);
 
 class cInterfaceRenderDevice : public cUnknownClass
@@ -360,6 +377,29 @@ public:
     virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) = 0;
     virtual void UnlockIndexBuffer(class IndexBuffer &ib) = 0;
     virtual void SubmitDrawBuffer(class DrawBuffer* db) = 0;
+
+    virtual void BeginDrawMesh(bool obj_mesh, bool use_shadow) = 0;
+    virtual void EndDrawMesh() = 0;
+    virtual void SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) = 0;
+    virtual void DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) = 0;
+
+    virtual void BeginDrawShadow(bool shadow_map) = 0;
+    virtual void EndDrawShadow() = 0;
+    virtual void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) = 0;
+    virtual void DrawNoMaterialShadow(cObjMesh* mesh) = 0;
+
+    /*
+    virtual bool CreateShadowTexture(int xysize);
+    virtual void DeleteShadowTexture();
+    
+    virtual void SetMaterialTilemap(cTileMap *TileMap);
+    virtual void SetMaterialTilemapShadow();
+    virtual void SetTileColor(sColor4f color);
+
+    virtual cTexture* GetShadowMap();
+    virtual ???* GetZBuffer();
+    virtual cTexture* GetLightMap();
+    */
 };
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection);
@@ -404,23 +444,6 @@ enum eMaterialMode
 
     MAT_RENDER_SPHEREMAP	=1<<22,
     MAT_LIGHT				=1<<31
-};
-
-struct sDataRenderMaterial
-{
-    sColor4f	Ambient;
-    sColor4f	Diffuse;
-    sColor4f	Specular;
-    sColor4f	Emissive;
-    float		Power;
-
-    float Phase;
-    int			mat;//eMaterialMode
-    cTexture	*Tex[2];
-    MatXf		TexMatrix;
-    float		MaterialAnimPhase;
-
-    sDataRenderMaterial()			{ Phase=0; MaterialAnimPhase=0; }
 };
 
 bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);

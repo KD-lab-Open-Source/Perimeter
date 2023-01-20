@@ -45,3 +45,29 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
     cInterfaceRenderDevice::OutText(x, y, string, color, align, blend_mode, pTexture, mode, uv, duv, phase, lerp_factor);
 }
 
+// Mesh draw
+
+
+void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow) {
+}
+
+void cSokolRender::EndDrawMesh() {
+}
+
+void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+}
+
+void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+}
+
+void cSokolRender::BeginDrawShadow(bool shadow_map) {
+}
+
+void cSokolRender::EndDrawShadow() {
+}
+
+void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
+}
+
+void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
+}

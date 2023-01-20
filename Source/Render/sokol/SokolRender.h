@@ -145,6 +145,16 @@ public:
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
 
+    void BeginDrawMesh(bool obj_mesh, bool use_shadow) override;
+    void EndDrawMesh() override;
+    void SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) override;
+    void DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) override;
+
+    void BeginDrawShadow(bool shadow_map) override;
+    void EndDrawShadow() override;
+    void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override;
+    void DrawNoMaterialShadow(cObjMesh* mesh) override;
+
     // //// cInterfaceRenderDevice impls end ////
 };
 

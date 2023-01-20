@@ -87,6 +87,16 @@ public:
     indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
     void UnlockIndexBuffer(class IndexBuffer &ib) override;
     void SubmitDrawBuffer(class DrawBuffer* db) override {}
+
+    void BeginDrawMesh(bool obj_mesh, bool use_shadow) override {}
+    void EndDrawMesh() override {}
+    void SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) override {}
+    void DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) override {}
+
+    void BeginDrawShadow(bool shadow_map) override {}
+    void EndDrawShadow() override {}
+    void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override {}
+    void DrawNoMaterialShadow(cObjMesh* mesh) override {}
 };
 
 #endif //PERIMETER_EMPTYRENDERDEVICE_H

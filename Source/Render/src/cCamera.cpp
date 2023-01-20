@@ -798,82 +798,52 @@ void cCamera::DrawSortMaterial()
 	cCamera* pShadow=FindCildCamera(ATTRCAMERA_SHADOWMAP);
 
 	bool use_shadow=pShadow && !GetAttribute(ATTRCAMERA_REFLECTION) && Option_IsShadowMap;
-    
-#ifdef PERIMETER_D3D9
-    if (gb_RenderDevice->GetRenderSelection() != DEVICE_D3D9) {
-        //TODO
-        return;
-    }
-    DrawType* draw=gb_RenderDevice3D->dtAdvance;
-	draw->BeginDraw(use_shadow);
-	draw->SetSimplyMaterial(cur_mat->GetFront(),&Data);
-#endif
 
-	if(GetAttribute(ATTRCAMERA_REFLECTION))
-	{
-		std::vector<cMeshSortingPhase*>::iterator it;
-		FOR_EACH(ar,it)
-		{
-			cMeshSortingPhase* s=*it;
+    gb_RenderDevice->BeginDrawMesh(false, use_shadow);
+    gb_RenderDevice->SetSimplyMaterialMesh(cur_mat->GetFront(), &Data);
 
+	if (GetAttribute(ATTRCAMERA_REFLECTION)) {
+        for (cMeshSortingPhase* s : ar) {
 			if(cur_mat->pBank!=s->pBank || cur_mat->channel!=s->channel ||
 				cur_mat->phase!=s->phase || cur_mat->diffuse!=s->diffuse ||
 				cur_mat->ambient!=s->ambient ||
-				cur_mat->attribute!=s->attribute)
-			{
+				cur_mat->attribute!=s->attribute) {
 				cur_mat=s;
 				cur_mat->GetMaterial(&Data);
 
-#ifdef PERIMETER_D3D9
-				draw->SetSimplyMaterial(cur_mat->GetFront(),&Data);
-#endif
+                gb_RenderDevice->SetSimplyMaterialMesh(cur_mat->GetFront(), &Data);
 				change_mat++;
 			}
 
-			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting())
-			{
-				if(pMesh->GetGlobalMatrix().trans().z<GetHReflection())
-					continue;
+			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting()) {
+				if(pMesh->GetGlobalMatrix().trans().z<GetHReflection()) {
+                    continue;
+                }
 
-#ifdef PERIMETER_D3D9
-				draw->DrawNoMaterial(pMesh,&Data);
-#endif
+                gb_RenderDevice->DrawNoMaterialMesh(pMesh, &Data);
 				draw_object++;
 			}
 		}
-	}else
-	{
-		std::vector<cMeshSortingPhase*>::iterator it;
-		FOR_EACH(ar,it)
-		{
-			cMeshSortingPhase* s=*it;
-
+	} else {
+		for (cMeshSortingPhase* s : ar) {
 			if(cur_mat->pBank!=s->pBank || cur_mat->channel!=s->channel ||
 			   cur_mat->phase!=s->phase || cur_mat->diffuse!=s->diffuse ||
-			   cur_mat->attribute!=s->attribute)
-			{
+			   cur_mat->attribute!=s->attribute) {
 				cur_mat=s;
 				cur_mat->GetMaterial(&Data);
 
-#ifdef PERIMETER_D3D9
-				draw->SetSimplyMaterial(cur_mat->GetFront(),&Data);
-#endif
+                gb_RenderDevice->SetSimplyMaterialMesh(cur_mat->GetFront(), &Data);
 				change_mat++;
 			}
 
-			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting())
-			{
-#ifdef PERIMETER_D3D9
-				draw->DrawNoMaterial(pMesh,&Data);
-#endif
+			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting()) {
+                gb_RenderDevice->DrawNoMaterialMesh(pMesh, &Data);
 				draw_object++;
 			}
 		}
 	}
-    
-#ifdef PERIMETER_D3D9
-	draw->EndDraw();
-#endif
+
+    gb_RenderDevice->EndDrawMesh();
 }
 
 struct SortMaterialByShadowTexture
@@ -895,13 +865,8 @@ void cCamera::DrawSortMaterialShadow()
 	std::sort(ar.begin(),ar.end(),SortMaterialByShadowTexture());
 	cMeshBank *CurBank=NULL;
 
-#ifdef PERIMETER_D3D9
-	DrawType* draw=gb_RenderDevice3D->dtFixed;
-	if(GetAttribute(ATTRCAMERA_SHADOWMAP))
-		draw=gb_RenderDevice3D->dtAdvance;
-
-	int change_mat=0,draw_object=0;
-	draw->BeginDrawShadow();
+    gb_RenderDevice->BeginDrawShadow(GetAttribute(ATTRCAMERA_SHADOWMAP));
+    int change_mat=0,draw_object=0;
 
 	std::vector<cMeshSortingPhase*>::iterator it;
 	FOR_EACH(ar,it)
@@ -913,7 +878,7 @@ void cCamera::DrawSortMaterialShadow()
 			CurBank=s.pBank;
 
 			cTexture* Texture=CurBank->GetMaterial()->GetAttribute(MAT_ALPHA_TEST)?CurBank->GetTexture(0):0;
-			draw->SetSimplyMaterialShadow(s.GetFront(),Texture);
+            gb_RenderDevice->SetSimplyMaterialShadow(s.GetFront(),Texture);
 			change_mat++;
 		}
 
@@ -922,13 +887,12 @@ void cCamera::DrawSortMaterialShadow()
 			if(pMesh->GetBank()->GetMaterial()->GetAttribute(MAT_IS_BLEND))
 				continue;
 			if(pMesh->GetAttr(ATTRCAMERA_SHADOW))
-				draw->DrawNoMaterialShadow(pMesh);
+                gb_RenderDevice->DrawNoMaterialShadow(pMesh);
 			draw_object++;
 		}
 	}
 
-	draw->EndDrawShadow();
-#endif
+    gb_RenderDevice->EndDrawShadow();
 }
 
 void cCamera::DrawSortMaterialShadowStrencil()
