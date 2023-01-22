@@ -552,14 +552,8 @@ void XErrorHandler::SetCrash(void (*cf)(void))
     crash_func = cf;
 }
 
-void XErrorHandler::RTC(const char *file, unsigned int line, const char *expr)
-{
-	char msg[256];
-	strcpy(msg, file);
-	strcat(msg,", LINE: ");
-    sprintf(convBuf, "%d", line);
-    strcat(msg, convBuf);
-    strcat(msg,"\r\n");
-    strcat(msg,expr);
-	Abort(rterrorMSG,XERR_USER,-1,msg);
+void ErrH_RTC(const char *file,unsigned int line, const char *expr) {
+    std::string msg = file;
+    msg += ":" + std::to_string(line) + "\r\n" + expr;
+    ErrH.Abort(rterrorMSG,XERR_USER,-1,msg.c_str());
 }

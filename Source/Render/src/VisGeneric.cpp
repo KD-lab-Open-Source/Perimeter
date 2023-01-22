@@ -422,7 +422,7 @@ void DebugMemInfo()
 
 void dprintf(char *format, ...)
 {
-#ifdef _DEBUG
+#ifdef PERIMETER_DEBUG
   va_list args;
   char    buffer[512];
 
