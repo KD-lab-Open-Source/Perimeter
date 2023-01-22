@@ -64,9 +64,6 @@ private:
     
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;
-#ifdef PERIMETER_DEBUG
-    SokolTexture2D* testTexture = nullptr;
-#endif
 
     //Pipelines
     std::unordered_map<std::string, sg_shader> shaders;

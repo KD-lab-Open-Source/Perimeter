@@ -28,22 +28,27 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             img = nullptr;
         }
         std::string label = Texture->GetName() + std::to_string(i); 
-        sg_image_desc desc = {};
-        desc.label = label.c_str();
-        desc.width = dx;
-        desc.height = dy;
-        desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
-        desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-        desc.num_mipmaps = Texture->GetNumberMipMap();
+        sg_image_desc* desc = new sg_image_desc();
+        desc->label = label.c_str();
+        desc->width = dx;
+        desc->height = dy;
+        desc->wrap_u = desc->wrap_v = SG_WRAP_REPEAT;
+        desc->pixel_format = SG_PIXELFORMAT_RGBA8;
+        desc->num_mipmaps = Texture->GetNumberMipMap();
         //Filter must be linear for small font textures to not look unreadable
-        desc.min_filter = 1 < desc.num_mipmaps ? SG_FILTER_LINEAR_MIPMAP_LINEAR : SG_FILTER_LINEAR;
-        desc.mag_filter = SG_FILTER_LINEAR;
+#ifdef SOKOL_GL
+        //TODO check why mipmaps isn't working
+        desc->min_filter = SG_FILTER_LINEAR;
+#else
+        desc->min_filter = 1 < desc->num_mipmaps ? SG_FILTER_LINEAR_MIPMAP_LINEAR : SG_FILTER_LINEAR;
+#endif
+        desc->mag_filter = SG_FILTER_LINEAR;
 
         if (!FileImage) {
-            desc.usage = SG_USAGE_DYNAMIC;
+            desc->usage = SG_USAGE_DYNAMIC;
             img = new SokolTexture2D(desc);
         } else {
-            desc.usage = SG_USAGE_IMMUTABLE;
+            desc->usage = SG_USAGE_IMMUTABLE;
             std::vector<uint8_t*> buffers;
 
             uint8_t* buf = new uint8_t[tex_len];
@@ -85,11 +90,11 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             }
 
             //Load buffer into desc image
-            desc.data.subimage[0][0] = { buf, tex_len };
+            desc->data.subimage[0][0] = { buf, tex_len };
 
             //Load mipmaps    
-            if (1 < desc.num_mipmaps) {
-                for (int nMipMap = 1; nMipMap < desc.num_mipmaps; nMipMap++) {
+            if (1 < desc->num_mipmaps) {
+                for (int nMipMap = 1; nMipMap < desc->num_mipmaps; nMipMap++) {
                     int mmw = dx >> nMipMap;
                     int mmh = dy >> nMipMap;
                     size_t bufNextLen = mmw * mmh * 4;
@@ -97,22 +102,17 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
                     buffers.push_back(bufNext);
 
                     BuildMipMap(mmw, mmh, 4, 8 * mmw, buf, 4 * mmw, bufNext,
-                                8, 8, 8, 8, 16, 8, 0, 24,
+                                8, 8, 8, 8, 0, 8, 16, 24,
                                 Texture->GetAttribute(TEXTURE_MIPMAP_POINT | TEXTURE_MIPMAPBLUR | TEXTURE_BLURWHITE)
                     );
 
-                    desc.data.subimage[0][nMipMap] = { bufNext, bufNextLen };
+                    desc->data.subimage[0][nMipMap] = { bufNext, bufNextLen };
 
                     buf = bufNext;
                 }
             }
 
             img = new SokolTexture2D(desc);
-
-            //Cleanup buffers
-            for (uint8_t* dbuf : buffers) {
-                delete[] dbuf;
-            }
         }
 
         Texture->GetFrameImage(i).sg = img;

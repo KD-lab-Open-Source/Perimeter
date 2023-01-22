@@ -16,6 +16,7 @@
 
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
+    MTG();
     if (ActiveScene) {
         xassert(0);
         return 1;
@@ -27,6 +28,7 @@ int cSokolRender::BeginScene() {
 
 int cSokolRender::EndScene() {
     RenderSubmitEvent(RenderEvent::END_SCENE, ActiveScene ? "" : "NotActiveScene");
+    MTG();
     if (!ActiveScene) {
         xassert(0);
         return 1;
@@ -114,7 +116,9 @@ int cSokolRender::EndScene() {
             xxassert(0, "cSokolRender::EndScene missing vertex_buffer");
             continue;
         }
-        command->vertex_buffer->update(command->vertices * pipeline->vertex_size);
+        if (command->vertex_buffer->data) {
+            command->vertex_buffer->update(command->vertices * pipeline->vertex_size);
+        }
         if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene not valid state");
             continue;
@@ -125,7 +129,9 @@ int cSokolRender::EndScene() {
                 xxassert(0, "cSokolRender::EndScene missing index_buffer");
                 continue;
             }
-            command->index_buffer->update(command->indices * sizeof(indices_t));
+            if (command->index_buffer->data) {
+                command->index_buffer->update(command->indices * sizeof(indices_t));
+            }
             if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
                 xxassert(0, "cSokolRender::EndScene not valid state");
                 continue;
@@ -296,7 +302,7 @@ void cSokolRender::FinishCommand() {
 #ifdef PERIMETER_DEBUG
     xassert(!activeDrawBuffer->IsLocked());
     if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX1) {
-        if (activeCommand.sokol_textures[0] != emptyTexture && activeCommand.sokol_textures[0] != testTexture) {
+        if (activeCommand.sokol_textures[0] != emptyTexture) {
             xassert(activeCommand.sokol_textures[0]);
             xassert(activeCommand.texture_handles[0]);
         }

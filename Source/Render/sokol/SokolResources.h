@@ -10,32 +10,38 @@
 //TODO copied from _sg_pixelformat_bytesize private function, remove if becomes public
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
-struct SokolBuffer {
-    sg_buffer buffer = {};
+/**
+ * Common attributes for sokol resources
+ */
+struct SokolResource {
     void* data = nullptr;
     size_t data_len = 0;
     bool dirty = true;
     bool locked = false;
+    explicit SokolResource(size_t data_len);
+    NO_COPY_CONSTRUCTOR(SokolResource)
+    ~SokolResource();
+    void FreeData();
+};
 
-    explicit SokolBuffer(const sg_buffer_desc& desc);
+struct SokolBuffer : SokolResource {
+    sg_buffer_desc* desc = nullptr;
+    sg_buffer buffer = {};
+
+    explicit SokolBuffer(sg_buffer_desc* desc);
     NO_COPY_CONSTRUCTOR(SokolBuffer)
-
     ~SokolBuffer();
     
     void update(size_t len);
 };
 
-struct SokolTexture2D {
+struct SokolTexture2D : SokolResource {
     sg_pixel_format pixel_format;
+    sg_image_desc* desc = nullptr;
     sg_image image = {};
-    void* data = nullptr;
-    size_t data_len = 0;
-    bool dirty = true;
-    bool locked = false;
 
-    explicit SokolTexture2D(const sg_image_desc& desc);
+    explicit SokolTexture2D(sg_image_desc* desc);
     NO_COPY_CONSTRUCTOR(SokolTexture2D)
-
     ~SokolTexture2D();
 
     void update();

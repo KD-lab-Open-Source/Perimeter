@@ -131,34 +131,20 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
 #endif
     
     //Create empty texture
-    sg_image_desc imgdesc = {};
-    imgdesc.label = "EmptySlotTexture";
-    imgdesc.width = imgdesc.height = 64;
-    imgdesc.wrap_u = imgdesc.wrap_v = SG_WRAP_REPEAT;
-    imgdesc.pixel_format = SG_PIXELFORMAT_RGBA8;
-    imgdesc.num_mipmaps = 1;
-    imgdesc.min_filter = imgdesc.mag_filter = SG_FILTER_NEAREST;
-    imgdesc.usage = SG_USAGE_IMMUTABLE;
-    size_t pixel_len = sokol_pixelformat_bytesize(imgdesc.pixel_format);
-    size_t buf_len = imgdesc.height * imgdesc.width * pixel_len;
+    sg_image_desc* imgdesc = new sg_image_desc();
+    imgdesc->label = "EmptySlotTexture";
+    imgdesc->width = imgdesc->height = 64;
+    imgdesc->wrap_u = imgdesc->wrap_v = SG_WRAP_REPEAT;
+    imgdesc->pixel_format = SG_PIXELFORMAT_RGBA8;
+    imgdesc->num_mipmaps = 1;
+    imgdesc->min_filter = imgdesc->mag_filter = SG_FILTER_NEAREST;
+    imgdesc->usage = SG_USAGE_IMMUTABLE;
+    size_t pixel_len = sokol_pixelformat_bytesize(imgdesc->pixel_format);
+    size_t buf_len = imgdesc->height * imgdesc->width * pixel_len;
     uint8_t* buf = new uint8_t[buf_len];
     memset(buf, 0xFF, buf_len);
-    imgdesc.data.subimage[0][0] = { buf, buf_len };
+    imgdesc->data.subimage[0][0] = { buf, buf_len };
     emptyTexture = new SokolTexture2D(imgdesc);
-
-#ifdef PERIMETER_DEBUG
-    //Create test texture
-    imgdesc.label = "TestTexture";
-    for (int i = 0; i < buf_len; i += pixel_len * 4) {
-        *reinterpret_cast<uint32_t*>(&buf[i]) = 0xFF0000FF;
-        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*1]) = 0xFF00FF00;
-        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*2]) = 0xFFFF0000;
-        *reinterpret_cast<uint32_t*>(&buf[i+pixel_len*3]) = 0xFFAAAAAA;
-    }
-    imgdesc.data.subimage[0][0] = { buf, buf_len };
-    testTexture = new SokolTexture2D(imgdesc);
-#endif
-    delete[] buf;
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();
@@ -194,10 +180,6 @@ int cSokolRender::Done() {
     shaders.clear();
     delete emptyTexture;
     emptyTexture = nullptr;
-#ifdef PERIMETER_DEBUG
-    delete testTexture;
-    testTexture = nullptr;
-#endif
     if (sdlWindow) {
         //Make sure is called only once, as it may crash in some backends/OSes
         sg_shutdown();
@@ -236,11 +218,11 @@ void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, v
     xassert(NumberVertex <= std::numeric_limits<indices_t>().max());
     size_t size = GetSizeFromFormat(fmt);
 
-    sg_buffer_desc desc = {};
-    desc.size = NumberVertex * size;
-    desc.type = SG_BUFFERTYPE_VERTEXBUFFER;
-    desc.usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_DYNAMIC;
-    desc.label = "CreateVertexBuffer";
+    sg_buffer_desc* desc = new sg_buffer_desc();
+    desc->size = NumberVertex * size;
+    desc->type = SG_BUFFERTYPE_VERTEXBUFFER;
+    desc->usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
+    desc->label = "CreateVertexBuffer";
 
     vb.VertexSize = size;
     vb.fmt = fmt;
@@ -298,11 +280,11 @@ void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bo
     ib.NumberIndices = NumberIndices;
     ib.dynamic = dynamic;
     
-    sg_buffer_desc desc = {};
-    desc.size = ib.NumberIndices * sizeof(indices_t);
-    desc.type = SG_BUFFERTYPE_INDEXBUFFER;
-    desc.usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_DYNAMIC;
-    desc.label = "CreateIndexBuffer";
+    sg_buffer_desc* desc = new sg_buffer_desc();
+    desc->size = ib.NumberIndices * sizeof(indices_t);
+    desc->type = SG_BUFFERTYPE_INDEXBUFFER;
+    desc->usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
+    desc->label = "CreateIndexBuffer";
     ib.sg = new SokolBuffer(desc);
 }
 

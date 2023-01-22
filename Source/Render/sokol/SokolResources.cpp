@@ -59,17 +59,31 @@ size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     }
 }
 
-SokolBuffer::SokolBuffer(const sg_buffer_desc& desc) {
-    buffer = sg_make_buffer(desc);
-    if (desc.usage != SG_USAGE_IMMUTABLE) {
-        data_len = desc.size;
-        data = malloc(data_len);
+SokolResource::SokolResource(size_t _data_len) {
+    data_len = _data_len;
+    data = malloc(data_len);
+}
+
+void SokolResource::FreeData() {
+    if (data) {
+        free(data);
+        data = nullptr;
     }
+    data_len = 0;
+}
+
+SokolResource::~SokolResource() {
+    FreeData();
+}
+
+SokolBuffer::SokolBuffer(sg_buffer_desc* _desc)
+: SokolResource(_desc->size)
+, desc(_desc) {
 }
 
 SokolBuffer::~SokolBuffer() {
     if (buffer.id != SG_INVALID_ID) sg_destroy_buffer(buffer);
-    if (data) free(data);
+    delete desc;
 }
 
 void SokolBuffer::update(size_t len) {
@@ -82,23 +96,34 @@ void SokolBuffer::update(size_t len) {
     xassert(len && len <= data_len);
     if (len == 0) return;
     if (len > data_len) len = data_len;
-    sg_range range = {data, len};
-    sg_update_buffer(buffer, &range);
+    
+    if (desc) {
+        if (desc->usage == SG_USAGE_IMMUTABLE) {
+            desc->data = {data, data_len};
+        }
+        buffer = sg_make_buffer(desc);
+        if (desc->usage == SG_USAGE_IMMUTABLE) {
+            FreeData();
+        }
+        delete desc;
+        desc = nullptr;
+    } 
+    
+    if (data) {
+        sg_range range = {data, len};
+        sg_update_buffer(buffer, &range);
+    }
 }
 
-SokolTexture2D::SokolTexture2D(const sg_image_desc& desc) {
-    image = sg_make_image(desc);
-    pixel_format = desc.pixel_format;
-    //For non-immutable textures we need somewhere to hold CPU side data until is flushed into GPU
-    if (desc.usage != SG_USAGE_IMMUTABLE) {
-        data_len = desc.width * desc.height * sokol_pixelformat_bytesize(pixel_format);
-        data = malloc(data_len);
-    }
+SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
+: SokolResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
+, desc(_desc) {
+    pixel_format = desc->pixel_format;
 }
 
 SokolTexture2D::~SokolTexture2D() {
     if (image.id != SG_INVALID_ID) sg_destroy_image(image);
-    if (data) free(data);
+    delete desc;
 }
 
 void SokolTexture2D::update() {
@@ -107,8 +132,27 @@ void SokolTexture2D::update() {
     dirty = false;
     xassert(data);
     if (!data) return;
+
+    if (desc) {
+        image = sg_make_image(desc);
+        if (desc->usage == SG_USAGE_IMMUTABLE) {
+            //Cleanup buffers
+            for (int i = 0; i < SG_MAX_MIPMAPS; ++i) {
+                sg_range& range = desc->data.subimage[0][i];
+                if (range.size) {
+                    const uint8_t* buf = reinterpret_cast<const uint8_t*>(range.ptr);
+                    delete[] buf;
+                }
+            }
+            FreeData();
+        }
+        delete desc;
+        desc = nullptr;
+    } 
     
-    sg_image_data imageData;
-    imageData.subimage[0][0] = {data, data_len};
-    sg_update_image(image, &imageData);
+    if (data) {
+        sg_image_data imageData;
+        imageData.subimage[0][0] = {data, data_len};
+        sg_update_image(image, &imageData);
+    }
 }
