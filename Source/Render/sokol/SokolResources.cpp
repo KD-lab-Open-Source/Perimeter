@@ -136,10 +136,13 @@ void SokolTexture2D::update() {
     if (desc) {
         image = sg_make_image(desc);
         if (desc->usage == SG_USAGE_IMMUTABLE) {
-            //Cleanup buffers
-            for (int i = 0; i < SG_MAX_MIPMAPS; ++i) {
-                sg_range& range = desc->data.subimage[0][i];
-                if (range.size) {
+            //Cleanup subimages
+            for (int ci = 0; ci < SG_CUBEFACE_NUM; ++ci) {
+                for (int i = 0; i < SG_MAX_MIPMAPS; ++i) {
+                    sg_range& range = desc->data.subimage[ci][i];
+                    if (!range.ptr) {
+                        break;
+                    }
                     const uint8_t* buf = reinterpret_cast<const uint8_t*>(range.ptr);
                     delete[] buf;
                 }

@@ -34,14 +34,15 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         desc->height = dy;
         desc->wrap_u = desc->wrap_v = SG_WRAP_REPEAT;
         desc->pixel_format = SG_PIXELFORMAT_RGBA8;
-        desc->num_mipmaps = Texture->GetNumberMipMap();
-        //Filter must be linear for small font textures to not look unreadable
+        desc->num_slices = 1;
 #ifdef SOKOL_GL
         //TODO check why mipmaps isn't working
-        desc->min_filter = SG_FILTER_LINEAR;
+        desc->num_mipmaps = 1;
 #else
-        desc->min_filter = 1 < desc->num_mipmaps ? SG_FILTER_LINEAR_MIPMAP_LINEAR : SG_FILTER_LINEAR;
+        desc->num_mipmaps = std::min(static_cast<int>(SG_MAX_MIPMAPS), Texture->GetNumberMipMap());
 #endif
+        //Filter must be linear for small font textures to not look unreadable
+        desc->min_filter = 1 < desc->num_mipmaps ? SG_FILTER_LINEAR_MIPMAP_LINEAR : SG_FILTER_LINEAR;
         desc->mag_filter = SG_FILTER_LINEAR;
 
         if (!FileImage) {
@@ -102,7 +103,8 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
                     buffers.push_back(bufNext);
 
                     BuildMipMap(mmw, mmh, 4, 8 * mmw, buf, 4 * mmw, bufNext,
-                                8, 8, 8, 8, 0, 8, 16, 24,
+                                8, 8, 8, 8,
+                                0, 8, 16, 24,
                                 Texture->GetAttribute(TEXTURE_MIPMAP_POINT | TEXTURE_MIPMAPBLUR | TEXTURE_BLURWHITE)
                     );
 

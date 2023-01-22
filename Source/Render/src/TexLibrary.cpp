@@ -356,8 +356,6 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 		}
 	}
 */
-	cFileImage *FileImage=nullptr;
-
 	//Get path for file and open it
 	std::string path = convert_path_content(Texture->GetName());
 	if (path.empty()) {
@@ -368,10 +366,14 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
         }
 	}
 	
-	FileImage=cFileImage::Create(path.c_str());
+	cFileImage* FileImage = cFileImage::Create(path.c_str());
 	if(!FileImage) {
-	    //If the file extension is not recognized, open it using DirectX 
+#ifdef PERIMETER_D3D9
+	    //If the file extension is not recognized, try open it using DirectX 
 		return ReLoadDDS(Texture);
+#else
+        return false;
+#endif
 	}
 	
 	if(FileImage->load(path.c_str()))
@@ -403,10 +405,11 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 	return true;
 }
 
-void cTexLibrary::Error(cTexture* Texture)
-{
-	if(enable_error)
-		VisError<<"Error: cTexLibrary::GetElement()\r\n"<<"Texture is bad: "<<Texture->GetName()<<"."<<VERR_END;
+void cTexLibrary::Error(cTexture* Texture) {
+	if(enable_error) {
+        VisError << "Error: cTexLibrary::GetElement()\r\nTexture is bad: " << Texture->GetName() << "."
+                 << VERR_END;
+    }
 }
 
 void cTexLibrary::ReloadAllTexture()
@@ -424,6 +427,7 @@ void cTexLibrary::ReloadAllTexture()
 	}
 }
 
+#ifdef PERIMETER_D3D9
 bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 {
 	char* buf=NULL;
@@ -444,7 +448,6 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		}
 	} auto_delete(buf);
 
-#ifdef PERIMETER_D3D9
 	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP) {
         Error(Texture);
@@ -467,7 +470,5 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		Texture->frames.emplace_back().d3d = pTexture;
 		return true;
 	}
-#else
-    return false;
-#endif
 }
+#endif

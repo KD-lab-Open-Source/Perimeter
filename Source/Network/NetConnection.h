@@ -165,7 +165,7 @@ private:
     size_t max_connections = 0;
     PNetCenter* net_center = nullptr;
     TCPsocket accept_socket = nullptr;
-    typedef std::map<NETID, NetConnection*> NetConnectionMap;
+    typedef std::unordered_map<NETID, NetConnection*> NetConnectionMap;
     NetConnectionMap connections;
 
     NetConnection* newConnectionFromSocket(TCPsocket socket, bool host);

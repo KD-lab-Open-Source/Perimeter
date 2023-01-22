@@ -31,7 +31,7 @@ private:
 	bool enable_error;
     float current_bump_scale = 1;
 	std::vector<cTexture*> textures;
-    std::map<std::string, float> texture_bump_scale;
+    std::unordered_map<std::string, float> texture_bump_scale;
 	void FreeOne(FILE* f);
 
 	bool LoadTexture(cTexture* Texture,char *pMode);
@@ -39,7 +39,9 @@ private:
 
 	void Error(cTexture* Texture);
 
+#ifdef PERIMETER_D3D9
 	bool ReLoadDDS(cTexture* Texture);
+#endif
 	MTSection lock;
 };
 

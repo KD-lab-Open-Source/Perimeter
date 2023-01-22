@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <climits>
 #include <SDL_net.h>
-#include <map>
+#include <unordered_map>
 
 #include "tweaks.h"
 #include "xutil.h"

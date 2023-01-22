@@ -974,8 +974,9 @@ int SDL_main(int argc, char *argv[])
         if (applicationIsGo() != runapp) {
             if (gameShell && (!gameShell->alwaysRun())) {
                 if (gameShell->getNetClient()) {
-                    if (gameShell->getNetClient()->setPause(!applicationHasFocus()))
+                    if (gameShell->getNetClient()->setPause(!applicationHasFocus())) {
                         runapp = applicationIsGo();
+                    }
                 }
             }
         }

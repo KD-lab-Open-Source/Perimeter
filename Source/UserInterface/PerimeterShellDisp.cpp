@@ -1622,16 +1622,15 @@ void CShellIconManager::AddDynamicHandler(DYNCALLBACK _p, int code, int delay)
 
 //	fout < "AddDynamicHandler\n";
 
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH(m_dyn_queue, i)
-		if((i->cbproc == _p) && (i->code == code))
-		{
-			i->bDelete = 0;
-			i->time_delay = delay;
-			return;
-		}
+	for (auto& i : m_dyn_queue) {
+        if ((i.cbproc == _p) && (i.code == code)) {
+            i.bDelete = 0;
+            i.time_delay = delay;
+            return;
+        }
+    }
 
-	m_dyn_queue.push_back(DYN_QUEUE_ITEM(_p, code, delay));
+	m_dyn_queue.emplace_back(_p, code, delay);
 }
 void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
 {
@@ -1639,21 +1638,19 @@ void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
 
 //	fout < "DelDynamicHandler\n";
 
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH(m_dyn_queue, i)
-		if(( (i->cbproc == _p) || (_p == 0) ) && ( (i->code == code) || (code == 0) ))
-		{
-			i->bDelete = 1;
-			break;
-		}
+    for (auto& i : m_dyn_queue) {
+        if (((i.cbproc == _p) || (_p == 0)) && ((i.code == code) || (code == 0))) {
+            i.bDelete = 1;
+            break;
+        }
+    }
 }
 
 bool CShellIconManager::HasDynamicHandler(DYNCALLBACK _p, int code) {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
 
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH (m_dyn_queue, i) {
-		if (( (i->cbproc == _p) || (_p == 0) ) && ( (i->code == code) || (code == 0) )) {
+    for (auto const& i : m_dyn_queue) {
+		if (( (i.cbproc == _p) || (_p == 0) ) && ( (i.code == code) || (code == 0) )) {
 			return true;
 		}
 	}
@@ -1952,8 +1949,9 @@ void CShellIconManager::DrawControls(CShellWindow* pTop)
 		pTop->draw(m_pLastClicked == pTop);
 
 	std::list<CShellWindow*>::iterator i;
-	FOR_EACH(pTop->m_children, i)
-		DrawControls(*i);
+    for (auto i : pTop->m_children) {
+        DrawControls(i);
+    }
 
 	if (pTop->ID == SQSH_GAME_SCREEN_ID) {
 		terRenderDevice->FlushPrimitive2D();		
@@ -1967,7 +1965,7 @@ int CShellIconManager::ProcessDynQueue(int code, float x, float y)
 
 	int r = 0;
 
-	std::list<DYN_QUEUE_ITEM>::iterator i = m_dyn_queue.begin();
+	auto i = m_dyn_queue.begin();
 	while (i != m_dyn_queue.end()) {
 //		fout < "	 DYN_QUEUE_ITEM=" < ((DWORD)i->cbproc) < "\n";
 		if (i->bDelete) {
@@ -1991,15 +1989,14 @@ int CShellIconManager::ProcessDynQueue(int code, float x, float y)
 void CShellIconManager::QuantDynQueue(int dt)
 {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
-
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH(m_dyn_queue, i)
-		i->time_delay -= dt;
+    for (auto& i : m_dyn_queue) {
+        i.time_delay -= dt;
+    }
 }
 
 bool CShellIconManager::isDynQueueEmpty() {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
-	return (m_dyn_queue.size() == 0);
+	return m_dyn_queue.empty();
 }
 
 void CShellIconManager::quant(float dTime)

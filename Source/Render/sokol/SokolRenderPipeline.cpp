@@ -185,8 +185,12 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
                 break;
         }
 
-        blend0.src_factor_alpha = blend0.src_factor_rgb;
-        blend0.dst_factor_alpha = blend0.dst_factor_rgb;
+        if (blend0.src_factor_alpha == _SG_BLENDFACTOR_DEFAULT) {
+            blend0.src_factor_alpha = blend0.src_factor_rgb;
+        }
+        if (blend0.dst_factor_alpha == _SG_BLENDFACTOR_DEFAULT) {
+            blend0.dst_factor_alpha = blend0.dst_factor_rgb;
+        }
     }
 
     //Get shader desc and make if not cached already
