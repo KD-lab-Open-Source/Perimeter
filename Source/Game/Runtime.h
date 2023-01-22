@@ -38,9 +38,6 @@ extern int terGrabInput;
 extern int terMapReflection;
 extern int terObjectReflection;
 
-extern int terWinVideoValid;
-extern int terWinVideoEnable;
-
 extern int terSoundEnable;		// 0,1
 extern int terMusicEnable;		// 0,1
 extern float terSoundVolume;	// 0..1

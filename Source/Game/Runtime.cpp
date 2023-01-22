@@ -659,12 +659,6 @@ void HTManager::initGraphics()
 
 	terCamera = new terCameraType(terScene->CreateCamera());
 
-//For AVI
-/*	if(terWinVideoEnable){
-		terRenderDevice->Fill(0,0,0);
-		terRenderDevice->Flush();
-	};*/
-
     setSourceUIResolution(Vect2i(terScreenSizeX, terScreenSizeY));
 
 	vMap.prepare("RESOURCE\\Worlds");
