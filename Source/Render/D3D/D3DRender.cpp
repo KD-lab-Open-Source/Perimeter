@@ -3,6 +3,7 @@
 #include <SDL_video.h>
 #endif
 #include "StdAfxRD.h"
+#include "D3DRender.h"
 #include "Font.h"
 #include "files/files.h"
 #include "DrawBuffer.h"

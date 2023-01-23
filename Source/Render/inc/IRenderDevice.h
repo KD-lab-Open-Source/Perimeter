@@ -446,5 +446,3 @@ enum eMaterialMode
     MAT_RENDER_SPHEREMAP	=1<<22,
     MAT_LIGHT				=1<<31
 };
-
-bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);

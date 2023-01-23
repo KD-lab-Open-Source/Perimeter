@@ -1,4 +1,8 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
+#ifdef PERIMETER_D3D9
+#include "D3DRender.h"
+#endif
 #include "cCamera.h"
 #include "Scene.h"
 #include "MeshBank.h"
@@ -7,7 +11,6 @@
 #include "TileMap.h"
 #include "Font.h"
 #include "VertexFormat.h"
-#include "DrawBuffer.h"
 #include "SafeCast.h"
 
 class CameraShader

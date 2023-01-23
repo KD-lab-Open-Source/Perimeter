@@ -1,5 +1,7 @@
 #include "StdAfxRD.h"
 
+#include "D3DRender.h"
+#include "DrawBuffer.h"
 #include "ObjNode.h"
 #include "ObjMesh.h"
 #include "MeshTri.h"

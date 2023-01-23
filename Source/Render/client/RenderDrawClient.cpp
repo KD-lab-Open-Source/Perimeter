@@ -3,6 +3,9 @@
 #include "DrawBuffer.h"
 #include "ForceField.h"
 #include "SafeCast.h"
+#ifdef PERIMETER_D3D9
+#include "D3DRender.h"
+#endif
 
 class FFDData
 {

@@ -1,6 +1,6 @@
 #include "StdAfxRD.h"
 #ifdef PERIMETER_D3D9
-#include "shader/shaders.h"
+#include "D3DRender.h"
 #endif
 #include "DrawBuffer.h"
 #include "CChaos.h"

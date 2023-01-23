@@ -16,6 +16,7 @@
 
 #ifdef _PERIMETER_
 #include "../Render/inc/IRenderDevice.h"
+extern bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& indices);
 #endif //_PERIMETER_
 #include "files/files.h"
 

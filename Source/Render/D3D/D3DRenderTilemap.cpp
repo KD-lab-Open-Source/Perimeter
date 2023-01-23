@@ -1,4 +1,7 @@
 #include "StdAfxRD.h"
+#ifdef PERIMETER_D3D9
+#include "D3DRender.h"
+#endif
 #include "IncTerra.h"
 #include "TileMap.h"
 #include "Scene.h"

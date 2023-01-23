@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "D3DRender.h"
 #include "FileImage.h"
 #include "files/files.h"
 #include "SystemUtil.h"

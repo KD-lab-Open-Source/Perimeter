@@ -1,4 +1,8 @@
 #include "StdAfxRD.h"
+#ifdef PERIMETER_D3D9
+//TODO remove this
+#include "D3DRender.h"
+#endif
 #include "PoolManager.h"
 
 Pool::Pool()

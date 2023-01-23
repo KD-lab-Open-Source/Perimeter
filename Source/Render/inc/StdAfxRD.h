@@ -108,8 +108,4 @@ extern class cVisGeneric		*gb_VisGeneric;
 //#define TEXTURE_NOTFREE
 #endif
 
-#ifdef PERIMETER_D3D9
-#include "../D3D/D3DRender.h"
-#endif
-
 int ResourceFileRead(const char *fname,char *&buf,int &size);
