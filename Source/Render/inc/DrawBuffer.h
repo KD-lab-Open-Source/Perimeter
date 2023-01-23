@@ -26,47 +26,24 @@ public:
     void Recreate();
     void Backwind();
     void Destroy();
+    void LockRaw(size_t vertices, size_t indices, void*& vertex_buf, indices_t*& indices_buf, bool increment_written);
     void Unlock();
     bool IsLocked();
     void AutoUnlock();
     void Draw();
     void EndTriangleStrip();
     void PostDraw();
+    
+    //Helpers for common operation
 
     template<class TVERTEX>
     void Lock(size_t vertices, size_t indices, TVERTEX*& vertex_buf, indices_t*& indices_buf, bool increment_written) {
         //Make sure we are not locking with wrong vertex format
         xassert(TVERTEX::fmt == vb.fmt);
-        xassert(!locked_vertices && !locked_indices);
-        if (!LockSetup(vertices, indices)) {
-            vertex_buf = nullptr;
-            indices_buf = nullptr;
-            return;
-        }
-        //Set as null if no amount requested, lock whole if all was requested, else lock region
-        if (vertices == 0) {
-            vertex_buf = nullptr;
-        } else if (written_vertices == 0 && vertices == vb.NumberVertex) {
-            vertex_buf = static_cast<TVERTEX*>(gb_RenderDevice->LockVertexBuffer(vb));
-        } else {
-            vertex_buf = static_cast<TVERTEX*>(gb_RenderDevice->LockVertexBuffer(vb, written_vertices, vertices));
-        }
-        if (indices == 0) {
-            indices_buf = nullptr;
-        } else if (written_indices == 0 && indices == ib.NumberIndices) {
-            indices_buf = gb_RenderDevice->LockIndexBuffer(ib);
-        } else {
-            indices_buf = gb_RenderDevice->LockIndexBuffer(ib, written_indices, indices);
-        }
-        if (vertex_buf) locked_vertices = vertices;
-        if (indices_buf) locked_indices = indices;
-        if (increment_written) {
-            lock_written_vertices = locked_vertices;
-            lock_written_indices = locked_indices;
-        }
+        static void* vbuf;
+        LockRaw(vertices, indices, vbuf, indices_buf, increment_written);
+        vertex_buf = static_cast<TVERTEX*>(vbuf);
     }
-    
-    //Helpers for common operation
 
     template<class TVERTEX>
     inline void LockAll(TVERTEX*& vertex_buf, indices_t*& indices_buf) {

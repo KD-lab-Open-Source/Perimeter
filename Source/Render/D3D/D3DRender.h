@@ -139,6 +139,7 @@ public:
     bool IsEnableSelfShadow() override;
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
+    void SetBlendState(eBlendMode blend) override;
 
 
     void UseOrthographicProjection() override;
@@ -301,8 +302,6 @@ public:
 		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
 		return ArraytSamplerState[Stage][Type];
 	}
-    
-	void SetBlendState(eBlendMode blend);
 
 	void SetVertexShaderConstant(int StartRegister,const Mat4f *pMat);
 	void SetVertexShaderConstant(int StartRegister,const Vect4f *pVect);

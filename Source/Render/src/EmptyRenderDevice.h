@@ -75,6 +75,7 @@ public:
     bool IsEnableSelfShadow() override { return false; }
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override {}
+    void SetBlendState(eBlendMode blend) override {}
 
     void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) override;
     void DeleteVertexBuffer(class VertexBuffer &vb) override;

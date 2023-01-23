@@ -5,6 +5,26 @@
 #include "SokolRender.h"
 #include "DrawBuffer.h"
 #include "Font.h"
+#include "MeshTri.h"
+#include "ObjMesh.h"
+
+void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
+                                 eColorMode color_mode) {
+    SokolTexture2D* tex0 = emptyTexture;
+    SokolTexture2D* tex1 = nullptr;
+    if (Texture0) {
+        if (blend == ALPHA_NONE && Texture0->IsAlphaTest()) {
+            blend = ALPHA_TEST;
+        }
+        if (blend <= ALPHA_TEST && Texture0->IsAlpha()) {
+            blend = ALPHA_BLEND;
+        }
+    }
+
+    SetColorMode(color_mode);
+    SetBlendState(blend);
+    SetTextures(Phase, Texture0, Texture1);
+}
 
 // Sprites / 2d textures
 
@@ -45,7 +65,6 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
 }
 
 // Mesh draw
-
 
 void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow) {
 }

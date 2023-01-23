@@ -366,6 +366,7 @@ public:
     virtual bool IsEnableSelfShadow() = 0;
     
     virtual void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) = 0;
+    virtual void SetBlendState(eBlendMode blend) = 0;
     
     virtual void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) = 0;
     virtual void DeleteVertexBuffer(class VertexBuffer &vb) = 0;

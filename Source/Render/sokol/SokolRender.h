@@ -85,6 +85,8 @@ private:
     void FinishCommand();
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
+    void SetColorMode(eColorMode color_mode);
+    void SetTextures(float Phase, cTexture* tex0, cTexture* tex1);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
@@ -156,6 +158,7 @@ public:
     bool IsEnableSelfShadow() override;
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
+    void SetBlendState(eBlendMode blend) override;
 
     void BeginDrawMesh(bool obj_mesh, bool use_shadow) override;
     void EndDrawMesh() override;

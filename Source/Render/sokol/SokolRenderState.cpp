@@ -418,39 +418,43 @@ void cSokolRender::UseOrthographicProjection() {
     activeCommandW = Mat4f::ID;
 }
 
-void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
-                                 eColorMode color_mode) {
+void cSokolRender::SetColorMode(eColorMode color_mode) {
+    if (activeCommand.fs_color_mode != color_mode) {
+        FinishCommand();
+        activeCommand.fs_color_mode = color_mode;
+    }
+}
+
+void cSokolRender::SetBlendState(eBlendMode blend) {
+    if (activePipelineMode.blend != blend) {
+        FinishCommand();
+        activePipelineMode.blend = blend;
+    }
+}
+
+void cSokolRender::SetTextures(float Phase, cTexture* Texture0, cTexture* Texture1) {
     SokolTexture2D* tex0 = emptyTexture;
-    SokolTexture2D* tex1 = nullptr; 
+    SokolTexture2D* tex1 = nullptr;
+
     if (Texture0) {
-        if (blend == ALPHA_NONE && Texture0->IsAlphaTest()) {
-            blend = ALPHA_TEST;
-        } 
-        if (blend <= ALPHA_TEST && Texture0->IsAlpha()) {
-            blend = ALPHA_BLEND;
-        }
-        int nAllFrame = Texture0->GetNumberFrame();
+        float nAllFrame = static_cast<float>(Texture0->GetNumberFrame());
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
         tex0 = Texture0->GetFrameImage(nFrame).sg;
     }
+
     if (Texture1) {
-        int nAllFrame = Texture1->GetNumberFrame();
+        float nAllFrame = static_cast<float>(Texture1->GetNumberFrame());
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
         tex1 = Texture1->GetFrameImage(nFrame).sg;
     }
-    
-    if (activePipelineMode.blend != blend
-     || activeCommand.fs_color_mode != color_mode
-     || activeCommand.sokol_textures[0] != tex0
+
+    if (activeCommand.sokol_textures[0] != tex0
      || activeCommand.sokol_textures[1] != tex1) {
         FinishCommand();
-        activePipelineMode.blend = blend;
-        activeCommand.fs_color_mode = color_mode;
         activeCommand.SetTexture(0, Texture0, tex0);
         activeCommand.SetTexture(1, Texture1, tex1);
     }
 }
-
 
 void cSokolRender::SetDrawNode(cCamera *pDrawNode)
 {
