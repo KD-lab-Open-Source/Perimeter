@@ -571,7 +571,8 @@ int cD3DRender::Flush(bool wnd)
 		char str[256];
 		sprintf(str,"poly=%i, obj=%i",NumberPolygon,NumDrawObject);
 		OutText(10,100,str);
-		
+
+        /*
 		int dbg_MemVertexBuffer=0,dbg_NumVertexBuffer=0;
 
         for (int i = 0; i < LibVB.size(); i++) {
@@ -585,7 +586,6 @@ int cD3DRender::Flush(bool wnd)
 		sprintf(str,"vb=%i,nvb=%i",dbg_MemVertexBuffer,dbg_NumVertexBuffer);
 		OutText(10,80,str);
 
-        /*
 		int dbg_MemIndexBuffer=0,dbg_NumIndexBuffer=0;
 		int i;
         for (i = 0; i < LibIB.size(); i++) {
@@ -1048,6 +1048,23 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	lpD3DDevice->SetGammaRamp(0,D3DSGR_NO_CALIBRATION,&gamma);
 	return 0;
 }
+void cD3DRender::CreateD3DVertexBuffer(VertexBuffer& vb) {
+    if (vb.d3d) {
+        xassert(0);
+        return;
+    }
+
+    uint32_t fvf = GetD3DFVFFromFormat(vb.fmt);
+    size_t len = vb.NumberVertex * vb.VertexSize;
+    uint32_t flags = D3DUSAGE_WRITEONLY;
+    D3DPOOL pool = D3DPOOL_MANAGED;
+    if (vb.dynamic) {
+        flags |= D3DUSAGE_DYNAMIC;
+        LibVB.emplace_back(vb.d3d);
+        pool = D3DPOOL_DEFAULT;
+    }
+    RDCALL(lpD3DDevice->CreateVertexBuffer(len, flags, fvf, pool, &vb.d3d, nullptr))
+}
 
 void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t format, bool dynamic) {
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
@@ -1056,24 +1073,15 @@ void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, ver
                       + " Dyn: " + std::to_string(dynamic);
     RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF, label.c_str(), &vb);
 #endif
-    size_t size = GetSizeFromFormat(format);
 	xassert(NumberVertex>=0 || NumberVertex<=65536);
     
-	vb.VertexSize = size;
+	vb.VertexSize = GetSizeFromFormat(format);
 	vb.fmt = format;
 	vb.dynamic = dynamic;
 	vb.NumberVertex = NumberVertex;
 	vb.buf = nullptr;
-    LibVB.emplace_back(&vb);
-    
-    uint32_t fvf = GetD3DFVFFromFormat(format);
-	if (dynamic) {
-        RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex * size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
-                                               fvf, D3DPOOL_DEFAULT, &vb.d3d, NULL))
-    } else {
-        RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex * size, D3DUSAGE_WRITEONLY,
-                                               fvf, D3DPOOL_MANAGED, &vb.d3d, NULL))
-    }
+
+    CreateD3DVertexBuffer(vb);
 }
 
 void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
@@ -1082,43 +1090,33 @@ void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
 #endif
 	MTG();
     if (vb.d3d) {
+        if (vb.dynamic) {
+            std::remove(LibVB.begin(), LibVB.end(), vb.d3d);
+        }
         vb.d3d->Release();
         vb.d3d = nullptr;
     }
-    std::remove(LibVB.begin(), LibVB.end(), &vb);
 }
 
 void cD3DRender::DeleteDynamicVertexBuffer()
 {
 	for(int i=0;i<LibVB.size();i++)
 	{
-        VertexBuffer* s = LibVB[i];
-		if (s && s->dynamic && s->d3d) {
-            s->d3d->Release();
-            s->d3d = nullptr;
+		if (LibVB[i]) {
+            LibVB[i]->Release();
 		}
 	}
+    LibVB.clear();
 }
 
-void cD3DRender::RestoreDynamicVertexBuffer()
-{
-	for(int i=0;i<LibVB.size();i++)
-	{
-		VertexBuffer* s = LibVB[i];
-		if (s && s->dynamic && s->NumberVertex) {
-            if (s->d3d) {
-                s->d3d->Release();
-                s->d3d = nullptr;
-            }
-			RDCALL(lpD3DDevice->CreateVertexBuffer(s->NumberVertex*s->VertexSize,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY, s->fmt, D3DPOOL_DEFAULT,&s->d3d, NULL))
-		}
-	}
-}
 void* cD3DRender::LockVertexBuffer(VertexBuffer &vb) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "", &vb);
 #endif
-	void *p=0;
+    if (vb.dynamic && !vb.d3d) {
+        CreateD3DVertexBuffer(vb);
+    }
+	void *p= nullptr;
 	VISASSERT( vb.d3d );
 	RDCALL(vb.d3d->Lock(0,0,&p, vb.dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
 	return p;
@@ -1128,8 +1126,11 @@ void* cD3DRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Am
     std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
     RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, label.c_str(), &vb);
 #endif
+    if (vb.dynamic && !vb.d3d) {
+        CreateD3DVertexBuffer(vb);
+    }
     xassert(Start + Amount <= vb.NumberVertex);
-    void *p=0;
+    void *p= nullptr;
     VISASSERT( vb.d3d );
     vb.d3d->Lock(Start * vb.VertexSize, Amount * vb.VertexSize, &p, vb.dynamic ? D3DLOCK_NOSYSLOCK : 0 );
     return p;
@@ -1333,7 +1334,6 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 	RDCALL(lpD3DDevice->GetRenderTarget(0,&lpBackBuffer)); 
 
 	RestoreShader();
-	RestoreDynamicVertexBuffer();
 	RestoreTilemapPool();
 
 	return true;

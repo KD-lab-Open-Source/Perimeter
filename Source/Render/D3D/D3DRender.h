@@ -36,6 +36,7 @@ private:
     
     bool isOrthoSet = false;
 
+    void CreateD3DVertexBuffer(VertexBuffer& vb);
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 
@@ -366,7 +367,7 @@ protected:
 	uint32_t						CurrentFVF;
 	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
 
-	std::vector<VertexBuffer*>	LibVB;
+	std::vector<IDirect3DVertexBuffer9*>	LibVB;
 	
 	uint32_t				ArrayRenderState[RENDERSTATE_MAX];
 	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
@@ -377,8 +378,7 @@ protected:
 
 	void DeleteShader();
 
-	void DeleteDynamicVertexBuffer();
-	void RestoreDynamicVertexBuffer();
+	void DeleteDynamicVertexBuffer();;
 	void RestoreDeviceIfLost();
 
 	std::vector<class cTileMapRender*> tilemaps;
