@@ -1,8 +1,8 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 #include "ShadowVolume.h"
 #include "MeshTri.h"
 #include "VertexFormat.h"
-#include "DrawBuffer.h"
 /*
 Что надо переделать другим.
 1) Выключить тени на ландшафте.
@@ -23,18 +23,18 @@ bool ShadowVolume::Add(MatXf& mat,cMeshTri* pTri)
 		return false;
 	int offset_vertex=vertex.size();
 	vertex.resize(offset_vertex+pTri->NumVertex);
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(*pTri->vb);
+	void *pVertex=gb_RenderDevice->LockVertexBuffer(pTri->db->vb);
 	int i;
 	for(i=0;i<pTri->NumVertex;i++)
 	{
 		vertex[i+offset_vertex]=mat*pTri->GetPos(pVertex,i+pTri->OffsetVertex);
 	}
 
-	gb_RenderDevice->UnlockVertexBuffer(*pTri->vb);
+	gb_RenderDevice->UnlockVertexBuffer(pTri->db->vb);
 	
 	int offset_poly=triangle.size();
 	triangle.resize(offset_poly+pTri->NumPolygon);
-	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(*pTri->ib));
+	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(pTri->db->ib));
 	for(i=0;i<pTri->NumPolygon;i++)
 	{
 		sPolygon &p=Polygon[i+pTri->OffsetPolygon];
@@ -43,7 +43,7 @@ bool ShadowVolume::Add(MatXf& mat,cMeshTri* pTri)
 		s.v[1]=p.p2-pTri->OffsetVertex;
 		s.v[2]=p.p3-pTri->OffsetVertex;
 	}
-	gb_RenderDevice->UnlockIndexBuffer(*pTri->ib);
+	gb_RenderDevice->UnlockIndexBuffer(pTri->db->ib);
 
 	DeleteRepeatedVertex(offset_vertex,pTri->NumVertex,
 						 offset_poly,pTri->NumPolygon);

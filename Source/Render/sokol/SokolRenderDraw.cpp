@@ -73,9 +73,65 @@ void cSokolRender::EndDrawMesh() {
 }
 
 void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+    bool specular=data->Specular.r>=1/256.0f ||
+                  data->Specular.g>=1/256.0f ||
+                  data->Specular.b>=1/256.0f;
+    if (specular) {
+        data->mat |= MAT_COLOR_ADD_SPECULAR;
+    } else {
+        data->mat &= ~static_cast<uint32_t>(MAT_COLOR_ADD_SPECULAR);
+    }
+
+    bool bump = data->mat&MAT_BUMP;
+    
+    cTexture* Texture0 = data->Tex[0];
+    eBlendMode blend=ALPHA_NONE;
+    if (Texture0) {
+        if (Texture0->IsAlphaTest()) {
+            blend = ALPHA_TEST;
+        } else if (Texture0->IsAlpha() || data->Diffuse.a < 0.99f) {
+            blend = ALPHA_BLEND;
+        }
+    }
+
+    if (data->mat&MAT_ALPHA_SUBBLEND) {
+        blend = ALPHA_SUBBLEND;
+    } else if(data->mat&MAT_ALPHA_ADDBLENDALPHA) {
+        blend = ALPHA_ADDBLENDALPHA;
+    } else if(data->mat&MAT_ALPHA_ADDBLEND) {
+        blend = ALPHA_ADDBLEND;
+    }
+
+    SetColorMode(COLOR_MOD);
+    SetBlendState(blend);
+    SetTextures(data->MaterialAnimPhase, Texture0, bump ? nullptr: data->Tex[1]);
 }
 
 void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+    //TODO SetPointLight(mesh->GetRootNode()->GetLight());
+
+    SetWorldMatXf(mesh->GetGlobalMatrix());
+    if(data->mat&MAT_TEXMATRIX_STAGE1)
+    {
+        Mat4f mat;
+        MatXf &m=data->TexMatrix;
+        memset(&mat,0,sizeof(mat));
+        mat.xx = m.rot()[0][0],	mat.xy = m.rot()[0][1];
+        mat.yx = m.rot()[1][0],	mat.yy = m.rot()[1][1];
+        mat.zx = m.trans().x,	mat.zy = m.trans().y;
+        //TODO gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat));
+    }
+
+    if(data->mat&MAT_RENDER_SPHEREMAP)
+    { // сферический мапинг
+        Mat4f mat;
+        memset(&mat,0,sizeof(mat));
+        mat.xx=mat.yy=mat.wx=mat.wy=0.5f;
+        //TODO gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat));
+    }
+
+    cMeshTri *Tri = mesh->GetTri();
+    SubmitDrawBuffer(Tri->db);
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {

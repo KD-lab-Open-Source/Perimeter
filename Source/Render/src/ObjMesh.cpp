@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 #include "ObjNode.h"
 #include "ObjMesh.h"
 #include "AnimChannel.h"
@@ -156,38 +157,35 @@ bool cObjMesh::Intersect(const Vect3f& p0,const Vect3f& p1)
 
 void cObjMesh::GetAllPoints(std::vector<Vect3f>& point)
 {
-	if(!Tri)return;
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
-	for(int i=0;i<Tri->NumVertex;i++)
-	{
+	if (!Tri) return;
+	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
+	for (int i=0;i<Tri->NumVertex;i++) {
 		Vect3f &v=Tri->GetPos(pVertex,i+Tri->OffsetVertex);
 		point.push_back(GetGlobalMatrix()*v);
 	}
-	gb_RenderDevice->UnlockVertexBuffer(*Tri->vb);
+	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 }
 
 void cObjMesh::GetAllNormals(std::vector<Vect3f>& point)
 {
 	if(!Tri)return;
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
+	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
 	for(int i=0;i<Tri->NumVertex;i++)
 	{
 		Vect3f &v=Tri->GetNormal(pVertex,i+Tri->OffsetVertex);
 		point.push_back(GetGlobalMatrix().rot()*v);
 	}
-	gb_RenderDevice->UnlockVertexBuffer(*Tri->vb);
+	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 }
 
-int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
+int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices)
 {
-	if(!Tri)return 0;
-	if(point.size()!=Tri->vb->NumberVertex)
-	{
+	if (!Tri || point.size()!=Tri->db->vb.NumberVertex) {
+        VISASSERT(!Tri || point.size()==Tri->db->vb.NumberVertex);
 		return 0;
 	}
-	VISASSERT(point.size()==Tri->vb->NumberVertex);
 
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
+	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
 	int imin=Tri->OffsetVertex,
 		imax=imin+Tri->NumVertex;
 	for(int i=imin;i<imax;i++)
@@ -195,7 +193,7 @@ int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& 
 		Vect3f &v=Tri->GetPos(pVertex,i);
 		point[i]=GetGlobalMatrix()*v;
 	}
-	gb_RenderDevice->UnlockVertexBuffer(*Tri->vb);
+	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 	return Tri->NumVertex;
 }
 
@@ -216,7 +214,7 @@ void cObjMesh::ChangeBank(cAllMeshBank* new_root)
 void cObjMesh::DrawBadUV(cCamera *DrawNode)
 {
 	if(!Tri)return;
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
+	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
 	for(int i=0;i<Tri->NumVertex;i++)
 	{
 		sVertexXYZNT1 &v=Tri->GetVertex(pVertex,i+Tri->OffsetVertex);
@@ -225,5 +223,5 @@ void cObjMesh::DrawBadUV(cCamera *DrawNode)
 			gb_RenderDevice->DrawPoint(GetGlobalMatrix()*v.pos,sColor4c(255,0,0,255));
 		}
 	}
-	gb_RenderDevice->UnlockVertexBuffer(*Tri->vb);
+	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 }

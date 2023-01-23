@@ -16,7 +16,7 @@
 
 #ifdef _PERIMETER_
 #include "../Render/inc/IRenderDevice.h"
-extern bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& indices);
+extern bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<indices_t>& indices);
 #endif //_PERIMETER_
 #include "files/files.h"
 
@@ -5159,24 +5159,26 @@ bool meshM2VM::load(const char* fname)//, int numMesh)
 	}
 */
 
-	std::vector<sPolygon> poligonArr;
+	std::vector<indices_t> indicesArr;
 	std::vector<Vect3f> pointArr;
-	GetAllTriangle(fname, pointArr, poligonArr);
+	GetAllTriangle(fname, pointArr, indicesArr);
 
 	fname3DS=strdup(fname);
 
 	numVrtx=pointArr.size();
 	vrtx=new vrtxM2VM[numVrtx];
-	numFace=poligonArr.size();
+    size_t numIndices = indicesArr.size();
+    xassert(numIndices % sPolygon::PN == 0);
+	numFace=numIndices / sPolygon::PN;
 	face=new faceM2VM[numFace];
 
 	int indx;
-	for(indx=0; indx< numFace; indx++){
-		face[indx].v1=poligonArr[indx].p1;
-		face[indx].v2=poligonArr[indx].p2;
-		face[indx].v3=poligonArr[indx].p3;
+	for(indx=0; indx < numIndices; indx+=sPolygon::PN) {
+		face[indx].v1=indicesArr[indx];
+		face[indx].v2=indicesArr[indx+1];
+		face[indx].v3=indicesArr[indx+2];
 	}
-	for(indx=0; indx< numVrtx; indx++){
+	for(indx=0; indx< numVrtx; indx++) {
 		vrtx[indx].xyz.x=pointArr[indx].x;
 		vrtx[indx].xyz.y=-pointArr[indx].y;
 		vrtx[indx].xyz.z=pointArr[indx].z;

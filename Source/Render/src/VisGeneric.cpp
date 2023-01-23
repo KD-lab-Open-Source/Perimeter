@@ -773,13 +773,13 @@ int cVisGeneric::GetShadowHint()
 }
 
 
-bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
+bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<indices_t>& indices)
 {
 	VISASSERT(gb_VisGeneric);
 	cObjectNodeRoot* root=gb_VisGeneric->GetObjLib()->GetElement(filename,NULL);
 	if(!root)
 		return false;
-	root->GetAllTriangle(point,polygon);
+	root->GetAllTriangle(point,indices);
 	root->Release();
 	return true;
 }

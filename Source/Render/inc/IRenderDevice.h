@@ -215,8 +215,8 @@ struct sDataRenderMaterial
     sColor4f	Emissive;
     float		Power;
 
-    float Phase;
-    int			mat;//eMaterialMode
+    float       Phase;
+    uint32_t    mat;//eMaterialMode
     cTexture	*Tex[2];
     MatXf		TexMatrix;
     float		MaterialAnimPhase;

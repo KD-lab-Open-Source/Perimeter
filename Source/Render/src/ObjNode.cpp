@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 #include "ObjNode.h"
 #include "AnimChannel.h"
 #include "MeshBank.h"
@@ -490,22 +491,23 @@ void cObjectNode::UpdateMatrix()
 
 void cObjectNode::AddShadow(MatXf mat,cMeshTri* Tri)
 {
-#ifdef PERIMETER_D3D9
-	if (!gb_RenderDevice3D || !(gb_RenderDevice3D->GetRenderMode()&RENDERDEVICE_MODE_STRENCIL))
-		return;
-#endif
+	if (!(gb_RenderDevice->GetRenderMode()&RENDERDEVICE_MODE_STRENCIL)) {
+        return;
+    }
 	bool anim=false;
-	if(AnimChannel)
-	for(int i=0;i<AnimChannel->GetNumberChannel();i++)
-		anim=anim || AnimChannel->IsAnimMatrix(i);
+	if(AnimChannel) {
+        for (int i = 0; i < AnimChannel->GetNumberChannel(); i++) {
+            anim = anim || AnimChannel->IsAnimMatrix(i);
+        }
+    }
 
-	if(anim || !Parent)
-	{
+    if (anim || !Parent) {
 		if(!shadow)
 			shadow=new ShadowVolume;
 		shadow->Add(mat,Tri);
-	}else
-		Parent->AddShadow(GetLocalMatrix()*mat,Tri);
+	} else {
+        Parent->AddShadow(GetLocalMatrix() * mat, Tri);
+    }
 }
 
 void cObjectNode::BuildShadow()
@@ -1030,10 +1032,10 @@ void cObjectNodeRoot::GetAllNormals(std::vector<Vect3f>& point)
 	Update();
 }
 
-void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
+void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices)
 {
 	point.clear();
-	polygon.clear();
+	indices.clear();
 	if(root->GetNumberMeshBank()==0)
 		return;
 
@@ -1043,18 +1045,16 @@ void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPo
 
 	//Довольно криво, предполагается, что у одного cObjectNodeRoot один cMeshStatic 
 	cMeshStatic* bank=root->GetMeshBank(0)->GetBank();
-	point.resize(bank->vb.NumberVertex);
+	point.resize(bank->db.vb.NumberVertex);
 
-	polygon.resize(bank->ib_polygon);
-	sPolygon *IndexPolygon= reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(bank->ib, 0, bank->ib_polygon));
-    memcpy(polygon.data(), IndexPolygon, bank->ib_polygon * sizeof(sPolygon));
-	gb_RenderDevice->UnlockIndexBuffer(bank->ib);
+	indices.resize(bank->db.ib.NumberIndices);
+	indices_t* indxbuf = gb_RenderDevice->LockIndexBuffer(bank->db.ib);
+    memcpy(indices.data(), indxbuf, bank->db.ib.NumberIndices * sizeof(indices_t));
+	gb_RenderDevice->UnlockIndexBuffer(bank->db.ib);
 
 	int filled_point=0;
-	std::vector<cObjMesh*>::iterator it;
-	FOR_EACH(mesh_child,it)
-	{
-		filled_point+=(*it)->GetAllTriangle(point,polygon);
+	for (cObjMesh* ch : mesh_child) {
+		filled_point+=ch->GetAllTriangle(point, indices);
 	}
 
 	VISASSERT(filled_point==point.size());

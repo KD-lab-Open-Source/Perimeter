@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 #include "MeshBank.h"
 #include "MeshTri.h"
 #include "Scene.h"
@@ -37,7 +38,6 @@ cMeshStatic::cMeshStatic(const char* materialname)
 {
 	temp=NULL;
 	MaterialName=materialname;
-	ib_polygon=0;
 }
 
 cMeshStatic::~cMeshStatic()
@@ -197,9 +197,9 @@ void cMeshStatic::EndBuildMesh(bool bump)
 {
 	VISASSERT(temp);
 
-	int Material=0;
-	int n_vertex=temp->vertex.size();
-	int n_polygon=temp->polygons.size();
+    size_t n_vertex=temp->vertex.size();
+    size_t n_polygon=temp->polygons.size();
+    size_t n_indices = n_polygon * sPolygon::PN;
 
     int fmt = sVertexXYZNT1::fmt;
 #ifdef PERIMETER_D3D9
@@ -207,39 +207,32 @@ void cMeshStatic::EndBuildMesh(bool bump)
         fmt = sVertexDot3::fmt;
     }
 #endif
-    gb_RenderDevice->CreateVertexBuffer(vb, n_vertex, fmt, false);
+    db.Create(n_vertex, false, n_indices, false, fmt, PT_TRIANGLES);
 
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(vb);
-    if (pVertex) {
-        for (int i = 0; i < n_vertex; i++) {
-            GetVertex(pVertex, i) = temp->vertex[i];
-        }
-        gb_RenderDevice->UnlockVertexBuffer(vb);
+    void* pVertex = nullptr;
+    indices_t* indices = nullptr;
+    db.LockRaw(n_vertex, n_indices, pVertex, indices, true);
+    uint8_t* pVertexRaw = reinterpret_cast<uint8_t*>(pVertex);
+    for (int i = 0; i < n_vertex; i++) {
+        sVertexXYZNT1* v = reinterpret_cast<sVertexXYZNT1*>(pVertexRaw + i * db.vb.VertexSize);
+        *v = temp->vertex[i];
     }
-
-	gb_RenderDevice->CreateIndexBuffer(ib, n_polygon * sPolygon::PN, false);
-	sPolygon *IndexPolygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(ib));
-    if (IndexPolygon) {
-        for (int i = 0; i < n_polygon; i++) {
-            IndexPolygon[i] = temp->polygons[i];
-        }
-        gb_RenderDevice->UnlockIndexBuffer(ib);
+    for (int i = 0; i < n_polygon; i++) {
+        sPolygon* p = reinterpret_cast<sPolygon*>(indices + i * sPolygon::PN);
+        *p = temp->polygons[i];
     }
+    db.Unlock();
 
-	std::vector<cMeshTri*>::iterator it;
-	FOR_EACH(meshes,it)
-	{
-		cMeshTri* p=*it;
-		p->ib=&ib;
-		p->vb=&vb;
+	for (cMeshTri* p : meshes) {
+		p->db=&db;
 
-		if(bump)
-			p->CalcBumpST();
+		if (bump) {
+            p->CalcBumpST();
+        }
 	}
 
 	delete temp;
-	temp=NULL;
-	ib_polygon=n_polygon;
+	temp = nullptr;
 }
 
 void cMeshStatic::SortPolygon(sPolygon* polygon,int n_polygon)

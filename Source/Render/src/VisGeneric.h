@@ -32,7 +32,7 @@ enum eShowType
 	SHOW_MAX
 };
 
-bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& indices);
+bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<indices_t>& indices);
 
 class cVisGeneric : public cUnknownClass
 {

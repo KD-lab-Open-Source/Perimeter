@@ -44,7 +44,7 @@ public:
 
 	void GetAllPoints(std::vector<Vect3f>& point);
 	void GetAllNormals(std::vector<Vect3f>& point);
-	int GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);
+	int GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices);
 	virtual void ChangeBank(cAllMeshBank* new_root);
 	virtual void DrawBadUV(cCamera *DrawNode);
 protected:

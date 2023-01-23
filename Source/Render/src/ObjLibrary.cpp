@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 #include "ObjLibrary.h"
 #include "SceneMesh.h"
 #include "AnimChannel.h"

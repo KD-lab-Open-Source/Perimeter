@@ -26,9 +26,9 @@ void DrawType::DeleteShadowTexture()
 void DrawType::SetStream(cObjMesh *Mesh)
 {
 	cMeshTri *Tri=Mesh->GetTri();
-	gb_RenderDevice3D->SetFVF(*Tri->vb);
-	gb_RenderDevice3D->SetIndices(*Tri->ib);
-	gb_RenderDevice3D->SetStreamSource(*Tri->vb);
+	gb_RenderDevice3D->SetFVF(Tri->db->vb);
+	gb_RenderDevice3D->SetIndices(Tri->db->ib);
+	gb_RenderDevice3D->SetStreamSource(Tri->db->vb);
 }
 
 void DrawType::DrawPrimitive(cObjMesh *Mesh)

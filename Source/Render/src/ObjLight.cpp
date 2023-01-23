@@ -1,10 +1,10 @@
 #include "StdAfxRD.h"
 #include "ObjNode.h"
 #include "ObjLight.h"
+#include "DrawBuffer.h"
 #include "AnimChannel.h"
 #include "Scene.h"
 #include "MeshBank.h"
-#include "DrawBuffer.h"
 
 cObjLight::cObjLight():cObjectNode(KIND_LIGHT)
 { 

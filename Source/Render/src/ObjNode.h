@@ -283,7 +283,7 @@ public:
 	//Функции упрощённого доступа к геометрии объекта
 	void GetAllPoints(std::vector<Vect3f>& point);
 	void GetAllNormals(std::vector<Vect3f>& point);
-	void GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);
+	void GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices);
 
 	void GetEmitterMaterial(cObjMaterial& material);
 

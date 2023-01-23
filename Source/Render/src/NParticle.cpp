@@ -5,6 +5,7 @@
 #include "NParticleID.h"
 #include "TileMap.h"
 #include "ForceField.h"
+#include "DrawBuffer.h"
 #include "MeshBank.h"
 #include "ObjMesh.h"
 #include "xmath.h"

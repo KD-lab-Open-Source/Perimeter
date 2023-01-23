@@ -8,9 +8,7 @@ class cMeshTri;
 
 struct cMeshStatic:public cUnknownClass
 {
-	IndexBuffer				ib;
-	VertexBuffer			vb;
-	int							ib_polygon;//Количество полигонов в ib
+	DrawBuffer				db;
 	std::string					MaterialName;
 	std::vector<cMeshTri*>		meshes;
 	sAttribute				Material;
@@ -35,7 +33,6 @@ struct cMeshStatic:public cUnknownClass
 
 	void EndBuildMesh(bool bump);
 protected:
-	inline sVertexXYZNT1& GetVertex(void *pVertex,int n)	{ return ((sVertexXYZNT1*)((char*)pVertex+n*vb.VertexSize))[0]; }
 	void SortPolygon(sPolygon* polygon,int n_polygon);
 	void DeleteSingularPolygon(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon,
 		std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);
