@@ -126,11 +126,13 @@ void cCamera::DrawScene()
 		return;
 	}
 
-	if(GetAttribute(ATTRCAMERA_CLEARZBUFFER) || 
-		(!Parent && FindCildCamera(ATTRCAMERA_REFLECTION)) )
-		ClearZBuffer();
-	if(GetAttribute(ATTRCAMERA_SHOWCLIP))
-		ShowClip();
+	if (GetAttribute(ATTRCAMERA_CLEARZBUFFER) || 
+		(!Parent && FindCildCamera(ATTRCAMERA_REFLECTION)) ) {
+        gb_RenderDevice->ClearZBuffer();
+    }
+	if (GetAttribute(ATTRCAMERA_SHOWCLIP)) {
+        ShowClip();
+    }
 
 	DrawObjectFirst();
 
@@ -195,10 +197,7 @@ void cCamera::DrawScene()
 				RenderDevice->SetRenderState( RS_CULLMODE, CULL_NONE );
 			}
 
-			if(nType==SCENENODE_OBJECTSORT_NOZ)
-			{
-			}else
-			{
+			if (nType!=SCENENODE_OBJECTSORT_NOZ) {
 				std::vector<cIUnkClass*>& obj=DrawArray[nType];
 
                 for (cIUnkClass* it : obj) {
@@ -337,7 +336,7 @@ Perspective
 */
 
 void cCamera::Update() 
-{ 
+{
 	UpdateVieport();
 
 	if(!GetAttribute(ATTRCAMERA_NOT_CALC_PROJ))
@@ -430,8 +429,7 @@ void cCamera::CalcClipPlane()
 			v[4].Set(GetPos(),p11,p10);		// top
 			v[5].Set(GetPos(),p00,p01);		// bottom
 		}
-	}else
-	{
+	} else {
 		//float div=GetPos().z/GetFocusViewPort().x;
 		//Vect2f w(GetFocusViewPort().x/GetScaleViewPort().x*div,GetFocusViewPort().y/GetScaleViewPort().y*div);
 		Vect2f w(1/(Focus.x*ScaleViewPort.x),1/(Focus.y*ScaleViewPort.y));
@@ -1146,16 +1144,6 @@ eTestVisible cCamera::TestVisibleComplete(const Vect3f &min,const Vect3f &max)
 	return result;
 }
 /**/
-
-void cCamera::ClearZBuffer()
-{
-    if (GetRenderDevice()->GetRenderSelection() == DEVICE_D3D9) {
-#ifdef PERIMETER_D3D9
-        cD3DRender* render = safe_cast<cD3DRender*>(GetRenderDevice());
-        RDCALL(render->lpD3DDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
-#endif
-    }
-}
 
 void cCamera::ShowClip()
 {

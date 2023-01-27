@@ -214,7 +214,6 @@ protected:
 	void DrawShadowPlane();
 
 	std::vector<cIUnkClass*>	arZPlane;
-	void ClearZBuffer();
 	void ShowClip();
 
 	void CalcClipPlane();

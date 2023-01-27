@@ -38,31 +38,35 @@ int cSokolRender::EndScene() {
     FinishCommand();
     
     ActiveScene = false;
-
-    //Begin pass
-    sg_pass_action pass_action = {};
-    pass_action.colors[0].action = SG_ACTION_CLEAR;
-    pass_action.colors[0].value = {
-            fill_color.r,
-            fill_color.g,
-            fill_color.b,
-            fill_color.a
-    };
-    sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
+    bool ActivePass = false;
+    sg_pass_action default_pass_action = {};
+    default_pass_action.colors[0].action = SG_ACTION_CLEAR;
+    default_pass_action.depth.action = SG_ACTION_CLEAR;
+    default_pass_action.stencil.action = SG_ACTION_CLEAR;
     
-    sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
-    sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
-
     //Iterate each command
-    size_t cmdnum = 0;
     for (auto& command : commands) {
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         RenderSubmitEvent(RenderEvent::PROCESS_COMMAND, "", command);
 #endif
-        cmdnum += 1;
+        bool no_vertices = 3 > command->vertices;
+        
+        //Handle begin/end pass
+        if ((!ActivePass && no_vertices) || command->pass_action) {
+            if (ActivePass) {
+                sg_end_pass();
+            }
+            sg_pass_action* pass_action = command->pass_action ? command->pass_action : &default_pass_action;
+            sg_begin_default_pass(pass_action, ScreenSize.x, ScreenSize.y);
+            sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
+            sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
+            ActivePass = true;
+        }
+        
         //Nothing to draw
-        if (3 > command->vertices) {
-            xassert(0);
+        if (no_vertices) {
+            //Fail assert if this was not a pass action only command
+            xassert(command->pass_action);
             continue;
         }
         
@@ -227,7 +231,9 @@ int cSokolRender::EndScene() {
     }
 
     //End pass
-    sg_end_pass();
+    if (ActivePass) {
+        sg_end_pass();
+    }
 
     return cInterfaceRenderDevice::EndScene();
 }
@@ -246,12 +252,27 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
     }
 #endif
 
-    fill_color.r = static_cast<float>(r) / 255.f;
-    fill_color.g = static_cast<float>(g) / 255.f;
-    fill_color.b = static_cast<float>(b) / 255.f;
-    fill_color.a = static_cast<float>(a) / 255.f;
+    sg_pass_action* pass_action = new sg_pass_action();
+    pass_action->colors[0].action = SG_ACTION_CLEAR;
+    pass_action->colors[0].value = {
+        static_cast<float>(r) / 255.f,
+        static_cast<float>(g) / 255.f,
+        static_cast<float>(b) / 255.f,
+        static_cast<float>(a) / 255.f
+    };
+    pass_action->depth.action = SG_ACTION_CLEAR;
+    pass_action->stencil.action = RenderMode&RENDERDEVICE_MODE_STRENCIL ? SG_ACTION_CLEAR : SG_ACTION_LOAD;
+    SetPassAction(pass_action);
 
     return 0;
+}
+
+void cSokolRender::ClearZBuffer() {
+    sg_pass_action* pass_action = new sg_pass_action();
+    pass_action->colors[0].action = SG_ACTION_LOAD;
+    pass_action->depth.action = SG_ACTION_CLEAR;
+    pass_action->stencil.action = SG_ACTION_LOAD;
+    SetPassAction(pass_action);
 }
 
 int cSokolRender::Flush(bool wnd) {
@@ -274,9 +295,20 @@ int cSokolRender::Flush(bool wnd) {
 
 void cSokolRender::FinishCommand() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
+        if (activeCommand.pass_action) {
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-        RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
+            RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "Pass Action");
 #endif
+            //Submit empty command to set/switch pass action
+            SokolCommand* cmd = new SokolCommand();
+            cmd->pass_action = activeCommand.pass_action;
+            activeCommand.pass_action = nullptr;
+            commands.emplace_back(cmd);
+        } else {
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
+            RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
+#endif
+        }
         return;
     }
     
@@ -323,6 +355,10 @@ void cSokolRender::FinishCommand() {
     cmd->fs_color_mode = activeCommand.fs_color_mode;
     cmd->fs_tex2_lerp = activeCommand.fs_tex2_lerp;
     cmd->fs_alpha_test = activeCommand.fs_alpha_test;
+    if (activeCommand.pass_action) {
+        cmd->pass_action = activeCommand.pass_action;
+        activeCommand.pass_action = nullptr;
+    }
     cmd->vertices = activeDrawBuffer->written_vertices;
     cmd->indices = activeDrawBuffer->written_indices;
     
@@ -382,6 +418,13 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
     activePipelineType = getPipelineType(db->primitive);
     activeDrawBuffer = db;
     FinishCommand();
+}
+
+void cSokolRender::SetPassAction(sg_pass_action* action) {
+    if (activeCommand.pass_action != action) {
+        FinishCommand();
+    }
+    activeCommand.pass_action = action;
 }
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {

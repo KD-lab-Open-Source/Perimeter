@@ -94,6 +94,7 @@ public:
 	int BeginScene() override;
 	int EndScene() override;
 	int Fill(int r,int g,int b,int a=255) override;
+    void ClearZBuffer() override;
 	int Flush(bool wnd=false) override;
 	int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 	

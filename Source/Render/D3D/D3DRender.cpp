@@ -527,6 +527,10 @@ int cD3DRender::Fill(int r,int g,int b,int a)
 	return 0;
 }
 
+void cD3DRender::ClearZBuffer() {
+    RDCALL(lpD3DDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
+}
+
 void cD3DRender::RestoreDeviceIfLost()
 {
 	int hr;

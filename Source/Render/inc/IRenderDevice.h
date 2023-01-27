@@ -347,6 +347,7 @@ public:
     virtual void SetWorldMat4f(const Mat4f* matrix) = 0;
 
     virtual int Fill(int r,int g,int b,int a=255) = 0;
+    virtual void ClearZBuffer() = 0;
     virtual int Flush(bool wnd=false) = 0;
     virtual int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) = 0;
 
