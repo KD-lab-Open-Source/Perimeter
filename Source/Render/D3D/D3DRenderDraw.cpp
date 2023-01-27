@@ -122,7 +122,14 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 
 void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
     FlushActiveDrawBuffer();
-    isOrthoSet = false;
+    if (isOrthoSet) {
+        isOrthoSet = false;
+        //We need to restore 3D projection/view matrixes
+        if (DrawNode) {
+            RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&DrawNode->matProj)));
+            RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,reinterpret_cast<const D3DMATRIX*>(&DrawNode->matView)));
+        }
+    }
     if (!matrix) matrix = &Mat4f::ID;
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(matrix)));
 };
@@ -287,7 +294,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
     }
     SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
 
-    if (!isOrthoSet) UseOrthographicProjection();
+    UseOrthographicProjection();
 
     uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
     SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);

@@ -1610,6 +1610,7 @@ void cD3DRender::SaveStates(const char* fname)
 
 void cD3DRender::UseOrthographicProjection() {
     if (isOrthoSet) return;
+    FlushActiveDrawBuffer();
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&orthoVP)));
