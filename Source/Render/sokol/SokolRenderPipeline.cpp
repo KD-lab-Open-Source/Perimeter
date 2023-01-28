@@ -208,12 +208,29 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         fprintf(stderr, "RegisterPipeline: invalid shader ID pipeline '%s'\n", desc.label);
         return;
     }
-    if (ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "vs_params") != 0) {
-        fprintf(stderr, "RegisterPipeline: 'vs_params' uniform slot is not 0 at pipeline '%s'\n", desc.label);
+    if (0 <= ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params")) {
+        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "color_texture_vs_params") != sizeof(color_texture_vs_params_t)) {
+            fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+            return;
+        }
+    } else if (0 <= ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params")) {
+        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "normal_texture_vs_params") != sizeof(normal_texture_vs_params_t)) {
+            fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+            return;
+        }
+    } else {
+        fprintf(stderr, "RegisterPipeline: 'vs_params' uniform not found at pipeline '%s'\n", desc.label);
         return;
     }
-    if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "vs_params") != sizeof(vs_params_t)) {
-        fprintf(stderr, "RegisterPipeline: 'vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+    if (0 <= ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params")) {
+        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "color_texture_fs_params") != sizeof(color_texture_fs_params_t)) {
+            fprintf(stderr, "RegisterPipeline: 'color_texture_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+            return;
+        }
+    } else if (desc.label == std::string("normal_program_shader")) {
+        //No fs params yet
+    } else {
+        fprintf(stderr, "RegisterPipeline: 'fs_params' uniform not found at pipeline '%s'\n", desc.label);
         return;
     }
     if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
@@ -223,14 +240,6 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
     if (ctx.vertex_fmt & VERTEX_FMT_TEX2) {
         if (ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
             fprintf(stderr, "RegisterPipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
-            return;
-        }
-        if (ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "fs_params") != 0) {
-            fprintf(stderr, "RegisterPipeline: 'fs_params' uniform slot is not 0 at pipeline '%s'\n", desc.label);
-            return;
-        }
-        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "fs_params") != sizeof(fs_params_t)) {
-            fprintf(stderr, "RegisterPipeline: 'fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
             return;
         }
     }

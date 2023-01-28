@@ -176,27 +176,38 @@ int cSokolRender::EndScene() {
         sg_apply_bindings(&bindings);
         
         //Apply VS uniforms
-        int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "vs_params");
+        int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params");
         if (0 <= vs_params_slot) {
-            vs_params_t vs_params;
-            //Camera/projection
+            color_texture_vs_params_t vs_params;
             if (command->vs_mvp) {
                 vs_params.un_mvp = *command->vs_mvp;
-            } else if (DrawNode) {
-                vs_params.un_mvp = DrawNode->matViewProj;
             } else {
                 xxassert(0, "cSokolRender::EndScene missing mvp");
                 continue;
             }
-            sg_range vs_params_range = SG_RANGE(vs_params);
-            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, &vs_params_range);
+            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
+            vs_params_slot = -1;
+        } else {
+            vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params");
+        }
+        if (0 <= vs_params_slot) {
+            normal_texture_vs_params_t vs_params;
+            if (command->vs_mvp) {
+                vs_params.un_mvp = *command->vs_mvp;
+            } else {
+                xxassert(0, "cSokolRender::EndScene missing mvp");
+                continue;
+            }
+            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
+            vs_params_slot = -1;
         }
 
         //Apply FS uniforms, currently only for shader with 2 texures
+        int fs_params_slot = -1;
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "fs_params");
+            fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params");
             if (0 <= fs_params_slot) {
-                fs_params_t fs_params;
+                color_texture_fs_params_t fs_params;
                 fs_params.un_color_mode = static_cast<int>(command->fs_color_mode);
                 fs_params.un_tex2_lerp = command->fs_tex2_lerp;
                 switch (command->fs_alpha_test) {
@@ -214,8 +225,8 @@ int cSokolRender::EndScene() {
                         fs_params.un_alpha_test = 254.0f;
                         break;
                 }
-                sg_range fs_params_range = SG_RANGE(fs_params);
-                sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, &fs_params_range);
+                sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, SG_RANGE_REF(fs_params));
+                fs_params_slot = -1;
             }
         }
 

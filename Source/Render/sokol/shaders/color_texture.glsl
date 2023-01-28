@@ -2,7 +2,7 @@
 
 @vs vs
 //Uniforms
-uniform vs_params {
+uniform color_texture_vs_params {
     mat4 un_mvp;
 };
 
@@ -33,7 +33,7 @@ void main() {
 
 @fs fs
 //Uniforms
-uniform fs_params {
+uniform color_texture_fs_params {
     int un_color_mode;
     float un_tex2_lerp;
     float un_alpha_test;
@@ -84,7 +84,7 @@ void main() {
         }
     };
     #else //SHADER_TEX_2
-    //Modulate each other, default
+    //Modulate each other
     frag_color = texture(un_tex0, fs_uv0) * fs_color;
     #endif //SHADER_TEX_2
     if (un_alpha_test >= frag_color.a) discard;

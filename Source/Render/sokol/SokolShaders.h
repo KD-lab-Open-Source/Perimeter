@@ -30,7 +30,9 @@ SOKOL_SHADER(normal);
 SOKOL_SHADER(terrain);
 
 //All shaders should use same vs_params_t and fs_params_t format, so we take one as reference
-using vs_params_t = color_tex2_vs_params_t;
-using fs_params_t = color_tex2_fs_params_t;
+using normal_texture_vs_params_t = normal_normal_texture_vs_params_t;
+//using normal_texture_fs_params_t = normal_normal_texture_fs_params_t;
+using color_texture_vs_params_t = color_tex2_color_texture_vs_params_t;
+using color_texture_fs_params_t = color_tex2_color_texture_fs_params_t;
 
 #endif //PERIMETER_SOKOLSHADERS_H
