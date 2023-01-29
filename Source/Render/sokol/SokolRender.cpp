@@ -385,10 +385,6 @@ void SokolCommand::ClearDrawData() {
         delete index_buffer;
         owned_index_buffer = false;
     }
-    if (pass_action) {
-        delete pass_action;
-        pass_action = nullptr;
-    }
     vertex_buffer = nullptr;
     index_buffer = nullptr;
     vertices = 0;

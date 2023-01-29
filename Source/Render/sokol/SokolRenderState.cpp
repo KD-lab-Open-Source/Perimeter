@@ -38,35 +38,28 @@ int cSokolRender::EndScene() {
     FinishCommand();
     
     ActiveScene = false;
-    bool ActivePass = false;
-    sg_pass_action default_pass_action = {};
-    default_pass_action.colors[0].action = SG_ACTION_CLEAR;
-    default_pass_action.depth.action = SG_ACTION_CLEAR;
-    default_pass_action.stencil.action = SG_ACTION_CLEAR;
+
+    //Begin pass
+    sg_pass_action pass_action = {};
+    pass_action.colors[0].action = SG_ACTION_CLEAR;
+    pass_action.colors[0].value = fill_color;
+    pass_action.depth.action = SG_ACTION_CLEAR;
+    pass_action.depth.value = 1.0f;
+    pass_action.stencil.action = SG_ACTION_CLEAR;
+    pass_action.stencil.value = 0;
+    sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
     
+    sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
+    sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
+
     //Iterate each command
     for (auto& command : commands) {
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         RenderSubmitEvent(RenderEvent::PROCESS_COMMAND, "", command);
 #endif
-        bool no_vertices = 3 > command->vertices;
-        
-        //Handle begin/end pass
-        if ((!ActivePass && no_vertices) || command->pass_action) {
-            if (ActivePass) {
-                sg_end_pass();
-            }
-            sg_pass_action* pass_action = command->pass_action ? command->pass_action : &default_pass_action;
-            sg_begin_default_pass(pass_action, ScreenSize.x, ScreenSize.y);
-            sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
-            sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
-            ActivePass = true;
-        }
-        
         //Nothing to draw
-        if (no_vertices) {
-            //Fail assert if this was not a pass action only command
-            xassert(command->pass_action);
+        if (3 > command->vertices) {
+            xassert(0);
             continue;
         }
         
@@ -78,8 +71,8 @@ int cSokolRender::EndScene() {
             continue;
         }
 #if defined(PERIMETER_DEBUG) && 0
-        printf("[%d] id: 0x%X fmt: 0x%X vtx: %d idx: %d\n",
-               cmdnum, command->pipeline_id, pipeline->vertex_fmt,
+        printf("id: 0x%X fmt: 0x%X vtx: %d idx: %d\n",
+               command->pipeline_id, pipeline->vertex_fmt,
                command->vertices, command->indices
         );
         printf("tex0 0x%X 0x%X tex1 0x%X 0x%X\n",
@@ -231,9 +224,7 @@ int cSokolRender::EndScene() {
     }
 
     //End pass
-    if (ActivePass) {
-        sg_end_pass();
-    }
+    sg_end_pass();
 
     return cInterfaceRenderDevice::EndScene();
 }
@@ -252,27 +243,12 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
     }
 #endif
 
-    sg_pass_action* pass_action = new sg_pass_action();
-    pass_action->colors[0].action = SG_ACTION_CLEAR;
-    pass_action->colors[0].value = {
-        static_cast<float>(r) / 255.f,
-        static_cast<float>(g) / 255.f,
-        static_cast<float>(b) / 255.f,
-        static_cast<float>(a) / 255.f
-    };
-    pass_action->depth.action = SG_ACTION_CLEAR;
-    pass_action->stencil.action = RenderMode&RENDERDEVICE_MODE_STRENCIL ? SG_ACTION_CLEAR : SG_ACTION_LOAD;
-    SetPassAction(pass_action);
+    fill_color.r = static_cast<float>(r) / 255.f;
+    fill_color.g = static_cast<float>(g) / 255.f;
+    fill_color.b = static_cast<float>(b) / 255.f;
+    fill_color.a = static_cast<float>(a) / 255.f;
 
     return 0;
-}
-
-void cSokolRender::ClearZBuffer() {
-    sg_pass_action* pass_action = new sg_pass_action();
-    pass_action->colors[0].action = SG_ACTION_LOAD;
-    pass_action->depth.action = SG_ACTION_CLEAR;
-    pass_action->stencil.action = SG_ACTION_LOAD;
-    SetPassAction(pass_action);
 }
 
 int cSokolRender::Flush(bool wnd) {
@@ -295,20 +271,9 @@ int cSokolRender::Flush(bool wnd) {
 
 void cSokolRender::FinishCommand() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
-        if (activeCommand.pass_action) {
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-            RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "Pass Action");
+        RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
 #endif
-            //Submit empty command to set/switch pass action
-            SokolCommand* cmd = new SokolCommand();
-            cmd->pass_action = activeCommand.pass_action;
-            activeCommand.pass_action = nullptr;
-            commands.emplace_back(cmd);
-        } else {
-#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-            RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
-#endif
-        }
         return;
     }
     
@@ -355,10 +320,6 @@ void cSokolRender::FinishCommand() {
     cmd->fs_color_mode = activeCommand.fs_color_mode;
     cmd->fs_tex2_lerp = activeCommand.fs_tex2_lerp;
     cmd->fs_alpha_test = activeCommand.fs_alpha_test;
-    if (activeCommand.pass_action) {
-        cmd->pass_action = activeCommand.pass_action;
-        activeCommand.pass_action = nullptr;
-    }
     cmd->vertices = activeDrawBuffer->written_vertices;
     cmd->indices = activeDrawBuffer->written_indices;
     
@@ -418,13 +379,6 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
     activePipelineType = getPipelineType(db->primitive);
     activeDrawBuffer = db;
     FinishCommand();
-}
-
-void cSokolRender::SetPassAction(sg_pass_action* action) {
-    if (activeCommand.pass_action != action) {
-        FinishCommand();
-    }
-    activeCommand.pass_action = action;
 }
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
@@ -650,4 +604,7 @@ void cSokolRender::SetGlobalFog(const sColor4f &color,const Vect2f &v) {
 
 void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *Diffuse, sColor4f *Specular) {
     //TODO implement this
+}
+
+void cSokolRender::ClearZBuffer() {
 }

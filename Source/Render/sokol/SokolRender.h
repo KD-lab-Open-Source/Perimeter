@@ -29,7 +29,6 @@ struct SokolCommand {
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
     pipeline_id_t pipeline_id = 0;
-    sg_pass_action* pass_action = nullptr;
     size_t vertices = 0;
     size_t indices = 0;
     struct SokolTexture2D* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
@@ -58,6 +57,7 @@ private:
     
     //Renderer state
     bool ActiveScene = false;
+    sg_color fill_color;
     std::vector<SokolCommand*> commands;
     Vect2i viewportPos;
     Vect2i viewportSize;
@@ -84,7 +84,6 @@ private:
     void ClearCommands();
     void FinishCommand();
     void SetVPMatrix(const Mat4f* matrix);
-    void SetPassAction(sg_pass_action* action);
     void SetTex2Lerp(float lerp);
     void SetColorMode(eColorMode color_mode);
     void SetTextures(float Phase, cTexture* tex0, cTexture* tex1);
