@@ -109,7 +109,7 @@ public:
     indices_t* LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
 	void UnlockIndexBuffer(IndexBuffer &ib) override;
     void SetActiveDrawBuffer(class DrawBuffer* db) override;
-    void SubmitDrawBuffer(class DrawBuffer* db) override;
+    void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
 	int DeleteTexture(class cTexture *Texture) override;
 	void* LockTexture(class cTexture *Texture, int& Pitch) override;

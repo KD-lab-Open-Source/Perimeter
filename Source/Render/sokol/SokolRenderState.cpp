@@ -121,20 +121,19 @@ int cSokolRender::EndScene() {
             continue;
         }
         bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
-        if (command->indices) {
-            if (!command->index_buffer) {
-                xxassert(0, "cSokolRender::EndScene missing index_buffer");
-                continue;
-            }
-            if (command->index_buffer->data) {
-                command->index_buffer->update(command->indices * sizeof(indices_t));
-            }
-            if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
-                xxassert(0, "cSokolRender::EndScene not valid state");
-                continue;
-            }
-            bindings.index_buffer = command->index_buffer->buffer;
+        xassert(command->indices);
+        if (!command->index_buffer) {
+            xxassert(0, "cSokolRender::EndScene missing index_buffer");
+            continue;
         }
+        if (command->index_buffer->data) {
+            command->index_buffer->update(command->indices * sizeof(indices_t));
+        }
+        if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
+            xxassert(0, "cSokolRender::EndScene not valid state");
+            continue;
+        }
+        bindings.index_buffer = command->index_buffer->buffer;
         
         //Bind images for samplers
         int slot_tex0 = shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
@@ -231,7 +230,7 @@ int cSokolRender::EndScene() {
         }
 
         //Draw
-        sg_draw(0, static_cast<int>(command->indices ? command->indices : command->vertices), 1);
+        sg_draw(static_cast<int>(command->base_elements), static_cast<int>(command->indices), 1);
     }
 
     //End pass
@@ -249,7 +248,7 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
 
 #ifdef PERIMETER_DEBUG
     if (r == 0 && g == 0 && b == 0) {
-        r = 32; 
+        r = 32;
         g = b = 24;
     }
 #endif
@@ -322,6 +321,12 @@ void cSokolRender::FinishCommand() {
     }
 #endif
     
+    if (0 == activeCommand.vertices && 0 == activeCommand.indices) {
+        activeCommand.base_elements = 0;
+        activeCommand.vertices = activeDrawBuffer->written_vertices;
+        activeCommand.indices = activeDrawBuffer->written_indices;
+    }
+    
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
     cmd->pipeline_id = pipeline_id;
@@ -331,8 +336,9 @@ void cSokolRender::FinishCommand() {
     cmd->fs_color_mode = activeCommand.fs_color_mode;
     cmd->fs_tex2_lerp = activeCommand.fs_tex2_lerp;
     cmd->fs_alpha_test = activeCommand.fs_alpha_test;
-    cmd->vertices = activeDrawBuffer->written_vertices;
-    cmd->indices = activeDrawBuffer->written_indices;
+    cmd->base_elements = activeCommand.base_elements;
+    cmd->vertices = activeCommand.vertices;
+    cmd->indices = activeCommand.indices;
     
     //We copy the MVP
     cmd->owned_mvp = true;
@@ -351,6 +357,9 @@ void cSokolRender::FinishCommand() {
     }
     activeDrawBuffer->PostDraw();
     activeDrawBuffer = nullptr;
+    activeCommand.base_elements = 0;
+    activeCommand.vertices = 0;
+    activeCommand.indices = 0;
     
     //Submit command
     commands.emplace_back(cmd);
@@ -377,9 +386,12 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
     if (activeDrawBuffer) {
         activePipelineType = getPipelineType(activeDrawBuffer->primitive);
     }
+    activeCommand.base_elements = 0;
+    activeCommand.vertices = 0;
+    activeCommand.indices = 0;
 }
 
-void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
+void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
     RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
 #endif
@@ -389,6 +401,16 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db) {
     }
     activePipelineType = getPipelineType(db->primitive);
     activeDrawBuffer = db;
+    if (activeDrawBuffer) {
+        activeCommand.vertices = activeDrawBuffer->written_vertices;
+        if (range) {
+            activeCommand.base_elements = range->offset;
+            activeCommand.indices = range->len;
+        } else {
+            activeCommand.base_elements = 0;
+            activeCommand.indices = activeDrawBuffer->written_indices;
+        }
+    }
     FinishCommand();
 }
 

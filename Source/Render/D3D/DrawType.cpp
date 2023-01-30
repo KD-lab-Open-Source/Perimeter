@@ -39,7 +39,7 @@ void DrawType::DrawPrimitive(cObjMesh *Mesh)
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 			0,
 			Tri->GetOffsetVertex(),Tri->GetNumberVertex(),
-			3*Tri->GetOffsetPolygon(),Tri->GetNumberPolygon()));
+			sPolygon::PN*Tri->GetOffsetPolygon(),Tri->GetNumberPolygon()));
 
 		gb_RenderDevice3D->NumberPolygon+=Tri->GetNumberPolygon();
 		gb_RenderDevice3D->NumDrawObject++;

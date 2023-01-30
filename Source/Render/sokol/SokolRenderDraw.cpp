@@ -131,7 +131,10 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
     }
 
     cMeshTri *Tri = mesh->GetTri();
-    SubmitDrawBuffer(Tri->db);
+    SubmitDrawBuffer(Tri->db, new DrawBufferRange {
+        Tri->GetOffsetPolygon() * sPolygon::PN,
+        Tri->GetNumberPolygon() * sPolygon::PN
+    });
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {

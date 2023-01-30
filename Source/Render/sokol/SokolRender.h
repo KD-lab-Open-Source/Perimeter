@@ -29,6 +29,7 @@ struct SokolCommand {
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
     pipeline_id_t pipeline_id = 0;
+    size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
     struct SokolTexture2D* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
@@ -133,7 +134,7 @@ public:
     indices_t* LockIndexBuffer(class IndexBuffer &ib) override;
     indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
     void UnlockIndexBuffer(class IndexBuffer &ib) override;
-    void SubmitDrawBuffer(class DrawBuffer* db) override;
+    void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
     int DeleteTexture(class cTexture *Texture) override;
     void* LockTexture(class cTexture *Texture, int& Pitch) override;

@@ -114,7 +114,7 @@ void DrawBuffer::Draw() {
             return;
         }
     }
-    gb_RenderDevice->SubmitDrawBuffer(this);
+    gb_RenderDevice->SubmitDrawBuffer(this, nullptr);
 }
 
 void DrawBuffer::EndTriangleStrip() {

@@ -379,7 +379,7 @@ public:
     virtual indices_t* LockIndexBuffer(class IndexBuffer &ib) = 0;
     virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) = 0;
     virtual void UnlockIndexBuffer(class IndexBuffer &ib) = 0;
-    virtual void SubmitDrawBuffer(class DrawBuffer* db) = 0;
+    virtual void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) = 0;
 
     virtual void BeginDrawMesh(bool obj_mesh, bool use_shadow) = 0;
     virtual void EndDrawMesh() = 0;

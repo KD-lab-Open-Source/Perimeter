@@ -88,7 +88,7 @@ public:
     indices_t* LockIndexBuffer(class IndexBuffer &ib) override;
     indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
     void UnlockIndexBuffer(class IndexBuffer &ib) override;
-    void SubmitDrawBuffer(class DrawBuffer* db) override {}
+    void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override {}
 
     void BeginDrawMesh(bool obj_mesh, bool use_shadow) override {}
     void EndDrawMesh() override {}

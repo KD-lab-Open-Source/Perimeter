@@ -1212,7 +1212,7 @@ void cD3DRender::SetActiveDrawBuffer(DrawBuffer* db) {
     cInterfaceRenderDevice::SetActiveDrawBuffer(db);
 }
 
-void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
+void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
     if (activeDrawBuffer) {
         if (activeDrawBuffer == db) {
             //Avoid drawing twice
@@ -1239,18 +1239,22 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db) {
     }
     if (db->written_indices) {
         SetIndices(db->ib);
+        size_t offset = range ? range->offset : 0;
+        size_t amount = range ? range->len : db->written_indices;
         size_t polys = (db->primitive == PT_TRIANGLESTRIP 
-                ? (db->written_indices - 2)
-                : static_cast<size_t>(xm::floor(static_cast<double>(db->written_indices) / sPolygon::PN)));
+                ? (amount - 2)
+                : static_cast<size_t>(xm::floor(static_cast<double>(amount) / sPolygon::PN)));
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
                 d3dType,
                 0, 0, db->written_vertices,
-                0, polys
+                offset, polys
         ));
         NumberPolygon += polys;
     } else {
         xassert(0);
-        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, 0, db->written_vertices));
+        size_t offset = range ? range->offset : 0;
+        size_t amount = range ? range->len : db->written_vertices;
+        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, amount));
     }
     db->PostDraw();
 }
