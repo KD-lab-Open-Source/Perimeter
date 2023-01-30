@@ -30,9 +30,9 @@ float cEffect::GetParticleRateReal()const
 }
 ///////////////////////////cEmitterInterface///////////////////////////
 cEmitterInterface::cEmitterInterface()
-:cUnkObj(NULL)
+:cUnkObj(0)
 {
-	parent=NULL;
+	parent=nullptr;
 
 	time=0;
 	old_time=0;
@@ -41,7 +41,7 @@ cEmitterInterface::cEmitterInterface()
 	cycled=false;
 	start_time=0;
 	emitter_life_time=1;
-	unical_id=NULL;
+	unical_id=nullptr;
 	no_show_obj_editor=false;
 }
 
@@ -66,7 +66,7 @@ void cEmitterInterface::SetCycled(bool cycled_)
 ///////////////////////////cEmitterBase////////////////////////////////
 cEmitterBase::cEmitterBase()
 {
-	parent=NULL;
+	parent=nullptr;
 
 	sprite_blend=ALPHA_BLEND;
 
@@ -82,7 +82,7 @@ cEmitterBase::cEmitterBase()
 	chPlume = false;
 	TraceCount = 1;
 	PlumeInterval = 0.01f;
-	other = NULL;
+	other = nullptr;
 }
 
 cEmitterBase::~cEmitterBase()
@@ -332,7 +332,7 @@ inline Vect3f* cEmitterBase::GetNormal(const int& ix)
 			return &normal_position[ix];
 		break;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
@@ -398,7 +398,7 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 	#undef num
 }
 
-bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm /*= NULL*/)
+bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm)
 {
 	cur_one_pos=-1;
 	float size_pos=100;
@@ -663,8 +663,8 @@ void cEmitterInt::Draw(cCamera *pCamera)
 
     MatXf mat=pCamera->GetMatrix();
     Bound.SetInvalidBox();
-    cTextureAviScale* texture = NULL;
-//	cTextureAviScale* plume_texture = NULL;
+    cTextureAviScale* texture = nullptr;
+//	cTextureAviScale* plume_texture = nullptr;
     if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture()) {
         texture = (cTextureAviScale*) GetTexture(0);
     }
@@ -1235,8 +1235,8 @@ void cEmitterSpl::Draw(cCamera *pCamera)
 	MatXf mat=pCamera->GetMatrix();
 	Bound.SetInvalidBox();
         
-    cTextureAviScale* texture = NULL;
-//	cTextureAviScale* plume_texture = NULL;
+    cTextureAviScale* texture = nullptr;
+//	cTextureAviScale* plume_texture = nullptr;
     if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture()) {
         texture = (cTextureAviScale*) GetTexture(0);
     }
@@ -1685,13 +1685,13 @@ void cEmitterSpl::DummyQuant()
 
 ////////////////////////cEffect//////////////////////////
 cEffect::cEffect()
-:cIUnkObjScale(NULL)
+:cIUnkObjScale(0)
 {
 	link.SetParent(this);
 	time=0;
 	auto_delete_after_life=false;
 	particle_rate=1;
-	func_getz=NULL;
+	func_getz=nullptr;
 }
 
 cEffect::~cEffect()
@@ -3114,7 +3114,7 @@ EffectKey* EffectLibrary::Get(const char* name) const
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool EffectLibrary::Load(const char* fname,const char* texture_path)
@@ -3243,7 +3243,7 @@ class FunctorMapZ:public FunctorGetZ
 public:
 	FunctorMapZ()
 	{
-		terra=NULL;
+		terra=nullptr;
 		terra_x=terra_y=0;
 	}
 
@@ -3295,7 +3295,7 @@ cEmitterZ::cEmitterZ()
 	base_angle=XM_PI/2;
 
 	use_force_field=false;
-	func_getz=NULL;
+	func_getz=nullptr;
 }
 
 cEmitterZ::~cEmitterZ()
@@ -3396,7 +3396,7 @@ void cEmitterZ::Draw(cCamera *pCamera)
     MatXf mat=pCamera->GetMatrix();
     Bound.SetInvalidBox();
 
-    cTextureAviScale* texture = NULL;
+    cTextureAviScale* texture = nullptr;
     
     if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture())
         texture = (cTextureAviScale*)GetTexture(0);
@@ -3700,7 +3700,7 @@ void cEmitterZ::SetEmitterKey(EmitterKeyZ& k,cEmitter3dObject* models)
 ///////////////////////////////////cEmitterLight/////////////////////
 cEmitterLight::cEmitterLight()
 {
-	light=NULL;
+	light=nullptr;
 }
 
 cEmitterLight::~cEmitterLight()
@@ -3745,7 +3745,7 @@ void cEmitterLight::Animate(float dt)
 		float size=emitter_size.Get(t);
 		light->SetScale(Vect3f(size,size,size));
 		sColor4f color=emitter_color.Get(t);
-		light->SetColor(NULL,&color);
+		light->SetColor(nullptr,&color);
 		light->SetPosition(GlobalMatrix);
 	}else
 	{

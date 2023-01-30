@@ -108,7 +108,7 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 {
     FlushActiveDrawBuffer();
-    isOrthoSet = false;
+    isOrthographicProjSet = false;
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matProj)));
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matView)));
 	RDCALL(lpD3DDevice->SetViewport((D3DVIEWPORT9*)&pDrawNode->vp));
@@ -122,8 +122,8 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 
 void cD3DRender::SetWorldMat4f(const Mat4f* matrix) {
     FlushActiveDrawBuffer();
-    if (isOrthoSet) {
-        isOrthoSet = false;
+    if (isOrthographicProjSet) {
+        isOrthographicProjSet = false;
         //We need to restore 3D projection/view matrixes
         if (DrawNode) {
             RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&DrawNode->matProj)));

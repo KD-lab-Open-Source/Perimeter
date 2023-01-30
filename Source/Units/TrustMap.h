@@ -79,17 +79,17 @@ struct terTerraformGeneral : GridElementType, SharedObject
 	//Осторожно, модифицирует внутри TerraformsDigFill,TerraformsOther
 	void Quant(class terTerraformDispatcher* dispatcher,bool first);
 
-	virtual int GetDigPosition(int& cx,int& cy){ return NULL; };
-	virtual int GetFillPosition(int& cx,int& cy){ return NULL; };
-	virtual int GetZeroPosition(int& cx,int& cy){ return NULL; };
+	virtual int GetDigPosition(int& cx,int& cy){ return 0; };
+	virtual int GetFillPosition(int& cx,int& cy){ return 0; };
+	virtual int GetZeroPosition(int& cx,int& cy){ return 0; };
 
-	virtual int CheckDigPosition(int cx,int cy){ return NULL; };
-	virtual int CheckFillPosition(int cx,int cy){ return NULL; };
-	virtual int CheckZeroPosition(int cx,int cy){ return NULL; };
+	virtual int CheckDigPosition(int cx,int cy){ return 0; };
+	virtual int CheckFillPosition(int cx,int cy){ return 0; };
+	virtual int CheckZeroPosition(int cx,int cy){ return 0; };
 
-	virtual int GetClusterAttribute(int cx,int cy,int sx,int sy,int& prepared_zero,int& resource_zero,int& dig_layer,int& fill_layer,int& ground_zero,int& cell,int& zero_present){ return NULL; };
+	virtual int GetClusterAttribute(int cx,int cy,int sx,int sy,int& prepared_zero,int& resource_zero,int& dig_layer,int& fill_layer,int& ground_zero,int& cell,int& zero_present){ return 0; };
 
-	virtual int GetHeight(){ return NULL; };
+	virtual int GetHeight(){ return 0; };
 
 	bool IsDigFill(){return (Status & (TERRAFORM_STATUS_DIG|TERRAFORM_STATUS_FILL))?true:false;}
 	void ChangeStatus(terTerraformDispatcher* dispatcher,int begin_status,int end_status);

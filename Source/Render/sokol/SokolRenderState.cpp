@@ -248,8 +248,8 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
 
 #ifdef PERIMETER_DEBUG
     if (r == 0 && g == 0 && b == 0) {
-        r = 32;
-        g = b = 24;
+        r = 64;
+        g = b = 32;
     }
 #endif
 

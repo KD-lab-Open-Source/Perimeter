@@ -24,6 +24,7 @@ OPTION(OPTION_D3D9 "Enable D3D9 renderer using dxvk-native in Linux or DirectX i
 OPTION(OPTION_SOKOL "Enable Sokol GFX based renderer" ON)
 OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
 OPTION(OPTION_FFMPEG_MOVIES "Use FFMPEG to decode ingame movies" ON)
+OPTION(OPTION_ASAN "Enable AddressSanitizer" OFF)
 
 # Compiler detections
 SET(MSVC_CL_BUILD OFF)
@@ -230,9 +231,9 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize")
 
-    IF (NOT MINGW)
-        set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-        set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+    IF (OPTION_ASAN)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+        set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
     ENDIF()
     
     #TODO remove these once code is more tidy

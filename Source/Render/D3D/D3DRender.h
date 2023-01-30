@@ -34,7 +34,7 @@ private:
     int							NumberPolygon,NumDrawObject;
     int                         xScrMin,yScrMin,xScrMax,yScrMax;
     
-    bool isOrthoSet = false;
+    bool isOrthographicProjSet = false;
 
     void CreateD3DVertexBuffer(VertexBuffer& vb);
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);

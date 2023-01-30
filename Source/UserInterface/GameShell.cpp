@@ -1239,7 +1239,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		//setUseAlternativeNames(true);
-#ifdef _WIN32
+#ifndef _FINAL_VERSION_
         //TODO Port TriggerChain to ingame dev UI instead of using win32 stuff
 		static TriggerEditor triggerEditor(triggerInterface());
 		TriggerChain* triggerChain = universe()->activePlayer()->getStrategyToEdit();

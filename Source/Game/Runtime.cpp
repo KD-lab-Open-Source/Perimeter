@@ -586,8 +586,7 @@ cInterfaceRenderDevice* SetGraph()
         SDL_VERSION(&wm_info.version);
         SDL_GetWindowWMInfo(sdlWindow, &wm_info);
         
-        wnd = wm_info.info.win.window;
-        hWndVisGeneric = wnd;
+        wnd = hWndVisGeneric = wm_info.info.win.window;
 #else
         //dxvk-native uses HWND as SDL2 window handle, so this is allowed
         wnd = static_cast<HWND>(sdlWindow);
