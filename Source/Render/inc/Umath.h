@@ -315,7 +315,7 @@ inline void GetScale(const MatXf &Matrix,Vect3f& v)
 	Vect3f zcol=Matrix.rot().zcol();
 	v.set(xcol.norm(),ycol.norm(),zcol.norm());
 }
-inline Vect3f GetMin(const Vect3f& u,Vect3f& v)
+inline Vect3f GetMin(const Vect3f& u,const Vect3f& v)
 {
 	Vect3f tmp=v;
 	if(u.x<tmp.x) tmp.x=u.x;
@@ -323,7 +323,7 @@ inline Vect3f GetMin(const Vect3f& u,Vect3f& v)
 	if(u.z<tmp.z) tmp.z=u.z;
 	return tmp;
 }
-inline Vect3f GetMax(const Vect3f& u,Vect3f& v)
+inline Vect3f GetMax(const Vect3f& u,const Vect3f& v)
 {
 	Vect3f tmp=v;
 	if(u.x>tmp.x) tmp.x=u.x;

@@ -34,16 +34,11 @@ static int16_t FindNewPoint(Points& p,int16_t texel)
 	return p.new_base_index;
 }
 
-cMeshStatic::cMeshStatic(const char* materialname)
-{
-	temp=NULL;
+cMeshStatic::cMeshStatic(const char* materialname) {
 	MaterialName=materialname;
 }
 
-cMeshStatic::~cMeshStatic()
-{
-	if(temp)delete temp;
-
+cMeshStatic::~cMeshStatic() {
     for (auto mesh : meshes) {
         delete mesh;
     }
@@ -51,13 +46,14 @@ cMeshStatic::~cMeshStatic()
 
 void cMeshStatic::BeginBuildMesh()
 {
-	VISASSERT(temp==NULL);
-	temp=new TEMP; 
+    VISASSERT(vertexes.empty());
+    VISASSERT(polygons.empty());
+    vertexes.clear();
+    polygons.clear();
 }
 
 cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel)
 {
-	VISASSERT(temp);
 	VISASSERT(Polygon.size()==TexPoly.size() || TexPoly.size()==0);
 	DeleteSingularPolygon(Vertex,Polygon,TexPoly,Texel);
 
@@ -162,24 +158,25 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 	cMeshTri* pTri=new cMeshTri;
 	meshes.push_back(pTri);
 
-	pTri->OffsetPolygon=temp->polygons.size();
-	pTri->OffsetVertex=temp->vertex.size();
+	pTri->OffsetPolygon=polygons.size();
+	pTri->OffsetVertex=vertexes.size();
 	pTri->NumPolygon=n_polygon;
 	pTri->NumVertex=n_vertex;
 
-	temp->polygons.resize(pTri->OffsetPolygon+n_polygon);
-	temp->vertex.resize(pTri->OffsetVertex+n_vertex);
-	for(i=0;i<n_polygon;i++)
-	{
-		sPolygon& to=temp->polygons[i+pTri->OffsetPolygon];
+	polygons.resize(pTri->OffsetPolygon+n_polygon);
+    vertexes.resize(pTri->OffsetVertex+n_vertex);
+    
+	for (i=0;i<n_polygon;i++) {
+		sPolygon& to=polygons[i+pTri->OffsetPolygon];
 		to=new_polygon[i];
 		to.p1+=pTri->OffsetVertex;
 		to.p2+=pTri->OffsetVertex;
 		to.p3+=pTri->OffsetVertex;
 	}
 
-	for(i=0;i<n_vertex;i++)
-		temp->vertex[pTri->OffsetVertex+i]=new_vertex[i];
+	for (i=0;i<n_vertex;i++) {
+        vertexes[pTri->OffsetVertex + i] = new_vertex[i];
+    }
 /*
 #ifdef _DEBUG
 	for(i=0;i<n_vertex;i++)
@@ -195,12 +192,11 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 
 void cMeshStatic::EndBuildMesh(bool bump)
 {
-	VISASSERT(temp);
-
-    size_t n_vertex=temp->vertex.size();
-    size_t n_polygon=temp->polygons.size();
+    size_t n_vertex=vertexes.size();
+    size_t n_polygon=polygons.size();
     size_t n_indices = n_polygon * sPolygon::PN;
 
+    //Write vertex and indices into DrawBuffer
     int fmt = sVertexXYZNT1::fmt;
 #ifdef PERIMETER_D3D9
     if (bump && gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
@@ -212,27 +208,24 @@ void cMeshStatic::EndBuildMesh(bool bump)
     void* pVertex = nullptr;
     indices_t* indices = nullptr;
     db.LockRaw(n_vertex, n_indices, pVertex, indices, true);
-    uint8_t* pVertexRaw = reinterpret_cast<uint8_t*>(pVertex);
+    //Since DB vertex may be sVertexXYZNT1 or bigger than sVertexXYZNT1 we need to go by VertexSize
     for (int i = 0; i < n_vertex; i++) {
-        sVertexXYZNT1* v = reinterpret_cast<sVertexXYZNT1*>(pVertexRaw + i * db.vb.VertexSize);
-        *v = temp->vertex[i];
+        uint8_t* v = reinterpret_cast<uint8_t*>(pVertex) + i * db.vb.VertexSize;
+        memcpy(v, &(vertexes[i]), sizeof(sVertexXYZNT1));
     }
-    for (int i = 0; i < n_polygon; i++) {
-        sPolygon* p = reinterpret_cast<sPolygon*>(indices + i * sPolygon::PN);
-        *p = temp->polygons[i];
-    }
+    memcpy(indices, polygons.data(), n_indices * sizeof(indices_t));
     db.Unlock();
 
 	for (cMeshTri* p : meshes) {
-		p->db=&db;
-
+        p->db=&db;
+        p->dbr.offset = p->OffsetPolygon * sPolygon::PN;
+        p->dbr.len = p->NumPolygon * sPolygon::PN;
+        p->VertexBuffer = &vertexes[p->OffsetVertex];
+        p->PolygonBuffer = &polygons[p->OffsetPolygon];
 		if (bump) {
             p->CalcBumpST();
         }
 	}
-
-	delete temp;
-	temp = nullptr;
 }
 
 void cMeshStatic::SortPolygon(sPolygon* polygon,int n_polygon)
@@ -654,24 +647,24 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 	cMeshTri* pTri=new cMeshTri;
 	meshes.push_back(pTri);
 
-	pTri->OffsetPolygon=temp->polygons.size();
-	pTri->OffsetVertex=temp->vertex.size();
+	pTri->OffsetPolygon=polygons.size();
+	pTri->OffsetVertex=vertexes.size();
 	pTri->NumPolygon=n_polygon;
 	pTri->NumVertex=n_vertex;
 
-	temp->polygons.resize(pTri->OffsetPolygon+n_polygon);
-	temp->vertex.resize(pTri->OffsetVertex+n_vertex);
-	for(i=0;i<n_polygon;i++)
-	{
-		sPolygon& to=temp->polygons[i+pTri->OffsetPolygon];
+	polygons.resize(pTri->OffsetPolygon+n_polygon);
+	vertexes.resize(pTri->OffsetVertex+n_vertex);
+	for(i=0;i<n_polygon;i++) {
+		sPolygon& to=polygons[i+pTri->OffsetPolygon];
 		to=new_polygon[i];
 		to.p1+=pTri->OffsetVertex;
 		to.p2+=pTri->OffsetVertex;
 		to.p3+=pTri->OffsetVertex;
 	}
 
-	for(i=0;i<n_vertex;i++)
-		temp->vertex[pTri->OffsetVertex+i]=new_vertex[i];
+	for(i=0;i<n_vertex;i++) {
+        vertexes[pTri->OffsetVertex + i] = new_vertex[i];
+    }
 /*
 #ifdef _DEBUG
 	for(i=0;i<n_vertex;i++)

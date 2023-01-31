@@ -158,24 +158,17 @@ bool cObjMesh::Intersect(const Vect3f& p0,const Vect3f& p1)
 void cObjMesh::GetAllPoints(std::vector<Vect3f>& point)
 {
 	if (!Tri) return;
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
 	for (int i=0;i<Tri->NumVertex;i++) {
-		Vect3f &v=Tri->GetPos(pVertex,i+Tri->OffsetVertex);
-		point.push_back(GetGlobalMatrix()*v);
+		point.push_back(GetGlobalMatrix()*Tri->GetPos(i));
 	}
-	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 }
 
 void cObjMesh::GetAllNormals(std::vector<Vect3f>& point)
 {
-	if(!Tri)return;
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
-	for(int i=0;i<Tri->NumVertex;i++)
-	{
-		Vect3f &v=Tri->GetNormal(pVertex,i+Tri->OffsetVertex);
-		point.push_back(GetGlobalMatrix().rot()*v);
+	if (!Tri) return;
+	for (int i=0;i<Tri->NumVertex;i++) {
+		point.push_back(GetGlobalMatrix().rot()*Tri->GetNormal(i));
 	}
-	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 }
 
 int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices)
@@ -185,15 +178,9 @@ int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>&
 		return 0;
 	}
 
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
-	int imin=Tri->OffsetVertex,
-		imax=imin+Tri->NumVertex;
-	for(int i=imin;i<imax;i++)
-	{
-		Vect3f &v=Tri->GetPos(pVertex,i);
-		point[i]=GetGlobalMatrix()*v;
+	for (int i=0;i<Tri->NumVertex;i++) {
+		point[i]=GetGlobalMatrix()*Tri->GetPos(i);
 	}
-	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 	return Tri->NumVertex;
 }
 
@@ -213,15 +200,11 @@ void cObjMesh::ChangeBank(cAllMeshBank* new_root)
 
 void cObjMesh::DrawBadUV(cCamera *DrawNode)
 {
-	if(!Tri)return;
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(Tri->db->vb);
-	for(int i=0;i<Tri->NumVertex;i++)
-	{
-		sVertexXYZNT1 &v=Tri->GetVertex(pVertex,i+Tri->OffsetVertex);
-		if(!(v.uv[0]>-100 && v.uv[0]<100 && v.uv[1]>-100 && v.uv[1]<100))
-		{
+	if (!Tri) return;
+	for(int i=0;i<Tri->NumVertex;i++) {
+		const sVertexXYZNT1& v = Tri->GetVertex(i);
+		if(!(v.uv[0]>-100 && v.uv[0]<100 && v.uv[1]>-100 && v.uv[1]<100)) {
 			gb_RenderDevice->DrawPoint(GetGlobalMatrix()*v.pos,sColor4c(255,0,0,255));
 		}
 	}
-	gb_RenderDevice->UnlockVertexBuffer(Tri->db->vb);
 }

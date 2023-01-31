@@ -38,10 +38,11 @@ void DrawType::DrawPrimitive(cObjMesh *Mesh)
 		cMeshTri *Tri=Mesh->GetTri();
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 			0,
-			Tri->GetOffsetVertex(),Tri->GetNumberVertex(),
-			sPolygon::PN*Tri->GetOffsetPolygon(),Tri->GetNumberPolygon()));
+			Tri->OffsetVertex,Tri->NumVertex,
+			Tri->OffsetPolygon * sPolygon::PN, Tri->NumPolygon
+        ));
 
-		gb_RenderDevice3D->NumberPolygon+=Tri->GetNumberPolygon();
+		gb_RenderDevice3D->NumberPolygon+=Tri->NumPolygon;
 		gb_RenderDevice3D->NumDrawObject++;
 	}
 }

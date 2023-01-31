@@ -15,23 +15,18 @@ struct cMeshStatic:public cUnknownClass
 	cAnimChannelMaterial    AnimChannelMat;
 	//ATTRUNKOBJ_COLLISIONTRACE ATTRUNKOBJ_NOLIGHT
 	sAttribute				ObjectAttribute;
-	struct TEMP
-	{
-		std::vector<sVertexXYZNT1> vertex;
-		std::vector<sPolygon> polygons;
-	};
-
-	TEMP* temp;
+    std::vector<sVertexXYZNT1> vertexes;
+    std::vector<sPolygon> polygons;
 
 	//////////////////////////////
-	cMeshStatic(const char* materialname);
+	explicit cMeshStatic(const char* materialname);
 	~cMeshStatic();
 
 	void BeginBuildMesh();
 	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);
 	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<Vect3f> &Normal, std::vector<Vect2f> &Texel);
-
 	void EndBuildMesh(bool bump);
+    
 protected:
 	void SortPolygon(sPolygon* polygon,int n_polygon);
 	void DeleteSingularPolygon(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon,

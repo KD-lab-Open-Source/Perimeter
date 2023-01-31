@@ -23,20 +23,14 @@ bool ShadowVolume::Add(MatXf& mat,cMeshTri* pTri)
 		return false;
 	int offset_vertex=vertex.size();
 	vertex.resize(offset_vertex+pTri->NumVertex);
-	void *pVertex=gb_RenderDevice->LockVertexBuffer(pTri->db->vb);
-	int i;
-	for(i=0;i<pTri->NumVertex;i++)
-	{
-		vertex[i+offset_vertex]=mat*pTri->GetPos(pVertex,i+pTri->OffsetVertex);
+	for(int i=0;i<pTri->NumVertex;i++) {
+		vertex[i+offset_vertex]=mat*pTri->GetPos(i);
 	}
-
-	gb_RenderDevice->UnlockVertexBuffer(pTri->db->vb);
 	
 	int offset_poly=triangle.size();
 	triangle.resize(offset_poly+pTri->NumPolygon);
 	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(pTri->db->ib));
-	for(i=0;i<pTri->NumPolygon;i++)
-	{
+	for (int i=0;i<pTri->NumPolygon;i++) {
 		sPolygon &p=Polygon[i+pTri->OffsetPolygon];
 		sv_triangle& s=triangle[i+offset_poly];
 		s.v[0]=p.p1-pTri->OffsetVertex;
