@@ -58,6 +58,7 @@ private:
     
     //Renderer state
     bool ActiveScene = false;
+    bool isOrthographicProjSet = false;
     sg_color fill_color;
     std::vector<SokolCommand*> commands;
     Vect2i viewportPos;

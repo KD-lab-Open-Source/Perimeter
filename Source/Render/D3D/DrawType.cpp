@@ -11,6 +11,8 @@
 
 #define DEL(p) {if(p)delete p;}
 
+//#define USE_SUBMITBUFFER
+
 DrawType::~DrawType()
 {
 	DeleteShadowTexture();
@@ -25,10 +27,12 @@ void DrawType::DeleteShadowTexture()
 
 void DrawType::SetStream(cObjMesh *Mesh)
 {
+#ifndef USE_SUBMITBUFFER
 	cMeshTri *Tri=Mesh->GetTri();
 	gb_RenderDevice3D->SetFVF(Tri->db->vb);
 	gb_RenderDevice3D->SetIndices(Tri->db->ib);
 	gb_RenderDevice3D->SetStreamSource(Tri->db->vb);
+#endif
 }
 
 void DrawType::DrawPrimitive(cObjMesh *Mesh)
@@ -36,11 +40,15 @@ void DrawType::DrawPrimitive(cObjMesh *Mesh)
 	if(Option_DrawMeshScreen)
 	{
 		cMeshTri *Tri=Mesh->GetTri();
+#ifdef USE_SUBMITBUFFER
+        gb_RenderDevice->SubmitDrawBuffer(Tri->db, &Tri->dbr);
+#else
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 			0,
 			Tri->OffsetVertex,Tri->NumVertex,
 			Tri->OffsetPolygon * sPolygon::PN, Tri->NumPolygon
         ));
+#endif
 
 		gb_RenderDevice3D->NumberPolygon+=Tri->NumPolygon;
 		gb_RenderDevice3D->NumDrawObject++;

@@ -184,7 +184,9 @@ int cInterfaceRenderDevice::EndScene() {
 }
 
 void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX, "MatXf");
+#endif
     Mat4f mat;
     Mat4fSetTransposedMatXf(mat, matrix);
     SetWorldMat4f(&mat);

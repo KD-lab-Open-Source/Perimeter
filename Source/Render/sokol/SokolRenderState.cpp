@@ -342,7 +342,11 @@ void cSokolRender::FinishCommand() {
     
     //We copy the MVP
     cmd->owned_mvp = true;
-    cmd->vs_mvp = new Mat4f(activeCommandVP * activeCommandW);
+    if (isOrthographicProjSet) {
+        cmd->vs_mvp = new Mat4f(orthoVP);
+    } else {
+        cmd->vs_mvp = new Mat4f(activeCommandVP * activeCommandW);
+    }
     
     //Transfer buffers to command
     cmd->owned_vertex_buffer = activeDrawBuffer->vb.dynamic;
@@ -415,20 +419,26 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
 }
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
+#endif
     if (!matrix) matrix = &Mat4f::ID;
-    if (!activeCommandVP.eq(*matrix, 0)) {
+    if (isOrthographicProjSet || !activeCommandVP.eq(*matrix, 0)) {
         FinishCommand();
     }
+    isOrthographicProjSet = false;
     activeCommandVP = *matrix;
 }
 
 void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX);
+#endif
     if (!matrix) matrix = &Mat4f::ID;
-    if (!activeCommandW.eq(*matrix, 0)) {
+    if (isOrthographicProjSet || !activeCommandW.eq(*matrix, 0)) {
         FinishCommand();
     }
+    isOrthographicProjSet = false;
     activeCommandW = *matrix;
 }
 
@@ -440,12 +450,13 @@ void cSokolRender::SetTex2Lerp(float lerp) {
 }
 
 void cSokolRender::UseOrthographicProjection() {
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX, "Orthographic");
-    if (!activeCommandVP.eq(orthoVP, 0) || activeCommandW != Mat4f::ID) {
+#endif
+    if (!isOrthographicProjSet) {
         FinishCommand();
     }
-    activeCommandVP = orthoVP;
-    activeCommandW = Mat4f::ID;
+    isOrthographicProjSet = true;
 }
 
 void cSokolRender::SetColorMode(eColorMode color_mode) {
@@ -550,17 +561,16 @@ void cSokolRender::SetDrawNode(cCamera *pDrawNode)
 
 void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
 {
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
+#endif
+    FinishCommand();
     viewportPos.x = pDrawNode->vp.X;
     viewportPos.y = pDrawNode->vp.Y;
     viewportSize.x = pDrawNode->vp.Width;
     viewportSize.y = pDrawNode->vp.Height;
-    CameraCullMode = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
     SetVPMatrix(&pDrawNode->matViewProj);
-    if (CameraCullMode != activePipelineMode.cull) {
-        FinishCommand();
-        activePipelineMode.cull = CameraCullMode;
-    }
+    activePipelineMode.cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
 }
 
 uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {

@@ -63,9 +63,10 @@ public:
         LOCK_INDEXBUF,
         UNLOCK_INDEXBUF,
 #endif
-        
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX        
         SET_WORLD_MATRIX,
         SET_VIEWPROJ_MATRIX,
+#endif
         
 #ifdef PERIMETER_SOKOL
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
@@ -122,8 +123,10 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
         case RenderEvent::LOCK_INDEXBUF: return "LOCK_INDEXBUF";
         case RenderEvent::UNLOCK_INDEXBUF: return "UNLOCK_INDEXBUF";
 #endif
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
         case RenderEvent::SET_WORLD_MATRIX: return "SET_WORLD_MATRIX";
         case RenderEvent::SET_VIEWPROJ_MATRIX: return "SET_VIEWPROJ_MATRIX";
+#endif
 #ifdef PERIMETER_SOKOL
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         case RenderEvent::FINISH_COMMAND: return "FINISH_COMMAND";
@@ -173,8 +176,10 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::LOCK_INDEXBUF:
         case RenderEvent::UNLOCK_INDEXBUF:
 #endif
+#ifdef PERIMETER_RENDER_TRACKER_MATRIX
         case RenderEvent::SET_WORLD_MATRIX:
         case RenderEvent::SET_VIEWPROJ_MATRIX:
+#endif
             return 2;
     }
 }
