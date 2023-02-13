@@ -33,7 +33,7 @@ jobs:
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           appendedCacheKey: '${{ env.VCPKG_DEFAULT_TRIPLET }}'
-          vcpkgGitCommitId: bd1ef2df46303989eeb048eb7aa9b816aa46365e
+          vcpkgGitCommitId: 36fb23307e10cc6ffcec566c46c4bb3f567c82c6
           vcpkgJsonGlob: 'vcpkg.json'
           runVcpkgInstall: false
       - name: Configure developer command prompt
@@ -55,8 +55,8 @@ jobs:
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/ogg.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbis.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbisfile.dll ${{ env.outDir }}
-          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swscale-5.dll ${{ env.outDir }}
-          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swresample-3.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swscale-*.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swresample-*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.pdb ${{ env.outDir }}
