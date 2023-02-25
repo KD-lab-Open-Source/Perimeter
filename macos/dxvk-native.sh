@@ -13,7 +13,7 @@ export CFLAGS="-arch $ARCH"
 export CXXFLAGS="-arch $ARCH"
 export LDFLAGS="-arch $ARCH"
 
-exec meson \
+exec meson setup \
 --cross-file "$CROSS_ROOT/meson-$ARCH.txt" \
 --cross-file $CROSS_ROOT/meson-config.txt \
 -Ddxvk_native_force=true \

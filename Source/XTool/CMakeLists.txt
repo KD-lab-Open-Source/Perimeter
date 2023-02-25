@@ -10,8 +10,7 @@ FetchContent_Declare(gamemath
 FetchContent_MakeAvailable(gamemath)
 
 #Workaround for some compilers that not recognize __always_inline
-target_compile_definitions(gamemath_object_lib PUBLIC -D__always_inline=)
-target_compile_definitions(gamemath_static_lib PUBLIC -D__always_inline=)
+#target_compile_definitions(gamemath PUBLIC -D__always_inline=)
 
 INCLUDE_DIRECTORIES(
     BEFORE .
@@ -39,7 +38,7 @@ SET(XTool_SRCS
     codepages/codepages.cpp
 )
 
-SET(XTool_LINK_LIBS gamemath_static_lib ZLIB::ZLIB)
+SET(XTool_LINK_LIBS gamemath ZLIB::ZLIB)
 
 IF(NOT OPTION_DISABLE_STACKTRACE)
     #https://www.boost.org/doc/libs/1_78_0/doc/html/stacktrace/configuration_and_build.html

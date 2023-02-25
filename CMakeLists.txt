@@ -144,7 +144,7 @@ ENDIF()
 IF (PERIMETER_WINDOWS)
     FIND_PACKAGE(FFMPEG)
 ELSE()
-    #Required since there is no alternative for loading AVI textures 
+    #Required since there is no alternative for loading AVI textures
     FIND_PACKAGE(FFMPEG REQUIRED)
 ENDIF()
 

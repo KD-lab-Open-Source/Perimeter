@@ -47,7 +47,7 @@ IF(NOT PERIMETER_WINDOWS)
     IF (OPTION_D3D9)
         MESSAGE("Using DXVK-native for D3D9 API")
 
-        SET(DXVK_NATIVE_BUILD_COMMAND meson)
+        SET(DXVK_NATIVE_BUILD_COMMAND meson setup)
         IF (MACOS AND CMAKE_OSX_ARCHITECTURES)
             #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
             SET(DXVK_NATIVE_BUILD_COMMAND
