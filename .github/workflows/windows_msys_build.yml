@@ -82,6 +82,7 @@ jobs:
           --enable-protocol=file \
           --disable-d3d11va \
           --disable-dxva2 \
+          --disable-vulkan \
           --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg \
           --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
         working-directory: ffmpeg
