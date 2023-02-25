@@ -181,7 +181,7 @@ void findGameContent() {
             //Set current path to game directory to allow relative paths inside
             //This is specially needed for MacOS as it forbids writing inside .app
             std::filesystem::current_path(rootPath);
-            if (scan_resource_paths()) {
+            if (scan_resource_paths("./")) {
                 if (convert_path_content("Perimeter.ini").empty()) {
                     fprintf(stderr, "Path for content doesn't contain game: %s\n", rootPathStr.c_str());
                 } else {

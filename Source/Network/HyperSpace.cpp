@@ -144,10 +144,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 		flag_rePlayReel=true;
 		loadPlayReel(mission.playReelPath().c_str());
 	}
-	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
-		flag_autoSavePlayReel=true;
-        create_directories(autoSavePlayReelDir);
-	}
+	flag_autoSavePlayReel = IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel") != 0;
 
 	currentQuant=0;
 	//flag_endCurQuant=0;
@@ -313,7 +310,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
     if (fo.ioError()) {
         return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
     } else {
-        scan_resource_paths(convert_path_content(REPLAY_PATH));
+        scan_resource_paths(convert_path_content(autoSavePlayReelDir));
         return SAVE_REPLAY_OK;
     }
 }

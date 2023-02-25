@@ -932,18 +932,23 @@ int SDL_main(int argc, char *argv[])
     detectGameContent();
 
     //Create some folders
-    for (std::string path : {
-        CRASH_DIR,
-        "cache",
-        "cache/font",
-        "cache/bump",
-    }) {
-        path = convert_path_native(path);
-        bool ok = create_directories(path);
-        xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
+    std::vector<std::string> paths = {
+            CRASH_DIR,
+            "cache/font",
+            "cache/bump",
+            REPLAY_PATH,
+    };
+    if(IniManager("Perimeter.ini", false).getInt("Game","AutoSavePlayReel")!=0){
+        extern const char* autoSavePlayReelDir;
+        paths.emplace_back(autoSavePlayReelDir);
     }
-    std::string path = convert_path_content("resource/saves/") + "Multiplayer";
-    if (!std::filesystem::exists(std::filesystem::u8path(path))) {
+    {
+        std::string path = convert_path_content("resource/saves/");
+        if (path.empty()) path = "resource/saves/";
+        paths.emplace_back(path + "Multiplayer");
+    }
+    for (std::string path : paths) {
+        path = convert_path_native(path);
         bool ok = create_directories(path);
         xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
     }
