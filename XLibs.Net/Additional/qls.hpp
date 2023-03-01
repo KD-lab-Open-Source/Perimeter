@@ -2,8 +2,8 @@
 #define ACHILLES_H_
 
 #include <algorithm>
-#include <boost/type_traits.hpp>
 #include <iterator>
+#include <type_traits>
 
 namespace Loki
 {
@@ -66,18 +66,18 @@ namespace qls
 		Iter find(Iter from, Iter to, const ValueType& val)
 	{
 		typedef std::iterator_traits<Iter>::iterator_category Category;
-		enum { isBidir = boost::is_same<
+		enum { isBidir = std::is_same<
 			Category, std::bidirectional_iterator_tag>::value };
-		enum { isRand = boost::is_same<
+		enum { isRand = std::is_same<
 			Category, std::random_access_iterator_tag>::value };
 		typedef std::iterator_traits<Iter>::pointer PointerType;
-		typedef boost::remove_pointer<PointerType>::type
+		typedef std::remove_pointer<PointerType>::type
 			IteratedType;
 		
-		enum { isMutableSeq = !boost::is_const<
+		enum { isMutableSeq = !std::is_const<
 			IteratedType>::value };
 		typedef std::iterator_traits<Iter>::value_type ValueType;
-		enum { isPod = boost::is_POD<ValueType>::value };
+		enum { isPod = std::is_pod<ValueType>::value };
 		enum { selector = 
 			(isBidir || isRand) && isPod && isMutableSeq ? 2 :
 		(isRand ? 1 : 0) };
