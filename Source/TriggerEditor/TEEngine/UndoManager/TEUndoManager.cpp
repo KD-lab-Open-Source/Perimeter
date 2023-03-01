@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "teundomanager.h"
-#include <boost/utility.hpp>
 #include <iterator>
 
 bool TEUndoManager::Bunch::addAction(TEUndoManager::Action const& action)

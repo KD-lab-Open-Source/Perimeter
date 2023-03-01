@@ -2,12 +2,12 @@
 
 #include <list>
 #include <utility>
-#include <boost/function.hpp>
+#include <function>
 
 class TEUndoManager
 {
 public:
-	typedef boost::function0<bool> Action;
+	typedef std::function<bool()> Action;
 private:
 	typedef std::pair<Action, Action> DOREDOPair;
 	typedef std::list<DOREDOPair> DOREDOContainer;
