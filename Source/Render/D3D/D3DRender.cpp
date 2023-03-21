@@ -1297,8 +1297,8 @@ int cD3DRender::KillFocus()
 	DeleteShader();
 		
 	ClearTilemapPool();
-	vertex_pool_manager.Clear();
-	index_pool_manager.Clear();
+	//vertex_pool_manager.Clear();
+	//index_pool_manager.Clear();
 	return 0;
 }
 
