@@ -434,7 +434,7 @@ void loadAddonCommon(const std::string& addonName, const std::string& addonDir) 
 
 void applyWorkarounds() {
     std::map<std::string, std::string> paths;
-    std::string locpath = getLocDataPath();
+    const std::string& locpath = getLocDataPath();
 
     if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
         for (auto faction : { BELLIGERENT_FACTION::EXODUS, BELLIGERENT_FACTION::EMPIRE, BELLIGERENT_FACTION::HARKBACK }) {
@@ -446,6 +446,10 @@ void applyWorkarounds() {
             paths[factionpath + "_Voice_Building_Destroyed.wav"] = factionpath + "_Voice_ElectroGun_Destroyed.wav";
         }
     }
+    
+    //Localized resources if any
+    paths[locpath + "MainMenu"] = "Resource/Icons/MainMenu";
+    paths[locpath + "Video"] = "Resource/Video";
 
     //Map the resource paths
     for (const auto& entry : paths) {
@@ -490,7 +494,7 @@ void detectGameContent() {
     ini->put("Global", "LastContent", getGameContentEnumName(terGameContentBase).c_str());
     putStringSettings("GameContent", get_content_root_path_str());
         
-    //Detect if we have extra contents
+    //Detect if we have extra contents/mods
     int loadAddons = 1;
     check_command_line_parameter("mods", loadAddons);
     std::vector<std::string> addons;
