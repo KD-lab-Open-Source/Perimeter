@@ -25,7 +25,7 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: ${{matrix.env.arch}}-windows
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: lukka/get-cmake@latest
       - name: Restore artifacts, or run vcpkg, build (and cache artifacts as post step)
         uses: lukka/run-vcpkg@v10
@@ -60,7 +60,7 @@ jobs:
           copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.pdb ${{ env.outDir }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Perimeter MSVC ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
           path: ${{ env.outDir }}

@@ -22,13 +22,13 @@ jobs:
     name: ${{matrix.build_type}}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: install libs
         run: |
           brew install ninja yasm dylibbundler \
           libogg libvorbis libvpx boost meson cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: cache
         with:
           path: |
@@ -103,7 +103,7 @@ jobs:
       - name: perimeter -- release tar
         run: tar -cvf Perimeter.app.tar Perimeter.app
       #TODO Expose artifacts once we stop depending on Vulkan
-      #- uses: actions/upload-artifact@v2
+      #- uses: actions/upload-artifact@v3
       #  with:
       #    name: Perimeter MacOS ${{matrix.env.build_type}}
       #    path: Perimeter.app.tar

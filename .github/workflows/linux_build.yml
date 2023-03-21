@@ -17,7 +17,7 @@ jobs:
     name: ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.cmake}}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: update repos
         run: sudo apt-get update
       - name: install libs
@@ -43,7 +43,7 @@ jobs:
         run: strip -g -x perimeter/perimeter
       - name: Release tar
         run: tar -cvf Perimeter.tar perimeter
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Perimeter ${{matrix.env.build_type}} ${{matrix.env.arch}}
           path: Perimeter.tar
@@ -51,7 +51,7 @@ jobs:
     name: Check Scripts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: update repos
         run: sudo apt-get update
       - name: install libs
