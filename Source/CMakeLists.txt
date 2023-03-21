@@ -20,8 +20,8 @@ ENDIF()
 #simpleini
 FetchContent_Declare(simpleini
         GIT_REPOSITORY    https://github.com/brofield/simpleini
-        GIT_TAG           origin/master
-        GIT_SHALLOW       ON
+        GIT_TAG           "142beb4ecef7b50887ae99e7dfcbc09f779372cd"
+        GIT_SHALLOW       OFF
 )
 FetchContent_MakeAvailable(simpleini)
 INCLUDE_DIRECTORIES(${simpleini_SOURCE_DIR})
@@ -32,8 +32,8 @@ IF(NOT PERIMETER_WINDOWS)
     #pevents retrieval
     FetchContent_Declare(pevents
             GIT_REPOSITORY    https://github.com/neosmart/pevents
-            GIT_TAG           origin/master
-            GIT_SHALLOW       ON
+            GIT_TAG           "d6afcbc629cf806f6465238849278e530e1d56fb"
+            GIT_SHALLOW       OFF
     )
     FetchContent_MakeAvailable(pevents)
     ADD_DEFINITIONS(-DWFMO)

@@ -1,8 +1,8 @@
 #Include Sokol
 FetchContent_Declare(sokol
         GIT_REPOSITORY    https://github.com/floooh/sokol
-        GIT_TAG           origin/master
-        GIT_SHALLOW       ON
+        GIT_TAG           "c0e54485457b2e1645f2d809394753b53bf50cd4"
+        GIT_SHALLOW       OFF
         )
 FetchContent_MakeAvailable(sokol)
 include_directories("${sokol_SOURCE_DIR}/")
@@ -11,8 +11,8 @@ IF (OPTION_PROCESS_SHADERS)
     #Download precompiled sokol-shdc
     FetchContent_Declare(sokol-tools-bin
             GIT_REPOSITORY    https://github.com/floooh/sokol-tools-bin
-            GIT_TAG           origin/master
-            GIT_SHALLOW       ON
+            GIT_TAG           "e906578942899c5c803bae8de3b722ab4241f768"
+            GIT_SHALLOW       OFF
             )
     FetchContent_MakeAvailable(sokol-tools-bin)
 
