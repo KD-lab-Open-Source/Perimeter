@@ -1,10 +1,12 @@
 name: MacOS Build
 
 on:
-  #push:
+  push:
   pull_request:
 
 env:
+  VULKAN_SDK_VERSION: '1.2.198.1'
+  VULKAN_LIB_VERSION: '1.2.198'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
   GH_CACHE_KEY: 9
 
@@ -14,12 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          #{build_type: Debug,   arch_name: Apple Silicon, arch_apple: arm64, arch: aarch64},
-          #{build_type: Release, arch_name: Apple Silicon, arch_apple: arm64, arch: aarch64},
-          {build_type: Debug,   arch_name: Intel, arch_apple: x86_64, arch: x86_64},
-          {build_type: Release, arch_name: Intel, arch_apple: x86_64, arch: x86_64}
+          {build_type: Debug, cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
+          {build_type: Release, cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=OFF"}
         ]
-    name: ${{matrix.build_type}} ${{matrix.env.arch_name}}
+    name: ${{matrix.build_type}}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,18 +32,28 @@ jobs:
         id: cache
         with:
           path: |
+            vulkansdk-macos.dmg
             ffmpeg
-          key: MacOS-${{matrix.env.arch_apple}}-${{ env.GH_CACHE_KEY }}
+          key: MacOS-${{ env.VULKAN_SDK_VERSION }}-${{ env.GH_CACHE_KEY }}
+      - name: download Vulkan SDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          wget https://sdk.lunarg.com/sdk/download/${{ env.VULKAN_SDK_VERSION }}/mac/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}.dmg?Human=true -O vulkansdk-macos.dmg
+      - name: install Vulkan SDK
+        run: |
+          hdiutil attach vulkansdk-macos.dmg
+          sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
+          hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone --depth 1 --branch n4.4.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        run: git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./configure --enable-shared --prefix=/usr/local 
+        run: ./configure --enable-shared --prefix=/usr/local
           --cc="clang"
           --arch=${{matrix.env.arch}}
-          --extra-cflags="-arch ${{matrix.env.arch_apple}}"
-          --extra-ldflags="-arch ${{matrix.env.arch_apple}}"
+          --extra-cflags="-arch x86_64"
+          --extra-ldflags="-arch x86_64"
           --target-os=darwin
           --sysroot=$(xcrun --sdk macosx --show-sdk-path)
           --disable-everything
@@ -72,7 +82,7 @@ jobs:
       - name: perimeter -- create build dir
         run: mkdir build
       - name: perimeter -- configure
-        run: cmake .. -G Ninja -DOPTION_D3D9=OFF -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_OSX_ARCHITECTURES=${{matrix.env.arch_apple}}
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} ${{matrix.env.cmake}}
         working-directory: build
       - name: perimeter -- build dependencies
         run: ninja dependencies
@@ -92,7 +102,8 @@ jobs:
           LIB_DIR: "/usr/local/lib"
       - name: perimeter -- release tar
         run: tar -cvf Perimeter.app.tar Perimeter.app
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Perimeter MacOS ${{matrix.env.build_type}} ${{matrix.env.arch_name}}
-          path: Perimeter.app.tar
+      #TODO Expose artifacts once we stop depending on Vulkan
+      #- uses: actions/upload-artifact@v2
+      #  with:
+      #    name: Perimeter MacOS ${{matrix.env.build_type}}
+      #    path: Perimeter.app.tar

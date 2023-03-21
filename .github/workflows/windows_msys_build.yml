@@ -60,8 +60,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           mkdir downloads
-          wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.2/SDL2_image-2.6.2-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_image.zip
-          wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.2/SDL2_mixer-2.6.2-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_mixer.zip
+          wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-2.6.3-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_image.zip
+          wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-2.6.3-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_mixer.zip
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
