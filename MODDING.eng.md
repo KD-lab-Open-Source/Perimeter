@@ -35,6 +35,10 @@ Examples:
 - Files placed in `Mods/MyMap/Resource/Multiplayer/MyCoolMap.spg` etc, will appear like they were placed in 
   `Resource/Multiplayer/MyCoolMap.spg` thus allowing players to use this multiplayer map.
 
+Localizations also can supply certain resources adecuate to the provided language when placed as these examples:
+- LocData/LocData/LANGUAGE/Video/Perimeter.bik is used instead of Resource/Video/Perimeter.bik if LANGUAGE is active
+- LocData/LocData/LANGUAGE/MainMenu/1200/main_menu_logo.tga is used instead of Resource/Icons/MainMenu/1200/main_menu_logo.tga if LANGUAGE is active
+
 ## Content mapping
 
 Text file named `content_mapping.txt` can be placed in mod folder to tell game to map certain paths to another path

@@ -46,7 +46,6 @@ There is instructions available in:
 
 ## Enhancements from original game
 
-
 - Modding support
   - [English](MODDING.eng.md)
 - Bugfixes
@@ -78,6 +77,16 @@ There is instructions available in:
   - Experimental recovery mechanism for desyncs
 - Experimental support for MacOS
 - More than 4 player maps supported
+
+## Game settings:
+
+Application preferences paths: 
+- Linux: $HOME/.local/share/KD Vision/Perimeter/
+- MacOS: $HOME/Library/Application Support/KD Vision/Perimeter/
+- Windows: %AppData%\\Roaming\\KD Vision\\Perimeter\
+
+NOTE: Some settings like current language, active profile, multiplayer settings and game content path can be found now at file Settings.ini inside application preferences directory.
+This file is automatically created/updated by the game.
 
 ## Repository contents
 
