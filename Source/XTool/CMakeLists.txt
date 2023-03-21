@@ -4,8 +4,8 @@ OPTION(OPTION_USE_BACKTRACE "Use libbacktrace if present" OFF)
 #GameMath retrieval
 FetchContent_Declare(gamemath
     GIT_REPOSITORY    https://github.com/TheAssemblyArmada/GameMath
-    GIT_TAG           origin/master
-    GIT_SHALLOW       ON
+    GIT_TAG           "59f7ccd494f7e7c916a784ac26ef266f9f09d78d"
+    GIT_SHALLOW       OFF
 )
 FetchContent_MakeAvailable(gamemath)
 
