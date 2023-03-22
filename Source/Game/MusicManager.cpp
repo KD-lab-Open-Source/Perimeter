@@ -62,7 +62,7 @@ public:
 
 		SetVolumeMusic( terMusicVolume );
 		bool b=mpeg->OpenToPlay(fname,true);
-		xassert_s(b && "Cannot open music: ",fname);
+		if (!b) fprintf(stderr, "Cannot open music: %s\n",fname);
 		return b;
 	}
 
