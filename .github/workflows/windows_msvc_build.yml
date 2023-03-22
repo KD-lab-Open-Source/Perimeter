@@ -5,6 +5,7 @@ on:
   pull_request:
 
 env:
+  VCPKG_COMMIT_ID: '69efe9cc2df0015f0bb2d37d55acde4a75c9a25b'
   buildDir: '${{ github.workspace }}/build/'
   outDir: '${{ github.workspace }}/artifact/'
 
@@ -33,7 +34,7 @@ jobs:
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           appendedCacheKey: '${{ env.VCPKG_DEFAULT_TRIPLET }}'
-          vcpkgGitCommitId: b4f29c54450ddfc7efd2989cb9d32158ae291b40
+          vcpkgGitCommitId: '${{ env.VCPKG_COMMIT_ID }}'
           vcpkgJsonGlob: 'vcpkg.json'
           runVcpkgInstall: false
       - name: Configure developer command prompt
