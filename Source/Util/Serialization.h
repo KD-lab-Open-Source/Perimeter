@@ -552,32 +552,39 @@ template<class T> bool editParameters(T& t, EditArchive& ea);
 template<class T>
 class SingletonPrm 
 {
+private:
+    static T& get_instance(bool load) {
+        static T* t;
+        if(!t){
+            static T tt;
+            t = &tt;
+            if (load) {
+                loadParameters(*t);
+            }
+        }
+        return *t;
+    }
+    
 public:
     static void load() {
-        return loadParameters(instance());
+        return loadParameters(get_instance(false));
     }
 
     static void save() {
-        return saveParameters(instance());
+        return saveParameters(get_instance(true));
     }
 
 	static bool edit(EditArchive& ea) {
-		return editParameters(instance(), ea);
+		return editParameters(get_instance(true), ea);
 	}
 
 	T& operator()() const {
-		return instance();
+		return get_instance(false);
 	}
-
-	static T& instance() {
-		static T* t;
-		if(!t){
-			static T tt;
-			t = &tt;
-			loadParameters(*t);
-		}
-		return *t;
-	}
+    
+    static T& instance() {
+        return get_instance(false);
+    }        
 };
 
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
