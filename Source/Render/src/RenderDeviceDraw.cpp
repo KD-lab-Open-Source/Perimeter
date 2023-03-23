@@ -561,10 +561,6 @@ void cInterfaceRenderDevice::Draw(ElasticSphere *es) {
     int js = es->psi_size;
     size_t points = (is+1) * (js+1) + (is+2) * (js-1);
     
-    Vect3f uv[2];
-    Mat3f &mC=DrawNode->GetMatrix().rot();
-    uv[0].set(0.5f * mC[0][0], 0.5f * mC[0][1], 0.5f * mC[0][2]);
-    uv[1].set(0.5f * mC[1][0], 0.5f * mC[1][1], 0.5f * mC[1][2]);
     VISASSERT(es->GetTexture(0));
     
     SetNoMaterial(es->blendMode,es->GetFrame()->GetPhase(),es->GetTexture(0),es->GetTexture(1),COLOR_MOD);
