@@ -901,9 +901,6 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_START_SCR:
                     if (gameShell->getNetClient()) {
                         gameShell->destroyNetClient();
-                        
-                        //Re-init attributes since server might have provided a different one than ours
-                        initAttributes();
                     }
                     //Remove last game type Multiplayer if set
                     if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {

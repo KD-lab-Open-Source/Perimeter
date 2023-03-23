@@ -1716,7 +1716,7 @@ inline void setKeyC(AttributeIDBelligerent& data, const char* str) {
 
 typedef TypeLibrary<AttributeIDBelligerent, AttributeBase> AttributeLibrary;
 extern SingletonPrm<AttributeLibrary> attributeLibrary;
-void initAttributes(XBuffer* scriptsSerialized = nullptr);
+void initAttributes(bool campaign = false, XBuffer* scriptsSerialized = nullptr);
 uint32_t get_content_crc();
 const std::map<std::string, uint32_t>& get_content_list();
 

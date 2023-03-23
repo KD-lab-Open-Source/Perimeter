@@ -757,8 +757,16 @@ void initInterfaceAttributes() {
     copyInterfaceAttributesIndispensable();
 }
 
-void initAttributes(XBuffer* scriptsSerialized)
-{
+int _lastInitAttributesType = 0; //0 = None or single use, 1 = normal, 2 = campaign 
+
+void initAttributes(bool campaign, XBuffer* scriptsSerialized) {
+    //Check if we don't need to actually load if type is same
+    int initAttrType = scriptsSerialized ? 0 : (campaign ? 2 : 1);
+    if (0 < initAttrType && 0 < _lastInitAttributesType && initAttrType == _lastInitAttributesType) {
+        return;
+    }
+    _lastInitAttributesType = initAttrType;
+    
 //	soundScriptTable();
 
     //Clear previous data
@@ -775,9 +783,22 @@ void initAttributes(XBuffer* scriptsSerialized)
         ia >> WRAP_NAME(globalAttr(), "globalAttr");
     } else {
         //Deserialize from files
-        SingletonPrm<RigidBodyPrmLibrary>::load();
-        SingletonPrm<AttributeLibrary>::load();
-        SingletonPrm<GlobalAttributes>::load();
+        XPrmIArchive ia;
+        if(campaign && ia.open("Scripts\\RigidBodyPrmLibraryCampaign")) {
+            ia >> makeObjectWrapper(SingletonPrm<RigidBodyPrmLibrary>::instance(), "RigidBodyPrmLibrary", nullptr);
+        } else {
+            SingletonPrm<RigidBodyPrmLibrary>::load();
+        }
+        if(campaign && ia.open("Scripts\\AttributeLibraryCampaign")) {
+            ia >> makeObjectWrapper(SingletonPrm<AttributeLibrary>::instance(), "AttributeLibrary", nullptr);
+        } else {
+            SingletonPrm<AttributeLibrary>::load();
+        }
+        if(campaign && ia.open("Scripts\\GlobalAttributesCampaign")) {
+            ia >> makeObjectWrapper(SingletonPrm<GlobalAttributes>::instance(), "GlobalAttributes", nullptr);
+        } else {
+            SingletonPrm<GlobalAttributes>::load();
+        }
 
         //Copy hardcoded data in this executable that is missing in files
         int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
