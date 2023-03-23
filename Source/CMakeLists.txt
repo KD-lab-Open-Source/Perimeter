@@ -177,6 +177,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Game/MusicManager.cpp
         Game/VideoPlayer.cpp
         Game/qd_textdb.cpp
+        Game/Texts.cpp
         Units/Economic.cpp
         Game/Player.cpp
         Game/Universe.cpp

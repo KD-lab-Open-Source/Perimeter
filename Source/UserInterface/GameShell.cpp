@@ -2698,8 +2698,9 @@ void GameShell::preLoad() {
         qdTextDB::instance().load(locale, entry->path_content.c_str(), nullptr, false, replace, txt);
     }
     
-    //Load the builtin texts that might not be provided by addons
+    //Load the builtin texts that might not be provided by mods
     qdTextDB::instance().load_supplementary_texts(getLocale());
+    qdTextDB::instance().load_replacement_texts(getLocale());
     
     //Setup initial menu
     const char* initial_menu_str = check_command_line("initial_menu");

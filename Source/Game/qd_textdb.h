@@ -39,6 +39,9 @@ public:
     ///text_id=text content\nmore content etc
     void load_lines(const std::vector<std::string>& lines, bool replace_old_texts, const std::string& locale = "");
 
+    ///Includes texts that must be set always
+    void load_replacement_texts(const std::string& locale);
+
     ///Includes texts that are not usually in retail game translations, these only are added if DB don't have them already
     void load_supplementary_texts(const std::string& locale);
 

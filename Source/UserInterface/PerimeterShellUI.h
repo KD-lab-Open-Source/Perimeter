@@ -836,15 +836,6 @@ public:
 	virtual void draw(int bFocus);
 	virtual void Show(int bShow);
 
-	void SetText(const char* text) {
-		textData = text;
-	}
-	void setText(const std::string& text) {
-		textData = text;
-	}
-	const std::string& getText() const {
-		return textData;
-	}
 	virtual int EffectSupported() {
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
