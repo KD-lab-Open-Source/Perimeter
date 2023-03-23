@@ -48,9 +48,9 @@ void cUnkLight::Draw(cCamera *DrawNode)
 
 	Vect3f pv0,pe0,pv,pe;
 	const int NumberPlane=10;
-	sColor4c Diffuse(GetDiffuse().a*GetDiffuse().r,
+	uint32_t Diffuse = gb_RenderDevice->ConvertColor(sColor4c(GetDiffuse().a*GetDiffuse().r,
 					GetDiffuse().a*GetDiffuse().g,
-					GetDiffuse().a*GetDiffuse().b,1);
+					GetDiffuse().a*GetDiffuse().b,1));
 	float dr=2*GetRadius()/(NumberPlane+1);
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
@@ -60,24 +60,25 @@ void cUnkLight::Draw(cCamera *DrawNode)
 	Vect3f WorldK=DrawNode->GetPos()-GetPos();
 	FastNormalize(WorldK);
 
-	sVertexXYZDT1 v0,v1;
-	for(int i=0;i<NumberPlane;i++,tex+=1)
-	{ // NumberPlane>=2
+	sVertexXYZDT1* vb = db->LockTriangleStripSteps<sVertexXYZDT1>(NumberPlane);
+    
+	for(int i=0;i<NumberPlane;i++,tex+=1) {
 		float r=GetRadius()*(1-ABS(2.f*(i+1)/(NumberPlane+2)-1));
-		Vect3f sx=r*DrawNode->GetWorldI(),sy=r*DrawNode->GetWorldJ(),
-//			sz=(GetRadius()-(i+1)*dr)*DrawNode->GetWorldK();
-			sz=(GetRadius()-(i+1)*dr)*WorldK;
-		if(i&1)
-			v0.pos=GetPos()-sx+sy-sz,
-			v1.pos=GetPos()-sx-sy-sz;
-		else
-			v0.pos=GetPos()+sx+sy-sz,
-			v1.pos=GetPos()+sx-sy-sz;
+		Vect3f sx=r*DrawNode->GetWorldI(),sy=r*DrawNode->GetWorldJ(),sz=(GetRadius()-(i+1)*dr)*WorldK;
+        sVertexXYZDT1& v0 = vb[i*2];
+        sVertexXYZDT1& v1 = vb[i*2+1];
+		if (i&1) {
+            v0.pos = GetPos() - sx + sy - sz;
+            v1.pos = GetPos() - sx - sy - sz;
+        } else {
+            v0.pos = GetPos() + sx + sy - sz;
+            v1.pos = GetPos() + sx - sy - sz;
+        }
 		v0.GetTexel().set(tex,0); v1.GetTexel().set(tex,1);
-		v0.diffuse=v1.diffuse=gb_RenderDevice->ConvertColor(Diffuse);
-		db->AutoTriangleStripStep(v0,v1);
+		v0.diffuse=v1.diffuse=Diffuse;
 	}
 
+    db->Unlock();
     db->EndTriangleStrip();
 }
 const MatXf& cUnkLight::GetPosition() const

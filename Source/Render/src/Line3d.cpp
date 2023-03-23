@@ -43,7 +43,8 @@ void cLine3d::Draw(cCamera *DrawNode)
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
 	Vect3f Orientation;
 
-	sVertexXYZDT1 v0,v1;
+	sVertexXYZDT1* vb = db->LockTriangleStripSteps<sVertexXYZDT1>(Vertex.size());
+    size_t i = 0;
 	for( int nVertex=Vertex.size()-1; nVertex>=0; nVertex-- )
 	{
 		if(nVertex>0)
@@ -61,14 +62,16 @@ void cLine3d::Draw(cCamera *DrawNode)
 /**/
 		}
 
+        sVertexXYZDT1& v0 = vb[i++];
+        sVertexXYZDT1& v1 = vb[i++];
 		v0.pos=Vertex[nVertex].pos+Orientation; 
 		v1.pos=Vertex[nVertex].pos-Orientation;
 		v0.u1()=   v1.u1()=Vertex[nVertex].v-GetFrame()->GetPhase();
 		v0.v1()=0; v1.v1()=1;
 		v0.diffuse=v1.diffuse=gb_RenderDevice->ConvertColor(Vertex[nVertex].color);
-		db->AutoTriangleStripStep(v0,v1);
 	}
 
+    db->Unlock();
     db->EndTriangleStrip();
 }
 

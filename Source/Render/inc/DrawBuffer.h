@@ -66,6 +66,16 @@ public:
     }
 
     template<class TVERTEX>
+    inline TVERTEX* LockTriangleStripSteps(size_t steps) {
+        TVERTEX* vptr;
+        indices_t* iptr;
+        Lock((steps + 1) * 2, (steps + 1) * 2, vptr, iptr, false);
+        TVERTEX* empty = nullptr;
+        WriteTriangleStripStep(steps, empty, iptr);
+        return vptr;
+    }
+
+    template<class TVERTEX>
     inline TVERTEX* LockTriangleStripGrid(size_t quads, size_t rows = 1) {
         TVERTEX* vptr;
         indices_t* iptr;
@@ -76,25 +86,21 @@ public:
     }
 
     template<class TVERTEX>
-    void AutoTriangleStripStep(TVERTEX& v0, TVERTEX& v1) {
-        xassert(TVERTEX::fmt == vb.fmt);
-        xassert(primitive == PT_TRIANGLESTRIP);
-        TVERTEX* vptr;
-        indices_t* iptr;
-
-        Lock(2, 2, vptr, iptr, true);
-        vptr[0] = v0; vptr[1] = v1;
-        iptr[0] = written_vertices; iptr[1] = written_vertices + 1;
-        Unlock();
-
-        if (written_indices + 2 >= ib.NumberIndices) {
-            Draw();
-            
-            Lock(2, 2, vptr, iptr, true);
-            vptr[0] = v0; vptr[1] = v1;
-            iptr[0] = 0; iptr[1] = 1;
+    void AutoLockTriangleStripStep(size_t locked_steps, size_t steps, TVERTEX*& vertex_buf, indices_t*& indices_buf) {
+        xassert(locked_steps);
+        if ((locked_vertices && lock_written_vertices + steps * 2 >= locked_vertices)
+            || (locked_indices && lock_written_indices + steps * 2 + 2 >= locked_indices)) {
             Unlock();
         }
+        TVERTEX* empty = nullptr;
+        bool was_locked = IsLocked();
+        if (!was_locked) {
+            Lock(
+                    std::min(static_cast<size_t>(vb.NumberVertex), locked_steps * 2),
+                    std::min(static_cast<size_t>(ib.NumberIndices), locked_steps * 2),
+                    vertex_buf, indices_buf, false);
+        }
+        WriteTriangleStripStep(steps, was_locked ? vertex_buf : empty, indices_buf);
     }
 
     template<class TVERTEX>
@@ -147,6 +153,24 @@ public:
     }
     
     //Write* functions prewrite indices and advance vertex buffer automatically
+
+    template<class TVERTEX>
+    void WriteTriangleStripStep(size_t steps, TVERTEX*& vertex_buf, indices_t*& indices_buf) {
+        xassert(TVERTEX::fmt == vb.fmt);
+        xassert(primitive == PT_TRIANGLESTRIP);
+        if (!steps) return;
+        xassert(lock_written_vertices + steps * 2 <= locked_vertices);
+        xassert(lock_written_indices + steps * 2 <= locked_indices);
+        size_t b = written_vertices + lock_written_vertices;
+        size_t points = steps * 2;
+        for (int i = 0; i < points; ++i) {
+            indices_buf[i] = b + i;
+        }
+        indices_buf += points;
+        lock_written_indices += points;
+        lock_written_vertices += points;
+        if (vertex_buf) vertex_buf += points;
+    }
 
     template<class TVERTEX>
     void WriteQuad(size_t quads, TVERTEX*& vertex_buf, indices_t*& indices_buf) {

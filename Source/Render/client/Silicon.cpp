@@ -333,15 +333,14 @@ void ElasticLink::Draw(cCamera *DrawNode)
     gb_RenderDevice->SetWorldMatXf(MatXf(Mat3f::ID,point1));
     DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP);
 
-	sColor4c Diffuse(diffuse);
+	uint32_t Diffuse = gb_RenderDevice->ConvertColor(sColor4c(diffuse));
 	Vect3f Weight = 10*x_axis;
 	float u1=0.f, du1=0.01f;
 	float u2=2*GetFrame()->GetPhase(), du2=0.02f;
 	float v2=0, dv2=0.01f;
 
-	sVertexXYZDT2 vtx0,vtx1;
-	for(int i = 0; i < line_size; i++)
-	{
+    sVertexXYZDT2* vb = db->LockTriangleStripSteps<sVertexXYZDT2>(line_size);
+	for(int i = 0; i < line_size; i++) {
 		float z = dz*i;
 		float x = thickness_factor*x_height[i];
 		if(z < oscillating_link_tail_length)
@@ -349,15 +348,18 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		if(length - z < oscillating_link_tail_length)
 			x *= (length - z)/oscillating_link_tail_length;
 		Vect3f v = x*x_axis + z*z_axis;
+        sVertexXYZDT2& vtx0 = vb[i*2];
+        sVertexXYZDT2& vtx1 = vb[i*2+1];
 		vtx0.pos = v-Weight;
 		vtx1.pos = v+Weight;
-		vtx0.diffuse=vtx1.diffuse=gb_RenderDevice->ConvertColor(Diffuse);
+		vtx0.diffuse=vtx1.diffuse=Diffuse;
 		vtx0.u1()=   vtx1.u1()=(u1+=du1);
 		vtx0.v1()=0; vtx1.v1()=1;
 		vtx0.u2()=   vtx1.u2()=(u2+=du2);
 		vtx0.v2()=(v2+=dv2);vtx1.v2()=v2+1;
-		db->AutoTriangleStripStep(vtx0,vtx1);
 	}
+    db->Unlock();
+    db->EndTriangleStrip();
 
 	gb_RenderDevice->SetRenderState(RS_CULLMODE, old_cull);
 }

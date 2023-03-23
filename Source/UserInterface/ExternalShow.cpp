@@ -21,6 +21,8 @@
 #define GAME_SHELL_SHOW_REGION_U_STEP		0.01f
 #define GAME_SHELL_SHOW_REGION_U_SPEED		0.5f
 
+#define GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE 16
+
 float terExternalEnergyTextureStart = 0;
 float terExternalEnergyTextureEnd = GAME_SHELL_SHOW_REGION_U_STEP;
 //--------------------------------------------------
@@ -186,6 +188,9 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 {
 	sColor4c diffuse(circleColor.color);
 	float width = circleColor.width;
+    indices_t* ib = nullptr;
+    sVertexXYZDT1* vb = nullptr;
+    
 	if (circleColor.dotted != 3) {
 
 		Vect2f tp,dn;
@@ -222,10 +227,8 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
         
 
 		float v_pos = 0;
-		sVertexXYZDT1 p1,p2;
-		p1.diffuse = p2.diffuse = gb_RenderDevice->ConvertColor(diffuse);
-		p1.v1() = selection ? terExternalEnergyTextureEnd : 1.0f;
-		p2.v1() = selection ? terExternalEnergyTextureStart : 0.05f;
+
+        uint32_t diffusev = gb_RenderDevice->ConvertColor(diffuse);
 
 		for(int i = 0;i <= num_da;i++)
 		{
@@ -239,20 +242,27 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			dn.y *= width;
 
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
+            
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
 
-			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
-			p1.u1() = selection ? v_pos : u;
+            vb[0].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+            vb[0].u1() = selection ? v_pos : u;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 		
-			p2.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
-			p2.u1() = selection ? v_pos : p1.u1();
+			vb[1].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+            vb[1].u1() = selection ? v_pos : vb[0].u1();
+            
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
+            
+            vb[0].diffuse = vb[1].diffuse = diffusev;
+            vb[0].v1() = selection ? terExternalEnergyTextureEnd : 1.0f;
+            vb[1].v1() = selection ? terExternalEnergyTextureStart : 0.05f;
 
-            db->AutoTriangleStripStep(p1, p2);
 			a += da;
 			u+=du;
 		}
-    
+
+        db->AutoUnlock();
         db->EndTriangleStrip();
 	} else {
 		int num = xm::round(2.0f * r / region_show_spline_space);
@@ -262,11 +272,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		float v_pos = 0;
 
-		sVertexXYZDT1 p1,p2;
-
-		p1.diffuse = p2.diffuse = gb_RenderDevice->ConvertColor(diffuse);
-		p1.v1() = 1.0f;
-		p2.v1() = 0.05f;
+		uint32_t diffusev = gb_RenderDevice->ConvertColor(diffuse);
 
         gb_RenderDevice->SetWorldMat4f(nullptr);
         DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
@@ -275,38 +281,55 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 		float x2 = x1 + width;
 		float y = pos.y - r;
 		for (int i = 0; i <= num; i++) {
-			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(pos.x)), vMap.YCYCL(xm::round(y))) >> VX_FRACTION);
-			p1.pos.set(x1, y, z0);
-			p1.u1() = v_pos;
-			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
-		
-			p2.pos.set(x2, y, z0);
-			p2.u1() = v_pos;
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+
+            float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(pos.x)), vMap.YCYCL(xm::round(y))) >> VX_FRACTION);
+            
+            vb[0].pos.set(x1, y, z0);
+            vb[0].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			db->AutoTriangleStripStep(p1,p2);
+            vb[1].pos.set(x2, y, z0);
+            vb[1].u1() = v_pos;
+			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
+
+
+            vb[0].diffuse = vb[1].diffuse = diffusev;
+            vb[0].v1() = 1.0f;
+            vb[1].v1() = 0.05f;
+
 			y += region_show_spline_space;
 		}
 
+        db->AutoUnlock();
         db->EndTriangleStrip();
+        ib = nullptr;
+        vb = nullptr;
 
 		float y1 = pos.y - width / 2.0f;
 		float y2 = y1 + width;
 		float x = pos.x - r;
 		for (int i = 0; i <= num; i++) {
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(x)), vMap.YCYCL(xm::round(pos.y))) >> VX_FRACTION);
-			p1.pos.set(x, y1, z0);
-			p1.u1() = v_pos;
+			vb[0].pos.set(x, y1, z0);
+			vb[0].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 		
-			p2.pos.set(x, y2, z0);
-			p2.u1() = v_pos;
+			vb[1].pos.set(x, y2, z0);
+			vb[1].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			db->AutoTriangleStripStep(p1,p2);
+
+            vb[0].diffuse = vb[1].diffuse = diffusev;
+            vb[0].v1() = 1.0f;
+            vb[1].v1() = 0.05f;
+
 			x += region_show_spline_space;
 		}
 
+        db->AutoUnlock();
         db->EndTriangleStrip();
 	}
 }
@@ -487,29 +510,32 @@ void terExternalRegionShowLine(Region* region,uint32_t diffuse)
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
 
-		sVertexXYZDT1 p0,p1;
-		p0.diffuse = diffuse;
-		p0.u1() = terExternalEnergyTextureEnd;
-		p1.diffuse = diffuse;
-		p1.u1() = terExternalEnergyTextureStart;
+        indices_t* ib = nullptr;
+		sVertexXYZDT1* vb = nullptr;
 
 		do{
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+            
 			tp = region->spline()(t);
 			dn = region->spline().inward_normal(t)*0.02f;
 
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 
-			p0.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
-			p0.v1() = v_pos;
+			vb[0].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+			vb[0].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
-			p1.v1() = v_pos;
+			vb[1].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+			vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			db->AutoTriangleStripStep(p0,p1);
+            vb[0].diffuse = diffuse;
+            vb[0].u1() = terExternalEnergyTextureEnd;
+            vb[1].diffuse = diffuse;
+            vb[1].u1() = terExternalEnergyTextureStart;
 		} while((t += dt) < t_max);
 
+        db->AutoUnlock();
         db->EndTriangleStrip();
 	}
 
@@ -531,11 +557,8 @@ void terExternalRegionShowLineZeroplast(Region* region,uint32_t diffuse)
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
 
-		sVertexXYZDT1 p0,p1;
-		p0.diffuse = diffuse;
-		p0.u1() = terExternalEnergyTextureEnd;
-		p1.diffuse = diffuse;
-		p1.u1() = terExternalEnergyTextureStart;
+        indices_t* ib = nullptr;
+		sVertexXYZDT1* vb = nullptr;
 
 		do{
 			tp = region->spline()(t);
@@ -546,17 +569,23 @@ void terExternalRegionShowLineZeroplast(Region* region,uint32_t diffuse)
 				z0=vMap.hZeroPlast;
 			z0+=ZFIX;
 
-			p0.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
-			p0.v1() = v_pos;
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+
+            vb[0].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+            vb[0].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
-			p1.v1() = v_pos;
+			vb[1].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+			vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-            db->AutoTriangleStripStep(p0, p1);
+            vb[0].diffuse = diffuse;
+            vb[0].u1() = terExternalEnergyTextureEnd;
+            vb[1].diffuse = diffuse;
+            vb[1].u1() = terExternalEnergyTextureStart;
         } while((t += dt) < t_max);
 
+        db->AutoUnlock();
         db->EndTriangleStrip();
 	}
 
@@ -579,32 +608,35 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,uint32_t diffuse)
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
 
-		sVertexXYZDT1 p0,p1;
-		p0.diffuse = diffuse;
-		p0.u1() = terExternalEnergyTextureEnd;
-		p1.diffuse = diffuse;
-		p1.u1() = terExternalEnergyTextureStart;
+        indices_t* ib = nullptr;
+        sVertexXYZDT1* vb = nullptr;
 		float zero=vMap.hZeroPlast;
 		float zero_fix=zero-ZFIX;
 
+        
 		do{
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+            
 			tp = region->spline()(t);
 
 			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
-			if(z0>zero)
-				z0=zero;
+			if(z0>zero) z0=zero;
 
-			p0.pos.set(tp.x,tp.y,zero_fix);
-			p0.v1() = v_pos;
+            vb[0].pos.set(tp.x,tp.y,zero_fix);
+            vb[0].v1() = v_pos; 
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			p1.pos.set(tp.x,tp.y,z0);
-			p1.v1() = v_pos;
+            vb[1].pos.set(tp.x,tp.y,z0);
+            vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-            db->AutoTriangleStripStep(p0, p1);
+            vb[0].diffuse = diffuse;
+            vb[0].u1() = terExternalEnergyTextureEnd;
+            vb[1].diffuse = diffuse;
+            vb[1].u1() = terExternalEnergyTextureStart;
         } while((t += dt) < t_max);
 
+        db->AutoUnlock();
         db->EndTriangleStrip();
 	}
 
