@@ -12,6 +12,7 @@ extern cInterfaceRenderDevice* terRenderDevice;
 extern cVisGeneric* terVisGeneric;
 extern int terSoundEnable;
 extern float terSoundVolume;
+extern float GlobalParticleRate;
 
 extern MusicPlayer gb_Music;
 
@@ -509,6 +510,10 @@ void HistoryScene::drawSprites() {
 }
 
 void HistoryScene::draw() {
+    //Workaround to reduce lag caused by particles when frames move
+    //we make sure % is never 100% even when options specify 100%
+    float rate = GlobalParticleRate;
+    GlobalParticleRate = 0.5f;
 	sceneSky->Draw(cameraSky);
 	scene->Draw(historyCamera->getCamera());
 
@@ -528,6 +533,7 @@ void HistoryScene::draw() {
                 sColor4f(1, 1, 1, BRIEFING_LOG_ALPHA) );
 		terRenderDevice->SetFont( NULL );
 	}
+    GlobalParticleRate = rate;
 }
 void HistoryScene::postDraw() {
 	sceneSky->PostDraw(cameraSky);

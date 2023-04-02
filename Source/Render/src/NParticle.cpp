@@ -17,6 +17,7 @@ const int PARTICLE_BUF_LOCK_LEN = 50;
 static RandomGenerator rnd;
 static std::vector<Vect2f> rotate_angle;
 
+float GlobalParticleRate = 1.0f;
 KeyFloat::value KeyFloat::none=0;
 KeyPos::value KeyPos::none=Vect3f::ZERO;
 KeyRotate::value KeyRotate::none=QuatF::ID;
@@ -26,7 +27,7 @@ static const float INV_2_PI=1/(2*XM_PI);
 
 float cEffect::GetParticleRateReal()const
 {
-	return particle_rate*Option_ParticleRate;
+	return particle_rate*GlobalParticleRate*Option_ParticleRate;
 }
 ///////////////////////////cEmitterInterface///////////////////////////
 cEmitterInterface::cEmitterInterface()
