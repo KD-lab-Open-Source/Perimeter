@@ -105,7 +105,7 @@ This file is automatically created/updated by the game.
   * PluginMAX - _Working_ - Handles game 3D models loading from M3D/L3D files. Name comes from "3ds Max" which was used
     originally for creating and exporting these models.
   * Render - _Working_ - Provides graphics/rendering abstraction API, uses DirectX APIs under the hood which is provided
-    by dxvk-native and Exodus outside Windows platform.
+    by dxvk and Exodus outside Windows platform.
   * Scripts/ - _Working_ - Contains .prm files that are compiled using XPrm tool, *Library files that are loaded by game at runtime
     which contain some game configs/data and Texts.tdb containing ingame texts. Some game copies may contain a copy of this folder.
     * Triggers - Trigger chains containing maps and AI triggers/behaviors.

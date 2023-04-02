@@ -7,7 +7,7 @@ shift
 CROSS_ROOT=$1
 shift
 
-echo "Cross compiling DXVK-Native for $ARCH at $CROSS_ROOT with $@"
+echo "Cross compiling DXVK for $ARCH at $CROSS_ROOT with $@"
 
 export CFLAGS="-arch $ARCH"
 export CXXFLAGS="-arch $ARCH"

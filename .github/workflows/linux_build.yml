@@ -36,7 +36,7 @@ jobs:
       - name: Package
         run: |
           mkdir perimeter
-          if [[ -f "build/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so" ]]; then cp build/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so perimeter/; fi
+          if [[ -f "build/Source/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.so" ]]; then cp build/Source/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.so perimeter/; fi
           cp build/Source/perimeter perimeter/
           chmod 777 perimeter/perimeter
       - name: Strip binary

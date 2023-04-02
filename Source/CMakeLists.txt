@@ -45,42 +45,59 @@ IF(NOT PERIMETER_WINDOWS)
     )
 
     IF (OPTION_D3D9)
-        MESSAGE("Using DXVK-native for D3D9 API")
+        MESSAGE("Using DXVK for D3D9 API")
 
-        SET(DXVK_NATIVE_BUILD_COMMAND meson setup)
-        IF (MACOS AND CMAKE_OSX_ARCHITECTURES)
+        SET(DXVK_BUILD_COMMAND meson setup)
+        #DXVK wrapper lib retrieval and building
+        IF (MACOS)
+            IF (CMAKE_OSX_ARCHITECTURES)
             #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
-            SET(DXVK_NATIVE_BUILD_COMMAND
+            SET(DXVK_BUILD_COMMAND
                     ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
                     ${CMAKE_OSX_ARCHITECTURES}
                     ${PROJECT_SOURCE_DIR}/macos/
             )
+            ENDIF()
+            #TODO change this to upstream once changes are merged
+            ExternalProject_Add(dxvk
+                    GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
+                    GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
+                    GIT_SHALLOW       OFF
+                    BUILD_ALWAYS      OFF
+                    CONFIGURE_HANDLED_BY_BUILD ON
+                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk --buildtype=release
+                                      -Denable_d3d9=true
+                                      -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
+                    BUILD_COMMAND     ninja
+                    INSTALL_COMMAND   ""
+            )
+        ELSE()
+            ExternalProject_Add(dxvk
+                    GIT_REPOSITORY    https://github.com/doitsujin/dxvk
+                    GIT_TAG           "306919047bffb3d8f30159c219722741728904e2"
+                    GIT_SHALLOW       OFF
+                    BUILD_ALWAYS      OFF
+                    CONFIGURE_HANDLED_BY_BUILD ON
+                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk --buildtype=release
+                                      -Denable_d3d9=true -Ddxvk_native_wsi=sdl2
+                                      -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
+                    BUILD_COMMAND     ninja
+                    INSTALL_COMMAND   ""
+            )
         ENDIF()
-        #DXVK-native wrapper lib retrieval and building
-        #TODO change this to upstream once changes are merged
-        ExternalProject_Add(dxvk-native
-                GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
-                GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
-                GIT_SHALLOW       OFF
-                BUILD_ALWAYS      OFF
-                CONFIGURE_HANDLED_BY_BUILD ON
-                CONFIGURE_COMMAND ${DXVK_NATIVE_BUILD_COMMAND} ../dxvk-native --buildtype=release -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
-                BUILD_COMMAND     ninja
-                INSTALL_COMMAND   ""
-        )
-        ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
-        set(DXVK_NATIVE_INCLUDE_DIRS
+        ExternalProject_Get_property(dxvk SOURCE_DIR BINARY_DIR)
+        set(DXVK_INCLUDE_DIRS
                 "${SOURCE_DIR}/include/native/directx"
                 "${SOURCE_DIR}/include/native/windows"
         )
         IF (MACOS)
-            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
+            set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
         ELSE()
-            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+            set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
         ENDIF()
     
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
-        INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_D3D9_LIB})
+        INCLUDE_DIRECTORIES("${DXVK_INCLUDE_DIRS}")
     ENDIF()
 ELSEIF(OPTION_D3D9)
     #DirectX SDK libs
@@ -106,7 +123,7 @@ IF(PERIMETER_EXODUS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
     IF (OPTION_D3D9)
         #Make Exodus depend on lib that provides D3D9 API
-        ADD_DEPENDENCIES(Exodus dxvk-native)
+        ADD_DEPENDENCIES(Exodus dxvk)
         #Make other modules depend on Exodus
         ADD_DEPENDENCIES(dependencies Exodus)
     ENDIF()

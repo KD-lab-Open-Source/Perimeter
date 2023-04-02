@@ -84,7 +84,7 @@ uint32_t cD3DRender::GetD3DFVFFromFormat(vertex_fmt_t fmt) {
 uint32_t cD3DRender::GetWindowCreationFlags() const {
     uint32_t flags = cInterfaceRenderDevice::GetWindowCreationFlags();
 #ifndef _WIN32
-    //On non Windows we use dxvk-native which uses Vulkan
+    //On non Windows we use dxvk which uses Vulkan
     flags |= SDL_WINDOW_VULKAN;
 #endif
     return flags;

@@ -30,7 +30,7 @@ We have several CI in github which can serve as hint and examples.
 ### Automatic dependencies
 
 These dependencies are downloaded and compiled automatically if needed by CMake and no intervention is need:
-- https://github.com/Joshua-Ashton/dxvk-native - Modified VXVK for inclusion in native Linux applications.
+- https://github.com/doitsujin/dxvk - Vulkan translation layer for D3D9 render code.
 - https://github.com/neosmart/pevents - Provides Windows compatible events.
 - https://github.com/brofield/simpleini - Provides .ini file loading/writing.
 
@@ -86,7 +86,7 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
 
 # Linux
 
-Experimental support, it uses dxvk-native for D3D9 API and some libraries to supply Windows platform stuff.
+Experimental support, it uses dxvk for D3D9 API and some libraries to supply Windows platform stuff.
 
 ### Requirements
 
@@ -119,7 +119,7 @@ Run executable while current directory is the game directory or pass content= wi
 
 # MacOS
 
-Experimental support, it uses dxvk-native for D3D9 API and some libraries to supply Windows platform stuff.
+Experimental support, it uses dxvk for D3D9 API and some libraries to supply Windows platform stuff.
 
 ### Requirements
 
