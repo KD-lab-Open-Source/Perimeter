@@ -50,20 +50,16 @@
 #include "GraphicsOptions.h"
 #include "GameContent.h"
 
+const char* currentShortVersion = PERIMETER_VERSION;
+
 const char* currentVersion = 
-"Version "
-#include "../version.h"
+"Version " PERIMETER_VERSION
 #ifdef _FINAL_VERSION_
 " Final"
 #endif
 #ifdef PERIMETER_DEBUG
 " Debug"
 #endif
-" (" __DATE__ " " __TIME__ ")"
-;
-
-const char* currentShortVersion =
-#include "../version.h"
 ;
 
 uint16_t currentVersionNumbers[] = {0, 0, 0};
