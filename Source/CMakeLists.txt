@@ -345,13 +345,15 @@ ENDIF()
 SET(perimeter_LINK_LIBS
         #Libraries
         ${perimeter_LINK_LIBS}
-        ${SDL2MAIN_LIBRARY}
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
 )
 
+IF(PERIMETER_WINDOWS)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
+ENDIF()
 IF(OPTION_LINK_VULKAN)
     MESSAGE("Linking Vulkan library")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} "vulkan")
