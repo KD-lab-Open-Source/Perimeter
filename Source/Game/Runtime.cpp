@@ -33,6 +33,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_vulkan.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
@@ -473,6 +474,12 @@ void PerimeterCreateWindow(uint32_t window_flags) {
             windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY(terScreenIndex);
         } else {
             windowPos = SDL_WINDOWPOS_UNDEFINED_DISPLAY(terScreenIndex);            
+        }
+    }
+    if (window_flags & SDL_WINDOW_VULKAN) {
+        int res = SDL_Vulkan_LoadLibrary(nullptr);
+        if (res) {
+            fprintf(stderr, "SDL_Vulkan_LoadLibrary: Error '%d', '%s'", res, SDL_GetError());
         }
     }
     sdlWindow = SDL_CreateWindow(

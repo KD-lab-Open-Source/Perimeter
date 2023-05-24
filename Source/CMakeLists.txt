@@ -352,6 +352,11 @@ SET(perimeter_LINK_LIBS
         ${SDL2_NET_LIBRARY}
 )
 
+IF(OPTION_LINK_VULKAN)
+    MESSAGE("Linking Vulkan library")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} "vulkan")
+ENDIF()
+    
 TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
 
 IF(OPTION_PROCESS_SCRIPTS)
