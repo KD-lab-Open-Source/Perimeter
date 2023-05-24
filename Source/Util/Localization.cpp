@@ -7,6 +7,14 @@ std::string localeCurrent;
 std::string localePath;
 std::vector<std::string> localesAvailable;
 
+void saveLocale(const std::string& locale) {
+    //Windows players are used to changing it in Locale, so keep behavior consistent if is present in Perimeter.ini
+    if (IniManager("Perimeter.ini", false).get("Game", "Language")) {
+        IniManager("Perimeter.ini", false).put("Game", "Language", locale.c_str());
+    }
+    putStringSettings("Locale", locale);
+}
+
 void initLocale() {
     for (filesystem_entry* entry : get_content_entries_directory("Resource/LocData")) {
         if (entry->is_directory) {
@@ -33,7 +41,7 @@ void initLocale() {
     if (check_command_line("clearlocale") || IniManager("Perimeter.ini", false).getInt("Game","ClearLocale")) {
         fprintf(stdout, "Clearing previously selected locale\n");
         localeCurrent = "";
-        putStringSettings("Locale", localeCurrent);
+        saveLocale(localeCurrent);
     }
     //Check if locale is actually available
     if (!localeCurrent.empty()) {
@@ -54,7 +62,7 @@ void initLocale() {
             localeCurrent = string_to_lower(localesAvailable[choice - 1].c_str());
             
             //Save user selection
-            putStringSettings("Locale", localeCurrent);
+            saveLocale(localeCurrent);
             fprintf(stdout, "User selected locale: %s\n", localeCurrent.c_str());
         }
     }  
@@ -76,7 +84,8 @@ void initLocale() {
                 localeCurrent = string_to_lower(localesAvailable.front().c_str());
                 fprintf(stdout, "No locale selected, using first available: %s\n", localeCurrent.c_str());
             }
-            putStringSettings("Locale", localeCurrent);
+            saveLocale(localeCurrent);
+            fprintf(stdout, "Selected fallback locale: %s\n", localeCurrent.c_str());
         }
     }
 

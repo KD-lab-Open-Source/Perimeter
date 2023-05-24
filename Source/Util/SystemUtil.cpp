@@ -385,8 +385,7 @@ const char* IniManager::get(const char* section, const char* key)
 void IniManager::put(const char* section, const char* key, const char* val)
 {
     std::string path = getFilePath();
-
-
+    
     WriteIniString(section, key, val, path);
 }
 
@@ -478,26 +477,6 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
         res = result;
     }
     
-    //In case of Windows try checking registry if this fails
-#ifdef _WIN32
-    if (!found) {
-        HKEY hKey;
-        char name[PERIMETER_CONTROL_NAME_SIZE];
-        DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
-        int32_t lRet = RegOpenKeyExA( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
-    
-        if ( lRet == ERROR_SUCCESS ) {
-            lRet = RegQueryValueExA( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
-    
-            if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
-                found = true;
-                res = name;
-            }
-    
-            RegCloseKey( hKey );
-        }
-    }
-#endif
     return found ? res : defaultValue;
 }
 
