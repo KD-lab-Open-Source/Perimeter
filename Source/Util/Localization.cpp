@@ -64,11 +64,20 @@ void initLocale() {
             localeCurrent = "?";
             fprintf(stderr, "No locale available!");
         } else {
-            //Just choose first available lang
-            localeCurrent = string_to_lower(localesAvailable.front().c_str());
-            fprintf(stdout, "No locale selected, using first available: %s\n", localeCurrent.c_str());
+            //Use english if available, since everybody knows it
+            for (auto& locale : localesAvailable) {
+                if (stricmp(locale.c_str(), "english") == 0) {
+                    localeCurrent = "english";
+                    break;
+                }
+            }
+            //Just choose first available lang as last ditch effort
+            if (localeCurrent.empty()) {
+                localeCurrent = string_to_lower(localesAvailable.front().c_str());
+                fprintf(stdout, "No locale selected, using first available: %s\n", localeCurrent.c_str());
+            }
+            putStringSettings("Locale", localeCurrent);
         }
-        
     }
 
     fprintf(stdout, "Current locale: %s\n", localeCurrent.c_str());
