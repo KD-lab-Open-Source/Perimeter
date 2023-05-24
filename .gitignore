@@ -1,13 +1,25 @@
-.svn
+# IDEs
 /.vscode
+/.idea
+/*.iml
+
+# Game runtime stuff
 /perimeter
-/build
 /Source/cache_font
-.scc
-cmake-build-*
-build/
-docker/dockcross-*-perimeter
 logfile.txt
 perimeter.dxvk-cache
 perimeter_crash
+
+# Build artifacts
+/build
+docker/dockcross-*-perimeter
+/result
+/result-*
+cmake-build-*
+
+# MacOS...
 .DS_Store
+
+# Other
+.svn
+.scc
