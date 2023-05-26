@@ -20,7 +20,7 @@ ENDIF()
 #simpleini
 FetchContent_Declare(simpleini
         GIT_REPOSITORY    https://github.com/brofield/simpleini
-        GIT_TAG           "142beb4ecef7b50887ae99e7dfcbc09f779372cd"
+        GIT_TAG           "7350fcc9228f410309734c3fb6dae2bf513cdd98"
         GIT_SHALLOW       OFF
 )
 FetchContent_MakeAvailable(simpleini)
