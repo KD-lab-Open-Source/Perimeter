@@ -10,11 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          {build_type: Debug, arch: x86_64, cmake: "-DOPTION_D3D9=OFF"},
-          {build_type: Debug, arch: x86_64, cmake: "-DOPTION_SOKOL=OFF"},
-          {build_type: Release, arch: x86_64, cmake: ""}
+          {build_type: Release, arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
+          {build_type: Debug,   arch: x86_64, name: "D3D9", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=OFF"},
+          {build_type: Debug,   arch: x86_64, name: "Sokol", cmake: "-DOPTION_D3D9=OFF -DOPTION_SOKOL=ON"},
         ]
-    name: ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.cmake}}
+    name: ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.name}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
