@@ -2,6 +2,7 @@
 #define __XSTREAM_H
 
 #include <cstring>
+#include <cstdint>
 #include <string>
 
 #define XS_CONV_BUFFER_LEN	63

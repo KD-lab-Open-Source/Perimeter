@@ -2,6 +2,8 @@
 #ifndef __XUTL_H
 #define __XUTL_H
 
+#include <cstdint>
+
 #define GET_PREF_PATH() SDL_GetPrefPath("KD Vision", "Perimeter")
 #define PRINTF_FLOATING_FORMAT "%.*f"
 
