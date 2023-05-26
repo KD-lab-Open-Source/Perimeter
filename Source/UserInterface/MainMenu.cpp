@@ -1657,8 +1657,9 @@ void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
         }
     } else if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         //Reset locale and restart game so it shows lang selector
-        putStringSettings("Locale", "");
-        request_application_restart();
+        std::vector<std::string> args;
+        args.emplace_back("tmp_chooselocale=1");
+        request_application_restart(&args);
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, RESTART_GAME);
     }
 }

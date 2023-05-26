@@ -30,11 +30,14 @@ void initLocale() {
     }
     if (localeCurrent.empty()) {
         localeCurrent = IniManager("Perimeter.ini", false).get("Game", "Language");
+        if (!localeCurrent.empty()) {
+            fprintf(stdout, "Using game data locale: %s\n", localeCurrent.c_str());
+        }
     }
     if (localeCurrent.empty()) {
         localeCurrent = getStringSettings("Locale");
         if (!localeCurrent.empty()) {
-            fprintf(stdout, "Previously selected locale: %s\n", localeCurrent.c_str());
+            fprintf(stdout, "Using settings locale: %s\n", localeCurrent.c_str());
         }
     }
     //Clear language if requested
@@ -56,7 +59,7 @@ void initLocale() {
         }
     }
     //Show selector if there is more than 1 locales available and none is currently active
-    if (localeCurrent.empty() && 1 < localesAvailable.size()) {
+    if (check_command_line("chooselocale") || (localeCurrent.empty() && 1 < localesAvailable.size())) {
         int choice = MessageBoxChoice("Perimeter", "Select language:", localesAvailable);
         if (0 < choice && choice <= localesAvailable.size()) {
             localeCurrent = string_to_lower(localesAvailable[choice - 1].c_str());
