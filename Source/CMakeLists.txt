@@ -382,3 +382,9 @@ ADD_DEPENDENCIES(Sound dependencies)
 ADD_DEPENDENCIES(Network dependencies)
 ADD_DEPENDENCIES(perimeter dependencies)
 target_compile_options(perimeter PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+
+#Install rules
+IF(OPTION_D3D9 AND NOT PERIMETER_WINDOWS)
+    install (FILES ${DXVK_D3D9_LIB} TYPE LIB)
+ENDIF()
+install (TARGETS perimeter RUNTIME)
