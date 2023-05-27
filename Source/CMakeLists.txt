@@ -48,41 +48,45 @@ IF(NOT PERIMETER_WINDOWS)
         MESSAGE("Using DXVK for D3D9 API")
 
         SET(DXVK_BUILD_COMMAND meson setup)
+        SET(DXVK_BUILD_OPTIONS --buildtype=release -Denable_d3d9=true -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false)
         #DXVK wrapper lib retrieval and building
         IF (MACOS)
             IF (CMAKE_OSX_ARCHITECTURES)
-            #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
-            SET(DXVK_BUILD_COMMAND
-                    ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
-                    ${CMAKE_OSX_ARCHITECTURES}
-                    ${PROJECT_SOURCE_DIR}/macos/
-            )
+                #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
+                SET(DXVK_BUILD_COMMAND
+                        ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
+                        ${CMAKE_OSX_ARCHITECTURES}
+                        ${PROJECT_SOURCE_DIR}/macos/
+                )
             ENDIF()
-            #TODO change this to upstream once changes are merged
+            #TODO change this to upstream once DXVK2 works with MoltenVK and MacOS
+            set(DXVK_GIT_URL https://github.com/IonAgorria/dxvk-native)
+            set(DXVK_GIT_TAG "2e91e784a86bc1355100518cd90eee48433551ac")
+        ELSE()
+            set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
+            set(DXVK_GIT_TAG "306919047bffb3d8f30159c219722741728904e2")
+            set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
+        ENDIF()
+        IF(OPTION_DXVK_SOURCE_DIR)
+            MESSAGE("DXVK Source path provided: ${OPTION_DXVK_SOURCE_DIR}")
             ExternalProject_Add(dxvk
-                    GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
-                    GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
-                    GIT_SHALLOW       OFF
-                    BUILD_ALWAYS      OFF
-                    CONFIGURE_HANDLED_BY_BUILD ON
-                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk --buildtype=release
-                                      -Denable_d3d9=true
-                                      -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
-                    BUILD_COMMAND     ninja
-                    INSTALL_COMMAND   ""
+                SOURCE_DIR        ${OPTION_DXVK_SOURCE_DIR}
+                BUILD_ALWAYS      OFF
+                CONFIGURE_HANDLED_BY_BUILD ON
+                CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ${OPTION_DXVK_SOURCE_DIR} ${DXVK_BUILD_OPTIONS}
+                BUILD_COMMAND     ninja
+                INSTALL_COMMAND   ""
             )
         ELSE()
             ExternalProject_Add(dxvk
-                    GIT_REPOSITORY    https://github.com/doitsujin/dxvk
-                    GIT_TAG           "306919047bffb3d8f30159c219722741728904e2"
-                    GIT_SHALLOW       OFF
-                    BUILD_ALWAYS      OFF
-                    CONFIGURE_HANDLED_BY_BUILD ON
-                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk --buildtype=release
-                                      -Denable_d3d9=true -Ddxvk_native_wsi=sdl2
-                                      -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
-                    BUILD_COMMAND     ninja
-                    INSTALL_COMMAND   ""
+                GIT_REPOSITORY    ${DXVK_GIT_URL}
+                GIT_TAG           ${DXVK_GIT_TAG}
+                GIT_SHALLOW       OFF
+                BUILD_ALWAYS      OFF
+                CONFIGURE_HANDLED_BY_BUILD ON
+                CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk ${DXVK_BUILD_OPTIONS}
+                BUILD_COMMAND     ninja
+                INSTALL_COMMAND   ""
             )
         ENDIF()
         ExternalProject_Get_property(dxvk SOURCE_DIR BINARY_DIR)
