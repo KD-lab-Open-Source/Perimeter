@@ -19,7 +19,7 @@ jobs:
           {build_type: Debug, cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
           {build_type: Release, cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=OFF"}
         ]
-    name: ${{matrix.build_type}}
+    name: ${{matrix.env.build_type}}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
