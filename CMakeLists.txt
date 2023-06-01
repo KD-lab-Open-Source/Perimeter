@@ -18,6 +18,7 @@ ENDIF ()
 # Options and inputs
 OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
+OPTION(OPTION_STATIC_LIB_STD "Statically link to libstd++" ON)
 OPTION(OPTION_CHECK_SCRIPTS "Check game scripts with XPrm" OFF)
 OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
@@ -36,9 +37,11 @@ OPTION(OPTION_ASAN "Enable AddressSanitizer" OFF)
 SET(MSVC_CL_BUILD OFF)
 SET(CLANG OFF)
 IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
+    MESSAGE("Compiler: MSVC")
     SET(MSVC_CL_BUILD ON)
 ENDIF()
 IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    MESSAGE("Compiler: clang")
     SET(CLANG ON)
 ENDIF()
 
@@ -98,6 +101,34 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug)
     SET(PERIMETER_DEBUG ON)
     #On debug mode don't download every time unless its absent
     SET(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+ENDIF()
+
+#Linking setup
+SET(BUILD_SHARED_LIBS OFF)
+SET(BUILD_STATIC_LIBS ON)
+#MESSAGE("Lib suffixes ${CMAKE_FIND_LIBRARY_SUFFIXES}")
+IF(OPTION_STATIC_BUILD)
+    MESSAGE("Static build selected")
+    SET(CMAKE_LINK_SEARCH_START_STATIC 1)
+    SET(CMAKE_LINK_SEARCH_END_STATIC 1)
+    IF (NOT PERIMETER_WINDOWS)
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    ENDIF()
+ELSE()
+    # Configure lib suffixes for MinGW unless is static build
+    IF((NOT MSVC_CL_BUILD) AND MINGW)
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES
+            ".a"
+            ".dll.a"
+            ".a.lib"
+        )
+    ENDIF()
+ENDIF()
+IF(OPTION_STATIC_LIB_STD)
+    IF (NOT MSVC_CL_BUILD)
+        MESSAGE("Linking libstd statically")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
+    ENDIF ()
 ENDIF()
 
 # Dependencies
@@ -203,20 +234,6 @@ ELSE()
 ENDIF()
 
 IF(NOT MSVC_CL_BUILD)
-    # Configure lib suffixes for MinGW unless is static build
-    IF(MINGW AND NOT OPTION_STATIC_BUILD)
-        SET(CMAKE_FIND_LIBRARY_SUFFIXES
-            ".a"
-            ".dll.a"
-            ".a.lib"
-        )
-    ENDIF()
-    IF(OPTION_STATIC_BUILD)
-        SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-        SET(BUILD_SHARED_LIBS OFF)
-        SET(CMAKE_EXE_LINKER_FLAGS "-static")
-    ENDIF()
-    
     #Others
     IF(CLANG)
         add_compile_options(-Werror=unused-command-line-argument)
