@@ -26,4 +26,4 @@ SET(PluginMAX_SRCS
 )
 
 ADD_LIBRARY(PluginMAX STATIC ${PluginMAX_SRCS})
-target_compile_options(PluginMAX PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(PluginMAX PRIVATE ${PERIMETER_COMPILE_OPTIONS})

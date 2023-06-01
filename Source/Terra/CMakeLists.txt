@@ -28,4 +28,4 @@ SET(Terra_SRCS
 ADD_DEFINITIONS(-D_TX3D_LIBRARY_)
 
 ADD_LIBRARY(Terra STATIC ${Terra_SRCS})
-target_compile_options(Terra PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(Terra PRIVATE ${PERIMETER_COMPILE_OPTIONS})

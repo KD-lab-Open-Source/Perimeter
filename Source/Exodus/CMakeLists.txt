@@ -14,5 +14,5 @@ IF(OPTION_D3D9)
 ENDIF()
 
 ADD_LIBRARY(Exodus STATIC ${Exodus_SRCS})
-target_compile_options(Exodus PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(Exodus PRIVATE ${PERIMETER_COMPILE_OPTIONS})
 

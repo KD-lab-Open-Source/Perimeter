@@ -48,4 +48,4 @@ SET(tx3d_SRCS
 )
 
 ADD_LIBRARY(tx3d STATIC ${tx3d_SRCS})
-target_compile_options(tx3d PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(tx3d PRIVATE ${PERIMETER_COMPILE_OPTIONS})

@@ -363,7 +363,7 @@ IF(OPTION_LINK_VULKAN)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} "vulkan")
 ENDIF()
     
-TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
+TARGET_LINK_LIBRARIES(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 IF(OPTION_PROCESS_SCRIPTS)
     ADD_DEPENDENCIES(dependencies ScriptsCompile)
@@ -385,7 +385,7 @@ ADD_DEPENDENCIES(Render dependencies)
 ADD_DEPENDENCIES(Sound dependencies)
 ADD_DEPENDENCIES(Network dependencies)
 ADD_DEPENDENCIES(perimeter dependencies)
-target_compile_options(perimeter PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(perimeter PRIVATE ${PERIMETER_COMPILE_OPTIONS})
 
 #Install rules
 IF(OPTION_D3D9 AND NOT PERIMETER_WINDOWS)
