@@ -8,7 +8,7 @@ Be aware that some options and parts are experimental or untested.
 
 Some CMake options are available to customize builds:
 - `OPTION_DISABLE_STACKTRACE` - Set this to ON to not compile stacktrace support, which can give issues sometimes when building.  
-- `OPTION_LINKER_LLD` - Set this to OFF to use builtin linker in builds that are not MSVC
+- `OPTION_LINKER` - Set this to custom linker in builds that are not MSVC
 More available in CMakeLists.txt
   
 Pass `-DCMAKE_BUILD_TYPE=Debug` to cmake command for debug builds with some stuff enabled or -DCMAKE_BUILD_TYPE=Release 

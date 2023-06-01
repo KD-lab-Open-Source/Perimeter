@@ -48,7 +48,6 @@ ${CROSS_TRIPLE}-cmake \
 -DOFF_AVUTIL_LIBRARY="${BASE_DIR}/lib/libavutil${LIB_SUFFIX}" \
 -DOFF_AVCODEC_LIBRARY="${BASE_DIR}/lib/libavcodec${LIB_SUFFIX}" \
 -DOFF_AVFORMAT_LIBRARY="${BASE_DIR}/lib/libavformat${LIB_SUFFIX}" \
--DOPTION_LINKER_LLD=OFF \
 $@
 
 cd build/${CROSS_TRIPLE}
