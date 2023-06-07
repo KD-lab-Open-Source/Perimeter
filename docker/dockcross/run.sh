@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DOCKER_ROOT=./docker
+DOCKER_ROOT=./docker/dockcross
 export SSH_DIR=/noexist
 
 if [[ -z $BUILD_32 ]] && [[ -z $BUILD_64 ]]; then
