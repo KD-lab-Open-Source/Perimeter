@@ -4,8 +4,52 @@ on:
   push:
   pull_request:
 
+env:
+  GH_CACHE_KEY: 3
+
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [
+          {build_type: Release, arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
+          {build_type: Debug,   arch: x86_64, name: "D3D9 + Sokol + Asserts", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON -DOPTION_DEBUG_ASSERT=ON"},
+        ]
+    name: ${{matrix.env.build_type}} ${{matrix.env.arch}}
+    runs-on: ubuntu-latest
+    container:
+      image: "debian:buster"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: |
+            /opt/ffmpeg-src
+            /opt/ffmpeg
+          key: Linux-${{matrix.env.arch}}-${{ env.GH_CACHE_KEY }}
+      - name: prepare env
+        run: |
+          chmod a+x ./docker/linux/prepare_pkgs
+          chmod a+x ./docker/linux/builder
+          ./docker/linux/prepare_pkgs
+      - name: build ffmpeg
+        run: |
+          chmod a+x ./docker/linux/prepare_ffmpeg
+          ./docker/linux/prepare_ffmpeg
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: build
+        run: |
+          export FFMPEG_ROOT=/opt/ffmpeg
+          ./docker/linux/builder \
+            -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
+            ${{matrix.env.cmake}}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Perimeter ${{matrix.env.build_type}} ${{matrix.env.arch}}
+          path: ./build/docker-linux/output/Perimeter.tar
+  check_build:
     strategy:
       fail-fast: false
       matrix:

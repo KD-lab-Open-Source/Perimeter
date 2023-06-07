@@ -23,9 +23,11 @@ static_assert(sizeof(float) * CHAR_BIT == 32);
 static_assert(sizeof(double) * CHAR_BIT == 64);
 static_assert(FLT_RADIX == 2);
 static_assert(FLT_EVAL_METHOD == 0);
-#ifdef FLT_DECIMAL_DIG //Unavailable in Dockcross for some reason
+#ifdef FLT_DECIMAL_DIG
 static_assert(FLT_DECIMAL_DIG == 9);
 static_assert(DBL_DECIMAL_DIG == 17);
+#endif
+#ifdef FLT_HAS_SUBNORM
 static_assert(FLT_HAS_SUBNORM == 1);
 static_assert(DBL_HAS_SUBNORM == 1);
 #endif

@@ -15,6 +15,10 @@ IF(FFMPEG_FOUND)
     IF(OPTION_FFMPEG_MOVIES)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBSWSCALE_LIBRARIES} ${FFMPEG_LIBAVFILTER_LIBRARIES})
     ENDIF()
+    #Optionally link since static ffmpeg builds require libswresample
+    IF(FFMPEG_LIBSWRESAMPLE_FOUND)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
+    ENDIF()
 ENDIF()
 
 #simpleini
@@ -47,7 +51,6 @@ IF(NOT PERIMETER_WINDOWS)
     IF (OPTION_D3D9)
         MESSAGE("Using DXVK for D3D9 API")
 
-        SET(DXVK_BUILD_COMMAND meson setup)
         SET(DXVK_BUILD_OPTIONS --buildtype=release -Denable_d3d9=true -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false)
         #DXVK wrapper lib retrieval and building
         IF (MACOS)
@@ -69,6 +72,9 @@ IF(NOT PERIMETER_WINDOWS)
             set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
             set(DXVK_GIT_TAG "306919047bffb3d8f30159c219722741728904e2")
             set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
+        ENDIF()
+        IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
+            SET(DXVK_BUILD_COMMAND meson setup)
         ENDIF()
         IF(OPTION_DXVK_SOURCE_DIR)
             MESSAGE("DXVK Source path provided: ${OPTION_DXVK_SOURCE_DIR}")
@@ -351,6 +357,7 @@ ENDIF()
 
 SET(perimeter_LINK_LIBS
         #Libraries
+        ${EXE_LINK_LIBS}
         ${perimeter_LINK_LIBS}
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
@@ -360,12 +367,6 @@ SET(perimeter_LINK_LIBS
 
 IF(PERIMETER_WINDOWS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
-ENDIF()
-IF(OPTION_LINK_LIBS)
-    FOREACH(LINK_LIB ${OPTION_LINK_LIBS})
-        MESSAGE("Linking extra library: ${LINK_LIB}")
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} "${LINK_LIB}")
-    ENDFOREACH()
 ENDIF()
     
 TARGET_LINK_LIBRARIES(perimeter PRIVATE ${perimeter_LINK_LIBS})

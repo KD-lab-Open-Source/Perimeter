@@ -9,7 +9,7 @@ SET(XPrm_SRCS
     Token.cpp
 )
 
-SET(XPrm_LINK_LIBS XTool ${SDL2_LIBRARY})
+SET(XPrm_LINK_LIBS ${EXE_LINK_LIBS} XTool ${SDL2_LIBRARY})
 
 IF(PERIMETER_DEBUG)
     SET(XPrm_SRCS ${XPrm_SRCS} RunTimeCompiler.cpp)
