@@ -55,10 +55,12 @@ jobs:
       matrix:
         env: [
           {build_type: Release, arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
+          {build_type: Debug,   arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
           {build_type: Debug,   arch: x86_64, name: "D3D9", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=OFF"},
           {build_type: Debug,   arch: x86_64, name: "Sokol", cmake: "-DOPTION_D3D9=OFF -DOPTION_SOKOL=ON"},
+          {build_type: Release, arch: x86_64, name: "Scripts Check", cmake: "-DOPTION_CHECK_SCRIPTS=ON "},
         ]
-    name: ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.name}}
+    name: Check build ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.name}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -69,42 +71,19 @@ jobs:
       - name: create build dir
         run: mkdir build
       - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} ${{matrix.env.cmake}} -DOPTION_DEBUG_ASSERT=ON
+        run: cmake .. -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
+          -DOPTION_DEBUG_ASSERT=ON \
+          ${{matrix.env.cmake}}
         working-directory: build
       - name: build dependencies
         run: ninja dependencies
         working-directory: build
-      - name: build project
-        run: ninja
-        working-directory: build
-      - name: Package
-        run: |
-          mkdir perimeter
-          if [[ -f "build/Source/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.so" ]]; then cp build/Source/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.so perimeter/; fi
-          cp build/Source/perimeter perimeter/
-          chmod 777 perimeter/perimeter
-      - name: Strip binary
-        run: strip -g -x perimeter/perimeter
-      - name: Release tar
-        run: tar -cvf Perimeter.tar perimeter
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Perimeter ${{matrix.env.build_type}} ${{matrix.env.arch}}
-          path: Perimeter.tar
-  check_scripts:
-    name: Check Scripts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: update repos
-        run: sudo apt-get update
-      - name: install libs
-        run: sudo apt-get install cmake meson libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev zlib1g-dev libvulkan-dev glslang-tools lld
-      - name: create build dir
-        run: mkdir build
-      - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOPTION_CHECK_SCRIPTS=ON
-        working-directory: build
       - name: Scripts check
         run: ninja ScriptsCheck
         working-directory: build
+        if: matrix.env.name == 'Scripts Check'
+      - name: build project
+        run: ninja
+        working-directory: build
+        if: matrix.env.name != 'Scripts Check'

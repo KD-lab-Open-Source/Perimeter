@@ -43,13 +43,17 @@ jobs:
         run: |
           hdiutil attach vulkansdk-macos.dmg
           sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
+          sync
+          sleep 5
           hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./configure --enable-shared --prefix=/usr/local
+        run: ./configure
+          --prefix=/usr/local
+          --enable-shared --disable-static
           --cc="clang"
           --arch=${{matrix.env.arch}}
           --extra-cflags="-arch x86_64"
@@ -69,8 +73,10 @@ jobs:
           --enable-protocol=file
           --disable-d3d11va
           --disable-dxva2
+          --disable-vulkan
+          --disable-network
           --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg
-          --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
+          --disable-bzlib --disable-libopenjpeg --disable-iconv
         working-directory: ffmpeg
       - name: ffmpeg -- build
         if: steps.cache.outputs.cache-hit != 'true'

@@ -5,7 +5,7 @@ on:
   pull_request:
 
 env:
-  VCPKG_COMMIT_ID: '69efe9cc2df0015f0bb2d37d55acde4a75c9a25b'
+  VCPKG_COMMIT_ID: 'db2071b44938c0fb7943a94c8ab912e4e182a60b'
   buildDir: '${{ github.workspace }}/build/'
   outDir: '${{ github.workspace }}/artifact/'
 
