@@ -5172,13 +5172,13 @@ bool meshM2VM::load(const char* fname)//, int numMesh)
 	numFace=numIndices / sPolygon::PN;
 	face=new faceM2VM[numFace];
 
-	int indx;
-	for(indx=0; indx < numIndices; indx+=sPolygon::PN) {
-		face[indx].v1=indicesArr[indx];
-		face[indx].v2=indicesArr[indx+1];
-		face[indx].v3=indicesArr[indx+2];
+	for(size_t indx=0; indx < numFace; indx++) {
+        size_t i = indx * sPolygon::PN; 
+		face[indx].v1=indicesArr[i];
+		face[indx].v2=indicesArr[i+1];
+		face[indx].v3=indicesArr[i+2];
 	}
-	for(indx=0; indx< numVrtx; indx++) {
+	for(size_t indx=0; indx< numVrtx; indx++) {
 		vrtx[indx].xyz.x=pointArr[indx].x;
 		vrtx[indx].xyz.y=-pointArr[indx].y;
 		vrtx[indx].xyz.z=pointArr[indx].z;
