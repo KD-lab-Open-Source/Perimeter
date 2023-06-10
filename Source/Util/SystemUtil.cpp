@@ -292,7 +292,7 @@ bool create_directories(const std::string& path, std::error_code* error) {
 uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
                        char* returnBuffer, uint32_t bufferSize, const std::string& filePath) {
     //Load file content
-    std::ifstream istream(std::filesystem::u8path(filePath));
+    std::ifstream istream(std::filesystem::u8path(filePath), std::ios::in | std::ios::binary);
     CSimpleIniA ini;
     SI_Error rc = ini.LoadData(istream);
     if (rc < 0) {
@@ -316,7 +316,7 @@ uint32_t ReadIniString(const char* section, const char* key, const char* default
 
 uint32_t WriteIniString(const char* section, const char* key, const char* value, const std::string& filePath) {
     //Load file content
-    std::ifstream istream(std::filesystem::u8path(filePath));
+    std::ifstream istream(std::filesystem::u8path(filePath), std::ios::in | std::ios::binary);
     CSimpleIniA ini;
     SI_Error rc = ini.LoadData(istream);
     if (rc < 0) {
@@ -333,8 +333,8 @@ uint32_t WriteIniString(const char* section, const char* key, const char* value,
     }
     
     //Save file changes
-    std::ofstream ostream(std::filesystem::u8path(filePath));
-    ini.Save(ostream);
+    std::ofstream ostream(std::filesystem::u8path(filePath), std::ios::out | std::ios::binary);
+    rc = ini.Save(ostream);
     if (rc < 0) {
         fprintf(stderr, "Error writing %s file: %d\n", filePath.c_str(), rc);
         return 0;
