@@ -257,9 +257,10 @@ bool SNDScriptPrmEnable(const SoundScriptPrm& prm)
 
 bool SNDScriptPrmEnableAll()
 {
-	std::vector<SoundScriptPrm>::const_iterator i;
-	FOR_EACH(soundScriptTable().table, i)
-		SNDScriptPrmEnable(*i);
+    SingletonPrm<SoundScriptTable>::load();
+	for (const auto& i : soundScriptTable().table) {
+        SNDScriptPrmEnable(i);
+    }
 
 	return true;
 }
