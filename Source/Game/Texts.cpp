@@ -112,9 +112,9 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
     load_lines({
        //These should be in released games but seems to be absent sometimes
        "Interface.Tips.ToClanPostfix=(&FF00FFclan&FFFFFF)",
-       "Interface.Tips.ToAllPostfix=(&FF00FF*&FFFFFF)",
+       "Interface.Tips.ToAllPostfix=&FFFFFF",
        "Interface.Tips.ToClanPrefix=&FF00FFClan&FFFFFF: ",
-       "Interface.Tips.ToAllPrefix=&FF00FF*&FFFFFF: ",
+       "Interface.Tips.ToAllPrefix=&FFFFFF",
        //Was not translated
        "Interface.Tips.mission_editor_help=Mission Editor:\n\n"
        "Q - Player \"Me\"\n"
