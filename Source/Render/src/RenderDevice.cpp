@@ -287,12 +287,14 @@ void cInterfaceRenderDevice::OutTextRect(int x, int y, const char *string, int a
     }
 
     cFontInternal* cf=CurrentFont->GetInternal();
+    cTexture* tex = cf->GetTexture();
+    if (!tex) return;
     sColor4c diffuse(0,0,0,0);
     
     float xOfs;
     float yOfs = static_cast<float>(y);
-    float xSize = CurrentFont->GetScale().x*static_cast<float>(cf->GetTexture()->GetWidth());
-    float ySize = CurrentFont->GetScale().y*cf->FontHeight*static_cast<float>(cf->GetTexture()->GetHeight());
+    float xSize = CurrentFont->GetScale().x*static_cast<float>(tex->GetWidth());
+    float ySize = CurrentFont->GetScale().y*cf->FontHeight*static_cast<float>(tex->GetHeight());
 
     for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
         xOfs = static_cast<float>(x);

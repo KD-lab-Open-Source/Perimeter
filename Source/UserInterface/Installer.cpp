@@ -250,17 +250,19 @@ void terBuildingInstaller::InitTexture()
 	int dy = 1 << (BitSR(BaseBuffSY) + 1);
 	dx = dy = max(dx,dy);
 	pTexture = terVisGeneric->CreateTexture(dx,dy,true);
-	if(pTexture == 0)return;
+	if (!pTexture) return;
 
 	int Pitch;
-	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
-	for(int y=0;y<dy;y++)
-	{
-        uint32_t * c = (uint32_t*)(buf + y * Pitch);
-		for(int x = 0; x < dx; x++,c++)
-			*c = 0;
-	}
-	pTexture->UnlockTexture();
+	uint8_t* buf = pTexture->LockTexture(Pitch);
+    if (buf) {
+        for (int y = 0; y < dy; y++) {
+            uint32_t* c = reinterpret_cast<uint32_t*>(buf + y * Pitch);
+            for (int x = 0; x < dx; x++, c++) {
+                *c = 0;
+            }
+        }
+        pTexture->UnlockTexture();
+    }
 }
 
 void terBuildingInstaller::SetBuildPosition(const Vect2f& mousePos, terPlayer* player)
