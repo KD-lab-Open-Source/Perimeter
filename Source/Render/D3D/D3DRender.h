@@ -239,11 +239,6 @@ public:
 		}
 	}
 
-	inline void SetFVF(VertexBuffer& vb)
-	{
-		SetFVF(vb.fmt);
-	}
-
 	FORCEINLINE void SetRenderState(D3DRENDERSTATETYPE State, unsigned int Value)
 	{
 		VISASSERT(0<=State&&State<RENDERSTATE_MAX);
@@ -317,13 +312,6 @@ public:
                                          reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
    
-	inline void DrawPrimitiveUP(D3DPRIMITIVETYPE Type, uint32_t Count, void* pVertex, uint32_t Size)
-	{
-		RDCALL(lpD3DDevice->DrawPrimitiveUP(Type,Count,pVertex,Size));
-	}
-
-	FORCEINLINE IDirect3DVertexBuffer9* GetVB(const VertexBuffer& vb) { return vb.d3d;	}
-
 	inline void SetIndices(IDirect3DIndexBuffer9* pIndexData)
 	{
 		if(CurrentIndexBuffer!=pIndexData)
@@ -332,14 +320,6 @@ public:
 			CurrentIndexBuffer=pIndexData;
 			RDCALL(lpD3DDevice->SetIndices(pIndexData));
 		}
-	}
-
-	inline void SetIndices(const IndexBuffer& ib) { SetIndices(ib.d3d); }
-    
-	inline void SetStreamSource(const VertexBuffer& vb)
-	{
-        FlushActiveDrawBuffer();
-		RDCALL(lpD3DDevice->SetStreamSource(0,vb.d3d,0,vb.VertexSize));
 	}
 
 	void SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer);
@@ -362,8 +342,8 @@ protected:
     IDirect3DIndexBuffer9*		CurrentIndexBuffer;
 	IDirect3DVertexShader9* 	CurrentVertexShader;	// vertex shader
 	IDirect3DPixelShader9*		CurrentPixelShader;
-	uint32_t						CurrentFVF;
-	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
+	uint32_t					CurrentFVF;
+	int							CurrentMod4; // поддерживаемые тип текстурных операций
 
     std::vector<IDirect3DVertexBuffer9*> LibVB;
     std::vector<IDirect3DIndexBuffer9*>	LibIB;

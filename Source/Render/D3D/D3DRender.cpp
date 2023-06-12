@@ -182,7 +182,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 	bSupportVertexFog=(DeviceCaps.RasterCaps&D3DPRASTERCAPS_FOGVERTEX)?1:0;
 	bSupportTableFog=(DeviceCaps.RasterCaps&D3DPRASTERCAPS_FOGTABLE)?1:0;
 	CurrentMod4 = (DeviceCaps.TextureOpCaps&D3DTEXOPCAPS_MODULATE4X)?D3DTOP_MODULATE4X:((DeviceCaps.TextureOpCaps&D3DTEXOPCAPS_MODULATE2X)?D3DTOP_MODULATE2X:D3DTOP_MODULATE);
-	CurrentBumpMap = DeviceCaps.TextureOpCaps&D3DTEXOPCAPS_BUMPENVMAP ? D3DTOP_BUMPENVMAP : 0;
 
 	MaxTextureAspectRatio=DeviceCaps.MaxTextureAspectRatio;
 	nSupportTexture=min(DeviceCaps.MaxTextureBlendStages,TEXTURE_MAX-1);
@@ -1256,7 +1255,7 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
     }
     
     SetFVF(vb.fmt);
-    SetStreamSource(vb);
+    RDCALL(lpD3DDevice->SetStreamSource(0, vb.d3d, 0, vb.VertexSize));
     D3DPRIMITIVETYPE d3dType;
     switch (db->primitive) {
         default:
@@ -1268,7 +1267,8 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
             break;
     }
     if (db->written_indices) {
-        SetIndices(db->ib);
+        //TODO use this instead of SetIndices when TileMap uses DrawBuffer RDCALL(lpD3DDevice->SetIndices(db->ib.d3d));
+        SetIndices(db->ib.d3d);
         size_t offset = range ? range->offset : 0;
         size_t amount = range ? range->len : db->written_indices;
         size_t polys = (db->primitive == PT_TRIANGLESTRIP 
