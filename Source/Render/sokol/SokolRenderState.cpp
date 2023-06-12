@@ -48,9 +48,6 @@ int cSokolRender::EndScene() {
     pass_action.stencil.action = SG_ACTION_CLEAR;
     pass_action.stencil.value = 0;
     sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
-    
-    sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
-    sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
 
     //Iterate each command
     for (auto& command : commands) {
@@ -62,6 +59,12 @@ int cSokolRender::EndScene() {
             xassert(0);
             continue;
         }
+
+        //Apply viewport/clip
+        auto& clipPos = command->clipPos;
+        auto& clipSize = command->clipSize;
+        //sg_apply_viewport(0, 0, ScreenSize.x, ScreenSize.y, true);
+        sg_apply_scissor_rect(clipPos.x, clipPos.y, clipSize.x, clipSize.y, true);
         
         //Get pipeline
         const SokolPipeline* pipeline = pipelines.count(command->pipeline_id) ? pipelines[command->pipeline_id] : nullptr;
@@ -571,10 +574,12 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
 #endif
     FinishCommand();
-    viewportPos.x = pDrawNode->vp.X;
-    viewportPos.y = pDrawNode->vp.Y;
-    viewportSize.x = pDrawNode->vp.Width;
-    viewportSize.y = pDrawNode->vp.Height;
+    SetClipRect(
+        pDrawNode->vp.X,
+        pDrawNode->vp.Y,
+        pDrawNode->vp.X + pDrawNode->vp.Width,
+        pDrawNode->vp.Y + pDrawNode->vp.Height
+    );
     SetVPMatrix(&pDrawNode->matViewProj);
     activePipelineMode.cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
 }

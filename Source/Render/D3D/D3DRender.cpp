@@ -9,8 +9,6 @@
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
 
-const int POLYGONMAX=1024;
-
 static uint32_t ColorConvertARGB(const sColor4c& c) { return CONVERT_COLOR_TO_ARGB(c.v); };
 
 cD3DRender *gb_RenderDevice3D = nullptr;
@@ -493,7 +491,7 @@ int cD3DRender::Done()
 }
 int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
 {
-	if(lpD3DDevice==0) return -1;
+	if (lpD3DDevice == nullptr) return -1;
 	D3DVIEWPORT9 vp;
 	RDCALL(lpD3DDevice->GetViewport(&vp));
 	*xmin=xScrMin=vp.X; *xmax=xScrMax=vp.X+vp.Width;
@@ -502,14 +500,19 @@ int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
 }
 int cD3DRender::SetClipRect(int xmin,int ymin,int xmax,int ymax)
 {
-	if(lpD3DDevice==0) return -1;
+	if (lpD3DDevice == nullptr) return -1;
+    if (xScrMin==xmin && yScrMin==ymin && xScrMax==xmax && yScrMax==ymax) {
+        return 0;
+    }
+    FlushActiveDrawBuffer();
+    
 	xScrMin=xmin;
 	yScrMin=ymin;
 	xScrMax=xmax;
 	yScrMax=ymax;
 
-	D3DVIEWPORT9 vp={xScrMin,yScrMin,xScrMax-xScrMin,yScrMax-yScrMin,0.0f,1.0f};
-	RDCALL(lpD3DDevice->SetViewport(&vp));
+    sRect vp = { xScrMin, yScrMin, xScrMax, yScrMax };
+	RDCALL(lpD3DDevice->SetScissorRect(reinterpret_cast<RECT*>(&vp)));
 	return 0;
 }
 
@@ -746,7 +749,8 @@ int cD3DRender::BeginScene()
 	SetRenderState(D3DRS_DEPTHBIAS,0);
 	SetRenderState(D3DRS_TEXTUREFACTOR,0xFFFFFFFF);
 
-	SetRenderState(D3DRS_CLIPPING,TRUE);
+    SetRenderState(D3DRS_CLIPPING,TRUE);
+    SetRenderState(D3DRS_SCISSORTESTENABLE,TRUE);
 	SetRenderState(D3DRS_LIGHTING,FALSE);
 
 	SetRenderState(D3DRS_AMBIENT,0xFFFFFFFF);
@@ -774,6 +778,10 @@ int cD3DRender::BeginScene()
 	}else
 		SetRenderState( D3DRS_FOGTABLEMODE,  D3DFOG_NONE ),
 		SetRenderState( D3DRS_FOGVERTEXMODE,  D3DFOG_NONE );
+    
+    D3DVIEWPORT9 vp = {0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+    RDCALL(lpD3DDevice->SetViewport(&vp));
+    
 	return hr;
 }
 
@@ -1653,6 +1661,9 @@ void cD3DRender::UseOrthographicProjection() {
     RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&orthoVP)));
+    //SetDrawTransform may have changed viewport, set screen viewport just in case
+    D3DVIEWPORT9 vp={0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+    RDCALL(lpD3DDevice->SetViewport(&vp));
 }
 
 bool cD3DRender::PossibleAnisotropic()

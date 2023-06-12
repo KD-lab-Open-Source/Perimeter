@@ -284,17 +284,27 @@ void cSokolRender::ClearPipelines() {
 }
 
 int cSokolRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) {
-    *xmin=viewportPos.x; *xmax=viewportSize.x + viewportPos.x;
-    *ymin=viewportPos.y; *ymax=viewportSize.y + viewportPos.y;
+    *xmin = activeCommand.clipPos.x;
+    *ymin = activeCommand.clipPos.y;
+    *xmax = activeCommand.clipSize.x + activeCommand.clipPos.x;
+    *ymax = activeCommand.clipSize.y + activeCommand.clipPos.y;
     return 0;
 }
 
 int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
-    viewportPos.x = xmin;
-    viewportPos.y = ymin;
-    viewportSize.x = xmax-xmin;
-    viewportSize.y = ymax-ymin;
-    return 0;
+    int w = xmax-xmin;
+    int h = ymax-ymin;
+    if (activeCommand.clipPos.x == xmin && activeCommand.clipPos.y == ymin
+     && activeCommand.clipSize.x == w && activeCommand.clipSize.y == h) {
+        //Nothing to do
+        return 0;
+    }
+    FinishCommand();
+    activeCommand.clipPos.x = xmin;
+    activeCommand.clipPos.y = ymin;
+    activeCommand.clipSize.x = w;
+    activeCommand.clipSize.y = h;
+    return UpdateRenderMode();
 }
 
 bool cSokolRender::SetScreenShot(const char *fname) {

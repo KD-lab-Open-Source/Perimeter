@@ -2892,17 +2892,32 @@ void CMapWindow::draw(int bFocus)
 
 			int x1, y1, x2, y2; 
 			terRenderDevice->GetClipRect(&x1, &y1, &x2, &y2);
-			terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
-			std::list<Vect2f>::iterator pi;
-			FOR_EACH(logicData->miniMapLabels, pi) {
-				terRenderDevice->DrawSprite(x + map_xs * (*pi).x - activeObjectSx / 2, y + map_ys * (*pi).y - activeObjectSy / 2, activeObjectSx, activeObjectSy, 0, 0, 1, 1, activeObjectTx, sColor4c(255,255,255,255),
-                                            xm::fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period);
+            terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
+            
+			for (const auto& ii : logicData->miniMapLabels) {
+				terRenderDevice->DrawSprite(
+                        x + map_xs * ii.x - activeObjectSx / 2,
+                        y + map_ys * ii.y - activeObjectSy / 2,
+                        activeObjectSx,
+                        activeObjectSy, 
+                        0, 0, 1, 1,
+                        activeObjectTx,
+                        sColor4c(255,255,255,255),
+                        xm::fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period
+                );
 			}
-			std::list<MiniMapEventIcon>::iterator ii;
-			FOR_EACH(_shellIconManager.getMiniMapEventIcons(), ii) {
-				float timeElapsed = (*ii).period - (*ii).timeRemain;
-				if (timeElapsed <= (*ii).animTime) {
-					terRenderDevice->DrawSprite(x + map_xs * (*ii).pos.x - eventSx[(*ii).code] / 2, y + map_ys * (*ii).pos.y - eventSy[(*ii).code] / 2, eventSx[(*ii).code], eventSy[(*ii).code], 0, 0, 1, 1, eventTx[(*ii).code], sColor4c(255,255,255,255), timeElapsed / (*ii).animTime);
+
+            for (const auto& ii : _shellIconManager.getMiniMapEventIcons()) {
+				float timeElapsed = ii.period - ii.timeRemain;
+				if (timeElapsed <= ii.animTime) {
+					terRenderDevice->DrawSprite(
+                            x + map_xs * ii.pos.x - eventSx[ii.code] / 2,
+                            y + map_ys * ii.pos.y - eventSy[ii.code] / 2,
+                            eventSx[ii.code], eventSy[ii.code],
+                            0, 0, 1, 1, eventTx[ii.code],
+                            sColor4c(255,255,255,255),
+                            timeElapsed / ii.animTime
+                    );
 				}
 			}
 			
