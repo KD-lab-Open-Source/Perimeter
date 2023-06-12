@@ -482,6 +482,12 @@ void PerimeterCreateWindow(uint32_t window_flags) {
             fprintf(stderr, "SDL_Vulkan_LoadLibrary: Error '%d', '%s'", res, SDL_GetError());
         }
     }
+    if (window_flags & SDL_WINDOW_OPENGL) {
+        int res = SDL_GL_LoadLibrary(nullptr);
+        if (res) {
+            fprintf(stderr, "SDL_GL_LoadLibrary: Error '%d', '%s'", res, SDL_GetError());
+        }
+    }
     sdlWindow = SDL_CreateWindow(
             "Perimeter",
             windowPos, windowPos,
