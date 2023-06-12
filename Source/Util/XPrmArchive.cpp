@@ -141,7 +141,7 @@ void XPrmOArchive::openNode(const char* name) {
 
 void XPrmOArchive::closeNode(const char* name) {
     if (name) {
-        buffer_ < (binary_friendly ? ";" : ";\r\n");
+        buffer_ < ";\r\n";
     }
 }
 

@@ -777,10 +777,11 @@ void initAttributes(bool campaign, XBuffer* scriptsSerialized) {
         //Deserialize from buffer
         XPrmIArchive ia;
         std::swap(ia.buffer(), *scriptsSerialized);
-        ia.buffer().set(0);
+        ia.reset();
         ia >> WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
         ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
         ia >> WRAP_NAME(globalAttr(), "globalAttr");
+
     } else {
         //Deserialize from files
         XPrmIArchive ia;

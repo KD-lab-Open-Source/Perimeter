@@ -986,7 +986,7 @@ end_while_01:;
                 if (mission.saveData.length()) {
                     XPrmIArchive ia;
                     std::swap(ia.buffer(), mission.saveData);
-                    ia.buffer().set(0);
+                    ia.reset();
                     ia >> WRAP_NAME(savePrm, "SavePrm");
                 }
                 client->desync_missionDescription->saveMission(savePrm, true);

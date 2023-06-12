@@ -901,7 +901,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
         //Load save data into IA and deserialize
         XPrmIArchive ia;
         std::swap(ia.buffer(), mission.saveData);
-        ia.buffer().set(0);
+        ia.reset();
         ia >> WRAP_NAME(data, "SavePrm");
     } else {
         mission.loadMission(data);
