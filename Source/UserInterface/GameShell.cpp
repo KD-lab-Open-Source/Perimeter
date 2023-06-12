@@ -143,13 +143,15 @@ windowClientSize_(1024, 768)
 	reelAbortEnabled = true;
 	gamePausedByMenu = false;
 
-	MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
-
     IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
     IniManager("Perimeter.ini", false).getInt("Game","DoubleClickDistance", doubleClickDistance);
 
 	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
 
+    terShowFPS = IniManager("Perimeter.ini").getInt("Game","ShowFPS");
+    check_command_line_parameter("show_fps", terShowFPS);
+
+    MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 	check_command_line_parameter("mainmenu", MainMenuEnable);
 	if(mission_edit)
 		MainMenuEnable = false;

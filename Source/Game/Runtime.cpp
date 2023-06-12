@@ -851,6 +851,7 @@ void show_help() {
             "    debug_key_handler=1 - Enables debug key handler\n"
             "    explore=1 - Opens Debug.prm editor and closes game\n"
             "    start_splash=0/1 - Enables or disables intro movies\n"
+            "    show_fps=0/1 - Displays FPS counter\n"
             "    convert=1 - Saves opened map and closes game\n"
             "\n"
             "    More info and source code: https://github.com/KD-lab-Open-Source/Perimeter\n"
