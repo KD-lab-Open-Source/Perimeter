@@ -37,6 +37,9 @@ private:
     bool isOrthographicProjSet = false;
 
     void CreateD3DVertexBuffer(VertexBuffer& vb);
+    void CreateD3DIndexBuffer(IndexBuffer& ib);
+    void UpdateD3DVertexBuffer(VertexBuffer& vb, size_t len);
+    void UpdateD3DIndexBuffer(IndexBuffer& ib, size_t len);
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 
@@ -100,14 +103,8 @@ public:
 	
 	void CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, uint8_t fmt, bool dynamic) override;
 	void DeleteVertexBuffer(VertexBuffer &vb) override;
-	void* LockVertexBuffer(VertexBuffer &vb) override;
-    void* LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) override;
-	void UnlockVertexBuffer(VertexBuffer &vb) override;
 	void CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) override;
 	void DeleteIndexBuffer(IndexBuffer &ib) override;
-    indices_t* LockIndexBuffer(IndexBuffer &ib) override;
-    indices_t* LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
-	void UnlockIndexBuffer(IndexBuffer &ib) override;
     void SetActiveDrawBuffer(class DrawBuffer* db) override;
     void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
@@ -368,7 +365,8 @@ protected:
 	uint32_t						CurrentFVF;
 	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
 
-	std::vector<IDirect3DVertexBuffer9*>	LibVB;
+    std::vector<IDirect3DVertexBuffer9*> LibVB;
+    std::vector<IDirect3DIndexBuffer9*>	LibIB;
 	
 	uint32_t				ArrayRenderState[RENDERSTATE_MAX];
 	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
@@ -379,7 +377,7 @@ protected:
 
 	void DeleteShader();
 
-	void DeleteDynamicVertexBuffer();;
+	void DeleteDynamicBuffers();
 	void RestoreDeviceIfLost();
 
 	std::vector<class cTileMapRender*> tilemaps;

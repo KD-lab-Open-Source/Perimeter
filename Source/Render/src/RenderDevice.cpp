@@ -109,18 +109,41 @@ void RDWriteLog(char *exp,int size)
 #endif
 }
 
-void VertexBuffer::Destroy() {
-    if (buf && gb_RenderDevice) {
-        gb_RenderDevice->DeleteVertexBuffer(*this);
+void MemoryResource::AllocData(size_t _data_len) {
+    if (data) {
+        FreeData();
     }
-    buf = nullptr;
+    data_len = _data_len;
+    if (data_len) {
+        data = malloc(data_len);
+    } else {
+        data = nullptr;
+    }
 }
 
+void MemoryResource::FreeData() {
+    if (data) {
+        free(data);
+        data = nullptr;
+    }
+    burned = false;
+    data_len = 0;
+}
+
+VertexBuffer::VertexBuffer() = default;
+
+void VertexBuffer::Destroy() {
+    if (gb_RenderDevice) {
+        gb_RenderDevice->DeleteVertexBuffer(*this);
+    }
+}
+
+IndexBuffer::IndexBuffer() = default;
+
 void IndexBuffer::Destroy() {
-    if (buf && gb_RenderDevice) {
+    if (gb_RenderDevice) {
         gb_RenderDevice->DeleteIndexBuffer(*this);
     }
-    buf = nullptr;
 }
 
 cInterfaceRenderDevice::cInterfaceRenderDevice() : cUnknownClass(KIND_UI_RENDERDEVICE) {
@@ -181,6 +204,74 @@ int cInterfaceRenderDevice::BeginScene() {
 
 int cInterfaceRenderDevice::EndScene() {
     return 0;
+}
+
+
+void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "", &vb);
+#endif
+    if (!vb.data) {
+        xassert(0);
+        return nullptr;
+    }
+    xassert(!vb.burned);
+    xassert(!vb.locked);
+    vb.dirty = true;
+    vb.locked = true;
+    return vb.data;
+}
+
+void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
+    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, label.c_str(), &vb);
+#endif
+    xassert(Start + Amount <= vb.NumberVertex);
+    return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
+}
+
+void cInterfaceRenderDevice::UnlockVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
+#endif
+    xassert(!vb.burned);
+    xassert(vb.locked);
+    vb.locked = false;
+}
+
+
+indices_t* cInterfaceRenderDevice::LockIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "", &ib);
+#endif
+    if (!ib.data) {
+        xassert(0);
+        return nullptr;
+    }
+    xassert(!ib.burned);
+    xassert(!ib.locked);
+    ib.dirty = true;
+    ib.locked = true;
+    return static_cast<indices_t*>(ib.data);
+}
+
+indices_t* cInterfaceRenderDevice::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
+    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, label.c_str(), &ib);
+#endif
+    xassert(Start + Amount <= ib.NumberIndices);
+    return &LockIndexBuffer(ib)[Start];
+}
+
+void cInterfaceRenderDevice::UnlockIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
+#endif
+    xassert(!ib.burned);
+    xassert(ib.locked);
+    ib.locked = false;
 }
 
 void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
@@ -525,50 +616,20 @@ void cEmptyRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, v
     vb.fmt=fmt;
     vb.dynamic = dynamic;
     vb.NumberVertex=NumberVertex;
-    vb.buf = malloc(NumberVertex * size);
+    vb.AllocData(NumberVertex * size);
 }
 
 void cEmptyRender::DeleteVertexBuffer(VertexBuffer &vb) {
-    if (vb.buf) {
-        free(vb.buf);
-        vb.buf = nullptr;
-    }
-}
-
-void* cEmptyRender::LockVertexBuffer(VertexBuffer &vb) {
-    return vb.buf;
-}
-
-void* cEmptyRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
-    xassert(Start + Amount <= vb.NumberVertex);
-    return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
-}
-
-void cEmptyRender::UnlockVertexBuffer(VertexBuffer &vb) {
+    vb.FreeData();
 }
 
 void cEmptyRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
     ib.NumberIndices = NumberIndices;
-    ib.buf = malloc(ib.NumberIndices * sizeof(indices_t));
+    ib.AllocData(ib.NumberIndices * sizeof(indices_t));
 }
 
 void cEmptyRender::DeleteIndexBuffer(IndexBuffer &ib) {
-    if (ib.buf) {
-        free(ib.buf);
-        ib.buf = nullptr;
-    }
-}
-
-indices_t* cEmptyRender::LockIndexBuffer(class IndexBuffer &ib) {
-    return static_cast<indices_t*>(ib.buf);
-}
-
-indices_t* cEmptyRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
-    xassert(Start + Amount <= ib.NumberIndices);
-    return &LockIndexBuffer(ib)[Start];
-}
-
-void cEmptyRender::UnlockIndexBuffer(class IndexBuffer &ib) {
+    ib.FreeData();
 }
 
 cEmptyRender::~cEmptyRender() {

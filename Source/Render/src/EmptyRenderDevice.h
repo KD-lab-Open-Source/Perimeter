@@ -80,14 +80,8 @@ public:
 
     void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) override;
     void DeleteVertexBuffer(class VertexBuffer &vb) override;
-    void* LockVertexBuffer(class VertexBuffer &vb) override;
-    void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount) override;
-    void UnlockVertexBuffer(class VertexBuffer &vb) override;
     void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) override;
     void DeleteIndexBuffer(class IndexBuffer &ib) override;
-    indices_t* LockIndexBuffer(class IndexBuffer &ib) override;
-    indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) override;
-    void UnlockIndexBuffer(class IndexBuffer &ib) override;
     void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override {}
 
     void BeginDrawMesh(bool obj_mesh, bool use_shadow) override {}

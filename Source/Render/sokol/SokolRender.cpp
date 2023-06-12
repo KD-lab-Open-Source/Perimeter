@@ -229,6 +229,7 @@ void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, v
     vb.dynamic = dynamic;
     vb.NumberVertex = NumberVertex;
     vb.sg = new SokolBuffer(desc);
+    vb.burned = false;
 }
 
 void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
@@ -237,37 +238,7 @@ void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
 #endif
     delete vb.sg;
     vb.sg = nullptr;
-}
-
-void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, "", &vb);
-#endif
-    if (!vb.sg) {
-        xassert(0);
-        return nullptr;
-    }
-    xassert(!vb.sg->locked);
-    vb.sg->dirty = true;
-    vb.sg->locked = true;
-    return vb.sg->data;
-}
-
-void* cSokolRender::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
-    RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, label.c_str(), &vb);
-#endif
-    xassert(Start + Amount <= vb.NumberVertex);
-    return &static_cast<uint8_t*>(LockVertexBuffer(vb))[vb.VertexSize * Start];
-}
-
-void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-    RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
-#endif
-    xassert(vb.sg->locked);
-    vb.sg->locked = false;
+    vb.FreeData();
 }
 
 void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
@@ -286,6 +257,7 @@ void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bo
     desc->usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
     desc->label = "CreateIndexBuffer";
     ib.sg = new SokolBuffer(desc);
+    ib.burned = false;
 }
 
 void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
@@ -294,37 +266,7 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
 #endif
     delete ib.sg;
     ib.sg = nullptr;
-}
-
-indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, "", &ib);
-#endif
-    if (!ib.sg) {
-        xassert(0);
-        return nullptr;
-    }
-    xassert(!ib.sg->locked);
-    ib.sg->dirty = true;
-    ib.sg->locked = true;
-    return static_cast<indices_t*>(ib.sg->data);
-}
-
-indices_t* cSokolRender::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-    std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
-    RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, label.c_str(), &ib);
-#endif
-    xassert(Start + Amount <= ib.NumberIndices);
-    return &LockIndexBuffer(ib)[Start];
-}
-
-void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
-#ifdef PERIMETER_RENDER_TRACKER_LOCKS
-    RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
-#endif
-    xassert(ib.sg->locked);
-    ib.sg->locked = false;
+    ib.FreeData();
 }
 
 void cSokolRender::ClearCommands() {

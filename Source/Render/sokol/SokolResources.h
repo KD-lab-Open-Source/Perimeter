@@ -7,24 +7,12 @@
  * sokol resources can only be updated at most once per per frame, this way we can update several times
  */
 
+#include "MemoryResource.h"
+
 //TODO copied from _sg_pixelformat_bytesize private function, remove if becomes public
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
-/**
- * Common attributes for sokol resources
- */
-struct SokolResource {
-    void* data = nullptr;
-    size_t data_len = 0;
-    bool dirty = true;
-    bool locked = false;
-    explicit SokolResource(size_t data_len);
-    NO_COPY_CONSTRUCTOR(SokolResource)
-    ~SokolResource();
-    void FreeData();
-};
-
-struct SokolBuffer : SokolResource {
+struct SokolBuffer {
     sg_buffer_desc* desc = nullptr;
     sg_buffer buffer = {};
 
@@ -32,10 +20,10 @@ struct SokolBuffer : SokolResource {
     NO_COPY_CONSTRUCTOR(SokolBuffer)
     ~SokolBuffer();
     
-    void update(size_t len);
+    void update(MemoryResource* resource, size_t len);
 };
 
-struct SokolTexture2D : SokolResource {
+struct SokolTexture2D : MemoryResource {
     sg_pixel_format pixel_format;
     sg_image_desc* desc = nullptr;
     sg_image image = {};

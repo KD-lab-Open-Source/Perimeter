@@ -170,7 +170,6 @@ void cMeshTri::CalcBumpST()
 	}
 
 	gb_RenderDevice->UnlockVertexBuffer(db->vb);
-	gb_RenderDevice->UnlockIndexBuffer(db->ib);
 #endif
 }
 

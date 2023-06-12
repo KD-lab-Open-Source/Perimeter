@@ -59,26 +59,8 @@ size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     }
 }
 
-SokolResource::SokolResource(size_t _data_len) {
-    data_len = _data_len;
-    data = malloc(data_len);
-}
-
-void SokolResource::FreeData() {
-    if (data) {
-        free(data);
-        data = nullptr;
-    }
-    data_len = 0;
-}
-
-SokolResource::~SokolResource() {
-    FreeData();
-}
-
 SokolBuffer::SokolBuffer(sg_buffer_desc* _desc)
-: SokolResource(_desc->size)
-, desc(_desc) {
+: desc(_desc) {
 }
 
 SokolBuffer::~SokolBuffer() {
@@ -86,37 +68,36 @@ SokolBuffer::~SokolBuffer() {
     delete desc;
 }
 
-void SokolBuffer::update(size_t len) {
-    xassert(!locked);
-    if (!dirty) return;
-    dirty = false;
-    xassert(data);
-    if (!data) return;
+void SokolBuffer::update(MemoryResource* resource, size_t len) {
+    xassert(!resource->locked);
+    if (!resource->dirty) return;
+    resource->dirty = false;
+    xassert(resource->data);
+    if (!resource->data) return;
 
-    xassert(len && len <= data_len);
+    xassert(len && len <= resource->data_len);
     if (len == 0) return;
-    if (len > data_len) len = data_len;
+    if (len > resource->data_len) len = resource->data_len;
     
     if (desc) {
         if (desc->usage == SG_USAGE_IMMUTABLE) {
-            desc->data = {data, data_len};
+            desc->data = {resource->data, resource->data_len};
         }
         buffer = sg_make_buffer(desc);
-        if (desc->usage == SG_USAGE_IMMUTABLE) {
-            FreeData();
-        }
         delete desc;
         desc = nullptr;
     } 
     
-    if (data) {
-        sg_range range = {data, len};
+    if (resource->data) {
+        xassert(!resource->burned);
+        resource->burned = true;
+        sg_range range = {resource->data, len};
         sg_update_buffer(buffer, &range);
     }
 }
 
 SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
-: SokolResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
+: MemoryResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
 , desc(_desc) {
     pixel_format = desc->pixel_format;
 }

@@ -11,10 +11,10 @@ void DrawBuffer::Create(size_t vertices, bool dynamic_vertices, size_t indices, 
 }
 
 void DrawBuffer::Recreate() {
-    if (!vb.buf) {
+    if (!vb.data) {
         gb_RenderDevice->CreateVertexBuffer(vb, vb.NumberVertex, vb.fmt, vb.dynamic);
     }
-    if (!ib.buf) {
+    if (!ib.data) {
         gb_RenderDevice->CreateIndexBuffer(ib, ib.NumberIndices, ib.dynamic);
     }
     Backwind();
@@ -26,11 +26,13 @@ void DrawBuffer::Backwind() {
         Unlock();
     }
     if (vb.dynamic) {
+        vb.burned = false;
         locked_vertices = 0;
         lock_written_vertices = 0;
         written_vertices = 0;
     }
     if (ib.dynamic) {
+        ib.burned = false;
         locked_indices = 0;
         lock_written_indices = 0;
         written_indices = 0;
@@ -114,6 +116,7 @@ void DrawBuffer::Draw() {
             return;
         }
     }
+    
     gb_RenderDevice->SubmitDrawBuffer(this, nullptr);
 }
 
@@ -132,7 +135,7 @@ void DrawBuffer::EndTriangleStrip() {
 
 void DrawBuffer::PostDraw() {
     if (vb.dynamic || ib.dynamic) {
-        if (vb.buf && ib.buf) {
+        if (vb.data && ib.data) {
             Backwind();
         } else {
             Recreate();

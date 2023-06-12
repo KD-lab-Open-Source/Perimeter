@@ -113,9 +113,6 @@ int cSokolRender::EndScene() {
             xxassert(0, "cSokolRender::EndScene missing vertex_buffer");
             continue;
         }
-        if (command->vertex_buffer->data) {
-            command->vertex_buffer->update(command->vertices * pipeline->vertex_size);
-        }
         if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene not valid state");
             continue;
@@ -125,9 +122,6 @@ int cSokolRender::EndScene() {
         if (!command->index_buffer) {
             xxassert(0, "cSokolRender::EndScene missing index_buffer");
             continue;
-        }
-        if (command->index_buffer->data) {
-            command->index_buffer->update(command->indices * sizeof(indices_t));
         }
         if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene not valid state");
@@ -358,6 +352,18 @@ void cSokolRender::FinishCommand() {
     }
     if (cmd->owned_index_buffer) {
         activeDrawBuffer->ib.sg = nullptr;
+    }
+    if (activeDrawBuffer->vb.data) {
+        cmd->vertex_buffer->update(
+                &activeDrawBuffer->vb,
+                cmd->vertices * activeDrawBuffer->vb.VertexSize
+        );
+    }
+    if (activeDrawBuffer->ib.data) {
+        cmd->index_buffer->update(
+                &activeDrawBuffer->ib,
+                cmd->indices * sizeof(indices_t)
+        );
     }
     activeDrawBuffer->PostDraw();
     activeDrawBuffer = nullptr;

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "Unknown.h"
 #include "RenderTypes.h"
+#include "MemoryResource.h"
 
 enum eRenderDeviceSelection {
     DEVICE_D3D9,
@@ -19,14 +20,13 @@ inline int Power2up(int n)
     return i;
 }
 
-class VertexBuffer {
+class VertexBuffer: public MemoryResource {
 public:
     union {
-        void* buf = nullptr;
+        void* ptr = nullptr;
 #ifdef PERIMETER_D3D9
         struct IDirect3DVertexBuffer9* d3d;
 #endif
-        
 #ifdef PERIMETER_SOKOL
         struct SokolBuffer* sg;
 #endif
@@ -36,7 +36,7 @@ public:
     uint16_t VertexSize = 0;
     uint32_t NumberVertex = 0;
     
-    VertexBuffer() = default;
+    VertexBuffer();
     ~VertexBuffer() {
         Destroy();
     }
@@ -45,10 +45,10 @@ public:
     void Destroy();
 };
 
-class IndexBuffer {
+class IndexBuffer: public MemoryResource {
 public:
     union {
-        void* buf = nullptr;
+        void* ptr = nullptr;
 #ifdef PERIMETER_D3D9
         struct IDirect3DIndexBuffer9* d3d;
 #endif
@@ -59,7 +59,7 @@ public:
     bool dynamic = false;
     uint32_t NumberIndices = 0;
     
-    IndexBuffer() = default;
+    IndexBuffer();
     ~IndexBuffer() {
         Destroy();
     }
@@ -283,6 +283,13 @@ public:
     float getThinLineWidth() const;
 
     virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
+    
+    virtual void* LockVertexBuffer(class VertexBuffer &vb);
+    virtual void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount);
+    virtual void UnlockVertexBuffer(class VertexBuffer &vb);
+    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib);
+    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount);
+    virtual void UnlockIndexBuffer(class IndexBuffer &ib);
 
     virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive);
     virtual void SetActiveDrawBuffer(class DrawBuffer*);
@@ -371,14 +378,8 @@ public:
     
     virtual void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) = 0;
     virtual void DeleteVertexBuffer(class VertexBuffer &vb) = 0;
-    virtual void* LockVertexBuffer(class VertexBuffer &vb) = 0;
-    virtual void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount) = 0;
-    virtual void UnlockVertexBuffer(class VertexBuffer &vb) = 0;
     virtual void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) = 0;
     virtual void DeleteIndexBuffer(class IndexBuffer &ib) = 0;
-    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib) = 0;
-    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount) = 0;
-    virtual void UnlockIndexBuffer(class IndexBuffer &ib) = 0;
     virtual void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) = 0;
 
     virtual void BeginDrawMesh(bool obj_mesh, bool use_shadow) = 0;
