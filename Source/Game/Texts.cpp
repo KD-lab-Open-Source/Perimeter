@@ -4,6 +4,7 @@
 
 void qdTextDB::load_replacement_texts(const std::string& locale) {
     //Community credits
+    /*
     if (startsWith(locale, "russian")) {
         load_lines({
            "Interface.Credits.Community=&FF3333Сообщество \"Периметра\"\n\n&FFFFFFPLACEHOLDER",
@@ -13,6 +14,7 @@ void qdTextDB::load_replacement_texts(const std::string& locale) {
            "Interface.Credits.Community=&FF3333\"Perimeter\" Community\n\n&FFFFFFPLACEHOLDER",
        }, true, locale);
     }
+    */
     
     //Used for all langs
     load_lines({
