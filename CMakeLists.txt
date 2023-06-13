@@ -163,6 +163,28 @@ IF(OPTION_STATIC_LIB_STD)
     ENDIF ()
 ENDIF()
 
+# paths to search libs
+IF(NOT MSVC_CL_BUILD)
+    SET(LIBRARY_SEARCH_PATHS
+        "${LIBRARY_SEARCH_PATHS}"
+        "~/Library/Frameworks" 
+        "/Library/Frameworks"
+        "/mingw"
+        "/usr/pkg"
+        "/usr/local"
+        "/usr"
+        "/sw # Fink"
+        "/opt/local # DarwinPorts"
+        "/opt/csw # Blastwave"
+        "/opt"
+        "/local"
+        "C:/MinGW"
+        "/usr/include/x86_64-linux-gnu"
+        "/usr/include/aarch64-linux-gnu"
+        "/usr/lib/x86_64-linux-gnu"
+        "/usr/lib/aarch64-linux-gnu"
+    )
+ENDIF()
 # Dependencies
 SET(CMAKE_FIND_LIBRARY_SUFFIXES ${PREFER_STATIC_LIBRARY_SUFFIXES})
 IF(NOT APPLE)
@@ -184,27 +206,6 @@ IF(MSVC_CL_BUILD)
     FIND_PACKAGE(SDL2_net CONFIG REQUIRED)
     SET(SDL2_NET_LIBRARY $<IF:$<TARGET_EXISTS:SDL2_net::SDL2_net>,SDL2_net::SDL2_net,SDL2_net::SDL2_net-static>)
 ELSE()
-    # paths to search libs
-    SET(LIBRARY_SEARCH_PATHS "
-        ${LIBRARY_SEARCH_PATHS}
-        ~/Library/Frameworks 
-        /Library/Frameworks
-        /mingw
-        /usr/pkg
-        /usr/local
-        /usr
-        /sw # Fink
-        /opt/local # DarwinPorts
-        /opt/csw # Blastwave
-        /opt
-        /local
-        C:/MinGW
-        /usr/include/x86_64-linux-gnu
-        /usr/include/aarch64-linux-gnu
-        /usr/lib/x86_64-linux-gnu
-        /usr/lib/aarch64-linux-gnu
-    ")
-    
     SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
     
     FIND_PACKAGE(SDL2 REQUIRED)
