@@ -2524,8 +2524,6 @@ void CShellIconManager::draw()
 		}
 
 	}
-
-	_shellCursorManager.draw();
 }
 
 void CShellIconManager::forceDraw() {
