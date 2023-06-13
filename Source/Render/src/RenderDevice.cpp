@@ -222,7 +222,7 @@ void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb) {
     return vb.data;
 }
 
-void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
+void* cInterfaceRenderDevice::LockVertexBufferRange(VertexBuffer &vb, uint32_t Start, uint32_t Amount) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
     RenderSubmitEvent(RenderEvent::LOCK_VERTEXBUF, label.c_str(), &vb);
@@ -256,7 +256,7 @@ indices_t* cInterfaceRenderDevice::LockIndexBuffer(IndexBuffer &ib) {
     return static_cast<indices_t*>(ib.data);
 }
 
-indices_t* cInterfaceRenderDevice::LockIndexBuffer(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
+indices_t* cInterfaceRenderDevice::LockIndexBufferRange(IndexBuffer &ib, uint32_t Start, uint32_t Amount) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     std::string label = "Idx: " + std::to_string(Start) + " Len: " + std::to_string(Amount);
     RenderSubmitEvent(RenderEvent::LOCK_INDEXBUF, label.c_str(), &ib);

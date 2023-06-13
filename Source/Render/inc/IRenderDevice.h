@@ -285,10 +285,10 @@ public:
     virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
     
     virtual void* LockVertexBuffer(class VertexBuffer &vb);
-    virtual void* LockVertexBuffer(class VertexBuffer &vb, uint32_t Start, uint32_t Amount);
+    virtual void* LockVertexBufferRange(class VertexBuffer &vb, uint32_t Start, uint32_t Amount);
     virtual void UnlockVertexBuffer(class VertexBuffer &vb);
     virtual indices_t* LockIndexBuffer(class IndexBuffer &ib);
-    virtual indices_t* LockIndexBuffer(class IndexBuffer &ib, uint32_t Start, uint32_t Amount);
+    virtual indices_t* LockIndexBufferRange(class IndexBuffer &ib, uint32_t Start, uint32_t Amount);
     virtual void UnlockIndexBuffer(class IndexBuffer &ib);
 
     virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive);

@@ -58,14 +58,14 @@ void DrawBuffer::LockRaw(size_t vertices, size_t indices, void*& vertex_buf, ind
     } else if (written_vertices == 0 && vertices == vb.NumberVertex) {
         vertex_buf = gb_RenderDevice->LockVertexBuffer(vb);
     } else {
-        vertex_buf = gb_RenderDevice->LockVertexBuffer(vb, written_vertices, vertices);
+        vertex_buf = gb_RenderDevice->LockVertexBufferRange(vb, written_vertices, vertices);
     }
     if (indices == 0) {
         indices_buf = nullptr;
     } else if (written_indices == 0 && indices == ib.NumberIndices) {
         indices_buf = gb_RenderDevice->LockIndexBuffer(ib);
     } else {
-        indices_buf = gb_RenderDevice->LockIndexBuffer(ib, written_indices, indices);
+        indices_buf = gb_RenderDevice->LockIndexBufferRange(ib, written_indices, indices);
     }
     if (vertex_buf) locked_vertices = vertices;
     if (indices_buf) locked_indices = indices;

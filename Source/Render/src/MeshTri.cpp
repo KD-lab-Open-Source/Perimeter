@@ -60,7 +60,7 @@ void cMeshTri::GetBoundingBox(Vect3f &Min,Vect3f &Max)
 }
 void cMeshTri::InvertTri() {
     xassert(!db->IsLocked());
-	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBuffer(db->ib, OffsetPolygon*sPolygon::PN, NumPolygon*sPolygon::PN));
+	sPolygon* Polygon = reinterpret_cast<sPolygon*>(gb_RenderDevice->LockIndexBufferRange(db->ib, OffsetPolygon*sPolygon::PN, NumPolygon*sPolygon::PN));
     if (!Polygon) {
         xassert(0);
         return;
