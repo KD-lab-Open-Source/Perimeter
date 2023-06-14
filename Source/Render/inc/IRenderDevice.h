@@ -196,10 +196,6 @@ enum ePrimitiveType
 {
     PT_TRIANGLES,
     PT_TRIANGLESTRIP,
-#ifdef PERIMETER_D3D9
-    PT_POINTLIST,
-    PT_LINELIST,
-#endif
 };
 
 class cFont;
@@ -283,7 +279,11 @@ public:
     float getThinLineWidth() const;
 
     virtual size_t GetSizeFromFormat(vertex_fmt_t fmt) const;
-    
+
+    virtual void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic);
+    virtual void DeleteVertexBuffer(class VertexBuffer &vb);
+    virtual void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic);
+    virtual void DeleteIndexBuffer(class IndexBuffer &ib);
     virtual void* LockVertexBuffer(class VertexBuffer &vb);
     virtual void* LockVertexBufferRange(class VertexBuffer &vb, uint32_t Start, uint32_t Amount);
     virtual void UnlockVertexBuffer(class VertexBuffer &vb);
@@ -376,10 +376,6 @@ public:
     virtual void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) = 0;
     virtual void SetBlendState(eBlendMode blend) = 0;
     
-    virtual void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) = 0;
-    virtual void DeleteVertexBuffer(class VertexBuffer &vb) = 0;
-    virtual void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) = 0;
-    virtual void DeleteIndexBuffer(class IndexBuffer &ib) = 0;
     virtual void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) = 0;
 
     virtual void BeginDrawMesh(bool obj_mesh, bool use_shadow) = 0;

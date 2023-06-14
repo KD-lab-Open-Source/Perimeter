@@ -207,31 +207,6 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
     return -1;
 }
 
-void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
-#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
-    std::string label = "Len: " + std::to_string(NumberVertex)
-                      + " Fmt: " + std::to_string(fmt)
-                      + " Dyn: " + std::to_string(dynamic);
-    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF, label.c_str(), &vb);
-#endif
-    xassert(!vb.sg);
-    xassert(NumberVertex <= std::numeric_limits<indices_t>().max());
-    size_t size = GetSizeFromFormat(fmt);
-
-    sg_buffer_desc* desc = new sg_buffer_desc();
-    desc->size = NumberVertex * size;
-    desc->type = SG_BUFFERTYPE_VERTEXBUFFER;
-    desc->usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
-    desc->label = "CreateVertexBuffer";
-
-    vb.VertexSize = size;
-    vb.fmt = fmt;
-    vb.dynamic = dynamic;
-    vb.NumberVertex = NumberVertex;
-    vb.sg = new SokolBuffer(desc);
-    vb.burned = false;
-}
-
 void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
     RenderSubmitEvent(RenderEvent::DELETE_VERTEXBUF, "", &vb);
@@ -239,25 +214,6 @@ void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
     delete vb.sg;
     vb.sg = nullptr;
     vb.FreeData();
-}
-
-void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
-#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
-    std::string label = "Len: " + std::to_string(NumberIndices)
-                      + " Dyn: " + std::to_string(dynamic);
-    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF, label.c_str(), &ib);
-#endif
-    xassert(!ib.sg);
-    ib.NumberIndices = NumberIndices;
-    ib.dynamic = dynamic;
-    
-    sg_buffer_desc* desc = new sg_buffer_desc();
-    desc->size = ib.NumberIndices * sizeof(indices_t);
-    desc->type = SG_BUFFERTYPE_INDEXBUFFER;
-    desc->usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
-    desc->label = "CreateIndexBuffer";
-    ib.sg = new SokolBuffer(desc);
-    ib.burned = false;
 }
 
 void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {

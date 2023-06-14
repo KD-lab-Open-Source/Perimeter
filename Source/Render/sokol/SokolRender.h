@@ -125,9 +125,7 @@ public:
     
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 
-    void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) override;
     void DeleteVertexBuffer(class VertexBuffer &vb) override;
-    void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) override;
     void DeleteIndexBuffer(class IndexBuffer &ib) override;
     void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;

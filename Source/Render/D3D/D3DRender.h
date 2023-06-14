@@ -36,10 +36,8 @@ private:
     
     bool isOrthographicProjSet = false;
 
-    void CreateD3DVertexBuffer(VertexBuffer& vb);
-    void CreateD3DIndexBuffer(IndexBuffer& ib);
-    void UpdateD3DVertexBuffer(VertexBuffer& vb, size_t len);
-    void UpdateD3DIndexBuffer(IndexBuffer& ib, size_t len);
+    void UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len);
+    void UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len);
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 
@@ -101,9 +99,7 @@ public:
 	int Flush(bool wnd=false) override;
 	int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 	
-	void CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, uint8_t fmt, bool dynamic) override;
 	void DeleteVertexBuffer(VertexBuffer &vb) override;
-	void CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) override;
 	void DeleteIndexBuffer(IndexBuffer &ib) override;
     void SetActiveDrawBuffer(class DrawBuffer* db) override;
     void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;

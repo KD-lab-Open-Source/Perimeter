@@ -78,9 +78,7 @@ public:
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override {}
     void SetBlendState(eBlendMode blend) override {}
 
-    void CreateVertexBuffer(class VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) override;
     void DeleteVertexBuffer(class VertexBuffer &vb) override;
-    void CreateIndexBuffer(class IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) override;
     void DeleteIndexBuffer(class IndexBuffer &ib) override;
     void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override {}
 

@@ -13,7 +13,6 @@
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
 struct SokolBuffer {
-    sg_buffer_desc* desc = nullptr;
     sg_buffer buffer = {};
 
     explicit SokolBuffer(sg_buffer_desc* desc);

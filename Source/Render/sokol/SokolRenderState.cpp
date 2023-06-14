@@ -276,6 +276,33 @@ int cSokolRender::Flush(bool wnd) {
     return 0;
 }
 
+SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynamic, sg_buffer_type type) {
+    xassert(!resource->locked);
+    xassert(len <= resource->data_len);
+    sg_buffer_desc desc = {};
+    desc.size = len;
+    desc.type = type;
+    desc.usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
+    if (type == SG_BUFFERTYPE_VERTEXBUFFER) {
+        desc.label = "CreateVertexBuffer";
+    } else if (type == SG_BUFFERTYPE_INDEXBUFFER) {
+        desc.label = "CreateIndexBuffer";
+    } else {
+        desc.label = "CreateSokolBuffer";
+    }
+    if (desc.usage == SG_USAGE_IMMUTABLE) {
+        xassert(resource->data);
+        xassert(!resource->burned);
+        desc.data = {resource->data, len};
+        resource->burned = true;
+        resource->dirty = false;
+    }
+
+    SokolBuffer* buffer = new SokolBuffer(&desc);
+    
+    return buffer;
+}
+
 void cSokolRender::FinishCommand() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
@@ -323,6 +350,28 @@ void cSokolRender::FinishCommand() {
         activeCommand.vertices = activeDrawBuffer->written_vertices;
         activeCommand.indices = activeDrawBuffer->written_indices;
     }
+
+    //Update buffers
+    if (activeDrawBuffer->vb.data) {
+        VertexBuffer* vb  = &activeDrawBuffer->vb;
+        size_t len = activeDrawBuffer->written_vertices * activeDrawBuffer->vb.VertexSize;
+        if (!vb->sg) {
+            vb->sg = CreateSokolBuffer(vb, len, vb->dynamic, SG_BUFFERTYPE_VERTEXBUFFER);
+        }
+        if (vb->dynamic) {
+            vb->sg->update(vb, len);
+        }
+    }
+    if (activeDrawBuffer->ib.data) {
+        IndexBuffer* ib  = &activeDrawBuffer->ib;
+        size_t len = activeDrawBuffer->written_indices * sizeof(indices_t);
+        if (!ib->sg) {
+            ib->sg = CreateSokolBuffer(ib, len, ib->dynamic, SG_BUFFERTYPE_INDEXBUFFER);
+        }
+        if (ib->dynamic) {
+            ib->sg->update(ib, len);
+        }
+    }
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
@@ -355,18 +404,6 @@ void cSokolRender::FinishCommand() {
     }
     if (cmd->owned_index_buffer) {
         activeDrawBuffer->ib.sg = nullptr;
-    }
-    if (activeDrawBuffer->vb.data) {
-        cmd->vertex_buffer->update(
-                &activeDrawBuffer->vb,
-                cmd->vertices * activeDrawBuffer->vb.VertexSize
-        );
-    }
-    if (activeDrawBuffer->ib.data) {
-        cmd->index_buffer->update(
-                &activeDrawBuffer->ib,
-                cmd->indices * sizeof(indices_t)
-        );
     }
     activeDrawBuffer->PostDraw();
     activeDrawBuffer = nullptr;

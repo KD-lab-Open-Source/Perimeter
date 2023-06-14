@@ -1072,105 +1072,68 @@ void cD3DRender::DeleteDynamicBuffers() {
     LibIB.clear();
 }
 
-void cD3DRender::CreateD3DVertexBuffer(VertexBuffer& vb) {
-    if (vb.d3d) {
-        xassert(0);
-        return;
-    }
-
-    MTG();
-    uint32_t fvf = GetD3DFVFFromFormat(vb.fmt);
-    uint32_t flags = D3DUSAGE_WRITEONLY;
-    if (vb.dynamic) {
-        flags |= D3DUSAGE_DYNAMIC;
-        LibVB.emplace_back(vb.d3d);
-    }
-    
-    RDCALL(lpD3DDevice->CreateVertexBuffer(
-            vb.data_len,
-            flags,
-            fvf,
-            vb.dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
-            &vb.d3d,
-            nullptr
-    ));
-}
-
-void cD3DRender::CreateD3DIndexBuffer(IndexBuffer& ib) {
-    if (ib.d3d) {
-        xassert(0);
-        return;
-    }
-
-    MTG();
-    uint32_t flags = D3DUSAGE_WRITEONLY;
-    if (ib.dynamic) {
-        flags |= D3DUSAGE_DYNAMIC;
-        LibIB.emplace_back(ib.d3d);
-    }
-
-    RDCALL(lpD3DDevice->CreateIndexBuffer(
-            ib.data_len,
-            flags,
-            PERIMETER_D3D_INDEX_FMT,
-            ib.dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
-            &ib.d3d,
-            nullptr
-    ));
-}
-
 const uint32_t D3D_LOCK_FLAGS_STATIC = D3DLOCK_NOSYSLOCK | D3DLOCK_NO_DIRTY_UPDATE;
 const uint32_t D3D_LOCK_FLAGS_DYNAMIC = D3D_LOCK_FLAGS_STATIC | D3DLOCK_DISCARD;
 
-void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer& vb, size_t len) {
-    xassert(!vb.burned);
-    vb.burned = true;
-    if (!vb.d3d) {
-        CreateD3DVertexBuffer(vb);
+void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
+    xassert(!vb->burned);
+    vb->burned = true;
+    xassert(len <= vb->data_len);
+    if (!vb->d3d) {
+        MTG();
+        uint32_t fvf = GetD3DFVFFromFormat(vb->fmt);
+        uint32_t flags = D3DUSAGE_WRITEONLY;
+        if (vb->dynamic) {
+            flags |= D3DUSAGE_DYNAMIC;
+            LibVB.emplace_back(vb->d3d);
+        }
+
+        RDCALL(lpD3DDevice->CreateVertexBuffer(
+                vb->dynamic ? vb->data_len : len,
+                flags,
+                fvf,
+                vb->dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
+                &vb->d3d,
+                nullptr
+        ));
     }
-    VISASSERT( vb.d3d );
-    vb.dirty = false;
+    VISASSERT( vb->d3d );
+    vb->dirty = false;
     void* lock_ptr = nullptr;
-    uint32_t flags = vb.dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
-    RDCALL(vb.d3d->Lock(0, 0, &lock_ptr, flags));
-    memcpy(lock_ptr, vb.data, len);
-    vb.d3d->Unlock();
+    uint32_t flags = vb->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
+    RDCALL(vb->d3d->Lock(0, 0, &lock_ptr, flags));
+    memcpy(lock_ptr, vb->data, len);
+    vb->d3d->Unlock();
 }
 
-void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer& ib, size_t len) {
-    xassert(!ib.burned);
-    ib.burned = true;
-    if (!ib.d3d) {
-        CreateD3DIndexBuffer(ib);
+void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
+    xassert(!ib->burned);
+    ib->burned = true;
+    xassert(len <= ib->data_len);
+    if (!ib->d3d) {
+        MTG();
+        uint32_t flags = D3DUSAGE_WRITEONLY;
+        if (ib->dynamic) {
+            flags |= D3DUSAGE_DYNAMIC;
+            LibIB.emplace_back(ib->d3d);
+        }
+
+        RDCALL(lpD3DDevice->CreateIndexBuffer(
+                ib->dynamic ? ib->data_len : len,
+                flags,
+                PERIMETER_D3D_INDEX_FMT,
+                ib->dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
+                &ib->d3d,
+                nullptr
+        ));
     }
-    VISASSERT( ib.d3d );
-    ib.dirty = false;
+    VISASSERT( ib->d3d );
+    ib->dirty = false;
     void* lock_ptr = nullptr;
-    uint32_t flags = ib.dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
-    RDCALL(ib.d3d->Lock(0, 0, &lock_ptr, flags));
-    memcpy(lock_ptr, ib.data, len);
-    ib.d3d->Unlock();
-}
-
-void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t format, bool dynamic) {
-#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
-    std::string label = "Len: " + std::to_string(NumberVertex)
-                      + " Fmt: " + std::to_string(format)
-                      + " Dyn: " + std::to_string(dynamic);
-    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF, label.c_str(), &vb);
-#endif
-	xassert(NumberVertex>=0 || NumberVertex<=65536);
-    if (vb.data) {
-        return;
-    }
-    
-	vb.VertexSize = GetSizeFromFormat(format);
-	vb.fmt = format;
-	vb.dynamic = dynamic;
-	vb.NumberVertex = NumberVertex;
-	vb.ptr = nullptr;
-
-    vb.AllocData(vb.NumberVertex * vb.VertexSize);
+    uint32_t flags = ib->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
+    RDCALL(ib->d3d->Lock(0, 0, &lock_ptr, flags));
+    memcpy(lock_ptr, ib->data, len);
+    ib->d3d->Unlock();
 }
 
 void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
@@ -1185,24 +1148,7 @@ void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
         vb.d3d->Release();
         vb.d3d = nullptr;
     }
-    vb.FreeData();
-}
-
-void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
-#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
-    std::string label = "Len: " + std::to_string(NumberIndices)
-                      + " Dyn: " + std::to_string(dynamic);
-    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF, label.c_str(), &ib);
-#endif
-    if (ib.data) {
-        return;
-    }
-
-    ib.NumberIndices = NumberIndices;
-    ib.dynamic = dynamic;
-    ib.ptr = nullptr;
-
-    ib.AllocData(ib.NumberIndices * sizeof(indices_t));
+    cInterfaceRenderDevice::DeleteVertexBuffer(vb);
 }
 
 void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib) {
@@ -1217,7 +1163,7 @@ void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib) {
         ib.d3d->Release();
         ib.d3d = nullptr;
     }
-    ib.FreeData();
+    cInterfaceRenderDevice::DeleteIndexBuffer(ib);
 }
 
 void cD3DRender::FlushActiveDrawBuffer() {
@@ -1250,20 +1196,20 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
         return;
     }
     
-    VertexBuffer& vb = db->vb;
-    if (vb.dirty) {
-        UpdateD3DVertexBuffer(vb, db->written_vertices * vb.VertexSize);
-    } else if (!vb.d3d) {
+    VertexBuffer* vb = &db->vb;
+    if (vb->dirty) {
+        UpdateD3DVertexBuffer(vb, db->written_vertices * vb->VertexSize);
+    } else if (!vb->d3d) {
         xassert(0);
         return;
     }
     
     if (db->written_indices && db->ib.dirty) {
-        UpdateD3DIndexBuffer(db->ib, db->written_indices * sizeof(indices_t));
+        UpdateD3DIndexBuffer(&db->ib, db->written_indices * sizeof(indices_t));
     }
     
-    SetFVF(vb.fmt);
-    RDCALL(lpD3DDevice->SetStreamSource(0, vb.d3d, 0, vb.VertexSize));
+    SetFVF(vb->fmt);
+    RDCALL(lpD3DDevice->SetStreamSource(0, vb->d3d, 0, vb->VertexSize));
     D3DPRIMITIVETYPE d3dType;
     switch (db->primitive) {
         default:

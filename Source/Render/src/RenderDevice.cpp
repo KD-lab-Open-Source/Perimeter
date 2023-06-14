@@ -206,6 +206,60 @@ int cInterfaceRenderDevice::EndScene() {
     return 0;
 }
 
+void cInterfaceRenderDevice::CreateVertexBuffer(VertexBuffer& vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    std::string label = "Len: " + std::to_string(NumberVertex)
+                      + " Fmt: " + std::to_string(fmt)
+                      + " Dyn: " + std::to_string(dynamic);
+    RenderSubmitEvent(RenderEvent::CREATE_VERTEXBUF, label.c_str(), &vb);
+#endif
+    xassert(NumberVertex <= std::numeric_limits<indices_t>().max());
+
+    if (vb.data) {
+        return;
+    }
+
+    vb.ptr = nullptr;
+    vb.dynamic = dynamic;
+    vb.fmt = fmt;
+    vb.VertexSize = GetSizeFromFormat(vb.fmt);
+    vb.NumberVertex = NumberVertex;
+    
+    vb.dirty = true;
+    vb.locked = false;
+    vb.burned = false;
+    
+    vb.AllocData(vb.NumberVertex * vb.VertexSize);
+}
+
+void cInterfaceRenderDevice::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    std::string label = "Len: " + std::to_string(NumberIndices)
+                      + " Dyn: " + std::to_string(dynamic);
+    RenderSubmitEvent(RenderEvent::CREATE_INDEXBUF, label.c_str(), &ib);
+#endif
+    if (ib.data) {
+        return;
+    }
+
+    ib.ptr = nullptr;
+    ib.dynamic = dynamic;
+    ib.NumberIndices = NumberIndices;
+
+    ib.dirty = true;
+    ib.locked = false;
+    ib.burned = false;
+    
+    ib.AllocData(ib.NumberIndices * sizeof(indices_t));
+}
+
+void cInterfaceRenderDevice::DeleteVertexBuffer(VertexBuffer &vb) {
+    vb.FreeData();
+}
+
+void cInterfaceRenderDevice::DeleteIndexBuffer(IndexBuffer &ib) {
+    ib.FreeData();
+}
 
 void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
@@ -609,23 +663,8 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 
 // cEmptyRender impl
 
-void cEmptyRender::CreateVertexBuffer(VertexBuffer &vb, uint32_t NumberVertex, vertex_fmt_t fmt, bool dynamic) {
-    size_t size = GetSizeFromFormat(fmt);
-
-    vb.VertexSize=size;
-    vb.fmt=fmt;
-    vb.dynamic = dynamic;
-    vb.NumberVertex=NumberVertex;
-    vb.AllocData(NumberVertex * size);
-}
-
 void cEmptyRender::DeleteVertexBuffer(VertexBuffer &vb) {
     vb.FreeData();
-}
-
-void cEmptyRender::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberIndices, bool dynamic) {
-    ib.NumberIndices = NumberIndices;
-    ib.AllocData(ib.NumberIndices * sizeof(indices_t));
 }
 
 void cEmptyRender::DeleteIndexBuffer(IndexBuffer &ib) {
