@@ -267,8 +267,10 @@ windowClientSize_(1024, 768)
 		startedWithMainmenu = true;
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
-
-        if (IniManager("Perimeter.ini").getInt("Game","StartSplash") || check_command_line("start_splash")) {
+        
+        int splash = IniManager("Perimeter.ini").getInt("Game","StartSplash");
+        check_command_line_parameter("start_splash", splash);
+        if (splash) {
 			_bCursorVisible = 0;
 //			_shellIconManager.GetWnd(SQSH_MM_SPLASH1)->Show(1);
 //			_shellIconManager.SetModalWnd(SQSH_MM_SPLASH1);
