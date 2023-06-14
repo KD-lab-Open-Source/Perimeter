@@ -63,7 +63,6 @@ int cSokolRender::EndScene() {
         //Apply viewport/clip
         auto& clipPos = command->clipPos;
         auto& clipSize = command->clipSize;
-        //sg_apply_viewport(0, 0, ScreenSize.x, ScreenSize.y, true);
         sg_apply_scissor_rect(clipPos.x, clipPos.y, clipSize.x, clipSize.y, true);
         
         //Get pipeline
@@ -117,7 +116,7 @@ int cSokolRender::EndScene() {
             continue;
         }
         if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
-            xxassert(0, "cSokolRender::EndScene not valid state");
+            xxassert(0, "cSokolRender::EndScene vertex_buffer not valid state");
             continue;
         }
         bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
@@ -127,7 +126,7 @@ int cSokolRender::EndScene() {
             continue;
         }
         if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
-            xxassert(0, "cSokolRender::EndScene not valid state");
+            xxassert(0, "cSokolRender::EndScene index_buffer not valid state");
             continue;
         }
         bindings.index_buffer = command->index_buffer->buffer;
@@ -140,14 +139,14 @@ int cSokolRender::EndScene() {
                 tex = command->sokol_textures[0];
             }
             if (tex) {
-                if (tex->data) tex->update();
+                if (tex->dirty) tex->update();
                 if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
-                    xxassert(0, "cSokolRender::EndScene not valid state");
+                    xxassert(0, "cSokolRender::EndScene tex0 not valid state");
                     continue;
                 }
                 bindings.fs_images[slot_tex0] = tex->image;
             } else {
-                xxassert(0, "cSokolRender::EndScene missing");
+                xxassert(0, "cSokolRender::EndScene tex0 missing");
                 continue;
             }
         }
@@ -158,14 +157,14 @@ int cSokolRender::EndScene() {
                 tex = command->sokol_textures[1];
             }
             if (tex) {
-                if (tex->data) tex->update();
+                if (tex->dirty) tex->update();
                 if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
-                    xxassert(0, "cSokolRender::EndScene not valid state");
+                    xxassert(0, "cSokolRender::EndScene tex1 not valid state");
                     continue;
                 }
                 bindings.fs_images[slot_tex1] = tex->image;
             } else {
-                xxassert(0, "cSokolRender::EndScene missing");
+                xxassert(0, "cSokolRender::EndScene tex1 missing");
                 continue;
             }
         }
@@ -385,13 +384,15 @@ void cSokolRender::FinishCommand() {
     cmd->base_elements = activeCommand.base_elements;
     cmd->vertices = activeCommand.vertices;
     cmd->indices = activeCommand.indices;
+    cmd->clipPos = activeCommand.clipPos;
+    cmd->clipSize = activeCommand.clipSize;
     
     //We copy the MVP
     cmd->owned_mvp = true;
     if (isOrthographicProjSet) {
         cmd->vs_mvp = new Mat4f(orthoVP);
     } else {
-        cmd->vs_mvp = new Mat4f(activeCommandVP * activeCommandW);
+        cmd->vs_mvp = new Mat4f(activeCommandW * activeCommandVP);
     }
     
     //Transfer buffers to command

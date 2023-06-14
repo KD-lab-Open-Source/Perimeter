@@ -81,7 +81,7 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, uint32_t fmt_flag) {
             bind_attr_slot(ctx, "vs_texcoord1", SG_VERTEXFORMAT_FLOAT2);
             break;
         case VERTEX_FMT_NORMAL:
-            bind_attr_slot(ctx, "vs_normal", SG_VERTEXFORMAT_FLOAT2);
+            bind_attr_slot(ctx, "vs_normal", SG_VERTEXFORMAT_FLOAT3);
             break;
         default:
             fprintf(stderr, "bind_vertex_fmt: unregistered fmt '%d'\n", fmt_flag);
