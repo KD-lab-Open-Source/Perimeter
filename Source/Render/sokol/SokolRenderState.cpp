@@ -431,6 +431,9 @@ void cSokolRender::FinishCommand() {
 void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
     if (activeDrawBuffer && activeDrawBuffer != db) {
         //Submit previous buffer first
+        if (activeDrawBuffer->IsLocked()) {
+            activeDrawBuffer->Unlock();
+        }
         FinishCommand();
     }
     cInterfaceRenderDevice::SetActiveDrawBuffer(db);

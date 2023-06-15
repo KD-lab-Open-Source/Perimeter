@@ -79,12 +79,16 @@ void AIPlayer::addUnit(terUnitBase* p)
 				*si = safe_cast<terUnitSquad*>(p);
 				return;
 			}
-			if((*si)->commander()->attr()->ID != UNIT_ATTRIBUTE_FRAME && !(*si)->commander()->isBuildingEnable())
-				break;
+            terUnitBase* comm = (*si)->commander();
+			if (comm && comm->attr()->ID != UNIT_ATTRIBUTE_FRAME && !comm->isBuildingEnable()) {
+                break;
+            }
 		}
 		squads.insert(si, safe_cast<terUnitSquad*>(p));
 		break;
 		}
+    default:
+        break;
 	}
 }
 
@@ -119,6 +123,8 @@ void AIPlayer::removeUnit(terUnitBase* p)
 		}
 		}
 		break;
+    default:
+        break;
 	}
 }
 

@@ -1170,6 +1170,9 @@ void cD3DRender::FlushActiveDrawBuffer() {
     if (activeDrawBuffer) {
         DrawBuffer* db = activeDrawBuffer;
         activeDrawBuffer = nullptr;
+        if (db->IsLocked()) {
+            db->Unlock();
+        }
         db->Draw();
     }
 }

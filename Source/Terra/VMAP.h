@@ -889,6 +889,8 @@ struct vrtMap {
 					PutAltGeo(offset,V); 
 				}
 				break;
+            default:
+                break;
 		}
 	}
 	void PutAlt(int x,int y,int V) {

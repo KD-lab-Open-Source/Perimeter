@@ -35,6 +35,7 @@ StreamInterpolator::~StreamInterpolator()
 
 StreamInterpolator& StreamInterpolator::set(InterpolateFunction func,cUnknownClass* obj)
 {
+    MTL();
     obj->IncRef();
     xassert(in_avatar);
 	xassert(sizeof(func)==sizeof(InterpolateFunction));
@@ -50,6 +51,7 @@ StreamInterpolator& StreamInterpolator::set(InterpolateFunction func,cUnknownCla
 
 void StreamInterpolator::ClearData()
 {
+    MTL();
     last_header = 0;
 
     size_t size = stream.tell();
@@ -72,6 +74,7 @@ void StreamInterpolator::ClearData()
 
 void StreamInterpolator::ProcessData()
 {
+    MTG();
 	Lock();
 	timer=HTManager::instance()->interpolationFactor();
 	timer_=1-timer;
