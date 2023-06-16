@@ -225,11 +225,14 @@ using ColorConversionFunc = uint32_t (*)(const sColor4c&);
 class cInterfaceRenderDevice : public cUnknownClass
 {
 protected:
+    struct SDL_Window* sdl_window = nullptr;
     cTexLibrary* TexLibrary = nullptr;
     cFont* CurrentFont = nullptr;
     cFont* DefaultFont = nullptr;
     cCamera *DrawNode = nullptr;
     Vect2i ScreenSize = { 0, 0 };
+    Vect2i MaxScreenSize = { 0, 0 };
+    uint32_t ScreenHZ = 0;
     uint32_t RenderMode = 0;
     class DrawBuffer* activeDrawBuffer = nullptr;
     std::vector<class DrawBuffer*> drawBuffers;
@@ -247,7 +250,7 @@ public:
     // Common methods
 
     virtual uint32_t GetWindowCreationFlags() const { return 0; }
-    virtual int Init(int xScr,int yScr,int mode, void* wnd = nullptr, int RefreshRateInHz=0);
+    virtual int Init(int xScr,int yScr,int mode, SDL_Window* wnd = nullptr, int RefreshRateInHz=0);
     virtual int Done();
     virtual int BeginScene();
     virtual int EndScene();
@@ -261,6 +264,9 @@ public:
     
     virtual int GetSizeX() { return ScreenSize.x; };
     virtual int GetSizeY() { return ScreenSize.y; };
+    virtual int GetMaxSizeX() { return MaxScreenSize.x; }
+    virtual int GetMaxSizeY() { return MaxScreenSize.y; }
+    
 
     inline cCamera* GetDrawNode() { return DrawNode; }
     virtual void SetDrawNode(cCamera* node) { DrawNode = node; };

@@ -104,7 +104,7 @@ cTexture* cTexLibrary::CreateRenderTexture(int width, int height, uint32_t attr,
 	MTAuto mtenter(&lock);
 	if(!attr)
 		attr=TEXTURE_RENDER16;
-	attr|=TEXTURE_D3DPOOL_DEFAULT;
+	attr|=TEXTURE_POOL_DEFAULT;
 	cTexture *Texture=new cTexture("");
 	Texture->New(1);
 	Texture->SetTimePerFrame(0);	
@@ -127,7 +127,7 @@ cTexture* cTexLibrary::CreateTexture(int sizex,int sizey,bool alpha,bool default
 	if(alpha)
 		Texture->SetAttribute(TEXTURE_ALPHA_BLEND);
 	if(default_pool)
-		Texture->SetAttribute(TEXTURE_D3DPOOL_DEFAULT);
+		Texture->SetAttribute(TEXTURE_POOL_DEFAULT);
 
 	Texture->frames.resize(1);
 	Texture->frames[0].ptr=nullptr;

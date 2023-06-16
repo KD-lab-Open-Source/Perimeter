@@ -56,7 +56,8 @@ public:
     DrawType*   dtDrawShadowActive = nullptr;
 
     HWND						hWnd;
-
+    
+    uint32_t Adapter = 0;
     LPDIRECT3D9					lpD3D;
     LPDIRECT3DDEVICE9			lpD3DDevice;
     LPDIRECT3DSURFACE9			lpBackBuffer,lpZBuffer;
@@ -86,7 +87,7 @@ public:
     }
 
     uint32_t GetWindowCreationFlags() const override;
-	int Init(int xScr,int yScr,int mode, void* wnd=0, int RefreshRateInHz=0) override;
+	int Init(int xScr,int yScr,int mode, SDL_Window* wnd=nullptr, int RefreshRateInHz=0) override;
 	bool ChangeSize(int xScr,int yScr,int mode) override;
 	int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override;
 	int SetClipRect(int xmin,int ymin,int xmax,int ymax) override;
@@ -364,7 +365,7 @@ protected:
 
 	void UpdateRenderMode();
 
-	D3DFORMAT GetBackBufferFormat(int Mode);
+	D3DFORMAT GetBackBufferFormat(uint32_t Mode);
 
 	friend class cTileMapRender;
 };

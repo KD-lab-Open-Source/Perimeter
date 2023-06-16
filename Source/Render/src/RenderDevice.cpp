@@ -1,3 +1,4 @@
+#include <SDL.h>
 #include "StdAfxRD.h"
 #include "xutil.h"
 #include "VertexFormat.h"
@@ -18,96 +19,6 @@ static uint32_t ColorConvertABGR(const sColor4c& c) { return CONVERT_COLOR_TO_AB
 
 const size_t PERIMETER_RENDER_VERTEXBUF_LEN = 40960;
 const size_t PERIMETER_RENDER_INDEXBUF_LEN = PERIMETER_RENDER_VERTEXBUF_LEN * 2;
-
-FILE* fRD= nullptr;
-
-#ifndef _FINAL_VERSION_
-char* GetErrorText(HRESULT hr)
-{
-switch(hr)
-{
-case D3D_OK :
-return "No error occurred. ";
-case D3DERR_CONFLICTINGRENDERSTATE :
-return "The currently set render states cannot be used together. ";
-case D3DERR_CONFLICTINGTEXTUREFILTER :
-return "The current texture filters cannot be used together. ";
-case D3DERR_CONFLICTINGTEXTUREPALETTE :
-return "The current textures cannot be used simultaneously. This generally occurs when a multitexture device requires that all palletized textures simultaneously enabled also share the same palette. ";
-case D3DERR_DEVICELOST :
-return "The device is lost and cannot be restored at the current time, so rendering is not possible. ";
-case D3DERR_DEVICENOTRESET :
-return "The device cannot be reset. ";
-case D3DERR_DRIVERINTERNALERROR :
-return "Internal driver error. ";
-case D3DERR_INVALIDCALL :
-return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
-case D3DERR_INVALIDDEVICE :
-return "The requested device type is not valid. ";
-case D3DERR_MOREDATA :
-return "There is more data available than the specified buffer size can hold. ";
-case D3DERR_NOTAVAILABLE :
-return "This device does not support the queried technique. ";
-case D3DERR_NOTFOUND :
-return "The requested item was not found. ";
-case D3DERR_OUTOFVIDEOMEMORY :
-return "Direct3D does not have enough display memory to perform the operation. ";
-case D3DERR_TOOMANYOPERATIONS :
-return "The application is requesting more texture-filtering operations than the device supports. ";
-case D3DERR_UNSUPPORTEDALPHAARG :
-return "The device does not support a specified texture-blending argument for the alpha channel. ";
-case D3DERR_UNSUPPORTEDALPHAOPERATION :
-return "The device does not support a specified texture-blending operation for the alpha channel. ";
-case D3DERR_UNSUPPORTEDCOLORARG :
-return "The device does not support a specified texture-blending argument for color values. ";
-case D3DERR_UNSUPPORTEDCOLOROPERATION :
-return "The device does not support a specified texture-blending operation for color values. ";
-case D3DERR_UNSUPPORTEDFACTORVALUE :
-return "The device does not support the specified texture factor value. ";
-case D3DERR_UNSUPPORTEDTEXTUREFILTER :
-return "The device does not support the specified texture filter. ";
-case D3DERR_WRONGTEXTUREFORMAT :
-return "The pixel format of the texture surface is not valid. ";
-case E_FAIL :
-return "An undetermined error occurred inside the Direct3D subsystem. ";
-case E_INVALIDARG :
-return "An invalid parameter was passed to the returning function ";
-//case E_INVALIDCALL :
-//return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
-case E_OUTOFMEMORY :
-return "Direct3D could not allocate sufficient memory to complete the call. ";
-}
-return "Unknown error";
-};
-#endif
-
-void RDOpenLog(char *fname="RenderDevice.!!!")
-{
-#ifndef _FINAL_VERSION_
-	fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
-	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
-#endif
-}
-int RDWriteLog(HRESULT err,char *exp,char *file,int line)
-{
-#ifndef _FINAL_VERSION_
-	if (fRD==nullptr) RDOpenLog();
-	fprintf(fRD,"%s line: %i - %s = 0x%X , %s\n",file,line,exp,err,GetErrorText(err));
-	fflush(fRD);
-#endif
-	return err;
-}
-void RDWriteLog(char *exp,int size)
-{
-#ifndef _FINAL_VERSION_
-	if (fRD==nullptr) RDOpenLog();
-	if(size==-1)
-		size=strlen(exp);
-	fwrite(exp,size,1,fRD);
-	fprintf(fRD,"\n");
-	fflush(fRD);
-#endif
-}
 
 void MemoryResource::AllocData(size_t _data_len) {
     if (data) {
@@ -161,13 +72,35 @@ cInterfaceRenderDevice::~cInterfaceRenderDevice() {
     }
 }
 
-int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
+int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int RefreshRateInHz) {
+    sdl_window = wnd;
     gb_RenderDevice = this;
     ScreenSize.x = xScr;
     ScreenSize.y = yScr;
+    ScreenHZ = RefreshRateInHz;
     RenderMode = mode;
     TexLibrary = new cTexLibrary();
     drawBuffers.resize(0xFF);
+
+    //Get the biggest resolution we might need
+    MaxScreenSize.set(0, 0);
+    int displays = SDL_GetNumVideoDisplays();
+    if (displays < 0) {
+        SDL_PRINT_ERROR("SDL_GetNumVideoDisplays");
+    } else {
+        SDL_DisplayMode mode;
+        for (int i = 0; i < displays; ++i) {
+            mode.w = 0;
+            mode.h = 0;
+            if (SDL_GetDesktopDisplayMode(i, &mode) != 0) {
+                SDL_PRINT_ERROR("SDL_GetDesktopDisplayMode");
+            } else {
+                MaxScreenSize.x = max(MaxScreenSize.x, mode.w);
+                MaxScreenSize.y = max(MaxScreenSize.y, mode.h);
+            }
+        }
+    }
+    
     RenderSubmitEvent(RenderEvent::INIT, "Intf done");
     return 0;
 }
@@ -185,6 +118,9 @@ int cInterfaceRenderDevice::Done() {
     }
     if (gb_RenderDevice) {
         gb_RenderDevice = nullptr;
+    }
+    if (sdl_window) {
+        sdl_window = nullptr;
     }
     RenderSubmitEvent(RenderEvent::DONE, "Intf done");
     return 0;

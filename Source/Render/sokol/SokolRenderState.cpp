@@ -259,6 +259,10 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
 
 int cSokolRender::Flush(bool wnd) {
     RenderSubmitEvent(RenderEvent::FLUSH_SCENE);
+    if (!sdl_window) {
+        xassert(0);
+        return -1;
+    }
     if (ActiveScene) {
         xassert(0);
         EndScene();
@@ -266,7 +270,7 @@ int cSokolRender::Flush(bool wnd) {
 
     sg_commit();
 
-    SDL_GL_SwapWindow(sdlWindow);
+    SDL_GL_SwapWindow(sdl_window);
 
     ClearCommands();
 

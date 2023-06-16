@@ -35,15 +35,6 @@
 #include <SDL_image.h>
 #include <SDL_vulkan.h>
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-#define execv _execv
-//Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
-#include <SDL_syswm.h>
-#include <commdlg.h>
-#endif
-
 //#define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN
 #define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN_DESKTOP
 
@@ -587,23 +578,7 @@ cInterfaceRenderDevice* SetGraph()
         PerimeterCreateWindow(IRenderDevice->GetWindowCreationFlags());
     }
 
-    void* wnd;
-    if (deviceSelection == DEVICE_D3D9) {
-#ifdef _WIN32
-        //Get HWND from SDL window
-        SDL_SysWMinfo wm_info;
-        SDL_VERSION(&wm_info.version);
-        SDL_GetWindowWMInfo(sdlWindow, &wm_info);
-        
-        wnd = hWndVisGeneric = wm_info.info.win.window;
-#else
-        //dxvk-native uses HWND as SDL2 window handle, so this is allowed
-        wnd = static_cast<HWND>(sdlWindow);
-#endif
-    } else {
-        wnd = sdlWindow;
-    }
-    int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,wnd,terScreenRefresh);
+    int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,sdlWindow,terScreenRefresh);
 	if(error)
 	{
         fprintf(stderr, "SetGraph init error: %d\n", error);
@@ -1112,12 +1087,16 @@ void app_event_poll() {
                     case SDL_WINDOWEVENT_RESIZED:
                     case SDL_WINDOWEVENT_SIZE_CHANGED: {
                         if (0 <= lastWindowResize) {
+#if 1
+                            lastWindowResize = 5;
+#else
                             if (_bMenuMode) {
-                                lastWindowResize = 15;
+                                lastWindowResize = 10;
                             } else {
                                 //Game can be unstable during frequent resizing
-                                lastWindowResize = 30;
+                                lastWindowResize = 20;
                             }
+#endif
                         }
                         break;
                     }

@@ -51,7 +51,6 @@ bool StreamInterpolator::set(InterpolateFunction func,cUnknownClass* obj)
 
 void StreamInterpolator::ClearData()
 {
-    MTL();
     last_header = 0;
 
     size_t size = stream.tell();

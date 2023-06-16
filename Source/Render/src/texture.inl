@@ -9,7 +9,7 @@ enum eAttributeTexture
 	TEXTURE_RENDER32		=	1<<22,
 	TEXTURE_32				=	1<<24,		//Только 32 битный формат
 	TEXTURE_RENDER_SHADOW_9700 =1<<25,
-	TEXTURE_D3DPOOL_DEFAULT =	1<<26,
+    TEXTURE_POOL_DEFAULT    =	1<<26,
 	TEXTURE_GRAY			=   1<<27,
 	TEXTURE_UVBUMP			=	1<<28,
 	TEXTURE_U16V16			=	1<<29,

@@ -33,7 +33,7 @@ uint32_t cSokolRender::GetWindowCreationFlags() const {
     return flags;
 }
 
-int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
+int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int RefreshRateInHz) {
     RenderSubmitEvent(RenderEvent::INIT, "Sokol start");
     int res = cInterfaceRenderDevice::Init(xScr, yScr, mode, wnd, RefreshRateInHz);
     if (res != 0) {
@@ -42,8 +42,6 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
 
     ClearCommands();
     ClearPipelines();
-    
-    sdlWindow = static_cast<SDL_Window*>(wnd);
     
     //Init some state
     activePipelineType = PIPELINE_TYPE_TRIANGLE;
@@ -118,7 +116,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
 
 #ifdef SOKOL_GL
     // Create an OpenGL context associated with the window.
-    sdlGlContext = SDL_GL_CreateContext(sdlWindow);
+    sdlGlContext = SDL_GL_CreateContext(sdl_window);
     if (sdlGlContext == nullptr) {
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
@@ -174,16 +172,16 @@ int cSokolRender::UpdateRenderMode() {
 
 int cSokolRender::Done() {
     RenderSubmitEvent(RenderEvent::DONE, "Sokol start");
+    if (sdl_window) {
+        //Make sure is called only once, as it may crash in some backends/OSes
+        sg_shutdown();
+    }
     int ret = cInterfaceRenderDevice::Done();
     ClearCommands();
     ClearPipelines();
     shaders.clear();
     delete emptyTexture;
     emptyTexture = nullptr;
-    if (sdlWindow) {
-        //Make sure is called only once, as it may crash in some backends/OSes
-        sg_shutdown();
-    }
 #ifdef SOKOL_METAL
     if (sdlMetalView != nullptr) {
         SDL_Metal_DestroyView(sdlMetalView);
@@ -196,7 +194,6 @@ int cSokolRender::Done() {
         sdlGlContext = nullptr;
     }
 #endif
-    sdlWindow = nullptr;
     RenderSubmitEvent(RenderEvent::DONE, "Sokol done");
     return ret;
 }

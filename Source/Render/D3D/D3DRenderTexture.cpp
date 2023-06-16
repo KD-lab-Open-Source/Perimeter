@@ -36,7 +36,7 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 		Pool=D3DPOOL_DEFAULT;
 	}
 
-	if(attribute&TEXTURE_D3DPOOL_DEFAULT)
+	if(attribute&TEXTURE_POOL_DEFAULT)
 	{
 		Pool=D3DPOOL_DEFAULT;
 	}

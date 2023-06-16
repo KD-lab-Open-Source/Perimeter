@@ -8,12 +8,114 @@
 #include "files/files.h"
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
+#include "DebugUtil.h"
+#include "SystemUtil.h"
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#define execv _execv
+//Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
+#include <SDL_syswm.h>
+#include <commdlg.h>
+#endif
 
 static uint32_t ColorConvertARGB(const sColor4c& c) { return CONVERT_COLOR_TO_ARGB(c.v); };
 
 cD3DRender *gb_RenderDevice3D = nullptr;
 
 void IsDeleteAllDefaultTextures();
+
+FILE* fRD= nullptr;
+
+char* GetErrorText(HRESULT hr)
+{
+    switch(hr)
+    {
+        case D3D_OK :
+            return "No error occurred. ";
+        case D3DERR_CONFLICTINGRENDERSTATE :
+            return "The currently set render states cannot be used together. ";
+        case D3DERR_CONFLICTINGTEXTUREFILTER :
+            return "The current texture filters cannot be used together. ";
+        case D3DERR_CONFLICTINGTEXTUREPALETTE :
+            return "The current textures cannot be used simultaneously. This generally occurs when a multitexture device requires that all palletized textures simultaneously enabled also share the same palette. ";
+        case D3DERR_DEVICELOST :
+            return "The device is lost and cannot be restored at the current time, so rendering is not possible. ";
+        case D3DERR_DEVICENOTRESET :
+            return "The device cannot be reset. ";
+        case D3DERR_DRIVERINTERNALERROR :
+            return "Internal driver error. ";
+        case D3DERR_INVALIDCALL :
+            return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
+        case D3DERR_INVALIDDEVICE :
+            return "The requested device type is not valid. ";
+        case D3DERR_MOREDATA :
+            return "There is more data available than the specified buffer size can hold. ";
+        case D3DERR_NOTAVAILABLE :
+            return "This device does not support the queried technique. ";
+        case D3DERR_NOTFOUND :
+            return "The requested item was not found. ";
+        case D3DERR_OUTOFVIDEOMEMORY :
+            return "Direct3D does not have enough display memory to perform the operation. ";
+        case D3DERR_TOOMANYOPERATIONS :
+            return "The application is requesting more texture-filtering operations than the device supports. ";
+        case D3DERR_UNSUPPORTEDALPHAARG :
+            return "The device does not support a specified texture-blending argument for the alpha channel. ";
+        case D3DERR_UNSUPPORTEDALPHAOPERATION :
+            return "The device does not support a specified texture-blending operation for the alpha channel. ";
+        case D3DERR_UNSUPPORTEDCOLORARG :
+            return "The device does not support a specified texture-blending argument for color values. ";
+        case D3DERR_UNSUPPORTEDCOLOROPERATION :
+            return "The device does not support a specified texture-blending operation for color values. ";
+        case D3DERR_UNSUPPORTEDFACTORVALUE :
+            return "The device does not support the specified texture factor value. ";
+        case D3DERR_UNSUPPORTEDTEXTUREFILTER :
+            return "The device does not support the specified texture filter. ";
+        case D3DERR_WRONGTEXTUREFORMAT :
+            return "The pixel format of the texture surface is not valid. ";
+        case E_FAIL :
+            return "An undetermined error occurred inside the Direct3D subsystem. ";
+        case E_INVALIDARG :
+            return "An invalid parameter was passed to the returning function ";
+        case E_OUTOFMEMORY :
+            return "Direct3D could not allocate sufficient memory to complete the call. ";
+#ifdef E_INVALIDCALL
+        case E_INVALIDCALL:
+            return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
+#endif
+        default:
+            return "Unknown error";
+    }
+};
+
+void RDOpenLog(char *fname="RenderDevice.!!!")
+{
+#ifndef _FINAL_VERSION_
+    fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
+	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
+#endif
+}
+int RDWriteLog(HRESULT err,char *exp,char *file,int line)
+{
+#ifndef _FINAL_VERSION_
+    if (fRD==nullptr) RDOpenLog();
+	fprintf(fRD,"%s line: %i - %s = 0x%X , %s\n",file,line,exp,err,GetErrorText(err));
+	fflush(fRD);
+#endif
+    return err;
+}
+void RDWriteLog(char *exp,int size)
+{
+#ifndef _FINAL_VERSION_
+    if (fRD==nullptr) RDOpenLog();
+	if(size==-1)
+		size=strlen(exp);
+	fwrite(exp,size,1,fRD);
+	fprintf(fRD,"\n");
+	fflush(fRD);
+#endif
+}
 
 cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 {
@@ -88,7 +190,7 @@ uint32_t cD3DRender::GetWindowCreationFlags() const {
     return flags;
 }
 
-int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
+int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRateInHz)
 {
     RenderSubmitEvent(RenderEvent::INIT, "D3D9 start");
     Done();
@@ -100,7 +202,17 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 	memset(CurrentTexture,0,sizeof(CurrentTexture));
 	memset(ArrayRenderState,0xEF,sizeof(ArrayRenderState));
 
-	this->hWnd=static_cast<HWND>(wnd);
+#ifdef _WIN32
+    //Get HWND from SDL window
+    SDL_SysWMinfo wm_info;
+    SDL_VERSION(&wm_info.version);
+    SDL_GetWindowWMInfo(sdlWindow, &wm_info);
+    
+    this->hWnd = hWndVisGeneric = wm_info.info.win.window;
+#else
+    //dxvk-native uses HWND as SDL2 window handle, so this is allowed
+    this->hWnd = static_cast<HWND>(sdl_window);
+#endif
 
 	if(!lpD3D)
 		RDERR((lpD3D=Direct3DCreate9(D3D_SDK_VERSION))==0);
@@ -108,7 +220,13 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 		
 	if(lpD3D==0) return 2;
 	D3DDISPLAYMODE d3ddm;
-	uint32_t Adapter=0/*D3DADAPTER_DEFAULT*/;
+    
+    IniManager ini("Perimeter.ini", false);
+    int adapter_int = D3DADAPTER_DEFAULT; 
+    ini.getInt("Graphics", "Adapter", adapter_int);
+    check_command_line_parameter("d3d_adapter", adapter_int);
+    Adapter = adapter_int;
+    
 	RDERR(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(Mode&RENDERDEVICE_MODE_WINDOW) {
 		if(d3ddm.Format==D3DFMT_X8R8G8B8||d3ddm.Format==D3DFMT_R8G8B8||d3ddm.Format==D3DFMT_A8R8G8B8)
@@ -122,16 +240,11 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 
 	RDCALL(lpD3D->GetDeviceCaps(Adapter,D3DDEVTYPE_HAL,&DeviceCaps));
     memset(&d3dpp, 0, sizeof(d3dpp));
-	d3dpp.BackBufferWidth			= ScreenSize.x;
-	d3dpp.BackBufferHeight			= ScreenSize.y;
-	d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;
-	d3dpp.MultiSampleQuality		= 0;
-	d3dpp.SwapEffect				= D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow				= hWnd;
-
-	d3dpp.EnableAutoDepthStencil	= TRUE;
-	d3dpp.Flags						= D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
-	d3dpp.FullScreen_RefreshRateInHz= (Mode&RENDERDEVICE_MODE_WINDOW)?0:RefreshRateInHz;
+    d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;
+    d3dpp.MultiSampleQuality		= 0;
+    d3dpp.SwapEffect				= D3DSWAPEFFECT_COPY;
+    d3dpp.EnableAutoDepthStencil	= TRUE;
+    d3dpp.Flags						= D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
     d3dpp.PresentationInterval		= D3DPRESENT_INTERVAL_IMMEDIATE;
 	UpdateRenderMode();
 
@@ -156,7 +269,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 		if(lpD3D->CreateDevice(Adapter,D3DDEVTYPE_HAL,hWnd,D3DCREATE_MIXED_VERTEXPROCESSING|mt,&d3dpp,&lpD3DDevice))
 			RDERR(lpD3D->CreateDevice(Adapter,D3DDEVTYPE_HAL,hWnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING|mt,&d3dpp,&lpD3DDevice));
 
-	if(lpD3DDevice==0) return 3;
+	if(lpD3DDevice==nullptr) return 3;
 
 	if(Mode&RENDERDEVICE_MODE_WINDOW)
 	{
@@ -236,14 +349,12 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, void* wnd, int RefreshRateInHz)
 	return 0;
 }
 
-D3DFORMAT cD3DRender::GetBackBufferFormat(int Mode)
+D3DFORMAT cD3DRender::GetBackBufferFormat(uint32_t Mode)
 {
-	uint32_t Adapter=0;
 	D3DFORMAT BackBufferFormat=D3DFMT_X8R8G8B8;
 	if(Mode&RENDERDEVICE_MODE_WINDOW)
 	{
 		D3DDISPLAYMODE d3ddm;
-		uint32_t Adapter=0;
 		RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 		BackBufferFormat = d3ddm.Format;
 	}else
@@ -285,15 +396,28 @@ void cD3DRender::UpdateRenderMode()
 		is32zbuffer=(RenderMode&RENDERDEVICE_MODE_RGB32)?true:false;
 	}
 
-	d3dpp.AutoDepthStencilFormat= is32zbuffer?D3DFMT_D24S8:D3DFMT_D16;
-	d3dpp.BackBufferFormat=GetBackBufferFormat(RenderMode);
+    D3DDISPLAYMODE d3ddm;
+    RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
+    MaxScreenSize.x = max(MaxScreenSize.x, static_cast<int>(d3ddm.Width));
+    MaxScreenSize.y = max(MaxScreenSize.y, static_cast<int>(d3ddm.Height));
+    
+	d3dpp.AutoDepthStencilFormat    = is32zbuffer ? D3DFMT_D24S8 : D3DFMT_D16;
+	d3dpp.BackBufferFormat          = GetBackBufferFormat(RenderMode);
+    d3dpp.hDeviceWindow				= hWnd;
+    d3dpp.Windowed					= (RenderMode&RENDERDEVICE_MODE_WINDOW)?TRUE:FALSE;
+    d3dpp.FullScreen_RefreshRateInHz= d3dpp.Windowed ? 0 : ScreenHZ;
+	d3dpp.BackBufferCount			= (d3dpp.Windowed | (RenderMode&RENDERDEVICE_MODE_ONEBACKBUFFER)) ? 1 : 2;
 
-	d3dpp.BackBufferCount			= (RenderMode&RENDERDEVICE_MODE_WINDOW)?1:2;
-	d3dpp.Windowed					= (RenderMode&(RENDERDEVICE_MODE_WINDOW|RENDERDEVICE_MODE_ONEBACKBUFFER))?TRUE:FALSE;
+    //Set biggest size the window can have so we don't have to reinit render device each time user resizes the window
+    d3dpp.BackBufferWidth = MaxScreenSize.x;
+    d3dpp.BackBufferHeight = MaxScreenSize.y;
+    fprintf(stdout, "D3D Backbuffer size: %dx%d\n", d3dpp.BackBufferWidth, d3dpp.BackBufferHeight);
 
-	D3DDISPLAYMODE d3ddm;
-	uint32_t Adapter=0;
-	RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
+    //Set max resolution to not be bigger than backbuffer
+    if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
+        SDL_SetWindowMaximumSize(sdl_window, d3dpp.BackBufferWidth, d3dpp.BackBufferHeight);
+    }
+
 	if(RenderMode&RENDERDEVICE_MODE_COMPRESS)
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT5)==0)
@@ -399,10 +523,17 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
     
     int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW
                  |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
-    
-	if (ScreenSize.x==xscr && ScreenSize.y==yscr && (RenderMode&mode_mask) == mode) {
+
+    bool same_size = ScreenSize.x == xscr && ScreenSize.y == yscr;
+    if (!same_size) {
+        ScreenSize.x = xscr;
+        ScreenSize.y = yscr;
+        UpdateRenderMode();
+    }
+    if ((RenderMode&mode_mask) == (mode&mode_mask)) {
         return true; //Nothing to do
-	}
+    }
+    fprintf(stdout, "RenderMode %d new %d\n", RenderMode, mode);
 	
 	KillFocus();
 
@@ -421,11 +552,19 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 
 	}
 
-	d3dpp.BackBufferWidth	= ScreenSize.x = xscr;
-	d3dpp.BackBufferHeight	= ScreenSize.y = yscr;
-	UpdateRenderMode();
+    if (same_size) {
+        UpdateRenderMode();
+    }
 
-	return SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
+    fprintf(stdout, "d3dpp %dx%d Count %d Hz %d\n", d3dpp.BackBufferWidth, d3dpp.BackBufferHeight, d3dpp.BackBufferCount, d3dpp.FullScreen_RefreshRateInHz);
+
+	bool result = SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
+    if (!result) {
+        RestoreDeviceIfLost();
+        result = SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
+    }
+    
+    return result;
 }
 
 
@@ -570,8 +709,8 @@ int cD3DRender::Flush(bool wnd)
 	MTG();
 	RestoreDeviceIfLost();
 
-	//RDCALL(lpD3DDevice->Present(NULL,NULL,wnd,NULL))
-	lpD3DDevice->Present(NULL,NULL,wnd ? hWnd : nullptr, NULL);
+	RECT rect { 0, 0, ScreenSize.x, ScreenSize.y };
+	lpD3DDevice->Present(&rect, &rect, wnd ? hWnd : nullptr, nullptr);
 
 	if(Option_DrawNumberPolygon) 
 	{
@@ -1265,7 +1404,7 @@ void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)
 }
 int cD3DRender::KillFocus()
 {
-	if(lpD3DDevice==0) return 1;
+	if (lpD3DDevice== nullptr) return 1;
 
 	RELEASE(lpZBuffer);
 	RELEASE(lpBackBuffer);
@@ -1274,11 +1413,11 @@ int cD3DRender::KillFocus()
 	if(dtAdvanceOriginal)
 		dtAdvanceOriginal->DeleteShadowTexture();
 
-	for(int i=0;i<TexLibrary->GetNumberTexture();i++)
-	{
+	for(int i=0;i<TexLibrary->GetNumberTexture();i++) {
 		cTexture* pTexture=TexLibrary->GetTexture(i);
-		if(pTexture&&pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
-			DeleteTexture(pTexture);
+		if(pTexture&&pTexture->GetAttribute(TEXTURE_POOL_DEFAULT)) {
+            DeleteTexture(pTexture);
+        }
 	}
 //	IsDeleteAllDefaultTextures();
 
@@ -1299,11 +1438,12 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 		for(int i=0;i<imax;i++)
 		{
 			hres=lpD3DDevice->Reset(&d3dpp);
-			if(hres!=D3D_OK && wait)
-				Sleep(1000);
+			if (FAILED(hres) && wait) {
+                Sleep(1000);
+            }
 		}
-		if(hres!=D3D_OK)
-		{
+		if (FAILED(hres)) {
+            fprintf(stderr, "D3D::SetFocus failed reset %s\n", GetErrorText(hres));
 			if(focus_error)
 			{
 				VisError<<"Internal error. Cannot reinitialize graphics"<<VERR_END;
@@ -1317,7 +1457,7 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 	for(int i=0;i<TexLibrary->GetNumberTexture();i++)
 	{
 		cTexture* pTexture=TexLibrary->GetTexture(i);
-		if(pTexture && pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT)) {
+		if(pTexture && pTexture->GetAttribute(TEXTURE_POOL_DEFAULT)) {
 			if (pTexture->GetRef()>1) {
                 CreateTexture(pTexture, 0);
             }
@@ -1646,7 +1786,7 @@ void IsDeleteAllDefaultTextures()
 		cTexture* p=dynamic_cast<cTexture*>(cur);
 		if(p)
 		{
-			if(p->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
+			if(p->GetAttribute(TEXTURE_POOL_DEFAULT))
 			{
 				for(int nFrame=0;nFrame<p->GetNumberFrame();nFrame++)
 				if(p->GetFrameImage(nFrame)) 

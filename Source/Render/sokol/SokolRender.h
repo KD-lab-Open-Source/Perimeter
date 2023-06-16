@@ -50,7 +50,6 @@ struct SokolCommand {
 class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
-    SDL_Window* sdlWindow = nullptr;
 #ifdef SOKOL_GL
     SDL_GLContext sdlGlContext = nullptr;
 #endif
@@ -104,7 +103,7 @@ public:
     uint32_t GetWindowCreationFlags() const override;
     void SetActiveDrawBuffer(class DrawBuffer*) override;
     
-    int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override;
+    int Init(int xScr,int yScr,int mode,SDL_Window* wnd=nullptr,int RefreshRateInHz=0) override;
     bool ChangeSize(int xScr,int yScr,int mode) override;
 
     int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override;
