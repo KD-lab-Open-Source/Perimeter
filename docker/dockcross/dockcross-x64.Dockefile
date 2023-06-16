@@ -21,13 +21,27 @@ RUN cd /work && git clone https://github.com/ianlancetaylor/libbacktrace.git
 RUN cd /work/libbacktrace && ./configure --host=$CROSS_TRIPLE --prefix=/usr/local --enable-static --disable-shared
 RUN cd /work/libbacktrace && make -j$NCPU
 RUN cd /work/libbacktrace && sudo make install
+ 
+RUN cd /work && wget https://github.com/libsdl-org/SDL/releases/download/release-2.26.5/SDL2-devel-2.26.5-mingw.zip
+RUN cd /work && unzip SDL2-devel-2.26.5-mingw.zip
+ 
+RUN cd /work && wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-devel-2.6.3-mingw.zip
+RUN cd /work && unzip SDL2_mixer-devel-2.6.3-mingw.zip
+ 
+RUN cd /work && wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-mingw.zip
+RUN cd /work && unzip SDL2_image-devel-2.6.3-mingw.zip
+ 
+RUN cd /work && wget https://github.com/libsdl-org/SDL_net/releases/download/release-2.2.0/SDL2_net-devel-2.2.0-mingw.zip
+RUN cd /work && unzip SDL2_net-devel-2.2.0-mingw.zip
+
+RUN cd /work/SDL2-2.26.5 && make install-package arch=x86_64-w64-mingw32 prefix=/usr/local
+RUN cd /work/SDL2_mixer-2.6.3 && make install-package arch=x86_64-w64-mingw32 prefix=/usr/local
+RUN cd /work/SDL2_image-2.6.3 && make install-package arch=x86_64-w64-mingw32 prefix=/usr/local
+RUN cd /work/SDL2_net-2.2.0 && make install-package arch=x86_64-w64-mingw32 prefix=/usr/local
+RUN rm -rf /work/SDL2-2.26.5 /work/SDL2_mixer-2.6.3 /work/SDL2_image-2.6.3 /work/SDL2_net-2.2.0
 
 WORKDIR /work
 
 RUN apt-get install -y \
- mxe-x86-64-w64-mingw32.shared-ffmpeg \
- mxe-x86-64-w64-mingw32.shared-vorbis \
- mxe-x86-64-w64-mingw32.shared-sdl2 \
- mxe-x86-64-w64-mingw32.shared-sdl2-image \
- mxe-x86-64-w64-mingw32.shared-sdl2-mixer \
- mxe-x86-64-w64-mingw32.shared-sdl2-net
+ mxe-x86-64-w64-mingw32.shared-pthread \
+ mxe-x86-64-w64-mingw32.static-zlib

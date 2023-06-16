@@ -357,12 +357,13 @@ ENDIF()
 
 SET(perimeter_LINK_LIBS
         #Libraries
-        ${EXE_LINK_LIBS}
+        ${EXE_LINK_LIBS_PRE}
         ${perimeter_LINK_LIBS}
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
+        ${EXE_LINK_LIBS_POST}
 )
 
 IF(PERIMETER_WINDOWS)
