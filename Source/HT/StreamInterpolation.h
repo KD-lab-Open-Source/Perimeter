@@ -50,7 +50,7 @@ public:
 
 	void SetInAvatar(bool in){in_avatar=in;}
 
-	StreamInterpolator& set(InterpolateFunction func,cUnknownClass* obj);
+	bool set(InterpolateFunction func,cUnknownClass* obj);
 
 #ifdef PERIMETER_DEBUG
     void CheckData() {

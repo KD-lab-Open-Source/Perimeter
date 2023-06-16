@@ -33,7 +33,7 @@ StreamInterpolator::~StreamInterpolator()
 	MTDONE(lock);
 }
 
-StreamInterpolator& StreamInterpolator::set(InterpolateFunction func,cUnknownClass* obj)
+bool StreamInterpolator::set(InterpolateFunction func,cUnknownClass* obj)
 {
     MTL();
     obj->IncRef();
@@ -46,7 +46,7 @@ StreamInterpolator& StreamInterpolator::set(InterpolateFunction func,cUnknownCla
 	data.func = func;
 	data.obj = obj;
     stream.write(data);
-	return *this;
+	return true;
 }
 
 void StreamInterpolator::ClearData()

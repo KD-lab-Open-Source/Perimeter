@@ -1143,7 +1143,8 @@ void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
     if (vb.d3d) {
         MTG();
         if (vb.dynamic) {
-            std::remove(LibVB.begin(), LibVB.end(), vb.d3d);
+            auto removed = std::remove(LibVB.begin(), LibVB.end(), vb.d3d);
+            LibVB.erase(removed, LibVB.end());
         }
         vb.d3d->Release();
         vb.d3d = nullptr;
@@ -1158,7 +1159,8 @@ void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib) {
     if (ib.d3d) {
         MTG();
         if (ib.dynamic) {
-            std::remove(LibIB.begin(), LibIB.end(), ib.d3d);
+            auto removed = std::remove(LibIB.begin(), LibIB.end(), ib.d3d);
+            LibIB.erase(removed, LibIB.end());
         }
         ib.d3d->Release();
         ib.d3d = nullptr;

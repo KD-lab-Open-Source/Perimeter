@@ -81,7 +81,7 @@ public:
 #define InterpolationOpStruct(NAME, T) \
 struct NAME##InterpolationOp { \
 	void operator()(cUnknownClass* cur, const T p[2]) { \
-        stream_interpolator.set(f##NAME##Interpolation, cur) << p[0] << p[1]; \
+        if (stream_interpolator.set(f##NAME##Interpolation, cur)) { stream_interpolator << p[0] << p[1]; }; \
     } \
 };
 
@@ -106,7 +106,9 @@ class InterpolatorAngle: public Interpolator<float, UnusedAssertOp> {
 public:
 	void operator()(cUnknownClass* cur,eAxis axis) {
 		if(update_) {
-			stream_interpolator.set(fAngleInterpolation,cur)<<x_<<static_cast<uint8_t>(axis);
+			if (stream_interpolator.set(fAngleInterpolation,cur)) {
+                stream_interpolator << x_ << static_cast<uint8_t>(axis);
+            }
 		}
 		update_=false;
 	}
@@ -116,7 +118,9 @@ class InterpolatorPhase: public Interpolator<float, UnusedAssertOp> {
 public:
 	void operator()(cUnknownClass* cur,int recursive) {
 		if(update_) {
-			stream_interpolator.set(fPhaseInterpolation,cur)<<x_<<recursive;
+			if (stream_interpolator.set(fPhaseInterpolation,cur)) {
+                stream_interpolator << x_ << recursive;
+            }
 		}
 		update_=false;
 	}
@@ -154,8 +158,11 @@ public:
 
 	void operator()(cUnknownClass* cur)
 	{ 
-		if(update_)
-			stream_interpolator.set(fLineInterpolation,cur)<<x0_<<x1_;
+		if(update_) {
+            if (stream_interpolator.set(fLineInterpolation, cur)) {
+                stream_interpolator << x0_ << x1_;
+            }
+        }
 
 		update_=false;
 	}

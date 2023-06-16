@@ -55,8 +55,8 @@ const char* currentShortVersion = PERIMETER_VERSION;
 
 const char* currentVersion = 
 "Version " PERIMETER_VERSION
-#ifdef _FINAL_VERSION_
-" Final"
+#ifndef _FINAL_VERSION_
+" NotFinal"
 #endif
 #ifdef PERIMETER_DEBUG
 " Debug"

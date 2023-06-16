@@ -16,7 +16,7 @@ bool MT_IS_LOGIC();
 #define MTG() xassert(MT_IS_GRAPH())
 #define MTL() xassert(MT_IS_LOGIC())
 
-#define MTDECLARE(x) SDL_mutex* x;
+#define MTDECLARE(x) SDL_mutex* x
 #define MTINIT(x) x = SDL_CreateMutex()
 #define MTDONE(x) SDL_DestroyMutex(x)
 #define MTENTER(x) SDL_LockMutex(x)
@@ -26,7 +26,7 @@ void debug_dump_mt_tls();
 
 struct MTEnter
 {
-    SDL_mutex* pcs;
+    MTDECLARE(pcs);
 	MTEnter(SDL_mutex* pcs_)
 	{
 		pcs=pcs_;

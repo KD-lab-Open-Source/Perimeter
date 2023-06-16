@@ -298,7 +298,7 @@ private:
 	void hmapRotate();
 	//Везде, где обращаются из графического потока к hmap_prev,hmap_cur,hmap_logic
 	//хотя, если lock не сделать, ничего фатального не случится.
-	MTDECLARE(hmap_lock)
+	MTDECLARE(hmap_lock);
 
 	inline float interpolateHeight(int x,int y,float t,float t_)
 	{
