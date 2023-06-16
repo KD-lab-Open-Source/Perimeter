@@ -4,7 +4,7 @@ class cIUnkObj : public cIUnkClass
 { // базовый класс объектов
 public:
 	cIUnkObj(int kind);
-	virtual ~cIUnkObj();
+	~cIUnkObj() override;
 
 	virtual void Animate(float dt)													{ }
 	virtual void PreDraw(cCamera *UClass)											{ }

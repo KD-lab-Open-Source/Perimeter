@@ -17,8 +17,8 @@ class cIUnkClass : public cUnknownClass, protected sAttribute
 public:
 	// инициализационная часть 
 	cIUnkClass(int kind) : cUnknownClass(kind),IParent(0){ }
-	virtual ~cIUnkClass(){}
-	virtual	int Release();
+    ~cIUnkClass() override = default;
+	int64_t Release() override;
 
 	// общие функции для работы объектами cIUnkClass
 	virtual void PreDraw(cCamera *UCamera)=0;

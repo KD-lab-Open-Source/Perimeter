@@ -86,7 +86,7 @@ cSprite* cSpriteManager::Create()
 	return p;
 }
 
-int cSprite::Release()
+int64_t cSprite::Release()
 {
     if (GetRef() <= 1) {
         manager->DeleteSprite(this);

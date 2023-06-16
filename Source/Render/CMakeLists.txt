@@ -11,6 +11,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Render_SRCS
+        src/Unknown.cpp
         src/umath.cpp
         src/VisError.cpp
         src/Frame.cpp

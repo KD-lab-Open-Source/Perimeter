@@ -103,28 +103,26 @@ cIUnkObj::cIUnkObj(int kind):cIUnkClass(kind)
 	Radius=0;
 }
 
-cIUnkObj::~cIUnkObj()
-{
-}
+cIUnkObj::~cIUnkObj() = default;
 
-int cIUnkClass::Release()
-{
-	if(DecRef()>0) 
-	{
+int64_t cIUnkClass::Release() {
+    int64_t cnt = DecRef();
+	if (0 < cnt) {
 		VISASSERT(!GetAttribute(ATTRUNKOBJ_DELETED));
 		return GetRef(); 
 	}
 
 //	bool is_deleted=GetAttribute(ATTRUNKOBJ_DELETED);
-	if(IParent && !GetAttribute(ATTRUNKOBJ_DELETED))
-	{
+	if (IParent && !GetAttribute(ATTRUNKOBJ_DELETED)) {
 		SetAttribute(ATTRUNKOBJ_DELETED|ATTRUNKOBJ_IGNORE);
 		//IParent=NULL;
 		IParent->DetachObj(this);
+        
+        //DetachObj might have IncRef this object, so check again
+        cnt = GetRef();
 	}
 
-	if(GetRef()<=0)
-	{
+	if (cnt<=0)	{
 //		if(IParent && is_deleted)
 //		{
 //			MTG();
@@ -136,7 +134,7 @@ int cIUnkClass::Release()
 		return 0;
 	}
 
-	return GetRef();
+	return cnt;
 }
 
 

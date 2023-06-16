@@ -6,7 +6,7 @@ public:
 	cSprite() : cUnknownClass(0) {}
     ~cSprite() override = default;
 
-	int Release() override;
+	int64_t Release() override;
 	void SetPos(const Vect3f& p){pos=p;};
 	void SetColor(sColor4c c){color=c;}
 	void SetRadius(float r){radius=r;}
