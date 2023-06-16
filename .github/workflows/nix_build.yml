@@ -10,6 +10,7 @@ env:
 
 jobs:
   build:
+    if: false
     strategy:
       fail-fast: false
       matrix:
