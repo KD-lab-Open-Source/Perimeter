@@ -4,8 +4,8 @@
 
 enum
 {
-	MT_GRAPH_THREAD=1,
-	MT_LOGIC_THREAD=2,
+	MT_GRAPH_THREAD=1 << 0,
+	MT_LOGIC_THREAD=1 << 1,
 };
 
 uint32_t MT_GET_TYPE();
@@ -77,42 +77,18 @@ public:
 	}
 
 	//Not copy this object
-	void operator =(const MTSection& in)
-	{
-	}
+    MTSection& operator=(MTSection const&) = delete;
 };
 
 class MTAuto
 {
 	MTSection* s;
 public:
-	MTAuto(MTSection* s_)
-		:s(s_)
-	{
+	explicit MTAuto(MTSection* s_) :s(s_) {
 		s->Lock();
 	}
 
-	~MTAuto()
-	{
+	~MTAuto() {
 		s->Unlock();
-	}
-};
-
-/*
-	Отключает на области видимости assert`ы связанные с многопоточностью.
-*/
-class MTAutoSkipAssert
-{
-    uint32_t real_tls;
-public:
-	MTAutoSkipAssert()
-	{
-		real_tls= MT_GET_TYPE();
-        MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
-	}
-
-	~MTAutoSkipAssert()
-	{
-        MT_SET_TYPE(real_tls);
 	}
 };

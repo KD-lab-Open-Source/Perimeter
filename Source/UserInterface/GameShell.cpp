@@ -611,8 +611,7 @@ void GameShell::GameClose()
 
 bool GameShell::universalSave(const char* name, bool userSave, MissionDescription* missionOutput)
 {
-	MTAuto lock(HTManager::instance()->GetLockLogic());
-	MTAutoSkipAssert skip_assert;
+	MTAutoSingleThread skip_assert;
 
     MissionDescription* mission;
     if (missionOutput) {
@@ -1147,7 +1146,7 @@ void GameShell::DebugCteateFilth(terFilthSpotID id)
 
 bool GameShell::DebugKeyPressed(sKey& Key)
 {
-	MTAutoSkipAssert mtAutoSkipAssert;
+	MTAutoSingleThread mtAutoSkipAssert;
 
 	switch(Key.fullkey){
 	case VK_F1:

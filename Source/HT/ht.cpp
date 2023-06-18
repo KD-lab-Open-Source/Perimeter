@@ -344,3 +344,23 @@ void HTManager::Show()
 		lag_stat->Show();
 #endif //_FINAL
 }
+
+
+MTAutoSingleThread::MTAutoSingleThread() {
+    real_tls = MT_GET_TYPE();
+    if (real_tls == MT_GRAPH_THREAD) {
+        lock = HTManager::instance()->GetLockLogic();
+    }
+    if (lock) {
+        lock->Lock();
+    }
+    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
+}
+
+MTAutoSingleThread::~MTAutoSingleThread()
+{
+    MT_SET_TYPE(real_tls);
+    if (lock) {
+        lock->Unlock();
+    }
+}

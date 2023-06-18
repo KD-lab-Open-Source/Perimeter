@@ -17,6 +17,7 @@
 #include "EditArchive.h"
 #include "qd_textdb.h"
 #include "codepages/codepages.h"
+#include "../HT/ht.h"
 
 //------------------------------------------------
 MissionEditor::MissionEditor()
@@ -42,7 +43,7 @@ void MissionEditor::quant()
 {
 	terUnitBase* unit = universe()->selectedObject();
 	if(unit){
-		MTAutoSkipAssert auto_skip;
+		MTAutoSingleThread auto_skip;
 		if(isPressed('V')){
 			float factor = unit->position().distance(terCamera->GetCamera()->GetPos())*2;
 			Vect3f delta = Vect3f::ZERO;
@@ -93,7 +94,7 @@ void MissionEditor::quant()
 
 bool MissionEditor::keyPressed(const sKey& Key)
 {
-	MTAutoSkipAssert mtAutoSkipAssert;
+	MTAutoSingleThread mtAutoSkipAssert;
 
 	switch(Key.fullkey)
 	{

@@ -48,8 +48,7 @@ int SwitchMultiplayerToLoadQuant(float, float ) {
 int SwitchMultiplayerToRestoreQuant(float, float ) {
     if (menuChangingDone) {
         if (missionToExec.gameType_ == GT_MULTI_PLAYER_RESTORE_PARTIAL) {
-            MTAuto lock(HTManager::instance()->GetLockLogic());
-            MTAutoSkipAssert skip_assert;
+            MTAutoSingleThread skip_assert;
             universe()->clear();
             universe()->universalLoad(missionToExec, gameShell->savePrm(), nullptr);
             missionToExec.gameType_ = GT_MULTI_PLAYER_LOAD;
