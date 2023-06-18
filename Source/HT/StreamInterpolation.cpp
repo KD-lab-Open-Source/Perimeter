@@ -36,39 +36,60 @@ StreamInterpolator::~StreamInterpolator()
 bool StreamInterpolator::set(InterpolateFunction func,cUnknownClass* obj)
 {
     MTL();
-    obj->IncRef();
+    if (!obj) {
+        xassert(0);
+        return false;
+    }
+    InterpolateHeader data;
+    data.data_len = 0;
+    data.func = func;
+#ifdef STREAM_INTERPOLATOR_USE_HANDLES
+    data.handle = obj->AcquireHandle();
+    if (!data.handle) {
+        xassert(0);
+        return false;
+    }
+#else
+    data.obj = obj;
+#endif
     xassert(in_avatar);
 	xassert(sizeof(func)==sizeof(InterpolateFunction));
     last_header = stream.tell();
-    InterpolateHeader data;
-    data.flags = 0;
-    data.data_len = 0;
-	data.func = func;
-	data.obj = obj;
     stream.write(data);
+    headers_count += 1;
 	return true;
 }
 
 void StreamInterpolator::ClearData()
 {
-    last_header = 0;
+    Lock();
 
-    size_t size = stream.tell();
-    if (size) {
+    if (headers_count) {
+        size_t size = stream.tell();
         stream.set(0);
-        while (stream.tell() < size) {
+        size_t headers = 0;
+        while (stream.tell() < size || headers < headers_count) {
+            headers += 1;
             InterpolateHeader data;
             stream.read(data);
             stream.set(data.data_len, XB_CUR);
-            xassert((data.flags & INTERPOLATION_DATA_FLAG_CLEARED) == 0);
-            if ((data.flags & INTERPOLATION_DATA_FLAG_CLEARED) == 0) {
-                data.flags |= INTERPOLATION_DATA_FLAG_CLEARED;
-                data.obj->Release();
+#ifdef STREAM_INTERPOLATOR_USE_HANDLES
+            if (data.handle) {
+                data.handle->Release();
+                data.handle = nullptr;
             }
+#else
+            data.obj = nullptr;
+#endif
         }
-        xassert(stream.tell()==size);
+        xassert(headers == headers_count);
+        xassert(stream.tell() == size);
         stream.set(0);
+        headers_count = 0;
+        last_header = 0;
     }
+
+    Unlock();
 }
 
 void StreamInterpolator::ProcessData()
@@ -78,25 +99,33 @@ void StreamInterpolator::ProcessData()
 	timer=HTManager::instance()->interpolationFactor();
 	timer_=1-timer;
     
-    size_t size = stream.tell();
-    if (size) {
+    if (headers_count) {
+        size_t size = stream.tell();
         stream.set(0);
-        while (stream.tell() < size) {
+        size_t headers = 0;
+        while (stream.tell() < size || headers < headers_count) {
+            headers += 1;
             InterpolateHeader data;
             stream.read(data);
-            if ((data.flags & INTERPOLATION_DATA_FLAG_CLEARED) == 0) {
-                xassert(data.func);
-                xassert(data.obj);
-                size_t pos = stream.tell();
-                data.func(data.obj, &stream);
-                xassert(pos + data.data_len == stream.tell());
+            xassert(data.func);
+            size_t pos = stream.tell();
+#ifdef STREAM_INTERPOLATOR_USE_HANDLES
+            xassert(data.handle);
+            //Get object unless it was Release'd
+            cUnknownClass* obj = data.handle ? data.handle->Get() : nullptr;
+#else
+            cUnknownClass* obj = data.obj;
+#endif
+            if (obj) {
+                data.func(obj, &stream);
             } else {
-                xassert(0);
+                //Skip this data
                 stream.set(data.data_len, XB_CUR);
             }
+            xassert(pos + data.data_len == stream.tell());
         }
-        xassert(stream.tell()==size);
-        stream.set(size);
+        xassert(headers == headers_count);
+        xassert(stream.tell() == size);
     }
 
 	Unlock();

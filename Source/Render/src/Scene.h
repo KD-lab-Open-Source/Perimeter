@@ -68,8 +68,8 @@ public:
 	cObjLibrary* GetObjLibrary()									{ return ObjLibrary; }
 	virtual void SetObjLibrary(cObjLibrary *pObjLibrary);
 	// доступ к переменным
-	inline int GetNumberLight()									{ return UnkLightArray.size(); }
-	inline cUnkLight* GetLight(int number)						{ return (cUnkLight*)UnkLightArray[number]; }
+	inline int GetNumberLight() { return UnkLightArray.size(); }
+	cUnkLight* GetLight(int number);						
 	void AttachLight(cUnkLight* ULight);
 	void DetachLight(cUnkLight* ULight);
 	void GetLighting(const Vect3f &pos,sColor4f &diffuse,sColor4f &specular);
@@ -110,7 +110,7 @@ private:
 	double				CurrentTime,PreviousTime;	// текущее и предыдущее время
 	Vect2i				Size;						// размер мира
 	MTGVector			UnkLightArray;				// массив источников света сцены
-	sGrid2d				grid;
+    MTGVector			grid;
 	QuatTree			tree;
 
 	class cTileMap *TileMap;

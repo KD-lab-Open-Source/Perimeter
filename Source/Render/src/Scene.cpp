@@ -3,6 +3,7 @@
 #include <climits>
 #include <typeinfo>
 
+#include "SafeCast.h"
 #include "Scene.h"
 #include "TileMap.h"
 #include "ObjNode.h"
@@ -123,26 +124,42 @@ void cScene::Animate()
 	if(dTime==0) return;
 	MTEnter enter(lock_draw);
 
-	// анимация объектов
-	grid.SetDetachNow(false);
-	for(sGrid2d::iterator it=grid.begin();it!=grid.end();)
-	{
-		cIUnkClass* p=*it;
-		if(p && p->GetAttr(ATTRUNKOBJ_IGNORE)==0) 
-		{
-			p->Animate(dTime);
-		}
-
-		grid.DetachAndIterate(it);
+    //Iterate objects
+    grid.DisableChanges(true);
+	for (auto el : grid) {
+#ifdef MTGVECTOR_USE_HANDLES
+        cIUnkClass* p = safe_cast<cIUnkClass*>(el->Get());
+#else
+        cIUnkClass* p = el;
+#endif
+		if (p) {
+            //Clear previously assigned lights, we do this always outside Animate() to avoid stale pointers
+            //Sometimes an object may skip Animate() and get ATTRUNKOBJ_IGNORE removed, while having stale lights in array
+            if (p->GetKind()==KIND_OBJ_NODE_ROOT) {
+                cObjectNodeRoot* r = safe_cast<cObjectNodeRoot*>(p);
+                r->GetLight().clear();
+            }
+            if (p->GetAttr(ATTRUNKOBJ_IGNORE) == 0) {
+                p->Animate(dTime);
+                //p might not be valid after this point!
+            }
+        }
 	}
-	grid.SetDetachNow(true);
-	if(TileMap)
-		TileMap->Animate(dTime);
+    grid.DisableChanges(false);
+    
+	if(TileMap) {
+        TileMap->Animate(dTime);
+    }
 
 	// анимация источников света
-	for(int i=0;i<GetNumberLight();i++)
-		if(GetLight(i)&&GetLight(i)->GetAttr(ATTRUNKOBJ_IGNORE)==0) 
-			GetLight(i)->Animate(dTime);
+    UnkLightArray.DisableChanges(true);
+	for (int i=0;i<GetNumberLight();i++) {
+        cUnkLight* light = GetLight(i);
+        if (light && light->GetAttr(ATTRUNKOBJ_IGNORE) == 0) {
+            light->Animate(dTime);
+        }
+    }
+    UnkLightArray.DisableChanges(false);
 	BuildTree();
 	CaclulateLightAmbient();
 
@@ -201,25 +218,31 @@ void cScene::Draw(cCamera *DrawNode)
 			DrawNode->EnableGridTest(TileNumber.x,TileNumber.y,tile_size);
 	}
 
-	{
-		for(i=0;i<grid.size();i++)
-		{
-			cIUnkClass* obj=grid[i];
-			if(obj&&obj->GetAttr(ATTRUNKOBJ_IGNORE)==0) 
-			{
-				obj->PreDraw(DrawNode);
-			}
-		}
-	}
+    grid.DisableChanges(true);
+    for (auto el : grid) {
+#ifdef MTGVECTOR_USE_HANDLES
+        cIUnkClass* obj = safe_cast<cIUnkClass*>(el->Get());
+#else
+        cIUnkClass* obj = el;
+#endif
+        if (obj&&obj->GetAttr(ATTRUNKOBJ_IGNORE)==0) {
+            obj->PreDraw(DrawNode);
+        }
+    }
+    grid.DisableChanges(false);
 
-	{
-		for(i=0;i<GetNumberLight();i++)
-			if(GetLight(i)&&GetLight(i)->GetAttr(ATTRLIGHT_DIRECTION)==0) 
-				GetLight(i)->PreDraw(DrawNode);
-	}
+    UnkLightArray.DisableChanges(true);
+    for (i=0;i<GetNumberLight();i++) {
+        cUnkLight* light = GetLight(i);
+        if (light && light->GetAttr(ATTRLIGHT_DIRECTION) == 0) {
+            light->PreDraw(DrawNode);
+        }
+    }
+    UnkLightArray.DisableChanges(false);
 
-	if(TileMap)
-		TileMap->FixShadowMapCamera(DrawNode);
+	if(TileMap) {
+        TileMap->FixShadowMapCamera(DrawNode);
+    }
 
 	//Draw
 	VISASSERT(DrawNode->GetScene()==this);
@@ -489,6 +512,16 @@ cIUnkClass* cScene::CreateElasticSphere(const char* TextureName1, const char* Te
 	return UObj;
 }
 
+cUnkLight* cScene::GetLight(int number) {
+    xassert(0 <= number && number < UnkLightArray.size());
+    auto light = UnkLightArray.get(number);
+#ifdef MTGVECTOR_USE_HANDLES
+    return handle ? safe_cast<cUnkLight*>(handle->Get()) : nullptr;
+#else
+    return safe_cast<cUnkLight*>(light);
+#endif
+}
+
 void cScene::AttachLight(cUnkLight* ULight)
 {
 	UnkLightArray.Attach(ULight);
@@ -536,8 +569,7 @@ void cScene::AddReflectionCamera(cCamera *DrawNode)
 
 void cScene::BuildTree()
 {
-	if(TileMap)
-	{
+	if(TileMap) {
 		tree.clear();
 
 		bool is_spherical=false;
@@ -550,14 +582,18 @@ void cScene::BuildTree()
 			}
 		}
 
-		if(is_spherical)
-		{
+		if(is_spherical) {
 			std::vector<cIUnkClass*> nodes;
-			sGrid2d::iterator it;
-			FOR_EACH(grid,it)
-			{
-				if((*it)->GetKind()==KIND_OBJ_NODE_ROOT)
-					nodes.push_back(*it);
+			for (auto el : grid) {
+#ifdef MTGVECTOR_USE_HANDLES
+                cUnknownClass* unk = el->Get();
+#else
+                cUnknownClass* unk = el;
+#endif
+				if (unk && unk->GetKind()==KIND_OBJ_NODE_ROOT) {
+                    cIUnkClass* obj = safe_cast<cIUnkClass*>(unk);
+                    nodes.push_back(obj);
+                }
 			}
 
 			tree.build(0,0,Size.x,Size.y,nodes);
@@ -578,7 +614,7 @@ static void SceneLightProc(cIUnkClass* obj,void* param)
 {
 	SceneLightProcParam& p=*(SceneLightProcParam*)param;
 	VISASSERT(obj->GetKind()==KIND_OBJ_NODE_ROOT);
-	cObjectNodeRoot* node=(cObjectNodeRoot*)obj;
+	cObjectNodeRoot* node = safe_cast<cObjectNodeRoot*>(obj);
 /*
 	float r=(node->GetPosition().trans()-p.pos).norm();
 	if(r<p.radius)
@@ -630,17 +666,16 @@ void cScene::DeleteAutoObject()
 	MTG();
 	UpdateLists(INT_MAX);
 
-	for(int i=0;i<grid.size();i++)
-	{
-		cIUnkClass* obj=grid[i];
-		if(obj) 
-		{
-			cEffect* eff=dynamic_cast<cEffect*>(obj);
-			if(eff)
-			if(eff->IsAutoDeleteAfterLife())
-			{
-				if(eff->Release()<=0)
-					i--;
+    for (auto el : grid) {
+#ifdef MTGVECTOR_USE_HANDLES
+        cIUnkClass* obj = safe_cast<cIUnkClass*>(el->Get());
+#else
+        cIUnkClass* obj = el;
+#endif
+		if (obj) {
+			cEffect* eff = dynamic_cast<cEffect*>(obj);
+			if (eff && eff->IsAutoDeleteAfterLife()) {
+				eff->Release();
 			}
 		}
 	}

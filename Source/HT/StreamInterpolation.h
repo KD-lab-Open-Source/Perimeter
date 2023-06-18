@@ -1,4 +1,7 @@
 #pragma once
+
+#define STREAM_INTERPOLATOR_USE_HANDLES
+
 /*
 Потоковая интерполяция данных.
 Каждая команда - указатель на функцию.
@@ -9,15 +12,16 @@ int command(void* data);
 
 using InterpolateFunction = void (*)(cUnknownClass*, XBuffer*);
 
-const int INTERPOLATION_DATA_FLAG_CLEARED = 1 << 0;
-
 #pragma pack(push,1)
 
 struct InterpolateHeader {
-    uint16_t flags = 0;
     uint16_t data_len = 0;
     InterpolateFunction func = nullptr;
+#ifdef STREAM_INTERPOLATOR_USE_HANDLES
+    cUnknownHandle* handle = nullptr;
+#else
     cUnknownClass* obj = nullptr;
+#endif
 };
 
 #pragma pack(pop)
@@ -37,6 +41,7 @@ class StreamInterpolator
 {
 	XBuffer stream;
     size_t last_header = 0;
+    size_t headers_count = 0;
 	MTDECLARE(lock);
 	bool in_avatar;
 public:
@@ -52,20 +57,8 @@ public:
 
 	bool set(InterpolateFunction func,cUnknownClass* obj);
 
-#ifdef PERIMETER_DEBUG
-    void CheckData() {
-        xassert(in_avatar);
-        xassert(last_header + sizeof(InterpolateHeader) <= stream.tell());
-        InterpolateHeader& data = *reinterpret_cast<InterpolateHeader*>(&stream[last_header]);
-        xassert(last_header + sizeof(InterpolateHeader) + data.data_len == stream.tell());
-    }
-#else
-#define CheckData()
-#endif
-
     template<typename T>
     StreamInterpolator& write(const T& v) {
-        CheckData();
         //Increment data len with data about to write
         InterpolateHeader& data = *reinterpret_cast<InterpolateHeader*>(&stream[last_header]);
         xassert(data.data_len + sizeof(T) <= std::numeric_limits<uint16_t>().max());

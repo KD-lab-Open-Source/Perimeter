@@ -680,7 +680,6 @@ void cObjectNodeRoot::Animate(float dt)
 {
 	MaterialAnimTime+=dt;
 	LightIntensity.set(0,0,0,0);
-	point_light.clear();
 }
 
 void cObjectNodeRoot::PreDraw(cCamera *DrawNode)
