@@ -460,9 +460,17 @@ void cSelectManager::addToSelection(terUnitBase* p)
 void cSelectManager::DeleteSelectedObjects()
 {
 	CSELECT_AUTOLOCK();
-	UnitList::iterator ui;
-	FOR_EACH(SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER],ui)
-		(*ui)->Kill();
+    for (auto unit : SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER]) {
+        if (unit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
+            terUnitSquad* squad = safe_cast<terUnitSquad*>(unit);
+            if (squad->commander()) {
+                //Can cause use-after-free when command center or frame accesses the internal squad ptr
+                //so simply skip deleting this squad
+                continue;
+            }
+        }
+        unit->Kill();
+    }
 }
 
 void cSelectManager::explodeUnit()
