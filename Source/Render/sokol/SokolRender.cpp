@@ -107,7 +107,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 
 #ifdef SOKOL_METAL
     // Obtain Metal device by creating a SDL Metal View, also useful to retain the Metal device
-    sdlMetalView = SDL_Metal_CreateView(sdlWindow);
+    sdlMetalView = SDL_Metal_CreateView(sdl_window);
     if (sdlMetalView == nullptr) {
         ErrH.Abort("Error creating SDL Metal View", XERR_CRITICAL, 0, SDL_GetError());
     }
