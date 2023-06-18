@@ -11,9 +11,7 @@ cUnkLight::cUnkLight() : cUnkObj(KIND_LIGHT)
 	NumberKey=0;
 }
 
-cUnkLight::~cUnkLight()
-{
-}
+cUnkLight::~cUnkLight() = default;
 
 void cUnkLight::Animate(float dt)
 {

@@ -10,10 +10,12 @@ cUnknownClass::~cUnknownClass() {
     //Remove link that handle has to this object if handle exists
     cUnknownHandle* handle = currentHandle;
 #ifdef UNKNOWNCLASS_USE_ATOMIC
-    if (handle && currentHandle.compare_exchange_strong(handle, nullptr)) {
-        if (handle) {
+    if (handle) {
+        if (currentHandle.compare_exchange_strong(handle, nullptr)) {
             handle->ptr = nullptr;
             handle->Release();
+        } else {
+            xassert(0);
         }
     }
 #else
@@ -23,6 +25,16 @@ cUnknownClass::~cUnknownClass() {
         handle->Release();
     }
 #endif
+}
+
+int64_t cUnknownClass:: Release() {
+    int64_t r = DecRef();
+    if (0 < r) {
+        return r;
+    }
+    xassert(r == 0);
+    delete this;
+    return 0;
 }
 
 int64_t cUnknownClass::CountHandles() const {

@@ -116,22 +116,17 @@ public:
     }
     
 	virtual ~cUnknownClass();
-
-	virtual int64_t Release() {
-        int64_t r = DecRef();
-		if (0 < r) {
-            return r;
-        }
-        xassert(r == 0);
-		delete this;
-		return 0;
-	}
+    
+	virtual int64_t Release();
     
 	inline bool GetKind(eKindUnknownClass kind) const { return Kind==kind; }
 	inline eKindUnknownClass GetKind() const { return Kind; }
 	inline int64_t GetRef()	const { return m_cRef; }
-	inline int64_t IncRef()	{ return ++m_cRef; }
-	inline int64_t DecRef() {
+#ifdef PERIMETER_DEBUG
+    virtual
+#endif
+    inline int64_t IncRef()	{ return ++m_cRef; }
+    inline int64_t DecRef() {
         int64_t r = --m_cRef;
         if (0 <= r) {
             return r;

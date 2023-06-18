@@ -20,6 +20,10 @@ public:
     ~cIUnkClass() override = default;
 	int64_t Release() override;
 
+#ifdef PERIMETER_DEBUG_ASSERT
+    int64_t IncRef() override;
+#endif
+
 	// общие функции для работы объектами cIUnkClass
 	virtual void PreDraw(cCamera *UCamera)=0;
 	virtual void Draw(cCamera *UCamera)=0;

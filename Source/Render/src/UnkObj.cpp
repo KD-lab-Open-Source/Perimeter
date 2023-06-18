@@ -118,7 +118,7 @@ int64_t cIUnkClass::Release() {
 		//IParent=NULL;
 		IParent->DetachObj(this);
         
-        //DetachObj might have IncRef this object, so check again
+        //DetachObj might have IncRef this object for removal, so check again
         cnt = GetRef();
 	}
 
@@ -137,6 +137,16 @@ int64_t cIUnkClass::Release() {
 	return cnt;
 }
 
+#ifdef PERIMETER_DEBUG_ASSERT
+int64_t cIUnkClass::IncRef() {
+    int64_t cnt = cUnknownClass::IncRef();
+    if (1 < cnt) {
+        //Make sure we are not overusing a deleted object pending removal at MTGVector
+        VISASSERT(!GetAttribute(ATTRUNKOBJ_DELETED));
+    }
+    return cnt;
+}
+#endif
 
 void cIUnkObj::SetCopy(cIUnkObj *UObj)
 { 
