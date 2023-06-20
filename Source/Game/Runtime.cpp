@@ -1088,7 +1088,7 @@ void app_event_poll() {
                     case SDL_WINDOWEVENT_SIZE_CHANGED: {
                         if (0 <= lastWindowResize) {
 #if 1
-                            lastWindowResize = 5;
+                            lastWindowResize = 10;
 #else
                             if (_bMenuMode) {
                                 lastWindowResize = 10;

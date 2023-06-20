@@ -344,6 +344,11 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
 	}
     
     gb_RenderDevice3D = this;
+    
+    //Workaround for Linux setting window bigger than originally requested 
+    if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
+        SDL_SetWindowSize(sdl_window, ScreenSize.x, ScreenSize.y);
+    }
 
     RenderSubmitEvent(RenderEvent::INIT, "D3D9 end");
 	return 0;
