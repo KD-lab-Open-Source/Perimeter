@@ -47,6 +47,9 @@ char* GetErrorText(HRESULT hr)
         case D3DERR_DRIVERINTERNALERROR :
             return "Internal driver error. ";
         case D3DERR_INVALIDCALL :
+#ifdef E_INVALIDCALL
+        case E_INVALIDCALL:
+#endif
             return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
         case D3DERR_INVALIDDEVICE :
             return "The requested device type is not valid. ";
@@ -80,12 +83,13 @@ char* GetErrorText(HRESULT hr)
             return "An invalid parameter was passed to the returning function ";
         case E_OUTOFMEMORY :
             return "Direct3D could not allocate sufficient memory to complete the call. ";
-#ifdef E_INVALIDCALL
-        case E_INVALIDCALL:
-            return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
-#endif
+        case E_NOTIMPL :
+            return "Not implemented. ";
+        case E_NOINTERFACE :
+            return "No object interface is available. ";
         default:
-            return "Unknown error";
+            fprintf(stderr, "Unknown D3D error: %d\n", hr);
+            return "Unknown D3D error. ";
     }
 };
 
@@ -418,11 +422,6 @@ void cD3DRender::UpdateRenderMode()
     d3dpp.BackBufferHeight = MaxScreenSize.y;
     fprintf(stdout, "D3D Backbuffer size: %dx%d\n", d3dpp.BackBufferWidth, d3dpp.BackBufferHeight);
 
-    //Set max resolution to not be bigger than backbuffer
-    if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
-        SDL_SetWindowMaximumSize(sdl_window, d3dpp.BackBufferWidth, d3dpp.BackBufferHeight);
-    }
-
 	if(RenderMode&RENDERDEVICE_MODE_COMPRESS)
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT5)==0)
@@ -530,14 +529,18 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
                  |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
 
     bool same_size = ScreenSize.x == xscr && ScreenSize.y == yscr;
-    if (!same_size) {
-        ScreenSize.x = xscr;
-        ScreenSize.y = yscr;
+    ScreenSize.x = xscr;
+    ScreenSize.y = yscr;
+    
+#if 0
+    if (same_size && ((RenderMode&mode_mask) == (mode&mode_mask)) 
+    && ScreenSize.x <= MaxScreenSize.x && ScreenSize.y <= MaxScreenSize.y) {
+        //We can change window size without reinitializing graphics
         UpdateRenderMode();
+        return true;
     }
-    if ((RenderMode&mode_mask) == (mode&mode_mask)) {
-        return true; //Nothing to do
-    }
+#endif
+
     fprintf(stdout, "RenderMode %d new %d\n", RenderMode, mode);
 	
 	KillFocus();
@@ -557,9 +560,7 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 
 	}
 
-    if (same_size) {
-        UpdateRenderMode();
-    }
+    UpdateRenderMode();
 
     fprintf(stdout, "d3dpp %dx%d Count %d Hz %d\n", d3dpp.BackBufferWidth, d3dpp.BackBufferHeight, d3dpp.BackBufferCount, d3dpp.FullScreen_RefreshRateInHz);
 
@@ -1437,14 +1438,20 @@ int cD3DRender::KillFocus()
 
 bool cD3DRender::SetFocus(bool wait,bool focus_error)
 {
+    MTG();
 	{
-		HRESULT hres=D3D_OK;
+        HRESULT hrescoop=D3D_OK;
+        HRESULT hres=D3D_OK;
 		int imax=wait?10:1;
 		for(int i=0;i<imax;i++)
 		{
 			hres=lpD3DDevice->Reset(&d3dpp);
-			if (FAILED(hres) && wait) {
-                Sleep(1000);
+			if (FAILED(hres)) {
+                hrescoop=lpD3DDevice->TestCooperativeLevel();
+                fprintf(stderr, "D3D::SetFocus coop level after reset %s\n", GetErrorText(hrescoop));
+                if (wait) {
+                    Sleep(1000);
+                }
             }
 		}
 		if (FAILED(hres)) {

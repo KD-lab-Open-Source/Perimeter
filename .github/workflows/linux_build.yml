@@ -74,6 +74,7 @@ jobs:
         run: cmake .. -G Ninja \
           -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
           -DOPTION_DEBUG_ASSERT=ON \
+          -DOPTION_USE_BACKTRACE=ON \
           ${{matrix.env.cmake}}
         working-directory: build
       - name: build dependencies
