@@ -532,21 +532,23 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
     ScreenSize.x = xscr;
     ScreenSize.y = yscr;
     
-#if 0
-    if (same_size && ((RenderMode&mode_mask) == (mode&mode_mask)) 
+    if (!same_size && ((RenderMode&mode_mask) == (mode&mode_mask)) 
     && ScreenSize.x <= MaxScreenSize.x && ScreenSize.y <= MaxScreenSize.y) {
         //We can change window size without reinitializing graphics
         UpdateRenderMode();
         return true;
     }
-#endif
 
-    fprintf(stdout, "RenderMode %d new %d\n", RenderMode, mode);
+    MaxScreenSize.x = max(MaxScreenSize.x, ScreenSize.x);
+    MaxScreenSize.y = max(MaxScreenSize.y, ScreenSize.y);
 	
 	KillFocus();
-
+    
+    uint32_t mode_old = RenderMode;
 	RenderMode&=~mode_mask;
-	RenderMode|=mode;
+	RenderMode|=(mode&mode_mask);
+    fprintf(stdout, "RenderMode %d new %d with %d\n", mode_old, RenderMode, mode);
+    
 	if(RenderMode&RENDERDEVICE_MODE_WINDOW)
 	{
 		D3DDISPLAYMODE mode;
@@ -1207,12 +1209,21 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 }
 
 void cD3DRender::DeleteDynamicBuffers() {
+    MTG();
     for (auto vb : LibVB) {
-        if (vb) vb->Release();
+        if (vb && vb->d3d) {
+            auto d3d = vb->d3d;
+            vb->d3d = nullptr;
+            d3d->Release();
+        }
     }
     LibVB.clear();
     for (auto ib : LibIB) {
-        if (ib) ib->Release();
+        if (ib && ib->d3d) {
+            auto d3d = ib->d3d;
+            ib->d3d = nullptr;
+            d3d->Release();
+        }
     }
     LibIB.clear();
 }
@@ -1230,7 +1241,6 @@ void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
         uint32_t flags = D3DUSAGE_WRITEONLY;
         if (vb->dynamic) {
             flags |= D3DUSAGE_DYNAMIC;
-            LibVB.emplace_back(vb->d3d);
         }
 
         RDCALL(lpD3DDevice->CreateVertexBuffer(
@@ -1241,6 +1251,11 @@ void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
                 &vb->d3d,
                 nullptr
         ));
+        xassert(vb->d3d);
+        
+        if (vb->dynamic) {
+            LibVB.emplace_back(vb);
+        }
     }
     VISASSERT( vb->d3d );
     vb->dirty = false;
@@ -1260,7 +1275,6 @@ void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
         uint32_t flags = D3DUSAGE_WRITEONLY;
         if (ib->dynamic) {
             flags |= D3DUSAGE_DYNAMIC;
-            LibIB.emplace_back(ib->d3d);
         }
 
         RDCALL(lpD3DDevice->CreateIndexBuffer(
@@ -1271,6 +1285,11 @@ void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
                 &ib->d3d,
                 nullptr
         ));
+        xassert(ib->d3d);
+        
+        if (ib->dynamic) {
+            LibIB.emplace_back(ib);
+        }
     }
     VISASSERT( ib->d3d );
     ib->dirty = false;
@@ -1288,7 +1307,7 @@ void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
     if (vb.d3d) {
         MTG();
         if (vb.dynamic) {
-            auto removed = std::remove(LibVB.begin(), LibVB.end(), vb.d3d);
+            auto removed = std::remove(LibVB.begin(), LibVB.end(), &vb);
             LibVB.erase(removed, LibVB.end());
         }
         vb.d3d->Release();
@@ -1304,7 +1323,7 @@ void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib) {
     if (ib.d3d) {
         MTG();
         if (ib.dynamic) {
-            auto removed = std::remove(LibIB.begin(), LibIB.end(), ib.d3d);
+            auto removed = std::remove(LibIB.begin(), LibIB.end(), &ib);
             LibIB.erase(removed, LibIB.end());
         }
         ib.d3d->Release();

@@ -342,8 +342,8 @@ protected:
 	uint32_t					CurrentFVF;
 	int							CurrentMod4; // поддерживаемые тип текстурных операций
 
-    std::vector<IDirect3DVertexBuffer9*> LibVB;
-    std::vector<IDirect3DIndexBuffer9*>	LibIB;
+    std::vector<VertexBuffer*> LibVB;
+    std::vector<IndexBuffer*> LibIB;
 	
 	uint32_t				ArrayRenderState[RENDERSTATE_MAX];
 	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
