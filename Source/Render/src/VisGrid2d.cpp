@@ -422,8 +422,6 @@ void MTGVector::mtUpdate(int cur_quant) {
         for (auto ptr : slot) {
 #ifdef MTGVECTOR_USE_HANDLES
             ReleaseSlot(ptr);
-#else
-            ptr->Release();
 #endif
         }
         slot.clear();
