@@ -1087,9 +1087,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
         }
 	} else {
         //Clear soundtracks so players don't get wrong belligerent soundtracks
-        for (int i = 0; i < 3; i++) {
-            data.manualData.soundTracks[i].clear();
-        }
+        data.manualData.clearSoundTracks();
     }
 
 	PlayerVect playersToSave(mission.playersData.size(), nullptr);

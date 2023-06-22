@@ -2700,6 +2700,7 @@ struct SaveManualData // Данные, редактируемые руками
 	const SaveCameraSplineData* findCameraSpline(const char* name) const;
 	void saveCamera(int playerID, const char* triggerName);
     void copyCamera(int playerID, const char* triggerName, const char* sourceTriggerName);
+    void clearSoundTracks();
 
 	SERIALIZE(ar) {
 		if(ar.type() & ARCHIVE_EDIT){

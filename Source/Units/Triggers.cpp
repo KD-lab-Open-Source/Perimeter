@@ -1705,6 +1705,12 @@ void SaveManualData::copyCamera(int playerID, const char* triggerName, const cha
     spline->useAsSpline = sourceSpline->useAsSpline;
 }
 
+void SaveManualData::clearSoundTracks() {
+    for (int i = 0; i < 3; i++) {
+        soundTracks[i].clear();
+    }
+}
+
 //------------------------------------------------------
 const char* editTextMultiLine(void* hwnd, const char* initialString)
 {

@@ -424,6 +424,7 @@ void PNetCenter::HandlerInputNetCommand()
                 universe()->clearLogList();
 
                 //Attempt to save state
+                gameShell->savePrm().manualData.clearSoundTracks(); //Avoid host overriding client soundtracks
                 std::unique_ptr<MissionDescription> md = std::make_unique<MissionDescription>();
                 gameShell->universalSave((crash_dir + "save").c_str(), true, md.get());
 
