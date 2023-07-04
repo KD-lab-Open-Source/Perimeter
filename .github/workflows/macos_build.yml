@@ -5,8 +5,8 @@ on:
   pull_request:
 
 env:
-  VULKAN_SDK_VERSION: '1.2.198.1'
-  VULKAN_LIB_VERSION: '1.2.198'
+  VULKAN_SDK_VERSION: '1.3.250.1'
+  VULKAN_LIB_VERSION: '1.3.250'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
   GH_CACHE_KEY: 9
 
@@ -42,10 +42,12 @@ jobs:
       - name: install Vulkan SDK
         run: |
           hdiutil attach vulkansdk-macos.dmg
-          sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
+          sudo /Volumes/VulkanSDK/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
           sync
-          sleep 5
-          hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
+          cd ~/VulkanSDK/
+          sudo ./install_vulkan.py
+          sleep 10
+          hdiutil detach /Volumes/VulkanSDK
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
