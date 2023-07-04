@@ -16,8 +16,8 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          {build_type: Debug, cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
-          {build_type: Release, cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=OFF"}
+          {build_type: Debug, cmake: "-DOPTION_SOKOL=ON"},
+          {build_type: Release, cmake: ""}
         ]
     name: ${{matrix.env.build_type}}
     runs-on: macos-latest
@@ -90,7 +90,7 @@ jobs:
       - name: perimeter -- create build dir
         run: mkdir build
       - name: perimeter -- configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} ${{matrix.env.cmake}}
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DOPTION_D3D9=ON ${{matrix.env.cmake}}
         working-directory: build
       - name: perimeter -- build dependencies
         run: ninja dependencies
@@ -110,7 +110,7 @@ jobs:
           LIB_DIR: "/usr/local/lib"
       - name: perimeter -- release tar
         run: tar -cvf Perimeter.app.tar Perimeter.app
-      #TODO Expose artifacts once we stop depending on Vulkan
+      #TODO Expose artifacts once we build universal binaries
       #- uses: actions/upload-artifact@v3
       #  with:
       #    name: Perimeter MacOS ${{matrix.env.build_type}}
