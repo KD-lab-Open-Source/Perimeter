@@ -1108,6 +1108,14 @@ public:
 	const std::string& getText() const {
 		return m_data;
 	}
+    bool isEmptyText() const {
+        for (auto c : m_data) {
+            if (c != ' ' && c != '\t' && c != '\n') {
+                return false;
+            }
+        }
+        return true;
+    }
 protected:
 	std::string   m_data;
 

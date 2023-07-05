@@ -922,7 +922,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						fillProfileList();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_NAME_INPUT);
-						if (input->getText().empty()) {
+						if (input->isEmptyText()) {
 							input->SetText(qdTextDB::instance().getText("Interface.Menu.EmptyName.NewPlayer"));
 						}
 
@@ -1006,7 +1006,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 						loadMapVector(replays, REPLAY_PATH, "", true);
 //						StartSpace();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
-//						if (input->getText().empty()) {
+//						if (input->isEmptyText()) {
 							input->SetText(gameShell->CurrentMission.worldName().c_str());
 //						}
 						fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
@@ -1153,7 +1153,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_MULTIPLAYER_JOIN_SCR:
 					{
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT);
-						if (input->getText().empty()) {
+						if (input->isEmptyText()) {
                             std::string text = getStringSettings("JoinIP");
 							input->SetText(text.c_str());
 						}
@@ -2136,7 +2136,7 @@ void onMMSaveGameMapList(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	} else if (code == EVENT_DRAWWND) {
 //		int pos = ((CListBoxWindow*)pWnd)->GetCurSel();
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
-		_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_GO_BTN)->Enable(!input->getText().empty());
+		_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_GO_BTN)->Enable(!input->isEmptyText());
 	}
 }
 void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -2260,7 +2260,7 @@ void onMMSaveReplayList(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 	} else if (code == EVENT_DRAWWND) {
 //		int pos = ((CListBoxWindow*)pWnd)->GetCurSel();
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
-		_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_GO_BTN)->Enable(!input->getText().empty());
+		_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_GO_BTN)->Enable(!input->isEmptyText());
 	}
 }
 void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {

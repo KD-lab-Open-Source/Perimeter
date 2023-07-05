@@ -192,7 +192,7 @@ int joinQuant( float, float ) {
 void onMMMultiplayerListJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-        if (input->getText().empty()) {
+        if (input->isEmptyText()) {
             setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
             showMessageBox();
         } else {
@@ -223,11 +223,11 @@ void onMMMultiplayerListDirectButton(CShellWindow* pWnd, InterfaceEventCode code
 void onMMMultiplayerListCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-        if (input->getText().empty()) {
+        if (input->isEmptyText()) {
             setupOkMessageBox(0, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
             showMessageBox();
         } else {
-            if (!input->getText().empty()) {
+            if (!input->isEmptyText()) {
                 putStringSettings(regLanName, input->getText());
             }
 			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_MULTIPLAYER_HOST_SCR);
@@ -239,7 +239,7 @@ void onMMMultiplayerListBackButton(CShellWindow* pWnd, InterfaceEventCode code, 
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         if (gameShell->isStartedWithMainmenu()) {
             CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-            if (!input->getText().empty()) {
+            if (!input->isEmptyText()) {
                 putStringSettings(regLanName, input->getText());
             }
             _shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_START_SCR );

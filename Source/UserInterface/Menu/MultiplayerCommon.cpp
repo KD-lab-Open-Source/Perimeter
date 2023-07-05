@@ -260,7 +260,7 @@ void chatWindowInput(CChatInGameEditWindow* chatInput, bool ingame) {
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
-        if (!chatInput->getText().empty()) {
+        if (!chatInput->isEmptyText()) {
             chatWindowInput(chatInput, false);
         }
     }
@@ -270,7 +270,7 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         terPlayer* activePlayer = universe()->activePlayer();
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
-        if (activePlayer && !chatInput->getText().empty()) {
+        if (activePlayer && !chatInput->isEmptyText()) {
             chatWindowInput(chatInput, true);
         }
     }
