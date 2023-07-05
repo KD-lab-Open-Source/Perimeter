@@ -1541,7 +1541,7 @@ void GameShell::KeyPressed(sKey& Key)
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
-		if ( Key.fullkey == VK_INSERT || Key.fullkey == (VK_SPACE | KBD_CTRL) ) {
+		if (Key.fullkey == VK_INSERT) {
 			if (chatEdit->isVisible()) {
 				if (!chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = true;
@@ -1558,7 +1558,7 @@ void GameShell::KeyPressed(sKey& Key)
 				chatEdit->alliesOnlyMode = true;
 			}
 			return;
-		} else if ( Key.fullkey == (VK_INSERT | KBD_CTRL) || (!chatEdit->isVisible() && Key.fullkey == VK_SPACE)) {
+		} else if (Key.fullkey == (VK_INSERT | KBD_CTRL) || Key.fullkey == (VK_SPACE | KBD_CTRL)) {
 			if (chatEdit->isVisible()) {
 				if (chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = false;
@@ -1576,7 +1576,7 @@ void GameShell::KeyPressed(sKey& Key)
 			}
 			return;
 		} else if (chatEdit->isVisible()) {
-			if (Key.fullkey == VK_ESCAPE || (Key.fullkey == VK_RETURN && chatEdit->getText().empty())) {
+			if (Key.fullkey == VK_ESCAPE || (Key.fullkey == VK_RETURN && chatEdit->isEmptyText())) {
 				chatEdit->Show(0);
 				_shellIconManager.SetFocus(0);
 				chatInfo->setTime(CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT);
