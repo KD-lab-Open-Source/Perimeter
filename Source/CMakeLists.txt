@@ -276,6 +276,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Util/SystemUtil.cpp
         Util/XPrmArchive.cpp
         Util/Localization.cpp
+        Util/ANIFile.cpp
         UserInterface/BGScene.cpp
         UserInterface/chaos.cpp
         UserInterface/controls.cpp

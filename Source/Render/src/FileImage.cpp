@@ -26,6 +26,7 @@
 #include <SDL_image.h>
 
 #include "files/files.h"
+#include "ANIFile.h"
 
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
@@ -756,13 +757,6 @@ class cSDLImage : public cFileImage
 {
 #ifndef SDL_IMAGE_ICOCUR_24
 public:
-    static Uint8 SDL_Read8(SDL_RWops * src) {
-        Uint8 value;
-
-        SDL_RWread(src, &value, 1, 1);
-        return (value);
-    }
-
     //Method copied from SDL_image to support 24 bits CUR
     static SDL_Surface* LoadICOCUR_RW_Custom(SDL_RWops * src, int type, int freesrc) {
         SDL_bool was_error;
@@ -812,12 +806,12 @@ public:
         /* Read the Win32 Icon Directory */
         for (i = 0; i < bfCount; i++) {
             /* Icon Directory Entries */
-            int bWidth = SDL_Read8(src);    /* Uint8, but 0 = 256 ! */
-            int bHeight = SDL_Read8(src);   /* Uint8, but 0 = 256 ! */
-            int bColorCount = SDL_Read8(src);       /* Uint8, but 0 = 256 ! */
-            SDL_Read8(src);
-            SDL_ReadLE16(src);
-            SDL_ReadLE16(src);
+            int bWidth = SDL_ReadU8(src);    /* Uint8, but 0 = 256 ! */
+            int bHeight = SDL_ReadU8(src);   /* Uint8, but 0 = 256 ! */
+            int bColorCount = SDL_ReadU8(src);       /* Uint8, but 0 = 256 ! */
+            SDL_ReadU8(src);
+            SDL_ReadLE16(src); //Hotspot X
+            SDL_ReadLE16(src); //Hotspot Y
             SDL_ReadLE32(src);
             Uint32 dwImageOffset = SDL_ReadLE32(src);
 
@@ -1160,34 +1154,13 @@ public:
 
 class cANIImage : public cFileImage
 {
-    struct RIFF_chunk
-    {
-        char id[4];
-        uint32_t size;
-    };
-    
-    struct ANIHeader
-    {
-        RIFF_chunk riff;
-        char header_acon[4];
-        RIFF_chunk chunk_anih;
-        uint32_t header_size;
-        uint32_t frames; //Unique frames count
-        uint32_t steps; //Amount of frames to display, including duplicates
-        uint32_t widt_unused; //These are usually 0
-        uint32_t height_unused; //These are usually 0
-        uint32_t bpp;
-        uint32_t planes;
-        uint32_t fps;
-        uint32_t flags;
-    } data;
-    
-    int tpf; //Cached time per frame
-    
-    //Frames used by this animation
+    int tpf; //Time per frame in ms
+
+    //Frames used by this animation, we store individually to free them later
     std::vector<cSDLImage*> frames;
-    //Frame for each slice
+    //Frame for each slice that will be used to draw, may contain duplicates of frames
     std::vector<cSDLImage*> slices;
+
 public:
     cANIImage() {
     }
@@ -1211,153 +1184,42 @@ public:
     
     virtual int load(const char *fname)
     {
-        std::string file_path = convert_path_content(fname);
-        XStream s;
-        s.open(file_path);
-        s.read(&data, sizeof(ANIHeader));
+        x = y = 0;
+        ANIFile ani;
+        int err = ani.load(fname, true);
+        if (err) {
+            close();
+            return 1;
+        }
 
-        //Basic checks
-        if (memcmp(data.riff.id, "RIFF", 4) != 0) {
-            ErrH.Abort("File doesn't contain RIFF header ID " + file_path);
-        }
-        if (memcmp(data.header_acon, "ACON", 4) != 0) {
-            ErrH.Abort("File doesn't contain ACON header ID " + file_path);
-        }
-        if (memcmp(data.chunk_anih.id, "anih", 4) != 0) {
-            ErrH.Abort("File doesn't contain anih chunk " + file_path);
-        }
-        if (data.chunk_anih.size != 36 || data.header_size != 36) {
-            ErrH.Abort("File anih chunk size invalid " + file_path);
-        }
-        if (!(data.flags & 0b1)) {   
-            ErrH.Abort("Animation is not icon/cursor " + file_path);
+        //Create image from data in mem and add to frames
+        frames.clear();
+        for (auto& frame : ani.frames) {
+            SDL_RWops* ops = SDL_RWFromConstMem(frame.data, static_cast<int>(frame.data_len));
+            cSDLImage* frame_image = new cSDLImage();
+            err = frame_image->loadRW(ops);
+            if (err) {
+                delete frame_image;
+                close();
+                return 1;
+            }
+            x = max(x, frame_image->GetX());
+            y = max(y, frame_image->GetX());
+            frames.emplace_back(frame_image);
         }
         
-        //Setup default data unless they are specified in chunks
-        std::vector<uint32_t> frame_order;
-        frame_order.reserve(data.frames);
-        for (int i = 0; i < data.frames; ++i) {
-            frame_order.emplace_back(i);
-        }
-        std::vector<int> frame_delay;
-        frame_delay.reserve(data.steps);
-        for (int i = 0; i < data.steps; ++i) {
-            frame_delay.emplace_back(data.fps);
-        }
-
-        //Parse the chunks
-        char* chunk_name = new char[5];
-        uint32_t chunk_size = 0;
-        while (!s.eof()) {
-            s.read(chunk_name, 4);
-            chunk_name[4] = '\0';
-            s.read(chunk_size);
-            size_t chunk_end = s.tell() + chunk_size; 
-            std::string name = chunk_name;
-            if (name == "LIST") {
-                s.read(chunk_name, 4);
-                if (memcmp(chunk_name, "fram", 4) != 0) {
-                    ErrH.Abort("Unknown LIST type in " + file_path);
-                }
-                
-                //Parse each frame in list
-                for (int i = 0; i < data.frames; ++i) {
-                    RIFF_chunk icon_chunk {};
-                    s.read(icon_chunk);
-                    if (memcmp(icon_chunk.id, "icon", 4) != 0) {
-                        ErrH.Abort("Unknown frame type in " + file_path);
-                    }
-                    //Load this frame data into memory
-                    uint8_t* frame_data = new uint8_t[icon_chunk.size];
-                    s.read(frame_data, icon_chunk.size);
-                    
-                    //Create image from data in mem and add to frames
-                    SDL_RWops* ops = SDL_RWFromMem(frame_data, static_cast<int>(icon_chunk.size));
-                    cSDLImage* frame_image = new cSDLImage();
-                    int err = frame_image->loadRW(ops);
-                    frames.emplace_back(frame_image);
-                    
-                    delete[] frame_data;
-                    
-                    if (err) {
-                        close();
-                        return 1;
-                    }
-
-                    if (s.pos & 1) {
-                        s.pos += 1;
-                    }
-                }
-            } else if (name == "seq ") {
-                frame_order.clear();
-                uint32_t v = 0;
-                while (s.tell() < chunk_end) {
-                    s.read(v);
-                    frame_order.emplace_back(v);
-                }
-                if (frame_order.size() != data.steps) {
-                    ErrH.Abort("Seq chunk size mismatch in " + file_path);
-                }
-            } else if (name == "rate") {
-                frame_delay.clear();
-                uint32_t v = 0;
-                while (s.tell() < chunk_end) {
-                    s.read(v);
-                    frame_delay.emplace_back(static_cast<int>(v));
-                }
-                if (frame_delay.size() != data.steps) {
-                    ErrH.Abort("Rate chunk size mismatch in " + file_path);
-                }
-            } else {
-                ErrH.Abort("Unknown chunk type in " + file_path);
-            }
-            if (s.tell() != chunk_end) {
-                ErrH.Abort("Chunk end " + std::to_string(chunk_end)
-                + " but current pos is " + std::to_string(s.tell())
-                + " in " + file_path);
-            }
-        }
-        s.close(); 
-        
-        //Calculate some time stuff
-        time = 0;
-        int lowest_delay = 0;
-        for (int i = 0; i < data.steps; ++i) {
-            //Convert jiffies (1/60 sec) to ms
-            frame_delay[i] = static_cast<uint32_t>(xm::round((static_cast<float>(frame_delay[i]) / 60.0) * 1000));
-            int v = frame_delay[i];
-            time += v;
-            if (lowest_delay == 0 || v < lowest_delay) {
-                lowest_delay = v;
-            }
-        }
-        //All cursors are 32x32
-        x = y = 32;
-        //Use the lowest delay to "slice" as smallest step
-        length = time / lowest_delay;
+        time = ani.time;
+        length = ani.length;
+        tpf = ani.tpf;
 
         //ICO/CUR are always 32 bits per pixel surfaces
         bpp = 32;
-
-        if (length <= 1) {
-            tpf = 1;
-        } else {
-            tpf = (time - 1) / (length - 1);
-        }
         
-        //Create slices
-        for (int i = 0; i < data.steps; ++i) {
-            uint32_t index = frame_order[i];
-            int delay = frame_delay[i];
-            if (index >= frames.size()) {
-                ErrH.Abort("Attempted to read frame " + std::to_string(index) + " which is out of bounds " + std::to_string(frames.size()));
-            }
+        //Get each image for slice and populate slices
+        slices.clear();
+        for (auto& index : ani.slices) {
             cSDLImage* ptr = frames[index];
-            //We may need to repeat some frames to match lowest delay slice
-            int repetitions = delay / lowest_delay;
-            while (repetitions--) {
-                slices.emplace_back(ptr);
-            }
+            slices.emplace_back(ptr);
         }
 
         return 0;
@@ -1369,9 +1231,11 @@ public:
 
     cSDLImage* getFrameFromTime(int t) {
         int i = t / tpf;
-        if (i >= frames.size()) {
-            ErrH.Abort("Attempted to read frame " + std::to_string(i) + " which is out of bounds " + std::to_string(frames.size()));
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (i >= slices.size()) {
+            ErrH.Abort("Attempted to read slice " + std::to_string(i) + " which is out of bounds " + std::to_string(slices.size()));
         }
+#endif
         return slices[i];
     }
 
@@ -1401,13 +1265,7 @@ cFileImage* cFileImage::Create(const std::string& fname)
         return new cAVIXImage;
     } else if(endsWith(path,".cur") || endsWith(path,".ani")) {
 	    //Since we don't know which ".cur" files are actually CUR or ANI... we do runtime checking
-        std::string file_path = convert_path_content(path);
-        char type[4];
-        XStream s;
-        s.open(file_path);
-        s.read(&type, 4);
-        s.close();
-        if (memcmp(type, "RIFF", 4) == 0) {
+        if (isANIFile(path.c_str())) {
             return new cANIImage;
         } else {
             return new cSDLImage;

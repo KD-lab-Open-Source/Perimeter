@@ -8,9 +8,8 @@ protected:
     int bpp; //Bits per pixel
     int length; //Amount of frames if is animated or 1
     int time; //Total time in ms if animated or 0
-    int fmt;
 public:
-	cFileImage()																{ x=y=length=bpp=time=fmt=0; }
+	cFileImage()																{ x=y=length=bpp=time=0; }
 	virtual ~cFileImage()														{}
 	virtual int load(void *pointer,int size)									{ return -1; }
 	virtual int load(const char *fname)												{ return -1; }
@@ -24,7 +23,6 @@ public:
 		int xSize=-1,int ySize=-1)												{ return -1; }
 	inline int GetX()															{ if(x>=0) return x; return -x; }
 	inline int GetY()															{ if(y>=0) return y; return -y; }
-	inline int GetFmt()															{ return fmt; }
 	inline int GetTime()														{ return time; }
 	inline int GetLength()														{ return length; }
 	inline int GetBitPerPixel()													{ return bpp; }
