@@ -30,6 +30,8 @@
 #include "HistoryScene.h"
 #include "BelligerentSelect.h"
 
+#include "ANIFile.h"
+
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
 extern UnitInterfacePrm interface_frame_uninstalled;
@@ -506,9 +508,13 @@ CShellCursorManager::~CShellCursorManager()
 }
 void CShellCursorManager::Done()
 {
-	std::deque<CURSOR>::iterator i;
-	FOR_EACH(m_cursors, i)
-        _RELEASE(i->hCursorProgram);
+    for (auto& cur : m_cursors) {
+        _RELEASE(cur.texture);
+        if (cur.anifile) {
+            delete cur.anifile;
+            cur.anifile = nullptr;
+        }
+    }
 
 	_RELEASE(m_hFontCursorWorkarea);
 	_RELEASE(hFontMainmenu1);
@@ -519,15 +525,26 @@ void CShellCursorManager::Done()
 
 void CShellCursorManager::Load()
 {
-	CURSOR _c;
+    CShellCursor _c;
 	for(int i=0; i<_sqsh_cursor_count; i++)
 	{
 		sqshCursor& cc = _sqsh_cursors[i];
 
 		_c.sx = cc.sx; 
 		_c.sy = cc.sy;
-		_c.bHotspotCentred = cc.hotspot_center;
-        _c.hCursorProgram = terVisGeneric->CreateTexture(cc.image);
+		_c.bHotspotCentered = cc.hotspot_center;
+        _c.texture = terVisGeneric->CreateTexture(cc.image);
+
+        //Load ANI file metadata
+        if (isANIFile(cc.image)) {
+            _c.anifile = new ANIFile();
+            int err = _c.anifile->load(cc.image, false);
+            if (err) {
+                fprintf(stderr, "Error %d loading ANI metadata for cursor %s\n", err, cc.image);
+                delete _c.anifile;
+                _c.anifile = nullptr;
+            }
+        }
 
 		m_cursors.push_back(_c);
 	}
@@ -608,6 +625,30 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 	}
 }
 
+void CShellCursorManager::DrawCursor(CShellCursor* cursor, int x, int y, float phase, float scale) {
+    int sx = static_cast<int>(cursor->sx * scale);
+    int sy = static_cast<int>(cursor->sy * scale);
+    ANIFile* ani = cursor->anifile;
+    if (ani) {
+        int i = static_cast<int>(phase * 1000) / ani->tpf;
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (i >= ani->slices.size()) {
+            ErrH.Abort("Attempted to read slice " + std::to_string(i) + " which is out of bounds " + std::to_string(ani->slices.size()));
+        }
+#endif
+        size_t fi = ani->slices[i];
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (fi >= ani->frames.size()) {
+            ErrH.Abort("Attempted to read frame " + std::to_string(fi) + " which is out of bounds " + std::to_string(ani->frames.size()));
+        }
+#endif
+        auto& hotspot = ani->frames[fi].hotspot;
+        x -= static_cast<int>(hotspot.x * scale);
+        y -= static_cast<int>(hotspot.y * scale);
+    }
+    terRenderDevice->DrawSprite(x, y, sx, sy, 0, 0, 1, 1, cursor->texture, sColor4c(255, 255, 255, 255), phase);
+}
+
 void CShellCursorManager::draw()
 {
 	m_ftime += frame_time.delta();
@@ -621,30 +662,22 @@ void CShellCursorManager::draw()
 			Vect3f v1,e1;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&gameShell->mapMoveStartPoint(), &v1, &e1);
 
-			CURSOR* pCursor = &m_cursors[map_move];
+            CShellCursor* pCursor = &m_cursors[map_move];
 
 			e1.x -= 16;
 			e1.y -= 16;
 
-			terRenderDevice->DrawSprite(e1.x, e1.y, pCursor->sx, pCursor->sy,
-				0, 0, 1, 1, pCursor->hCursorProgram, sColor4c(255, 255, 255, 255));
+            DrawCursor(pCursor, e1.x, e1.y);
 
 			return;
 		}
 		if(gameShell->cameraMouseTrack)
 		{
-			CURSOR* pCursor;
-			if(terCamera->tilting())
-				 pCursor = &m_cursors[tilt];
-			else
-				 pCursor = &m_cursors[rotate];
-
-			int x = (gameShell->mousePressControl().x + 0.5f)*terScreenSizeX - 16;
-			int y = (gameShell->mousePressControl().y + 0.5f)*terScreenSizeY - 16;
-
-			terRenderDevice->DrawSprite(x, y, pCursor->sx, pCursor->sy,
-				0, 0, 1, 1, pCursor->hCursorProgram, sColor4c(255, 255, 255, 255));
-
+            DrawCursor(
+                &m_cursors[terCamera->tilting() ? tilt : rotate],
+                static_cast<int>((gameShell->mousePressControl().x + 0.5f)*terScreenSizeX) - 16,
+                static_cast<int>((gameShell->mousePressControl().y + 0.5f)*terScreenSizeY) - 16
+            );
 			return;
 		}
 	}
@@ -680,14 +713,17 @@ void CShellCursorManager::draw()
 		}
 
 		//сдвиг карты
-		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * cur_x) + dx, xm::round(terScreenSizeY * cur_y) + dy,
-                                    m_cursors[m_nCursorShift].sx, m_cursors[m_nCursorShift].sy,
-                                    0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), xm::fmod(m_ftime, 1000)/1000.f);
+        DrawCursor(
+            &m_cursors[m_nCursorShift],
+            xm::round(terScreenSizeX * cur_x) + dx,
+            xm::round(terScreenSizeY * cur_y) + dy,
+            xm::fmod(m_ftime, 1000) / 1000.f
+        );
 		return;
 	}
 
 	//Draw normal cursor
-	CURSOR* cursor = m_pActiveCursor;	
+    CShellCursor* cursor = m_pActiveCursor;	
 	if(_bCursorVisible && !m_nCursorShift && cursor)
 	{
         //If game is running then set default cursor if user is hovering on a control
@@ -713,30 +749,36 @@ void CShellCursorManager::draw()
             printf("%s\n", text.c_str());
         }
 #endif
+        bool is_cursor_workarea = (cursor == &m_cursors[workarea_in]) || (cursor == &m_cursors[workarea_out]);
+        bool is_cursor_toolzer = (cursor == &m_cursors[rov]) || is_cursor_workarea;
         
 	    //Get cursor scale factor
 		float fScale = 1.0f;
-		if((cursor == &m_cursors[workarea_in]) || (cursor == &m_cursors[workarea_out])) {
+		if (is_cursor_workarea) {
             fScale = fCursorWorkareaDefaultHeight / terCamera->coordinate().distance();
         }
 
 		//Apply offset for cursor position
-        float draw_cur_x = cur_x;
-        float draw_cur_y = cur_y;
-        if(cursor->bHotspotCentred)
+        float draw_cur_x = cur_x;// - cursor->hotspot.x;
+        float draw_cur_y = cur_y;// - cursor->hotspot.y;
+        if (cursor->bHotspotCentered)
         {
-            draw_cur_x -= fScale*cursor->sx/terScreenSizeX*fWorkAreaCenterX;
-            draw_cur_y -= fScale*cursor->sy/terScreenSizeY*fWorkAreaCenterY;
+            draw_cur_x -= fScale*cursor->sx/terScreenSizeX*(is_cursor_toolzer ? fWorkAreaCenterX : 0.5f);
+            draw_cur_y -= fScale*cursor->sy/terScreenSizeY*(is_cursor_toolzer ? fWorkAreaCenterY : 0.5f);
         }
 
         //Draw it
-		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * draw_cur_x), xm::round(terScreenSizeY * draw_cur_y),
-			fScale*cursor->sx, fScale*cursor->sy,
-                                    0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), xm::fmod(m_ftime, 1000)/1000.f);
+		DrawCursor(
+            cursor,
+            xm::round(terScreenSizeX * draw_cur_x),
+            xm::round(terScreenSizeY * draw_cur_y),
+            xm::fmod(m_ftime, 1000) / 1000.f,
+            fScale
+        );
 
 	    //высота до зерослоя / Text for toolzer
 	    if(!_pShellDispatcher->m_bToolzerSizeChangeMode
-	    && (cursor == &m_cursors[workarea_in] || cursor == &m_cursors[workarea_out]))
+	    && (is_cursor_toolzer))
 		{
 			Vect3f v;
 			if(terCamera->cursorTrace(Vect2f(_pShellDispatcher->m_fMouseCurrentX-0.5f, _pShellDispatcher->m_fMouseCurrentY-0.5f), v))

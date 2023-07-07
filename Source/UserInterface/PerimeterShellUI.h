@@ -1450,24 +1450,25 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+class ANIFile;
+
 //курсоры
 class CShellCursorManager
 {
-	struct CURSOR
+	struct CShellCursor
 	{
-		union
-		{
-			cTexture* hCursorProgram;
-		};
-		char bHotspotCentred;
+        cTexture* texture;
+        ANIFile* anifile;
+		char bHotspotCentered; //This is used for toolzers
+        //Size
 		float sx, sy;
 	};
 
 	float m_ftime;
 	float cur_x, cur_y;
-	std::deque<CURSOR> m_cursors;
-	CURSOR*       m_pActiveCursor;
-    CURSOR*       m_pCursorDefault;
+	std::deque<CShellCursor> m_cursors;
+    CShellCursor* m_pActiveCursor;
+    CShellCursor* m_pCursorDefault;
 	int           m_nCursorShift;
 
 	cFont*        m_hFontCursorWorkarea;
@@ -1517,6 +1518,7 @@ public:
 	void OnMouseMove(float x, float y);
 
 	void draw();
+    static void DrawCursor(CShellCursor* cursor, int x, int y, float phase = 0, float scale = 1.0f);
 
 	float GetSize();
 	void  SetSize(float sx);
