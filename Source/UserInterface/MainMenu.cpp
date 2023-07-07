@@ -303,7 +303,7 @@ std::string checkMissingContent(const MissionDescription& mission) {
         //Game content is OK but we still don't have this map
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         msg += mission.worldName();
-    } else if (mission.saveData.length() == 0 && (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent()))) {
+    } else if (mission.saveData.length() == 0 && mission.gameType_ != GT_MULTI_PLAYER_LOAD && (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent()))) {
         //If has saveData ignore since is packed already
         //Game content is OK but we still don't have this save
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
