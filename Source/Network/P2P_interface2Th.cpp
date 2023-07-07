@@ -215,8 +215,7 @@ bool PNetCenter::SecondThread(void)
                     PlayerData pd;
                     pd.set(m_PlayerName, m_localNETID);
 					if(AddClient(pd)==-1){
-						xassert(0&&"Error connect host 2 missionDescription");
-						ErrH.Abort("Network: General error 2!");
+						ErrH.Abort("Network: Couldnt add host player to mission");
 					}
 
 					LogMsg("New game <%s> for start...\n", m_GameName.c_str());

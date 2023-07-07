@@ -10,8 +10,6 @@
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
-    SokolTexture2D* tex0 = emptyTexture;
-    SokolTexture2D* tex1 = nullptr;
     if (Texture0) {
         if (blend == ALPHA_NONE && Texture0->IsAlphaTest()) {
             blend = ALPHA_TEST;
