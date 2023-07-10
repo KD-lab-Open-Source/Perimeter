@@ -515,6 +515,7 @@ void CShellCursorManager::Done()
             cur.anifile = nullptr;
         }
     }
+    m_cursors.clear();
 
 	_RELEASE(m_hFontCursorWorkarea);
 	_RELEASE(hFontMainmenu1);
@@ -526,10 +527,10 @@ void CShellCursorManager::Done()
 void CShellCursorManager::Load()
 {
     CShellCursor _c;
-	for(int i=0; i<_sqsh_cursor_count; i++)
-	{
+	for (int i=0; i<_sqsh_cursor_count; i++) {
 		sqshCursor& cc = _sqsh_cursors[i];
 
+        _c.anifile = nullptr;
 		_c.sx = cc.sx; 
 		_c.sy = cc.sy;
 		_c.bHotspotCentered = cc.hotspot_center;
@@ -546,7 +547,7 @@ void CShellCursorManager::Load()
             }
         }
 
-		m_cursors.push_back(_c);
+		m_cursors.emplace_back(_c);
 	}
 
 	//The default one is the first one (RESOURCE\\cursors\\arrow.cur)

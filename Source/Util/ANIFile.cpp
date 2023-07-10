@@ -54,7 +54,7 @@ ANIFile::~ANIFile() {
 }
 
 void ANIFile::close() {
-    for (auto frame : frames) {
+    for (auto& frame : frames) {
         if (frame.data) {
             delete[] frame.data;
             frame.data = nullptr;
