@@ -21,7 +21,7 @@
   # Dependencies that CMake fetches with FetchContent
   dxvk_git = builtins.fetchGit (if pkgs.stdenv.isDarwin then {
     url = "https://github.com/IonAgorria/dxvk-native.git";
-    rev = "e636fc44afa36867c56166f07c4b2c51400f4a6d";
+    rev = "43aedc756cbd620b9ee8b1cf2c17b17cc49b3781";
     ref = "master";
   } else {
     url = "https://github.com/doitsujin/dxvk.git";
