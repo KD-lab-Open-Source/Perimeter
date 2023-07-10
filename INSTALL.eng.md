@@ -146,7 +146,26 @@ Run executable while current directory is the game directory or pass content= wi
 
 ---
 
-# Docker
+# Linux using Docker
+
+This uses Docker container to setup a builder that will compile linux compatible binaries
+A old debian image is used so the binary is linked against old GLIBC symbols so it can be run in older OSes
+
+### Requirements
+
+- Docker
+
+### Instructions
+
+- Run `docker/linux/run.sh` script
+
+### Launching the game
+
+Copy generated perimeter executable and required libraries .so's to the game directory.
+
+---
+
+# Windows using Docker dockcross
 
 This uses Docker container to setup a builder that will compile Win32 compatible .exe, originally used during initial
 porting and currently is not recommended, but can be useful for compiling in hosts that can run Docker containers.
@@ -157,7 +176,8 @@ porting and currently is not recommended, but can be useful for compiling in hos
 
 ### Instructions
 
-- Run `docker/run.sh` script
+- Run `docker/dockcross/run.sh` script
 
 ### Launching the game
+
 Copy generated perimeter.exe executable and required libraries .dll's to the game directory.
