@@ -8,7 +8,7 @@
 #include "MeshBank.h"
 #include "ObjMesh.h"
 #include <algorithm>
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 #include "Font.h"
 #include "VertexFormat.h"
 #include "SafeCast.h"

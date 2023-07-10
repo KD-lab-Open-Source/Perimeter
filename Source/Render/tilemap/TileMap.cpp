@@ -2,12 +2,12 @@
 #ifdef PERIMETER_D3D9
 #include "D3DRender.h"
 #endif
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 #include "Scene.h"
 #include "ObjLibrary.h"
 #include "../../Game/Region.h"
 #include "Font.h"
-#include "TilemapRender.h"
+#include "TileMapRender.h"
 
 #ifdef PERIMETER_D3D9
 //D3D9 specific render code

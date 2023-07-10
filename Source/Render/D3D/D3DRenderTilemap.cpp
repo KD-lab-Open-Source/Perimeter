@@ -3,7 +3,7 @@
 #include "D3DRender.h"
 #endif
 #include "IncTerra.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 #include "Scene.h"
 
 #include "../../Game/Region.h"
@@ -13,7 +13,7 @@
 
 #include "clip/ClippingMesh.h"
 
-#include "TilemapRender.h"
+#include "tilemap/TileMapRender.h"
 
 #define BUMP_VTXTYPE   sVertexXYZT1
 #define BUMP_VTXFORMAT (BUMP_VTXTYPE::fmt)

@@ -3,7 +3,7 @@
 #include "Scene.h"
 #include <algorithm>
 #include "NParticleID.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 #include "ForceField.h"
 #include "DrawBuffer.h"
 #include "MeshBank.h"

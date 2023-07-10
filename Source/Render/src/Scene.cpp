@@ -5,7 +5,7 @@
 
 #include "SafeCast.h"
 #include "Scene.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 #include "ObjNode.h"
 #include "SpriteNode.h"
 #include "Line3d.h"

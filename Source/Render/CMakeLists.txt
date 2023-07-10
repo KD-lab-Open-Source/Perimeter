@@ -15,8 +15,6 @@ SET(Render_SRCS
         src/umath.cpp
         src/VisError.cpp
         src/Frame.cpp
-        src/TileMap.cpp
-        src/TilemapRender.cpp
         src/UnkLight.cpp
         src/UnkObj.cpp
         src/CChaos.cpp
@@ -54,6 +52,8 @@ SET(Render_SRCS
         tracker/RenderTracker.cpp
         src/RenderDeviceDraw.cpp
         client/RenderDrawClient.cpp
+        tilemap/TileMap.cpp
+        tilemap/TileMapRender.cpp
 )
 
 IF (OPTION_D3D9)

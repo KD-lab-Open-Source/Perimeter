@@ -7,7 +7,7 @@
 #include "MeshTri.h"
 #include "DrawType.h"
 #include "Scene.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 
 #define DEL(p) {if(p)delete p;}
 

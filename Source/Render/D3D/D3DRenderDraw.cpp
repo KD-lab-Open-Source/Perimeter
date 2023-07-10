@@ -5,7 +5,7 @@
 #include "ObjNode.h"
 #include "ObjMesh.h"
 #include "MeshTri.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 
 #include "AnimChannel.h"
 #include "Font.h"

@@ -23,6 +23,6 @@
 #include "../src/lighting.h"
 
 #include "../client/ExternalObj.h"
-#include "../src/TileMap.h"
+#include "../tilemap/TileMap.h"
 
 #include "../inc/IncTerra.h"
