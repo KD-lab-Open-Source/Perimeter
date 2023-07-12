@@ -8,7 +8,6 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 {
 	LPDIRECT3DTEXTURE9 lpTexture=0;
 
-#ifndef PERIMETER_EXODUS //TODO We don't support DXT textures yet
 	if((TextureFormat==SURFMT_COLOR || TextureFormat==SURFMT_COLORALPHA || TextureFormat==SURFMT_GRAYALPHA) && Option_FavoriteLoadDDS)
 	{
 		if(TextureFormat==SURFMT_GRAYALPHA)
@@ -25,7 +24,6 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 		VISASSERT(lpTexture);
 		return lpTexture;
 	}
-#endif
 
 	VISASSERT(x&&y&&TextureFormat>=0&&TextureFormat<SURFMT_NUMBER);
 	int Usage=0;
@@ -85,8 +83,8 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
                     Texture->GetAttribute()
             );
         }
-		if(tex == nullptr) return 2;
-		if(FileImage==0) continue;
+		if (tex == nullptr) return 2;
+		if (FileImage == nullptr) continue;
 
 		uint8_t* lpBuf = new uint8_t[tex_len];
 		memset(lpBuf, 0xFF, tex_len);
