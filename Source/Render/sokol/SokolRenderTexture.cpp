@@ -148,7 +148,7 @@ void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
     SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
     xassert(!tex->locked);
     xassert(tex->data);
-    Pitch = Texture->GetWidth() * sokol_pixelformat_bytesize(tex->pixel_format);
+    Pitch = static_cast<int>(Texture->GetWidth() * sokol_pixelformat_bytesize(tex->pixel_format));
     if (!tex->data) {
         //Immutable texture, nothing to do
         return nullptr;
@@ -156,6 +156,26 @@ void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
     tex->dirty = true;
     tex->locked = true;
     return tex->data;
+}
+
+void* cSokolRender::LockTextureRect(cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_TEXTURE_RECT);
+#endif
+    SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
+    xassert(!tex->locked);
+    xassert(tex->data);
+    size_t fmt_size = sokol_pixelformat_bytesize(tex->pixel_format);
+    Pitch = static_cast<int>(size.x * fmt_size);
+    if (!tex->data) {
+        //Immutable texture, nothing to do
+        return nullptr;
+    }
+    tex->dirty = true;
+    tex->locked = true;
+    uint8_t* ptr = static_cast<uint8_t*>(tex->data);
+    size_t start = (pos.y * Texture->GetWidth() + pos.x) * fmt_size;
+    return ptr + start;
 }
 
 void cSokolRender::UnlockTexture(cTexture* Texture) {

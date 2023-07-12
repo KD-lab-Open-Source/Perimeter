@@ -67,6 +67,7 @@ public:
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override { return 0; }
     int DeleteTexture(class cTexture *Texture) override { return 0; }
     void* LockTexture(class cTexture *Texture, int& Pitch) override { return nullptr; }
+    void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override { return nullptr; };
     void UnlockTexture(class cTexture *Texture) override {}
 
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override {};

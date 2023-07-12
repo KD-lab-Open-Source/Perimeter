@@ -107,6 +107,7 @@ public:
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
 	int DeleteTexture(class cTexture *Texture) override;
 	void* LockTexture(class cTexture *Texture, int& Pitch) override;
+    void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override;
 	void UnlockTexture(class cTexture *Texture) override;
 
 	void SetDrawNode(class cCamera *DrawNode) override;

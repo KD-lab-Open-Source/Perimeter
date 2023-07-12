@@ -371,6 +371,7 @@ public:
     virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) = 0;
     virtual int DeleteTexture(class cTexture *Texture) = 0;
     virtual void* LockTexture(class cTexture *Texture, int& Pitch) = 0;
+    virtual void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) = 0;
     virtual void UnlockTexture(class cTexture *Texture) = 0;
     
     virtual void SetGlobalFog(const sColor4f &color,const Vect2f &v) = 0;

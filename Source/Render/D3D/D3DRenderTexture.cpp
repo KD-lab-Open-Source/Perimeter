@@ -198,18 +198,42 @@ bool cD3DRender::SetScreenShot(const char *fname)
 #endif
 }
 
-void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
+void* cD3DRender::LockTexture(cTexture* Texture, int& Pitch)
 {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_TEXTURE);
+#endif
 	D3DLOCKED_RECT d3dLockRect;
 	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
-	RDCALL(lpSurface->LockRect(0,&d3dLockRect,0,0));
+	RDCALL(lpSurface->LockRect(0,&d3dLockRect,nullptr,0));
 
 	Pitch=d3dLockRect.Pitch;
 	return d3dLockRect.pBits;
 }
 
+void* cD3DRender::LockTextureRect(cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size)
+{
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::LOCK_TEXTURE_RECT);
+#endif
+    D3DLOCKED_RECT d3dLockRect;
+    IDirect3DTexture9* lpSurface=Texture->GetFrameImage(0).d3d;
+    RECT rc;
+    rc.left=pos.x;
+    rc.top=pos.y;
+    rc.right=pos.x+size.x;
+    rc.bottom=pos.y+size.y;
+    RDCALL(lpSurface->LockRect(0,&d3dLockRect,&rc,0));
+
+    Pitch=d3dLockRect.Pitch;
+    return d3dLockRect.pBits;
+}
+
 void cD3DRender::UnlockTexture(class cTexture *Texture)
 {
+#ifdef PERIMETER_RENDER_TRACKER_LOCKS
+    RenderSubmitEvent(RenderEvent::UNLOCK_TEXTURE);
+#endif
 	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
 	RDCALL(lpSurface->UnlockRect(0));
 }
