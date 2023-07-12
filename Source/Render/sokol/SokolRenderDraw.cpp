@@ -133,13 +133,29 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {
+    //TODO
 }
 
 void cSokolRender::EndDrawShadow() {
+    //TODO
 }
 
 void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
+    //TODO
 }
 
 void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
+    //TODO
+}
+
+void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
+    //TODO
+}
+
+void cSokolRender::SetMaterialTilemapShadow() {
+    //TODO
+}
+
+void cSokolRender::SetTileColor(sColor4f color) {
+    //TODO
 }

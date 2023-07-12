@@ -188,6 +188,18 @@ void cD3DRender::DrawNoMaterialShadow(cObjMesh* mesh) {
     dtDrawShadowActive->DrawNoMaterialShadow(mesh);
 }
 
+void cD3DRender::SetMaterialTilemap(cTileMap *TileMap) {
+    dtAdvance->SetMaterialTilemap(TileMap);
+}
+
+void cD3DRender::SetMaterialTilemapShadow() {
+    dtAdvance->SetMaterialTilemapShadow();
+}
+
+void cD3DRender::SetTileColor(sColor4f color) {
+    dtAdvance->SetTileColor(color);
+}
+
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode)
 {
 	if(CurrentFont==0)

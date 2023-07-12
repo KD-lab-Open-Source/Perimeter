@@ -46,8 +46,8 @@ public:
     uint32_t GetRenderState(eRenderStateOption option) { return 0; }
     int SetRenderState(eRenderStateOption option,uint32_t value) override { return 0; }
 
-    int Create(class cTileMap *TileMap) override { return -1; }
-    int Delete(class cTileMap *TileMap) override { return -1; }
+    int CreateTilemap(class cTileMap *TileMap) override { return -1; }
+    int DeleteTilemap(class cTileMap *TileMap) override { return -1; }
 
     void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override { }
@@ -91,6 +91,10 @@ public:
     void EndDrawShadow() override {}
     void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override {}
     void DrawNoMaterialShadow(cObjMesh* mesh) override {}
+
+    void SetMaterialTilemap(cTileMap *TileMap) override {};
+    void SetMaterialTilemapShadow() override {};
+    void SetTileColor(sColor4f color) override {};
 };
 
 #endif //PERIMETER_EMPTYRENDERDEVICE_H

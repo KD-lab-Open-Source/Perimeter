@@ -26,13 +26,11 @@ void DrawBuffer::Backwind() {
         Unlock();
     }
     if (vb.dynamic) {
-        vb.burned = false;
         locked_vertices = 0;
         lock_written_vertices = 0;
         written_vertices = 0;
     }
     if (ib.dynamic) {
-        ib.burned = false;
         locked_indices = 0;
         lock_written_indices = 0;
         written_indices = 0;

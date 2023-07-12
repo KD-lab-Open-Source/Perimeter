@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PERIMETER_TILEMAP_H
+#define PERIMETER_TILEMAP_H
 
 class cScene;
 
@@ -49,10 +50,11 @@ class cTileMap : public cUnkObj
 	sTile*			Tile;
 	Vect2i			TileSize;		// размер одного тайла
 	Vect2i			TileNumber;		// число тайлов по осям
+    size_t TexturePoolSize;
 
 	Vect3d			tilesize;
 
-	cTileMapRender* pTileMapRender;
+	cTileMapRender* pTileMapRender = nullptr;
 	
 	cCamera*		ShadowDrawNode;
 	cCamera*		LightDrawNode;
@@ -90,7 +92,8 @@ public:
 	void Animate(float dt);
 	// общие интерфейсные функции cTileMap
 	const Vect2i& GetTileSize()const					{ return TileSize; }
-	const Vect2i& GetTileNumber()const					{ return TileNumber; }
+    const Vect2i& GetTileNumber()const					{ return TileNumber; }
+    size_t GetTexturePoolSize() const { return TexturePoolSize; }
 	sTile& GetTile(int i,int j)							{ return Tile[i+j*GetTileNumber().x]; }
 	int GetZeroplastNumber()	const					{ return zeroplastnumber; }
 
@@ -116,7 +119,10 @@ public:
 		zeroplast_color[player]=color;
 	}
 
-	void SetTilemapRender(cTileMapRender* p){VISASSERT(pTileMapRender==NULL);pTileMapRender=p;};
+	void SetTilemapRender(cTileMapRender* p) {
+        VISASSERT(p == nullptr || pTileMapRender == nullptr);
+        pTileMapRender=p;
+    };
 	cTileMapRender* GetTilemapRender(){return pTileMapRender;}
 
 	TerraInterface* GetTerra(){return terra;}
@@ -179,3 +185,5 @@ protected:
 };
 
 class cCamera;
+
+#endif //PERIMETER_TILEMAP_H

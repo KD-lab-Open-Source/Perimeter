@@ -42,6 +42,7 @@ public:
 #endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         LOCK_TEXTURE,
+        LOCK_TEXTURE_RECT,
         UNLOCK_TEXTURE,
 #endif
         
@@ -106,6 +107,7 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
 #endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
         case RenderEvent::LOCK_TEXTURE: return "LOCK_TEXTURE";
+        case RenderEvent::LOCK_TEXTURE_RECT: return "LOCK_TEXTURE_RECT";
         case RenderEvent::UNLOCK_TEXTURE: return "UNLOCK_TEXTURE";
 #endif
 #ifdef PERIMETER_RENDER_TRACKER_RESOURCES
@@ -171,6 +173,7 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
 #endif
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS 
         case RenderEvent::LOCK_TEXTURE:
+        case RenderEvent::LOCK_TEXTURE_RECT:
         case RenderEvent::UNLOCK_TEXTURE:
         case RenderEvent::LOCK_VERTEXBUF:
         case RenderEvent::UNLOCK_VERTEXBUF:

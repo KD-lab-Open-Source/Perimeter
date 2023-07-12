@@ -54,6 +54,10 @@ SET(Render_SRCS
         client/RenderDrawClient.cpp
         tilemap/TileMap.cpp
         tilemap/TileMapRender.cpp
+        tilemap/TileMapBumpTile.cpp
+        tilemap/TileMapTexturePool.cpp
+        tilemap/PoolManager.cpp
+        tilemap/ClippingMesh.cpp
 )
 
 IF (OPTION_D3D9)
@@ -68,8 +72,6 @@ IF (OPTION_D3D9)
         D3D/D3DRenderTexture.cpp
         D3D/D3DRenderTilemap.cpp
         D3D/DrawType.cpp
-        D3D/PoolManager.cpp
-        D3D/clip/ClippingMesh.cpp
     )
 ENDIF()
 

@@ -20,8 +20,6 @@ enum
 
 inline uint32_t F2DW( float f ) { return *((uint32_t*)&f); }
 
-#include "PoolManager.h"
-
 class cD3DRender : public cInterfaceRenderDevice
 {
 private:
@@ -74,9 +72,6 @@ public:
     
 	cD3DRender();
 	~cD3DRender() override;
-
-    VertexPoolManager* GetVertexPool() { return &vertex_pool_manager; }
-    IndexPoolManager* GetIndexPool() { return &index_pool_manager; }
     
     virtual void SaveStates(const char* fname="states.txt");
 
@@ -99,6 +94,9 @@ public:
     void ClearZBuffer() override;
 	int Flush(bool wnd=false) override;
 	int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
+
+    int CreateTilemap(cTileMap *TileMap) override;
+    int DeleteTilemap(cTileMap *TileMap) override;
 	
 	void DeleteVertexBuffer(VertexBuffer &vb) override;
 	void DeleteIndexBuffer(IndexBuffer &ib) override;
@@ -153,10 +151,12 @@ public:
     void EndDrawShadow() override;
     void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override;
     void DrawNoMaterialShadow(cObjMesh* mesh) override;
+    
+    void SetMaterialTilemap(cTileMap *TileMap) override;
+    void SetMaterialTilemapShadow() override;
+    void SetTileColor(sColor4f color) override;
 
     // //// cInterfaceRenderDevice impls end ////
-    
-    //void DrawNoMaterialShadowNoWorld(cObjMesh *Mesh);
 
     //This converts flag based vertex format to D3D9 FVF format
     static uint32_t GetD3DFVFFromFormat(vertex_fmt_t fmt) ;
@@ -224,17 +224,6 @@ public:
 		{
             FlushActiveDrawBuffer();
 			RDCALL(lpD3DDevice->SetPixelShader(CurrentPixelShader=Handle));
-		}
-	}
-
-	inline void SetFVF(uint32_t handle)
-	{
-		xassert(handle);
-        uint32_t fvf = GetD3DFVFFromFormat(handle);
-		if(fvf!=CurrentFVF)
-		{
-            FlushActiveDrawBuffer();
-			RDCALL(lpD3DDevice->SetFVF(CurrentFVF=fvf));
 		}
 	}
 
@@ -310,16 +299,6 @@ public:
 		RDCALL(lpD3DDevice->SetTransform(D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+Stage),
                                          reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
-   
-	inline void SetIndices(IDirect3DIndexBuffer9* pIndexData)
-	{
-		if(CurrentIndexBuffer!=pIndexData)
-		{
-            FlushActiveDrawBuffer();
-			CurrentIndexBuffer=pIndexData;
-			RDCALL(lpD3DDevice->SetIndices(pIndexData));
-		}
-	}
 
 	void SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer);
 	void RestoreRenderTarget();
@@ -351,9 +330,6 @@ protected:
 	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
 	uint32_t				ArraytSamplerState[TEXTURE_MAX][SAMPLERSTATE_MAX];
 	
-	VertexPoolManager vertex_pool_manager;
-	IndexPoolManager index_pool_manager;
-
 	void DeleteShader();
 
 	void DeleteDynamicBuffers();
@@ -363,7 +339,7 @@ protected:
 	void ClearTilemapPool();
 	void RestoreTilemapPool();
 
-	void GetTilemapTextureMemory(int& total,int& free);
+	//void GetTilemapTextureMemory(int& total,int& free);
 
 	void UpdateRenderMode();
 

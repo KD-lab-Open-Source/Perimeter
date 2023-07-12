@@ -1,34 +1,172 @@
+#include <set>
 #include "StdAfxRD.h"
 #ifdef PERIMETER_D3D9
 #include "D3DRender.h"
 #endif
-#include "tilemap/TileMap.h"
+#include "TileMap.h"
 #include "Scene.h"
 #include "ObjLibrary.h"
 #include "../../Game/Region.h"
 #include "Font.h"
+#include "PoolManager.h"
 #include "TileMapRender.h"
+#include "ClippingMesh.h"
 
-#ifdef PERIMETER_D3D9
-//D3D9 specific render code
-void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
-void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
-#endif
 
-void cTileMap::calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear) {
-    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
-#ifdef PERIMETER_D3D9
-        calcVisMapD3D(DrawNode, TileNumber, TileSize, visMap, clear);
-#endif
+static void fillVisPoly(uint8_t *buf, std::vector<Vect2f>& vert, int VISMAP_W, int VISMAP_H)
+{
+    if(vert.empty())return;
+    const int VISMAP_W_MAX=128,VISMAP_H_MAX=128;
+    VISASSERT(VISMAP_W<=VISMAP_W_MAX && VISMAP_H<=VISMAP_H_MAX);
+    float lx[VISMAP_W_MAX], rx[VISMAP_H_MAX];
+    int i, y, ytop, ybot;
+
+    // find top/bottom y
+    ytop = xm::floor(vert[0].y);
+    ybot = xm::ceil(vert[0].y);
+    for(i=1;i<vert.size();i++)
+    {
+        float y=vert[i].y;
+        if (y < ytop) ytop = xm::floor(y);
+        if (y > ybot) ybot = xm::ceil(y);
+    }
+
+    for (i = 0; i < VISMAP_H; i++)
+    {
+        lx[i] = VISMAP_W-1;
+        rx[i] = 0;
+    }
+
+    // render edges
+    for (i = 0; i < vert.size(); i++)
+    {
+        int i2=(i+1>=vert.size())?0:i+1;
+        float x1, x2, y1, y2, t;
+        x1=vert[i].x;  y1=vert[i].y;
+        x2=vert[i2].x; y2=vert[i2].y;
+
+        if (y1 > y2) { t = x1; x1 = x2; x2 = t; t = y1; y1 = y2; y2 = t; }
+
+        int iy1 = (int)y1, iy2 = (int)y2;
+        if(iy1>iy2)continue;
+
+        float dy = (y2 == y1) ? 1 : (y2 - y1);
+        float dy1 =1/dy;
+        for (y = max(iy1, 0); y <= min(iy2, VISMAP_H-1); y++)
+        {
+            float ix1 = x1 + (y-y1) * (x2-x1) * dy1;
+            float ix2 = x1 + (y-y1+1) * (x2-x1) * dy1;
+            if (y == iy1) ix1 = x1;
+            if (y == iy2) ix2 = x2;
+            lx[y] = min(min(lx[y], ix1), ix2);
+            rx[y] = max(max(rx[y], ix1), ix2);
+        }
+    }
+
+    // fill the buffer
+    for (y = max(0, ytop); y <= min(ybot, VISMAP_H-1); y++)
+    {
+        if (lx[y] > rx[y]) continue;
+        int x1 = (int)max((float)xm::floor(lx[y]), 0.0f);
+        int x2 = (int)min((float)xm::ceil(rx[y]), (float)VISMAP_W);
+        if(x1>=x2)continue;
+        memset(buf + y*VISMAP_W + x1, 1, x2-x1);
     }
 }
 
-void cTileMap::calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize, Mat3f& direction,sBox6f& box) {
-    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
-#ifdef PERIMETER_D3D9
-        calcVisMapD3D(DrawNode, TileNumber, TileSize, direction, box);
-#endif
+void calcCMesh(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,CMesh& cmesh)
+{
+    AMesh mesh;
+    float dx=TileNumber.x*TileSize.x;
+    float dy=TileNumber.y*TileSize.y;
+    Vect3f vmin(0,0,0);
+    Vect3f vmax(dx,dy,256.0f);
+    mesh.CreateABB(vmin, vmax);
+
+    cmesh.Set(mesh);
+
+    for(int i=0;i<DrawNode->GetNumberPlaneClip3d();i++)
+    {
+        sPlane4f& plane=DrawNode->GetPlaneClip3d(i);
+        cmesh.Clip(plane);
     }
+}
+
+void drawCMesh(CMesh& cmesh)
+{
+    for(int i=0;i<cmesh.E.size();i++)
+        if(cmesh.E[i].visible)
+        {
+            int iv0=cmesh.E[i].vertex[0];
+            int iv1=cmesh.E[i].vertex[1];
+            Vect3f v0,v1;
+            v0=cmesh.V[iv0].point;
+            v1=cmesh.V[iv1].point;
+            gb_RenderDevice->DrawLine(v0,v1,sColor4c(0,0,0,255));
+        }
+}
+
+void calcVisMapCMesh(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
+{
+    APolygons poly;
+    cmesh.BuildPolygon(poly);
+    if(clear)
+        memset(visMap, 0, TileNumber.x*TileNumber.y);
+
+    for(int i=0;i<poly.faces.size();i++)
+    {
+        std::vector<int>& inp=poly.faces[i];
+        std::vector<Vect2f> points(inp.size());
+        for(int j=0;j<inp.size();j++)
+        {
+            Vect3f& p=poly.points[inp[j]];
+            points[j].x=p.x/TileSize.x;
+            points[j].y=p.y/TileSize.y;
+        }
+
+        fillVisPoly(visMap, points,TileNumber.x,TileNumber.y);
+    }
+
+    if(false)
+        drawCMesh(cmesh);
+}
+
+sBox6f calcBoundInDirection(CMesh& cmesh,Mat3f& m)
+{
+    sBox6f box;
+    box.SetInvalidBox();
+    for(int i=0;i<cmesh.E.size();i++)
+        if(cmesh.E[i].visible)
+        {
+            for(int j=0;j<2;j++)
+            {
+                int iv=cmesh.E[i].vertex[j];
+                Vect3f v;
+                v=m*cmesh.V[iv].point;
+                box.AddBound(v);
+            }
+        }
+    return box;
+}
+
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
+{
+}
+
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box)
+{
+}
+
+void cTileMap::calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear) {
+    CMesh cmesh;
+    calcCMesh(DrawNode,TileNumber,TileSize,cmesh);
+    calcVisMapCMesh(DrawNode,cmesh,TileNumber,TileSize,visMap,clear);
+}
+
+void cTileMap::calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize, Mat3f& direction,sBox6f& box) {
+    CMesh cmesh;
+    calcCMesh(DrawNode,TileNumber,TileSize,cmesh);
+    box=calcBoundInDirection(cmesh,direction);
 }
 
 cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP)
@@ -38,6 +176,7 @@ cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP
 	TileSize.set(TILEMAP_SIZE,TILEMAP_SIZE);
 	TileNumber.set(0,0);
 	Tile=0;
+    TexturePoolSize = 512;
 
 	tilesize.set(0,0,0);
 	pTileMapRender=NULL;
@@ -57,11 +196,10 @@ cTileMap::~cTileMap()
 	RELEASE(terra);
 	RELEASE(ShadowDrawNode);
 	RELEASE(LightDrawNode);
-#ifdef PERIMETER_D3D9
-    gb_RenderDevice->Delete(this);
-#endif
+    gb_RenderDevice->DeleteTilemap(this);
 	if(Tile) { delete [] Tile; Tile=nullptr; }
 	MTDONE(lock_update_rect);
+    xassert(pTileMapRender == nullptr);
 }
 
 int cTileMap::CheckLightMapType()
@@ -161,11 +299,11 @@ void cTileMap::PreDraw(cCamera *DrawNode)
 	BuildRegionPoint();
 
 	DrawNode->Attach(SCENENODE_OBJECT_TILEMAP,this);
-#ifdef PERIMETER_D3D9
+    
     cTileMapRender* render = GetTilemapRender();
-    if (!render) return;
-    render->PreDraw(DrawNode);
-#endif
+    if (render) {
+        render->PreDraw(DrawNode);
+    }
 }
 
 void cTileMap::Draw(cCamera *DrawNode)
@@ -173,7 +311,6 @@ void cTileMap::Draw(cCamera *DrawNode)
 	if(!Option_ShowType[SHOW_TILEMAP])
 		return;
 
-#ifdef PERIMETER_D3D9
     cTileMapRender* render = GetTilemapRender();
     if (!render) return;
 
@@ -237,7 +374,6 @@ void cTileMap::Draw(cCamera *DrawNode)
 		gb_RenderDevice->SetFont(NULL);
 		pFont->Release();
 	}
-#endif
 
 	DrawLines();
 }
@@ -273,16 +409,22 @@ void cTileMap::SetBuffer(const Vect2i &size,int zeroplastnumber_)
 {
 	zeroplastnumber=zeroplastnumber_;
 	zeroplast_color.resize(zeroplastnumber);
-	for(int i=0;i<zeroplastnumber;i++)
-		zeroplast_color[i]=sColor4f(0,1,0,1);
+	for (int i=0;i<zeroplastnumber;i++) {
+        zeroplast_color[i] = sColor4f(0, 1, 0, 1);
+    }
 
-	if(Tile) { gb_RenderDevice->Delete(this); delete Tile; }
+	if (Tile) {
+        gb_RenderDevice->DeleteTilemap(this);
+        delete Tile;
+        Tile = nullptr;
+    }
+    
 	TileNumber.set(size.x/GetTileSize().x,size.y/GetTileSize().y);
 	VISASSERT(TileNumber.x*GetTileSize().x==size.x);
 	VISASSERT(TileNumber.y*GetTileSize().y==size.y);
 
-	Tile=new sTile[GetTileNumber().x*GetTileNumber().y];
-	gb_RenderDevice->Create(this);
+	Tile = new sTile[GetTileNumber().x*GetTileNumber().y];
+	gb_RenderDevice->CreateTilemap(this);
 
 	UpdateMap(Vect2i(0,0), Vect2i(size.x-1,size.y-1));
 }

@@ -166,8 +166,6 @@ uint32_t cD3DRender::GetD3DFVFFromFormat(vertex_fmt_t fmt) {
     switch (fmt) {
         case sVertexXYZ::fmt:
             return D3DFVF_XYZ;
-        case sVertexXYZD::fmt:
-            return D3DFVF_XYZ|D3DFVF_DIFFUSE;
         case sVertexXYZT1::fmt:
             return D3DFVF_XYZ|D3DFVF_TEX1;
         case sVertexXYZDT1::fmt:
@@ -793,6 +791,7 @@ int cD3DRender::Flush(bool wnd)
 		sprintf(str,"font_mem=%i",dbg_MemTexture);
 		OutText(10,180,str);
 
+        /*
 		int FreeTileMemoty,TotalTileMemory;
 		vertex_pool_manager.GetUsedMemory(TotalTileMemory,FreeTileMemoty);
 		
@@ -819,6 +818,7 @@ int cD3DRender::Flush(bool wnd)
 		else
 			sprintf(str,"TileIndex=0 byte, slack=0%%");
 		OutText(10,160,str);
+        */
 /*
 		extern void CalcNumParticleClass(int& num_object,int& num_particle);
 		int num_particle_obj,num_particle;
@@ -1280,7 +1280,7 @@ void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
         RDCALL(lpD3DDevice->CreateIndexBuffer(
                 ib->dynamic ? ib->data_len : len,
                 flags,
-                PERIMETER_D3D_INDEX_FMT,
+                D3DFMT_INDEX16,
                 ib->dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
                 &ib->d3d,
                 nullptr
@@ -1382,7 +1382,8 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
         UpdateD3DIndexBuffer(ib, indices * sizeof(indices_t));
     }
 
-    SetFVF(vb->fmt);
+    uint32_t fvf = GetD3DFVFFromFormat(vb->fmt);
+    RDCALL(lpD3DDevice->SetFVF(fvf));
     RDCALL(lpD3DDevice->SetStreamSource(0, vb->d3d, 0, vb->VertexSize));
     D3DPRIMITIVETYPE d3dType;
     switch (primitive) {
@@ -1398,8 +1399,7 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
     size_t offset = range ? range->offset : 0;
     if (indices) {
         indices = range ? range->len : indices;
-        //RDCALL(lpD3DDevice->SetIndices(ib->d3d));
-        SetIndices(ib->d3d);
+        RDCALL(lpD3DDevice->SetIndices(ib->d3d));
         size_t polys = (primitive == PT_TRIANGLESTRIP
                         ? (indices - 2)
                         : static_cast<size_t>(xm::floor(static_cast<double>(indices) / sPolygon::PN)));
@@ -1414,6 +1414,8 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
         xassert(0);
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, vertices));
     }
+    if (vb->dynamic) vb->burned = false;
+    if (ib->dynamic) ib->burned = false;
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)

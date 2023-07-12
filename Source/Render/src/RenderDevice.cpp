@@ -8,6 +8,8 @@
 #include "EmptyRenderDevice.h"
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
+
+//Per backend includes
 #ifdef PERIMETER_D3D9
 #include "D3DRender.h"
 #endif
@@ -79,7 +81,9 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, SDL_Window* wnd, 
     ScreenSize.y = yScr;
     ScreenHZ = RefreshRateInHz;
     RenderMode = mode;
-    TexLibrary = new cTexLibrary();
+    if (!TexLibrary) {
+        TexLibrary = new cTexLibrary();
+    }
     drawBuffers.resize(0xFF);
 
     //Get the biggest resolution we might need

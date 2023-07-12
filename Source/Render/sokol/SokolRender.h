@@ -167,6 +167,10 @@ public:
     void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override;
     void DrawNoMaterialShadow(cObjMesh* mesh) override;
 
+    void SetMaterialTilemap(cTileMap *TileMap) override;
+    void SetMaterialTilemapShadow() override;
+    void SetTileColor(sColor4f color) override;
+
     // //// cInterfaceRenderDevice impls end ////
 };
 

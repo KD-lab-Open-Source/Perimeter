@@ -17,7 +17,6 @@
 #endif
 
 #ifdef PERIMETER_D3D9
-#define PERIMETER_D3D_INDEX_FMT D3DFMT_INDEX16
 #include <d3d9.h>
 #include <d3dx9.h>
 #endif

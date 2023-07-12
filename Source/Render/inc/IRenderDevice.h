@@ -241,7 +241,6 @@ protected:
     uint32_t RenderMode = 0;
     class DrawBuffer* activeDrawBuffer = nullptr;
     std::vector<class DrawBuffer*> drawBuffers;
-    std::vector<class cTileMapRender*> tilemaps;
     Mat4f orthoVP;
     eCullMode CameraCullMode = CULL_NONE;
     bool WireframeMode = false;
@@ -325,8 +324,8 @@ public:
     virtual void CreateFFDData(class FieldDispatcher *rd);
     virtual void DeleteFFDData(class FieldDispatcher *rd);
 
-    virtual int Create(class cTileMap *TileMap);
-    virtual int Delete(class cTileMap *TileMap);
+    virtual int CreateTilemap(class cTileMap *TileMap);
+    virtual int DeleteTilemap(class cTileMap *TileMap);
 
     virtual void Draw(class ElasticSphere *es);
     virtual void Draw(class cScene *Scene);
@@ -401,13 +400,13 @@ public:
     virtual void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) = 0;
     virtual void DrawNoMaterialShadow(cObjMesh* mesh) = 0;
 
+    virtual void SetMaterialTilemap(cTileMap *TileMap) = 0;
+    virtual void SetMaterialTilemapShadow() = 0;
+    virtual void SetTileColor(sColor4f color) = 0;
+
     /*
     virtual bool CreateShadowTexture(int xysize);
     virtual void DeleteShadowTexture();
-    
-    virtual void SetMaterialTilemap(cTileMap *TileMap);
-    virtual void SetMaterialTilemapShadow();
-    virtual void SetTileColor(sColor4f color);
 
     virtual cTexture* GetShadowMap();
     virtual ???* GetZBuffer();
