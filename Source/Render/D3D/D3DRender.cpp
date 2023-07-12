@@ -1261,7 +1261,7 @@ void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
     vb->dirty = false;
     void* lock_ptr = nullptr;
     uint32_t flags = vb->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
-    RDCALL(vb->d3d->Lock(0, 0, &lock_ptr, flags));
+    RDCALL(vb->d3d->Lock(0, len, &lock_ptr, flags));
     memcpy(lock_ptr, vb->data, len);
     vb->d3d->Unlock();
 }
@@ -1295,7 +1295,7 @@ void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
     ib->dirty = false;
     void* lock_ptr = nullptr;
     uint32_t flags = ib->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
-    RDCALL(ib->d3d->Lock(0, 0, &lock_ptr, flags));
+    RDCALL(ib->d3d->Lock(0, len, &lock_ptr, flags));
     memcpy(lock_ptr, ib->data, len);
     ib->d3d->Unlock();
 }
@@ -1351,7 +1351,7 @@ void cD3DRender::SetActiveDrawBuffer(DrawBuffer* db) {
     cInterfaceRenderDevice::SetActiveDrawBuffer(db);
 }
 
-void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
+void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawRange* range) {
     if (activeDrawBuffer) {
         if (activeDrawBuffer == db) {
             //Avoid drawing twice
@@ -1365,22 +1365,27 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
         return;
     }
     
-    VertexBuffer* vb = &db->vb;
+    SubmitBuffers(db->primitive, &db->vb, db->written_vertices, &db->ib, db->written_indices, range);
+    
+    db->PostDraw();
+}
+
+void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices, DrawRange* range) {
     if (vb->dirty) {
-        UpdateD3DVertexBuffer(vb, db->written_vertices * vb->VertexSize);
+        UpdateD3DVertexBuffer(vb, vertices * vb->VertexSize);
     } else if (!vb->d3d) {
         xassert(0);
         return;
     }
-    
-    if (db->written_indices && db->ib.dirty) {
-        UpdateD3DIndexBuffer(&db->ib, db->written_indices * sizeof(indices_t));
+
+    if (0 < indices && ib->dirty) {
+        UpdateD3DIndexBuffer(ib, indices * sizeof(indices_t));
     }
-    
+
     SetFVF(vb->fmt);
     RDCALL(lpD3DDevice->SetStreamSource(0, vb->d3d, 0, vb->VertexSize));
     D3DPRIMITIVETYPE d3dType;
-    switch (db->primitive) {
+    switch (primitive) {
         default:
         case PT_TRIANGLESTRIP:
             d3dType = D3DPT_TRIANGLESTRIP;
@@ -1389,27 +1394,26 @@ void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
             d3dType = D3DPT_TRIANGLELIST;
             break;
     }
-    if (db->written_indices) {
-        //TODO use this instead of SetIndices when TileMap uses DrawBuffer RDCALL(lpD3DDevice->SetIndices(db->ib.d3d));
-        SetIndices(db->ib.d3d);
-        size_t offset = range ? range->offset : 0;
-        size_t amount = range ? range->len : db->written_indices;
-        size_t polys = (db->primitive == PT_TRIANGLESTRIP 
-                ? (amount - 2)
-                : static_cast<size_t>(xm::floor(static_cast<double>(amount) / sPolygon::PN)));
+    
+    size_t offset = range ? range->offset : 0;
+    if (indices) {
+        indices = range ? range->len : indices;
+        //RDCALL(lpD3DDevice->SetIndices(ib->d3d));
+        SetIndices(ib->d3d);
+        size_t polys = (primitive == PT_TRIANGLESTRIP
+                        ? (indices - 2)
+                        : static_cast<size_t>(xm::floor(static_cast<double>(indices) / sPolygon::PN)));
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
                 d3dType,
-                0, 0, db->written_vertices,
+                0, 0, vertices,
                 offset, polys
         ));
         NumberPolygon += polys;
     } else {
+        vertices = range ? range->len : vertices;
         xassert(0);
-        size_t offset = range ? range->offset : 0;
-        size_t amount = range ? range->len : db->written_vertices;
-        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, amount));
+        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, vertices));
     }
-    db->PostDraw();
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)

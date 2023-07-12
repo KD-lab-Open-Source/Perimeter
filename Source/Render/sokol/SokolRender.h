@@ -83,7 +83,8 @@ private:
 
     //Commands handling
     void ClearCommands();
-    void FinishCommand();
+    void FinishActiveDrawBuffer();
+    void CreateCommand(class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices);
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
     void SetColorMode(eColorMode color_mode);
@@ -126,7 +127,8 @@ public:
 
     void DeleteVertexBuffer(class VertexBuffer &vb) override;
     void DeleteIndexBuffer(class IndexBuffer &ib) override;
-    void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;
+    void SubmitDrawBuffer(class DrawBuffer* db, DrawRange* range) override;
+    void SubmitBuffers(ePrimitiveType primitive, class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices, DrawRange* range) override;
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
     int DeleteTexture(class cTexture *Texture) override;
     void* LockTexture(class cTexture *Texture, int& Pitch) override;

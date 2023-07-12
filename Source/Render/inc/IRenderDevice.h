@@ -5,6 +5,11 @@
 #include "RenderTypes.h"
 #include "MemoryResource.h"
 
+struct DrawRange {
+    size_t offset = 0;
+    size_t len = 0;
+};
+
 enum eRenderDeviceSelection {
     DEVICE_D3D9,
     DEVICE_HEADLESS,
@@ -382,8 +387,9 @@ public:
     
     virtual void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) = 0;
     virtual void SetBlendState(eBlendMode blend) = 0;
-    
-    virtual void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) = 0;
+
+    virtual void SubmitDrawBuffer(class DrawBuffer* db, DrawRange* range) = 0;
+    virtual void SubmitBuffers(ePrimitiveType primitive, class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices, DrawRange* range) = 0;
 
     virtual void BeginDrawMesh(bool obj_mesh, bool use_shadow) = 0;
     virtual void EndDrawMesh() = 0;

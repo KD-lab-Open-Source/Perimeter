@@ -597,20 +597,6 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 	}
 }
 
-// cEmptyRender impl
-
-void cEmptyRender::DeleteVertexBuffer(VertexBuffer &vb) {
-    vb.FreeData();
-}
-
-void cEmptyRender::DeleteIndexBuffer(IndexBuffer &ib) {
-    ib.FreeData();
-}
-
-cEmptyRender::~cEmptyRender() {
-    Done();
-}
-
 // Render device selection
 
 cInterfaceRenderDevice *gb_RenderDevice = nullptr;

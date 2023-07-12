@@ -254,7 +254,7 @@ int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
         //Nothing to do
         return 0;
     }
-    FinishCommand();
+    FinishActiveDrawBuffer();
     activeCommand.clipPos.x = xmin;
     activeCommand.clipPos.y = ymin;
     activeCommand.clipSize.x = w;

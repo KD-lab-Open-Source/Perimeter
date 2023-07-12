@@ -10,7 +10,7 @@ public:
 	DrawBuffer* db;
     
     //Range of db which contains this mesh data
-    DrawBufferRange dbr;
+    DrawRange dbr;
     
     //Reference to cMeshStatic data
     sVertexXYZNT1* VertexBuffer;

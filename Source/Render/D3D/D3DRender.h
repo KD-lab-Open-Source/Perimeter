@@ -103,7 +103,8 @@ public:
 	void DeleteVertexBuffer(VertexBuffer &vb) override;
 	void DeleteIndexBuffer(IndexBuffer &ib) override;
     void SetActiveDrawBuffer(class DrawBuffer* db) override;
-    void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override;
+    void SubmitDrawBuffer(class DrawBuffer* db, DrawRange* range) override;
+    void SubmitBuffers(ePrimitiveType primitive, class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices, DrawRange* range) override;
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
 	int DeleteTexture(class cTexture *Texture) override;
 	void* LockTexture(class cTexture *Texture, int& Pitch) override;

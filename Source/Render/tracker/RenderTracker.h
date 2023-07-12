@@ -32,6 +32,7 @@ public:
         GET_DRAW_BUFFER,
         SET_ACTIVE_DRAW_BUFFER,
         SUBMIT_DRAW_BUFFER,
+        FINISH_ACTIVE_DRAW_BUFFER,
 #endif
         
         //PTR: Texture
@@ -71,7 +72,7 @@ public:
 #ifdef PERIMETER_SOKOL
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         //PTR: SokolCommand
-        FINISH_COMMAND,
+        CREATE_COMMAND,
         PROCESS_COMMAND,
 #endif
 #endif
@@ -129,7 +130,7 @@ static const char* getRenderEventTypeStr(RenderEvent::RenderEventType type) {
 #endif
 #ifdef PERIMETER_SOKOL
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-        case RenderEvent::FINISH_COMMAND: return "FINISH_COMMAND";
+        case RenderEvent::CREATE_COMMAND: return "CREATE_COMMAND";
         case RenderEvent::PROCESS_COMMAND: return "PROCESS_COMMAND";
 #endif
 #endif
@@ -158,7 +159,7 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
         case RenderEvent::FLUSH_SCENE:
 #ifdef PERIMETER_SOKOL
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-        case RenderEvent::FINISH_COMMAND:
+        case RenderEvent::CREATE_COMMAND:
         case RenderEvent::PROCESS_COMMAND:
 #endif
 #endif

@@ -35,7 +35,7 @@ int cSokolRender::EndScene() {
     }
 
     //Make sure there is nothing left to send as command
-    FinishCommand();
+    FinishActiveDrawBuffer();
     
     ActiveScene = false;
 
@@ -306,14 +306,33 @@ SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynami
     return buffer;
 }
 
-void cSokolRender::FinishCommand() {
+void cSokolRender::FinishActiveDrawBuffer() {
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
-#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-        RenderSubmitEvent(RenderEvent::FINISH_COMMAND, "No/Empty");
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
+        RenderSubmitEvent(RenderEvent::FINISH_ACTIVE_DRAW_BUFFER, "No/Empty", activeDrawBuffer);
 #endif
         return;
     }
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
+    RenderSubmitEvent(RenderEvent::FINISH_ACTIVE_DRAW_BUFFER, "Finish", activeDrawBuffer);
+#endif
+    xassert(!activeDrawBuffer->IsLocked());
+
+    if (0 == activeCommand.vertices && 0 == activeCommand.indices) {
+        activeCommand.base_elements = 0;
+        activeCommand.vertices = activeDrawBuffer->written_vertices;
+        activeCommand.indices = activeDrawBuffer->written_indices;
+    }
     
+    CreateCommand(&activeDrawBuffer->vb, activeDrawBuffer->written_vertices, &activeDrawBuffer->ib, activeDrawBuffer->written_indices);
+
+    activeDrawBuffer->PostDraw();
+    activeDrawBuffer = nullptr;
+}
+
+void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices) {
+    if (0 == vertices) vertices = activeCommand.vertices;
+    if (0 == indices) vertices = activeCommand.indices;
     PIPELINE_TYPE pipelineType = activePipelineType;
 #ifdef PERIMETER_DEBUG
     if (WireframeMode) pipelineType = PIPELINE_TYPE_LINE_STRIP;
@@ -321,7 +340,7 @@ void cSokolRender::FinishCommand() {
     
     pipeline_id_t pipeline_id = GetPipelineID(
             pipelineType,
-            activeDrawBuffer->vb.fmt,
+            vb->fmt,
             activePipelineMode
     );
     if (pipelines.count(pipeline_id) == 0) {
@@ -330,34 +349,26 @@ void cSokolRender::FinishCommand() {
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
     std::string label = "Pipeline: " + std::to_string(pipeline_id);
-    RenderSubmitEvent(RenderEvent::FINISH_COMMAND, label.c_str());
+    RenderSubmitEvent(RenderEvent::CREATE_COMMAND, label.c_str());
 #endif
 
 #ifdef PERIMETER_DEBUG
-    xassert(!activeDrawBuffer->IsLocked());
-    if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX1) {
+    if (vb->fmt & VERTEX_FMT_TEX1) {
         if (activeCommand.sokol_textures[0] != emptyTexture) {
             xassert(activeCommand.sokol_textures[0]);
             xassert(activeCommand.texture_handles[0]);
         }
         
     }
-    if (activeDrawBuffer->vb.fmt & VERTEX_FMT_TEX2) {
+    if (vb->fmt & VERTEX_FMT_TEX2) {
         xassert(activeCommand.sokol_textures[1]);
         xassert(activeCommand.texture_handles[1]);
     }
 #endif
-    
-    if (0 == activeCommand.vertices && 0 == activeCommand.indices) {
-        activeCommand.base_elements = 0;
-        activeCommand.vertices = activeDrawBuffer->written_vertices;
-        activeCommand.indices = activeDrawBuffer->written_indices;
-    }
 
     //Update buffers
-    if (activeDrawBuffer->vb.data) {
-        VertexBuffer* vb  = &activeDrawBuffer->vb;
-        size_t len = activeDrawBuffer->written_vertices * activeDrawBuffer->vb.VertexSize;
+    if (vb->data && vb->dirty) {
+        size_t len = vertices * vb->VertexSize;
         if (!vb->sg) {
             vb->sg = CreateSokolBuffer(vb, len, vb->dynamic, SG_BUFFERTYPE_VERTEXBUFFER);
         }
@@ -365,9 +376,8 @@ void cSokolRender::FinishCommand() {
             vb->sg->update(vb, len);
         }
     }
-    if (activeDrawBuffer->ib.data) {
-        IndexBuffer* ib  = &activeDrawBuffer->ib;
-        size_t len = activeDrawBuffer->written_indices * sizeof(indices_t);
+    if (ib->data && ib->dirty) {
+        size_t len = indices * sizeof(indices_t);
         if (!ib->sg) {
             ib->sg = CreateSokolBuffer(ib, len, ib->dynamic, SG_BUFFERTYPE_INDEXBUFFER);
         }
@@ -400,18 +410,18 @@ void cSokolRender::FinishCommand() {
     }
     
     //Transfer buffers to command
-    cmd->owned_vertex_buffer = activeDrawBuffer->vb.dynamic;
-    cmd->owned_index_buffer = activeDrawBuffer->ib.dynamic;
-    cmd->vertex_buffer = activeDrawBuffer->vb.sg;
-    cmd->index_buffer = activeDrawBuffer->ib.sg;
+    cmd->owned_vertex_buffer = vb->dynamic;
+    cmd->owned_index_buffer = ib->dynamic;
+    cmd->vertex_buffer = vb->sg;
+    cmd->index_buffer = ib->sg;
     if (cmd->owned_vertex_buffer) {
-        activeDrawBuffer->vb.sg = nullptr;
+        vb->sg = nullptr;
+        vb->burned = false;
     }
     if (cmd->owned_index_buffer) {
-        activeDrawBuffer->ib.sg = nullptr;
+        ib->sg = nullptr;
+        ib->burned = false;
     }
-    activeDrawBuffer->PostDraw();
-    activeDrawBuffer = nullptr;
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
@@ -428,7 +438,7 @@ void cSokolRender::FinishCommand() {
             + " Idxs: " + std::to_string(cmd->indices)
             + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))
             + " Tex1: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[1]));
-    RenderSubmitEvent(RenderEvent::FINISH_COMMAND, label.c_str(), cmd);
+    RenderSubmitEvent(RenderEvent::CREATE_COMMAND, label.c_str(), cmd);
 #endif
 }
 
@@ -438,7 +448,7 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
         if (activeDrawBuffer->IsLocked()) {
             activeDrawBuffer->Unlock();
         }
-        FinishCommand();
+        FinishActiveDrawBuffer();
     }
     cInterfaceRenderDevice::SetActiveDrawBuffer(db);
     if (activeDrawBuffer) {
@@ -449,13 +459,13 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
     activeCommand.indices = 0;
 }
 
-void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
+void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawRange* range) {
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
     RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
 #endif
     if (activeDrawBuffer != nullptr && activeDrawBuffer != db) {
         //We need to submit internal render buffer first
-        FinishCommand();
+        FinishActiveDrawBuffer();
     }
     activePipelineType = getPipelineType(db->primitive);
     activeDrawBuffer = db;
@@ -469,7 +479,23 @@ void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawBufferRange* range) {
             activeCommand.indices = activeDrawBuffer->written_indices;
         }
     }
-    FinishCommand();
+    FinishActiveDrawBuffer();
+}
+
+void cSokolRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices, DrawRange* range) {
+#ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
+    RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
+#endif
+    if (activeDrawBuffer != nullptr) {
+        //We need to submit internal render buffer first
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = getPipelineType(primitive);
+    activeDrawBuffer = nullptr;
+    activeCommand.base_elements = range ? range->offset : 0;
+    activeCommand.vertices = vertices;
+    activeCommand.indices = range ? range->len : indices;
+    CreateCommand(vb, vertices, ib, indices);
 }
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
@@ -478,7 +504,7 @@ void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
 #endif
     if (!matrix) matrix = &Mat4f::ID;
     if (isOrthographicProjSet || !activeCommandVP.eq(*matrix, 0)) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
     }
     isOrthographicProjSet = false;
     activeCommandVP = *matrix;
@@ -490,7 +516,7 @@ void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
 #endif
     if (!matrix) matrix = &Mat4f::ID;
     if (isOrthographicProjSet || !activeCommandW.eq(*matrix, 0)) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
     }
     isOrthographicProjSet = false;
     activeCommandW = *matrix;
@@ -498,7 +524,7 @@ void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
 
 void cSokolRender::SetTex2Lerp(float lerp) {
     if (activeCommand.fs_tex2_lerp != lerp) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
     }
     activeCommand.fs_tex2_lerp = lerp;
 }
@@ -508,21 +534,21 @@ void cSokolRender::UseOrthographicProjection() {
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX, "Orthographic");
 #endif
     if (!isOrthographicProjSet) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
     }
     isOrthographicProjSet = true;
 }
 
 void cSokolRender::SetColorMode(eColorMode color_mode) {
     if (activeCommand.fs_color_mode != color_mode) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
         activeCommand.fs_color_mode = color_mode;
     }
 }
 
 void cSokolRender::SetBlendState(eBlendMode blend) {
     if (activePipelineMode.blend != blend) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
         activePipelineMode.blend = blend;
     }
 }
@@ -545,7 +571,7 @@ void cSokolRender::SetTextures(float Phase, cTexture* Texture0, cTexture* Textur
 
     if (activeCommand.sokol_textures[0] != tex0
      || activeCommand.sokol_textures[1] != tex1) {
-        FinishCommand();
+        FinishActiveDrawBuffer();
         activeCommand.SetTexture(0, Texture0, tex0);
         activeCommand.SetTexture(1, Texture1, tex1);
     }
@@ -618,7 +644,7 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
 #ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_VIEWPROJ_MATRIX);
 #endif
-    FinishCommand();
+    FinishActiveDrawBuffer();
     SetClipRect(
         pDrawNode->vp.X,
         pDrawNode->vp.Y,
@@ -656,7 +682,7 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
             }
             bool state = value != 0;
             if (state != activePipelineMode.depth_write) {
-                FinishCommand();
+                FinishActiveDrawBuffer();
                 activePipelineMode.depth_write = state;
             }
             break;
@@ -664,7 +690,7 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
         case RS_ZFUNC: {
             eCMPFUNC depth_cmp = static_cast<eCMPFUNC>(value);
             if (depth_cmp != activePipelineMode.depth_cmp) {
-                FinishCommand();
+                FinishActiveDrawBuffer();
                 activePipelineMode.depth_cmp = depth_cmp;
             }
             break;
@@ -672,7 +698,7 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
         case RS_WIREFRAME: {
             bool state = value != 0;
             if (state != WireframeMode) {
-                FinishCommand();
+                FinishActiveDrawBuffer();
                 WireframeMode = state;
             }
             break;
@@ -681,7 +707,7 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
             eCullMode cull = static_cast<eCullMode>(value);
             if (cull >= CULL_CAMERA) cull = CameraCullMode;
             if (cull != activePipelineMode.cull) {
-                FinishCommand();
+                FinishActiveDrawBuffer();
                 activePipelineMode.cull = cull;
             }
             break;

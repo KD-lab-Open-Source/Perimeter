@@ -6,7 +6,7 @@ class cEmptyRender : public cInterfaceRenderDevice
 {
 public:
     cEmptyRender() = default;
-    ~cEmptyRender() override;
+    ~cEmptyRender() = default;
 
     eRenderDeviceSelection GetRenderSelection() const override {
         return DEVICE_HEADLESS;
@@ -79,9 +79,8 @@ public:
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override {}
     void SetBlendState(eBlendMode blend) override {}
 
-    void DeleteVertexBuffer(class VertexBuffer &vb) override;
-    void DeleteIndexBuffer(class IndexBuffer &ib) override;
-    void SubmitDrawBuffer(class DrawBuffer* db, struct DrawBufferRange* range) override {}
+    void SubmitDrawBuffer(class DrawBuffer* db, DrawRange* range) override {}
+    void SubmitBuffers(ePrimitiveType primitive, class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices, DrawRange* range) override {}
 
     void BeginDrawMesh(bool obj_mesh, bool use_shadow) override {}
     void EndDrawMesh() override {}

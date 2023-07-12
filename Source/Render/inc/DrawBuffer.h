@@ -1,11 +1,6 @@
 #ifndef PERIMETER_DRAWBUFFER_H
 #define PERIMETER_DRAWBUFFER_H
 
-struct DrawBufferRange {
-    size_t offset = 0;
-    size_t len = 0;
-};
-
 class DrawBuffer {
 private:
     bool LockSetup(size_t vertices, size_t indices);
