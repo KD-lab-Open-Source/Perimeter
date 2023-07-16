@@ -3127,10 +3127,10 @@ inline void CheckBuildingPowerButton(terUnitBase* pUnit)
 	CShellComplexPushButton* pBtnOn = (CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SELPANEL_POWERON_ID);
 	CShellComplexPushButton* pBtnOff = (CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SELPANEL_POWEROFF_ID);
 	if (pBtnOn && pBtnOff) {
-		pBtnOn->Show(TRUE);
-		pBtnOff->Show(TRUE);
-		pBtnOn->Enable(pUnit == 0 ? TRUE : (!pUnit->isBuildingPowerOn()));
-		pBtnOff->Enable(pUnit == 0 ? TRUE : (pUnit->isBuildingPowerOn()));
+		pBtnOn->Show(true);
+		pBtnOff->Show(true);
+		pBtnOn->Enable(pUnit == 0 ? true : (!pUnit->isBuildingPowerOn()));
+		pBtnOff->Enable(pUnit == 0 ? true : (pUnit->isBuildingPowerOn()));
 	}
 }
 
@@ -3138,28 +3138,28 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 {
 	CShellComplexPushButton* pBtn;
 
-#define SHOW_ICON_IF(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(TRUE); pBtn->Enable(enbl);}}
-#define SHOW_ICON_IF2(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(TRUE); pBtn->Enable(enbl || pBtn->GetCheck());}}
+#define SHOW_ICON_IF(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(true); pBtn->Enable(enbl);}}
+#define SHOW_ICON_IF2(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(true); pBtn->Enable(enbl || pBtn->GetCheck());}}
 
 //	bool bShowAttack = actions.op_attack && pUnit->isBuildingPowerOn() && pUnit->CanBuildingEnable();
 
-	SHOW_ICON_IF(actions.op_move,   TRUE, SQSH_SELPANEL_MOVE_ID);
-	SHOW_ICON_IF(actions.op_stop,   TRUE, SQSH_SELPANEL_STOP_ID);
-	SHOW_ICON_IF(actions.op_stop2,  TRUE, SQSH_SELPANEL_STOP2_ID);
-	SHOW_ICON_IF(actions.op_attack,	TRUE, SQSH_SELPANEL_SQ_ATTACK_ID);
-	SHOW_ICON_IF(actions.op_back,   TRUE, SQSH_SELPANEL_SQ_BACK_ID);
-	SHOW_ICON_IF(actions.op_offdeff,TRUE, SQSH_SELPANEL_SQ_OFDEF_ID);
-	SHOW_ICON_IF(actions.op_patrol, TRUE, SQSH_SELPANEL_SQ_PATROL_ID);
-	SHOW_ICON_IF(actions.op_sell,   TRUE, SQSH_SELPANEL_SELL_ID);
-	SHOW_ICON_IF(actions.op_install,TRUE, SQSH_SELPANEL_FRAME_INSTALL_ID);
-	SHOW_ICON_IF(actions.op_teleportate,TRUE, SQSH_SELPANEL_FRAME_TELEPORTATE_ID);
-	SHOW_ICON_IF(actions.op_alarm,  TRUE, SQSH_SELPANEL_FRAME_ALARM_ID);
-	SHOW_ICON_IF(actions.op_brig_back, TRUE, SQSH_SELPANEL_BRIG_BACK_ID);
-	SHOW_ICON_IF(actions.op_brig_change,TRUE, SQSH_SELPANEL_BRIG_CHANGE_ID);
-	SHOW_ICON_IF(actions.op_brig_build, TRUE, SQSH_SELPANEL_BRIG_BUILD_ID);
+	SHOW_ICON_IF(actions.op_move,   true, SQSH_SELPANEL_MOVE_ID);
+	SHOW_ICON_IF(actions.op_stop,   true, SQSH_SELPANEL_STOP_ID);
+	SHOW_ICON_IF(actions.op_stop2,  true, SQSH_SELPANEL_STOP2_ID);
+	SHOW_ICON_IF(actions.op_attack,	true, SQSH_SELPANEL_SQ_ATTACK_ID);
+	SHOW_ICON_IF(actions.op_back,   true, SQSH_SELPANEL_SQ_BACK_ID);
+	SHOW_ICON_IF(actions.op_offdeff,true, SQSH_SELPANEL_SQ_OFDEF_ID);
+	SHOW_ICON_IF(actions.op_patrol, true, SQSH_SELPANEL_SQ_PATROL_ID);
+	SHOW_ICON_IF(actions.op_sell,   true, SQSH_SELPANEL_SELL_ID);
+	SHOW_ICON_IF(actions.op_install,true, SQSH_SELPANEL_FRAME_INSTALL_ID);
+	SHOW_ICON_IF(actions.op_teleportate,true, SQSH_SELPANEL_FRAME_TELEPORTATE_ID);
+	SHOW_ICON_IF(actions.op_alarm,  true, SQSH_SELPANEL_FRAME_ALARM_ID);
+	SHOW_ICON_IF(actions.op_brig_back, true, SQSH_SELPANEL_BRIG_BACK_ID);
+	SHOW_ICON_IF(actions.op_brig_change,true, SQSH_SELPANEL_BRIG_CHANGE_ID);
+	SHOW_ICON_IF(actions.op_brig_build, true, SQSH_SELPANEL_BRIG_BUILD_ID);
 	SHOW_ICON_IF(actions.op_upgrade && pUnit->isBuildingPowerOn() && pUnit->CanBuildingEnable(), 
 		safe_cast<terBuilding*>(pUnit)->canUpgrade(), intf_prm.upgrade_button_id);
-	SHOW_ICON_IF(actions.op_charging, TRUE, SQSH_SELPANEL_UNIT_CHARGE_ID);
+	SHOW_ICON_IF(actions.op_charging, true, SQSH_SELPANEL_UNIT_CHARGE_ID);
 
 	updateButtonLabel(intf_prm.upgrading_button_id, 0, 0, false, true);
 	updateButtonLabel(intf_prm.upgrade_button_id, 0, 0, false, true);
@@ -3170,7 +3170,7 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 	if (actions.op_power_onoff && pUnit->CanBuildingEnable()) {
 		CShellComplexPushButton* pBtnOn = (CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SELPANEL_POWERON_ID);
 		if (pBtnOn) {
-			pBtnOn->Show(TRUE);
+			pBtnOn->Show(true);
 			bool powerOn = false;
 			CSELECT_AUTOLOCK();
 			const UnitList& selList=universe()->select.GetSelectList();
@@ -3190,8 +3190,8 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 	{
 		CShellComplexPushButton* pBtnOn = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_FIELDON_ID);
 		CShellComplexPushButton* pBtnCharge = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_START_CHARGE_ID);
-		pBtnOn->Show(TRUE);
-		pBtnCharge->Show(TRUE);
+		pBtnOn->Show(true);
+		pBtnCharge->Show(true);
 		bool fieldOn = false;
 		bool fieldOff = false;
 		bool chargeDisabled = false;
@@ -3224,7 +3224,7 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 
 	if (actions.op_offdeff) {
 		CShellComplexPushButton* pBtnOffDef = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_SQ_OFDEF_ID);
-		pBtnOffDef->Show(TRUE);
+		pBtnOffDef->Show(true);
 		pBtnOffDef->SetCheck(true);
 		CSELECT_AUTOLOCK();
 		//!!! В SelectList не обязательно сквад !!!
@@ -3349,12 +3349,12 @@ void CShellIconManager::ShowUpgradeBuildProcessIcons(const terUnitBase* pUnit)
 	if (pUnit->attr()->isUpgrade || pUnit->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)	{
 		GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Enable(false);
 		_shellIconManager.GetWnd(SQSH_SELPANEL_SELL_ID)->Show(pUnit->attr()->ID != UNIT_ATTRIBUTE_CORRIDOR_OMEGA);
-		_shellIconManager.GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Show(TRUE);
+		_shellIconManager.GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Show(true);
 		const terBuilding* b = safe_cast<const terBuilding*>(pUnit);
 		updateButtonLabel(pUnit->attr()->interfacePrm.upgrading_button_id, 0, GetUnitUpgradeProgress(b), b->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION, true);
 	} else {
 		ShellControlID ids[] = { SQSH_SELPANEL_SELL_ID };
-		ShowControls(TRUE, ids, sizeof(ids)/sizeof(ShellControlID));
+		ShowControls(true, ids, sizeof(ids)/sizeof(ShellControlID));
 	}
 }
 
@@ -3415,7 +3415,7 @@ void CShellIconManager::UpdateSelectionIcons()
 			{
 				if(attr->interfacePrm.actions.op_sell){
 					ShellControlID ids[] = { SQSH_SELPANEL_SELL_ID };
-					ShowControls(TRUE, ids, sizeof(ids)/sizeof(ShellControlID));
+					ShowControls(true, ids, sizeof(ids)/sizeof(ShellControlID));
 				}
 			}
 	*/

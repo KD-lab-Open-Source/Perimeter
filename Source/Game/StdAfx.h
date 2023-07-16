@@ -5,11 +5,6 @@
 #include <direct.h>
 #endif
 
-#ifdef PERIMETER_D3D9
-#include <d3d9.h>
-#include <d3dx9.h>
-#endif
-
 // Standart includes
 #include <climits>
 #include <string.h>
@@ -58,7 +53,3 @@
 #include "NetComEventBuffer.h"
 #include "CommonEvents.h"
 
-//TODO wtf?
-#ifdef small
-#undef small
-#endif
