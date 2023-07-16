@@ -62,7 +62,7 @@ extern void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,
 extern void GetFileName(const char *FullName,char *fname);				// возвращает имя файла, обрезает каталог
 extern void GetFilePath(const char *FullName,char *path);				// возвращает каталог
 
-bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
+bool SaveTGA(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,int& byte_per_pixel);
 extern void GetDimTexture(int& dx,int& dy,int& count);
 

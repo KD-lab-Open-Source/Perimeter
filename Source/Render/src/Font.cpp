@@ -286,7 +286,7 @@ bool cFontInternal::CreateTexture(const char* fontname, const char* filename, in
 
 bool cFontImage::Save(const char* fname)
 {
-	return SaveTga(fname,GetX(),GetY(),ImageData,GetBitPerPixel()/8);
+	return SaveTGA(fname,GetX(),GetY(),ImageData,GetBitPerPixel()/8);
 }
 
 bool cFontImage::Load(const char* fname)

@@ -15,6 +15,8 @@
 
 #include "tilemap/TileMapRender.h"
 
+#include "FileImage.h"
+
 #define BUMP_VTXTYPE   sVertexXYZT1
 #define BUMP_VTXFORMAT (BUMP_VTXTYPE::fmt)
 #define BUMP_VTXSIZE   sizeof(BUMP_VTXTYPE)
@@ -1506,8 +1508,6 @@ void cTileMapRender::IncUpdate(sBumpTile* pbump)
 	}
 }
 
-
-bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
 void cTileMapRender::SaveUpdateStat()
 {
 	static int tga_num=-1;
@@ -1545,7 +1545,7 @@ void cTileMapRender::SaveUpdateStat()
 
 	char fname[100];
 	sprintf(fname,"tga\\%05i.tga",tga_num);
-	SaveTga(fname,dx,dy,buf,4);
+    SaveTGA(fname,dx,dy,buf,4);
 	delete[] buf;
 
 }

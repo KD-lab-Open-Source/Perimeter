@@ -196,7 +196,7 @@ uint8_t flags;
 
 #pragma pack(pop)
 
-bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel)
+bool SaveTGA(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel)
 {
 	bool bHasAlpha=false;
 	int file= file_open(filename, _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
@@ -316,7 +316,7 @@ public:
 	}
 	virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
 	{
-		if(!SaveTga(fname,x,y,(unsigned char*)pointer,bpp/8))
+		if(!SaveTGA(fname,x,y,(unsigned char*)pointer,bpp/8))
 			return -1;
 		return 0;
 	}
