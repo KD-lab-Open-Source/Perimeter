@@ -106,6 +106,9 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         case PIPELINE_TYPE_TRIANGLE:
         case PIPELINE_TYPE_TRIANGLESTRIP:
             switch (ctx.vertex_fmt) {
+                case sVertexXYZT1::fmt:
+                    ctx.shader_funcs = &shader_terrain;
+                    break;
                 case sVertexXYZDT1::fmt:
                     ctx.shader_funcs = &shader_color_tex1;
                     break;
@@ -208,30 +211,61 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         fprintf(stderr, "RegisterPipeline: invalid shader ID pipeline '%s'\n", desc.label);
         return;
     }
-    if (0 <= ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params")) {
-        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "color_texture_vs_params") != sizeof(color_texture_vs_params_t)) {
-            fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+    shader_id_t shader_id = ctx.shader_funcs->get_id();
+    switch (shader_id) {
+        case shader_id_color_tex1:
+        case shader_id_color_tex2:
+            if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "color_texture_vs_params") != sizeof(color_texture_vs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params"))  {
+                fprintf(stderr, "RegisterPipeline: 'color_texture_fs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "color_texture_fs_params") != sizeof(color_texture_fs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'color_texture_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            }
+            break;
+        case shader_id_normal:
+            if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "normal_texture_vs_params") != sizeof(normal_texture_vs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            }
+            break;
+        case shader_id_terrain:
+            if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "terrain_vs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'terrain_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "terrain_vs_params") != sizeof(terrain_vs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'terrain_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "terrain_fs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'terrain_fs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "terrain_fs_params") != sizeof(terrain_fs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'terrain_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            }
+            break;
+        default:
+            fprintf(stderr, "RegisterPipeline: Unknown shader id '%d' at pipeline '%s'\n", shader_id, desc.label);
             return;
-        }
-    } else if (0 <= ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params")) {
-        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "normal_texture_vs_params") != sizeof(normal_texture_vs_params_t)) {
-            fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
-            return;
-        }
-    } else {
-        fprintf(stderr, "RegisterPipeline: 'vs_params' uniform not found at pipeline '%s'\n", desc.label);
-        return;
-    }
-    if (0 <= ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params")) {
-        if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "color_texture_fs_params") != sizeof(color_texture_fs_params_t)) {
-            fprintf(stderr, "RegisterPipeline: 'color_texture_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
-            return;
-        }
-    } else if (desc.label == std::string("normal_program_shader")) {
-        //No fs params yet
-    } else {
-        fprintf(stderr, "RegisterPipeline: 'fs_params' uniform not found at pipeline '%s'\n", desc.label);
-        return;
     }
     if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
         fprintf(stderr, "RegisterPipeline: 'un_tex0' image slot not found at pipeline '%s'\n", desc.label);

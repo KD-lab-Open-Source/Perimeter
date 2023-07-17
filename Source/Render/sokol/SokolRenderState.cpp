@@ -171,8 +171,8 @@ int cSokolRender::EndScene() {
         sg_apply_bindings(&bindings);
         
         //Apply VS uniforms
-        int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params");
-        if (0 <= vs_params_slot) {
+        shader_id_t shader_id = shader_funcs->get_id();
+        if (shader_id == shader_id_color_tex1 || shader_id == shader_id_color_tex2) {
             color_texture_vs_params_t vs_params;
             if (command->vs_mvp) {
                 vs_params.un_mvp = *command->vs_mvp;
@@ -180,12 +180,10 @@ int cSokolRender::EndScene() {
                 xxassert(0, "cSokolRender::EndScene missing mvp");
                 continue;
             }
+            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params");
+            xxassert(0 <= vs_params_slot, "No vs slot found");
             sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
-            vs_params_slot = -1;
-        } else {
-            vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params");
-        }
-        if (0 <= vs_params_slot) {
+        } else if (shader_id == shader_id_normal) {
             normal_texture_vs_params_t vs_params;
             if (command->vs_mvp) {
                 vs_params.un_mvp = *command->vs_mvp;
@@ -193,36 +191,66 @@ int cSokolRender::EndScene() {
                 xxassert(0, "cSokolRender::EndScene missing mvp");
                 continue;
             }
+            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params");
+            xxassert(0 <= vs_params_slot, "No vs slot found");
             sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
-            vs_params_slot = -1;
+        } else if (shader_id == shader_id_terrain) {
+            terrain_vs_params_t vs_params;
+            if (command->vs_mvp) {
+                vs_params.un_mvp = *command->vs_mvp;
+            } else {
+                xxassert(0, "cSokolRender::EndScene missing mvp");
+                continue;
+            }
+            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "terrain_vs_params");
+            xxassert(0 <= vs_params_slot, "No vs slot found");
+            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
         }
 
-        //Apply FS uniforms, currently only for shader with 2 texures
-        int fs_params_slot = -1;
-        if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-            fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params");
-            if (0 <= fs_params_slot) {
-                color_texture_fs_params_t fs_params;
-                fs_params.un_color_mode = static_cast<int>(command->fs_color_mode);
-                fs_params.un_tex2_lerp = command->fs_tex2_lerp;
-                switch (command->fs_alpha_test) {
-                    default:
-                    case ALPHATEST_NONE:
-                        fs_params.un_alpha_test = -1.0f;
-                        break;
-                    case ALPHATEST_GT_0:
-                        fs_params.un_alpha_test = 0.0f;
-                        break;
-                    case ALPHATEST_GT_1:
-                        fs_params.un_alpha_test = 1.0f;
-                        break;
-                    case ALPHATEST_GT_254:
-                        fs_params.un_alpha_test = 254.0f;
-                        break;
-                }
-                sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, SG_RANGE_REF(fs_params));
-                fs_params_slot = -1;
+        //Apply FS uniforms
+        if (shader_id == shader_id_color_tex2) {
+            color_texture_fs_params_t fs_params;
+            fs_params.un_color_mode = static_cast<int>(command->fs_color_mode);
+            fs_params.un_tex2_lerp = command->fs_tex2_lerp;
+            switch (command->fs_alpha_test) {
+                default:
+                case ALPHATEST_NONE:
+                    fs_params.un_alpha_test = -1.0f;
+                    break;
+                case ALPHATEST_GT_0:
+                    fs_params.un_alpha_test = 0.0f;
+                    break;
+                case ALPHATEST_GT_1:
+                    fs_params.un_alpha_test = 1.0f;
+                    break;
+                case ALPHATEST_GT_254:
+                    fs_params.un_alpha_test = 254.0f;
+                    break;
             }
+            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params");
+            xxassert(0 <= fs_params_slot, "No fs slot found");
+            sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, SG_RANGE_REF(fs_params));
+        } else if (shader_id == shader_id_terrain) {
+            terrain_fs_params_t fs_params;
+            fs_params.un_tile_color = Vect4f(1.0f, 1.0f, 1.0f, 1.0f);
+            switch (command->fs_alpha_test) {
+                default:
+                case ALPHATEST_NONE:
+                    fs_params.un_alpha_test = -1.0f;
+                    break;
+                case ALPHATEST_GT_0:
+                    fs_params.un_alpha_test = 0.0f;
+                    break;
+                case ALPHATEST_GT_1:
+                    fs_params.un_alpha_test = 1.0f;
+                    break;
+                case ALPHATEST_GT_254:
+                    fs_params.un_alpha_test = 254.0f;
+                    break;
+            }
+            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "terrain_fs_params");
+            xxassert(0 <= fs_params_slot, "No fs slot found");
+            sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, SG_RANGE_REF(fs_params));
         }
 
         //Draw
@@ -367,18 +395,18 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
 #endif
 
     //Update buffers
-    if (vb->data && vb->dirty) {
+    if (vb->data && (vb->sg == nullptr || vb->dirty)) {
         size_t len = vertices * vb->VertexSize;
-        if (!vb->sg) {
+        if (vb->sg == nullptr) {
             vb->sg = CreateSokolBuffer(vb, len, vb->dynamic, SG_BUFFERTYPE_VERTEXBUFFER);
         }
         if (vb->dynamic) {
             vb->sg->update(vb, len);
         }
     }
-    if (ib->data && ib->dirty) {
+    if (ib->data && (!ib->sg || ib->dirty)) {
         size_t len = indices * sizeof(indices_t);
-        if (!ib->sg) {
+        if (ib->sg == nullptr) {
             ib->sg = CreateSokolBuffer(ib, len, ib->dynamic, SG_BUFFERTYPE_INDEXBUFFER);
         }
         if (ib->dynamic) {
