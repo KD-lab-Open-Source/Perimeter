@@ -172,16 +172,18 @@ int cSokolRender::UpdateRenderMode() {
 
 int cSokolRender::Done() {
     RenderSubmitEvent(RenderEvent::DONE, "Sokol start");
-    if (sdl_window) {
-        //Make sure is called only once, as it may crash in some backends/OSes
-        sg_shutdown();
-    }
+    bool do_sg_shutdown = sdl_window != nullptr;
     int ret = cInterfaceRenderDevice::Done();
     ClearCommands();
     ClearPipelines();
     shaders.clear();
     delete emptyTexture;
     emptyTexture = nullptr;
+    //At this point sokol stuff should be cleaned up, is important as calling sg_* after this will result in crashes
+    //Make sure is called only once, as repeated shutdowns may crash in some backends/OSes
+    if (do_sg_shutdown) {
+        sg_shutdown();
+    }
 #ifdef SOKOL_METAL
     if (sdlMetalView != nullptr) {
         SDL_Metal_DestroyView(sdlMetalView);
