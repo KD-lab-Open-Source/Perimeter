@@ -518,9 +518,35 @@ void XErrorHandler::Abort(const std::string& message, int code, int val, const c
 }
 
 bool XErrorHandler::ShowErrorMessage(const char* message) {
+    //Break too long lines
+    std::string text;
+    size_t line_len = 0;
+    const char* ptr = message;
+    while (true) {
+        const char c = *ptr;
+        if (c == '\0') {
+            break;
+        }
+
+        ptr++;
+        if (c == '\n' || c == '\r') {
+            line_len = 0;
+            if (c == '\n') {
+                text += '\n';
+            }
+        } else {
+            text += c;
+            line_len += 1;
+            if (line_len >= 160) {
+                text += '\n';
+                line_len = 0;
+            }
+        }
+    }
+    
     int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                                        "Perimeter error",
-                                       message,
+                                       text.c_str(),
                                        nullptr);
     if (err) {
         SDL_PRINT_ERROR("Creating error window");
