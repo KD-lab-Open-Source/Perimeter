@@ -35,6 +35,10 @@
 #include <SDL_image.h>
 #include <SDL_vulkan.h>
 
+#ifdef _WIN32
+#include <commdlg.h>
+#endif
+
 //#define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN
 #define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN_DESKTOP
 

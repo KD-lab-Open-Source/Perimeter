@@ -9,6 +9,10 @@
 #include <thread>
 #include <SDL_thread.h>
 
+#ifdef _WIN32
+#include "objbase.h"
+#endif
+
 const SDL_threadID bad_thread_id=-1;
 
 HTManager* HTManager::self=nullptr;
