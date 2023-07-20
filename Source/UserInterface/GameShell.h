@@ -41,6 +41,7 @@ public:
 	void startCmdline(const CommandLineData& data);
 	void switchToInitialMenu();
 
+    void MultiplayerGameStarting();
 	void MultiplayerGameStart(const MissionDescription& mission);
     void MultiplayerGameRestore(const MissionDescription& mission);
 

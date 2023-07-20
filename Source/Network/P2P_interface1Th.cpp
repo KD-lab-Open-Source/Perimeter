@@ -51,6 +51,8 @@ const char* PNetCenter::getStrState() const
 		return("PNC_STATE__NET_CENTER_CRITICAL_ERROR");
 	case		PNC_STATE__HOST_TUNING_GAME:
 		return("PNC_STATE__HOST_TUNING_GAME");
+    case		PNC_STATE__HOST_SENDING_GAME:
+        return("PNC_STATE__HOST_SENDING_GAME");
 	case		PNC_STATE__HOST_LOADING_GAME:
 		return("PNC_STATE__HOST_LOADING_GAME");
 	case		PNC_STATE__HOST_GAME:
@@ -183,12 +185,17 @@ PNetCenter::~PNetCenter()
 
     DestroyEvent(hSecondThreadInitComplete);
     DestroyEvent(hCommandExecuted);
-    
+
     if (hostMissionDescription) {
         delete hostMissionDescription;
         hostMissionDescription = nullptr;
     }
-    
+
+    if (clientMissionDescription) {
+        delete clientMissionDescription;
+        clientMissionDescription = nullptr;
+    }
+
     for (auto cmd : interfaceCommandList) {
         delete cmd;
     }
@@ -317,13 +324,19 @@ void PNetCenter::HandlerInputNetCommand()
 		case NETCOM_4C_ID_START_LOAD_GAME:
 			{
 				netCommand4C_StartLoadGame nc4c_sl(in_ClientBuf);
-				clientMissionDescription=nc4c_sl.missionDescription_;
+                if (nc4c_sl.missionDescription_ == nullptr) {
+                    gameShell->MultiplayerGameStarting();
+                } else {
+                    //Transfer mission from packet
+                    clientMissionDescription = nc4c_sl.missionDescription_;
+                    nc4c_sl.missionDescription_ = nullptr;
 
-				m_bStarted = true;
+                    m_bStarted = true;
 
-				///if(!isHost()) ExecuteInternalCommand(PNC_COMMAND__CLIENT_STARTING_LOAD_GAME, false);
-				//game_shell.GameStart(ncbc.missionDescription_);
-                gameShell->MultiplayerGameStart(clientMissionDescription);
+                    ///if(!isHost()) ExecuteInternalCommand(PNC_COMMAND__CLIENT_STARTING_LOAD_GAME, false);
+                    //game_shell.GameStart(ncbc.missionDescription_);
+                    gameShell->MultiplayerGameStart(*clientMissionDescription);
+                }
 			}
 			break;
         case NETCOM_4G_ID_EXIT: {
@@ -338,7 +351,7 @@ void PNetCenter::HandlerInputNetCommand()
 					std::string s;
 					for(int i=0; i<NETWORK_PLAYERS_MAX; i++){
 						if(ncp.playersIDArr[i]!=netCommand4C_Pause::NOT_PLAYER_ID) {
-							clientMissionDescription.getPlayerName(ncp.playersIDArr[i], s);
+							clientMissionDescription->getPlayerName(ncp.playersIDArr[i], s);
 						}
 					}
 					gameShell->showConnectFailedInGame(s);
@@ -462,7 +475,7 @@ void PNetCenter::HandlerInputNetCommand()
         case NETCOM_4C_ID_DESYNC_RESTORE: {
             //Load the mission state sent by host
             netCommand4C_DesyncRestore nc(in_ClientBuf);
-            clientMissionDescription=*nc.missionDescription;
+            clientMissionDescription=nc.missionDescription.release();
 
             if (!isHost()) {
                 CAutoLock _lock(m_GeneralLock); //! Lock   
@@ -473,10 +486,10 @@ void PNetCenter::HandlerInputNetCommand()
             
             {
                 CAutoLock _lock(m_GeneralLock); //! Lock
-                gameShell->MultiplayerGameRestore(clientMissionDescription);
+                gameShell->MultiplayerGameRestore(*clientMissionDescription);
             }
 
-            clientMissionDescription.gameType_ = GT_MULTI_PLAYER_LOAD;
+            clientMissionDescription->gameType_ = GT_MULTI_PLAYER_LOAD;
         
             LogMsg("Desync Restore attempt %d\n", nc.desync_amount);
             
@@ -601,7 +614,7 @@ void PNetCenter::P2PIQuant()
 			}
 			else if(clocki() > lastTimeServerPacket+TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION){
 				std::string s;
-				clientMissionDescription.getAllOtherPlayerName(s);
+				clientMissionDescription->getAllOtherPlayerName(s);
 				gameShell->showConnectFailedInGame(s);
 				clientInPacketPause=true;
 			}
@@ -679,11 +692,11 @@ bool PNetCenter::setPause(bool pause)
 	if(m_bStarted){
 		CAutoLock p_Lock(m_GeneralLock);
 		if(pause){
-			netCommand4H_RequestPause nc_rp(clientMissionDescription.activePlayerID, true);
+			netCommand4H_RequestPause nc_rp(clientMissionDescription->activePlayerID, true);
 			SendEvent(&nc_rp);
 		}
 		else {
-			netCommand4H_RequestPause nc_rp(clientMissionDescription.activePlayerID, false);
+			netCommand4H_RequestPause nc_rp(clientMissionDescription->activePlayerID, false);
 			SendEvent(&nc_rp);
 		}
 		return 1;
@@ -704,7 +717,7 @@ void PNetCenter::StartLoadTheGame(bool state)
 void PNetCenter::GameIsReady()
 {
     //Clear MD data in case we restored it
-    clientMissionDescription.clearData();
+    clientMissionDescription->clearData();
 	netCommandC_PlayerReady event2(vMap.getWorldCRC());
 	SendEventSync(&event2);
 }

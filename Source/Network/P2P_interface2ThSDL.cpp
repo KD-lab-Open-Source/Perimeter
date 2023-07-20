@@ -22,9 +22,6 @@ bool PNetCenter::Init()
         server_arch_mask = strtoull(server_arch_mask_str, nullptr, 16);
     }
     
-    //Reset our attributes in case we played before
-    initAttributes();
-    
     server_content_crc = get_content_crc();
     
 #if defined(PERIMETER_DEBUG) && defined(PERIMETER_EXODUS) && 0
@@ -39,7 +36,7 @@ bool PNetCenter::Init()
 }
 
 bool PNetCenter::ServerStart()
-{
+{    
     m_hostNETID = m_localNETID = NETID_NONE;
     flag_connected = connectionHandler.startListening(hostConnection.port());
     if (!flag_connected) {
@@ -360,11 +357,11 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
         }
     }
     if(m_bStarted){
-        int idx=clientMissionDescription.findPlayer(netid);
+        int idx=clientMissionDescription->findPlayer(netid);
         //xassert(idx!=-1);
         if(idx!=-1){
             //отсылка сообщения о том, что игрок вышел
-            PlayerData& pd = clientMissionDescription.playersData[idx];
+            PlayerData& pd = clientMissionDescription->playersData[idx];
             std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
                 pd.name(), getLocale()
             );
@@ -374,7 +371,7 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
             );
         }
         //Удаление игрока из clientMD
-        clientMissionDescription.disconnectPlayer2PlayerDataByNETID(netid);
+        clientMissionDescription->disconnectPlayer2PlayerDataByNETID(netid);
     }
 
 }

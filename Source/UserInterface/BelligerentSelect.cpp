@@ -84,6 +84,21 @@ BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent) {
     return FACTION_NONE;
 }
 
+void setBelligerentFactionSound(BELLIGERENT_FACTION faction) {
+    switch(faction){
+        default:
+        case EXODUS:
+            SNDSetBelligerentIndex(0);
+            break;
+        case HARKBACK:
+            SNDSetBelligerentIndex(1);
+            break;
+        case EMPIRE:
+            SNDSetBelligerentIndex(2);
+            break;
+    }
+}
+
 std::string getBelligerentFactionName(BELLIGERENT_FACTION faction) {
     switch (faction) {
         case EXODUS:

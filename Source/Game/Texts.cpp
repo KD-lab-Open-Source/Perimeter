@@ -62,6 +62,7 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.Multiplayer.IncorrectArch=Сервер имеет другую битность или архитектуру ЦПУ, другой тип билда (Debug/Release), операционную систему или использован другой компилятор (MSVC/Clang/GCC), пожалуйста, убедитесь, что они совпадают",
            "Interface.Menu.Messages.Multiplayer.SignatureError=Проверка подписи или CRC не прошла, соединение может быть ненадёжным",
            "Interface.Menu.Messages.Multiplayer.HostTerminated=Хост прекратил игру или отключился",
+           "Interface.Menu.Messages.Multiplayer.StartingGame=Игра начинается...",
            "Interface.Menu.Messages.Confirmations.PendingChanges=Отложенные изменения не будут применены, вернуться в главное меню?",
            "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Чтобы применить изменения, требуется перезапуск игры, вы уверены?",
            //Empty to not mess with ,'s
@@ -103,6 +104,7 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.Multiplayer.IncorrectArch=Server has different bits or CPU architecture, different build type (Debug/Release), Operating System or used a different compiler (MSVC/Clang/GCC), please ensure they match",
            "Interface.Menu.Messages.Multiplayer.SignatureError=Signature or CRC checks failed, connection may be unreliable",
            "Interface.Menu.Messages.Multiplayer.HostTerminated=Host has terminated session or disconnected",
+           "Interface.Menu.Messages.Multiplayer.StartingGame=Starting the game...",
            "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
            "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Game restart is required to apply changes, are you sure?",
            //Empty to not mess with ,'s

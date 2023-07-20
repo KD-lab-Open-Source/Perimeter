@@ -6,6 +6,7 @@
 #include "../../HT/ht.h"
 #include "Localization.h"
 #include "MultiplayerCommon.h"
+#include "BelligerentSelect.h"
 
 //This file handles mostly ingame multiplayer stuff but some parts are shared with main menu
 
@@ -106,6 +107,26 @@ int multiplayerMapNotFoundQuant(float, float ) {
         return 0;
     }
     return 1;
+}
+
+void GameShell::MultiplayerGameStarting() {
+    //SHow text message in chat so players know is about to start
+    const char* text = qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.StartingGame");
+    addStringToChatWindow(false, text, getLocale());
+    
+    //
+    const MissionDescription& mission = getNetClient()->getLobbyMissionDescription();
+    BELLIGERENT_FACTION faction = FACTION_NONE;
+    for (auto& player : mission.playersData) {
+        if (mission.activePlayerID == player.playerID) {
+            faction = getBelligerentFaction(player.belligerent);
+            break;
+        }
+    }
+    if (faction != FACTION_NONE) {
+        setBelligerentFactionSound(faction);
+        SND2DPlaySound("Frame_Teleportation");
+    }
 }
 
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {

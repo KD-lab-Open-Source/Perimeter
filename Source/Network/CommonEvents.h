@@ -140,19 +140,33 @@ struct netCommand4G_Exit : netCommandGeneral
 
 struct netCommand4C_StartLoadGame : netCommandGeneral {
 
-	MissionDescription missionDescription_;
+	MissionDescription* missionDescription_ = nullptr;
 
-	netCommand4C_StartLoadGame(const MissionDescription& missionDescription, int playerID) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
-		missionDescription_=missionDescription;
-        missionDescription_.activePlayerID = playerID;
+	netCommand4C_StartLoadGame(const MissionDescription* missionDescription) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
+        if (missionDescription) {
+            missionDescription_ = new MissionDescription(*missionDescription);
+        }
 	}
+    
+    ~netCommand4C_StartLoadGame() override {
+        delete missionDescription_;
+    }
 
 	netCommand4C_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
-		missionDescription_.read(in);
+        bool hasMission = false;
+        in.read(&hasMission, sizeof(hasMission));
+		if (hasMission) {
+            missionDescription_ = new MissionDescription();
+            missionDescription_->read(in);
+        }
 	}
 
 	void Write(XBuffer& out) const override {
-		missionDescription_.write(out);
+        bool hasMission = missionDescription_ != nullptr;
+        out.write(&hasMission, sizeof(hasMission));
+		if (hasMission) {
+            missionDescription_->write(out);
+        }
 	}
 };
 
@@ -506,7 +520,7 @@ public:
     std::unique_ptr<MissionDescription> missionDescription;
     XBuffer netlog = XBuffer(0, true);
 
-    netCommand4H_DesyncAcknowledge(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
+    netCommand4H_DesyncAcknowledge(std::unique_ptr<MissionDescription> missionDescription_) : netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE), missionDescription(std::move(missionDescription_)) {
     }
 
     netCommand4H_DesyncAcknowledge(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
@@ -527,7 +541,7 @@ public:
     int desync_amount;
     std::unique_ptr<MissionDescription> missionDescription;
 
-    netCommand4C_DesyncRestore(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE) {
+    netCommand4C_DesyncRestore(std::unique_ptr<MissionDescription> missionDescription_) : netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE), missionDescription(std::move(missionDescription_)) {
         desync_amount = 0;
     }
 

@@ -363,26 +363,17 @@ bool PNetCenter::SecondThread(void)
 	return false;
 }
 
-
-void PNetCenter::UpdateBattleData()
-{
-    //Load current attributes into host mission
-    XPrmOArchive oaScripts;
-    oaScripts.binary_friendly = true;
-    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
-    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
-    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
-    std::swap(hostMissionDescription->scriptsData, oaScripts.buffer());
-
-    MissionDescription& mission = *hostMissionDescription;
-	if (mission.gameType_ == GT_MULTI_PLAYER_CREATE) {
+void PNetCenter::UpdateBattleData() {
+    MissionDescription* mission = hostMissionDescription;
+    
+	if (mission->gameType_ == GT_MULTI_PLAYER_CREATE) {
 		//Random xchg
 		////random_shuffle(missionDescription.playersData, missionDescription.playersData+missionDescription.playersAmount);
-		mission.shufflePlayers();
-	} else if (mission.gameType_ == GT_MULTI_PLAYER_LOAD) {
+		mission->shufflePlayers();
+	} else if (mission->gameType_ == GT_MULTI_PLAYER_LOAD) {
         //Set the current allocated client player names
-        for(int i=0; i<mission.playerAmountScenarioMax; i++) {
-            PlayerData& pd = mission.playersData[i];
+        for(int i=0; i<mission->playerAmountScenarioMax; i++) {
+            PlayerData& pd = mission->playersData[i];
             if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
                 for (auto client : m_clients) {
                     if (client->netidPlayer == pd.netid) {
@@ -394,22 +385,40 @@ void PNetCenter::UpdateBattleData()
             }
         }
 	}
-    mission.packPlayerIDs();
+    mission->packPlayerIDs();
+
+    LogMsg("Battle info ready\n");
+}
+
+void PNetCenter::SendBattleData() {
+    MissionDescription* mission = hostMissionDescription;
     
-	for(int i=0; i<mission.playerAmountScenarioMax; i++){
-        PlayerData& pd = mission.playersData[i];
+    //Init attrs just in case
+    initAttributes(false, nullptr);
+
+    //Load current attributes into host mission
+    XPrmOArchive oaScripts;
+    oaScripts.binary_friendly = true;
+    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
+    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
+    std::swap(mission->scriptsData, oaScripts.buffer());
+
+    for(int i=0; i<mission->playerAmountScenarioMax; i++){
+        PlayerData& pd = mission->playersData[i];
         //Close open positions
         if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN) {
             pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
         }
         //Send data
 		if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-			netCommand4C_StartLoadGame nccsl(mission, pd.playerID);
-            printf("Sending to %d %d %lu\n", i, pd.playerID, pd.netid);
+            mission->activePlayerID = pd.playerID;
+            netCommand4C_StartLoadGame nccsl(mission);
+            printf("Sending mission to %d %d %lu\n", i, pd.playerID, pd.netid);
 			SendEvent(nccsl, pd.netid);
 		}
 	}
-    mission.activePlayerID = mission.findPlayer(m_localNETID);
+    mission->activePlayerID = mission->findPlayer(m_localNETID);
 
 	LogMsg("Sent battle info\n");
 }
@@ -566,12 +575,30 @@ void PNetCenter::LLogicQuant()
 				//ReleaseAllPlayers
                 ClearQueuedGameCommands();
 
-				LogMsg("Wait for all clients ready. \n");
+                //Notify clients that we will send mission now
+                netCommand4C_StartLoadGame start_signal(nullptr);
+                SendEvent(start_signal, NETID_ALL);
 
-				m_state=PNC_STATE__HOST_LOADING_GAME;
+				LogMsg("Wait for all clients to receive battle info. \n");
+
+				m_state=PNC_STATE__HOST_SENDING_GAME;
 			}
 		}
 		break;
+    case PNC_STATE__HOST_SENDING_GAME:
+        {
+            CAutoLock _lock(m_GeneralLock); //! Lock
+
+            LogMsg("Sending battle info\n");
+
+            SendBattleData();
+            ClearQueuedGameCommands();
+
+            LogMsg("Wait for all clients ready. \n");
+
+            m_state=PNC_STATE__HOST_LOADING_GAME;
+        }
+        break;
 	case PNC_STATE__HOST_LOADING_GAME: 
 		{
 			CAutoLock _lock(m_GeneralLock); //! Lock
@@ -1072,7 +1099,8 @@ end_while_01:;
 
 			ClearClientData();
 			//Т.к. миграция разрешается только после START_LOAD_GAME clientMissionDescription корректен
-			*hostMissionDescription = clientMissionDescription;
+            delete hostMissionDescription;            
+			hostMissionDescription = new MissionDescription(*clientMissionDescription);
 			hostMissionDescription->clearAllPlayerStartReady();
 			//missionDescription.clearAllPlayerGameReady();
 			//clientMissionDescription

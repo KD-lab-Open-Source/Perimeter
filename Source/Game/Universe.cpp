@@ -1276,18 +1276,7 @@ void terUniverse::SetActivePlayer(int id)
 	select.Quant();
 
     BELLIGERENT_FACTION faction = getBelligerentFaction(activePlayer()->belligerent());
-	switch(faction){
-    default:
-	case EXODUS:
-		SNDSetBelligerentIndex(0);
-		break;
-	case HARKBACK:
-		SNDSetBelligerentIndex(1);
-		break;
-	case EMPIRE:
-		SNDSetBelligerentIndex(2);
-		break;
-	}
+    setBelligerentFactionSound(faction);
 
 	field_dispatcher->Update();
 
