@@ -787,6 +787,8 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     
     setLogicFp();
 
+    if (loadProgressUpdate) loadProgressUpdate(0.3f);
+
     //---------------------
     //Load binary data from memory or from files
 
@@ -853,7 +855,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
         }
     }
 
-    if (loadProgressUpdate) loadProgressUpdate(0.6f);
+    if (loadProgressUpdate) loadProgressUpdate(0.4f);
 
     //---------------------
 
@@ -881,13 +883,16 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
         xm_random_generator.set(1);
     }
 
+    if (loadProgressUpdate) loadProgressUpdate(0.45f);
+
     //---------------------
 
     //If a campaign mission then load campaign attributes
     bool campaign = 0 <= mission.missionNumber;
     initAttributes(campaign, mission.scriptsData.length() ? &mission.scriptsData : nullptr);
 
-    if (loadProgressUpdate) loadProgressUpdate(0.7f);
+
+    if (loadProgressUpdate) loadProgressUpdate(0.75f);
 
     //---------------------
 
@@ -934,7 +939,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
         vMap.loadHardness();
     }
 
-    if (loadProgressUpdate) loadProgressUpdate(0.9f);
+    if (loadProgressUpdate) loadProgressUpdate(0.85f);
 
     //---------------------
     gameShell->changeControlState(manualData.controls, true);
@@ -1010,7 +1015,9 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     }
 
     enableEventChecking_ = true;
-
+    
+    if (loadProgressUpdate) loadProgressUpdate(0.9f);
+    
     //---------------------
     
     SetActivePlayer(mission.activePlayerID);
@@ -1029,6 +1036,8 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     ai_tile_map->InitialUpdate();
     cluster_column_.setUnchanged();
     updateClusterColumn(sRectS(0, 0, vMap.H_SIZE, vMap.V_SIZE));
+
+    if (loadProgressUpdate) loadProgressUpdate(0.95f);
 
     //-----------------
     vMap.WorldRender();
