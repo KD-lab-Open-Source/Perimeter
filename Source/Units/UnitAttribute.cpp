@@ -274,7 +274,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute->InstallBound || modelScaleOld != modelScale) {
+	if(attribute->InstallBound && modelScaleOld != modelScale) {
 		cObjectNodeRoot* model = createObject(modelData.modelName, attribute->belligerent);
 
 		int vertex_num = 0;
@@ -762,6 +762,7 @@ int _lastInitAttributesType = 0; //0 = None or single use, 1 = normal, 2 = campa
 void initAttributes(bool campaign, XBuffer* scriptsSerialized) {
     //Check if we don't need to actually load if type is same
     int initAttrType = scriptsSerialized ? 0 : (campaign ? 2 : 1);
+    fprintf(stdout, "initAttributes %d -> %d\n", _lastInitAttributesType, initAttrType);
     if (0 < initAttrType && 0 < _lastInitAttributesType && initAttrType == _lastInitAttributesType) {
         return;
     }
