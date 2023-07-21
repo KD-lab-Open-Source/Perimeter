@@ -116,5 +116,6 @@ add_library(RenderSokol STATIC
 IF (OPTION_PROCESS_SHADERS)
     add_dependencies(RenderSokol sokol_shaders)
 ENDIF()
+ADD_DEPENDENCIES(RenderSokol dependencies)
 
 target_link_libraries(RenderSokol PRIVATE ${RenderSokol_LINK_LIBS})
