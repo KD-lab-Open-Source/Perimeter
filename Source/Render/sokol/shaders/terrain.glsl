@@ -35,8 +35,7 @@ layout(location=0) in vec2 fs_uv0;
 out vec4 frag_color;
 
 void main() {
-    //TODO enable this frag_color = un_tile_color * texture(un_tex0, fs_uv0);
-    frag_color = un_tile_color + texture(un_tex0, fs_uv0);
+    frag_color = un_tile_color * texture(un_tex0, fs_uv0);
     if (un_alpha_test >= frag_color.a) discard;
 }
 @end

@@ -10,7 +10,7 @@
 #ifdef SOKOL_METAL
 #include <SDL_metal.h>
 #endif
-#include "SokolRenderPipeline.h"
+#include "SokolTypes.h"
 
 const int PERIMETER_SOKOL_TEXTURES = 2;
 
@@ -21,14 +21,16 @@ void sokol_metal_setup_desc(SDL_MetalView view, sg_desc* desc);
 struct SokolCommand {
     SokolCommand();
     ~SokolCommand();
+    void CreateShaderParams();
     void Clear();
     void ClearDrawData();
-    void ClearMVP();
+    void ClearShaderParams();
     void SetTexture(size_t index, cTexture* texture, SokolTexture2D* sokol_texture);
     void ClearTextures();
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
     pipeline_id_t pipeline_id = 0;
+    SOKOL_SHADER_ID shader_id = SOKOL_SHADER_ID_NONE;
     size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
@@ -38,11 +40,10 @@ struct SokolCommand {
     bool owned_index_buffer = false;
     struct SokolBuffer* vertex_buffer = nullptr;
     struct SokolBuffer* index_buffer = nullptr;
-    bool owned_mvp = false;
-    Mat4f* vs_mvp = nullptr;
-    eColorMode fs_color_mode = COLOR_MOD;
-    float fs_tex2_lerp = -1;
-    eAlphaTestMode fs_alpha_test = ALPHATEST_NONE;
+    void* vs_params = nullptr;
+    void* fs_params = nullptr;
+    size_t vs_params_len = 0;
+    size_t fs_params_len = 0;
     Vect2i clipPos = Vect2i(0, 0);
     Vect2i clipSize = Vect2i(0, 0);
 };
@@ -80,6 +81,10 @@ private:
     PIPELINE_MODE activePipelineMode;
     Mat4f activeCommandVP;
     Mat4f activeCommandW;
+    eColorMode activeCommandColorMode = COLOR_MOD;
+    float activeCommandTex2Lerp = -1;
+    eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
+    Vect4f activeCommandTileColor;
 
     //Commands handling
     void ClearCommands();
@@ -92,6 +97,27 @@ private:
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
+
+    //Set common VS/FS parameters
+    template<typename T_VS, typename T_FS>
+    void shader_set_common_params(T_VS* vs_params, T_FS* fs_params) {
+        vs_params->un_mvp = isOrthographicProjSet ? orthoVP : (activeCommandW * activeCommandVP);
+        switch (activeCommandAlphaTest) {
+            default:
+            case ALPHATEST_NONE:
+                fs_params->un_alpha_test = -1.0f;
+                break;
+            case ALPHATEST_GT_0:
+                fs_params->un_alpha_test = 0.0f;
+                break;
+            case ALPHATEST_GT_1:
+                fs_params->un_alpha_test = 1.0f;
+                break;
+            case ALPHATEST_GT_254:
+                fs_params->un_alpha_test = 254.0f;
+                break;
+        }
+    }
 
 public:
     cSokolRender();

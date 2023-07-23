@@ -211,10 +211,10 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         fprintf(stderr, "RegisterPipeline: invalid shader ID pipeline '%s'\n", desc.label);
         return;
     }
-    shader_id_t shader_id = ctx.shader_funcs->get_id();
+    SOKOL_SHADER_ID shader_id = ctx.shader_funcs->get_id();
     switch (shader_id) {
-        case shader_id_color_tex1:
-        case shader_id_color_tex2:
+        case SOKOL_SHADER_ID_color_tex1:
+        case SOKOL_SHADER_ID_color_tex2:
             if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params")) {
                 fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
@@ -233,7 +233,7 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
                 return;
             }
             break;
-        case shader_id_normal:
+        case SOKOL_SHADER_ID_normal:
             if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params")) {
                 fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
@@ -244,7 +244,7 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
                 return;
             }
             break;
-        case shader_id_terrain:
+        case SOKOL_SHADER_ID_terrain:
             if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "terrain_vs_params")) {
                 fprintf(stderr, "RegisterPipeline: 'terrain_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
@@ -295,7 +295,8 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         ctx.vertex_fmt,
         GetSizeFromFormat(ctx.vertex_fmt),
         sg_make_pipeline(desc),
-        ctx.shader_funcs
+        ctx.shader_funcs,
+        ctx.shader_funcs->get_id()
     };
     if (pipeline->pipeline.id == SG_INVALID_ID) {
         xxassert(0, "RegisterPipeline: invalid sg_pipeline ID pipeline " + std::string(desc.label));
@@ -314,9 +315,9 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         xassert(0);
         while (pipelines.size() + 10 > PERIMETER_SOKOL_PIPELINES_MAX) {
             auto it = pipelines.cbegin();
-            SokolPipeline* pipeline = it->second;
+            SokolPipeline* pipeline_delete = it->second;
             pipelines.erase(it);
-            delete pipeline;
+            delete pipeline_delete;
         }
     }
     pipelines.insert(std::make_pair(pipeline->id, pipeline));

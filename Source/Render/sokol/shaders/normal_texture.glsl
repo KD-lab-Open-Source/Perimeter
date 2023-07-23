@@ -24,8 +24,9 @@ void main() {
 
 @fs fs
 //Uniforms
-//uniform normal_texture_fs_params {
-//};
+uniform normal_texture_fs_params {
+    float un_alpha_test;
+};
 uniform sampler2D un_tex0;
 
 //Fragment shader inputs from Vertex shader
@@ -37,7 +38,7 @@ out vec4 frag_color;
 
 void main() {
     frag_color = texture(un_tex0, fs_uv0);
-    //if (un_alpha_test >= frag_color.a) discard;
+    if (un_alpha_test >= frag_color.a) discard;
 }
 @end
 

@@ -1,15 +1,10 @@
 #ifndef PERIMETER_SOKOLSHADERS_H
 #define PERIMETER_SOKOLSHADERS_H
 
-using shader_id_t = uint8_t;
-
-const shader_id_t shader_id_color_tex1 = 0;
-const shader_id_t shader_id_color_tex2 = 1;
-const shader_id_t shader_id_normal = 2;
-const shader_id_t shader_id_terrain = 3;
+#include "SokolTypes.h"
 
 struct shader_funcs {
-    shader_id_t (*get_id)() = nullptr;
+    SOKOL_SHADER_ID (*get_id)() = nullptr;
     const sg_shader_desc* (*shader_desc)(sg_backend) = nullptr;
     int (*attr_slot)(const char*) = nullptr;
     int (*image_slot)(sg_shader_stage, const char*) = nullptr;
@@ -26,8 +21,8 @@ struct shader_funcs {
 extern shader_funcs shader_##MODULE_NAME;
 
 #define SOKOL_SHADER_IMPL(MODULE_NAME) \
-shader_id_t MODULE_NAME##_get_shader_id() { \
-    return shader_id_##MODULE_NAME;    \
+SOKOL_SHADER_ID MODULE_NAME##_get_shader_id() { \
+    return SOKOL_SHADER_ID_##MODULE_NAME;    \
 }; \
 shader_funcs shader_##MODULE_NAME = { \
     MODULE_NAME##_get_shader_id, \
@@ -44,7 +39,7 @@ SOKOL_SHADER(normal);
 SOKOL_SHADER(terrain);
 
 using normal_texture_vs_params_t = normal_normal_texture_vs_params_t;
-//using normal_texture_fs_params_t = normal_normal_texture_fs_params_t;
+using normal_texture_fs_params_t = normal_normal_texture_fs_params_t;
 //color_tex1 and color_tex2 share the params struct, so we pick tex2
 using color_texture_vs_params_t = color_tex2_color_texture_vs_params_t;
 using color_texture_fs_params_t = color_tex2_color_texture_fs_params_t;

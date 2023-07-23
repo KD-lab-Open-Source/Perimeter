@@ -8,8 +8,8 @@
 #include "IRenderDevice.h"
 #include "SokolRender.h"
 #include "SokolRenderPipeline.h"
-#include "xerrhand.h"
 #include "SokolShaders.h"
+#include "xerrhand.h"
 #include "Texture.h"
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
@@ -171,86 +171,38 @@ int cSokolRender::EndScene() {
         sg_apply_bindings(&bindings);
         
         //Apply VS uniforms
-        shader_id_t shader_id = shader_funcs->get_id();
-        if (shader_id == shader_id_color_tex1 || shader_id == shader_id_color_tex2) {
-            color_texture_vs_params_t vs_params;
-            if (command->vs_mvp) {
-                vs_params.un_mvp = *command->vs_mvp;
-            } else {
-                xxassert(0, "cSokolRender::EndScene missing mvp");
-                continue;
-            }
-            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params");
-            xxassert(0 <= vs_params_slot, "No vs slot found");
-            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
-        } else if (shader_id == shader_id_normal) {
-            normal_texture_vs_params_t vs_params;
-            if (command->vs_mvp) {
-                vs_params.un_mvp = *command->vs_mvp;
-            } else {
-                xxassert(0, "cSokolRender::EndScene missing mvp");
-                continue;
-            }
-            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params");
-            xxassert(0 <= vs_params_slot, "No vs slot found");
-            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
-        } else if (shader_id == shader_id_terrain) {
-            terrain_vs_params_t vs_params;
-            if (command->vs_mvp) {
-                vs_params.un_mvp = *command->vs_mvp;
-            } else {
-                xxassert(0, "cSokolRender::EndScene missing mvp");
-                continue;
-            }
-            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "terrain_vs_params");
-            xxassert(0 <= vs_params_slot, "No vs slot found");
-            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, SG_RANGE_REF(vs_params));
+        SOKOL_SHADER_ID shader_id = shader_funcs->get_id();
+        const char* vs_params_name = nullptr;
+        const char* fs_params_name = nullptr;
+        switch (shader_id) {
+            case SOKOL_SHADER_ID_color_tex1:
+            case SOKOL_SHADER_ID_color_tex2:
+                vs_params_name = "color_texture_vs_params";
+                fs_params_name = "color_texture_fs_params";
+                break;
+            case SOKOL_SHADER_ID_normal:
+                vs_params_name = "normal_texture_vs_params";
+                break;
+            case SOKOL_SHADER_ID_terrain:
+                vs_params_name = "terrain_vs_params";
+                fs_params_name = "terrain_fs_params";
+                break;
+            default:
+            case SOKOL_SHADER_ID_NONE:
+                xassert(0);
         }
 
-        //Apply FS uniforms
-        if (shader_id == shader_id_color_tex2) {
-            color_texture_fs_params_t fs_params;
-            fs_params.un_color_mode = static_cast<int>(command->fs_color_mode);
-            fs_params.un_tex2_lerp = command->fs_tex2_lerp;
-            switch (command->fs_alpha_test) {
-                default:
-                case ALPHATEST_NONE:
-                    fs_params.un_alpha_test = -1.0f;
-                    break;
-                case ALPHATEST_GT_0:
-                    fs_params.un_alpha_test = 0.0f;
-                    break;
-                case ALPHATEST_GT_1:
-                    fs_params.un_alpha_test = 1.0f;
-                    break;
-                case ALPHATEST_GT_254:
-                    fs_params.un_alpha_test = 254.0f;
-                    break;
-            }
-            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params");
+        if (vs_params_name) {
+            int vs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, vs_params_name);
+            xxassert(0 <= vs_params_slot, "No vs slot found");
+            xxassert(command->vs_params, "No vs parameters set in command");
+            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, sg_range { command->vs_params, command->vs_params_len });
+        }
+        if (fs_params_name) {
+            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, fs_params_name);
             xxassert(0 <= fs_params_slot, "No fs slot found");
-            sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, SG_RANGE_REF(fs_params));
-        } else if (shader_id == shader_id_terrain) {
-            terrain_fs_params_t fs_params;
-            fs_params.un_tile_color = Vect4f(1.0f, 1.0f, 1.0f, 1.0f);
-            switch (command->fs_alpha_test) {
-                default:
-                case ALPHATEST_NONE:
-                    fs_params.un_alpha_test = -1.0f;
-                    break;
-                case ALPHATEST_GT_0:
-                    fs_params.un_alpha_test = 0.0f;
-                    break;
-                case ALPHATEST_GT_1:
-                    fs_params.un_alpha_test = 1.0f;
-                    break;
-                case ALPHATEST_GT_254:
-                    fs_params.un_alpha_test = 254.0f;
-                    break;
-            }
-            int fs_params_slot = shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "terrain_fs_params");
-            xxassert(0 <= fs_params_slot, "No fs slot found");
-            sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, SG_RANGE_REF(fs_params));
+            xxassert(command->fs_params, "No fs parameters set in command");
+            sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, sg_range { command->fs_params, command->fs_params_len });
         }
 
         //Draw
@@ -360,7 +312,7 @@ void cSokolRender::FinishActiveDrawBuffer() {
 
 void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices) {
     if (0 == vertices) vertices = activeCommand.vertices;
-    if (0 == indices) vertices = activeCommand.indices;
+    if (0 == indices) indices = activeCommand.indices;
     PIPELINE_TYPE pipelineType = activePipelineType;
 #ifdef PERIMETER_DEBUG
     if (WireframeMode) pipelineType = PIPELINE_TYPE_LINE_STRIP;
@@ -373,6 +325,11 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     );
     if (pipelines.count(pipeline_id) == 0) {
         RegisterPipeline(pipeline_id);
+    }
+    const SokolPipeline* pipeline = pipelines.count(pipeline_id) ? pipelines[pipeline_id] : nullptr;
+    if (!pipeline) {
+        xxassert(0, "CreateCommand: No pipeline found");
+        return;
     }
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
@@ -417,24 +374,45 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
     cmd->pipeline_id = pipeline_id;
+    cmd->shader_id = pipeline->shader_id;
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
         cmd->SetTexture(i, activeCommand.texture_handles[i], activeCommand.sokol_textures[i]);
     }
-    cmd->fs_color_mode = activeCommand.fs_color_mode;
-    cmd->fs_tex2_lerp = activeCommand.fs_tex2_lerp;
-    cmd->fs_alpha_test = activeCommand.fs_alpha_test;
     cmd->base_elements = activeCommand.base_elements;
     cmd->vertices = activeCommand.vertices;
     cmd->indices = activeCommand.indices;
     cmd->clipPos = activeCommand.clipPos;
     cmd->clipSize = activeCommand.clipSize;
     
-    //We copy the MVP
-    cmd->owned_mvp = true;
-    if (isOrthographicProjSet) {
-        cmd->vs_mvp = new Mat4f(orthoVP);
-    } else {
-        cmd->vs_mvp = new Mat4f(activeCommandW * activeCommandVP);
+    //Set shader params
+    cmd->CreateShaderParams();
+    switch (cmd->shader_id) {
+        default:
+        case SOKOL_SHADER_ID_NONE:
+            xassert(0);
+            break;
+        case SOKOL_SHADER_ID_color_tex1:
+        case SOKOL_SHADER_ID_color_tex2: {
+            auto vs_params = reinterpret_cast<color_texture_vs_params_t*>(cmd->vs_params);
+            auto fs_params = reinterpret_cast<color_texture_fs_params_t*>(cmd->fs_params);
+            shader_set_common_params(vs_params, fs_params);
+            fs_params->un_color_mode = activeCommandColorMode;
+            fs_params->un_tex2_lerp = activeCommandTex2Lerp;
+            break;
+        }
+        case SOKOL_SHADER_ID_normal: {
+            auto vs_params = reinterpret_cast<normal_texture_vs_params_t*>(cmd->vs_params);
+            auto fs_params = reinterpret_cast<normal_texture_fs_params_t*>(cmd->fs_params);
+            shader_set_common_params(vs_params, fs_params);
+            break;
+        }
+        case SOKOL_SHADER_ID_terrain: {
+            auto vs_params = reinterpret_cast<terrain_vs_params_t*>(cmd->vs_params);
+            auto fs_params = reinterpret_cast<terrain_fs_params_t*>(cmd->fs_params);
+            shader_set_common_params(vs_params, fs_params);
+            fs_params->un_tile_color = activeCommandTileColor;
+            break;
+        }
     }
     
     //Transfer buffers to command
@@ -551,10 +529,10 @@ void cSokolRender::SetWorldMat4f(const Mat4f* matrix) {
 }
 
 void cSokolRender::SetTex2Lerp(float lerp) {
-    if (activeCommand.fs_tex2_lerp != lerp) {
+    if (activeCommandTex2Lerp != lerp) {
         FinishActiveDrawBuffer();
     }
-    activeCommand.fs_tex2_lerp = lerp;
+    activeCommandTex2Lerp = lerp;
 }
 
 void cSokolRender::UseOrthographicProjection() {
@@ -568,9 +546,9 @@ void cSokolRender::UseOrthographicProjection() {
 }
 
 void cSokolRender::SetColorMode(eColorMode color_mode) {
-    if (activeCommand.fs_color_mode != color_mode) {
+    if (activeCommandColorMode != color_mode) {
         FinishActiveDrawBuffer();
-        activeCommand.fs_color_mode = color_mode;
+        activeCommandColorMode = color_mode;
     }
 }
 
@@ -692,7 +670,7 @@ uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
         case RS_CULLMODE:
             return activePipelineMode.cull;
         case RS_ALPHA_TEST_MODE:
-            return activeCommand.fs_alpha_test;
+            return activeCommandAlphaTest;
         case RS_BILINEAR:
             return 1;
     }
@@ -741,7 +719,7 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
             break;
         }
         case RS_ALPHA_TEST_MODE:
-            activeCommand.fs_alpha_test = static_cast<eAlphaTestMode>(value);
+            activeCommandAlphaTest = static_cast<eAlphaTestMode>(value);
             break;
         case RS_BILINEAR:
             //Useless as we can't change globally

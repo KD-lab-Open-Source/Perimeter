@@ -276,11 +276,38 @@ bool cSokolRender::IsEnableSelfShadow() {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 SokolCommand::SokolCommand() {
-    Clear();
 }
 
 SokolCommand::~SokolCommand() {
     Clear();
+}
+
+void SokolCommand::CreateShaderParams() {
+    switch (shader_id) {
+        default:
+        case SOKOL_SHADER_ID_NONE:
+            xassert(0);
+            break;
+        case SOKOL_SHADER_ID_color_tex1:
+        case SOKOL_SHADER_ID_color_tex2:
+            vs_params = new color_texture_vs_params_t();
+            fs_params = new color_texture_fs_params_t();
+            vs_params_len = sizeof(color_texture_vs_params_t);            
+            fs_params_len = sizeof(color_texture_fs_params_t);
+            break;
+        case SOKOL_SHADER_ID_normal:
+            vs_params = new normal_texture_vs_params_t();
+            fs_params = new normal_texture_fs_params_t();
+            vs_params_len = sizeof(normal_texture_vs_params_t);            
+            fs_params_len = sizeof(normal_texture_fs_params_t);
+            break;
+        case SOKOL_SHADER_ID_terrain:
+            vs_params = new terrain_vs_params_t();
+            fs_params = new terrain_fs_params_t();
+            vs_params_len = sizeof(terrain_vs_params_t);            
+            fs_params_len = sizeof(terrain_fs_params_t);
+            break;
+    }
 }
 
 void SokolCommand::ClearDrawData() {
@@ -299,12 +326,29 @@ void SokolCommand::ClearDrawData() {
     
 }
 
-void SokolCommand::ClearMVP() {
-    if (owned_mvp) {
-        delete vs_mvp;
-        owned_mvp = false;
+void SokolCommand::ClearShaderParams() {
+    switch (shader_id) {
+        default:
+        case SOKOL_SHADER_ID_NONE:
+            break;
+        case SOKOL_SHADER_ID_color_tex1:
+        case SOKOL_SHADER_ID_color_tex2:
+            delete reinterpret_cast<color_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<color_texture_fs_params_t*>(fs_params);
+            break;
+        case SOKOL_SHADER_ID_normal:
+            delete reinterpret_cast<normal_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<normal_texture_fs_params_t*>(fs_params);
+            break;
+        case SOKOL_SHADER_ID_terrain:
+            delete reinterpret_cast<terrain_vs_params_t*>(vs_params);
+            delete reinterpret_cast<terrain_fs_params_t*>(fs_params);
+            break;
     }
-    vs_mvp = nullptr;
+    vs_params = nullptr;
+    fs_params = nullptr;
+    vs_params_len = 0;
+    fs_params_len = 0;
 }
 
 void SokolCommand::ClearTextures() {
@@ -317,7 +361,7 @@ void SokolCommand::ClearTextures() {
 
 void SokolCommand::Clear() {
     ClearDrawData();
-    ClearMVP();
+    ClearShaderParams();
     ClearTextures();
 }
 

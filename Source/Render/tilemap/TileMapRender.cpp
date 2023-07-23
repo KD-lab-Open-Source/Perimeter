@@ -584,11 +584,10 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 #endif
     VertexPoolManager* vtxPoolMan = render->GetVertexPool();
     IndexPoolManager* idxPoolMan = render->GetIndexPool();
-    for (i = 0; i < bumpTexPools.size(); i++)
-    {
-        cTilemapTexturePool* curpool=bumpTexPools[i];
-        if (curpool->tileRenderList.empty())
+    for (cTilemapTexturePool* curpool : bumpTexPools) {
+        if (curpool->tileRenderList.empty()) {
             continue;
+        }
 
 #ifdef PERIMETER_D3D9
         if (gb_RenderDevice3D) {
@@ -642,6 +641,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                 DrawRange range;
                 range.offset = nIndexOffset;
                 range.len = nIndex;
+                xassert((nIndexOffset + nIndex) <= ib_len);
                 gb_RenderDevice->SubmitBuffers(PT_TRIANGLES, vb, nVertex, ib, ib_len, &range);
             }
 

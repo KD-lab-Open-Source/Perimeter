@@ -3,17 +3,6 @@
 
 #include "VertexFormat.h"
 
-enum PIPELINE_TYPE {
-    PIPELINE_TYPE_TRIANGLE,
-    PIPELINE_TYPE_TRIANGLESTRIP,
-    PIPELINE_TYPE_TERRAIN,
-#ifdef PERIMETER_DEBUG
-    PIPELINE_TYPE_LINE_STRIP,
-#endif
-    PIPELINE_TYPE_MAX,
-};
-const PIPELINE_TYPE PIPELINE_TYPE_DEFAULT = PIPELINE_TYPE_TRIANGLE;
-
 static PIPELINE_TYPE getPipelineType(const ePrimitiveType type) {
     switch (type) {
         default:
@@ -24,17 +13,6 @@ static PIPELINE_TYPE getPipelineType(const ePrimitiveType type) {
             return PIPELINE_TYPE_TRIANGLE;
     }
 }
-
-using pipeline_mode_value_t = uint16_t;
-struct PIPELINE_MODE {
-    eBlendMode blend = ALPHA_NONE;
-    eCullMode cull = CULL_NONE;
-    eCMPFUNC depth_cmp = CMP_GREATER;
-    bool depth_write = true;
-    
-    pipeline_mode_value_t GetValue() const;
-    void FromValue(pipeline_mode_value_t value);
-};
 
 const uint32_t PIPELINE_ID_MODE_MASK = 0xFFFF;
 const uint32_t PIPELINE_ID_MODE_BITS = 8;
@@ -62,6 +40,8 @@ struct SokolPipeline {
     sg_pipeline pipeline;
     //Shader functions to retrieve info
     struct shader_funcs* shader_funcs;
+    //Shader ID
+    SOKOL_SHADER_ID shader_id;
     
     SokolPipeline() = default;
     ~SokolPipeline();
