@@ -560,6 +560,10 @@ void cSokolRender::SetBlendState(eBlendMode blend) {
 void cSokolRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
     xassert(slot < GetMaxTextureSlots());
     SokolTexture2D* tex = texture_image ? texture_image->sg : nullptr;
+    //Required as sometimes empty slot must be used with color_tex1 shader
+    if (!tex && slot == 0) {
+        tex = emptyTexture;
+    }
     if (activeCommand.sokol_textures[slot] != tex) {
         FinishActiveDrawBuffer();
         activeCommand.SetTexture(slot, tex);
