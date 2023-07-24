@@ -312,6 +312,17 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     cCamera* pNormalCamera=DrawNode->GetRoot();
     cTileMapRender* render=tilemap->GetTilemapRender();
     bool use_shadow_map=false;
+    
+    //TODO remove this once D3D9 specifics are removed
+    if (shadow) {
+#ifdef PERIMETER_D3D9
+        if (!gb_RenderDevice3D) {
+            return;
+        }
+#else
+        return;
+#endif
+    }
 
     Vect3f dcoord(
             tilemap->GetTileSize().x * tilemap->GetScale().x,
@@ -561,10 +572,10 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
 //	if(pNormalCamera==DrawNode)
 //		gb_RenderDevice->SetRenderState(RS_WIREFRAME,1);
+    int first_texture_number = 0;
 #ifdef PERIMETER_D3D9
     uint32_t tss_colorarg2 = 0;
     uint32_t tss_alphaarg2 = 0;
-    int first_texture_number = 0;
     if (gb_RenderDevice3D) {
         tss_colorarg2 = gb_RenderDevice3D->GetTextureStageState(0, D3DTSS_COLORARG2);
         tss_alphaarg2 = gb_RenderDevice3D->GetTextureStageState(0, D3DTSS_ALPHAARG2);
@@ -589,15 +600,14 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             continue;
         }
 
+        if (shadow) {
 #ifdef PERIMETER_D3D9
-        if (gb_RenderDevice3D) {
-            if (shadow) {
-                gb_RenderDevice3D->SetTexture(0, gb_RenderDevice3D->dtAdvance->GetTilemapShadow0());
-            } else {
-                gb_RenderDevice3D->SetTexture(first_texture_number, curpool->GetTexture()->GetFrameImage(0).d3d);
-            }
-        }
+            TextureImage teximg(gb_RenderDevice3D->dtAdvance->GetTilemapShadow0());
+            gb_RenderDevice3D->SetTextureImage(0, &teximg);
 #endif
+        } else {
+            gb_RenderDevice->SetTextureImage(first_texture_number, &curpool->GetTexture()->GetFrameImage(0));
+        }
 
         for (sBumpTile* bumpTile : curpool->tileRenderList) {
             int iLod = bumpTile->LOD;

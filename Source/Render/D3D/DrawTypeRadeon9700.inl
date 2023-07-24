@@ -146,7 +146,7 @@ void DrawTypeRadeon9700::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
 	}
 
 	SetMaterial(Data->MaterialAnimPhase,Data->Tex[0],pShadowMap,Data);
-	gb_RenderDevice3D->SetTexture(Data->Tex[1],Data->MaterialAnimPhase,3);
+	gb_RenderDevice3D->SetTexture(3,Data->Tex[1],Data->MaterialAnimPhase);
 	gb_RenderDevice3D->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	gb_RenderDevice3D->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 	gb_RenderDevice3D->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -299,8 +299,8 @@ void DrawTypeRadeon9700::SetMaterialTilemap(cTileMap *TileMap)
 	gb_RenderDevice3D->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	gb_RenderDevice3D->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	gb_RenderDevice3D->SetSamplerState(3, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,1);
-	gb_RenderDevice3D->SetTexture(pLightMap,0,3);
+	gb_RenderDevice3D->SetTexture(1,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(3,pLightMap,0);
 
 	TerraInterface* terra=TileMap->GetTerra();
 	pVSTileMapScene->SetWorldSize(Vect2f(terra->SizeX(),terra->SizeY()));

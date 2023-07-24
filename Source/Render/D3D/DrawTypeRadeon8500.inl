@@ -151,10 +151,10 @@ void DrawTypeRadeon8500::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
     gb_RenderDevice3D->SetSamplerState( 4, D3DSAMP_MINFILTER, D3DTEXF_POINT );
     gb_RenderDevice3D->SetSamplerState( 4, D3DSAMP_MAGFILTER, D3DTEXF_POINT );
 
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,2);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,3);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,4);
-	gb_RenderDevice3D->SetTexture(pLightMap,0,5);
+	gb_RenderDevice3D->SetTexture(2,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(3,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(4,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(5,pLightMap,0);
 }
 
 void DrawTypeRadeon8500::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
@@ -190,7 +190,8 @@ void DrawTypeRadeon8500::SetSimplyMaterialShadow(cObjMesh *Mesh,cTexture *Textur
 	mat.MaterialAnimPhase=0;
 
 	SetMaterialSimply(0,Texture,pShadowMap,&mat,GetOffsetTextureNumber());
-	gb_RenderDevice3D->SetTexture(1, GetTilemapShadow0());
+    TextureImage teximg(GetTilemapShadow0());
+	gb_RenderDevice3D->SetTextureImage(1, &teximg);
 
 	pPSObjectShadow->Select();
 	SetStream(Mesh);
@@ -235,11 +236,11 @@ void DrawTypeRadeon8500::SetMaterialTilemap(cTileMap *TileMap)
 	Vect4f out;
     pShadow->matViewProj.xform(pos, out);
 
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,1);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,2);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,3);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,4);
-	gb_RenderDevice3D->SetTexture(pLightMap,0,5);
+	gb_RenderDevice3D->SetTexture(1,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(2,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(3,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(4,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(5,pLightMap,0);
 
 	pVSTileMapScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
 	pPSTileMapScene->Select();

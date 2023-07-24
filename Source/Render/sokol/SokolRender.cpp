@@ -353,9 +353,7 @@ void SokolCommand::ClearShaderParams() {
 
 void SokolCommand::ClearTextures() {
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
-        if (texture_handles[i]) texture_handles[i]->DecRef();
         sokol_textures[i] = nullptr;
-        texture_handles[i] = nullptr;
     }
 }
 
@@ -365,13 +363,7 @@ void SokolCommand::Clear() {
     ClearTextures();
 }
 
-void SokolCommand::SetTexture(size_t index, cTexture* texture, SokolTexture2D* sokol_texture) {
-    if (sokol_texture == nullptr) {
-        texture = nullptr;
-    }
-    if (texture) texture->IncRef();
-    cTexture* old_tex = texture_handles[index];
+void SokolCommand::SetTexture(size_t index, SokolTexture2D* sokol_texture) {
+    xassert(index<PERIMETER_SOKOL_TEXTURES);
     sokol_textures[index] = sokol_texture;
-    texture_handles[index] = texture;
-    if (old_tex) old_tex->DecRef();
 }

@@ -108,6 +108,8 @@ public:
 	void* LockTexture(class cTexture *Texture, int& Pitch) override;
     void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override;
 	void UnlockTexture(class cTexture *Texture) override;
+    void SetTextureImage(uint32_t slot, struct TextureImage* texture_image) override;
+    uint32_t GetMaxTextureSlots() override { return nSupportTexture; }
 
 	void SetDrawNode(class cCamera *DrawNode) override;
 	void SetGlobalFog(const sColor4f &color,const Vect2f &v) override;
@@ -158,7 +160,7 @@ public:
 
     // //// cInterfaceRenderDevice impls end ////
 
-    //This converts flag based vertex format to D3D9 FVF format
+    ///Converts flag based vertex format to D3D9 FVF format
     static uint32_t GetD3DFVFFromFormat(vertex_fmt_t fmt) ;
     
 	void SetAdvance();//Вызывать при изменении Option_ShadowType Option_EnableBump
@@ -179,35 +181,6 @@ public:
 	}
     
     void FlushActiveDrawBuffer();
-
-	inline void SetTexture(cTexture *Texture,float Phase,int dwStage=0)
-	{
-		if(Texture==0) 
-		{ 
-			SetTexture(dwStage,NULL);
-			return; 
-		}
-		VISASSERT( dwStage<nSupportTexture );
-
-		int nAllFrame=Texture->GetNumberFrame();
-		int nFrame ;
-		if(nAllFrame>1)
-			nFrame= (int)( 0.999f*Phase*nAllFrame);
-		else
-			nFrame=0;
-
-		VISASSERT(0<=nFrame&&nFrame<Texture->GetNumberFrame()&&bActiveScene);
-		SetTexture(dwStage,Texture->GetFrameImage(nFrame).d3d);
-	}
-
-	inline void SetTexture(uint32_t dwStage, IDirect3DBaseTexture9 *pTexture)
-	{
-		VISASSERT(dwStage<TEXTURE_MAX);
-		if(CurrentTexture[dwStage]!=pTexture) {
-            FlushActiveDrawBuffer();
-            RDCALL(lpD3DDevice->SetTexture(dwStage, CurrentTexture[dwStage] = pTexture));
-        }
-	}
 
 	inline void SetVertexShader(IDirect3DVertexShader9 * Handle)
 	{

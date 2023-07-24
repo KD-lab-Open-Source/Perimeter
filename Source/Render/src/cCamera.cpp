@@ -1274,7 +1274,8 @@ void cCamera::DrawShadowDebug()
                     RenderDevice->SetNoMaterial(ALPHA_NONE, 0);
                     RenderDevice->UseOrthographicProjection();
                     gb_VisGeneric->GetShaders()->pShowMap->Select();
-                    rd3d->SetTexture(0, rd3d->dtAdvance->GetTZBuffer());
+                    TextureImage teximg(rd3d->dtAdvance->GetTZBuffer());
+                    rd3d->SetTextureImage(0, &teximg);
 
                     sColor4c ColorMul = sColor4c(255, 255, 255, 255);
                     DrawBuffer* db = RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);

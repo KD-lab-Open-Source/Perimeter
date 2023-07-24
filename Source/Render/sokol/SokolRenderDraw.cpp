@@ -21,7 +21,8 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
 
     SetColorMode(color_mode);
     SetBlendState(blend);
-    SetTextures(Phase, Texture0, Texture1);
+    SetTexture(0, Texture0, Phase);
+    SetTexture(1, Texture1, Phase);
 }
 
 // Sprites / 2d textures
@@ -102,7 +103,8 @@ void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* da
 
     SetColorMode(COLOR_MOD);
     SetBlendState(blend);
-    SetTextures(data->MaterialAnimPhase, Texture0, bump ? nullptr: data->Tex[1]);
+    SetTexture(0, Texture0, data->MaterialAnimPhase);
+    SetTexture(1, bump ? nullptr: data->Tex[1], data->MaterialAnimPhase);
 }
 
 void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
@@ -157,5 +159,8 @@ void cSokolRender::SetMaterialTilemapShadow() {
 }
 
 void cSokolRender::SetTileColor(sColor4f color) {
-    //TODO
+    if (activeCommandTileColor != color) {
+        FinishActiveDrawBuffer();
+        activeCommandTileColor = color;
+    }
 }

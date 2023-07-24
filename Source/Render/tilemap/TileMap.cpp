@@ -432,6 +432,11 @@ void cTileMap::SetBuffer(const Vect2i &size,int zeroplastnumber_)
 
 void cTileMap::DrawLightmapShadow(cCamera *DrawNode)
 {
+#ifdef PERIMETER_D3D9
+    if (!gb_RenderDevice3D) return;
+#else
+    return;
+#endif
 	if (Option_DrawMeshShadow && GetShadowMap()==nullptr
 #ifdef PERIMETER_D3D9
     && gb_RenderDevice3D && gb_RenderDevice3D->nSupportTexture>1
@@ -461,6 +466,11 @@ void cTileMap::DrawLightmapShadow(cCamera *DrawNode)
 
 void cTileMap::AddLightCamera(cCamera *DrawNode)
 {
+#ifdef PERIMETER_D3D9
+    if (!gb_RenderDevice3D) return;
+#else
+    return;
+#endif
 	DrawNode->SetAttribute(ATTRCAMERA_ZMINMAX);
 	DrawNode->SetCopy(ShadowDrawNode);
 	DrawNode->AttachChild(ShadowDrawNode);

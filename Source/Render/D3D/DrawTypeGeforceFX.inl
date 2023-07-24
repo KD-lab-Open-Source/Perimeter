@@ -78,7 +78,7 @@ void DrawTypeGeforceFX::BeginDraw(bool use_shadow_)
 {
 	for(int i=0;i<6;i++)
 	{
-		gb_RenderDevice3D->SetTexture(i,NULL);
+		gb_RenderDevice3D->SetTextureImage(i, nullptr);
 	}
 	use_shadow=use_shadow_;
 	pShadow=gb_RenderDevice3D->GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
@@ -112,7 +112,7 @@ void DrawTypeGeforceFX::EndDraw()
 {
 	for(int i=0;i<6;i++)
 	{
-		gb_RenderDevice3D->SetTexture(i,NULL);
+		gb_RenderDevice3D->SetTextureImage(i, nullptr);
 	}
 
 	gb_RenderDevice3D->SetVertexShader(NULL);
@@ -161,10 +161,12 @@ void DrawTypeGeforceFX::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *Da
 	}
 
 	SetMaterial(Data->MaterialAnimPhase,Data->Tex[0],Data->Tex[1],Data);
-	if(use_shadow)
-		gb_RenderDevice3D->SetTexture(0,ptZBuffer);
-	else
-		gb_RenderDevice3D->SetTexture(0,(IDirect3DTexture9*)NULL);
+	if(use_shadow) {
+        TextureImage teximg(ptZBuffer);
+        gb_RenderDevice3D->SetTextureImage(0, &teximg);
+    } else {
+        gb_RenderDevice3D->SetTextureImage(0, nullptr);
+    }
 	
 	SetStream(Mesh);
 }
@@ -309,10 +311,11 @@ void DrawTypeGeforceFX::SetMaterialTilemap(cTileMap *TileMap)
 		gb_RenderDevice3D->SetSamplerState(ss, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		gb_RenderDevice3D->SetSamplerState(ss, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		gb_RenderDevice3D->SetSamplerState(ss, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-		gb_RenderDevice3D->SetTexture(ss,ptZBuffer);
+        TextureImage teximg(ptZBuffer);
+        gb_RenderDevice3D->SetTextureImage(0,&teximg);
 	}
 
-	gb_RenderDevice3D->SetTexture(pLightMap,0,offset+1);
+	gb_RenderDevice3D->SetTexture(offset+1,pLightMap,0);
 
 	TerraInterface* terra=TileMap->GetTerra();
 	pVSTileMapScene->SetWorldSize(Vect2f(terra->SizeX(),terra->SizeY()));

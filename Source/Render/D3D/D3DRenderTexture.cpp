@@ -54,7 +54,10 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 }
 
 int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert)
-{ // только создает в памяти поверхности 
+{ // только создает в памяти поверхности
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    RenderSubmitEvent(RenderEvent::CREATE_TEXTURE, "", Texture);
+#endif
 	sTextureFormatData &tfd = TexFmtData[Texture->GetFmt()];
 	if(Texture->GetX()==0||tfd.FormatID==0) return 1;
 
@@ -173,6 +176,9 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 int cD3DRender::DeleteTexture(cTexture *Texture)
 { // только освобождает в памяти поверхности 
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    RenderSubmitEvent(RenderEvent::DELETE_TEXTURE, "", Texture);
+#endif
 	for(int nFrame=0;nFrame<Texture->GetNumberFrame();nFrame++) {
         IDirect3DTexture9*& tex = Texture->GetFrameImage(nFrame).d3d;
         if (tex) {
@@ -238,3 +244,11 @@ void cD3DRender::UnlockTexture(class cTexture *Texture)
 	RDCALL(lpSurface->UnlockRect(0));
 }
 
+void cD3DRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
+    VISASSERT(slot<GetMaxTextureSlots());
+    IDirect3DBaseTexture9* pTexture = texture_image ? texture_image->d3d : nullptr;
+    if(CurrentTexture[slot]!=pTexture) {
+        FlushActiveDrawBuffer();
+        RDCALL(lpD3DDevice->SetTexture(slot, CurrentTexture[slot] = pTexture));
+    }
+}

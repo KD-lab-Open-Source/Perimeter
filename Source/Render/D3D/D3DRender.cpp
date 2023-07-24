@@ -1565,9 +1565,9 @@ void cD3DRender::SetBlendState(eBlendMode blend)
 void cD3DRender::SetNoMaterial(eBlendMode blend,float Phase,cTexture *Texture0,
 							   cTexture *Texture1,eColorMode color_mode)
 {
-	SetTexture(Texture0,Phase,0);
-	SetTexture(Texture1,Phase,1);
-	SetTexture(NULL,Phase,2);
+	SetTexture(0, Texture0, Phase);
+	SetTexture(1, Texture1, Phase);
+	SetTextureImage(2, nullptr);
 
 	if(Texture0)
 	{

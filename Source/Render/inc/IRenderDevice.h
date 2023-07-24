@@ -178,7 +178,8 @@ public:
     virtual int GetSizeY() { return ScreenSize.y; };
     virtual int GetMaxSizeX() { return MaxScreenSize.x; }
     virtual int GetMaxSizeY() { return MaxScreenSize.y; }
-    
+
+    virtual void SetTexture(uint32_t slot, class cTexture* texture, float Phase);
 
     inline cCamera* GetDrawNode() { return DrawNode; }
     virtual void SetDrawNode(cCamera* node) { DrawNode = node; };
@@ -285,6 +286,8 @@ public:
     virtual void* LockTexture(class cTexture *Texture, int& Pitch) = 0;
     virtual void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) = 0;
     virtual void UnlockTexture(class cTexture *Texture) = 0;
+    virtual void SetTextureImage(uint32_t slot, struct TextureImage* texture_image) = 0;
+    virtual uint32_t GetMaxTextureSlots() = 0;
     
     virtual void SetGlobalFog(const sColor4f &color,const Vect2f &v) = 0;
     virtual void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,

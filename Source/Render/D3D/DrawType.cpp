@@ -38,9 +38,9 @@ void DrawType::DrawPrimitive(cObjMesh *Mesh)
 
 eBlendMode DrawType::SetMaterialSimply(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data,int texture_offset)
 {
-	gb_RenderDevice3D->SetTexture(Texture0,Phase,0+texture_offset);
-	gb_RenderDevice3D->SetTexture(Texture1,Phase,1+texture_offset);
-	gb_RenderDevice3D->SetTexture(NULL,Phase,2+texture_offset);
+	gb_RenderDevice3D->SetTexture(0+texture_offset, Texture0, Phase);
+	gb_RenderDevice3D->SetTexture(1+texture_offset, Texture1, Phase);
+	gb_RenderDevice3D->SetTextureImage(2+texture_offset, nullptr);
 
 	eBlendMode blend=ALPHA_NONE;
 	if(Texture0 && Texture0->IsAlphaTest())

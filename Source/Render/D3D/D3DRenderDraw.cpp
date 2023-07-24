@@ -209,9 +209,9 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	}
     FlushActiveDrawBuffer();
     
-	SetTexture(CurrentFont->GetTexture(),0,0);
-	SetTexture(NULL,0,1);
-	SetTexture(NULL,0,2);
+	SetTexture(0,CurrentFont->GetTexture(),0);
+	SetTextureImage(1, nullptr);
+	SetTextureImage(2, nullptr);
 	SetBlendState(blend_mode);
 
 	SetRenderState(D3DRS_SPECULARENABLE,FALSE);

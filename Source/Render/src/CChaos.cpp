@@ -159,8 +159,8 @@ void cChaos::DrawD3D9(cCamera *DrawNode) {
 		}
 
 		rd->SetNoMaterial(ALPHA_NONE,0,pTex0_0,pTex0_1,COLOR_ADD);
-		rd->SetTexture(pTexBump,0,2);
-		rd->SetTexture(NULL,0,3);
+		rd->SetTexture(2, pTexBump,0);
+		rd->SetTexture(3, NULL,0);
 		float umin,vmin;
 		float umin2,vmin2;
 		umin=sfmod(time*stime_tex0.x*uvmul*2.0f,1.0f);

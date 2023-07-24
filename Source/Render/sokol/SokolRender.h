@@ -12,7 +12,7 @@
 #endif
 #include "SokolTypes.h"
 
-const int PERIMETER_SOKOL_TEXTURES = 2;
+const int PERIMETER_SOKOL_TEXTURES = 8;
 
 #ifdef SOKOL_METAL
 void sokol_metal_setup_desc(SDL_MetalView view, sg_desc* desc);
@@ -25,7 +25,7 @@ struct SokolCommand {
     void Clear();
     void ClearDrawData();
     void ClearShaderParams();
-    void SetTexture(size_t index, cTexture* texture, SokolTexture2D* sokol_texture);
+    void SetTexture(size_t index, SokolTexture2D* sokol_texture);
     void ClearTextures();
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
@@ -35,7 +35,6 @@ struct SokolCommand {
     size_t vertices = 0;
     size_t indices = 0;
     struct SokolTexture2D* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
-    class cTexture* texture_handles[PERIMETER_SOKOL_TEXTURES] = {};
     bool owned_vertex_buffer = false;
     bool owned_index_buffer = false;
     struct SokolBuffer* vertex_buffer = nullptr;
@@ -84,7 +83,7 @@ private:
     eColorMode activeCommandColorMode = COLOR_MOD;
     float activeCommandTex2Lerp = -1;
     eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
-    Vect4f activeCommandTileColor;
+    sColor4f activeCommandTileColor;
 
     //Commands handling
     void ClearCommands();
@@ -93,7 +92,6 @@ private:
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
     void SetColorMode(eColorMode color_mode);
-    void SetTextures(float Phase, cTexture* tex0, cTexture* tex1);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
@@ -160,6 +158,8 @@ public:
     void* LockTexture(class cTexture *Texture, int& Pitch) override;
     void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override;
     void UnlockTexture(class cTexture *Texture) override;
+    void SetTextureImage(uint32_t slot, struct TextureImage* texture_image) override;
+    uint32_t GetMaxTextureSlots() override;
 
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override;
 

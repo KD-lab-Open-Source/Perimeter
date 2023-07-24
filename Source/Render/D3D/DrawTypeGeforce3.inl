@@ -108,7 +108,7 @@ void DrawTypeGeforce3::EndDraw()
 {
 	for(int i=0;i<6;i++)
 	{
-		gb_RenderDevice3D->SetTexture(i,NULL);
+		gb_RenderDevice3D->SetTextureImage(i, nullptr);
 	}
 
 	gb_RenderDevice3D->SetVertexShader(NULL);
@@ -157,7 +157,8 @@ void DrawTypeGeforce3::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *Dat
 	}
 
 	SetMaterial(Data->MaterialAnimPhase,Data->Tex[0],Data->Tex[1],Data);
-	gb_RenderDevice3D->SetTexture(0,ptZBuffer);
+    TextureImage teximg(ptZBuffer);
+	gb_RenderDevice3D->SetTextureImage(0,&teximg);
 	
 	SetStream(Mesh);
 }
@@ -299,8 +300,9 @@ void DrawTypeGeforce3::SetMaterialTilemap(cTileMap *TileMap)
 {
 	pVSTileMapScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
 	pPSTileMapScene->Select();
-	gb_RenderDevice3D->SetTexture(0,ptZBuffer);
-	gb_RenderDevice3D->SetTexture(pLightMap,0,2);
+    TextureImage teximg(ptZBuffer);
+    gb_RenderDevice3D->SetTextureImage(0,&teximg);
+	gb_RenderDevice3D->SetTexture(2,pLightMap,0);
 
 	TerraInterface* terra=TileMap->GetTerra();
 	pVSTileMapScene->SetWorldSize(Vect2f(terra->SizeX(),terra->SizeY()));

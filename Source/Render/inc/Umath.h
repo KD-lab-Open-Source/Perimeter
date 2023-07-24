@@ -8,7 +8,12 @@
 
 struct sColor4f
 {
-	float r,g,b,a;
+    union {
+        struct {
+            float r, g, b, a;
+        };
+        Vect4f v;
+    };
 	
 	sColor4f() 											{ }
 	sColor4f(float r_,float g_,float b_,float a_=1.f)		{ r = r_; g = g_; b = b_; a = a_; }

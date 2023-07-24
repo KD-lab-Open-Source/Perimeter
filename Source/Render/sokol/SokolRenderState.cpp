@@ -341,13 +341,11 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     if (vb->fmt & VERTEX_FMT_TEX1) {
         if (activeCommand.sokol_textures[0] != emptyTexture) {
             xassert(activeCommand.sokol_textures[0]);
-            xassert(activeCommand.texture_handles[0]);
         }
         
     }
     if (vb->fmt & VERTEX_FMT_TEX2) {
         xassert(activeCommand.sokol_textures[1]);
-        xassert(activeCommand.texture_handles[1]);
     }
 #endif
 
@@ -376,7 +374,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     cmd->pipeline_id = pipeline_id;
     cmd->shader_id = pipeline->shader_id;
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
-        cmd->SetTexture(i, activeCommand.texture_handles[i], activeCommand.sokol_textures[i]);
+        cmd->SetTexture(i, activeCommand.sokol_textures[i]);
     }
     cmd->base_elements = activeCommand.base_elements;
     cmd->vertices = activeCommand.vertices;
@@ -410,7 +408,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto vs_params = reinterpret_cast<terrain_vs_params_t*>(cmd->vs_params);
             auto fs_params = reinterpret_cast<terrain_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
-            fs_params->un_tile_color = activeCommandTileColor;
+            fs_params->un_tile_color = activeCommandTileColor.v;
             break;
         }
     }
@@ -559,28 +557,17 @@ void cSokolRender::SetBlendState(eBlendMode blend) {
     }
 }
 
-void cSokolRender::SetTextures(float Phase, cTexture* Texture0, cTexture* Texture1) {
-    SokolTexture2D* tex0 = emptyTexture;
-    SokolTexture2D* tex1 = nullptr;
-
-    if (Texture0) {
-        float nAllFrame = static_cast<float>(Texture0->GetNumberFrame());
-        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
-        tex0 = Texture0->GetFrameImage(nFrame).sg;
-    }
-
-    if (Texture1) {
-        float nAllFrame = static_cast<float>(Texture1->GetNumberFrame());
-        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
-        tex1 = Texture1->GetFrameImage(nFrame).sg;
-    }
-
-    if (activeCommand.sokol_textures[0] != tex0
-     || activeCommand.sokol_textures[1] != tex1) {
+void cSokolRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
+    xassert(slot < GetMaxTextureSlots());
+    SokolTexture2D* tex = texture_image ? texture_image->sg : nullptr;
+    if (activeCommand.sokol_textures[slot] != tex) {
         FinishActiveDrawBuffer();
-        activeCommand.SetTexture(0, Texture0, tex0);
-        activeCommand.SetTexture(1, Texture1, tex1);
+        activeCommand.SetTexture(slot, tex);
     }
+}
+
+uint32_t cSokolRender::GetMaxTextureSlots() {
+    return PERIMETER_SOKOL_TEXTURES;
 }
 
 void cSokolRender::SetDrawNode(cCamera *pDrawNode)

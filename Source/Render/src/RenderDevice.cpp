@@ -268,6 +268,18 @@ void cInterfaceRenderDevice::UnlockIndexBuffer(IndexBuffer &ib) {
     ib.locked = false;
 }
 
+void cInterfaceRenderDevice::SetTexture(uint32_t slot, cTexture* texture, float phase) {
+    if (texture == nullptr) {
+        SetTextureImage(slot, nullptr);
+    } else {
+        float nAllFrame = static_cast<float>(texture->GetNumberFrame());
+        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * phase * nAllFrame) : 0;
+        VISASSERT(0<=nFrame&&nFrame<texture->GetNumberFrame());
+        TextureImage* tex = &texture->GetFrameImage(nFrame);
+        SetTextureImage(slot, tex);
+    }
+}
+
 void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
 #ifdef PERIMETER_RENDER_TRACKER_MATRIX
     RenderSubmitEvent(RenderEvent::SET_WORLD_MATRIX, "MatXf");

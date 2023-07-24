@@ -1,14 +1,22 @@
 #pragma once
 
-//Universal handle for diff backends
-union TextureImage {
-    void* ptr;
+//Universal handle for diff backends texture pointers
+struct TextureImage {
+    union {
+        void* ptr;
 #ifdef PERIMETER_D3D9
-    struct IDirect3DTexture9* d3d;
+        struct IDirect3DTexture9* d3d;
 #endif
 #ifdef PERIMETER_SOKOL
-    struct SokolTexture2D* sg;
+        struct SokolTexture2D* sg;
 #endif
+    };
+
+    TextureImage() : ptr(nullptr) {
+    }
+    explicit TextureImage(void* p) : ptr(p) {
+    }
+    ~TextureImage() = default;
 };
 
 class cTexture : public cUnknownClass, public sAttribute
