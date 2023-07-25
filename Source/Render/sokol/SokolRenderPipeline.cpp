@@ -293,10 +293,10 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         ctx.id,
         ctx.pipeline_type,
         ctx.vertex_fmt,
-        GetSizeFromFormat(ctx.vertex_fmt),
         sg_make_pipeline(desc),
         ctx.shader_funcs,
-        ctx.shader_funcs->get_id()
+        shader_id,
+        {}
     };
     if (pipeline->pipeline.id == SG_INVALID_ID) {
         xxassert(0, "RegisterPipeline: invalid sg_pipeline ID pipeline " + std::string(desc.label));
@@ -309,6 +309,10 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
     if (0 != pipelines.count(pipeline->id)) {
         fprintf(stderr, "RegisterPipeline: '%s' pipeline already registered with '%d'\n", desc.label, pipeline->id);
         xassert(0);
+    }
+    for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+        std::string name = "un_tex" + std::to_string(i);
+        pipeline->shader_fs_texture_slot[i] = ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, name.c_str());
     }
     if (pipelines.size() + 1 > PERIMETER_SOKOL_PIPELINES_MAX) {
         fprintf(stderr, "RegisterPipeline: reached maximum amount of registered pipelines '%d'\n", pipeline->id);

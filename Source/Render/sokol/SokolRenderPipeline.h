@@ -29,19 +29,19 @@ const uint32_t PERIMETER_SOKOL_PIPELINES_MAX = 128;
 
 struct SokolPipeline {
     //Pipeline ID
-    pipeline_id_t id;
+    pipeline_id_t id = 0;
     //Pipeline type
-    PIPELINE_TYPE type;
+    PIPELINE_TYPE type = PIPELINE_TYPE_DEFAULT;
     //VERTEX_FMT_* flags used as index for this pipeline
-    vertex_fmt_t vertex_fmt;
-    //Amount of bytes for this vertex fmt
-    size_t vertex_size;
+    vertex_fmt_t vertex_fmt = 0;
     //Created pipeline for this
-    sg_pipeline pipeline;
+    sg_pipeline pipeline = {};
     //Shader functions to retrieve info
-    struct shader_funcs* shader_funcs;
+    struct shader_funcs* shader_funcs = nullptr;
     //Shader ID
-    SOKOL_SHADER_ID shader_id;
+    SOKOL_SHADER_ID shader_id = SOKOL_SHADER_ID_NONE;
+    //Mapping of texture slots in fragment shader
+    int shader_fs_texture_slot[PERIMETER_SOKOL_TEXTURES] = {};
     
     SokolPipeline() = default;
     ~SokolPipeline();

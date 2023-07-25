@@ -115,58 +115,48 @@ int cSokolRender::EndScene() {
             xxassert(0, "cSokolRender::EndScene missing vertex_buffer");
             continue;
         }
+#ifdef PERIMETER_DEBUG
         if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene vertex_buffer not valid state");
             continue;
         }
+#endif
         bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
         xassert(command->indices);
         if (!command->index_buffer) {
             xxassert(0, "cSokolRender::EndScene missing index_buffer");
             continue;
         }
+#ifdef PERIMETER_DEBUG
         if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene index_buffer not valid state");
             continue;
         }
+#endif
         bindings.index_buffer = command->index_buffer->buffer;
         
         //Bind images for samplers
-        int slot_tex0 = shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
-        if (0 <= slot_tex0) {
-            SokolTexture2D* tex = emptyTexture;
-            if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
-                tex = command->sokol_textures[0];
-            }
-            if (tex) {
-                if (tex->dirty) tex->update();
-                if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
-                    xxassert(0, "cSokolRender::EndScene tex0 not valid state");
+        for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+            int fs_slot = pipeline->shader_fs_texture_slot[i];
+            if (fs_slot < 0) continue;
+            SokolTexture2D* tex = command->sokol_textures[i];
+            if (!tex) {
+                tex = emptyTexture;
+                if (!tex) {
+                    xxassert(0, "cSokolRender::EndScene sampler tex missing");
                     continue;
                 }
-                bindings.fs_images[slot_tex0] = tex->image;
-            } else {
-                xxassert(0, "cSokolRender::EndScene tex0 missing");
+            }
+            if (tex->dirty) {
+                tex->update();
+            }
+#ifdef PERIMETER_DEBUG
+            if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
+                xxassert(0, "cSokolRender::EndScene sampler tex not valid state");
                 continue;
             }
-        }
-        int slot_tex1 = shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1");
-        if (0 <= slot_tex1) {
-            SokolTexture2D* tex = emptyTexture;
-            if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-                tex = command->sokol_textures[1];
-            }
-            if (tex) {
-                if (tex->dirty) tex->update();
-                if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
-                    xxassert(0, "cSokolRender::EndScene tex1 not valid state");
-                    continue;
-                }
-                bindings.fs_images[slot_tex1] = tex->image;
-            } else {
-                xxassert(0, "cSokolRender::EndScene tex1 missing");
-                continue;
-            }
+#endif
+            bindings.fs_images[fs_slot] = tex->image;
         }
         sg_apply_bindings(&bindings);
         
