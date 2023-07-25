@@ -314,7 +314,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     bool use_shadow_map=false;
     
     //TODO remove this once D3D9 specifics are removed
-    if (shadow) {
+    if (shadow || reflection) {
 #ifdef PERIMETER_D3D9
         if (!gb_RenderDevice3D) {
             return;
