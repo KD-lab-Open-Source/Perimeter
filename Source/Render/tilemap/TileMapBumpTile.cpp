@@ -412,9 +412,9 @@ void sBumpTile::CalcPoint()
     int xFinish = xStart + is;
     int yFinish = yStart + js;
 
-    float ux_step=uStep/(1 << bumpGeoScale[LOD]);
+    float ux_step=uStep/static_cast<float>(1 << bumpGeoScale[LOD]);
     float ux_base=uStart-xStart*ux_step;
-    float vy_step=vStep/(1 << bumpGeoScale[LOD]);
+    float vy_step=vStep/static_cast<float>(1 << bumpGeoScale[LOD]);
     float vy_base=vStart-yStart*vy_step;
 
 
@@ -449,7 +449,7 @@ void sBumpTile::CalcPoint()
     int one_player=0;
     for(int i=0;i<index.size();i++)
     {
-        if(index[i].size()>0)
+        if(!index[i].empty())
         {
             num_non_empty++;
             one_player=i-1;

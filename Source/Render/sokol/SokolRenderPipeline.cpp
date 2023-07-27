@@ -269,12 +269,10 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
     }
     if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
         fprintf(stderr, "RegisterPipeline: 'un_tex0' image slot not found at pipeline '%s'\n", desc.label);
-        return;
     }
     if (ctx.vertex_fmt & VERTEX_FMT_TEX2) {
         if (ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
             fprintf(stderr, "RegisterPipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
-            return;
         }
     }
     
