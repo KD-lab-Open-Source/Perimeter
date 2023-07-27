@@ -1398,7 +1398,10 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
     
     size_t offset = range ? range->offset : 0;
     if (indices) {
-        indices = range ? range->len : indices;
+        if (range) {
+            xassert((range->offset + range->len) <= indices);
+            indices = range->len;
+        }
         RDCALL(lpD3DDevice->SetIndices(ib->d3d));
         size_t polys = (primitive == PT_TRIANGLESTRIP
                         ? (indices - 2)
@@ -1410,6 +1413,10 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
         ));
         NumberPolygon += polys;
     } else {
+        if (range) {
+            xassert((range->offset + range->len) <= vertices);
+            vertices = range->len;
+        }
         vertices = range ? range->len : vertices;
         xassert(0);
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, vertices));

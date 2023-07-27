@@ -651,7 +651,6 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                 DrawRange range;
                 range.offset = nIndexOffset;
                 range.len = nIndex;
-                xassert((nIndexOffset + nIndex) <= ib_len);
                 gb_RenderDevice->SubmitBuffers(PT_TRIANGLES, vb, nVertex, ib, ib_len, &range);
             }
 

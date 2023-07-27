@@ -358,6 +358,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             ib->sg->update(ib, len);
         }
     }
+    xassert(activeCommand.vertices <= vertices);
+    xassert((activeCommand.base_elements + activeCommand.indices) <= indices);
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
