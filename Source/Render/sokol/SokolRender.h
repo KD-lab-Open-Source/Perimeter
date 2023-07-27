@@ -109,10 +109,10 @@ private:
                 fs_params->un_alpha_test = 0.0f;
                 break;
             case ALPHATEST_GT_1:
-                fs_params->un_alpha_test = 1.0f;
+                fs_params->un_alpha_test = (1.0f/255.0f);
                 break;
             case ALPHATEST_GT_254:
-                fs_params->un_alpha_test = 254.0f;
+                fs_params->un_alpha_test = (254.0f/255.0f);
                 break;
         }
     }

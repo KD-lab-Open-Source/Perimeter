@@ -269,6 +269,8 @@ SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynami
         desc.data = {resource->data, len};
         resource->burned = true;
         resource->dirty = false;
+    } else {
+        resource->dirty = true;
     }
 
     SokolBuffer* buffer = new SokolBuffer(&desc);
