@@ -97,12 +97,12 @@ void sBumpTile::CalcTexture()
     int xFinish = xStart + tilex;
     int yFinish = yStart + tiley;
     int Pitch = 0;
-    void* texRect = LockTex(Pitch);
+    uint8_t* texRect = LockTex(Pitch);
     int dd = 1 << bumpTexScale[LOD];
 
     TerraInterface* terra = tilemap->GetTerra();
     terra->GetTileColor(
-            static_cast<char*>(texRect),
+            texRect,
             Pitch,
             xStart - cTilemapTexturePool::TEXTURE_BORDER * dd,
             yStart - cTilemapTexturePool::TEXTURE_BORDER * dd,

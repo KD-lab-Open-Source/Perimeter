@@ -166,7 +166,7 @@ void* cSokolRender::LockTextureRect(cTexture* Texture, int& Pitch, Vect2i pos, V
     xassert(!tex->locked);
     xassert(tex->data);
     size_t fmt_size = sokol_pixelformat_bytesize(tex->pixel_format);
-    Pitch = static_cast<int>(size.x * fmt_size);
+    Pitch = static_cast<int>(Texture->GetWidth() * fmt_size);
     if (!tex->data) {
         //Immutable texture, nothing to do
         return nullptr;
