@@ -621,7 +621,7 @@ bool GameShell::universalSave(const char* name, bool userSave, MissionDescriptio
         mission = new MissionDescription(CurrentMission);
     }
     mission->missionNumber = currentSingleProfile.getCurrentMissionNumber();
-    mission->gameContent = mission->missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    mission->gameContent = mission->isCampaign() ? getGameContentCampaign() : terGameContentSelect;
     if (userSave) {
         mission->globalTime = global_time();
         mission->gameSpeed = game_speed ? game_speed : game_speed_to_resume;

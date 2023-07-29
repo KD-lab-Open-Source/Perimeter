@@ -123,6 +123,7 @@ public:
 	int worldID() const { return worldID_; }
 
 	bool isMultiPlayer() const { return gameType_ == GT_MULTI_PLAYER_CREATE || gameType_ == GT_MULTI_PLAYER_LOAD;	}
+    bool isCampaign() const { return 0 <= missionNumber; }
 
 	int playersAmountScenarioMax() const { return playerAmountScenarioMax; }
 	int playersAmount() const;

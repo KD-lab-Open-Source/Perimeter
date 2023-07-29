@@ -646,8 +646,20 @@ void MissionDescription::loadDescription() {
                 pd.flag_playerGameReady = false;
                 switch (gameType_) {
                     case GT_SINGLE_PLAYER:
-                        pd.clan = i;
-                        pd.realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
+                        if (isCampaign()) {
+                            switch (pd.realPlayerType) {
+                                case REAL_PLAYER_TYPE_CLOSE:
+                                case REAL_PLAYER_TYPE_WORLD:
+                                case REAL_PLAYER_TYPE_OPEN:
+                                    break;
+                                case REAL_PLAYER_TYPE_PLAYER:
+                                case REAL_PLAYER_TYPE_AI:
+                                case REAL_PLAYER_TYPE_PLAYER_AI:
+                                    pd.clan = i;
+                                    pd.realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
+                                    break;
+                            }
+                        }
                         break;
                     case GT_SINGLE_PLAYER_ALL_AI:
                         pd.clan = i;
@@ -717,7 +729,7 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 {
 	MissionDescription data = *this;
     
-    data.gameContent = missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    data.gameContent = isCampaign() ? getGameContentCampaign() : terGameContentSelect;
 
 	if(!userSave) {
         data.playerAmountScenarioMax = static_cast<int>(savePrm.manualData.players.size());
@@ -884,7 +896,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     //---------------------
 
     //If a campaign mission then load campaign attributes
-    bool campaign = 0 <= mission.missionNumber;
+    bool campaign = mission.isCampaign();
     initAttributes(campaign, mission.scriptsData.length() ? &mission.scriptsData : nullptr);
 
     if (loadProgressUpdate) loadProgressUpdate(0.7f);

@@ -154,7 +154,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	net_log_buffer.init();
 
     if (!mission.gameContent) {
-        mission.gameContent = mission.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+        mission.gameContent = mission.isCampaign() ? getGameContentCampaign() : terGameContentSelect;
     }
 
 	//if(flag_rePlayReel) mission=curMission; //Порядок Важен!

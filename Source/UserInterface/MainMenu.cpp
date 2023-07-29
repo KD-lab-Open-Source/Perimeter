@@ -288,7 +288,7 @@ std::string checkMissingContent(const MissionDescription& mission) {
     std::string msg;
     std::vector<GAME_CONTENT> missingContent;
     
-    if (mission.missionNumber < 0) {
+    if (!mission.isCampaign()) {
         missingContent = getMissingGameContent(terGameContentSelect, static_cast<GAME_CONTENT>(mission.gameContent.value()));
     } else if (getGameContentCampaign() != mission.gameContent) {
         missingContent = getGameContentEnums(mission.gameContent);
