@@ -10,6 +10,10 @@ class AttributeProjectile : public AttributeReal
 {
 public:
 	AttributeProjectile();
+
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeReal::serialize_template(ar);
+    }
 };
 
 /// Базовый класс для снарядов, ракет, бомб и т.д.
