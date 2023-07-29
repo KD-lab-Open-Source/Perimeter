@@ -70,6 +70,8 @@ RandomGenerator terEffectRND;
 
 float AttributeBase::energyPerElement_ = 0;
 
+SERIALIZATION_TYPE_NAME_IMPL(GeometryAttribute);
+
 SINGLETON_PRM(AttributeLibrary, "AttributeLibrary", "Scripts\\AttributeLibrary") attributeLibrary;
 
 REGISTER_CLASS(AttributeBase, AttributeBase, "Базовые свойства")

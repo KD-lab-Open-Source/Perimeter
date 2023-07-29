@@ -5,7 +5,6 @@
 #include <string>
 #include <typeinfo>
 #include "Handle.h"
-#include <boost/type_index.hpp>
 #include "SerializationMacro.h"
 #include "xutl.h"
 
@@ -49,7 +48,7 @@ static void process_type_name(std::string& name) {
 template<class CLASS_T>
 static std::string get_type_id(const CLASS_T* ptr = nullptr) {
     if (ptr) {}
-	std::string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
+	std::string name = ptr->type_class_name();
     process_type_name(name);
     //printf("get_type_id %s = %s\n", typeid(CLASS_T).name(), name.c_str());
     return name;

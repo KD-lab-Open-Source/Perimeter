@@ -267,6 +267,8 @@ void terUnitBase::executeCommand(const UnitCommand& command)
 {
 	MTL();
 	switch(command.commandID()){
+    default:
+        break;
 	case COMMAND_ID_EXPLODE_UNIT: {
 		DamageData damage;
 		damage.clear();
@@ -382,7 +384,5 @@ void terUnitBase::setFieldDamage(const DamageData& damage)
 #include "XPrmArchive.h"
 
 /////////////////////////////////////////////////////
-//REGISTER_CLASS(PropertyBase, PropertyBase, "PropertyBase");
-
-/////////////////////////////////////////////////////
 //REGISTER_CLASS(terUnitBase, terUnitBase, "terUnitBase");
+SERIALIZATION_TYPE_NAME_IMPL(terUnitBase);
