@@ -638,9 +638,10 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                 int nIndexOffset = 0;
                 IndexBuffer* ib = nullptr;
                 if (pib.nindex==-1) {
-                    ib_len = nIndex = bumpNumIndex(iLod);
+                    nIndex = bumpNumIndex(iLod);
                     nIndexOffset = bumpIndexOffset(iLod);
                     ib = &tilemapIB;
+                    ib_len = ib->NumberIndices;
                 } else {
                     ib_len = idxPoolMan->GetPoolSize(pib.index);
                     nIndex = pib.nindex;
