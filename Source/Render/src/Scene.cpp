@@ -665,7 +665,8 @@ void cScene::DeleteAutoObject()
 {
 	MTG();
 	UpdateLists(INT_MAX);
-
+    
+    grid.DisableChanges(true);
     for (auto el : grid) {
 #ifdef MTGVECTOR_USE_HANDLES
         cIUnkClass* obj = safe_cast<cIUnkClass*>(el->Get());
@@ -679,5 +680,7 @@ void cScene::DeleteAutoObject()
 			}
 		}
 	}
+    grid.DisableChanges(false);
+    
 	UpdateLists(INT_MAX);
 }

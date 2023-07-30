@@ -419,11 +419,10 @@ void MTGVector::mtUpdate(int cur_quant) {
     if (cur_quant == INT_MAX) {
         VISASSERT(add_list.empty());
         VISASSERT(erase_list.empty());
-        for (auto ptr : slot) {
 #ifdef MTGVECTOR_USE_HANDLES
+        for (auto ptr : slot) {
             ReleaseSlot(ptr);
-#endif
         }
-        slot.clear();
+#endif
     }
 }
