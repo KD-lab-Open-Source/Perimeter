@@ -9,6 +9,7 @@ cUnkLight::cUnkLight() : cUnkObj(KIND_LIGHT)
 	CurrentTime=0;
 	TimeLife=1000;
 	NumberKey=0;
+    Key = nullptr;
 }
 
 cUnkLight::~cUnkLight() = default;

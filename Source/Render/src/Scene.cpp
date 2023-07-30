@@ -268,7 +268,7 @@ void cScene::GetLighting(const Vect3f &pos,sColor4f &diffuse,sColor4f &specular)
 	{
 		cUnkLight *Light=GetLight(i);
 		float intensity=1;
-		if(Light->GetAttr(ATTRLIGHT_SPHERICAL))
+		if(Light && Light->GetAttr(ATTRLIGHT_SPHERICAL))
 		{
 			float d=pos.distance2(Light->GetPos());
 			float r2=Light->GetRadius()*Light->GetRadius();
@@ -289,7 +289,7 @@ void cScene::GetLighting(Vect3f *LightDirection)
 	for(int i=0;i<GetNumberLight();i++)
 	{
 		cUnkLight *Light=GetLight(i);
-		if(Light->GetAttr(ATTRLIGHT_DIRECTION))
+		if(Light && Light->GetAttr(ATTRLIGHT_DIRECTION))
 		{
 			*LightDirection=Light->GetDirection();
 			break;
@@ -304,7 +304,7 @@ bool cScene::GetLighting(sColor4f &Ambient,sColor4f &Diffuse,sColor4f &Specular,
 	for(int i=0;i<GetNumberLight();i++)
 	{
 		cUnkLight *Light=GetLight(i);
-		if(Light->GetAttr(ATTRLIGHT_DIRECTION))
+		if(Light && Light->GetAttr(ATTRLIGHT_DIRECTION))
 		{
 			LightDirection+=Light->GetDirection();
 			Ambient+=Light->GetDiffuse();
