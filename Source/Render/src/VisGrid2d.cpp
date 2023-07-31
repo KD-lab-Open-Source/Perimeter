@@ -292,7 +292,9 @@ void MTGVector::Attach(cIUnkClass *UnkObj) {
 #ifdef MTGVECTOR_USE_HANDLES
 		slot.push_back(UnkObj->AcquireHandle());
 #else
-        slot.push_back(UnkObj);
+        if (std::count(slot.begin(), slot.end(), UnkObj) == 0) {
+            slot.push_back(UnkObj);
+        }
 #endif
 	} else {
         AddToList(add_list, UnkObj);

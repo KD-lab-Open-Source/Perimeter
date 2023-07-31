@@ -137,6 +137,8 @@ void terUniverse::clear() {
     
     select.DeselectAll();
 
+    terScene->DeleteAutoObject();
+
     for (terPlayer* p : Players) {
         p->killAllUnits();
     }
@@ -178,7 +180,6 @@ terUniverse::~terUniverse()
 	RELEASE(pSpriteCongregation);
 	RELEASE(pSpriteCongregationProtection);
 	RELEASE(pSpriteCongregationAnnihilation);
-	terScene->DeleteAutoObject();
 
 	xassert(this == universe());
 	universe_ = nullptr;

@@ -32,11 +32,11 @@ protected:
 
 	MTDECLARE(critical);
 public:
-    typedef std::vector<ptr_t>::iterator iterator;
+    typedef std::vector<ptr_t>::const_iterator const_iterator;
     inline ptr_t get(size_t i) const { return slot[i]; }
 	inline int size() { return slot.size(); }
-	iterator begin() { return slot.begin(); }
-	iterator end() { return slot.end(); }
+    const_iterator begin() const noexcept { return slot.cbegin(); }
+    const_iterator end() const noexcept { return slot.cend(); }
 
 	MTGVector();
 	~MTGVector();

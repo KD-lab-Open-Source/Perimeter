@@ -245,7 +245,7 @@ public:
 struct EmitterKeyInterface
 {
 	EmitterKeyInterface();
-	virtual ~EmitterKeyInterface(){};
+	virtual ~EmitterKeyInterface() = default;
 	virtual void Save(CSaver& s)=0;
 	virtual void Load(CLoadDirectory rd)=0;
 	virtual void RelativeScale(float scale)=0;
@@ -285,7 +285,7 @@ public:
 struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 {
 	EmitterKeyBase();
-	virtual ~EmitterKeyBase();
+	~EmitterKeyBase() override;
 	virtual void Save(CSaver& s)=0;
 	virtual void Load(CLoadDirectory rd)=0;
 	virtual void RelativeScale(float scale);
@@ -345,7 +345,7 @@ protected:
 struct EmitterKeyInt:public EmitterKeyBase
 {
 	EmitterKeyInt();
-	~EmitterKeyInt();
+	~EmitterKeyInt() override;
 
 	void Save(CSaver& s);
 	void Load(CLoadDirectory rd);
@@ -395,7 +395,7 @@ protected:
 struct EmitterKeySpl:public EmitterKeyBase
 {
 	EmitterKeySpl();
-	~EmitterKeySpl();
+	~EmitterKeySpl() override;
 
 	void Save(CSaver& s);
 	void Load(CLoadDirectory rd);
@@ -421,7 +421,7 @@ public:
 	std::vector<EmitterKeyInterface*> key;
 
 	EffectKey();
-	~EffectKey();
+	virtual ~EffectKey();
 
 	void Save(CSaver& s);
 	void Load(CLoadDirectory rd);
@@ -450,7 +450,7 @@ class cEmitterInterface:public cUnkObj
 	friend class cEffect;
 public:
 	cEmitterInterface();
-	~cEmitterInterface();
+	~cEmitterInterface() override;
 
 	virtual bool IsLive()=0;
 	virtual bool IsVisible(cCamera *pCamera)=0;
@@ -487,7 +487,7 @@ class cEmitterBase:public cEmitterInterface
 public:
 	cEmitterBase* other;
 	cEmitterBase();
-	~cEmitterBase();
+	~cEmitterBase() override;
 
 	virtual void PreDraw(cCamera *pCamera);
 	virtual void Animate(float dt);
@@ -616,7 +616,7 @@ protected:
 	CKey velocity_delta;
 public:
 	cEmitterInt();
-	~cEmitterInt();
+	~cEmitterInt() override;
 
 	virtual void Draw(cCamera *pCamera);
 
@@ -665,7 +665,7 @@ class cEmitterZ:public cEmitterInt
 	FunctorGetZ* func_getz;
 public:
 	cEmitterZ();
-	~cEmitterZ();
+	~cEmitterZ() override;
 	void Draw(cCamera *pCamera);
 	virtual void ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos);
 	void SetEmitterKey(EmitterKeyZ& k,cEmitter3dObject* models);
@@ -732,7 +732,7 @@ class cEmitterSpl:public cEmitterBase
 	EMITTER_TYPE_DIRECTION_SPL direction;
 public:
 	cEmitterSpl();
-	~cEmitterSpl();
+	~cEmitterSpl() override;
 
 	virtual void Draw(cCamera *pCamera);
 	bool IsLive(){return !Particle.is_empty() || time<emitter_life_time || cycled;}
@@ -755,7 +755,7 @@ class cEmitterLight:public cEmitterInterface
 {
 public:
 	cEmitterLight();
-	~cEmitterLight();
+	~cEmitterLight() override;
 	void Animate(float dt);
 
 	bool IsLive(){return time<emitter_life_time || cycled;}
@@ -793,7 +793,7 @@ class cEffect:public cIUnkObjScale
 	} link;
 public:
 	cEffect();
-	~cEffect();
+	~cEffect() override;
 
 	virtual void Animate(float dt);
 	virtual void PreDraw(cCamera *pCamera);

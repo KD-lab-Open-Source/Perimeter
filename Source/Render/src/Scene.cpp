@@ -34,21 +34,16 @@ cScene::cScene() : cUnknownClass(KIND_SCENE)
 cScene::~cScene()
 {
 	DeleteAutoObject();
-	ObjLibrary=0;
+	ObjLibrary = nullptr;
 	Size.set(0,0);
 	CurrentTime=PreviousTime=0;
+    UpdateLists(INT_MAX);
 	VISASSERT(grid.size()==0);
+    VISASSERT(UnkLightArray.size()==0);
 	grid.Release();
-/*	for(int i=GetNumberLight()-1;i>=0;i--)
-	{
-		cUnkLight *ULight=GetLight(i);
-		DetachLight(ULight);
-		ULight->Release();
-	}
-*/
-	UpdateLists(INT_MAX);
+    UnkLightArray.Release();
 	VISASSERT(grid.size()==0);
-	VISASSERT(GetNumberLight()==0);
+	VISASSERT(UnkLightArray.size()==0);
 
 //	GetTexLibrary()->Compact();
 	RELEASE(StrencilShadowDrawNode);
@@ -665,8 +660,9 @@ void cScene::DeleteAutoObject()
 {
 	MTG();
 	UpdateLists(INT_MAX);
+
+    std::vector<cEffect*> list;
     
-    grid.DisableChanges(true);
     for (auto el : grid) {
 #ifdef MTGVECTOR_USE_HANDLES
         cIUnkClass* obj = safe_cast<cIUnkClass*>(el->Get());
@@ -676,11 +672,14 @@ void cScene::DeleteAutoObject()
 		if (obj) {
 			cEffect* eff = dynamic_cast<cEffect*>(obj);
 			if (eff && eff->IsAutoDeleteAfterLife()) {
-				eff->Release();
+                list.push_back(eff);
 			}
 		}
 	}
-    grid.DisableChanges(false);
+    
+    for (auto eff : list) {
+        eff->Release();
+    }
     
 	UpdateLists(INT_MAX);
 }

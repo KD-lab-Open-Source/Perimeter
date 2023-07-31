@@ -35,7 +35,7 @@ class cIUnkObjScale : public cIUnkObj
 {
 public:
 	cIUnkObjScale(int kind);
-	virtual ~cIUnkObjScale();
+	~cIUnkObjScale() override;
 
 	virtual const Vect3f& GetScale() const 			{ return Scale; }
 	virtual void SetScale(const Vect3f& scale);
