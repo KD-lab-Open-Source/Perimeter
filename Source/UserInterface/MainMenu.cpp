@@ -1069,14 +1069,14 @@ int SwitchMenuScreenQuant1( float, float ) {
 						CLogoWindow* logoWnd = (CLogoWindow*)_shellIconManager.GetWnd(SQSH_MM_LOADING_NOMAD_ICON);
 						txtWnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LOADING_NOMAD_TXT);
 
-						bgScene.setSkinColor();
 						Frame* frame = historyScene.getNomadFrame();
+                        auto player = missionToExec.getActivePlayerData();
 						if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO && frame) {
 							txtWnd->setText(HistoryScene::getFrameNameFromBase(frame->getName()));
 							txtWnd->colorIndex = frame->getColorIndex();
 							logoWnd->setRace(frame->getRace());
 						} else {
-						    BELLIGERENT_FACTION faction = getBelligerentFaction(missionToExec.getActivePlayerData().belligerent);
+						    BELLIGERENT_FACTION faction = getBelligerentFaction(player.belligerent);
 							switch (faction) {
 								case EXODUS:
 									logoWnd->setRace(1);
@@ -1088,10 +1088,10 @@ int SwitchMenuScreenQuant1( float, float ) {
 								default:
 									logoWnd->setRace(0);
 							}
-							txtWnd->setText(missionToExec.getActivePlayerData().name());
-							txtWnd->colorIndex = missionToExec.getActivePlayerData().colorIndex;
+							txtWnd->setText(player.name());
+							txtWnd->colorIndex = player.colorIndex;
 						}
-					
+                        bgScene.setSkinColor(sColor4f(playerColors[txtWnd->colorIndex].unitColor));
 					}
 					break;
                 case SQSH_MM_MULTIPLAYER_LIST_SCR:
