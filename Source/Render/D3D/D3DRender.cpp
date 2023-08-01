@@ -517,6 +517,10 @@ void cD3DRender::UpdateRenderMode()
 
     orthoVP = Mat4f::ZERO;
     SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, 10, -10);
+    if (isOrthographicProjSet) {
+        isOrthographicProjSet = false;
+        UseOrthographicProjection();
+    }
 }
 
 bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
