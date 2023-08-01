@@ -400,6 +400,12 @@ void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
                     ptr + bufferPitch * y,
                     bufferPitch
             );
+            //Avoid texture bleeding due to old relocated image data
+            memset(
+                ptr + pitch * y + bufferPitch,
+                0x0,
+                pitch - bufferPitch
+            );
         }
     }
 
