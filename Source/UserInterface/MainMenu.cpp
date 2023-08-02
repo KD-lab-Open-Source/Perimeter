@@ -1364,8 +1364,9 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
 		int id = getVisibleMenuScr();
 		id_off = (id < 0) ? FAKE : id;
 	}
-	if (gameShell->BuildingInstaller.inited())
-		gameShell->BuildingInstaller.CancelObject();
+	if (gameShell->BuildingInstaller && gameShell->BuildingInstaller->inited()) {
+        gameShell->BuildingInstaller->CancelObject();
+    }
 	gameShell->cancelMouseLook();
 
     if (id_on == SQSH_MM_START_SCR && terGameContentAvailable != terGameContentSelect) {

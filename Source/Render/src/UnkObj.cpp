@@ -129,6 +129,11 @@ int64_t cIUnkClass::Release() {
 //		}
 
 //		xassert(!GetAttribute(ATTRUNKOBJ_TEMP_USED));
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (IParent) {
+            IParent->AssertNoObject(this);
+        }
+#endif
 		VISASSERT(GetRef()==0);
 		delete this;
 		return 0;

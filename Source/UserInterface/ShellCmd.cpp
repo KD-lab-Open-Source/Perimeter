@@ -84,8 +84,9 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	if(code == EVENT_PRESSED)
 	{
-		if(gameShell->BuildingInstaller.inited())
-			gameShell->BuildingInstaller.CancelObject();
+		if (gameShell->BuildingInstaller->inited()) {
+            gameShell->BuildingInstaller->CancelObject();
+        }
 
 		CheckBuildTerrainUnit(UNIT_ATTRIBUTE_TERRAIN_MASTER);
 
@@ -1128,8 +1129,8 @@ void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 			CheckBuildTerrainUnit(UNIT_ATTRIBUTE_BUILD_MASTER);
 
-			gameShell->BuildingInstaller.InitObject(universe()->activePlayer()->unitAttribute(n_struct));
-			gameShell->BuildingInstaller.SetBuildPosition(gameShell->mousePosition(), universe()->activePlayer());
+			gameShell->BuildingInstaller->InitObject(universe()->activePlayer()->unitAttribute(n_struct));
+			gameShell->BuildingInstaller->SetBuildPosition(gameShell->mousePosition(), universe()->activePlayer());
 		}
 	} else if (code == EVENT_PRESSED_DISABLED) {
 		CShellComplexPushButton* pBtn = (CShellComplexPushButton*)pWnd;

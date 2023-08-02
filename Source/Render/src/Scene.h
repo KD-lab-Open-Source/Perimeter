@@ -84,6 +84,11 @@ public:
 	void DisableTileMapVisibleTest();
 	void DeleteAutoObject();
 
+#ifdef PERIMETER_DEBUG_ASSERT
+    void AssertNoObject(cIUnkClass* object);
+    void CheckPendingObjects(std::vector<cIUnkClass*>& allowed);
+#endif
+
 	/* TODO unused?
 	template<class Caller>
 	void ScanUnit(Caller& call)

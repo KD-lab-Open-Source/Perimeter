@@ -28,7 +28,9 @@ float terExternalEnergyTextureEnd = GAME_SHELL_SHOW_REGION_U_STEP;
 //--------------------------------------------------
 void terExternalQuant()
 {
-	gameShell->BuildingInstaller.ShowCircle();
+    if (gameShell->BuildingInstaller) {
+        gameShell->BuildingInstaller->ShowCircle();
+    }
 	
 
 	terExternalEnergyTextureStart = xm::fmod(terExternalEnergyTextureStart + (float)scale_time.delta()*0.001f*GAME_SHELL_SHOW_REGION_U_SPEED + 1.0f,1.0f);

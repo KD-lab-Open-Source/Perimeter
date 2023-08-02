@@ -38,10 +38,12 @@ cScene::~cScene()
 	Size.set(0,0);
 	CurrentTime=PreviousTime=0;
     UpdateLists(INT_MAX);
-	VISASSERT(grid.size()==0);
-    VISASSERT(UnkLightArray.size()==0);
 	grid.Release();
     UnkLightArray.Release();
+#ifdef PERIMETER_DEBUG_ASSERT
+    std::vector<cIUnkClass*> list; //Empty as no object should be present at this point
+    CheckPendingObjects(list);
+#endif
 	VISASSERT(grid.size()==0);
 	VISASSERT(UnkLightArray.size()==0);
 
@@ -370,21 +372,18 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
 
 void cScene::AttachObj(cIUnkClass *obj)
 {
-	xassert(obj->GetKind()!=KIND_LIGHT);
+    xassert(obj->GetKind()!=KIND_LIGHT);
+    obj->SetScene(this);
 	grid.Attach(obj);
-	obj->SetScene(this);
 }
 void cScene::DetachObj(cIUnkClass *UObj)
 {
-	if(UObj==TileMap)
-		TileMap=NULL;
-	else
-	if(UObj->GetKind()==KIND_LIGHT)
-	{
-		DetachLight((cUnkLight*)UObj);
-	}else
-	{
-		grid.Detach((cIUnkObj*)UObj);
+	if (UObj==TileMap) {
+        TileMap = NULL;
+    } else if (UObj->GetKind()==KIND_LIGHT) {
+		DetachLight(safe_cast<cUnkLight*>(UObj));
+	} else {
+		grid.Detach(safe_cast<cIUnkObj*>(UObj));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -392,8 +391,9 @@ cUnkLight* cScene::CreateLight(int Attribute,cTexture *pTexture)
 {
 	cUnkLight *Light=new cUnkLight();
 	Light->SetAttr(Attribute);
-	if(pTexture) 
-		Light->SetTexture(0,pTexture);
+	if(pTexture) {
+        Light->SetTexture(0, pTexture);
+    }
 	AttachLight(Light);
 	Light->SetScene(this);
 	return Light;
@@ -519,11 +519,13 @@ cUnkLight* cScene::GetLight(int number) {
 
 void cScene::AttachLight(cUnkLight* ULight)
 {
+    xassert(ULight->GetKind()==KIND_LIGHT);
 	UnkLightArray.Attach(ULight);
 }
 
 void cScene::DetachLight(cUnkLight* ULight)
 {
+    xassert(ULight->GetKind()==KIND_LIGHT);
 	UnkLightArray.Detach(ULight);
 }
 
@@ -658,28 +660,57 @@ void cScene::DisableTileMapVisibleTest()
 
 void cScene::DeleteAutoObject()
 {
-	MTG();
-	UpdateLists(INT_MAX);
+    MTG();
+    UpdateLists(INT_MAX);
 
     std::vector<cEffect*> list;
-    
+
     for (auto el : grid) {
 #ifdef MTGVECTOR_USE_HANDLES
         cIUnkClass* obj = safe_cast<cIUnkClass*>(el->Get());
 #else
         cIUnkClass* obj = el;
 #endif
-		if (obj) {
-			cEffect* eff = dynamic_cast<cEffect*>(obj);
-			if (eff && eff->IsAutoDeleteAfterLife()) {
+        if (obj) {
+            cEffect* eff = dynamic_cast<cEffect*>(obj);
+            if (eff && eff->IsAutoDeleteAfterLife()) {
                 list.push_back(eff);
-			}
-		}
-	}
-    
+            }
+        }
+    }
+
     for (auto eff : list) {
         eff->Release();
     }
-    
-	UpdateLists(INT_MAX);
+
+    UpdateLists(INT_MAX);
 }
+
+
+#ifdef PERIMETER_DEBUG_ASSERT
+void cScene::AssertNoObject(cIUnkClass* object) {
+    if (object->GetKind() == KIND_LIGHT) {
+        UnkLightArray.AssertNoObject(object);
+    } else {
+        grid.AssertNoObject(object);
+    }
+}
+
+void cScene::CheckPendingObjects(std::vector<cIUnkClass*>& allowed) {
+    MTG();
+    for (auto e : grid) {
+        if (std::count(allowed.begin(), allowed.end(), e) == 0) {
+            fprintf(stderr, "Pending Object: %p refs %ld\n", e, e->GetRef());
+            xxassert(0, "Pending Object");
+        }
+    }
+    for (auto e : UnkLightArray) {
+        if (std::count(allowed.begin(), allowed.end(), e) == 0) {
+            fprintf(stderr, "Pending Light: %p refs %ld\n", e, e->GetRef());
+            xxassert(0, "Pending Light");
+        }
+    }
+    xxassert(0 == grid.PendingChanges(), "Pending Object changes!");
+    xxassert(0 == UnkLightArray.PendingChanges(), "Pending Light changes!");
+}
+#endif

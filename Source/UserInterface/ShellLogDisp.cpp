@@ -161,7 +161,7 @@ void CShellLogicDispatcher::quant(bool game_active)
             lastMouseMoveHoverCheck = clockf();
 
             terPlayer* pPlayer = universe()->activePlayer();
-            if(pPlayer && !gameShell->BuildingInstaller.inited()) //если не тащим здание
+            if(pPlayer && !gameShell->BuildingInstaller->inited()) //если не тащим здание
             {
                 //Find unit we may be hovering in mouse, in case we already are hovering one pass it as prev unit
                 terUnitBase* hoveringUnit = universe()->TraceUnit(Vect2f(m_fMouseCurrentX - 0.5f, m_fMouseCurrentY - 0.5f));
@@ -214,7 +214,7 @@ void CShellLogicDispatcher::quant(bool game_active)
             //Mark it
             if(_pUnitHover()) {
                 if((m_nState == STATE_DEFAULT) && _bCursorVisible &&
-                   !gameShell->BuildingInstaller.inited() && m_nEditRegion == editRegionNone)
+                   !gameShell->BuildingInstaller->inited() && m_nEditRegion == editRegionNone)
                     _pUnitHover->Mark();
             }
         }
@@ -513,7 +513,7 @@ int CShellLogicDispatcher::OnLButtonDown(float x, float y)
 	if(!pPlayer)
 		return 0;
 
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstaller->inited()) {
 		return 0;
 	}
 
@@ -558,7 +558,7 @@ int CShellLogicDispatcher::OnLButtonUp(float x, float y)
 	if((m_nMouseButtonsState & MK_LBUTTON) == 0)
 		return 0;
 
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstaller->inited()) {
 		return 0;
 	}
 
@@ -589,7 +589,7 @@ int CShellLogicDispatcher::OnLButtonUp(float x, float y)
 }
 int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 {
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstaller->inited()) {
 		return 0;
 	}
 	if (_pUnitHover()) {
@@ -609,7 +609,7 @@ int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 
 int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 {
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstaller->inited()) {
 		return 0;
 	}
 
@@ -658,7 +658,7 @@ int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 }
 int CShellLogicDispatcher::OnRButtonUp(float x, float y)
 {
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstaller->inited()) {
 		return 0;
 	}
 

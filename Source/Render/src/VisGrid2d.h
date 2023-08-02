@@ -16,6 +16,7 @@ protected:
     std::vector<ptr_t> slot = {};
     
     struct sPerQuant {
+        bool processed = false;
         int quant = 0;
         std::vector<ptr_t> list = {};
     };
@@ -29,6 +30,7 @@ protected:
 
     bool ChangeNow(cIUnkClass* UnkObj) const;
     void AddToList(std::list<sPerQuant>& list, cIUnkClass* UnkObj);
+    void RemoveFromList(std::list<sPerQuant>& list, cIUnkClass* UnkObj);
 
 	MTDECLARE(critical);
 public:
@@ -51,6 +53,10 @@ public:
 	void mtUpdate(int cur_quant);
     
     void DisableChanges(bool disable);
+#ifdef PERIMETER_DEBUG_ASSERT
+    void AssertNoObject(cIUnkClass* object);
+    size_t PendingChanges();
+#endif
 };
 
 class QuatTree

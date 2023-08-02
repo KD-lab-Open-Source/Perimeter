@@ -114,7 +114,7 @@ GameShell::GameShell(bool mission_edit) :
 chaos(0),
 NetClient(0), 
 missionEditor_(0),
-BuildingInstaller(),
+BuildingInstaller(nullptr),
 windowClientSize_(1024, 768)
 {
 	gameShell = this;
@@ -452,6 +452,10 @@ void GameShell::GameStart(const MissionDescription& mission)
 	triggersDisabled_ = false;
 	cutSceneSkipped_ = false;
 	lastSkipTime_.stop();
+    
+    if (!BuildingInstaller) {
+        BuildingInstaller = new terBuildingInstaller();
+    }
 		
 	//vMap.selectUsedWorld(CurrentMission.worldID());
 
@@ -584,8 +588,8 @@ void GameShell::GameClose()
 	if(universe())
 		delete universe();
 
-
-	BuildingInstaller.Clear();
+    delete BuildingInstaller;
+    BuildingInstaller = nullptr;
 
 	terScene->Compact();
 
@@ -607,6 +611,12 @@ void GameShell::GameClose()
 	MusicCloseWorld();
 	cVisGeneric::SetAssertEnabled(true);
 	debugPrm_.save();
+
+#if 1 && defined(PERIMETER_DEBUG_ASSERT)
+    std::vector<cIUnkClass*> allowed;
+    allowed.push_back(terLight);
+    terScene->CheckPendingObjects(allowed);
+#endif
 }
 
 bool GameShell::universalSave(const char* name, bool userSave, MissionDescription* missionOutput)
@@ -696,9 +706,9 @@ bool GameShell::showEnergy() const
 	{
 		CSELECT_AUTOLOCK();
 		const UnitList& select=universe()->select.GetSelectList();
-		if(BuildingInstaller.inited())
-			return true;
-		else {
+		if (BuildingInstaller && BuildingInstaller->inited()) {
+            return true;
+        } else {
 			UnitList::const_iterator ui;
 			FOR_EACH(select,ui)
 				if((*ui)->attr()->MakeEnergy > 0)
@@ -790,7 +800,9 @@ void GameShell::Show()
 
 		terExternalQuant();
 		
-		BuildingInstaller.UpdateInfo(terCamera->GetCamera());
+        if (BuildingInstaller) {
+            BuildingInstaller->UpdateInfo(terCamera->GetCamera());
+        }
 		terScene->PreDraw(terCamera->GetCamera());
 
 		m_ShellDispatcher.PreDraw(frame_time.delta());
@@ -1797,7 +1809,9 @@ void GameShell::cancelMouseLook() {
 void GameShell::updatePosition() 
 {
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
-	BuildingInstaller.SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
+    if (BuildingInstaller && BuildingInstaller->inited()) {
+        BuildingInstaller->SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
+    }
 }
 
 void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
@@ -1819,11 +1833,11 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 		MouseMoveFlag = 1;
 	}
 
-	if(BuildingInstaller.inited()){
+	if(BuildingInstaller && BuildingInstaller->inited()){
 		if(isShiftPressed()) {
-            BuildingInstaller.ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
+            BuildingInstaller->ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
         } else {
-            BuildingInstaller.SetBuildPosition(pos, universe()->activePlayer());
+            BuildingInstaller->SetBuildPosition(pos, universe()->activePlayer());
         }
 	}
 
@@ -1885,9 +1899,9 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 			}
 		}
 	}
-	if(BuildingInstaller.inited()){
-		SND2DPlaySound(BuildingInstaller.valid() ? "building_set" : "unable_build");
-		BuildingInstaller.ConstructObject(universe()->activePlayer());
+	if(BuildingInstaller && BuildingInstaller->inited()){
+		SND2DPlaySound(BuildingInstaller->valid() ? "building_set" : "unable_build");
+		BuildingInstaller->ConstructObject(universe()->activePlayer());
 	}
 }
 
@@ -1913,8 +1927,9 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
 		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_ = pos;
 
-		if(BuildingInstaller.inited())
-			BuildingInstaller.CancelObject();
+		if (BuildingInstaller && BuildingInstaller->inited()) {
+            BuildingInstaller->CancelObject();
+        }
 
 		//if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack)
 		if(!cameraMouseZoom && !cameraMouseShift)

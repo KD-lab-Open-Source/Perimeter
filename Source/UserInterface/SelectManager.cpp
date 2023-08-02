@@ -745,8 +745,8 @@ bool cSelectManager::canSelectionAttackUnit(terUnitBase* target) {
 }
 
 void cSelectManager::cancelActions() {
-	if (gameShell->BuildingInstaller.inited()) {
-		gameShell->BuildingInstaller.CancelObject();
+	if (gameShell->BuildingInstaller && gameShell->BuildingInstaller->inited()) {
+		gameShell->BuildingInstaller->CancelObject();
 	}
 	if (_pShellDispatcher->m_nPickAction != SHELL_PICK_NONE) {
 		_pShellDispatcher->m_nPickAction = SHELL_PICK_NONE;

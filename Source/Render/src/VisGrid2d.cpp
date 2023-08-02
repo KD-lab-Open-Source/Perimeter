@@ -249,6 +249,24 @@ void MTGVector::DisableChanges(bool disable) {
     disable_changes = disable;
 }
 
+#ifdef PERIMETER_DEBUG_ASSERT
+void MTGVector::AssertNoObject(cIUnkClass* object) {
+    xxassert(std::count(slot.begin(), slot.end(), object) == 0, "AssertNoObject: slot");
+    for (auto l : add_list) {
+        if (l.processed) continue;
+        xxassert(std::count(l.list.begin(), l.list.end(), object) == 0, "AssertNoObject: add_list");
+    }
+    for (auto l : erase_list) {
+        if (l.processed) continue;
+        xxassert(std::count(l.list.begin(), l.list.end(), object) == 0, "AssertNoObject: erase_list");
+    }
+}
+
+size_t MTGVector::PendingChanges() {
+    return add_list.size() + erase_list.size();
+}
+#endif
+
 bool MTGVector::ChangeNow(cIUnkClass *UnkObj) const {
     if (disable_changes) {
         return false;
@@ -265,11 +283,11 @@ void MTGVector::AddToList(std::list<sPerQuant>& list, cIUnkClass* UnkObj) {
     MTEnter mtenter(critical);
     int quant = gb_VisGeneric->GetLogicQuant();
 #ifdef MTGVECTOR_USE_HANDLES
-    auto obj = UnkObj->AcquireHandle());
+    auto obj = UnkObj->AcquireHandle();
 #else
     auto obj = UnkObj;
 #endif
-    
+
     //Try to add into existing list
     for (auto& per_quant : list) {
         //Check if we are not in past
@@ -279,12 +297,31 @@ void MTGVector::AddToList(std::list<sPerQuant>& list, cIUnkClass* UnkObj) {
             return;
         }
     }
-    
+
     //Not found any list, create new one and add it
     sPerQuant per_quant = {};
+    per_quant.processed = false;
     per_quant.quant = quant;
     per_quant.list.push_back(obj);
     list.push_back(per_quant);
+}
+
+void MTGVector::RemoveFromList(std::list<sPerQuant>& list, cIUnkClass* UnkObj) {
+    MTEnter mtenter(critical);
+#ifdef MTGVECTOR_USE_HANDLES
+    auto obj = UnkObj->AcquireHandle();
+#else
+    auto obj = UnkObj;
+#endif
+
+    //Remove from any per quant
+    for (auto& per_quant : list) {
+        auto& pl = per_quant.list;
+        if (0 < std::count(pl.begin(), pl.end(), obj)) {
+            auto removed = std::remove(pl.begin(), pl.end(), obj);
+            pl.erase(removed, pl.end());
+        }
+    }
 }
 
 void MTGVector::Attach(cIUnkClass *UnkObj) {
@@ -303,6 +340,7 @@ void MTGVector::Attach(cIUnkClass *UnkObj) {
 
 void MTGVector::Detach(cIUnkClass *UnkObj)
 {
+    RemoveFromList(add_list, UnkObj);
 	if (ChangeNow(UnkObj)) {
         auto deleted = std::remove_if(slot.begin(), slot.end(), [UnkObj] ( auto& slot_el ) {
 #ifdef MTGVECTOR_USE_HANDLES
@@ -340,9 +378,11 @@ void MTGVector::mtUpdate(int cur_quant) {
             add_list.begin(),
             add_list.end(),
             [this, cur_quant] (auto& per_quant) {
+        xassert(!per_quant.processed);
         if (per_quant.quant > cur_quant) {
             return false;
         }
+        per_quant.processed = true;
         //Transfer to slot list or release
         for (auto pending : per_quant.list) {
             if (std::count(slot.begin(), slot.end(), pending) == 0
@@ -363,9 +403,11 @@ void MTGVector::mtUpdate(int cur_quant) {
             erase_list.begin(),
             erase_list.end(),
             [this, cur_quant] (auto& per_quant) {
+        xassert(!per_quant.processed);
         if (per_quant.quant > cur_quant) {
             return false;
         }
+        per_quant.processed = true;
         //Remove from slot list and hold list
         for (auto pending : per_quant.list) {
 #ifdef MTGVECTOR_USE_HANDLES
