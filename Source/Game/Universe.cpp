@@ -137,8 +137,6 @@ void terUniverse::clear() {
     
     select.DeselectAll();
 
-    terScene->DeleteAutoObject();
-
     for (terPlayer* p : Players) {
         p->killAllUnits();
     }
@@ -157,6 +155,8 @@ void terUniverse::clear() {
     Players.clear();
 
     active_player_ = nullptr;
+
+    terScene->DeleteAutoObject();
 }
 
 terUniverse::~terUniverse()
