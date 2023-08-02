@@ -666,14 +666,14 @@ class cEmitterZ:public cEmitterInt
 public:
 	cEmitterZ();
 	~cEmitterZ() override;
-	void Draw(cCamera *pCamera);
-	virtual void ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos);
+	void Draw(cCamera *pCamera) override;
+	virtual void ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos) override;
 	void SetEmitterKey(EmitterKeyZ& k,cEmitter3dObject* models);
 
-	void SetParent(cEffect* parent);
+	void SetParent(cEffect* parent) override;
 	float CalcZ(float pos_x,float pos_y);
-	void SetFunctorGetZ(FunctorGetZ* func){RELEASE(func_getz);func_getz=func;func_getz->IncRef();};
-	virtual void AddZ(float z){add_z+=z;}
+	void SetFunctorGetZ(FunctorGetZ* func) override {RELEASE(func_getz);func_getz=func;func_getz->IncRef();};
+	void AddZ(float z) {add_z+=z;}
 protected:
 	virtual bool GetRndPos(Vect3f& pos, Vect3f* norm);
 	virtual void EmitOne(int ix_cur/*nParticle& cur*/,float begin_time);

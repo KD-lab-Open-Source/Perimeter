@@ -167,8 +167,6 @@ inline terUniverse* universe() { return terUniverse::universe_; }
 
 extern class FieldDispatcher* field_dispatcher;
 
-extern struct CEffectManager* terEffectD;
-
 //inline int terObjectBoxTest(const Vect3f& min, const Vect3f& max, sPlane4f* p)
 //{
 //	for(int i = 0;i < 5;i++){
