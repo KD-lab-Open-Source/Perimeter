@@ -28,7 +28,7 @@ float terExternalEnergyTextureEnd = GAME_SHELL_SHOW_REGION_U_STEP;
 //--------------------------------------------------
 void terExternalQuant()
 {
-    if (gameShell->BuildingInstaller) {
+    if (gameShell->BuildingInstallerInited()) {
         gameShell->BuildingInstaller->ShowCircle();
     }
 	

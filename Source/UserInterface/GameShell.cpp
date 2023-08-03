@@ -706,7 +706,7 @@ bool GameShell::showEnergy() const
 	{
 		CSELECT_AUTOLOCK();
 		const UnitList& select=universe()->select.GetSelectList();
-		if (BuildingInstaller && BuildingInstaller->inited()) {
+		if (BuildingInstallerInited()) {
             return true;
         } else {
 			UnitList::const_iterator ui;
@@ -1809,7 +1809,7 @@ void GameShell::cancelMouseLook() {
 void GameShell::updatePosition() 
 {
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
-    if (BuildingInstaller && BuildingInstaller->inited()) {
+    if (BuildingInstallerInited()) {
         BuildingInstaller->SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
     }
 }
@@ -1833,7 +1833,7 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 		MouseMoveFlag = 1;
 	}
 
-	if(BuildingInstaller && BuildingInstaller->inited()){
+	if (BuildingInstallerInited()){
 		if(isShiftPressed()) {
             BuildingInstaller->ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
         } else {
@@ -1899,7 +1899,7 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 			}
 		}
 	}
-	if(BuildingInstaller && BuildingInstaller->inited()){
+	if (BuildingInstallerInited()){
 		SND2DPlaySound(BuildingInstaller->valid() ? "building_set" : "unable_build");
 		BuildingInstaller->ConstructObject(universe()->activePlayer());
 	}
@@ -1927,7 +1927,7 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
 		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_ = pos;
 
-		if (BuildingInstaller && BuildingInstaller->inited()) {
+		if (BuildingInstallerInited()) {
             BuildingInstaller->CancelObject();
         }
 

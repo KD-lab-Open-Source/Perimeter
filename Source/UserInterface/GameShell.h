@@ -210,6 +210,10 @@ public:
 	LogicUpdater& getLogicUpdater() {
 		return logicUpdater;
 	}
+    
+    bool BuildingInstallerInited() const {
+        return BuildingInstaller && BuildingInstaller->inited();
+    }
 
 	void showReelModal(const char* videoFileName, const char* soundFileName, bool localized = false, bool stopBGMusic = true, int alpha = 255);
 	void showPictureModal(const char* pictureFileName, bool localized, int stableTime);
