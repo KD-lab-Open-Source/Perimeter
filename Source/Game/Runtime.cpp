@@ -702,9 +702,6 @@ void InitSound(bool sound, bool music, bool firstTime)
 {
 	terSoundEnable = sound;
 	terMusicEnable = music;
-    if (terRenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
-        terSoundEnable = terMusicEnable = false;
-    }
     
     int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
     int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
@@ -717,13 +714,17 @@ void InitSound(bool sound, bool music, bool firstTime)
         ini_no.getInt("Sound","MixChannels", mixChannels);
         ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
 	}
+    if (terRenderDevice->GetRenderSelection() == DEVICE_HEADLESS
+    || check_command_line("disable_sound") != nullptr) {
+        terSoundEnable = terMusicEnable = false;
+    }
 
 	if(terSoundEnable  || terMusicEnable){
 		static int inited = 0;
 
 		SNDSetLocDataDirectory(getLocDataPath().c_str());
 
-		if(!inited && check_command_line("disable_sound") == nullptr){
+		if(!inited){
 			inited = 1;
 
 			SNDSetSoundDirectory("RESOURCE\\SOUNDS\\EFF\\");
