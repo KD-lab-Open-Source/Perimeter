@@ -281,31 +281,96 @@ void cInterfaceRenderDevice::DrawLine(int x1,int y1,int x2,int y2,const sColor4c
     SetNoMaterial(ALPHA_BLEND);
     UseOrthographicProjection();
     
-    float w = width * getThinLineWidth();
+    // -o = outer   -i = inner
+    float tf = getThinLineWidth();
+    float w = width * tf;
+    float bo = 2.0f * tf;
+    float bi = 0;
+    //Check if too thin
+    if (w <= bo) {
+        bo *= 0.5f;
+    } else {
+        bi = bo;
+    }
     float phi = xm::atan2(static_cast<float>(x2 - x1), static_cast<float>(y2 - y1));
-    float vc = w * xm::cos(phi);
-    float vs = w * xm::sin(phi);
+    float vc = xm::cos(phi);
+    float vs = xm::sin(phi);
+    float vco = vc * (w + bo);
+    float vso = vs * (w + bo);
+    float vci = vc * (w - bi);
+    float vsi = vs * (w - bi);
 
-    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
-    sVertexXYZDT1* v = db->LockQuad<sVertexXYZDT1>(1);
+    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    sVertexXYZDT1* v = nullptr;
+    indices_t* ib = nullptr;
+    db->Lock(8, 16, v, ib, true);
 
-    v[0].z=v[1].z=v[2].z=v[3].z=0;
-    v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(color);
-    v[0].x = static_cast<float>(x1 + vc - vs);
-    v[0].y = static_cast<float>(y1 - vs - vc);
-    v[1].x = static_cast<float>(x1 - vc - vs);
-    v[1].y = static_cast<float>(y1 + vs - vc);
-    v[2].x = static_cast<float>(x2 + vc + vs);
-    v[2].y = static_cast<float>(y2 - vs + vc);
-    v[3].x = static_cast<float>(x2 - vc + vs);
-    v[3].y = static_cast<float>(y2 + vs + vc);
+    uint32_t diffuse = ConvertColor(color);
+    sColor4c fade_color = color;
+    fade_color.a = 0;
+    //fade_color = sColor4c(0,0,255,255);
+    uint32_t fade = ConvertColor(fade_color);
+    for (int i = 0; i < 8; ++i) {
+        v[i].z = 0;
+        v[i].diffuse = i < 4 ? fade : diffuse;
+    }
 
-    v[0].u1()=0.0f; v[0].v1()=0.0f;
-    v[1].u1()=0.0f; v[1].v1()=1.0f;
-    v[2].u1()=1.0f; v[2].v1()=0.0f;
-    v[3].u1()=1.0f; v[3].v1()=1.0f;
+    //         0 ------------- 2
+    //         |\      \      /|
+    //  START  | 4 --------- 6 |  END
+    //  POINT  |/|     \     |/| POINT
+    //         | 5 --------- 7 |
+    //         |/      \      \|
+    //         1 ------------- 3
+    //
+
+    size_t b = db->written_vertices;
+    size_t i = 0;
+    ib[i++] = b + 3;
+    ib[i++] = b + 2;
+    ib[i++] = b + 7;
+    ib[i++] = b + 6;
+    ib[i++] = b + 2;
+    ib[i++] = b; //0
+    ib[i++] = b + 6;
+    ib[i++] = b + 4;
+    ib[i++] = b + 7;
+    ib[i++] = b + 5;
+    ib[i++] = b + 3;
+    ib[i++] = b + 1;
+    ib[i++] = b + 5;
+    ib[i++] = b + 4;
+    ib[i++] = b + 1;
+    ib[i++] = b + 0;
+    xassert(i == db->locked_indices);
+
+    //Out
+    v[0].x = static_cast<float>(x1 + vco - vso);
+    v[0].y = static_cast<float>(y1 - vso - vco);
+    v[1].x = static_cast<float>(x1 - vco - vso);
+    v[1].y = static_cast<float>(y1 + vso - vco);
+    v[2].x = static_cast<float>(x2 + vco + vso);
+    v[2].y = static_cast<float>(y2 - vso + vco);
+    v[3].x = static_cast<float>(x2 - vco + vso);
+    v[3].y = static_cast<float>(y2 + vso + vco);
+
+    //In
+    v[4].x = static_cast<float>(x1 + vci - vsi);
+    v[4].y = static_cast<float>(y1 - vsi - vci);
+    v[5].x = static_cast<float>(x1 - vci - vsi);
+    v[5].y = static_cast<float>(y1 + vsi - vci);
+    v[6].x = static_cast<float>(x2 + vci + vsi);
+    v[6].y = static_cast<float>(y2 - vsi + vci);
+    v[7].x = static_cast<float>(x2 - vci + vsi);
+    v[7].y = static_cast<float>(y2 + vsi + vci);
+
+    v[0].u1() = v[4].u1() = 0.0f; v[0].v1() = v[4].v1() = 0.0f;
+    v[1].u1() = v[5].u1() = 0.0f; v[1].v1() = v[5].v1() = 1.0f;
+    v[2].u1() = v[6].u1() = 1.0f; v[2].v1() = v[6].v1() = 0.0f;
+    v[3].u1() = v[7].u1() = 1.0f; v[3].v1() = v[7].v1() = 1.0f;
 
     db->Unlock();
+    db->EndTriangleStrip();
 }
 
 void cInterfaceRenderDevice::DrawRectangle(int x1,int y1,int dx,int dy,const sColor4c& color, float outline) {
@@ -326,10 +391,10 @@ void cInterfaceRenderDevice::DrawRectangle(int x1,int y1,int dx,int dy,const sCo
         indices_t* ib = nullptr;
         db->Lock<sVertexXYZDT1>(8, 10, v, ib, true);
 
-        v[0].u1() = v[4].u1() = 0.0f; v[0].v1() = v[4].v1() =0.0f;
-        v[1].u1() = v[5].u1() = 0.0f; v[1].v1() = v[5].v1() =1.0f;
-        v[2].u1() = v[6].u1() = 1.0f; v[2].v1() = v[6].v1() =0.0f;
-        v[3].u1() = v[7].u1() = 1.0f; v[3].v1() = v[7].v1() =1.0f;
+        v[0].u1() = v[4].u1() = 0.0f; v[0].v1() = v[4].v1() = 0.0f;
+        v[1].u1() = v[5].u1() = 0.0f; v[1].v1() = v[5].v1() = 1.0f;
+        v[2].u1() = v[6].u1() = 1.0f; v[2].v1() = v[6].v1() = 0.0f;
+        v[3].u1() = v[7].u1() = 1.0f; v[3].v1() = v[7].v1() = 1.0f;
 
         //Outer
 
