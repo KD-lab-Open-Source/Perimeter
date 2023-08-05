@@ -1129,7 +1129,7 @@ void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 			CheckBuildTerrainUnit(UNIT_ATTRIBUTE_BUILD_MASTER);
 
-            if (gameShell->BuildingInstallerInited()) {
+            if (gameShell->BuildingInstaller) {
                 gameShell->BuildingInstaller->InitObject(universe()->activePlayer()->unitAttribute(n_struct));
                 gameShell->BuildingInstaller->SetBuildPosition(gameShell->mousePosition(), universe()->activePlayer());
             }

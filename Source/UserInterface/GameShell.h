@@ -196,7 +196,7 @@ public:
 	bool   cameraCursorInWindow;
 	bool  CursorOverInterface;
 		
-	terBuildingInstaller* BuildingInstaller;
+	terBuildingInstaller* BuildingInstaller = nullptr;
 	
 	CShellLogicDispatcher  m_ShellDispatcher;
 
