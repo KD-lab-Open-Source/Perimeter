@@ -698,6 +698,7 @@ void cScene::AssertNoObject(cIUnkClass* object) {
 
 void cScene::CheckPendingObjects(std::vector<cIUnkClass*>& allowed) {
     MTG();
+    UpdateLists(INT_MAX);
     for (auto e : grid) {
         if (std::count(allowed.begin(), allowed.end(), e) == 0) {
             fprintf(stderr, "Pending Object: %p refs %ld\n", e, e->GetRef());
