@@ -15,7 +15,7 @@ Parser::Parser(const char* fname)
 Parser::~Parser()
 {
 	if(buffer)
-		delete buffer;
+		delete[] buffer;
 }	
 
 void Parser::open(const char* fname_)
@@ -26,7 +26,7 @@ void Parser::open(const char* fname_)
 		throw std::logic_error(std::string("File not found: ") + fname + " " + fname_);
 	int len = ff.size();
 	if(buffer)
-		delete buffer;
+		delete[] buffer;
 	buffer = new char[len + 1];
 	ff.read(buffer, len);
 	buffer[len] = 0;
@@ -169,21 +169,30 @@ XBuffer& operator<=(XBuffer& os, const Parser& p) {
 ///////////////////////////////////////////////////////////////////////////
 Compiler::Compiler()
 {
-	clear();
+	reload();
 }
 
-void Compiler::clear() 
-{ 
-	sections.clear(); 
-	contexts.clear(); 
-	parsers.clear(); 
-	dependencies.clear();
+Compiler::~Compiler() {
+    clear();
+}
+
+void Compiler::clear()
+{
+    sections.clear();
+    contexts.clear();
+    parsers.clear();
+    dependencies.clear();
+}
+
+void Compiler::reload() 
+{
+    clear();
 	push_context(new TokenList(""));
 	context().add(new DataTypeTemplate<IntVariable>("int", "int", sizeof(int)));
 	context().add(new DataTypeTemplate<DoubleVariable>("double", "double", sizeof(double)));
 	context().add(new DataTypeTemplate<FloatVariable>("float", "float", sizeof(float)));
 	context().add(new DataTypeTemplate<StringVariable>("string", "char const*", sizeof(char*)));
-
+  
 	context().add(new PreprocessorToken);
 	context().add(new CreateSectionToken);
 	context().add(new StructToken);
@@ -425,6 +434,10 @@ TokenList::TokenList(const TokenList& tokens, const char* name)
 	lock_addition = 1;
 }
 
+TokenList::~TokenList() {
+    TokenList::clear();
+}
+
 const Token* TokenList::find(const char* name) const 
 { 
 	Map::const_iterator i = map.find(name); 
@@ -453,7 +466,7 @@ void TokenList::add(Token* token)
 	else { 
 		push_back(token); 
 		map.insert(Map::value_type(token->name(), token)); 
-		} 
+    }
 }
 
 void TokenList::addFront(Token* token)
@@ -490,6 +503,13 @@ void TokenList::parse(Compiler& comp)
 	decrRef();
 }
 
+void TokenList::clear() {
+    for (auto& h : *this) {
+        h = nullptr;
+    }
+    list<ShareHandle<Token>>::clear();
+    map.clear();
+}
 
 ///////////////////////////////////////////////////////////////////////////
 //		Section

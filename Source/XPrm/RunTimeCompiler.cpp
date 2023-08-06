@@ -31,7 +31,7 @@ void RunTimeCompiler::loadSection(ParameterSection* prm)
 		if(!prm->needToReload())
 			return;
 
-		Compiler::clear();
+		Compiler::reload();
 
 		Section* sec = getSection(prm->name);
 		if(!sec){

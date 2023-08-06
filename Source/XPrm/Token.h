@@ -14,7 +14,7 @@ class Token : public ShareHandleBase
 public:
 	Token(const char* name = 0) : name_(name) { assert(name); }
 	Token(const Token& token) : name_(token.name()) {}
-	virtual ~Token() {}
+	~Token() override = default;
 	const char* name() const { return name_.c_str(); }
 	virtual Token* clone() const { return const_cast<Token*>(this); } // реально клонируются только изменяемые токены
 	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // основное действие данного токена
@@ -41,13 +41,14 @@ protected:
 public:
 	TokenList(const char* name) : Token(name) { lock_addition = 0; parent = 0; }
 	TokenList(const TokenList& tokens, const char* name = 0);
+    ~TokenList() override;
 	const Token* find(const char* name) const;
 	const Token* find_local(const char* name) const;
 	void run(const char* name, Compiler& comp) const { find(name)->affect(comp); }
 	void add(Token* token);
 	void addFront(Token* token);
 	void parse(class Compiler& comp);
-	void clear() { list<ShareHandle<Token> >::clear(); map.clear(); } 
+	void clear();
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +139,9 @@ class Compiler
 
 public:							
 	Compiler();
-	void clear();
+    ~Compiler();
+    void clear();
+    void reload();
 	int parse_file(const char* fname, XBuffer& sout); // returns the number of errors
 	bool compile(const char* fname, const char* sources, bool rebuild, bool fail_outdated); // returns 1 if succeeds
 	bool sectionUpdated() const { return sectionUpdated_; }
@@ -230,11 +233,11 @@ public:
 	virtual void write_name(XBuffer& buf) const { if(new_emulation_flag) buf < "static "; buf < refine_name_prefix.c_str() < type.type_name() < " " < name(); }
 	virtual void write_value(WriteStream& buf) const = 0;
 	virtual void copy_value(void* value) const = 0;
-	void description(unsigned& crc) const { type.description(crc); crc = CRC(name(), crc); }
-	int sizeOf() const { return type.sizeOf(); }
+	void description(unsigned& crc) const override { type.description(crc); crc = CRC(name(), crc); }
+	int sizeOf() const override { return type.sizeOf(); }
 	int declarable() const { return !static_flag && !new_emulation_flag; }
 	int definible() const { return !static_flag; }
-	Token* clone() const = 0;
+	Token* clone() const override = 0;
 	void affect(Compiler& comp) const;
 	bool newEmulated() const { return new_emulation_flag; }
 };
