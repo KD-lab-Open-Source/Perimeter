@@ -684,24 +684,12 @@ struct Reel {
 };
 
 Reel reels[int REEL_COUNT] = {
-//	{name = "RESOURCE\\VIDEO\\cm.bik"; abortEnabled = 1;},
-//	{name = "RESOURCE\\VIDEO\\CMLegalScreen.tga"; abortEnabled = 0; video = 0;},
-	{name = "RESOURCE\\VIDEO\\1c.bik"; abortEnabled = 1;},
 	{name = "RESOURCE\\VIDEO\\kd.bik"; abortEnabled = 1;},
-//	{name = "RESOURCE\\VIDEO\\ati.bik"; abortEnabled = 1;},
 	{name = "RESOURCE\\VIDEO\\perimeter.bik"; abortEnabled = 1;},
 	{name = "RESOURCE\\VIDEO\\intro.bik"; abortEnabled = 1;}
 };
 
-Reel demoReels[int DEMO_REEL_COUNT] = {
-	{name = "start_splash.tga"; abortEnabled = 0; localized = 1; video = 0;},
-	{name = "RESOURCE\\VIDEO\\CMLegalScreen.tga"; abortEnabled = 0; video = 0;},
-	{name = "RESOURCE\\Icons\\logo.tga"; abortEnabled = 1; video = 0;}
-};
-
 Reel lastReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
-//Reel lastDemoReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
-Reel lastDemoReel = {name = "splash_out.tga"; abortEnabled = 0; localized = 1; video = 0;time = -1;};
 
 _V2i imageRacePos[] = {
 	{x = 0; y = 0;},

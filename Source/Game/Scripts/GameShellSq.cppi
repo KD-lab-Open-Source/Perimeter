@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript definition
 //	Section: SquadShellUIPrm
-//	Number of variables: 292
+//	Number of variables: 289
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct__V2i__
@@ -386,20 +386,15 @@ struct Reel {
 };
 #pragma pack( pop, __XScript_struct_pack__)
 #endif  // __XScript_struct_Reel__
-int REEL_COUNT = 4;
-Reel reels[] = { { "RESOURCE\\VIDEO\\1c.bik" 
- , 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\kd.bik", 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\perimeter.bik" 
- , 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\intro.bik", 1, 0, 1, 4000 } };
-int DEMO_REEL_COUNT = 3;
-Reel demoReels[] = { { "start_splash.tga" 
- , 0, 1, 0, 4000 }, { "RESOURCE\\VIDEO\\CMLegalScreen.tga", 0, 0, 0, 4000 }, { "RESOURCE\\Icons\\logo.tga" 
- , 1, 0, 0, 4000 } };
+int REEL_COUNT = 3;
+Reel reels[] = { { "RESOURCE\\VIDEO\\kd.bik" 
+ , 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\perimeter.bik", 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\intro.bik" 
+ , 1, 0, 1, 4000 } };
 Reel lastReel = { "RESOURCE\\VIDEO\\out.bik", 1, 0, 1, -1 };
-Reel lastDemoReel = { "splash_out.tga" 
- , 0, 1, 0, -1 };
-_V2i imageRacePos[3] = { { 0, 0 }, { 0, 84 }, { 0, 168 } };
-_V2i imageRaceSize[3] = { { 83 
- , 83 }, { 83, 83 }, { 83, 83 } };
+_V2i imageRacePos[3] = { { 0 
+ , 0 }, { 0, 84 }, { 0, 168 } };
+_V2i imageRaceSize[3] = { { 83, 83 }, { 83, 83 }, { 83 
+ , 83 } };
 float CUT_SCENE_TOP = -0.390625f;
 float CUT_SCENE_BOTTOM = 0.390625f;
 int CUT_SCENE_FADEOUT_TIME = 700;
@@ -463,8 +458,8 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\GameShellSq.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 87201575;
-	reserve(292);
+	description = 725633912;
+	reserve(289);
 	add(&_sqsh_cursor_count, "_sqsh_cursor_count", 1356362679);
 	add(&_sqsh_cursors, "_sqsh_cursors", 2573016843);
 	add(&shell_galogram_table_size, "shell_galogram_table_size", 1902009007);
@@ -705,11 +700,8 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add(&LOD_COUNT, "LOD_COUNT", 2701994995);
 	add(&LODS, "LODS", 1214535828);
 	add(&REEL_COUNT, "REEL_COUNT", 2369747542);
-	add(&reels, "reels", 3284598149);
-	add(&DEMO_REEL_COUNT, "DEMO_REEL_COUNT", 697203670);
-	add(&demoReels, "demoReels", 848239309);
+	add(&reels, "reels", 154282128);
 	add(&lastReel, "lastReel", 1974528893);
-	add(&lastDemoReel, "lastDemoReel", 1849906889);
 	add(&imageRacePos, "imageRacePos", 3109320867);
 	add(&imageRaceSize, "imageRaceSize", 742031112);
 	add(&CUT_SCENE_TOP, "CUT_SCENE_TOP", 1693331698);

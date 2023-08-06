@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: SquadShellUIPrm
-//	Number of variables: 292
+//	Number of variables: 289
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct__V2i__
@@ -342,10 +342,7 @@ struct Reel {
 #endif  // __XScript_struct_Reel__
 extern int REEL_COUNT;
 extern Reel reels[];
-extern int DEMO_REEL_COUNT;
-extern Reel demoReels[];
 extern Reel lastReel;
-extern Reel lastDemoReel;
 extern _V2i imageRacePos[3];
 extern _V2i imageRaceSize[3];
 extern float CUT_SCENE_TOP;
