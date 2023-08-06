@@ -705,14 +705,17 @@ void InitSound(bool sound, bool music, bool firstTime)
     int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
     int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
 
+    IniManager ini("Perimeter.ini");
 	if (firstTime) {
-		IniManager ini("Perimeter.ini");
 		terSoundVolume = ini.getFloat("Sound","SoundVolume");
 		terMusicVolume = ini.getFloat("Sound","MusicVolume");
         IniManager ini_no("Perimeter.ini", false);
         ini_no.getInt("Sound","MixChannels", mixChannels);
         ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
-	}
+	} else {
+        ini.putInt("Sound","SoundEnable", terSoundEnable);
+        ini.putInt("Sound","MusicEnable", terMusicEnable);
+    }
     if (terRenderDevice->GetRenderSelection() == DEVICE_HEADLESS
     || check_command_line("disable_sound") != nullptr) {
         terSoundEnable = terMusicEnable = false;
@@ -765,8 +768,6 @@ void SoundQuant()
 void FinitSound()
 {
 	IniManager ini("Perimeter.ini");
-	ini.putInt("Sound","SoundEnable", terSoundEnable);
-	ini.putInt("Sound","MusicEnable", terMusicEnable);
 	ini.putFloat("Sound","SoundVolume", terSoundVolume);
 	ini.putFloat("Sound","MusicVolume", terMusicVolume);
 
