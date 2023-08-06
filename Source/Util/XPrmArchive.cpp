@@ -227,34 +227,41 @@ const char* XPrmIArchive::getToken()
 
 	// Search begin of token
 	const char* i = &buffer_();
-	for(;;){
-		if(!*i)
-			return 0; // eof
+	for(;;) {
+        if (!*i) {
+            return nullptr;
+        } // eof
 
 		if(*i == '/'){	     
 			if(*(i + 1) == '/'){ // //-comment
 				i += 2;
-				if((i = strstr(i, "\n")) == 0) 
-					return 0;
+                while (!(*i == '\n')) {
+                    if (!*i) {
+                        return nullptr; // error
+                    }
+                    i++;
+                }
 				i++;
 				continue;
 				}
 			if(*(i + 1) == '*'){ // /* */-comment
 				i += 2;
-				while(!(*i == '*' && *(i + 1) == '/')){
-					if(!*i)
-						return 0; // error
+				while (!(*i == '*' && *(i + 1) == '/')) {
+					if(!*i) {
+                        return nullptr; // error
+                    }
 					i++;
-					}
+                }
 				i += 2;
 				continue;
 				}
-			}
-		if(isspace(*i))
-			i++;
-		else
-			break;
-		}
+        }
+        if (isspace(*i)) {
+            i++;
+        } else {
+            break;
+        }
+    }
 
 	// Search end of token
 	const char* marker = i;
@@ -272,11 +279,14 @@ const char* XPrmIArchive::getToken()
 		else
 			if(*i == '"'){ // Character Literal 
 				i++;
-				if((i = strstr(i, "\"")) == 0) 
-					return 0; // error
+                while (!(*i == '\"')) {
+                    if (!*i) {
+                        return nullptr; // error
+                    }
+                    i++;
+                }
 				i++;
-				}
-			else
+            } else
 				if(*i == '-' && *(i + 1) == '>'){ // ->
 					i += 2;
 					if(*i == '*')			// ->*
@@ -312,7 +322,12 @@ const char* XPrmIArchive::getToken()
 								else
 									i++;
 
-	buffer_.set(i - buffer_.address());
+    int64_t l = i - buffer_.address();
+    if (l >= buffer_.size) {
+        xassert(0);
+        return nullptr;
+    }
+	buffer_.set(l);
 	replaced_symbol = buffer_();
 	buffer_() = 0;
 	return marker;
