@@ -282,7 +282,8 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute->InstallBound && modelScaleOld != modelScale) {
+    //Calculate if model scale is different or unit does Install/Uninstall
+	if(attribute->InstallBound || modelScaleOld != modelScale) {
 		cObjectNodeRoot* model = createObject(modelData.modelName, attribute->belligerent);
 
 		int vertex_num = 0;
