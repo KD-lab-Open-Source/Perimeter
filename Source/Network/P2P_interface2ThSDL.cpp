@@ -21,6 +21,9 @@ bool PNetCenter::Init()
     if (server_arch_mask_str) {
         server_arch_mask = strtoull(server_arch_mask_str, nullptr, 16);
     }
+
+    //Reset our attributes in case we played before
+    loadUnitAttributes(false, nullptr);
     
     server_content_crc = get_content_crc();
     

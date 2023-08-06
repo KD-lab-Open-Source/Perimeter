@@ -898,7 +898,8 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
 
     //If a campaign mission then load campaign attributes
     bool campaign = mission.isCampaign();
-    initAttributes(campaign, mission.scriptsData.length() ? &mission.scriptsData : nullptr);
+    loadUnitAttributes(campaign, mission.scriptsData.length() ? &mission.scriptsData : nullptr);
+    initUnitAttributes();
 
     if (loadProgressUpdate) loadProgressUpdate(0.7f);
 

@@ -1528,9 +1528,11 @@ public:
                                
 	//---------------------------------------
 	const EffectLibrary* EffectLib;
+    
+    bool initialized = false;
 
 	AttributeBase();
-	virtual ~AttributeBase(){}
+	~AttributeBase() override = default;
 	void init();
 
 	EffectKey* getEffect(terEffectID effect_id) const;
@@ -1657,7 +1659,7 @@ public:
 		GeometryAttribute::serialize_template(ar);
 
         if (ar.isInput()) {
-            init();
+            initialized = false;
         }
 	}
 
@@ -1716,7 +1718,8 @@ inline void setKeyC(AttributeIDBelligerent& data, const char* str) {
 
 typedef TypeLibrary<AttributeIDBelligerent, AttributeBase> AttributeLibrary;
 extern SingletonPrm<AttributeLibrary> attributeLibrary;
-void initAttributes(bool campaign = false, XBuffer* scriptsSerialized = nullptr);
+void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized);
+void initUnitAttributes();
 uint32_t get_content_crc();
 const std::map<std::string, uint32_t>& get_content_list();
 

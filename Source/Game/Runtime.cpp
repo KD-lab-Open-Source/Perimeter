@@ -267,7 +267,6 @@ void HTManager::init()
 	initGraphics();
 
     initInterfaceAttributes();
-    //initAttributes(false);
 
 	allocation_tracking("PerimeterGraphicsInit");
 	

@@ -392,9 +392,10 @@ void PNetCenter::UpdateBattleData() {
 
 void PNetCenter::SendBattleData() {
     MissionDescription* mission = hostMissionDescription;
-    
-    //Init attrs just in case
-    initAttributes(false, nullptr);
+
+    //Load unit attrs before sending them
+    loadUnitAttributes(false, nullptr);
+    //initUnitAttributes();
 
     //Load current attributes into host mission
     XPrmOArchive oaScripts;

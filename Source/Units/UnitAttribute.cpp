@@ -147,6 +147,11 @@ EffectLib(0)
 
 void AttributeBase::init()
 {
+    if (initialized) {
+        return;
+    }
+    initialized = true;
+    
     //Avoid loading stuff that user may not have
     if (unavailableContentUnitAttribute(ID) || unavailableContentBelligerent(belligerent)) {
         return;
@@ -177,11 +182,12 @@ void AttributeBase::init()
 	if(strlen(interfaceNameTag())) {
 		std::string path = std::string("Interface.Tips.NAMES.") + interfaceNameTag();
 		InterfaceName = qdTextDB::instance().getText(path.c_str());
-		if(InterfaceName.empty())
-			InterfaceName = interfaceNameTag();
+		if (InterfaceName.empty()) {
+            InterfaceName = interfaceNameTag();
+        }
 	}
 
-	EffectLib = effectsData.effects.size() ? effectLibraryDispatcher().register_library(effectsData.libraryFileName) : 0;
+	EffectLib = effectsData.effects.empty() ? nullptr : effectLibraryDispatcher().register_library(effectsData.libraryFileName);
 
 	initGeometryAttribute(modelData, this);
 }
@@ -648,6 +654,10 @@ uint32_t contentCRC = 0;
 std::map<std::string, uint32_t> contentFiles;
 
 uint32_t get_content_crc() {
+    if (contentCRC == 0) {
+        xassert(0);
+        fprintf(stderr, "WARNING: content CRC is 0!\n");
+    }
     return contentCRC;
 }
 
@@ -689,26 +699,6 @@ void collect_content_crc() {
         }
     }
 }
-
-//---------------------------------
-//void initAttributes()
-//{ 
-//	AttributeLibrary::
-//	for(i = 0;i < table.size();i++){
-//		AttributeBase& cell = data[table[i].ID];
-//		if(cell.ID == UNIT_ATTRIBUTE_NONE || belligerent == table[i].belligerent)
-//			cell.init(table[i]); 
-//	}
-//  
-//	AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(100*DamageMolecula(table.BuildingBlock.damageMolecula).elementCount()));
-//
-//	for (i = 0; i < UNIT_ATTRIBUTE_MAX; i++) {
-//		AttributeBase& cell = data[i];
-//		if (cell.ID != UNIT_ATTRIBUTE_NONE) {
-//			cell.initIntfBalanceData((cell.weaponSetup && cell.weaponSetup->missileID != UNIT_ATTRIBUTE_NONE) ? &data[cell.weaponSetup->missileID] : 0);
-//		}
-//	}
-//}
 
 const char* AttributeBase::internalName(bool alt) const
 {
@@ -759,13 +749,41 @@ void initInterfaceAttributes() {
     copyInterfaceAttributesIndispensable();
 }
 
-int _lastInitAttributesType = 0; //0 = None or single use, 1 = normal, 2 = campaign 
+enum UNIT_ATTRIBUTES_TYPE {
+    UNIT_ATTRIBUTES_TMP = 0,
+    UNIT_ATTRIBUTES_NORMAL,
+    UNIT_ATTRIBUTES_CAMPAIGN,
+};
 
-void initAttributes(bool campaign, XBuffer* scriptsSerialized) {
+UNIT_ATTRIBUTES_TYPE _lastInitAttributesType = UNIT_ATTRIBUTES_TMP; 
+
+void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
     //Check if we don't need to actually load if type is same
-    int initAttrType = scriptsSerialized ? 0 : (campaign ? 2 : 1);
+    UNIT_ATTRIBUTES_TYPE initAttrType = scriptsSerialized ? UNIT_ATTRIBUTES_TMP : UNIT_ATTRIBUTES_NORMAL;
+    
+    //If campaign then check if there is any campaign specific attrs to load, else use normal
+    if (campaign) {
+        if (_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN) {
+            initAttrType = UNIT_ATTRIBUTES_CAMPAIGN;
+        } else {
+            for (const char* path: {
+                    "Scripts\\RigidBodyPrmLibraryCampaign",
+                    "Scripts\\AttributeLibraryCampaign",
+                    "Scripts\\GlobalAttributesCampaign"
+            }) {
+                std::string result = convert_path_native(path);
+                if (std::filesystem::exists(std::filesystem::u8path(result))) {
+                    initAttrType = UNIT_ATTRIBUTES_CAMPAIGN;
+                    break;
+                }
+            }
+        }
+    }
+    
     fprintf(stdout, "initAttributes %d -> %d\n", _lastInitAttributesType, initAttrType);
-    if (0 < initAttrType && 0 < _lastInitAttributesType && initAttrType == _lastInitAttributesType) {
+    if (initAttrType != UNIT_ATTRIBUTES_TMP
+    && _lastInitAttributesType != UNIT_ATTRIBUTES_TMP
+    && initAttrType == _lastInitAttributesType) {
         return;
     }
     _lastInitAttributesType = initAttrType;
@@ -788,17 +806,17 @@ void initAttributes(bool campaign, XBuffer* scriptsSerialized) {
     } else {
         //Deserialize from files
         XPrmIArchive ia;
-        if(campaign && ia.open("Scripts\\RigidBodyPrmLibraryCampaign")) {
+        if(_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN && ia.open("Scripts\\RigidBodyPrmLibraryCampaign")) {
             ia >> makeObjectWrapper(SingletonPrm<RigidBodyPrmLibrary>::instance(), "RigidBodyPrmLibrary", nullptr);
         } else {
             SingletonPrm<RigidBodyPrmLibrary>::load();
         }
-        if(campaign && ia.open("Scripts\\AttributeLibraryCampaign")) {
+        if(_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN && ia.open("Scripts\\AttributeLibraryCampaign")) {
             ia >> makeObjectWrapper(SingletonPrm<AttributeLibrary>::instance(), "AttributeLibrary", nullptr);
         } else {
             SingletonPrm<AttributeLibrary>::load();
         }
-        if(campaign && ia.open("Scripts\\GlobalAttributesCampaign")) {
+        if(_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN && ia.open("Scripts\\GlobalAttributesCampaign")) {
             ia >> makeObjectWrapper(SingletonPrm<GlobalAttributes>::instance(), "GlobalAttributes", nullptr);
         } else {
             SingletonPrm<GlobalAttributes>::load();
@@ -816,21 +834,24 @@ void initAttributes(bool campaign, XBuffer* scriptsSerialized) {
 //	interfaceAttr.edit();
 //	ErrH.Exit();
 
-	const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK); 
-    AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
-
-    for (auto& i : attributeLibrary().map()) {
-		AttributeBase* attribute = i.second;
-		if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
-            attribute->initIntfBalanceData(
-                (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
-                ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0
-            );
-        }
-	}
-
     if (!scriptsSerialized) {
         collect_content_crc();
+    }
+}
+
+void initUnitAttributes() {
+    const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK);
+    AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
+    
+    for (auto& i : attributeLibrary().map()) {
+        AttributeBase* attribute = i.second;
+        if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
+            attribute->init();
+            attribute->initIntfBalanceData(
+                    (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
+                    ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0
+            );
+        }
     }
 }
 
