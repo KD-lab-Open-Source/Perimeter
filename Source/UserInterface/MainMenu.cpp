@@ -1126,7 +1126,11 @@ int SwitchMenuScreenQuant1( float, float ) {
                             //Get player name and add Server
                             name = playerNameInput->getText();
                             if (name.empty()) name = getStringSettings(regLanName);
-                            name = name.empty() ? "Game Server" : (name + " Server");
+                            const char* server = qdTextDB::instance().getText("Interface.Menu.Multiplayer.Server");
+                            if (name.empty()) {
+                                name = "Game";
+                            }
+                            name = name + " " + server;
                         }
 
                         CEditWindow* hostNameInput = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_NAME_INPUT);
