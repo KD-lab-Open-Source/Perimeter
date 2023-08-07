@@ -2078,6 +2078,7 @@ void OnComboSoundEffects(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGameStartSplash(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnSliderScrollRate(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param);

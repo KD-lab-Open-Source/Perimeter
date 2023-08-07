@@ -539,24 +539,6 @@ void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param)
     }
 }
 
-/*
-void OnComboGameLanguage(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-    CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
-    if( code == EVENT_CREATEWND ) {
-        pCombo->pos = 0;
-        for (auto& locale : getLocales()) {
-            if (locale == getLocale()) {
-                pCombo->pos = static_cast<int>(pCombo->Array.size());
-            }
-            pCombo->Array.emplace_back(locale);
-        }
-        pCombo->size = pCombo->Array.size();
-    } else if( code == EVENT_UNPRESSED ) {
-        std::string lang = pCombo->Array[pCombo->pos];
-    }
-}
-*/
-
 void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
     if( code == EVENT_CREATEWND ) {
@@ -567,6 +549,20 @@ void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int p
     } else if( code == EVENT_UNPRESSED ) {
         applicationRunBackground = pCombo->pos;
     }
+}
+
+void OnComboGameStartSplash(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+	CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
+	if( code == EVENT_CREATEWND ) {
+		IniManager ini_no_check("Perimeter.ini", false);
+		pCombo->pos = ini_no_check.getInt("Game", "StartSplash");
+		pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
+		pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
+		pCombo->size = pCombo->Array.size();
+	} else if( code == EVENT_UNPRESSED ) {
+		IniManager ini_no_check("Perimeter.ini", false);
+		ini_no_check.putInt("Game", "StartSplash", pCombo->pos);
+	}
 }
 
 //main menu options-----------------------
