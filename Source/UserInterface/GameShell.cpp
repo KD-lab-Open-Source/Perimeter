@@ -1214,10 +1214,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case KBD_CTRL | VK_F11:
 		startStopRecordMovie();
 		break;
-	case VK_F11 | KBD_CTRL | KBD_SHIFT: 
+	case VK_F12 | KBD_CTRL: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY);
 		break; 
-	case VK_F12 | KBD_CTRL | KBD_SHIFT: 
+	case VK_F12 | KBD_SHIFT: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT);
 		break; 
 	case VK_F5:
@@ -1423,6 +1423,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'D':
 		universe()->select.explodeUnit();
 		break;
+	case 'D' | KBD_CTRL | KBD_SHIFT:
+		universe()->DeleteSelectedObjects();
+		break;
 
 	// Debug objects
 	case 'Q':
@@ -1497,7 +1500,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 void GameShell::KeyPressed(sKey& Key)
 {
-    if (Key.fullkey == (VK_F12|KBD_SHIFT|KBD_CTRL)) {
+    if (Key.fullkey == (VK_ESCAPE|KBD_SHIFT|KBD_CTRL)) {
         //Restart game now
         request_application_restart();
         terminate();
