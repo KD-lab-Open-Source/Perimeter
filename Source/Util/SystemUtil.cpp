@@ -39,7 +39,7 @@ bool isPressed(uint32_t key) {
             return SDL_GetModState() & KMOD_SHIFT;
         case VK_CONTROL:
             return SDL_GetModState() & KMOD_CTRL;
-        case VK_MENU:
+        case VK_ALT:
             return SDL_GetModState() & KMOD_ALT;
         case VK_BACK:           keycode = SDLK_BACKSPACE; break;
         case VK_TAB:            keycode = SDLK_TAB; break;
@@ -146,7 +146,7 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_LCTRL:
         case SDLK_RCTRL:        key = VK_CONTROL; break;
         case SDLK_LALT:
-        case SDLK_RALT:         key = VK_MENU; break;
+        case SDLK_RALT:         key = VK_ALT; break;
         case SDLK_PAUSE:        key = VK_PAUSE; break;
         case SDLK_CAPSLOCK:     key = VK_CAPITAL; break;
         case SDLK_ESCAPE:       key = VK_ESCAPE; break;
@@ -231,15 +231,15 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         ctrl |= 1;
     }
     if ((mod & KMOD_ALT) != 0) {
-        fullkey |= KBD_MENU;
-        menu |= 1;
+        fullkey |= KBD_ALT;
+        alt |= 1;
     }
     
     // Same as normal sKey constructor
     if(set_by_async_funcs){
         ctrl = isControlPressed();
         shift = isShiftPressed();
-        menu = isAltPressed();
+        alt = isAltPressed();
     }
 
     // добавляем расширенные коды для командных кодов
@@ -247,8 +247,8 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         ctrl |= 1;
     if(key == VK_SHIFT)
         shift |= 1;
-    if(key == VK_MENU)
-        menu |= 1;
+    if(key == VK_ALT)
+        alt |= 1;
 }
 
 sKey::sKey(int key_, bool set_by_async_funcs) {
@@ -256,15 +256,15 @@ sKey::sKey(int key_, bool set_by_async_funcs) {
     if(set_by_async_funcs){
         ctrl = isControlPressed();
         shift = isShiftPressed();
-        menu = isAltPressed();
+        alt = isAltPressed();
     }
     // добавляем расширенные коды для командных кодов
     if(key == VK_CONTROL)
         ctrl |= 1;
     if(key == VK_SHIFT)
         shift |= 1;
-    if(key == VK_MENU)
-        menu |= 1;
+    if(key == VK_ALT)
+        alt |= 1;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

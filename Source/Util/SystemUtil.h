@@ -35,11 +35,11 @@ bool applicationIsGo();
 bool isPressed(uint32_t key);
 inline bool isShiftPressed() { return isPressed(VK_SHIFT); }
 inline bool isControlPressed() { return isPressed(VK_CONTROL); }
-inline bool isAltPressed() { return isPressed(VK_MENU); }
+inline bool isAltPressed() { return isPressed(VK_ALT); }
 
 const unsigned int KBD_CTRL = 1 << 8;
 const unsigned int KBD_SHIFT = 1 << 9;
-const unsigned int KBD_MENU = 1 << 10;
+const unsigned int KBD_ALT = 1 << 10;
 
 struct sKey {
     union
@@ -49,7 +49,7 @@ struct sKey {
             unsigned char key;
             unsigned char ctrl : 1;
             unsigned char shift : 1;
-            unsigned char menu	: 1;
+            unsigned char alt	: 1;
         };
         int fullkey;
     };
@@ -59,7 +59,7 @@ struct sKey {
 	sKey(int key_ = 0, bool set_by_async_funcs = false);
 	
 	bool pressed() const {
-		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(menu ^ isAltPressed());
+		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(alt ^ isAltPressed());
 	}
 };
 

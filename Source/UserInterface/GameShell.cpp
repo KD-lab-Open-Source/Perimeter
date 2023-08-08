@@ -1199,7 +1199,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
         }
 		break;
 		}
-	case VK_F9 | KBD_CTRL | KBD_MENU: {
+	case VK_F10 | KBD_CTRL: {
 		savePrm().manualData.cameras.push_back(SaveCameraSplineData());
 		terCamera->savePath(savePrm().manualData.cameras.back());
 		XBuffer name;
@@ -1214,10 +1214,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case KBD_CTRL | VK_F11:
 		startStopRecordMovie();
 		break;
-	case VK_F11 | KBD_CTRL | KBD_MENU: 
+	case VK_F11 | KBD_CTRL | KBD_SHIFT: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY);
 		break; 
-	case VK_F12 | KBD_CTRL | KBD_MENU: 
+	case VK_F12 | KBD_CTRL | KBD_SHIFT: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT);
 		break; 
 	case VK_F5:
