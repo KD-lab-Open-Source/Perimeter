@@ -267,22 +267,29 @@ void terUnitBase::executeCommand(const UnitCommand& command)
 {
 	MTL();
 	switch(command.commandID()){
-    default:
-        break;
-	case COMMAND_ID_EXPLODE_UNIT: {
-		DamageData damage;
-		damage.clear();
-		if(attr()->ID != UNIT_ATTRIBUTE_SQUAD){
-			damage.width = damageMolecula().elementCount();
-			damage.power = damage.width*2;
-		}
-		else{
-			damage.width = 2;
-			damage.power = 4;
-		}
+		default:
+			break;
+		case COMMAND_ID_DEBUG: {
+#ifdef PERIMETER_DEBUG
+			int data = command.commandData();
+			if (data == 1) {
+				DamageData damage;
+				damage.clear();
+				if (attr()->ID != UNIT_ATTRIBUTE_SQUAD) {
+					damage.width = damageMolecula().elementCount();
+					damage.power = damage.width * 2;
+				} else {
+					damage.width = 2;
+					damage.power = 4;
+				}
 
-		setDamage(damage, NULL);
-		break; }
+				setDamage(damage, NULL);
+			} else if (data == 2) {
+				damageMoleculaKill();
+			}
+#endif
+			break;
+		}
 	}
 }
 

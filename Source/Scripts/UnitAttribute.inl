@@ -388,7 +388,7 @@ enum CommandID
 
 	//---------------------------
 	//	Scalar 
-	COMMAND_ID_EXPLODE_UNIT,
+	COMMAND_ID_DEBUG,
 
 	//  Frame
 	COMMAND_ID_FRAME_ATTACH,

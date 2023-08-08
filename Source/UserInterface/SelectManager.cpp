@@ -476,9 +476,9 @@ void cSelectManager::DeleteSelectedObjects()
 void cSelectManager::explodeUnit()
 {
 	CSELECT_AUTOLOCK();
-	UnitList::iterator ui;
-	FOR_EACH(SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER], ui)
-		(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_EXPLODE_UNIT, 0));
+	for (auto& ui : SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER]) {
+		ui->commandIncoming(UnitCommand(COMMAND_ID_DEBUG, 1));
+	}
 }
 
 void cSelectManager::MakeSelectionList(float x0, float y0, float x1, float y1, UnitList& out_list)
