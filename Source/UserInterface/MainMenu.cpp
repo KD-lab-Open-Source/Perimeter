@@ -79,146 +79,135 @@ const char* getMapName(const char* keyStr) {
 }
 
 void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
-	if (_shellIconManager.isCutSceneMode()) {
-		_shellIconManager.setCutSceneMode(false, false);
-	}
+    terUniverseInterfaceMessage current = gameShell->currentSingleProfile.getGameResult();
+    if (current & UNIVERSE_INTERFACE_MESSAGE_ACTIVE) {
+		//Already is displaying a message, don't replace
+        return;
+    }
+    current = static_cast<terUniverseInterfaceMessage>(current & UNIVERSE_INTERFACE_MESSAGE_MASK);
+    
+    //Set new game result if not defined previously, else use previous result
+    if (current == UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED) {
+        current = id = static_cast<terUniverseInterfaceMessage>(id & UNIVERSE_INTERFACE_MESSAGE_MASK);
+    } else {
+        id = current;
+    }
+    gameShell->currentSingleProfile.setGameResult(static_cast<terUniverseInterfaceMessage>(id | UNIVERSE_INTERFACE_MESSAGE_ACTIVE));
+    
+    if (_shellIconManager.isCutSceneMode()) {
+        _shellIconManager.setCutSceneMode(false, false);
+    }
 
 	bool multiPlayer = (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER);
-//	if (multiPlayer) {
-//		gameShell->getNetClient()->FinishGame();
-//	}
-
-#ifdef _FINAL_VERSION_
-	bool disableBack = 
-			(gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER)
-		||	gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT
-		||	(gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED && id == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT);
+	bool disableBack = gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE && !multiPlayer;
 
 	_shellIconManager.GetWnd( SQSH_MM_RESUME_BTN )->Enable(!disableBack);
-#else
-	_shellIconManager.GetWnd( SQSH_MM_RESUME_BTN )->Enable(true);
-#endif
-	if (gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED) {
-		if (universe()) {
-			universe()->stopPlayReel();
-		}
-		switch (id)	{
-			case UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY:
-				{
-					if (wndIDToHide == -1) {
-						gameShell->cancelMouseLook();
-					}
-					if (
-								gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO
-							&&	(		gameShell->currentSingleProfile.getLastMissionNumber() == 0
-									||	historyScene.getMissionNumberToExecute() == gameShell->currentSingleProfile.getLastMissionNumber() )
-	//						&&	historyScene.missionCount() > (gameShell->currentSingleProfile.getLastMissionNumber() + 1)
-						) {
+    
+    if (universe()) {
+        universe()->stopPlayReel();
+    }
+    switch (id) {
+        default:
+        case UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED:
+            break;
+        case UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY: {
+            if (wndIDToHide == -1) {
+                gameShell->cancelMouseLook();
+            }
+            if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO && (
+				gameShell->currentSingleProfile.getLastMissionNumber() == 0 || historyScene.getMissionNumberToExecute() == gameShell->currentSingleProfile.getLastMissionNumber()
+			)) {
+                gameShell->currentSingleProfile.setLastMissionNumber(gameShell->currentSingleProfile.getLastMissionNumber() + 1);
+            }
+                        
+            gameShell->currentSingleProfile.setLastWin(true);
 
-						gameShell->currentSingleProfile.setLastMissionNumber(gameShell->currentSingleProfile.getLastMissionNumber() + 1);
-					}
-								
-					gameShell->currentSingleProfile.setGameResult(id);
-					gameShell->currentSingleProfile.setLastWin(true);
+            if (multiPlayer) {
+                _shellIconManager.hideAllVisibleMenuScr();
+            }
 
-					if (multiPlayer) {
-						_shellIconManager.hideAllVisibleMenuScr();
-					}
+            gameShell->prepareForInGameMenu();
 
-					gameShell->prepareForInGameMenu();
+            _shellIconManager.playGameOverSound("RESOURCE\\MUSIC\\victory.ogg");
 
-                    _shellIconManager.playGameOverSound("RESOURCE\\MUSIC\\victory.ogg");
-//					SND2DPlaySound("victory");
+            CTextWindow *Wnd = (CTextWindow*)_shellIconManager.GetWnd( SQSH_MM_RESULT_TXT );
+            CScaleResultButton *rWnd = (CScaleResultButton*)_shellIconManager.GetWnd( SQSH_RESULT_WND );
+            if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SURVIVAL) {
+                const char* origName = gameShell->CurrentMission.originalSaveName;
+                xassert(origName);
+                std::string keyName;
+                if (!origName) {
+                    keyName = gameShell->CurrentMission.missionName();
+                } else {
+                    keyName = getOriginalMissionName(origName);
+                }
+                bool record = gameShell->currentSingleProfile.getRecord(keyName) < gameShell->gameTimer();
+                if (record) {
+                    gameShell->currentSingleProfile.setRecord(keyName, gameShell->gameTimer());
+                }
+                if (Wnd) {
+                    Wnd->setText( formatTimeWithHour(gameShell->gameTimer()) );
+                    Wnd->victory = record;
+                }
+                rWnd->victory = record;
+            } else {
+                if (Wnd) {
+                    Wnd->SetText( qdTextDB::instance().getText("Interface.Menu.Messages.Victory") );
+                    Wnd->victory = true;
+                }
+                rWnd->victory = true;
+            }
+            _shellIconManager.SwitchMenuScreens(wndIDToHide, SQSH_MM_ENDMISSION_SCR);
+            
+            break;
+        }
 
-					CTextWindow *Wnd = (CTextWindow*)_shellIconManager.GetWnd( SQSH_MM_RESULT_TXT );
-					CScaleResultButton *rWnd = (CScaleResultButton*)_shellIconManager.GetWnd( SQSH_RESULT_WND );
-					if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SURVIVAL) {
-						const char* origName = gameShell->CurrentMission.originalSaveName;
-						xassert(origName);
-						std::string keyName;
-						if (!origName) {
-							keyName = gameShell->CurrentMission.missionName();
-						} else {
-							keyName = getOriginalMissionName(origName);
-						}
-						bool record = gameShell->currentSingleProfile.getRecord(keyName) < gameShell->gameTimer();
-						if (record) {
-							gameShell->currentSingleProfile.setRecord(keyName, gameShell->gameTimer());
-						}
-						if (Wnd) {
-							Wnd->setText( formatTimeWithHour(gameShell->gameTimer()) );
-							Wnd->victory = record;
-						}
-						rWnd->victory = record;
-					} else {
-						if (Wnd) {
-							Wnd->SetText( qdTextDB::instance().getText("Interface.Menu.Messages.Victory") );
-							Wnd->victory = true;
-						}
-						rWnd->victory = true;
-					}
-					_shellIconManager.SwitchMenuScreens(wndIDToHide, SQSH_MM_ENDMISSION_SCR);
-					
-					break;
-				}
+        case UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT: {
+            if (wndIDToHide == -1) {
+                gameShell->cancelMouseLook();
+            }
+			bool win = gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO
+					&& historyScene.getMissionNumberToExecute() < gameShell->currentSingleProfile.getLastMissionNumber();
+            gameShell->currentSingleProfile.setLastWin(win);
 
-			case UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT:
-				{
-					if (wndIDToHide == -1) {
-						gameShell->cancelMouseLook();
-					}
-					gameShell->currentSingleProfile.setLastWin(
-							gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO
-						&&	historyScene.getMissionNumberToExecute() != gameShell->currentSingleProfile.getLastMissionNumber()
-					);
-					gameShell->currentSingleProfile.setGameResult(id);
+            if (multiPlayer) {
+                _shellIconManager.hideAllVisibleMenuScr();
+            }
 
-					if (multiPlayer) {
-						_shellIconManager.hideAllVisibleMenuScr();
-					}
+            gameShell->prepareForInGameMenu();
 
-					gameShell->prepareForInGameMenu();
+            _shellIconManager.playGameOverSound("RESOURCE\\MUSIC\\defeat.ogg");
 
-                    _shellIconManager.playGameOverSound("RESOURCE\\MUSIC\\defeat.ogg");
-//					SND2DPlaySound("defeat");
-
-					CTextWindow *Wnd = (CTextWindow*)_shellIconManager.GetWnd( SQSH_MM_RESULT_TXT );
-					CScaleResultButton *rWnd = (CScaleResultButton*)_shellIconManager.GetWnd( SQSH_RESULT_WND );
-					if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SURVIVAL) {
-						const char* origName = gameShell->CurrentMission.originalSaveName;
-						xassert(origName);
-						std::string keyName;
-						if (!origName) {
-							keyName = gameShell->CurrentMission.missionName();
-						} else {
-							keyName = getOriginalMissionName(origName);
-						}
-						bool record = gameShell->currentSingleProfile.getRecord(keyName) < gameShell->gameTimer();
-						if (record) {
-							gameShell->currentSingleProfile.setRecord(keyName, gameShell->gameTimer());
-						}
-						if(Wnd) {
-							Wnd->setText( formatTimeWithHour(gameShell->gameTimer()) );
-							Wnd->victory = record;
-						}
-						rWnd->victory = record;
-					} else {
-						if(Wnd) {
-							Wnd->SetText( qdTextDB::instance().getText("Interface.Menu.Messages.Mission Failed") );
-							Wnd->victory = false;
-						}
-						rWnd->victory = false;
-					}
-					_shellIconManager.SwitchMenuScreens(wndIDToHide, SQSH_MM_ENDMISSION_SCR);
-					break;
-				}
-		}
-	} else {
-		if (wndIDToHide == -1) {
-			gameShell->cancelMouseLook();
-		}
-		gameShell->prepareForInGameMenu();
-		_shellIconManager.SwitchMenuScreens(wndIDToHide, SQSH_MM_ENDMISSION_SCR);
+            CTextWindow *Wnd = (CTextWindow*)_shellIconManager.GetWnd( SQSH_MM_RESULT_TXT );
+            CScaleResultButton *rWnd = (CScaleResultButton*)_shellIconManager.GetWnd( SQSH_RESULT_WND );
+            if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SURVIVAL) {
+                const char* origName = gameShell->CurrentMission.originalSaveName;
+                xassert(origName);
+                std::string keyName;
+                if (!origName) {
+                    keyName = gameShell->CurrentMission.missionName();
+                } else {
+                    keyName = getOriginalMissionName(origName);
+                }
+                bool record = gameShell->currentSingleProfile.getRecord(keyName) < gameShell->gameTimer();
+                if (record) {
+                    gameShell->currentSingleProfile.setRecord(keyName, gameShell->gameTimer());
+                }
+                if(Wnd) {
+                    Wnd->setText( formatTimeWithHour(gameShell->gameTimer()) );
+                    Wnd->victory = record;
+                }
+                rWnd->victory = record;
+            } else {
+                if(Wnd) {
+                    Wnd->SetText( qdTextDB::instance().getText("Interface.Menu.Messages.Mission Failed") );
+                    Wnd->victory = false;
+                }
+                rWnd->victory = false;
+            }
+            _shellIconManager.SwitchMenuScreens(wndIDToHide, SQSH_MM_ENDMISSION_SCR);
+            break;
+        }
 	}
 }
 
@@ -695,11 +684,10 @@ int SwitchMenuScreenQuant2( float, float ) {
 			}
 		} else {
 			switch (_id_on) {
-				case SKIP_MISSION:
-					{
-						historyScene.getController()->eventOccured(Controller::MISSION_VICTORY_EVENT);
-					}
-					break;
+				case SKIP_MISSION: {
+                    historyScene.getController()->eventOccured(Controller::MISSION_VICTORY_EVENT);
+                    break;
+                }
 			}
 		}
 		menuChangingDone = true;
@@ -742,14 +730,10 @@ int SwitchMenuBGQuant2( float, float ) {
 					break;
 				case SQSH_MM_ENDMISSION_SCR:
 					{
-					#ifdef _FINAL_VERSION_
-						bool disableBack = (gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE || gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT) && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER;
+						bool disableBack = (gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE || (gameShell->currentSingleProfile.getGameResult() & UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT))
+                                        && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER;
 						_shellIconManager.GetWnd( SQSH_MM_RESUME_BTN )->Show(!disableBack);
 						_shellIconManager.GetWnd( SQSH_MM_RESUME_BORDER )->Show(!disableBack);
-					#else
-						_shellIconManager.GetWnd( SQSH_MM_RESUME_BTN )->Show(true);
-						_shellIconManager.GetWnd( SQSH_MM_RESUME_BORDER )->Show(true);
-					#endif
 					}
 					break;
 				case SQSH_MM_STATS_SCR:
@@ -1204,6 +1188,9 @@ int SwitchMenuScreenQuant1( float, float ) {
                     break;
 				case RESUME_GAME:
 					//resume game
+                    gameShell->currentSingleProfile.setGameResult(static_cast<terUniverseInterfaceMessage>(
+                            gameShell->currentSingleProfile.getGameResult() & ~UNIVERSE_INTERFACE_MESSAGE_ACTIVE
+                    ));
 					_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_GAME);
 					gameShell->resumeGame(true);
 					_shellCursorManager.m_bShowSideArrows=1;
@@ -1813,6 +1800,7 @@ void onMMInMissResumeButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 	}		
 }
 void exitToInterfaceMessage(CShellWindow* pWnd) {
+    int id_off = pWnd ? pWnd->m_pParent->ID : -1;
 	switch(gameShell->currentSingleProfile.getLastGameType()) {
 		case UserSingleProfile::REPLAY:
 			{
@@ -1826,11 +1814,15 @@ void exitToInterfaceMessage(CShellWindow* pWnd) {
 				if (Wnd) {
 					Wnd->SetText( "" );
 				}
-				_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_ENDMISSION_SCR );
+				_shellIconManager.SwitchMenuScreens(id_off, SQSH_MM_ENDMISSION_SCR );
 			}
 			break;
 		default:
-			processInterfaceMessageLater(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, pWnd ? pWnd->m_pParent->ID : -1);
+            terUniverseInterfaceMessage msg = gameShell->currentSingleProfile.getGameResult();
+            if (msg == UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED) {
+                msg = UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT;
+            }
+			processInterfaceMessageLater(msg, id_off);
 	}
 }
 int toQuitQuant( float, float ) {
