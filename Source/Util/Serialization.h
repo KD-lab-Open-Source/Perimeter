@@ -419,7 +419,8 @@ public:
 	CustomString(CustomValueFunc customValueFunc, const char* value = "") : customValueFunc_(customValueFunc) { (*this) = value; }
 	CustomString& operator=(const char* value) { if(value) { value_ = value; zeroPointer_ = false; } else { value_ = ""; zeroPointer_ = true; } return *this; }
 	CustomString& operator=(const std::string& value) { value_ = value; zeroPointer_ = false; return *this; }
-	operator const char*() const { return !zeroPointer_ ? value_.c_str() : 0; }
+    const char* c_str() const { return !zeroPointer_ ? value_.c_str() : nullptr; }
+    operator const char*() const { return c_str(); }
 	
 	CustomValueFunc customValueFunc() const { return customValueFunc_; }
 

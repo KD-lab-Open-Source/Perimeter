@@ -301,8 +301,9 @@ bool ConditionObjectNearObjectByLabel::check(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
-		return false;
+		fprintf(stderr, "Object by label not found: %s\n", label.c_str());
+        xassert_s(0, "Object by label not found");
+        return false;
 	}												
 	else{
 		terUnitBase* unit2 = getPlayer(aiPlayer, playerType)->findUnit(object, unit->position2D());
