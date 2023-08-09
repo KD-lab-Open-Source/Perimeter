@@ -11,6 +11,7 @@
 #include "Controls.h"
 #include "../Sound/PerimeterSound.h"
 
+#include "CameraManager.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
 #include "../HT/ht.h"
@@ -552,17 +553,29 @@ void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int p
 }
 
 void OnComboGameStartSplash(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
-	if( code == EVENT_CREATEWND ) {
-		IniManager ini_no_check("Perimeter.ini", false);
-		pCombo->pos = ini_no_check.getInt("Game", "StartSplash");
-		pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
-		pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
-		pCombo->size = pCombo->Array.size();
-	} else if( code == EVENT_UNPRESSED ) {
-		IniManager ini_no_check("Perimeter.ini", false);
-		ini_no_check.putInt("Game", "StartSplash", pCombo->pos);
-	}
+    CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
+    if( code == EVENT_CREATEWND ) {
+        IniManager ini_no_check("Perimeter.ini", false);
+        pCombo->pos = ini_no_check.getInt("Game", "StartSplash");
+        pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
+        pCombo->size = pCombo->Array.size();
+    } else if( code == EVENT_UNPRESSED ) {
+        IniManager ini_no_check("Perimeter.ini", false);
+        ini_no_check.putInt("Game", "StartSplash", pCombo->pos);
+    }
+}
+
+void OnComboGameCameraMode(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
+    if( code == EVENT_CREATEWND ) {
+        pCombo->pos = (terCamera && terCamera->restricted()) ? 1 : 0;
+        pCombo->Array.emplace_back( getItemTextFromBase("No restrictions").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("Classic").c_str() );
+        pCombo->size = pCombo->Array.size();
+    } else if( code == EVENT_UNPRESSED ) {
+        terCamera->setRestriction(pCombo->pos != 0);
+    }
 }
 
 //main menu options-----------------------

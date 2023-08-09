@@ -2,6 +2,7 @@
 #include "NetPlayer.h"
 #include "Runtime.h"
 #include "GameShell.h"
+#include "CameraManager.h"
 
 extern float CAMERA_SCROLL_SPEED_DELTA,CAMERA_BORDER_SCROLL_SPEED_DELTA;
 
@@ -93,6 +94,9 @@ void PerimeterDataChannelSave()
 	ini.putInt("Game", "ScrollRate", xm::round(CAMERA_SCROLL_SPEED_DELTA));
 	ini.putFloat("Game", "MouseLookRate", xm::round(CAMERA_MOUSE_ANGLE_SPEED_DELTA));
 //	ini.putFloat("Game", "GameSpeed", gameShell->getSpeed());
+    if (terCamera) {
+        ini.putInt("Game", "CameraRestriction", terCamera->restricted() ? 1 : 0);
+    }
 	
 	//GraphicsSection
 //	ini.putInt("Graphics","FullScreen", terFullScreen);

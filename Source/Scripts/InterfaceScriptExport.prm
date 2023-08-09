@@ -223,8 +223,10 @@ SqshBorder mainMenuMap = { x = 626 / 1024; y = (55 + 256 + 2) / 768; sx = 300 / 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int customUp = 80;
 int customStep = 50;
-int optionsGameUp = 140;
-int optionsGameStep = 90;
+int optionsGameUp = 120;
+int optionsGameStep = 80;
+int ingameGameUp = 160;
+int ingameGameStep = 80;
 int ingameCustomUp = 90;
 int ingameCustomStep = 46;
 int battleUp = 405;
@@ -5074,10 +5076,11 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 //	image = {texture="resource\\icons\\MainMenu\\t.avi";hasResolutionVersion=0;};
 //	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
 	controls = new sqshControl[] {
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 74 + optionsGameStep * 0)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 74 + optionsGameStep * 1)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 74 + optionsGameStep * 2)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 74 + optionsGameStep * 3)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 70 + optionsGameStep * 0)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 70 + optionsGameStep * 1)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 70 + optionsGameStep * 2)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 70 + optionsGameStep * 3)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(optionsGameUp + 70 + optionsGameStep * 4)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
 
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(optionsGameUp + optionsGameStep*0)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_ANGLESENS;		x=188/1024; y=(optionsGameUp + optionsGameStep*0)/768; sx=412/1024; sy=64/768; text="MOUSE LOOK RATE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
@@ -5119,6 +5122,10 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(optionsGameUp + optionsGameStep*4)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_START_SPLASH;  x=188/1024; y=(optionsGameUp + optionsGameStep*4)/768; sx=412/1024; sy=64/768; text="START SPLASH"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_START_SPLASH_COMBO;image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_START_SPLASH_COMBO;  x=635/1024; y=(optionsGameUp + optionsGameStep*4 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_START_SPLASH; image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(optionsGameUp + optionsGameStep*5)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_CAMERA_MODE;   x=188/1024; y=(optionsGameUp + optionsGameStep*5)/768; sx=412/1024; sy=64/768; text="CAMERA MODE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_CAMERA_MODE_COMBO;image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_CAMERA_MODE_COMBO;   x=635/1024; y=(optionsGameUp + optionsGameStep*5 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_CAMERA_MODE; image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; ystart=42/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_GAME_BTN;	x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; text="BACK"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};}
@@ -5510,31 +5517,28 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	image = {texture="resource\\icons\\MainMenu\\t.avi";hasResolutionVersion=0;};
 	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
 	controls = new sqshControl[] {
+		{type = SQSH_MOVE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 			x=0/1024; y=0/768; sx=1; sy=1; image={texture="resource\\icons\\MainMenu\\New_statistik.tga";_ix = 0; _iy = 0; ix = 1024; iy = 768;}; state = SQSH_ENABLED; xstart=521; ystart=-768; },
 
-		{type = SQSH_MOVE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=571/1024; y=0/768; sx=425/1024; sy=648/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 599; _iy = 376; ix = 425; iy = 648;}; state = SQSH_ENABLED; xstart=359; ystart=-648; },
-		{type = SQSH_MOVE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=60/1024; y=152/768; sx=511/1024; sy=496/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 88; _iy = 528; ix = 511; iy = 496;}; state = SQSH_ENABLED; xstart=359; ystart=-528; },
-
-
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			x=191/1024; y=(225 + 70*0)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_ANGLESENS;		x=208/1024; y=(225 + 70*0)/768; sx=406/1024; sy=64/768; text="MOUSE LOOK RATE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; sound = "mainmenu_button";},
-		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_GAME_ANGLESENS_SLIDER;   x=665/1024; y=(225 + 70*0 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(ingameGameUp + ingameGameStep*0)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_ANGLESENS;     x=188/1024; y=(ingameGameUp + ingameGameStep*0)/768; sx=406/1024; sy=64/768; text="MOUSE LOOK RATE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; sound = "mainmenu_button";},
+		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_GAME_ANGLESENS_SLIDER;   x=635/1024; y=(ingameGameUp + ingameGameStep*0 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																		image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																		image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
 																		image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};
 																		image_check={texture="";_ix = 478;_iy = 493; ix = 25; iy = 23;};
 																		target = SQSH_MM_GAME_ANGLESENS; },
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			x=191/1024; y=(225 + 70*1)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_SCROLLRATE;x=208/1024; y=(225 + 70*1)/768; sx=406/1024; sy=64/768; text="SCROLL RATE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";},
-		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_GAME_SCROLLRATE_SLIDER;x=665/1024; y=(225 + 70*1 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(ingameGameUp + ingameGameStep*1)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_SCROLLRATE;    x=188/1024; y=(ingameGameUp + ingameGameStep*1)/768; sx=406/1024; sy=64/768; text="SCROLL RATE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";},
+		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_GAME_SCROLLRATE_SLIDER;    x=635/1024; y=(ingameGameUp + ingameGameStep*1 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																		image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																		image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
 																		image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};
 																		image_check={texture="";_ix = 478;_iy = 493; ix = 25; iy = 23;};
 																		target = SQSH_MM_GAME_SCROLLRATE; },
 /*
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			x=191/1024; y=(225 + 70*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_MOUSESPEED;x=208/1024; y=(225 + 70*2)/768; sx=256/1024; sy=64/768; text="MOUSE SPEED"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";},
-		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_GAME_MOUSE_SLIDER;	x=665/1024; y=(225 + 70*2 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(ingameGameUp + ingameGameStep*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_MOUSESPEED;    x=188/1024; y=(ingameGameUp + ingameGameStep*2)/768; sx=256/1024; sy=64/768; text="MOUSE SPEED"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";},
+		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_GAME_MOUSE_SLIDER;       x=635/1024; y=(ingameGameUp + ingameGameStep*2 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																		image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																		image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
 																		image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};
@@ -5542,17 +5546,20 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 																		target = SQSH_MM_GAME_MOUSESPEED; },
 */
 
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			x=191/1024; y=(225 + 70*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_TOOLTIPS;	x=208/1024; y=(225 + 70*2)/768; sx=406/1024; sy=64/768; text="TOOL TIPS"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_TOOLTIPS_COMBO;},
-		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_TOOLTIPS_COMBO;	x=652/1024; y=(225 + 70*2 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_TOOLTIPS; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(ingameGameUp + ingameGameStep*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_TOOLTIPS;      x=188/1024; y=(ingameGameUp + ingameGameStep*2)/768; sx=406/1024; sy=64/768; text="TOOL TIPS"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_TOOLTIPS_COMBO;},
+		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_TOOLTIPS_COMBO;      x=635/1024; y=(ingameGameUp + ingameGameStep*2 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_TOOLTIPS; },
 
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;                 x=191/1024; y=(225 + 70*3)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_RUN_BACKGROUND;    x=208/1024; y=(225 + 70*3)/768; sx=406/1024; sy=64/768; text="RUN IN BACKGROUND"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_RUN_BACKGROUND_COMBO;},
-		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_RUN_BACKGROUND_COMBO;    x=652/1024; y=(225 + 70*3 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_RUN_BACKGROUND; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(ingameGameUp + ingameGameStep*3)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_RUN_BACKGROUND;x=188/1024; y=(ingameGameUp + ingameGameStep*3)/768; sx=406/1024; sy=64/768; text="RUN IN BACKGROUND"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_RUN_BACKGROUND_COMBO;},
+		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_RUN_BACKGROUND_COMBO;x=635/1024; y=(ingameGameUp + ingameGameStep*3 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_RUN_BACKGROUND; },
+		
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;             x=171/1024; y=(ingameGameUp + ingameGameStep*4)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_GAME_CAMERA_MODE;   x=188/1024; y=(ingameGameUp + ingameGameStep*4)/768; sx=406/1024; sy=64/768; text="CAMERA MODE"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_GAME_CAMERA_MODE_COMBO;},
+		{type = SQSH_COMBO_TYPE; id = SQSH_MM_GAME_CAMERA_MODE_COMBO;   x=635/1024; y=(ingameGameUp + ingameGameStep*4 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_GAME_CAMERA_MODE; },
 
-
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;						x=170/1024; y=509/768;  sx=145/1024; sy=45/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 340; _iy = 291; ix = 145; iy = 45;}; ystart=45/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_INGAME_GAME_OPTIONS;						x=177/1024; y=511/768;  sx=131/1024; sy=41/768; text="BACK"; font_group=2; txt_dy = 11/768; sound = "mainmenu_button"; state = SQSH_ENABLED; }
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;						x=97/1024; y=619/768;  sx=145/1024; sy=45/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 340; _iy = 291; ix = 145; iy = 45;}; ystart=45/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_INGAME_GAME_OPTIONS;	x=104/1024; y=621/768;  sx=131/1024; sy=41/768; text="BACK"; font_group=2; txt_dy = 11/768; sound = "mainmenu_button"; state = SQSH_ENABLED; }
 
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_INGAME_GAME_OPTIONS;

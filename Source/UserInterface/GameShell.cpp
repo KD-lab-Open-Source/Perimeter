@@ -1281,12 +1281,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		if(!missionEditor_){
 			setCutSceneMode(false, false);
 			missionEditor_ = new MissionEditor;
-			terCamera->setRestriction(false);
-		}
-		else{
-			terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction"));
+		} else {
 			delete missionEditor_;
-			missionEditor_ = 0;
+			missionEditor_ = nullptr;
 		}
 		break;
 
