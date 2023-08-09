@@ -326,7 +326,7 @@ void CShellWindow::loadAnchor() {
         }
     } else if (m_attr_cont) {
         //Menus are always centered
-        if (m_attr_cont->load_group == SHELL_LOAD_GROUP_MENU) {
+        if (m_attr_cont->load_group & SHELL_LOAD_GROUP_MENU) {
             anchor_children = anchor = SHELL_ANCHOR_MENU;
         } else {
             switch (m_attr_cont->id) {
@@ -335,11 +335,9 @@ void CShellWindow::loadAnchor() {
                     anchor = SHELL_ANCHOR_SCALED;
                     break;
                 //Specific in-game screens that need manual menu anchoring
-                case SQSH_MM_MISSION_TASK_SCR:
                 case SQSH_MM_SAVE_REPLAY_SCR:
                 case SQSH_MM_STATS_SCR:
                 case SQSH_MM_ENDMISSION_SCR:
-                case SQSH_MM_SUBMIT_DIALOG_SCR:
                 case SQSH_MM_INMISSION_SCR:
                 case SQSH_MM_INGAME_CUSTOM_SCR:
                 case SQSH_MM_LOAD_IN_GAME_SCR:
