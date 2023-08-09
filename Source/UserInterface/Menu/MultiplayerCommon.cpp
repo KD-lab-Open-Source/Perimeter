@@ -291,7 +291,7 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         terPlayer* activePlayer = universe()->activePlayer();
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
-        if (activePlayer && !chatInput->isEmptyText()) {
+        if (activePlayer && !activePlayer->shouldIgnoreIntfCommands() && !chatInput->isEmptyText()) {
             chatWindowInput(chatInput, true);
         }
     }
