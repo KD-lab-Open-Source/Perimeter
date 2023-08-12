@@ -675,16 +675,13 @@ void MissionDescription::loadDescription() {
                         pd.realPlayerType = REAL_PLAYER_TYPE_OPEN;
                         break;
                     case GT_MULTI_PLAYER_LOAD:
-                        //Old multi saves have opened players with empty name when not in use, mark as closed
-                        if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN && strlen(pd.name()) == 0) {
-                            pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
-                        }
                         switch (pd.realPlayerType) {
+                            case REAL_PLAYER_TYPE_OPEN:
+                                pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
                             case REAL_PLAYER_TYPE_CLOSE:
                             case REAL_PLAYER_TYPE_WORLD:
                             case REAL_PLAYER_TYPE_AI:
                                 break;
-                            case REAL_PLAYER_TYPE_OPEN:
                             case REAL_PLAYER_TYPE_PLAYER:
                             case REAL_PLAYER_TYPE_PLAYER_AI:
                                 pd.setNameInitial(pd.name());
