@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript definition
 //	Section: SquadShellUIPrm
-//	Number of variables: 289
+//	Number of variables: 285
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct__V2i__
@@ -232,12 +232,8 @@ char const* progress_texture = "resource\\icons\\intf\\progress.tga";
 int splash_delay_time = 1000;
 int alpha_delta = 5;
 int _bDebugDisplayAllIcons = 0;
-float nBaseUnitsDisplayX = 0.86914062f;
-float nBaseUnitsDisplayY = 0.00390625f;
 float countDownTimerX = 0.8984375f;
 float countDownTimerY = 0.04296875f;
-float totalTimerX = 0.71289062f;
-float totalTimerY = 0.00130208f;
 char const* sRegionTextureAbyss = "Resource\\Effect\\Region Down.tga";
 char const* sRegionTextureEnergy = "Resource\\Effect\\fx.tga";
 char const* sRegionTextureTriangle = "Resource\\Effect\\targetTriangle.tga";
@@ -458,8 +454,8 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\GameShellSq.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 725633912;
-	reserve(289);
+	description = 281150917;
+	reserve(285);
 	add(&_sqsh_cursor_count, "_sqsh_cursor_count", 1356362679);
 	add(&_sqsh_cursors, "_sqsh_cursors", 2573016843);
 	add(&shell_galogram_table_size, "shell_galogram_table_size", 1902009007);
@@ -581,12 +577,8 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add(&splash_delay_time, "splash_delay_time", 1614620605);
 	add(&alpha_delta, "alpha_delta", 4237534766);
 	add(&_bDebugDisplayAllIcons, "_bDebugDisplayAllIcons", 2561925483);
-	add(&nBaseUnitsDisplayX, "nBaseUnitsDisplayX", 733357742);
-	add(&nBaseUnitsDisplayY, "nBaseUnitsDisplayY", 968238766);
 	add(&countDownTimerX, "countDownTimerX", 3222282919);
 	add(&countDownTimerY, "countDownTimerY", 3524272807);
-	add(&totalTimerX, "totalTimerX", 461848704);
-	add(&totalTimerY, "totalTimerY", 159858816);
 	add(&sRegionTextureAbyss, "sRegionTextureAbyss", 3386508707);
 	add(&sRegionTextureEnergy, "sRegionTextureEnergy", 3703428377);
 	add(&sRegionTextureTriangle, "sRegionTextureTriangle", 2304608605);

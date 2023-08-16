@@ -481,14 +481,8 @@ int alpha_delta = 5;
 
 int _bDebugDisplayAllIcons = 0;
 
-float nBaseUnitsDisplayX = 890.0f / 1024.0f;
-float nBaseUnitsDisplayY = 3.0f / 768.0f;
-
 float countDownTimerX = 920.0f / 1024.0f;
 float countDownTimerY = 33.0f / 768.0f;
-
-float totalTimerX = 730.0f / 1024.0f;
-float totalTimerY = 1.0f / 768.0f;
 
 string sRegionTextureAbyss = "Resource\\Effect\\Region Down.tga";
 string sRegionTextureEnergy = "Resource\\Effect\\fx.tga";

@@ -2237,10 +2237,11 @@ inline void draw_rect(const Vect2i& a, const Vect2i& b, const sColor4c& c)
 
 inline void draw_rect_empty(const Vect2f& a, const Vect2f& b, const sColor4f& c = sColor4f(0, 0, 0, 1))
 {
-	draw_line(Vect2f(a.x, a.y), Vect2f(b.x, a.y), c);
-	draw_line(Vect2f(b.x, a.y), Vect2f(b.x, b.y), c);
-	draw_line(Vect2f(b.x, b.y), Vect2f(a.x, b.y), c);
-	draw_line(Vect2f(a.x, b.y), Vect2f(a.x, a.y), c);
+    int x1 = a.x;
+    int x2 = b.x;
+    int y1 = a.y;
+    int y2 = b.y;
+    terRenderDevice->DrawRectangle(x1, y1, x2-x1, y2-y1, c, 1.0f);
 }
 inline void draw_line(const Vect2i& a, const Vect2i& b, const sColor4f& c = sColor4f(1, 1, 1, 1))
 {

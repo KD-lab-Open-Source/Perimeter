@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: SquadShellUIPrm
-//	Number of variables: 289
+//	Number of variables: 285
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct__V2i__
@@ -201,12 +201,8 @@ extern char const* progress_texture;
 extern int splash_delay_time;
 extern int alpha_delta;
 extern int _bDebugDisplayAllIcons;
-extern float nBaseUnitsDisplayX;
-extern float nBaseUnitsDisplayY;
 extern float countDownTimerX;
 extern float countDownTimerY;
-extern float totalTimerX;
-extern float totalTimerY;
 extern char const* sRegionTextureAbyss;
 extern char const* sRegionTextureEnergy;
 extern char const* sRegionTextureTriangle;

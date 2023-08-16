@@ -2473,37 +2473,46 @@ void CShellIconManager::draw()
 			}
 		}
 		if (!_bMenuMode) {
-			if (gameShell->GameActive && !_bMenuMode && gameShell->getCountDownTime() != "") {
-				terRenderDevice->SetFont(m_hFontCountDownTime);
-                sColor4f c(sqshFontCountDownTimeColor);
-				OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &c, -1);
-				terRenderDevice->SetFont(0);
-			}
+            //Number of base units
+            terRenderDevice->SetFont(m_hFontPopup);
+            static char _cb[256];
+            sprintf(_cb, units.c_str(), m_nTotalUnitsBaseCount, globalAttr().baseUnitsMax);
+            std::string topLine = _cb;
+            Vect2f v1, v2;
+            OutTextRect(0, 0 , topLine.c_str(), -1, v1, v2);
+            float w = v2.x - v1.x;
 
-			if (gameShell->GameActive && !_bMenuMode) {
-				terRenderDevice->SetFont(m_hFontPopup);
-                sColor4f c(1, 1, 1, 1);
-				OutText(absoluteX(totalTimerX), absoluteY(totalTimerY), (totalTime + gameShell->getTotalTime()).c_str(), &c, -1);
-				terRenderDevice->SetFont(0);
-			}
-
-			//общее кол-во базовых юнитов
-			static char _cb[25];
-			sprintf(_cb, units.c_str(), m_nTotalUnitsBaseCount, globalAttr().baseUnitsMax);
-			terRenderDevice->SetFont(m_hFontPopup);
-
-			Vect2f v1, v2;
-			OutTextRect(0, 0 , _cb, -1, v1, v2);
-			float baseUnitsX = absoluteX(nBaseUnitsDisplayX);
-			float baseUnitsY = absoluteY(nBaseUnitsDisplayY);
+            //Render text
+            const float separationX = 30.0f;
+			int baseUnitsX = terRenderDevice->GetSizeX() - w - separationX;
+			int baseUnitsY = 10;
             sColor4f c(1, 1, 1, 1);
-			OutText(baseUnitsX, baseUnitsY, _cb, &c, -1);
-			terRenderDevice->SetFont(0);
+			OutText(baseUnitsX, baseUnitsY, topLine.c_str(), &c, -1);
 
-			Vect2f va(baseUnitsX - 2, baseUnitsY - 2);
-			Vect2f vb(va.x + v2.x-v1.x + 2, va.y + v2.y-v1.y + 2);
+            //Render rect
+            const float marginX = 3;
+            const float marginY = 3;
+            Vect2f va(baseUnitsX - marginX, baseUnitsY - marginY);
+			Vect2f vb(va.x + w + marginX * 2, va.y + v2.y-v1.y + marginY * 2);
+			draw_rect_empty(va, vb, c);
 
-			draw_rect_empty(va, vb, sColor4f(1, 1, 1, 1));
+            if (gameShell->GameActive) {
+                //Draw countdown
+                if (!gameShell->getCountDownTime().empty()) {
+                    terRenderDevice->SetFont(m_hFontCountDownTime);
+                    sColor4f c(sqshFontCountDownTimeColor);
+                    OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &c, -1);
+                }
+
+                //Add total time
+                terRenderDevice->SetFont(m_hFontPopup);
+                topLine = totalTime + gameShell->getTotalTime();
+                OutTextRect(0, 0 , topLine.c_str(), -1, v1, v2);
+                baseUnitsX -= v2.x - v1.x + separationX;
+                OutText(baseUnitsX, baseUnitsY, topLine.c_str(), &c, -1);
+            }
+            
+            terRenderDevice->SetFont(0);
 		}
 
 	} else if (m_pDesktop) {
