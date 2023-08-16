@@ -22,11 +22,14 @@ uint64_t getPerformanceFrequency();
 ///Initializes clock
 void initclock();
 
-///Current time in integer ms since start
+///Current time in integer millisecs since start
 int clocki();
 
-///Current time in fractional ms since start
+///Current time in fractional millisecs since start
 double clockf();
+
+///Current time in integer microsecs since start
+uint64_t clock_us();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
