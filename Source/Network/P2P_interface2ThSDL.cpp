@@ -57,6 +57,7 @@ void PNetCenter::SetConnectionTimeout(int _ms) {
 
 void PNetCenter::RemovePlayer(NETID netid)
 {
+    fprintf(stdout, "RemovePlayer: %lu\n", netid);
     if(isHost() && netid==m_localNETID && netid==m_hostNETID){
         ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
         ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
@@ -78,7 +79,7 @@ void PNetCenter::Close(bool flag_immediate)
 bool PNetCenter::Connect() {
     LogMsg("Connect %s\n", hostConnection.getString().c_str());
     m_hostNETID = m_localNETID = NETID_NONE;
-    std::string extraInfo = "";
+    std::string extraInfo;
 
     GameShell::e_JoinGameReturnCode rc = GameShell::JG_RC_CONNECTION_ERR;
     NetConnection* connection = connectionHandler.startConnection(&hostConnection);

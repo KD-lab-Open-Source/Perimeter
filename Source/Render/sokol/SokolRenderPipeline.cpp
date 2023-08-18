@@ -1,3 +1,4 @@
+#include <string>
 #include "xmath.h"
 #include "Umath.h"
 #include "StdAfxRD.h"

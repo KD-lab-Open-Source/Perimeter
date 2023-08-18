@@ -1,3 +1,4 @@
+#include <string>
 #include "StdAfxRD.h"
 #include "Umath.h"
 
@@ -234,3 +235,15 @@ void Mat4fConvert(const Mat4f& m, const Vect3f& in,Vect3f& pv,Vect3f& pe) {
     pe.y=pv.y*d;
     pe.z=pv.z*d;
 }
+
+std::string toColorCode(const sColor4f& color) {
+    std::string result;
+    char buff[7];
+    snprintf(buff, 7, "%x", color.GetRGB());
+    buff[6] = 0;
+    result += buff;
+    while (result.length() < 6) {
+        result = "0" + result;
+    }
+    return result;
+};

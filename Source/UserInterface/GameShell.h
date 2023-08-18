@@ -264,6 +264,8 @@ public:
 	void generalErrorOccured(GeneralErrorType error);
 
 	void abnormalNetCenterTermination();
+    
+    void updateLatencyInfo(const NetLatencyInfo& info);
 
 	void addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale);
 

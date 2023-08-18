@@ -22,7 +22,8 @@ public:
 
 	void SetServerSpeedScale(float scale){ ServerSpeedScale = scale; }
 
-	void ShowInfo();
+    virtual void ShowInfo() {};
+    std::string GetNetInfo();
 
 	virtual bool ReceiveEvent(terEventID event, InOutNetComBuffer& in);
 

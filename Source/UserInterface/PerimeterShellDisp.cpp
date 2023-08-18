@@ -32,6 +32,10 @@
 
 #include "ANIFile.h"
 
+namespace scripts_export {
+#include "Scripts/InterfaceScriptExport.hi"
+}
+
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
 extern UnitInterfacePrm interface_frame_uninstalled;
@@ -1621,6 +1625,10 @@ CShellWindow* CShellIconManager::CreateWnd(int id, ShellControlType type, CShell
 		pWnd = new CInfoWindow(id, pParent, proc);
 		break;
 
+    case SQSH_NETLATENCYINFOWND_TYPE:
+        pWnd = new CNetLatencyInfoWindow(id, pParent, proc);
+        break;
+
 	case SQSH_CHATINFO_WND_TYPE:
 		pWnd = new CChatInfoWindow(id, pParent, proc);
 		break;
@@ -2086,6 +2094,16 @@ void CShellIconManager::quant(float dTime)
 		m_nPromptMessageDelayTime -= dTime;
 		m_fPhase += dTime;
 	}
+    
+    //Set net info visibility
+    CShellWindow* wnd = GetWnd(SQSH_NET_LATENCY_INFO_ID);
+    if (wnd) {
+        bool visible = false;
+        if (gameShell->getNetClient()) {
+            visible = gameShell->getNetClient()->isGameRun();
+        }
+        wnd->Show(visible);
+    }
 
 	QuantDynQueue(dTime);
 	ProcessDynQueue(CBCODE_QUANT);
@@ -2485,15 +2503,14 @@ void CShellIconManager::draw()
             //Render text
             const float separationX = 30.0f;
 			int baseUnitsX = terRenderDevice->GetSizeX() - w - separationX;
-			int baseUnitsY = 10;
+			int baseUnitsY = absoluteY(scripts_export::gameTopEdge);
             sColor4f c(1, 1, 1, 1);
 			OutText(baseUnitsX, baseUnitsY, topLine.c_str(), &c, -1);
 
             //Render rect
-            const float marginX = 3;
-            const float marginY = 3;
-            Vect2f va(baseUnitsX - marginX, baseUnitsY - marginY);
-			Vect2f vb(va.x + w + marginX * 2, va.y + v2.y-v1.y + marginY * 2);
+            const float margin = 3;
+            Vect2f va(baseUnitsX - margin, baseUnitsY - margin);
+			Vect2f vb(va.x + w + margin * 2, va.y + v2.y-v1.y + margin * 2);
 			draw_rect_empty(va, vb, c);
 
             if (gameShell->GameActive) {

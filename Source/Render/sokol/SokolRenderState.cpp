@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 #include "xmath.h"
 #include "Umath.h"

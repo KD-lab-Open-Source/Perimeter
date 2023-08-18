@@ -625,50 +625,32 @@ bool terHyperSpace::SingleQuant()
 //{
 //}
 
-void terHyperSpace::ShowInfo()
-{
-#ifdef PERIMETER_DEBUG
-	if(pNetCenter){
-		XBuffer msg;
-		msg.SetDigits(10);
-		msg < "curQnt: " <= currentQuant;
-		msg < " confirmQnt: " <= confirmQuant;
-		msg < " diffQnt: " <= (currentQuant - confirmQuant);
-		msg < " intrnlLagQnt: " <= lagQuant;
-		msg < " dropQnt: " <= dropQuant;
+std::string terHyperSpace::GetNetInfo() {
+    static int rb = 0, sb = 0;
+    static int lastInfoQuant = 0;
+    static int lastInfoQuantTime = 0;
+    static int quantPerSec = 0;
 
-		//terRenderDevice->SetFont(pMonowideFont->getFont());
-		//terRenderDevice->OutText(20, 40, msg, sColor4f(1, 1, 1, 1));
+    int secondQuant = currentQuant/10;
+    if (lastInfoQuant < secondQuant) {
+        lastInfoQuant=secondQuant;
+        rb=pNetCenter->in_ClientBuf.getByteReceive();
+        sb=pNetCenter->out_ClientBuf.getByteSending();
+        quantPerSec=10*1000/(clocki()-lastInfoQuantTime);
+        lastInfoQuantTime=clocki();
+    }
 
-		XBuffer msg2;
-		msg2.SetDigits(10);
-		static int rb=0,sb=0;
-		static int lastInfoQuant=0;
-		static int lastInfoQuantTime=0;
-		static int quantPerSec;
-		int secondQuant=currentQuant/10;
-		if(lastInfoQuant < secondQuant) {
-			lastInfoQuant=secondQuant;
-			rb=pNetCenter->in_ClientBuf.getByteReceive();
-			sb=pNetCenter->out_ClientBuf.getByteSending();
-			quantPerSec=10*1000/(clocki()-lastInfoQuantTime);
-			lastInfoQuantTime=clocki();
-		}
-
-		msg < " quantPerSecond:" <= quantPerSec;
-		terRenderDevice->SetFont(pMonowideFont->getFont());
-		//terRenderDevice->OutText(20, 40, msg, sColor4f(1, 1, 1, 1));
-		terRenderDevice->OutText(360, 20, msg, sColor4f(1, 1, 1, 1));
-
-		msg2 < pNetCenter->getStrState();
-		msg2 < " byteReceive=" <= rb < " byteSending=" <=sb;
-		//terRenderDevice->OutText(20, 60, msg2, sColor4f(1, 1, 1, 1));
-		terRenderDevice->OutText(360, 35, msg2, sColor4f(1, 1, 1, 1));
-
-
-		terRenderDevice->SetFont(0);
-	}
-#endif
+    std::string msg = "Net state: ";
+    msg += pNetCenter->getStrState();
+    msg += "\nBytes recv: " + std::to_string(rb) + "\nBytes sent: " + std::to_string(sb);
+    msg += "\n\nQuants:\n current: " + std::to_string(currentQuant);
+    msg += "\n confirm: " + std::to_string(confirmQuant);
+    msg += "\n diff: " + std::to_string(currentQuant - confirmQuant);
+    msg += "\n lag: " + std::to_string(lagQuant);
+    msg += "\n drop: " + std::to_string(dropQuant);
+    msg += "\n per second: " + std::to_string(quantPerSec);
+    
+    return msg;
 }
 
 //По идее вызов корректный т.к. reJoin не пошлется пока игра не остановлена(stopGame_HostMigrate)

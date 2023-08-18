@@ -80,6 +80,8 @@ struct sColor4c
 	inline void interpolate(const sColor4c &u,const sColor4c &v,float f) { r=xm::round(u.r+(v.r-u.r)*f); g=xm::round(u.g+(v.g-u.g)*f); b=xm::round(u.b+(v.b-u.b)*f); a=xm::round(u.a+(v.a-u.a)*f); }
 };
 
+std::string toColorCode(const sColor4f& color);
+
 sColor4f::sColor4f(const sColor4c& color) 
 { 
 	r = color.r/255.f; 

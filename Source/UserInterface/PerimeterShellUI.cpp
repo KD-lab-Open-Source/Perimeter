@@ -321,6 +321,9 @@ void CShellWindow::loadAnchor() {
             case SQSH_SPEED_150:
                 anchor_children = anchor = SHELL_ANCHOR_LEFT;
                 break;
+            case SQSH_NET_LATENCY_INFO_ID:
+                anchor_children = anchor = SHELL_ANCHOR_RIGHT;
+                break;
             default:
                 break;
         }
@@ -6010,6 +6013,89 @@ void CChatInfoWindow::draw(int bFocus) {
 		}
 	}
 }
+
+
+CNetLatencyInfoWindow::CNetLatencyInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
+    m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, infoWndFontSize);
+}
+
+CNetLatencyInfoWindow::~CNetLatencyInfoWindow() {
+    _RELEASE(m_hFont);
+}
+
+void CNetLatencyInfoWindow::Load(const sqshControl* attr) {
+    CShellWindow::Load(attr);
+}
+
+void CNetLatencyInfoWindow::SetText(const std::string& brief, const std::string& full) {
+    briefData = brief;
+    fullData = full;
+}
+
+void CNetLatencyInfoWindow::OnWindow(int enable) {
+    CShellWindow::OnWindow(enable);
+    on_window = enable;
+}
+
+void CNetLatencyInfoWindow::draw(int bFocus) {
+    if(state & SQSH_VISIBLE) {
+        terRenderDevice->SetFont(m_hFont);
+        const float margin = 3;
+
+        //Draw brief button
+        Vect2f pos, size, v1, v2;
+        OutTextRect(0, 0 , briefData.c_str(), -1, v1, v2);
+        size.x = v2.x - v1.x;
+        size.y = v2.y - v1.y;
+        pos.x = x + (sx * 0.5f - size.x * 0.5f);
+        pos.y = y;
+#if 1 && defined(PERIMETER_DEBUG)
+        //terRenderDevice->DrawRectangle(x, y, sx, sy, sColor4f(1, 0, 0, 1), 2);
+#endif
+        /*
+        terRenderDevice->DrawRectangle(
+                pos.x - margin, y - margin,
+                size.x + margin * 2, size.y + margin * 2,
+                sColor4f(1, 1, 1, 1),
+                1
+        ); */
+        terRenderDevice->OutText(
+                pos.x,
+                pos.y,
+                briefData.c_str(),
+                sColor4f(1, 1, 1, 1),
+                -1
+        );
+        
+        //Draw full info
+        if (bFocus || on_window) {
+            std::string text = fullData;
+#if 1 && defined(PERIMETER_DEBUG)
+            text += "\n\n&FFFFFF" + universe()->GetNetInfo();
+#endif
+            pos.y += size.y + margin * 3;
+            OutTextRect(0, 0 , text.c_str(), -1, v1, v2);;
+            size.x = v2.x - v1.x + margin * 2;
+            size.y = v2.y - v1.y + margin * 2;
+            pos.x = x + sx * 0.5f - size.x * 0.5f;
+
+            if (m_hTexture) {
+                terRenderDevice->DrawSprite(pos.x - margin, pos.y - margin, size.x, size.y, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255));
+            }
+
+            terRenderDevice->OutText(pos.x, pos.y, text.c_str(), sColor4f(1, 1, 1, 1), -1);
+            terRenderDevice->SetFont(nullptr);
+            
+            terRenderDevice->DrawRectangle(
+                    pos.x - margin, pos.y - margin,
+                    size.x, size.y,
+                    sColor4f(1, 1, 1, 1),
+                    1
+            );
+        }
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 

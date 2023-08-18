@@ -56,7 +56,7 @@ public:
 
     void checkEvent(const class Event* event);
 
-	void ShowInfo();
+	void ShowInfo() override;
 
 	void makeCommand(CommandID id, int data);
 	void makeCommand2D(CommandID command_id, const Vect3f& position, CommandSelectionMode mode);

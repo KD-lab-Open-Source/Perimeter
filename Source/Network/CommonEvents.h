@@ -89,8 +89,8 @@ enum terEventID
 
 	NETCOM_4H_ID_START_LOAD_GAME,
 
-	NETCOM_4C_ID_ALIFE_PACKET,
-	NETCOM_4H_ID_ALIFE_PACKET,
+	NETCOM_4C_ID_LATENCY_STATUS,
+	NETCOM_4H_ID_LATENCY_RESPONSE,
 
 	NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE,
 
@@ -771,24 +771,84 @@ struct netCommandC_PlayerReady : netCommandGeneral
 	}
 };
 
-/*
-struct netCommandStartGame : netCommandGeneral
-{
-	netCommandStartGame() : netCommandGeneral(NETCOM_ID_START_GAME){}
-	netCommandStartGame(XBuffer& in) : netCommandGeneral(NETCOM_ID_START_GAME){}
-	//void Write(XBuffer& out) const override;
-};
-*/
-struct netCommand4C_AlifePacket : netCommandGeneral
-{
-	netCommand4C_AlifePacket() : netCommandGeneral(NETCOM_4C_ID_ALIFE_PACKET){}
-	netCommand4C_AlifePacket(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_ALIFE_PACKET){}
+
+struct NetLatencyInfo {
+    //Timestamp when this info was sent, also to return for the next latency status round
+    uint64_t timestamp = 0;
+    //Client player ids
+    std::vector<int> player_ids = {};
+    //Client pings in us
+    std::vector<size_t> player_pings = {};
+    //Client last packet in us
+    std::vector<size_t> player_last_seen = {};
+    
+    void clear() {
+        player_ids.clear();
+        player_pings.clear();
+        player_last_seen.clear();
+    }
+
+    void read(XBuffer& in) {
+        in.read(timestamp);
+        uint32_t amount = 0;
+        in.read(amount);
+        for (size_t i = 0; i < amount; ++i) {
+            int ei = 0;
+            in.read(ei);
+            player_ids.push_back(ei);
+            size_t e = 0;
+            in.read(e);
+            player_pings.push_back(e);
+            in.read(e);
+            player_last_seen.push_back(e);
+        }
+    }
+
+    void write(XBuffer& out) const {
+        out.write(timestamp);
+        uint32_t amount = player_ids.size();
+        out.write(amount);
+        for (size_t i = 0; i < amount; ++i) {
+            int ei = player_ids[i];
+            out.write(ei);
+            size_t e = player_pings[i];
+            out.write(e);
+            e = player_last_seen[i];
+            out.write(e);
+        }
+    }
 };
 
-struct netCommand4H_AlifePacket : netCommandGeneral
+struct netCommand4C_LatencyStatus : netCommandGeneral
+{    
+    //Contains server info about clients from last round
+    NetLatencyInfo info;
+    
+	netCommand4C_LatencyStatus() : netCommandGeneral(NETCOM_4C_ID_LATENCY_STATUS) {
+    }
+    
+	explicit netCommand4C_LatencyStatus(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_LATENCY_STATUS){
+        info.read(in);
+    }
+    
+    void Write(XBuffer& out) const override {
+        info.write(out);
+    }
+};
+
+struct netCommand4H_LatencyResponse : netCommandGeneral
 {
-	netCommand4H_AlifePacket() : netCommandGeneral(NETCOM_4H_ID_ALIFE_PACKET){}
-	netCommand4H_AlifePacket(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_ALIFE_PACKET){}
+    uint64_t timestamp = 0;
+    netCommand4H_LatencyResponse() : netCommandGeneral(NETCOM_4H_ID_LATENCY_RESPONSE) {
+    }
+    
+    explicit netCommand4H_LatencyResponse(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_LATENCY_RESPONSE){
+        in.read(timestamp);
+    }
+    
+    void Write(XBuffer& out) const override {
+        out.write(timestamp);
+    }
 };
 
 

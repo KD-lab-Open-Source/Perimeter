@@ -210,6 +210,7 @@ struct SqshBorder
 float leftSolidEdge = 350 / 1024;
 float leftSolidWidth = 324 / 1024;
 float littleBtnHeight = 719 / 768;
+float gameTopEdge = 5 / 768;
 
 SqshBorder leftBottomBtn = { x = 123 / 1024;  y = 679 / 768; sx = 133 / 1024; sy = 50 / 768; };
 SqshBorder rightBottomBtn = {  x = 768 / 1024; y = 679 / 768; sx = 133 / 1024; sy = 50 / 768; };
@@ -3913,6 +3914,19 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			y = 448.0f / 768.0f;
 			sx = 300.0f / 1024.0f;
 			sy = 120.0f / 768.0f;
+			image = {
+				texture = "resource\\icons\\intf\\back_info.tga";
+				hasResolutionVersion = 0;
+			};
+		},
+		{
+			type = SQSH_NETLATENCYINFOWND_TYPE;
+			id = SQSH_NET_LATENCY_INFO_ID;
+			state = SQSH_ENABLED;
+			x = 624.0f / 1024.0f;
+			y = gameTopEdge;
+			sx = 100.0f / 1024.0f;
+			sy = 16.0f / 768.0f;
 			image = {
 				texture = "resource\\icons\\intf\\back_info.tga";
 				hasResolutionVersion = 0;

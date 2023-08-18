@@ -107,10 +107,10 @@ connectionHandler(this)
 	m_quantInterval=NORMAL_QUANT_INTERVAL;
 
 	
-	TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION=5000;//5s
+	TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION=10000;//5s
 	TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION=IniManager("Network.ini").getInt("General","TimeOutClientOrServerReceive");
 
-	TIMEOUT_DISCONNECT=600000;
+	TIMEOUT_DISCONNECT=60000;
 	TIMEOUT_DISCONNECT=IniManager("Network.ini").getInt("General","TimeOutDisconnect");
 
 	MAX_TIME_PAUSE_GAME=40000;
@@ -391,9 +391,16 @@ void PNetCenter::HandlerInputNetCommand()
 					universe()->ReceiveEvent(event, in_ClientBuf);
 			}
 			break;
-		case NETCOM_4C_ID_ALIFE_PACKET:
+		case NETCOM_4C_ID_LATENCY_STATUS:
 			{
-				netCommand4C_AlifePacket nc(in_ClientBuf);
+				netCommand4C_LatencyStatus nc(in_ClientBuf);
+                
+                //Send timestamp back to server
+                netCommand4H_LatencyResponse rsp;
+                rsp.timestamp = nc.info.timestamp;
+                SendEventSync(&rsp);
+                
+                gameShell->updateLatencyInfo(nc.info);
 			}
 			break;
 		case NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE:

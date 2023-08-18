@@ -184,7 +184,9 @@ struct PClientData
 	std::vector<netCommand4H_BackGameInformation2> backGameInf2List;
 	unsigned int curLastQuant;
 
-	unsigned int lastTimeBackPacket;
+    unsigned int lastTimeBackPacket;
+    size_t latency = 0;
+    size_t last_time_latency_response = 0;
 
 	unsigned int confirmQuant;
     
@@ -491,6 +493,7 @@ public:
 	void HostReceiveQuant();
 	void ClientPredReceiveQuant();
 
+    uint64_t last_latency_status = 0;
 
 	unsigned int m_quantInterval;
 
