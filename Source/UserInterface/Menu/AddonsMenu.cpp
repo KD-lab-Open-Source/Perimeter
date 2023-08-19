@@ -75,7 +75,7 @@ void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 //Addons back button
 int addonsBackConfirmationQuant(float, float) {
     if (menuChangingDone) {
-        _shellIconManager.SwitchMenuScreens(SQSH_MM_ADDONS_SCR, SQSH_MM_START_SCR);
+        _shellIconManager.SwitchMenuScreens(SQSH_MM_ADDONS_SCR, SQSH_MM_COMMUNITY_SCR);
         return 0;
     }
     return 1;

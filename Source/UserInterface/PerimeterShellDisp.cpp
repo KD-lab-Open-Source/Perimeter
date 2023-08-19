@@ -81,7 +81,7 @@ _handlertbl[] = {
 	//start menu
 	{SQSH_MM_SINGLE_BTN, onMMSingleButton},
     {SQSH_MM_MULTIPLAYER_BTN, onMMMultiplayerButton},
-    {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
+    {SQSH_MM_COMMUNITY_BTN, onMMCommunityButton},
 	{SQSH_MM_OPTIONS_BTN, onMMOptionsButton},
 	{SQSH_MM_CREDITS_BTN, onMMCreditsButton},
     {SQSH_MM_QUIT_BTN, onMMQuitButton},
@@ -106,6 +106,14 @@ _handlertbl[] = {
     {SQSH_MM_ADDONS_APPLY_BTN, onMMAddonsApplyButton},
     {SQSH_MM_ADDONS_ENABLE_COMBO, onMMAddonsEnableCombo},
     {SQSH_MM_BACK_FROM_ADDONS_BTN, onMMAddonsBackButton},
+    
+    //community menu
+    {SQSH_MM_COMMUNITY_1_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_2_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_3_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_4_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
+    {SQSH_MM_BACK_FROM_COMMUNITY_BTN, onMMBackButton},
 
 	//profile editor
 	{SQSH_MM_NEW_PROFILE_BTN, onMMNewProfileButton},
@@ -156,6 +164,7 @@ _handlertbl[] = {
 	{SQSH_MM_MAP_LIST, onMMMapList},
 
 	//credits
+    {SQSH_MM_CREDITS_COMMUNITY_BTN, onMMCommunityButton},
 	{SQSH_MM_BACK_CREDITS_BTN, onMMBackButton},
 
 

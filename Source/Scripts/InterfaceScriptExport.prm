@@ -207,8 +207,8 @@ struct SqshBorder
 	float sy = 0;
 };
 
-float leftSolidEdge = 350 / 1024;
-float leftSolidWidth = 324 / 1024;
+float leftSolidEdge = 340 / 1024;
+float leftSolidWidth = 340 / 1024;
 float littleBtnHeight = 719 / 768;
 float gameTopEdge = 5 / 768;
 
@@ -4053,7 +4053,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 1)/768; sx=leftSolidWidth; sy=64/768; state = SQSH_ENABLED; ystart=64/768; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_BTN;	 x=leftSolidEdge; y=(startUp + startStep * 1)/768; sx=leftSolidWidth; sy=64/768; text="MULTIPLAYER"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 2)/768; sx=leftSolidWidth; sy=64/768; state = SQSH_ENABLED; ystart=64/768; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_ADDONS_BTN;	 x=leftSolidEdge; y=(startUp + startStep * 2)/768; sx=leftSolidWidth; sy=64/768; text="MODS"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_COMMUNITY_BTN;	 x=leftSolidEdge; y=(startUp + startStep * 2)/768; sx=leftSolidWidth; sy=64/768; text="COMMUNITY"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 3)/768; sx=leftSolidWidth; sy=64/768; state = SQSH_ENABLED; ystart=64/768; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_BTN; x=leftSolidEdge; y=(startUp + startStep * 3)/768; sx=leftSolidWidth; sy=64/768; text="OPTIONS"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 4)/768; sx=leftSolidWidth; sy=64/768; state = SQSH_ENABLED; ystart=64/768; },
@@ -5765,6 +5765,8 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
 		{type = SQSH_CREDITS_TEXT_TYPE; id = SQSH_MM_CREDITS_TXT;			x=179/1024; y=85/768; sx=652/1024; sy=544/768; image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};state=SQSH_ENABLED;text="Interface.Credits";},
 
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					x=middleSeparateBottomBtn.x;  y=middleSeparateBottomBtn.y; sx=middleSeparateBottomBtn.sx; sy=middleSeparateBottomBtn.sy; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_CREDITS_COMMUNITY_BTN;	x=middleSeparateBottomBtn.x;  y=middleSeparateBottomBtn.y; sx=middleSeparateBottomBtn.sx; sy=middleSeparateBottomBtn.sy; text="COMMUNITY"; font_group=2; txt_dx=134; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button"; bgObject = {name = "group skip"; chainName = "skip";};image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; },
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; ystart=42/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_CREDITS_BTN;		x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; text="BACK"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};}
 
@@ -5773,9 +5775,53 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group battle"; chainName = "battle";},
 		{name = "group back2"; chainName = "back2";},
+		{name = "group skip"; chainName = "skip";},
 		{name = "group background"; chainName = "background on";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_CREDITS_BTN;
+},
+
+{
+	id = SQSH_MM_COMMUNITY_SCR;
+	load_group = SHELL_LOAD_GROUP_MENU;
+	x = 0;
+	y = 0;
+	sx = 1024;
+	sy = 768;
+	type = SQSH_MULTITEX_WINDOW;
+//	image = {texture="resource\\icons\\MainMenu\\t.avi";hasResolutionVersion=0;};
+//	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
+	controls = new sqshControl[] {
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 100)/1024; y=(startUp + startStep - 2 + startStep * 0)/768; sx=200/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 200; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 100)/1024; y=(startUp + startStep - 2 + startStep * 1)/768; sx=200/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 200; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 100)/1024; y=(startUp + startStep - 2 + startStep * 2)/768; sx=200/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 200; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 100)/1024; y=(startUp + startStep - 2 + startStep * 3)/768; sx=200/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 200; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+
+		sqshControl_ScaleButton { x=(512 - 350 / 2)/1024; y=156/768; sx=350/1024; sy=139/768; state = SQSH_ENABLED; ystart=139/768; },
+		{type = SQSH_PORTRAIT_TYPE; id = SQSH_MM_RAMKA;	 x=(512 - 350 / 2)/1024; y=156/768; sx=350/1024; sy=139/768; image={texture="resource\\icons\\MainMenu\\main_menu_logo.tga";ix = 350; iy = 139;};image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 350; iy = 139;hasResolutionVersion=0;}; },
+
+        //Menu options
+		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 0)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_COMMUNITY_1_BTN;  x=leftSolidEdge; y=(startUp + startStep * 0)/768; sx=leftSolidWidth; sy=64/768; text="SOCIAL MEDIA"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 1)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_COMMUNITY_2_BTN; x=leftSolidEdge; y=(startUp + startStep * 1)/768; sx=leftSolidWidth; sy=64/768; text="KD LAB"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 2)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_COMMUNITY_3_BTN;  x=leftSolidEdge; y=(startUp + startStep * 2)/768; sx=leftSolidWidth; sy=64/768; text="ASSOCIATION"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 3)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_COMMUNITY_4_BTN;  x=leftSolidEdge; y=(startUp + startStep * 3)/768; sx=leftSolidWidth; sy=64/768; text="SOURCE CODE"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 4)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_ADDONS_BTN;   x=leftSolidEdge; y=(startUp + startStep * 4)/768; sx=leftSolidWidth; sy=64/768; text="MODS"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+
+        //Back button
+		sqshControl_ScaleButton { x=leftBottomBtn.x;  y=leftBottomBtn.y; sx=leftBottomBtn.sx; sy=leftBottomBtn.sy;  ystart=51/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_COMMUNITY_BTN;	x=leftBottomBtn.x;  y=leftBottomBtn.y; sx=leftBottomBtn.sx; sy=leftBottomBtn.sy; text="BACK"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};}
+	};
+	bgObjects = new BGObj[] {
+		{name = "group start"; chainName = "start screen";},
+		{name = "group back"; chainName = "back";},
+		{name = "group background"; chainName = "background on";}
+	};
+	defaultEscBtnID = SQSH_MM_BACK_FROM_COMMUNITY_BTN;
 },
 
 //заставка

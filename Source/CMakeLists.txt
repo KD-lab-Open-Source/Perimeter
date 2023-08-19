@@ -311,6 +311,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         UserInterface/MainMenu.cpp
         UserInterface/Menu/SingleMenu.cpp
         UserInterface/Menu/AddonsMenu.cpp
+        UserInterface/Menu/CommunityMenu.cpp
         UserInterface/Menu/MultiplayerList.cpp
         UserInterface/Menu/MultiplayerHost.cpp
         UserInterface/Menu/MultiplayerJoin.cpp
