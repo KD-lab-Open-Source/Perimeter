@@ -20,7 +20,7 @@ const int PNC_DESYNC_RESTORE_ATTEMPTS = 8;
 const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
 const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 5 * 60 * 1000; //5 mins
 const int PNC_DESYNC_RESTORE_MODE_FULL = PNC_DESYNC_RESTORE_MODE_PARTIAL + 1;
-const size_t PNC_LATENCY_UPDATE_INTERVAL = 300 * 1000; //us
+const size_t PNC_LATENCY_UPDATE_INTERVAL = 50 * 1000; //us
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -664,6 +664,15 @@ void PNetCenter::LLogicQuant()
                     ev.info.player_ids.push_back(idx);
                     ev.info.player_pings.push_back(client->latency);
                     ev.info.player_last_seen.push_back(client->last_time_latency_response);
+					size_t quant = 0;
+					auto& blist = client->backGameInf2List;
+					if (!blist.empty()) {
+						quant = blist.front().quant_;
+					}
+                    ev.info.player_quants.push_back(quant);
+					if (client->netidPlayer == NETID_HOST) {
+						ev.info.quant = quant;
+					}
                 }
                 SendEvent(ev, NETID_ALL);
             }

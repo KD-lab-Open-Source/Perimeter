@@ -6047,7 +6047,7 @@ void CNetLatencyInfoWindow::draw(int bFocus) {
         OutTextRect(0, 0 , briefData.c_str(), -1, v1, v2);
         size.x = v2.x - v1.x;
         size.y = v2.y - v1.y;
-        pos.x = x + (sx * 0.5f - size.x * 0.5f);
+        pos.x = x + margin;
         pos.y = y;
 #if 1 && defined(PERIMETER_DEBUG)
         //terRenderDevice->DrawRectangle(x, y, sx, sy, sColor4f(1, 0, 0, 1), 2);
@@ -6075,10 +6075,16 @@ void CNetLatencyInfoWindow::draw(int bFocus) {
 #endif
             pos.y += size.y + margin * 3;
             OutTextRect(0, 0 , text.c_str(), -1, v1, v2);;
+            //Round width so it doesn't flicker when text changes fast
+            const float roundStep = 50;
             size.x = v2.x - v1.x + margin * 2;
+            size.x = xm::ceil((size.x + roundStep * 0.5f) / roundStep) * roundStep;
             size.y = v2.y - v1.y + margin * 2;
             pos.x = x + sx * 0.5f - size.x * 0.5f;
-
+			if (pos.x + size.x >= terRenderDevice->GetSizeX()) {
+				//Failsafe, in case doesn't fit
+				pos.x = terRenderDevice->GetSizeX() - size.x - margin;
+			}
             if (m_hTexture) {
                 terRenderDevice->DrawSprite(pos.x - margin, pos.y - margin, size.x, size.y, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255));
             }

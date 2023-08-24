@@ -775,21 +775,29 @@ struct netCommandC_PlayerReady : netCommandGeneral
 struct NetLatencyInfo {
     //Timestamp when this info was sent, also to return for the next latency status round
     uint64_t timestamp = 0;
+    //Server quant
+    size_t quant = 0;
     //Client player ids
     std::vector<int> player_ids = {};
     //Client pings in us
     std::vector<size_t> player_pings = {};
-    //Client last packet in us
+    //Client last packet in us (use with server provided timestamp above) 
     std::vector<size_t> player_last_seen = {};
+    //Client quant number
+    std::vector<size_t> player_quants = {};
     
     void clear() {
+		timestamp = 0;
+		quant = 0;
         player_ids.clear();
         player_pings.clear();
         player_last_seen.clear();
+        player_quants.clear();
     }
 
     void read(XBuffer& in) {
-        in.read(timestamp);
+		in.read(timestamp);
+		in.read(quant);
         uint32_t amount = 0;
         in.read(amount);
         for (size_t i = 0; i < amount; ++i) {
@@ -801,11 +809,14 @@ struct NetLatencyInfo {
             player_pings.push_back(e);
             in.read(e);
             player_last_seen.push_back(e);
+            in.read(e);
+            player_quants.push_back(e);
         }
     }
 
     void write(XBuffer& out) const {
-        out.write(timestamp);
+		out.write(timestamp);
+		out.write(quant);
         uint32_t amount = player_ids.size();
         out.write(amount);
         for (size_t i = 0; i < amount; ++i) {
@@ -814,6 +825,8 @@ struct NetLatencyInfo {
             size_t e = player_pings[i];
             out.write(e);
             e = player_last_seen[i];
+            out.write(e);
+            e = player_quants[i];
             out.write(e);
         }
     }

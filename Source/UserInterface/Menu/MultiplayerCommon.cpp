@@ -7,6 +7,7 @@
 #include "Localization.h"
 #include "MultiplayerCommon.h"
 #include "BelligerentSelect.h"
+#include "codepages/codepages.h"
 
 //This file handles mostly ingame multiplayer stuff but some parts are shared with main menu
 
@@ -361,7 +362,7 @@ int updateLatencyInfoWindowQuant( float, float ) {
 
     std::string briefData, fullData;
     
-    const char* mslabel = startsWith(getLocale(), "russian") ? "мс" : "ms";
+    std::string mslabel = startsWith(getLocale(), "russian") ? convertToCodepage("мс", "russian") : "ms";
 
     for (int i : toNetInfo.player_ids) {
         int playerID = toNetInfo.player_ids[i];
@@ -370,7 +371,29 @@ int updateLatencyInfoWindowQuant( float, float ) {
             xassert(0);
             continue;
         }
+
+        //Get player name
+        if (!fullData.empty()) fullData += "\n";
+        std::string name = player->name();
+        while (name.length() < PLAYER_MAX_NAME_LEN) {
+            name += " ";
+        }
+        fullData += "&" + toColorCode(player->unitColor()) + name;
+
+        //Get quant text
+        uint64_t quant = toNetInfo.quant - toNetInfo.player_quants[i];
+        std::string quantText = std::to_string(quant);
+        while (quantText.length() < 2) {
+            quantText = " " + quantText;
+        }
+        sColor4f quantColor = sColor4f(
+                50 < quant ? 1 : 0,
+                quant < 100 ? 1 : 0,
+                0, 1
+        );
+        quantText = " &" + toColorCode(quantColor) + quantText;
         
+        //Get ping text
         size_t ping = toNetInfo.player_pings[i]; // toNetInfo.timestamp - toNetInfo.player_last_seen[i];
         ping = static_cast<size_t>(xm::ceil(static_cast<double>(ping) / 1000.0));
         sColor4f pingColor = sColor4f(
@@ -378,20 +401,17 @@ int updateLatencyInfoWindowQuant( float, float ) {
                 ping < 2000 ? 1 : 0,
                 0, 1
         );
-        std::string pingText = "&" + toColorCode(pingColor) + " " + std::to_string(ping) + mslabel;
-        
-        if (!fullData.empty()) fullData += "\n";
-        std::string name = player->name();
-        while (name.length() < PLAYER_MAX_NAME_LEN) {
-            name += " ";
+        std::string pingText = std::to_string(ping);
+        while (pingText.length() < 4) {
+            pingText = " " + pingText;
         }
-        
-        fullData += "&" + toColorCode(player->unitColor());
-        fullData += name + pingText;
+        pingText = " &" + toColorCode(pingColor) + pingText + mslabel;
+
+        fullData += quantText + pingText;
         
         if (playerID == gameShell->CurrentMission.activePlayerID) {
             briefData = qdTextDB::instance().getText("Interface.Menu.ButtonLabels.Network");
-            briefData += pingText;
+            briefData += quantText + pingText;
         }
     }
     

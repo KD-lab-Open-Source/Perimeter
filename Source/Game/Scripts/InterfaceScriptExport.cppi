@@ -9741,7 +9741,7 @@ static sqshControl _controls_2[] = { { SQSH_BACKGROUND_TYPE, SQSH_BACKGRND_ID
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_NETLATENCYINFOWND_TYPE 
- , SQSH_NET_LATENCY_INFO_ID, 2, 3, 0.609375f, 0.00651042f, 0.09765625f, 0.02083333f 
+ , SQSH_NET_LATENCY_INFO_ID, 2, 3, 0.43945312f, 0.00651042f, 0.14648438f, 0.02083333f 
  , 0.f, 0.f, { "resource\\icons\\intf\\back_info.tga", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
