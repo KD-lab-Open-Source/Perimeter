@@ -1090,23 +1090,15 @@ public:
 	virtual int  EffectSupported(){
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
-	void SetText(const char* lpszText){
-		m_data = lpszText;
-	}
+	void SetText(const char* lpszText);
 	const char* GetText(){
 		return m_data.c_str();
 	}
 	const std::string& getText() const {
 		return m_data;
 	}
-    bool isEmptyText() const {
-        for (auto c : m_data) {
-            if (c != ' ' && c != '\t' && c != '\n') {
-                return false;
-            }
-        }
-        return true;
-    }
+    bool isEmptyText() const;
+    bool isValidFilename() const;
 protected:
 	std::string   m_data;
 

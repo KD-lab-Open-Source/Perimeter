@@ -5206,6 +5206,49 @@ void CEditWindow::OnChar(char key)
 	}
 }
 
+void CEditWindow::SetText(const char* lpszText) {
+    m_data.clear();
+    while (true) {
+        char c = *lpszText;
+        if (c == '\0') break;
+        //Make sure all chars pass filter
+        OnChar(c);
+        lpszText++;
+    }
+}
+
+bool CEditWindow::isEmptyText() const {
+    for (auto c : m_data) {
+        if (c != ' ' && c != '\t' && c != '\n') {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool CEditWindow::isValidFilename() const {
+    bool empty = true;
+    for (auto c : m_data) {
+        //Nothing good below these chars
+        if (c < 32
+            //Path separators might have unforeseen consequences
+            || c == '/' || c == '\\'
+            //TODO Dots mess up with extension parsing, so they are forbidden for now
+            || c == '.'
+                ) {
+            return false;
+        }
+        //Only alphanumb?
+        if (m_attr->alnum && !isalnum(c)) {
+            return false;
+        }
+        //Set flag if there is non whitespace char
+        if (c != ' ') {
+            empty = false;
+        }
+    }
+    return !empty;
+}
 
 CChatInGameEditWindow::CChatInGameEditWindow(int id, CShellWindow* pParent, EVENTPROC p) : CEditWindow(id, pParent, p) {
 	alliesOnlyMode = false;

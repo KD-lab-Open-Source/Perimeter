@@ -2137,7 +2137,7 @@ void onMMSaveGameMapList(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	} else if (code == EVENT_DRAWWND) {
 //		int pos = ((CListBoxWindow*)pWnd)->GetCurSel();
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
-		_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_GO_BTN)->Enable(!input->isEmptyText());
+		_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_GO_BTN)->Enable(input->isValidFilename());
 	}
 }
 void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -2261,7 +2261,7 @@ void onMMSaveReplayList(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 	} else if (code == EVENT_DRAWWND) {
 //		int pos = ((CListBoxWindow*)pWnd)->GetCurSel();
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
-		_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_GO_BTN)->Enable(!input->isEmptyText());
+		_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_GO_BTN)->Enable(input->isValidFilename());
 	}
 }
 void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
