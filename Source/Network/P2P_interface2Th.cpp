@@ -652,6 +652,7 @@ void PNetCenter::LLogicQuant()
                 size_t timestamp = clock_us();
                 //Send current latency info
                 last_latency_status = timestamp;
+                size_t max_quant = 0;
                 netCommand4C_LatencyStatus ev;
                 ev.info.timestamp = timestamp;
                 for (auto client : m_clients) {
@@ -670,9 +671,16 @@ void PNetCenter::LLogicQuant()
 						quant = blist.front().quant_;
 					}
                     ev.info.player_quants.push_back(quant);
+                    if (max_quant < quant) {
+                        max_quant = quant;
+                    }
 					if (client->netidPlayer == NETID_HOST) {
 						ev.info.quant = quant;
 					}
+                }
+                //Sometimes host might be absent in backgame2list, so use the highest quant from clients
+                if (ev.info.quant == 0) {
+                    ev.info.quant = max_quant;
                 }
                 SendEvent(ev, NETID_ALL);
             }
