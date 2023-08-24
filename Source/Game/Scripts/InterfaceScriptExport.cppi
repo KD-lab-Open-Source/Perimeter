@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript definition
 //	Section: InterfaceScriptExportPrm
-//	Number of variables: 35
+//	Number of variables: 37
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct_ControlAction__
@@ -1085,8 +1085,8 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
  , 0 } };
 static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA 
- , 2, 3, 0.55761719f, 0.f, 0.41503906f, 0.84375f, 359.f, -648.f, { "resource\\icons\\MainMenu\\new_menu.tga" 
- , 599.f, 376.f, 425.f, 648.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 2, 3, 0.f, 0.f, 1.f, 1.f, 521.f, -768.f, { "resource\\icons\\MainMenu\\New_statistik.tga" 
+ , 0.f, 0.f, 1024.f, 768.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
@@ -1096,19 +1096,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
- , 0 }, { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA, 2, 3, 0.05859375f, 0.19791667f, 0.49902344f 
- , 0.64583333f, 359.f, -528.f, { "resource\\icons\\MainMenu\\new_menu.tga", 88.f, 528.f 
- , 511.f, 496.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f 
- , 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "" 
- , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
- , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", -1, -1, 0, 0 
- , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
- , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
- , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
- , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
- , 0 }, { SQSH_SCALE_BUTTON_TYPE, SQSH_MM_RAMKA, 3, 3, 0.18652344f, 0.29296875f, 0.6640625f 
+ , 0 }, { SQSH_SCALE_BUTTON_TYPE, SQSH_MM_RAMKA, 3, 3, 0.18652344f, 0.20833333f, 0.6640625f 
  , 0.08333333f, 0.f, 0.08333333f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f 
  , 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
@@ -1120,7 +1108,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE, 0 }, { SQSH_PUSH_BUTTON_TYPE 
- , SQSH_MM_GRAPHICS_GAMMA, 2, 3, 0.203125f, 0.29296875f, 0.39648438f, 0.08333333f, 0.f 
+ , SQSH_MM_GRAPHICS_GAMMA, 2, 3, 0.203125f, 0.20833333f, 0.39648438f, 0.08333333f, 0.f 
  , 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
@@ -1132,7 +1120,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SLIDER_TYPE, SQSH_MM_GRAPHICS_GAMMA_SLIDER 
- , 3, 3, 0.64941406f, 0.31640625f, 0.14648438f, 0.03515625f, 0.02441406f, 0.015625f 
+ , 3, 3, 0.64941406f, 0.23177083f, 0.14648438f, 0.03515625f, 0.02441406f, 0.015625f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 328.f, 489.f, 150.f, 27.f, 0.f, 0.f 
  , 0.f, 0.f, 1, 0 }, { "", 303.f, 493.f, 25.f, 23.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "" 
  , 478.f, 493.f, 25.f, 23.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 447.f, 456.f, 16.f, 27.f 
@@ -1144,7 +1132,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SCALE_BUTTON_TYPE 
- , SQSH_MM_RAMKA, 3, 3, 1.92480469f, 0.38411458f, 0.6640625f, 0.08333333f, 0.f, 0.08333333f 
+ , SQSH_MM_RAMKA, 3, 3, 1.92480469f, 0.3125f, 0.6640625f, 0.08333333f, 0.f, 0.08333333f 
  , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
@@ -1155,7 +1143,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE 
- , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_SETTINGS, 2, 3, 0.203125f, 0.38411458f, 0.39648438f 
+ , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_SETTINGS, 2, 3, 0.203125f, 0.3125f, 0.39648438f 
  , 0.08333333f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
@@ -1167,7 +1155,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_COMBO_TYPE 
- , SQSH_MM_SETTINGS_COMBO, 3, 3, 0.63671875f, 0.40755208f, 0.17285156f, 0.04166667f 
+ , SQSH_MM_SETTINGS_COMBO, 3, 3, 0.63671875f, 0.3359375f, 0.17285156f, 0.04166667f 
  , 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
@@ -1179,7 +1167,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SCALE_BUTTON_TYPE, SQSH_MM_RAMKA 
- , 3, 3, 1.92480469f, 0.47526042f, 0.6640625f, 0.08333333f, 0.f, 0.08333333f, { "" 
+ , 3, 3, 1.92480469f, 0.41666667f, 0.6640625f, 0.08333333f, 0.f, 0.08333333f, { "" 
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
@@ -1190,7 +1178,42 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE 
- , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_GRAPHICS_GRAB_INPUT, 2, 3, 0.203125f, 0.47526042f 
+ , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_GRAPHICS_UI_ANCHOR, 2, 3, 0.203125f, 0.41666667f 
+ , 0.39648438f, 0.08333333f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 456, -1, 0, 0, 0, 0, { "", "" 
+  }, "UI POSITION", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0 
+ , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
+ , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
+ , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_GRAPHICS_UI_ANCHOR_COMBO, 3, 3, 0.63671875f, 0.44010417f 
+ , 0.17285156f, 0.04166667f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 455, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
+ , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
+ , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SCALE_BUTTON_TYPE 
+ , SQSH_MM_RAMKA, 3, 3, 1.92480469f, 0.52083333f, 0.6640625f, 0.08333333f, 0.f, 0.08333333f 
+ , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press" 
+ , "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE 
+ , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_GRAPHICS_GRAB_INPUT, 2, 3, 0.203125f, 0.52083333f 
  , 0.39648438f, 0.08333333f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
@@ -1202,7 +1225,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
- , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_GRAPHICS_GRAB_INPUT_COMBO, 3, 3, 0.63671875f, 0.49869792f 
+ , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_GRAPHICS_GRAB_INPUT_COMBO, 3, 3, 0.63671875f, 0.54427083f 
  , 0.17285156f, 0.04166667f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
@@ -1214,7 +1237,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SCALE_BUTTON_TYPE 
- , SQSH_MM_RAMKA, 3, 3, 0.42382812f, 0.66276042f, 0.18945312f, 0.05859375f, 0.f, 0.05859375f 
+ , SQSH_MM_RAMKA, 3, 3, 0.42382812f, 0.80598958f, 0.18945312f, 0.05859375f, 0.f, 0.05859375f 
  , { "resource\\icons\\MainMenu\\new_menu.tga", 340.f, 234.f, 194.f, 45.f, 0.f, 0.f 
  , 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "" 
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
@@ -1226,7 +1249,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE, 0 }, { SQSH_PUSH_BUTTON_TYPE 
- , SQSH_MM_CUSTOM_INGAME_GRAPHICS_BTN, 2, 3, 0.43066406f, 0.66536458f, 0.17578125f 
+ , SQSH_MM_CUSTOM_INGAME_GRAPHICS_BTN, 2, 3, 0.43066406f, 0.80859375f, 0.17578125f 
  , 0.05338542f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
@@ -1238,7 +1261,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SCALE_BUTTON_TYPE 
- , SQSH_MM_RAMKA, 3, 3, 0.68164062f, 0.66276042f, 0.18945312f, 0.05859375f, 0.f, 0.05859375f 
+ , SQSH_MM_RAMKA, 3, 3, 0.71777344f, 0.80598958f, 0.18945312f, 0.05859375f, 0.f, 0.05859375f 
  , { "resource\\icons\\MainMenu\\new_menu.tga", 340.f, 234.f, 194.f, 45.f, 0.f, 0.f 
  , 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "" 
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
@@ -1250,7 +1273,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE, 0 }, { SQSH_PUSH_BUTTON_TYPE 
- , SQSH_MM_INGAME_APPLY_BTN, 2, 3, 0.68847656f, 0.66536458f, 0.17578125f, 0.05338542f 
+ , SQSH_MM_INGAME_APPLY_BTN, 2, 3, 0.72460938f, 0.80859375f, 0.17578125f, 0.05338542f 
  , 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
@@ -1262,8 +1285,8 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_SCALE_BUTTON_TYPE 
- , SQSH_MM_RAMKA, 3, 3, 0.16601562f, 0.66276042f, 0.18945312f, 0.05859375f, 0.f, 0.05859375f 
- , { "resource\\icons\\MainMenu\\new_menu.tga", 340.f, 234.f, 194.f, 45.f, 0.f, 0.f 
+ , SQSH_MM_RAMKA, 3, 3, 0.09472656f, 0.80598958f, 0.14160156f, 0.05859375f, 0.f, 0.05859375f 
+ , { "resource\\icons\\MainMenu\\new_menu.tga", 340.f, 291.f, 145.f, 45.f, 0.f, 0.f 
  , 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "" 
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
@@ -1274,7 +1297,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE, 0 }, { SQSH_PUSH_BUTTON_TYPE 
- , SQSH_MM_BACK_FROM_INGAME_GRAPHICS_BTN, 2, 3, 0.17285156f, 0.66536458f, 0.17578125f 
+ , SQSH_MM_BACK_FROM_INGAME_GRAPHICS_BTN, 2, 3, 0.1015625f, 0.80859375f, 0.12792969f 
  , 0.05338542f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
@@ -9849,6 +9872,8 @@ int optionsGameUp = 120;
 int optionsGameStep = 80;
 int ingameGameUp = 160;
 int ingameGameStep = 80;
+int ingameGraphUp = 160;
+int ingameGraphStep = 80;
 int ingameCustomUp = 90;
 int ingameCustomStep = 46;
 int battleUp = 405;
@@ -9967,7 +9992,7 @@ sqshControlContainer _sqsh_controls[] = { { SQSH_GENERAL_TYPE
  , SQSH_MM_BACK_FROM_INGAME_GAME_OPTIONS }, { SQSH_MULTITEX_WINDOW, 167, 0, 1, 0, 0 
  , 1024, 768, { "resource\\icons\\MainMenu\\t.avi", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f 
  , 0.f, 0.f, 0, 0 }, { "resource\\icons\\MainMenu\\il.tga", 0.f, 0.f, 1024.f, 1024.f 
- , 0.f, 0.f, 0.f, 0.f, 1, 0 }, 17, _controls_53, 0, 0, SQSH_MM_INGAME_APPLY_BTN, SQSH_MM_CUSTOM_INGAME_GRAPHICS_BTN 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, 19, _controls_53, 0, 0, SQSH_MM_INGAME_APPLY_BTN, SQSH_MM_CUSTOM_INGAME_GRAPHICS_BTN 
  , SQSH_MM_BACK_FROM_INGAME_GRAPHICS_BTN }, { SQSH_MULTITEX_WINDOW, 151, 0, 1, 0, 0 
  , 1024, 768, { "resource\\icons\\MainMenu\\t.avi", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f 
  , 0.f, 0.f, 0, 0 }, { "resource\\icons\\MainMenu\\il.tga", 0.f, 0.f, 1024.f, 1024.f 
@@ -10251,15 +10276,15 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\InterfaceScriptExport.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 608089886;
-	reserve(35);
+	description = 3229476226;
+	reserve(37);
 	add(&_bgObjects_59, "_bgObjects_59", 77798271);
 	add(&_controls_58, "_controls_58", 2542604647);
 	add(&_bgObjects_57, "_bgObjects_57", 443175274);
 	add(&_controls_56, "_controls_56", 245728213);
 	add(&_controls_55, "_controls_55", 3941193802);
 	add(&_controls_54, "_controls_54", 3534346316);
-	add(&_controls_53, "_controls_53", 2011498739);
+	add(&_controls_53, "_controls_53", 3686912415);
 	add(&_controls_52, "_controls_52", 923603302);
 	add(&_controls_51, "_controls_51", 2003146936);
 	add(&_controls_50, "_controls_50", 464115785);
@@ -10332,6 +10357,8 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add(&optionsGameStep, "optionsGameStep", 3773040620);
 	add(&ingameGameUp, "ingameGameUp", 2136690403);
 	add(&ingameGameStep, "ingameGameStep", 2462065627);
+	add(&ingameGraphUp, "ingameGraphUp", 869985074);
+	add(&ingameGraphStep, "ingameGraphStep", 426999965);
 	add(&ingameCustomUp, "ingameCustomUp", 303006106);
 	add(&ingameCustomStep, "ingameCustomStep", 3525427103);
 	add(&battleUp, "battleUp", 3994732379);
@@ -10341,7 +10368,7 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add(&optionsUp, "optionsUp", 1199352564);
 	add(&optionsStep, "optionsStep", 2147965020);
 	add(&_sqsh_control_count, "_sqsh_control_count", 1611044955);
-	add(&_sqsh_controls, "_sqsh_controls", 1578533290);
+	add(&_sqsh_controls, "_sqsh_controls", 4068662178);
 	add(&_sqsh_sheet_count, "_sqsh_sheet_count", 878183638);
 	add(&_sqsh_sheets, "_sqsh_sheets", 4086170788);
 	add(&squad_icon_count, "squad_icon_count", 3142965791);

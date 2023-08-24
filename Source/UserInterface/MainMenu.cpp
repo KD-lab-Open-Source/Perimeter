@@ -1785,7 +1785,8 @@ void onMMInMissLoadButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 }
 void onMMInMissOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		_shellIconManager.GetWnd(SQSH_MM_OPTIONS_GRAPHICS)->Enable(gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER);
+        //TODO why was disabled in multi?
+		//_shellIconManager.GetWnd(SQSH_MM_OPTIONS_GRAPHICS)->Enable(gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER);
 		_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_SCREEN_OPTIONS);
 	}		
 }

@@ -25,6 +25,7 @@ extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern int terShowTips;
 extern int applicationRunBackground;
+extern SHELL_ANCHOR shell_anchor;
 
 extern std::string getItemTextFromBase(const char *keyStr);
 
@@ -615,8 +616,9 @@ void OnButtonOptionGame(CShellWindow* pWnd, InterfaceEventCode code, int param)
 }
 void OnButtonOptionGraphics(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
-	if(code == EVENT_UNPRESSED)
-		_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_SCREEN_GRAPHICS);
+    if (code == EVENT_UNPRESSED) {
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_SCREEN_GRAPHICS);
+    }
 }
 void OnButtonOptionSound(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {

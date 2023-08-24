@@ -220,6 +220,7 @@ void GraphOptions::apply() {
             SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
         }
     }
+    shell_anchor = static_cast<SHELL_ANCHOR>(uiAnchor);
     
 	customOptions.apply();
 }

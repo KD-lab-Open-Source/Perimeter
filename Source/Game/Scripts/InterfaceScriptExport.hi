@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: InterfaceScriptExportPrm
-//	Number of variables: 35
+//	Number of variables: 37
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct_ControlAction__
@@ -219,6 +219,8 @@ extern int optionsGameUp;
 extern int optionsGameStep;
 extern int ingameGameUp;
 extern int ingameGameStep;
+extern int ingameGraphUp;
+extern int ingameGraphStep;
 extern int ingameCustomUp;
 extern int ingameCustomStep;
 extern int battleUp;
