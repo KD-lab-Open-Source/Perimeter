@@ -23,7 +23,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
     size_t tex_len = dx * dy * 4;
 
     for (int i=0; i<Texture->GetNumberFrame(); i++) {
-        SokolTexture2D*& img = Texture->GetFrameImage(i).sg;
+        SokolTexture2D*& img = Texture->GetFrameImage(i)->sg;
         if (img) {
             delete img;
             img = nullptr;
@@ -118,7 +118,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             img = new SokolTexture2D(desc);
         }
 
-        Texture->GetFrameImage(i).sg = img;
+        Texture->GetFrameImage(i)->sg = img;
     }
 
     if (is_skin) {
@@ -146,7 +146,12 @@ void* cSokolRender::LockTexture(cTexture* Texture, int& Pitch) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::LOCK_TEXTURE);
 #endif
-    SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
+    TextureImage* frm = Texture->GetFrameImage(0);
+    xassert(frm);
+    if (!frm) {
+        return nullptr;
+    }
+    SokolTexture2D* tex = frm->sg;
     xassert(!tex->locked);
     xassert(tex->data);
     Pitch = static_cast<int>(Texture->GetWidth() * sokol_pixelformat_bytesize(tex->pixel_format));
@@ -163,7 +168,12 @@ void* cSokolRender::LockTextureRect(cTexture* Texture, int& Pitch, Vect2i pos, V
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::LOCK_TEXTURE_RECT);
 #endif
-    SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
+    TextureImage* frm = Texture->GetFrameImage(0);
+    xassert(frm);
+    if (!frm) {
+        return nullptr;
+    }
+    SokolTexture2D* tex = frm->sg;
     xassert(!tex->locked);
     xassert(tex->data);
     size_t fmt_size = sokol_pixelformat_bytesize(tex->pixel_format);
@@ -183,7 +193,12 @@ void cSokolRender::UnlockTexture(cTexture* Texture) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_TEXTURE);
 #endif
-    SokolTexture2D* tex = Texture->GetFrameImage(0).sg;
+    TextureImage* frm = Texture->GetFrameImage(0);
+    xassert(frm);
+    if (!frm) {
+        return;
+    }
+    SokolTexture2D* tex = frm->sg;
     xassert(tex->locked);
     xassert(tex->data);
     if (!tex->data) {
