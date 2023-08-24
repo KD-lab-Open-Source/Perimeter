@@ -52,8 +52,13 @@ public:
 	inline bool IsAlpha();
 	inline bool IsAlphaTest();
 
-    TextureImage& GetFrameImage(int n) {
-        return frames[n];
+    TextureImage* GetFrameImage(int n) {
+        if (0<=n&&n<frames.size()) {
+            return &frames[n];
+        } else {
+            xassert(0);
+            return nullptr;
+        }
     }
     
 	inline void New(int number);

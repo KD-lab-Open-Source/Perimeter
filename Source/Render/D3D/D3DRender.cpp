@@ -760,16 +760,18 @@ int cD3DRender::Flush(bool wnd)
 		for(int i=0; i<TexLibrary->GetNumberTexture(); i++ )
 		{
 			cTexture* pTexture=TexLibrary->GetTexture(i);
-			if(pTexture)
-			for(int nFrame=0;nFrame<pTexture->GetNumberFrame();nFrame++)
-			if( pTexture->GetFrameImage(nFrame).d3d) 
-			{
-				D3DSURFACE_DESC dsc;
-				pTexture->GetFrameImage(nFrame).d3d->GetLevelDesc( 0, &dsc );
-				int sz=GetTextureFormatSize(dsc.Format);
-				int size=dsc.Width*dsc.Height*sz;
-				dbg_MemTexture += (size/8);
-			}
+            if (pTexture) {
+                for (int nFrame = 0; nFrame < pTexture->GetNumberFrame(); nFrame++) {
+                    TextureImage* tf = pTexture->GetFrameImage(nFrame);
+                    if (tf->d3d) {
+                        D3DSURFACE_DESC dsc;
+                        tf->d3d->GetLevelDesc(0, &dsc);
+                        int sz = GetTextureFormatSize(dsc.Format);
+                        int size = dsc.Width * dsc.Height * sz;
+                        dbg_MemTexture += (size / 8);
+                    }
+                }
+            }
 		}
 		sprintf(str,"tex=%i",dbg_MemTexture);
 		OutText(10,40,str);
@@ -781,7 +783,7 @@ int cD3DRender::Flush(bool wnd)
 			cTexture* pTexture=(*it)->GetTexture();
 			if(pTexture)
 			for(int nFrame=0;nFrame<pTexture->GetNumberFrame();nFrame++) {
-                IDirect3DTexture9* tex = pTexture->GetFrameImage(nFrame).d3d;
+                IDirect3DTexture9* tex = pTexture->GetFrameImage(nFrame)->d3d;
                 if (!tex) continue;
                 
                 D3DSURFACE_DESC dsc;

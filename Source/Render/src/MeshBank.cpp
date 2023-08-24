@@ -343,6 +343,14 @@ void cMeshBank::SetTexture(int n,cTexture * pTexture,int attr)
 {
 	VISASSERT(n>=0 && n<NUMBER_OBJTEXTURE);
 
+#ifdef PERIMETER_DEBUG_ASSERT
+    if (pTexture) {
+        std::string filetest = string_to_lower(pTexture->GetName());
+        if (filetest.find("_bump.") != std::string::npos) {
+            xassert(n == 1);
+        }
+    }
+#endif
 	bank->Material.ClearAttribute(attr);
 	if(Texture[n]) { Texture[n]->Release(); Texture[n]=0; } 
 

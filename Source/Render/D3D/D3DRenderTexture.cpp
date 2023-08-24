@@ -75,9 +75,8 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 	bool is_alpha_blend=false;
 	bool is_skin=Texture->skin_color.a==255;
 
-	for(int i=0;i<Texture->GetNumberFrame();i++)
-	{
-        IDirect3DTexture9*& tex = Texture->GetFrameImage(i).d3d;
+	for(int i=0;i<Texture->GetNumberFrame();i++) {
+        IDirect3DTexture9*& tex = Texture->GetFrameImage(i)->d3d;
 		if (tex) tex->Release(); 
 		if (tex == nullptr) {
             tex = CreateSurface(
@@ -129,7 +128,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 		RECT rect={0,0,dx,dy};
 
-		LPDIRECT3DTEXTURE9& lpD3DTexture=Texture->GetFrameImage(i).d3d;
+		LPDIRECT3DTEXTURE9& lpD3DTexture=Texture->GetFrameImage(i)->d3d;
 		LPDIRECT3DSURFACE9 lpSurface = NULL;
 		RDCALL( lpD3DTexture->GetSurfaceLevel( 0, &lpSurface ) );
 
@@ -180,7 +179,7 @@ int cD3DRender::DeleteTexture(cTexture *Texture)
     RenderSubmitEvent(RenderEvent::DELETE_TEXTURE, "", Texture);
 #endif
 	for(int nFrame=0;nFrame<Texture->GetNumberFrame();nFrame++) {
-        IDirect3DTexture9*& tex = Texture->GetFrameImage(nFrame).d3d;
+        IDirect3DTexture9*& tex = Texture->GetFrameImage(nFrame)->d3d;
         if (tex) {
             tex->Release();
             tex = nullptr;
@@ -210,7 +209,7 @@ void* cD3DRender::LockTexture(cTexture* Texture, int& Pitch)
     RenderSubmitEvent(RenderEvent::LOCK_TEXTURE);
 #endif
 	D3DLOCKED_RECT d3dLockRect;
-	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
+	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0)->d3d;
 	RDCALL(lpSurface->LockRect(0,&d3dLockRect,nullptr,0));
 
 	Pitch=d3dLockRect.Pitch;
@@ -223,7 +222,7 @@ void* cD3DRender::LockTextureRect(cTexture* Texture, int& Pitch, Vect2i pos, Vec
     RenderSubmitEvent(RenderEvent::LOCK_TEXTURE_RECT);
 #endif
     D3DLOCKED_RECT d3dLockRect;
-    IDirect3DTexture9* lpSurface=Texture->GetFrameImage(0).d3d;
+    IDirect3DTexture9* lpSurface=Texture->GetFrameImage(0)->d3d;
     RECT rc;
     rc.left=pos.x;
     rc.top=pos.y;
@@ -240,7 +239,7 @@ void cD3DRender::UnlockTexture(class cTexture *Texture)
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_TEXTURE);
 #endif
-	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
+	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0)->d3d;
 	RDCALL(lpSurface->UnlockRect(0));
 }
 

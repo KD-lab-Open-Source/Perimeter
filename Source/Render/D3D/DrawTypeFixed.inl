@@ -9,8 +9,6 @@ DrawTypeFixedPipeline::~DrawTypeFixedPipeline()
 
 void DrawTypeFixedPipeline::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 {
-	cMeshTri *Tri=Mesh->GetTri();
-
 	bool specular=Data->Specular.r>=1/256.0f || 
 				  Data->Specular.g>=1/256.0f || 
 				  Data->Specular.b>=1/256.0f;

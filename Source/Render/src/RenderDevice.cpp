@@ -269,13 +269,13 @@ void cInterfaceRenderDevice::UnlockIndexBuffer(IndexBuffer &ib) {
 }
 
 void cInterfaceRenderDevice::SetTexture(uint32_t slot, cTexture* texture, float phase) {
-    if (texture == nullptr) {
+    if (texture == nullptr || texture->GetNumberFrame() == 0) {
         SetTextureImage(slot, nullptr);
     } else {
         float nAllFrame = static_cast<float>(texture->GetNumberFrame());
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * phase * nAllFrame) : 0;
         VISASSERT(0<=nFrame&&nFrame<texture->GetNumberFrame());
-        TextureImage* tex = &texture->GetFrameImage(nFrame);
+        TextureImage* tex = texture->GetFrameImage(nFrame);
         SetTextureImage(slot, tex);
     }
 }

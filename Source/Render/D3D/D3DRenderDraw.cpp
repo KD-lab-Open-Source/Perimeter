@@ -20,8 +20,9 @@ void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
 		lpD3DDevice->SetTexture( nPasses, CurrentTexture[nPasses]=0 );
 	}
 
-	LPDIRECT3DSURFACE9 lpDDSurface=0;
-	RDCALL((target->GetFrameImage(0)).d3d->GetSurfaceLevel(0,&lpDDSurface));
+	LPDIRECT3DSURFACE9 lpDDSurface= nullptr;
+    TextureImage* frm = target->GetFrameImage(0);
+	RDCALL(frm->d3d->GetSurfaceLevel(0,&lpDDSurface));
 	RDCALL(lpD3DDevice->SetRenderTarget(0,lpDDSurface));
 	RDCALL(lpD3DDevice->SetDepthStencilSurface(pZBuffer));
 

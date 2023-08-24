@@ -606,7 +606,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             gb_RenderDevice3D->SetTextureImage(0, &teximg);
 #endif
         } else {
-            gb_RenderDevice->SetTextureImage(first_texture_number, &curpool->GetTexture()->GetFrameImage(0));
+            gb_RenderDevice->SetTextureImage(first_texture_number, curpool->GetTexture()->GetFrameImage(0));
         }
 
         for (sBumpTile* bumpTile : curpool->tileRenderList) {
