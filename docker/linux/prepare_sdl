@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+#Replace old system SDL2 with compiled version
+
+git clone https://github.com/libsdl-org/SDL.git -b release-2.28.2
+cd SDL
+mkdir build
+cd build
+../configure --prefix=/usr
+make
+make install -j4

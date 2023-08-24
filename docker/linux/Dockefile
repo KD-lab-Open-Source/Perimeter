@@ -6,6 +6,8 @@ WORKDIR /work
 #Run scripts to prepare env for compilation
 COPY ./docker/linux/prepare_pkgs /tmp/prepare_pkgs
 RUN bash /tmp/prepare_pkgs
+COPY ./docker/linux/prepare_sdl /tmp/prepare_sdl
+RUN bash /tmp/prepare_sdl
 COPY ./docker/linux/prepare_ffmpeg /tmp/prepare_ffmpeg
 RUN bash /tmp/prepare_ffmpeg
 
