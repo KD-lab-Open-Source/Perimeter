@@ -19,6 +19,6 @@ docker run \
  --tty \
  --volume "${PWD}/":/work \
  --env WORK_DIR=/work \
- --env FFMPEG_ROOT=/opt/ffmpeg \
+ --env LIBS_ROOT=/opt/out \
  $DOCKER_IMAGE \
  /bin/bash /work/docker/linux/builder $@

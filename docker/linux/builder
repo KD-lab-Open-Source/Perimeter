@@ -4,6 +4,9 @@ set -e
 if [[ ! -n $WORK_DIR ]]; then
   WORK_DIR=$PWD
 fi
+if [[ -z $LIBS_ROOT ]]; then
+  echo "Missing LIBS_ROOT env"
+fi
 BUILD_DIR=$WORK_DIR/build/docker-linux
 
 #rm -rf $BUILD_DIR
@@ -16,16 +19,18 @@ export LDFLAGS="-lstdc++fs"
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 cmake -S $WORK_DIR -B $BUILD_DIR -G Ninja \
-  -DFFMPEG_ROOT=$FFMPEG_ROOT \
+  -DFFMPEG_ROOT="$LIBS_ROOT/ffmpeg" \
   -DOPTION_LINKER=lld \
-  -DOPTION_LINK_LIBS="stdc++fs" \
+  -DOPTION_LINK_LIBS="stdc++fs;pthread" \
   -DOPTION_STATIC_LIB_STD=ON \
   -DOPTION_DEBUG_ASSERT=OFF \
   -DOPTION_DXVK_1=ON \
   -DCMAKE_INSTALL_DO_STRIP=OFF \
   -DCMAKE_INSTALL_RPATH="\$ORIGIN" \
-  $@
-
+  $@`
+`
+  #-DSDL2_INCLUDE_DIR="$LIBS_ROOT/sdl/include/SDL2" \
+  #-DSDL2_LIBRARY="$LIBS_ROOT/sdl/lib/libSDL2.so" \
 # Build dependencies
 ninja dependencies
 
@@ -37,13 +42,18 @@ rm -rf $BUILD_DIR/output
 cmake --install . --prefix $BUILD_DIR/output
 
 # Strip
-strip -g -x $BUILD_DIR/output/lib/*
+if [[ -d $BUILD_DIR/output/lib ]]; then
+  strip -g -x $BUILD_DIR/output/lib/*
+fi
 strip -g -x $BUILD_DIR/output/bin/*
 
 # Prepare package
 mv $BUILD_DIR/output/bin/* $BUILD_DIR/output
-mv $BUILD_DIR/output/lib/* $BUILD_DIR/output
-rmdir $BUILD_DIR/output/bin $BUILD_DIR/output/lib
+rmdir $BUILD_DIR/output/bin
+if [[ -d $BUILD_DIR/output/lib ]]; then
+  mv $BUILD_DIR/output/lib/* $BUILD_DIR/output
+  rmdir $BUILD_DIR/output/lib
+fi
 
 # Perms
 chmod 777 $BUILD_DIR/output

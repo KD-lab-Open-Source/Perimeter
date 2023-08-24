@@ -2,13 +2,13 @@
 set -e
 
 # Compile smaller version of FFMPEG with only what project needs
-git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git /opt/ffmpeg-src
+git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git /opt/src/ffmpeg
 
-cd /opt/ffmpeg-src
+cd /opt/src/ffmpeg
 
 ./configure \
-          --prefix=/opt/ffmpeg \
-          --enable-static --disable-shared  \
+          --prefix=/opt/out/ffmpeg \
+          --enable-static --disable-shared \
           --disable-everything \
           --enable-swscale \
           --enable-swresample \

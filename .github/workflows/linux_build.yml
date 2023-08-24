@@ -26,22 +26,29 @@ jobs:
         id: cache
         with:
           path: |
-            /opt/ffmpeg-src
-            /opt/ffmpeg
+            /opt/src
+            /opt/out
           key: Linux-${{matrix.env.arch}}-${{ env.GH_CACHE_KEY }}
       - name: prepare env
         run: |
           chmod a+x ./docker/linux/prepare_pkgs
-          chmod a+x ./docker/linux/builder
           ./docker/linux/prepare_pkgs
       - name: build ffmpeg
         run: |
           chmod a+x ./docker/linux/prepare_ffmpeg
           ./docker/linux/prepare_ffmpeg
         if: steps.cache.outputs.cache-hit != 'true'
+      - name: build sdl2
+        run: |
+          chmod a+x ./docker/linux/prepare_sdl_pkgs
+          chmod a+x ./docker/linux/prepare_sdl
+          ./docker/linux/prepare_sdl_pkgs
+          ./docker/linux/prepare_sdl
+        if: steps.cache.outputs.cache-hit != 'true'
       - name: build
         run: |
-          export FFMPEG_ROOT=/opt/ffmpeg
+          chmod a+x ./docker/linux/builder
+          export LIBS_ROOT=/opt/out
           ./docker/linux/builder \
             -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
             ${{matrix.env.cmake}}
