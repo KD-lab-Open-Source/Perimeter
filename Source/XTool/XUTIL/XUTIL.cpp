@@ -454,3 +454,29 @@ void encode_raw_double(XBuffer* buffer, double value) {
     (*buffer) < 'X' <= (*value_raw);
 }
 
+std::string BreakLongLines(const char* ptext, size_t max_width, char endline) {
+    std::string text;
+    if (ptext) {
+        size_t line_len = 0;
+        while (true) {
+            const char c = *ptext;
+            if (c == '\0') {
+                break;
+            }
+
+            ptext++;
+            if (c == endline) {
+                line_len = 0;
+                text += endline;
+            } else {
+                text += c;
+                line_len += 1;
+                if (line_len >= max_width) {
+                    line_len = 0;
+                    text += endline;
+                }
+            }
+        }
+    }
+    return text;
+}
