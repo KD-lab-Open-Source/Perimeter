@@ -31,7 +31,6 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
         load_lines({
            "GAME_CONTENT.PERIMETER=Периметр",
            "GAME_CONTENT.PERIMETER_ET=Периметр: Завет Императора",
-           "GAME_CONTENT.PERIMETER_HD=Периметр: HD",
            "Interface.Menu.Messages.ReplayGameVersionDifferent=Этот повтор был сохранен в другой версии и может отображаться неправильно. Использованная версия игры:",
            "Interface.Menu.Messages.GameContentMissing=Содержит ресурсы, которые не представлены или не включены в этой копии игры, убедитесь, что они установлены и включены:\n",
            "Interface.Menu.Messages.WorldMissing=Содержит карту, которая не представлена или не включена в этой копии игры, убедитесь, что она установлена и включена:\n\n",
@@ -85,7 +84,6 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
         load_lines({
            "GAME_CONTENT.PERIMETER=Perimeter",
            "GAME_CONTENT.PERIMETER_ET=Perimeter: Emperor's Testament",
-           "GAME_CONTENT.PERIMETER_HD=Perimeter: HD",
            "Interface.Menu.Messages.ReplayGameVersionDifferent=This replay was saved with a different version and may not display correctly, used game version:",
            "Interface.Menu.Messages.GameContentMissing=This contains game content that is not present or enabled in your installation, make sure these are installed and enabled in your game:\n",
            "Interface.Menu.Messages.WorldMissing=This contains a map/world that is not present or enabled in your installation, make sure that is installed and enabled in your game:\n\n",

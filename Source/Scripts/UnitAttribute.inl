@@ -992,6 +992,5 @@ enum {
 enum GAME_CONTENT {
     CONTENT_NONE = 0,
     PERIMETER    = 1 << 0,
-    PERIMETER_ET = 1 << 1,
-    PERIMETER_HD = 1 << 2
+    PERIMETER_ET = 1 << 1
 };
