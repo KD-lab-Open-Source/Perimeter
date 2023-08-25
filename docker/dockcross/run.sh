@@ -13,7 +13,7 @@ if [ ! -z $CLEAN ]; then
 fi
 
 if [[ -n $BUILD_DOCKER ]] || [[ ! -f $DOCKER_ROOT/dockcross-x64-perimeter ]]; then
-  docker build -t dockcross-x64-perimeter -f $DOCKER_ROOT/dockcross-x64.Dockefile $DOCKER_ROOT
+  docker build -t dockcross-x64-perimeter -f $DOCKER_ROOT/dockcross-x64.Dockerfile $DOCKER_ROOT
   docker run dockcross-x64-perimeter > $DOCKER_ROOT/dockcross-x64-perimeter
   chmod a+x $DOCKER_ROOT/dockcross-x64-perimeter
 fi

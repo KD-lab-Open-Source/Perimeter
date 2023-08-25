@@ -8,7 +8,7 @@ if [[ ! -d $DOCKER_ROOT ]]; then
 fi
 DOCKER_IMAGE="docker-linux-perimeter"
 
-docker build -t $DOCKER_IMAGE -f $DOCKER_ROOT/Dockefile .
+docker build -t $DOCKER_IMAGE -f $DOCKER_ROOT/Dockerfile .
 
 mkdir -p "${PWD}/build/docker-linux"
 
