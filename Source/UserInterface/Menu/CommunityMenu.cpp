@@ -2,7 +2,10 @@
 #include "MainMenu.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
+#include "MessageBox.h"
 #include <SDL.h>
+
+std::string openWebURL;
 
 void onMMCommunityButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
@@ -10,42 +13,57 @@ void onMMCommunityButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
     }
 }
 
+int openWebConfirmationHandler(float, float) {
+    hideMessageBox();
+    if (!openWebURL.empty()) {
+        fprintf(stdout, "Open web: %s\n", openWebURL.c_str());
+        if (SDL_OpenURL(openWebURL.c_str())) {
+            SDL_PRINT_ERROR("SDL_OpenURL");
+        }
+        openWebURL.clear();
+    }
+    return 0;
+}
+
 void onMMCommunityLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-        std::string url;
+        openWebURL.clear();
         bool addLocale = false;
         std::string params;
         switch (pWnd->ID) {
             default:
             case SQSH_MM_COMMUNITY_1_BTN:
-                url = "https://kdlab.com/community";
+                openWebURL = "https://kdlab.com/community";
                 addLocale = true;
                 params = "ref=perimeter";
                 break;
             case SQSH_MM_COMMUNITY_2_BTN:
-                url = "https://kdlab.com";
-                //Locale is auto detected by web
+                openWebURL = "https://kdlab.com";
+                //Locale is auto-detected by web
                 break;
             case SQSH_MM_COMMUNITY_3_BTN:
-                url = "https://kdlab.com/association";
+                openWebURL = "https://kdlab.com/association";
                 addLocale = true;
                 break;
             case SQSH_MM_COMMUNITY_4_BTN:
-                url = "https://github.com/KD-lab-Open-Source/Perimeter";
+                openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter";
                 break;
+        }
+        if (openWebURL.empty()) {
+            return;
         }
         if (addLocale && !startsWith(getLocale(), "russian")) {
             //For now there is only russian (without any extra url and /en for english)
-            url += "/en";
+            openWebURL += "/en";
         }
         if (!params.empty()) {
-            url += "?" + params;
+            openWebURL += "?" + params;
         }
-        if (!url.empty()) {
-            if (SDL_OpenURL(url.c_str())) {
-                SDL_PRINT_ERROR("SDL_OpenURL");
-            }
-        }
+        
+        std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OpenWeb");
+        text += "\n\n" + BreakLongLines(openWebURL.c_str(), 30);
+        setupYesNoMessageBox(openWebConfirmationHandler, 0, text);
+        showMessageBox();
     }
 }
 
