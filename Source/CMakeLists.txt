@@ -70,7 +70,7 @@ IF(NOT PERIMETER_WINDOWS)
             set(DXVK_GIT_TAG "43aedc756cbd620b9ee8b1cf2c17b17cc49b3781")
         ELSE()
             set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
-            set(DXVK_GIT_TAG "306919047bffb3d8f30159c219722741728904e2")
+            set(DXVK_GIT_TAG "80e075406b1b7d9d2508c9dc05e9745b3d3cf7e2") # v2.3
             set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
         ENDIF()
         IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
