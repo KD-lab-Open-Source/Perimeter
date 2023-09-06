@@ -348,7 +348,8 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
 
     if (terGameContentSelect == PERIMETER_ET) {
         //Load mission required data and other ET stuff
-        paths["Resource/scenario.hst"] = "";
+        paths["Resource/scenario.hst"] = "Resource/scenario_" + getLocale() + ".hst"; //In case scenario_LOCALE.hst exists in base
+        paths["Resource/controls.ini"] = "";
         paths["Resource/Icons"] = "";
         paths["Resource/Missions"] = "";
         paths["Resource/Music"] = "";
@@ -448,7 +449,7 @@ void applyWorkarounds() {
     }
     
     //Localized resources if any
-    paths[locpath + "MainMenu"] = "Resource/Icons/MainMenu";
+    paths[locpath + "Icons"] = "Resource/Icons";
     paths[locpath + "Video"] = "Resource/Video";
 
     //Map the resource paths
