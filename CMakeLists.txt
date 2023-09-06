@@ -318,6 +318,10 @@ IF(NOT MSVC_CL_BUILD)
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
         set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
     ENDIF()
+
+    #Codebase assumes char is signed, some compilers set char as unsigned
+    add_compile_options(-fsigned-char)
+    
     
     #TODO remove these once code is more tidy
     add_compile_options(-Wno-misleading-indentation)
