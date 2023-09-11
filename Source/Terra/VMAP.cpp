@@ -83,6 +83,73 @@ bool isWorldIDValid(int worldID) {
 	return (worldID < vMap.maxWorld && worldID >= 0);
 }
 
+void vrtMap::compressWorlds(int mode) {
+    fprintf(stdout, "compressWorlds: mode %d\n", mode);
+    sVmpHeader VmpHeader;
+    XStream fstream;
+    fstream.ErrHUsed = false;
+    for (int id = 0; id < vMap.maxWorld; ++id) {
+        std::string output_vmp = GetTargetName(id, worldDataFileLinear);
+        fprintf(stdout, "%s\n", vMap.wTable[id].name.c_str());
+        
+        //Read file
+        XBuffer fmap(0, true);
+        if (!fstream.open(output_vmp, XS_IN)) {
+            fprintf(stderr, "VMP file not found\n");
+            continue;
+        }
+        fstream.seek(0,XS_BEG);
+        fstream.read(&VmpHeader,sizeof(VmpHeader));
+        int64_t flen = fstream.size() - fstream.tell();
+        
+        //Decode header
+        if (VmpHeader.cmpID("S2T0")) {
+            if (mode == 0) {
+                continue;
+            }
+            fmap.realloc(flen);
+            fstream.read(fmap.buf, flen);
+            fmap.set(flen, XB_BEG);
+        } else if (VmpHeader.cmpID("S2T1")) {
+            if (mode == 1) {
+                continue;
+            }
+            XBuffer tmp(flen, false);
+            fstream.read(tmp.buf, flen);
+            if (tmp.uncompress(fmap) != 0) {
+                ErrH.Abort("Error decompressing world");
+            }
+        }
+        fstream.close();
+        
+        //Act on mode
+        if (mode == 0) {
+            VmpHeader.setID("S2T0");
+            //fmap is already uncompressed
+        } else if (mode == 1) {
+            VmpHeader.setID("S2T1");
+            XBuffer tmp(fmap.length(), true);
+            int result = fmap.compress(tmp);
+            if (result != 0) {
+                ErrH.Abort("Error compressing world");
+            }
+            fmap = std::move(tmp);
+        } else {
+            ErrH.Abort("Unsupported compression mode");
+        }
+
+        //Write back
+        fprintf(stdout, "%s %s\n", VmpHeader.id, output_vmp.c_str());
+        if (!fstream.open(output_vmp, XS_OUT)) {
+            ErrH.Abort("Error opening VMP for write");
+        }
+        fstream.seek(0,XS_BEG);
+        fstream.write(&VmpHeader, sizeof(VmpHeader));
+        fstream.write(fmap.buf, fmap.tell());
+        fstream.close();
+    }
+}
+
 std::string GetTargetName(int numWorld, const char* name)
 {
 	if ( !isWorldIDValid(numWorld) ) ErrH.Abort("World Index out of range");
@@ -420,7 +487,7 @@ void vrtMap::prepare(char* name)
 
 	//Scan resources worlds and create table with name and path
 	wTable.clear();
-    for (const auto& entry : get_content_entries_directory("resource/worlds")) {
+    for (const auto& entry : get_content_entries_directory(name)) {
         if (entry->is_directory) {
             std::filesystem::path path = std::filesystem::u8path(entry->path_content);
             wTable.emplace_back(path.filename().u8string(), entry->key);
@@ -428,6 +495,12 @@ void vrtMap::prepare(char* name)
     }
     maxWorld = wTable.size();
     if(maxWorld < 1) ErrH.Abort("Empty world list");
+
+    int compress_mode = -1;
+    check_command_line_parameter("compress_worlds", compress_mode);
+    if (0 <= compress_mode) { 
+        compressWorlds(compress_mode);
+    }
 }
 
 //Для Периметра

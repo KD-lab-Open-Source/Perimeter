@@ -830,6 +830,7 @@ void show_help() {
             "    not_triggerchains_binary=1 - Disallows loading triggerchain stored in .bin instead of .spg\n"
             "    debug_key_handler=1 - Enables debug key handler\n"
             "    explore=1 - Opens Debug.prm editor and closes game\n"
+            "    compress_worlds=0/1 - Attempts to decompress or compress all worlds\n"
             "    start_splash=0/1 - Enables or disables intro movies\n"
             "    show_fps=0/1 - Displays FPS counter\n"
             "    convert=1 - Saves opened map and closes game\n"
