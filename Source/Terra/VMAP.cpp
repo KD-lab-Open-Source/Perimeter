@@ -106,9 +106,7 @@ std::string safeGetTargetName(int numWorld, const char* name)
     return GetTargetName(numWorld, name);
 }
 
-vrtMap::vrtMap(void)
-: fmap(0)//, kmap(0)
-{
+vrtMap::vrtMap() {
 	GeonetMESH=200;
 	cWorld = -1;
 
@@ -299,6 +297,10 @@ int vrtMap::getWorld_V_SIZE(int idxWorld)
 	return V_size;
 }
 
+bool vrtMap::hasWorldData() {
+    std::string path = GetTargetName(worldDataFileLinear);
+    return !path.empty() && std::filesystem::exists(std::filesystem::u8path(path));
+}
 
 void vrtMap::analyzeINI(const char* name)
 {
@@ -391,16 +393,14 @@ void vrtMap::selectUsedWorld(char* _patch2World)
 	releaseChAreaBuf();
 	allocChAreaBuf();
 
-	int exist = 1;
-	if(!fmap.open(GetTargetName(worldDataFileLinear),XS_IN)) exist = 0;
-	else fmap.close();
+	bool exist = hasWorldData();
 
 	if(!exist) {
-		if(buildWorld()) exist=1;
+		if(buildWorld()) exist=true;
 	}
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear));
-
+	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName("").c_str());
+    
 	LoadVPR();
 	RenderPrepare1();
 
@@ -457,15 +457,13 @@ void vrtMap::selectUsedWorld(int nWorld)
 	releaseChAreaBuf();
 	allocChAreaBuf();
 
-	int exist = 1;
-	if(!fmap.open(GetTargetName(worldDataFileLinear),XS_IN)) exist = 0;
-	else fmap.close();
+	bool exist = hasWorldData();
 
 	if(!exist) {
-		if(buildWorld()) exist=1;
+		if(buildWorld()) exist=true;
 	}
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear).c_str());
+	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName("").c_str());
 
 	LoadVPR();
 	RenderPrepare1();
@@ -565,16 +563,15 @@ void vrtMap::newLoad(const char* dirName)
 	releaseChAreaBuf();
 	allocChAreaBuf();
 
-	int exist = 1;
-	if(!fmap.open(GetTargetName(worldDataFileLinear),XS_IN)) exist = 0;
-	else fmap.close();
 
-	if(!exist) {
-		if(buildWorld()) exist=1;
-	}
+    bool exist = hasWorldData();
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear).c_str());
+    if(!exist) {
+        if(buildWorld()) exist=true;
+    }
 
+    if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName("").c_str());
+    
 	LoadVPR();
 	RenderPrepare1();
 
@@ -804,14 +801,31 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 	if(VxGBuf!=0) releaseMem4Buf();
 	allocMem4Buf();
 
-	if (!fmap.open(GetTargetName(worldDataFileLinear), XS_IN)) {
+    //Read file
+    XBuffer fmap(0, true);
+    XStream fstream;
+	if (!fstream.open(GetTargetName(worldDataFileLinear), XS_IN)) {
         ErrH.Abort("VMP file not found");
     }
-
-	//const char id[4]={'S','2','T','0'};
-	fmap.seek(0,XS_BEG);
-	fmap.read(&VmpHeader,sizeof(VmpHeader));
-	if (VmpHeader.cmpID("S2T0")) { //(*(int*)VmpHeader.id == *(int*)id )
+    fstream.seek(0,XS_BEG);
+    fstream.read(&VmpHeader,sizeof(VmpHeader));
+    int64_t flen = fstream.size() - fstream.tell();
+    
+    //Read content according to header ID
+	if (VmpHeader.cmpID("S2T0")) {
+        fmap.realloc(flen);
+        fstream.read(fmap.buf, flen);
+    } else if (VmpHeader.cmpID("S2T1")) {
+        XBuffer tmp(flen, false);
+        fstream.read(tmp.buf, flen);
+        if (tmp.uncompress(fmap) != 0) {
+            ErrH.Abort("Error decompressing VMP");
+        }
+        fmap.set(0, XB_BEG);
+    }
+    
+    fstream.close();
+    if (0 < fmap.length()) {
 		fmap.read(&VxGBuf[0],XS_Buf*YS_Buf);
 		fmap.read(&VxDBuf[0],XS_Buf*YS_Buf);
 		fmap.read(&AtrBuf[0],XS_Buf*YS_Buf);
@@ -837,10 +851,9 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 		//	changedT[i]=0;
 		//	RenderStr(i);
 		//}
-	}
-	else ErrH.Abort("VMP file is not TRUE version");
-
-	fmap.close();
+	} else {
+        ErrH.Abort("VMP file format unknown");
+    }
 
 	loadLeveledTexture(); //необходимо вызывать после загрузки VxDBuf и палитры
 
@@ -1401,6 +1414,7 @@ void vrtMap::convertPal2TableTexCol()
 void vrtMap::save3BufOnly(void)
 {
 	sVmpHeader VmpHeader;
+    XStream fmap;
 	fmap.open(GetTargetName(worldDataFileLinear), XS_OUT);
 	//const char id[4]={'S','2','T','0'};
 	//int i;
@@ -1471,6 +1485,7 @@ void vrtMap::restore3Buf(void)
 	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
 	loadGeoDamPal();
 
+    XStream fmap;
 	fmap.open(GetTargetName(worldDataFileLinear),XS_IN | XS_OUT);
 	//const char id[4]={'S','2','T','0'};
 	fmap.seek(0,XS_BEG);

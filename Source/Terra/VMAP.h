@@ -361,9 +361,6 @@ struct vrtMap {
 	std::vector<vrtWorld> wTable;
 
 
-	XStream fmap,pmap;//,kmap
-
-
 
 	vrtMap(void);
 	~vrtMap(void);
@@ -481,7 +478,8 @@ struct vrtMap {
 //	PUBLIC fuction для использования 
 	int getWorld_H_SIZE(int idxWorld);
 	int getWorld_V_SIZE(int idxWorld);
-
+    bool hasWorldData();
+    
 #ifdef _SURMAP_
 	void prepare();
 	void selectUsedWorld(char* _patch2WorldIniFile);
