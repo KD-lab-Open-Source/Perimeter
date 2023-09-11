@@ -153,7 +153,12 @@ int XBuffer::uncompress(XBuffer& output, uint32_t* len) {
     
     //Ensure destination can handle uncompressed data
     while (output.tell() + original_len > output.size) {
-        output.handleOutOfSize();
+        if (output.automatic_realloc) {
+            output.realloc(output.tell() + original_len);
+        } else {
+            //This will error
+            output.handleOutOfSize();
+        }
     }
 
     //Do the decompression
