@@ -14,7 +14,3 @@ cd build
 
 make
 make install -j4
-
-#Replace system SDL2 with ours
-cp -va /opt/out/sdl/include/* /usr/include/
-cp -va /opt/out/sdl/lib/* /usr/lib/x86_64-linux-gnu/

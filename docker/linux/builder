@@ -9,6 +9,12 @@ if [[ -z $LIBS_ROOT ]]; then
 fi
 BUILD_DIR=$WORK_DIR/build/docker-linux
 
+#Replace system SDL2 with ours
+if [[ -d "$LIBS_ROOT/sdl" ]]; then
+  cp -va $LIBS_ROOT/sdl/include/* /usr/include/
+  cp -va $LIBS_ROOT/sdl/lib/* /usr/lib/x86_64-linux-gnu/
+fi
+
 #rm -rf $BUILD_DIR
 
 #Image is using GCC 8 so stdc++fs must be linked for std::filesystem
