@@ -15,7 +15,7 @@
   outputs = { self, nixpkgs, ... }:
     let
       # Systems supported to build this package
-      buildSystems = with nixpkgs.lib.platforms; [
+      buildSystems = [
           "i686-linux"
           "x86_64-linux"
           "x86_64-darwin"
@@ -23,6 +23,11 @@
           "aarch64-darwin"
           "powerpc64le-linux"
           #"riscv64-linux"
+      ];
+      
+      #Systems that don't need overlay
+      stableSystems = [
+          "x86_64-linux"
       ];
 
       # Systems targetted for this package
@@ -100,7 +105,7 @@
       ];
       
       #Overlays to apply
-      overlays = [        
+      overlays = [
         #Allow all platforms for these pkgs
         (self: super: (
           nixpkgs.lib.genAttrs [ "SDL2_mixer" "SDL2_image" "SDL2_net" ] (name: 
@@ -218,14 +223,14 @@
             mkPerimeterPackages {
               pkgs = import nixpkgs {
                 inherit system;
-                inherit overlays;
+                overlays = if (builtins.elem system stableSystems) then [] else overlays;
               };
             } ++ (builtins.concatLists (map ({ name, system }: 
               let
                 target_pkgs = import nixpkgs {
                   inherit localSystem;
                   crossSystem = system;
-                  inherit overlays;
+                  overlays = if (builtins.elem system stableSystems) then [] else overlays;
                 };
                 validPlatform = !target_pkgs.stdenv.hostPlatform.isDarwin
                   || (
