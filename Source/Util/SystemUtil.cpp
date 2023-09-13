@@ -272,16 +272,55 @@ sKey::sKey(int key_, bool set_by_async_funcs) {
 /////////////////////////////////////////////////////////////////////////////////
 
 bool create_directories(const std::string& path, std::error_code* error) {
-    bool result;
-    std::string pathstr = convert_path_native(path);
-    std::filesystem::path path_fs = std::filesystem::u8path(pathstr);
-    if (error) {
-        result = std::filesystem::create_directories(path_fs, *error);
-    } else {
-        result = std::filesystem::create_directories(path_fs);
+    std::string current;
+    std::string part;
+    size_t size = path.size();
+    for (int i = 0; i < size; ++i) {
+        char c = path[i];
+        if (c != '\\' && c != '/') {
+            part += c;
+            
+            //If this is last char then continue by creating dir on last part
+            if (i + 1 < size) {
+                continue;
+            }
+        }
+        
+        //Use native PATH_SEP and add path until now to parent
+        if (!current.empty()) {
+            current += PATH_SEP;
+        }
+        current += part;
+        part.clear();
+        
+        //Check if parent path exists, if so don't do anything
+        //We use our function for case-insensitivity
+        std::string path_content = convert_path_content(current);
+        if (!path_content.empty()) {
+            //In case real path has different case than one provided
+            current = path_content;
+            continue;
+        }
+        
+        //Create dir since doesn't exist
+        std::filesystem::path current_fs = std::filesystem::u8path(current);
+        bool result;
+        if (error) {
+            result = std::filesystem::create_directory(current_fs, *error);
+        } else {
+            result = std::filesystem::create_directory(current_fs);
+        }
+        
+        //Failed
+        if (!result) {
+            return false;
+        }
     }
-    if (result || std::filesystem::is_directory(path_fs)) {
-        scan_resource_paths(pathstr);
+    xassert(part.empty());
+    std::filesystem::path current_fs = std::filesystem::u8path(current);
+    bool result = std::filesystem::is_directory(current_fs);
+    if (result) {
+        scan_resource_paths(current);
     }
     return result;
 }
