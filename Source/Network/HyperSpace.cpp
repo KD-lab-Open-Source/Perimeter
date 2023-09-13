@@ -16,7 +16,7 @@ bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
 
 //XStream quantTimeLog("quantTime.log",XS_OUT);
-const char* autoSavePlayReelDir = "AUTOSAVE";
+const char* autoSavePlayReelDir = "RESOURCE\\Replay\\Autosave";
 
 
 const char * KEY_REPLAY_REEL="replay";

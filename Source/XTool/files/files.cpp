@@ -275,7 +275,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         || startsWith(entry_key, "cache")
         || startsWith(entry_key, "mods")
         || startsWith(entry_key, "scripts")
-        || startsWith(entry_key, "autosave")
+        || startsWith(entry_key, "crashdata")
         || endsWith(entry_key, ".ini")) {
         
         bool path_is_directory = std::filesystem::is_directory(std::filesystem::u8path(path_content));

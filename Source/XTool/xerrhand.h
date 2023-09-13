@@ -8,7 +8,7 @@
 #define NULL	0L
 #endif
 
-#define CRASH_DIR "perimeter_crash"
+#define CRASH_DIR "CrashData"
 
 #define X_WINNT 		0x0001
 #define X_WIN32S		0x0002

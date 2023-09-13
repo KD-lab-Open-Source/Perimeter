@@ -9,7 +9,7 @@
 /Source/cache_font
 logfile.txt
 perimeter.dxvk-cache
-perimeter_crash
+CrashData
 
 # Build artifacts
 /build
