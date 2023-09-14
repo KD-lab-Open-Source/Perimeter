@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "files/files.h"
+#include "../../Terra/crc.h"
 
 cTexture::cTexture(const char *TexName) : cUnknownClass(KIND_TEXTURE)
 { 
@@ -127,8 +128,8 @@ void cTexture::ConvertBumpToNormal(uint8_t* buffer) {
     if (entry) key = entry->key;
     if (key.empty()) key = convert_path_native(GetName());
     key = string_to_lower(key.c_str());
-    string_replace_all(key, PATH_SEP_STR, "_");
-    key = std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key +  ".bin";
+    unsigned int hash = crc32(reinterpret_cast<const unsigned char*>(key.c_str()), key.size(), startCRC32);
+    key = std::string("cache") + PATH_SEP + "bump" + PATH_SEP + std::to_string(hash) +  ".bin";
     std::string path = convert_path_content(key, true);
     xassert(!path.empty());
 
@@ -149,7 +150,7 @@ void cTexture::ConvertBumpToNormal(uint8_t* buffer) {
     if (usable) {
         //Load file and uncompress it
         XBuffer buf(ff.size(), true);
-        XBuffer dest = XBuffer(len, true);
+        XBuffer dest(0, true);
         ff.read(buf.address(), ff.size());
         if (buf.uncompress(dest) == 0 && dest.tell() == len) {
             memcpy(buffer, dest.address(), len);
