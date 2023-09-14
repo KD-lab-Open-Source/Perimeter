@@ -349,8 +349,6 @@ void terHyperSpace::allSavePlayReel()
 
 terHyperSpace::~terHyperSpace()
 {
-	allSavePlayReel();
-
 	//Очистка логов
 	clearLogList();
 	//Очистка списков команд

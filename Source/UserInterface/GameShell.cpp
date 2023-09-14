@@ -585,8 +585,10 @@ void GameShell::GameClose()
 		chaos = 0;
 	}
 
-	if(universe())
-		delete universe();
+	if (universe()) {
+        universe()->allSavePlayReel();
+        delete universe();
+    }
 
     delete BuildingInstaller;
     BuildingInstaller = nullptr;
