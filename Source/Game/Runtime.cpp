@@ -78,7 +78,7 @@ int terResizableWindow = 1;
 int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
-int terGrabInput = 1;
+int terGrabInput = 0;
 int applicationRunBackground = 1;
 
 int terDrawMeshShadow = 2;
