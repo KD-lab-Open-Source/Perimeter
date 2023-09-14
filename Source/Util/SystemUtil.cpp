@@ -311,9 +311,10 @@ bool create_directories(const std::string& path, std::error_code* error) {
             result = std::filesystem::create_directory(current_fs);
         }
         
-        //Failed
-        if (!result) {
-            return false;
+        //Add this new dir to paths
+        xassert(result);
+        if (result) {
+            scan_resource_paths(current);
         }
     }
     xassert(part.empty());
