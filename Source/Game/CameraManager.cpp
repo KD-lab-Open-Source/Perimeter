@@ -463,7 +463,8 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
         limitValue(cameraZoomForce, CAMERA_ZOOM_SPEED_DELTA * zoom_force_limit);
 		cameraZoomVelocity += cameraZoomForce*CAMERA_ZOOM_SPEED_MASS * zoom_factor;
 		coordinate().distance() += cameraZoomVelocity*delta_time;
-		
+
+#if 0
 		if(restricted()){
 			//if(!cameraMouseTrack){
 			//при зуме камера должна принимать макс. допустимый наклон
@@ -472,7 +473,8 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 				cameraThetaForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
 			//}
 		}
-		
+#endif
+        
 		//move
 		cameraPositionVelocity += cameraPositionForce*CAMERA_SCROLL_SPEED_MASS*move_factor;
 		
