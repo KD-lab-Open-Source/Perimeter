@@ -383,7 +383,7 @@ void cScene::DetachObj(cIUnkClass *UObj)
     } else if (UObj->GetKind()==KIND_LIGHT) {
 		DetachLight(safe_cast<cUnkLight*>(UObj));
 	} else {
-		grid.Detach(safe_cast<cIUnkObj*>(UObj));
+		grid.Detach(safe_cast<cIUnkClass*>(UObj));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////
