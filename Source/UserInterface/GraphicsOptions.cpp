@@ -214,6 +214,7 @@ void GraphOptions::apply() {
     
     if (terGrabInput != grabInput) {
         terGrabInput = grabInput;
+        check_command_line_parameter("GrabInput", terGrabInput);
         if (terGrabInput && !terFullScreen) {
             SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
         } else {
