@@ -2864,7 +2864,10 @@ void CMapWindow::draw(int bFocus)
 
 			_map_draw = true;
 
-			LogicData* logicData = gameShell->getLogicUpdater().getLogicData();
+            LogicUpdater& updater = gameShell->getLogicUpdater();
+            updater.lock(); //Lock to avoid use-after-free in logicData->alphaPath
+            
+			LogicData* logicData = updater.getLogicData();
 			if (logicData->getMiniMap() &&  (logicData->getWidth() == sx) && (logicData->getHeight() == sy)) {
 				drawBitmap(logicData->getMiniMap());
 			} else {
@@ -2907,6 +2910,8 @@ void CMapWindow::draw(int bFocus)
                         xm::fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period
                 );
 			}
+
+            updater.unlock();
 
             for (const auto& ii : _shellIconManager.getMiniMapEventIcons()) {
 				float timeElapsed = ii.period - ii.timeRemain;
