@@ -220,8 +220,12 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
         printf("Skipping ET content as base content is not Perimeter: %s\n", addonName.c_str());
         return;
     }
-    printf("Detected ET content at: %s\n", addonName.c_str());
-    std::map<std::string, std::string> paths;
+
+    bool legacy = convert_path_content(addonDir + "Resource/Models/Main/inferno.l3d").empty();
+    printf("Detected ET content at: %s type: %s\n", addonName.c_str(), legacy ? "legacy" : "reworked");
+    
+    //Add maps src to dst or src as dst if empty
+    std::map<std::string, std::vector<std::string>> paths;
     
     //Scan the hardcoded unit attributes data
     for(int i = 0; i < scripts_export::unitAttributeDataTable.size(); i++) {
@@ -258,70 +262,92 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
         }
 
         //Copy model paths
-        paths[src.LogicName] = "";
+        paths[src.LogicName] = {};
         for (int j = 0; j < src.ModelNameNum; ++j) {
-            paths[src.ModelNameArray[j]] = "";
+            paths[src.ModelNameArray[j]] = {};
         }
     }
-    
-    //Add maps
-    paths["resource/battle"] = "";
-    paths["resource/battle/scenario"] = "resource/battle"; //Make ET campaign maps available normally since we cant unlock em
-    paths["resource/multiplayer"] = "";
-    paths["resource/worlds"] = "";
-    paths["resource/geotx"] = "";
-    paths["Resource/Models/Environment"] = "";
+
+    //Make ET campaign maps available normally since we cant unlock em
+    paths["resource/battle/scenario"] = { "resource/battle" };
     
     //Add textures, these don't overlap original harkback structures textures
-    paths["resource/models/main/exodus"] = "";
-    paths["resource/models/main/empire"] = "";
-    paths["resource/models/main/harkbackhood"] = "";
-    paths["resource/models/main/textures"] = "";
+    paths["resource/models/main/exodus"] = {};
+    paths["resource/models/main/empire"] = {};
+    paths["resource/models/main/harkbackhood"] = {};
+    paths["resource/models/main/textures"] = {};
     
     //More stuff
-    paths["resource/fx"] = "";
-    paths["resource/effect"] = "";
-    paths["resource/sounds/eff"] = "";
-    
-    //Use exodus textures for generic units so harkback can have them and dont look like toys
-    std::string harktextures = "Resource/Models/Main/Harkbackhood/";
-    paths["Resource/Models/Main/Exodus/state_bump.tga"] = harktextures;
-    paths["Resource/Models/Main/Exodus/Gun.tga"] = harktextures;
-    paths["Resource/Models/Main/Exodus/Impaler.tga"] = harktextures;
-    paths["Resource/Models/Main/Exodus/efla.tga"] = harktextures;
-    paths["Resource/Models/Main/Exodus/Conductor.tga"] = harktextures;
+    paths["resource/fx"] = {};
+    paths["resource/sounds"] = {};
+    paths["resource/battle"] = {};
 
-    if (terGameContentSelect != PERIMETER_ET) {
+    if (legacy) {
+        paths["Resource/controls.ini"] = {};
+        paths["resource/multiplayer"] = {};
+        paths["resource/geotx"] = {};
+        paths["resource/worlds"] = {};
+        paths["resource/models/environment"] = {};
+        paths["resource/effect"] = {};
+        
+        //Use exodus textures for generic units so harkback can have them and dont look like toys
+        std::string exodus_textures = "Resource/Models/Main/Exodus/";
+        std::string harkback_textures = "Resource/Models/Main/Harkbackhood/";
+        for (auto& tex: {
+                "state_bump.tga"
+                "Gun.tga"
+                "Impaler.tga"
+                "efla.tga"
+                "Conductor.tga"
+        }) {
+            paths[exodus_textures + tex] = { harkback_textures + tex };
+        }
+
         //Map mechanical spirit (inferno) and spirit trap (catcher), for future use?
-        paths["Resource/Models/Main/build_harkbackers_st.l3d"] = "build_Resource/Models/Main/inferno.l3d";
-        paths["Resource/Models/Main/build_harkbackers_st.m3d"] = "build_Resource/Models/Main/inferno.m3d";
-        paths["Resource/Models/Main/build_filth_navigator.l3d"] = "build_Resource/Models/Main/catcher.l3d";
-        paths["Resource/Models/Main/build_filth_navigator.m3d"] = "build_Resource/Models/Main/catcher.m3d";
-        paths["Resource/Models/Main/harkbackers_st.l3d"] = "Resource/Models/Main/inferno.l3d";
-        paths["Resource/Models/Main/harkbackers_st.m3d"] = "Resource/Models/Main/inferno.m3d";
-        paths["Resource/Models/Main/filth_navigator.l3d"] = "Resource/Models/Main/catcher.l3d";
-        paths["Resource/Models/Main/filth_navigator.m3d"] = "Resource/Models/Main/catcher.m3d";
-    }
+        paths["Resource/Models/Main/build_harkbackers_st.l3d"] = { "Resource/Models/Main/build_inferno.l3d" };
+        paths["Resource/Models/Main/build_harkbackers_st.m3d"] = { "Resource/Models/Main/build_inferno.m3d" };
+        paths["Resource/Models/Main/build_filth_navigator.l3d"] = { "Resource/Models/Main/build_catcher.l3d" };
+        paths["Resource/Models/Main/build_filth_navigator.m3d"] = { "Resource/Models/Main/build_catcher.m3d" };
+        paths["Resource/Models/Main/harkbackers_st.l3d"] = { "Resource/Models/Main/inferno.l3d" };
+        paths["Resource/Models/Main/harkbackers_st.m3d"] = { "Resource/Models/Main/inferno.m3d" };
+        paths["Resource/Models/Main/filth_navigator.l3d"] = { "Resource/Models/Main/catcher.l3d" };
+        paths["Resource/Models/Main/filth_navigator.m3d"] = { "Resource/Models/Main/catcher.m3d" };
 
-    //Map infected vice
-    paths["Resource/Models/Main/Frame_Imperia_Vice.l3d"] = "Resource/Models/Main/Frame_Imperia_Vice_infected.l3d";
-    paths["Resource/Models/Main/Frame_Imperia_Vice.m3d"] = "Resource/Models/Main/Frame_Imperia_Vice_infected.m3d";
-
-    //Load certain models
-    std::vector<std::string> models = {
-        "build_electro_st", "build_electro_st",
-        "electro_gun", "electro_gun",
-        "eflair", "impaler", "conductor"
-    };
-    if (terGameContentSelect == PERIMETER_ET) {
-        models.emplace_back("build_harkbackers_st");
-        models.emplace_back("build_filth_navigator");
-        models.emplace_back("harkbackers_st");
-        models.emplace_back("filth_navigator");
-    }
-    for (const std::string& name : models) {
-        paths["Resource/Models/Main/" + name + ".l3d"] = "";
-        paths["Resource/Models/Main/" + name + ".m3d"] = "";
+        //Map infected vice
+        paths["Resource/Models/Main/Frame_Imperia_Vice.l3d"] = { "Resource/Models/Main/Frame_Imperia_Vice_infected.l3d" };
+        paths["Resource/Models/Main/Frame_Imperia_Vice.m3d"] = { "Resource/Models/Main/Frame_Imperia_Vice_infected.m3d" };
+        
+        //Override these models for missions too
+        if (terGameContentSelect == PERIMETER_ET) {
+            paths["Resource/Models/Main/build_harkbackers_st.l3d"].emplace_back("");
+            paths["Resource/Models/Main/build_harkbackers_st.m3d"].emplace_back("");
+            paths["Resource/Models/Main/build_filth_navigator.l3d"].emplace_back("");
+            paths["Resource/Models/Main/build_filth_navigator.m3d"].emplace_back("");
+            paths["Resource/Models/Main/harkbackers_st.l3d"].emplace_back("");
+            paths["Resource/Models/Main/harkbackers_st.m3d"].emplace_back("");
+            paths["Resource/Models/Main/filth_navigator.l3d"].emplace_back("");
+            paths["Resource/Models/Main/filth_navigator.m3d"].emplace_back("");
+            paths["Resource/Models/Main/Frame_Imperia_Vice.l3d"].emplace_back("");
+            paths["Resource/Models/Main/Frame_Imperia_Vice.m3d"].emplace_back("");
+        }
+    } else {
+        //This is a reworked ET
+        
+        paths["Resource/Models"] = {};
+        
+        if (terGameContentSelect == PERIMETER_ET) {
+            //Map mechanical spirit (inferno) and spirit trap (catcher) to harkback buildings for missions
+            paths["Resource/Models/Main/build_inferno.l3d"] = { "Resource/Models/Main/build_harkbackers_st.l3d" };
+            paths["Resource/Models/Main/build_inferno.m3d"] = { "Resource/Models/Main/build_harkbackers_st.m3d" };
+            paths["Resource/Models/Main/build_catcher.l3d"] = { "Resource/Models/Main/build_filth_navigator.l3d" };
+            paths["Resource/Models/Main/build_catcher.m3d"] = { "Resource/Models/Main/build_filth_navigator.m3d" };
+            paths["Resource/Models/Main/inferno.l3d"] = { "Resource/Models/Main/harkbackers_st.l3d" };
+            paths["Resource/Models/Main/inferno.m3d"] = { "Resource/Models/Main/harkbackers_st.m3d" };
+            paths["Resource/Models/Main/catcher.l3d"] = { "Resource/Models/Main/filth_navigator.l3d" };
+            paths["Resource/Models/Main/catcher.m3d"] = { "Resource/Models/Main/filth_navigator.m3d" };
+            paths["Resource/Models/Main/Frame_Imperia_Vice_infected.l3d"] = { "Resource/Models/Main/Frame_Imperia_Vice.l3d" };
+            paths["Resource/Models/Main/Frame_Imperia_Vice_infected.m3d"] = { "Resource/Models/Main/Frame_Imperia_Vice.m3d" };
+        }
     }
 
     //Load texts, first try current lang, then english, then russian
@@ -335,11 +361,11 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
         if (!convert_path_content(addonDir + texts_path).empty()) {
             //Override texts if game content selection is ET only
             if (terGameContentSelect == PERIMETER_ET) {
-                paths[texts_path] = locpath + "Text/Texts_ET.btdb";
+                paths[texts_path] = { locpath + "Text/Texts_ET.btdb" };
                 //paths[path + "Fonts"] = locpath;
-                paths[path + "Voice"] = locpath + "Voice/";
+                paths[path + "Voice"] = { locpath + "Voice/" };
             } else {
-                paths[texts_path] = locpath + "Text/Texts_ET_noreplace.btdb";
+                paths[texts_path] = { locpath + "Text/Texts_ET_noreplace.btdb" };
             }
             printf("Addon ET: Using locale at %s\n", path.c_str());
             break;
@@ -348,32 +374,41 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
 
     if (terGameContentSelect == PERIMETER_ET) {
         //Load mission required data and other ET stuff
-        paths["Resource/scenario.hst"] = "Resource/scenario_" + getLocale() + ".hst"; //In case scenario_LOCALE.hst exists in base
-        paths["Resource/controls.ini"] = "";
-        paths["Resource/Icons"] = "";
-        paths["Resource/Missions"] = "";
-        paths["Resource/Music"] = "";
-        paths["Resource/Video"] = "";
-        paths["Scripts/Triggers"] = "";
-        paths["Scripts"] = "";
+        std::string path_scenario = "Resource/scenario.hst";
+        if (!legacy && startsWith(getLocale(), "russian")) {
+            path_scenario = "Resource/scenario_russian.hst";
+        }
+        paths[path_scenario] = {
+            "Resource/scenario.hst",
+            //In case scenario_LOCALE.hst exists in base
+            "Resource/scenario_" + getLocale() + ".hst"
+        };
+        paths["Resource/Icons"] = {};
+        paths["Resource/Missions"] = {};
+        paths["Resource/Music"] = {};
+        paths["Resource/Video"] = {};
+        paths["Scripts"] = {};
     } else {
-        //Add AI scripts for battle so it uses electro units, also ETs map may require ET scripts
-        paths["scripts/triggers/battle.scr"] = "";
-        paths["scripts/triggers/battle1.scr"] = "";
-        paths["scripts/triggers/survival.scr"] = "";
-        paths["scripts/triggers/survival1.scr"] = "";
         for (int i = 1; i <= 12; ++i) {
-            paths["scripts/triggers/mp-" + std::to_string(i) + ".scr"] = "";
+            paths["scripts/triggers/mp-" + std::to_string(i) + ".scr"] = {};
         }
 
-        //Try to use ET interface so we can have icons at least
-        paths["Resource/Icons/intf"] = "";
+        if (legacy) {
+            //Try to use ET interface so we can have icons at least, non legacy the base game has the icons already
+            paths["Resource/Icons/intf"] = {};
+        }
     }
 
     //Map the ET resource paths into game
     for (const auto& entry : paths) {
-        const std::string& destination = entry.second.empty() ? entry.first : entry.second;
-        mapContentPath(addonDir + entry.first, destination);
+        if (entry.second.empty()) {
+            mapContentPath(addonDir + entry.first, entry.first);
+        } else {
+            for (const auto& path : entry.second) {
+                const std::string& destination = path.empty() ? entry.first : path;
+                mapContentPath(addonDir + entry.first, destination);
+            }
+        }
     }
 
     if (terGameContentSelect != PERIMETER_ET) {
