@@ -476,6 +476,44 @@ void IniManager::putFloatArray(const char* section, const char* key, int size, c
 	put(section, key, buf);
 }
 
+// ---  Files ------------------------------
+
+std::string getExtension(const std::string& file_name, bool process) {
+    std::string str = convert_path_posix(file_name);
+    size_t pos_dot = str.rfind('.');
+    size_t pos_path = str.rfind('/');
+    //Only get extension if dot is after the last path sep if any
+    if (pos_dot != std::string::npos && (pos_path == std::string::npos || pos_path < pos_dot)) {
+        str.erase(0, pos_dot + 1);
+        if (process) {
+            str = string_to_lower(str.c_str());
+            while (isspace(str[str.size() - 1])) {
+                str.erase(str.size() - 1);
+            }
+        }
+        return str;
+    } else {
+        return "";
+    }
+}
+
+std::string setExtension(const std::string& file_name, const char* extension) {
+    std::string str = file_name;
+    std::string old_ext = getExtension(file_name, false);
+    if (!old_ext.empty()) {
+        str.erase(str.size() - old_ext.length() - 1, str.size());
+    }
+    if (extension) {
+        if (!endsWith(str, ".")) {
+            str += ".";
+        }
+        str += extension;
+    }
+    return str;
+}
+
+// --- Settings ------
+
 static IniManager* settingsManager;
 
 IniManager* getSettings() {
@@ -525,6 +563,8 @@ void putStringSettings(const std::string& keyName, const std::string& value) {
     std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getGameContentEnumName(terGameContentBase); 
     ini->put(key.c_str(), keyName.c_str(), value.c_str());
 }
+
+// --- Formatting ------
 
 std::string formatTimeWithHour(int timeMilis) {
 	std::string res;

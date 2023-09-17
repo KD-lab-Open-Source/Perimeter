@@ -103,37 +103,9 @@ public:
 };
 
 // ---  Files ------------------------------
-inline std::string setExtension(const std::string& file_name, const char* extension)
-{
-	std::string str = file_name;
-	size_t pos = str.rfind('.');
-	if(pos != std::string::npos) {
-        str.erase(pos, str.size());
-    }
-    if (extension) {
-        str += ".";
-        str += extension;
-    }
-	return str;
-}
 
-inline std::string getExtension(const std::string& file_name, bool process)
-{
-	std::string str = file_name;
-	size_t pos = str.rfind('.');
-	if (pos != std::string::npos) {
-		str.erase(0, pos + 1);
-        if (process) {
-            str = string_to_lower(str.c_str());
-            while (isspace(str[str.size() - 1])) {
-                str.erase(str.size() - 1);
-            }
-        }
-		return str;
-	} else {
-        return "";
-    }
-}
+std::string setExtension(const std::string& file_name, const char* extension);
+std::string getExtension(const std::string& file_name, bool process);
 
 // --- Settings ------
 IniManager* getSettings();
