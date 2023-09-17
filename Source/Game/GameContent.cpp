@@ -213,6 +213,43 @@ void addGameContent(GAME_CONTENT content) {
     terGameContentAvailable = static_cast<GAME_CONTENT>(terGameContentAvailable | content);
 }
 
+
+///ET specific workarounds for broken assets
+void workaroundET() {
+    std::map<std::string, std::string> paths;
+    const std::string& locpath = getLocDataPath();
+
+    for (auto faction : { BELLIGERENT_FACTION::EXODUS, BELLIGERENT_FACTION::EMPIRE, BELLIGERENT_FACTION::HARKBACK }) {
+        std::string factionpath = locpath + "Voice/" + getBelligerentFactionName(faction);
+
+        //These audios are missing for harkback since ET doesn't have this faction
+        //On english version these audios just say "Gun", "Ready" or "Oops"
+        //On russian version Exodus has Empire files for these audios
+        paths[factionpath + "_Voice_Building_Ready.wav"] = factionpath + "_Voice_ElectroGun_Ready.wav";
+        paths[factionpath + "_Voice_Building_Destroyed.wav"] = factionpath + "_Voice_ElectroGun_Destroyed.wav";
+    }
+
+    //Map the resource paths
+    for (const auto& entry : paths) {
+        mapContentPath(entry.first, entry.second);
+    }
+}
+
+///Maps Icons/Video in current locale folder if any
+void loadLocalizedResources(const std::string& content_path = "") {
+    //Localized resources if any
+    const std::string& locpath = getLocDataPath();
+    for (auto& dir : {
+            "Icons",
+            "Video"
+    }) {
+        std::string path = content_path + locpath + dir;
+        if (get_content_entry(path) != nullptr) {
+            mapContentPath(path, std::string("Resource/") + dir);
+        }
+    }
+}
+
 ///Load ET content selectively
 void loadAddonET(const std::string& addonName, const std::string& addonDir) {
     //This is ET content as addon, skip if main content is not Perimeter
@@ -357,13 +394,12 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
     lang_paths.emplace_back("Resource/LocData/English/");
     lang_paths.emplace_back("Resource/LocData/Russian/");
     for (std::string& path : lang_paths) {
-        std::string texts_path = path + "Text/Texts.btdb";
-        if (!convert_path_content(addonDir + texts_path).empty()) {
+        if (get_content_entry(addonDir + path)) {
+            std::string texts_path = path + "Text/Texts.btdb";
             //Override texts if game content selection is ET only
             if (terGameContentSelect == PERIMETER_ET) {
                 paths[texts_path] = { locpath + "Text/Texts_ET.btdb" };
-                //paths[path + "Fonts"] = locpath;
-                paths[path + "Voice"] = { locpath + "Voice/" };
+                paths[path + "Voice"] = { locpath + "Voice" };
             } else {
                 paths[texts_path] = { locpath + "Text/Texts_ET_noreplace.btdb" };
             }
@@ -390,6 +426,7 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
         paths["Scripts"] = {};
     } else {
         for (int i = 1; i <= 12; ++i) {
+            //Copy scripts in case maps need them
             paths["scripts/triggers/mp-" + std::to_string(i) + ".scr"] = {};
         }
 
@@ -411,7 +448,10 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
         }
     }
 
-    if (terGameContentSelect != PERIMETER_ET) {
+    if (terGameContentSelect == PERIMETER_ET) {
+        //Only load localized resources if set as active
+        loadLocalizedResources(addonDir);
+    } else {
         //Map music manually to avoid copying main menu music
         for (filesystem_entry* entry : get_content_entries_directory(addonDir + "Resource/Music")) {
             if (endsWith(entry->key, "perimeter_main.ogg")) {
@@ -420,6 +460,11 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
 
             mapContentPath(entry->key, "Resource/Music/");
         }
+    }
+
+    //Legacy workarounds
+    if (legacy) {
+        workaroundET();
     }
 
     //Set flag that we have ET content
@@ -440,15 +485,14 @@ void loadAddon(const std::string& addonName, const std::string& addonDir) {
         if (entry_name == "saves" || entry_name == "replay") continue;
 
         //Load content from entry to destination
-        scan_resource_paths(
-                destination,
-                entry->path_content
-        );
+        mapContentPath(entry->path_content, destination);
     }
+
+    loadLocalizedResources(addonDir);
 
     //Load scripts
     if (get_content_entry(addonDir + "Scripts") != nullptr) {
-        scan_resource_paths("Scripts", addonDir + "Scripts");
+        mapContentPath(addonDir + "Scripts", "Scripts");
     }
 }
 
@@ -469,28 +513,8 @@ void loadAddonCommon(const std::string& addonName, const std::string& addonDir) 
 }
 
 void applyWorkarounds() {
-    std::map<std::string, std::string> paths;
-    const std::string& locpath = getLocDataPath();
-
-    if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
-        for (auto faction : { BELLIGERENT_FACTION::EXODUS, BELLIGERENT_FACTION::EMPIRE, BELLIGERENT_FACTION::HARKBACK }) {
-            std::string factionpath = locpath + "Voice/" + getBelligerentFactionName(faction);
-            
-            //These audios are missing for harkback since ET doesn't have this faction
-            //On english version these audios just say "Gun", "Ready" or "Oops"
-            //On russian version Exodus has Empire files for these audios
-            paths[factionpath + "_Voice_Building_Ready.wav"] = factionpath + "_Voice_ElectroGun_Ready.wav";
-            paths[factionpath + "_Voice_Building_Destroyed.wav"] = factionpath + "_Voice_ElectroGun_Destroyed.wav";
-        }
-    }
-    
-    //Localized resources if any
-    paths[locpath + "Icons"] = "Resource/Icons";
-    paths[locpath + "Video"] = "Resource/Video";
-
-    //Map the resource paths
-    for (const auto& entry : paths) {
-        mapContentPath(entry.first, entry.second);
+    if (terGameContentBase == GAME_CONTENT::PERIMETER_ET) {
+        workaroundET();
     }
 }
 
@@ -530,6 +554,9 @@ void detectGameContent() {
     IniManager* ini = getSettings();
     ini->put("Global", "LastContent", getGameContentEnumName(terGameContentBase).c_str());
     putStringSettings("GameContent", get_content_root_path_str());
+
+    //Map localized resources, we do this before addons loading
+    loadLocalizedResources();
         
     //Detect if we have extra contents/mods
     int loadAddons = 1;
