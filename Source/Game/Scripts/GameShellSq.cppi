@@ -383,10 +383,10 @@ struct Reel {
 #pragma pack( pop, __XScript_struct_pack__)
 #endif  // __XScript_struct_Reel__
 int REEL_COUNT = 3;
-Reel reels[] = { { "RESOURCE\\VIDEO\\kd.bik" 
- , 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\perimeter.bik", 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\intro.bik" 
+Reel reels[] = { { "RESOURCE\\VIDEO\\kd" 
+ , 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\perimeter", 1, 0, 1, 4000 }, { "RESOURCE\\VIDEO\\intro" 
  , 1, 0, 1, 4000 } };
-Reel lastReel = { "RESOURCE\\VIDEO\\out.bik", 1, 0, 1, -1 };
+Reel lastReel = { "RESOURCE\\VIDEO\\out", 1, 0, 1, -1 };
 _V2i imageRacePos[3] = { { 0 
  , 0 }, { 0, 84 }, { 0, 168 } };
 _V2i imageRaceSize[3] = { { 83, 83 }, { 83, 83 }, { 83 

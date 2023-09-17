@@ -678,12 +678,12 @@ struct Reel {
 };
 
 Reel reels[int REEL_COUNT] = {
-	{name = "RESOURCE\\VIDEO\\kd.bik"; abortEnabled = 1;},
-	{name = "RESOURCE\\VIDEO\\perimeter.bik"; abortEnabled = 1;},
-	{name = "RESOURCE\\VIDEO\\intro.bik"; abortEnabled = 1;}
+	{name = "RESOURCE\\VIDEO\\kd"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\perimeter"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\intro"; abortEnabled = 1;}
 };
 
-Reel lastReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
+Reel lastReel = {name = "RESOURCE\\VIDEO\\out"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
 
 _V2i imageRacePos[] = {
 	{x = 0; y = 0;},

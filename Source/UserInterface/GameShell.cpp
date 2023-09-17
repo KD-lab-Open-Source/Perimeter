@@ -2601,6 +2601,15 @@ void GameShell::showReelModal(const char* videoFileName, const char* soundFileNa
 	} else {
 		path = videoFileName;
 	}
+    if (getExtension(path, false).empty()) {
+        //Attempt to find extension, bik must be last as is the default one
+        for (const auto& ext : { ".mkv", ".bik" }) {
+            if (get_content_entry(path + ext)) {
+                path += ext;
+                break;
+            }
+        }
+    }
 	reelManager.showModal(path.c_str(), soundFileName, stopBGMusic, alpha);
 	if (stopBGMusic) {
 		PlayMusic();
