@@ -94,8 +94,19 @@ void initLocale() {
 
     fprintf(stdout, "Current locale: %s\n", localeCurrent.c_str());
     
-    localePath = getLocRootPath();
-    localePath += localeCurrent + "/";
+    //Find the folder name that might not be lowercase
+    localePath.clear();
+    for (auto& locale : localesAvailable) {
+        if (stricmp(locale.c_str(), localeCurrent.c_str()) == 0) {
+            localePath = getLocRootPath() + locale + "/";
+            break;
+        }
+    }
+    if (localePath.empty()) {
+        fprintf(stdout, "Current locale path not found!\n");
+    } else {
+        fprintf(stdout, "Current locale path: %s\n", localePath.c_str());
+    }
     
     isLocaleInit = true;
 }
