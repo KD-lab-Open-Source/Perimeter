@@ -477,7 +477,8 @@ void applyWorkarounds() {
             std::string factionpath = locpath + "Voice/" + getBelligerentFactionName(faction);
             
             //These audios are missing for harkback since ET doesn't have this faction
-            //On english version these audios have "Gun 
+            //On english version these audios just say "Gun", "Ready" or "Oops"
+            //On russian version Exodus has Empire files for these audios
             paths[factionpath + "_Voice_Building_Ready.wav"] = factionpath + "_Voice_ElectroGun_Ready.wav";
             paths[factionpath + "_Voice_Building_Destroyed.wav"] = factionpath + "_Voice_ElectroGun_Destroyed.wav";
         }

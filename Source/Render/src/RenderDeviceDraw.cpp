@@ -567,7 +567,7 @@ void cInterfaceRenderDevice::DrawLine(const Vect3f &v1,const Vect3f &v2, const s
     //If still behind camera cancel it
     if (0 >= p1v.z && 0 >= p2v.z) return;
     
-    DrawLine(p1e.x, p1e.y, p2e.x, p2e.y, color, 2);
+    DrawLine(p1e.x, p1e.y, p2e.x, p2e.y, color, 1.5f);
 }
 
 void cInterfaceRenderDevice::DrawPoint(const Vect3f &v1, const sColor4c& color) {
