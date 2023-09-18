@@ -109,7 +109,9 @@ int addonsApplyConfirmationQuant(float, float) {
             }
         }
 
-        request_application_restart();
+        std::vector<std::string> args;
+        args.emplace_back("tmp_start_splash=0");
+        request_application_restart(&args);
         _shellIconManager.SwitchMenuScreens(SQSH_MM_ADDONS_SCR, RESTART_GAME);
         return 0;
     }

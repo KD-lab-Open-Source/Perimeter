@@ -1377,7 +1377,9 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
 
     if (id_on == SQSH_MM_START_SCR && terGameContentAvailable != terGameContentSelect) {
         //Content is selected and user wants to go main menu, switch back to default and restart
-        request_application_restart();
+		std::vector<std::string> args;
+		args.emplace_back("tmp_start_splash=0");
+		request_application_restart(&args);
         //We play splash since "we are leaving the content" and user may not see content specific splash otherwise
         id_on = SQSH_MM_SPLASH_LAST;
     }
@@ -1669,6 +1671,7 @@ void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
         //Reset locale and restart game so it shows lang selector
         std::vector<std::string> args;
         args.emplace_back("tmp_chooselocale=1");
+		args.emplace_back("tmp_start_splash=0");
         request_application_restart(&args);
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, RESTART_GAME);
     }
@@ -1881,6 +1884,9 @@ void switchGameContent(GAME_CONTENT selected, const std::string& initial_menu) {
 		std::vector<std::string> args;
 		args.emplace_back("tmp_initial_menu=" + initial_menu);
 		args.emplace_back("tmp_content_select=" + getGameContentEnumName(selected));
+		if (selected == terGameContentAvailable) {
+			args.emplace_back("tmp_start_splash=0");
+		}
 		request_application_restart(&args);
 		_shellIconManager.SwitchMenuScreens( SQSH_MM_CONTENT_CHOOSER_SCR, RESTART_GAME );
 	}
