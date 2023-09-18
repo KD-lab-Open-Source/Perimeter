@@ -1866,6 +1866,25 @@ void onMMInMissQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 	}		
 }
 
+//game content
+
+//TODO call this from load/ingame-load/replay menus to enable auto switching (provide initial_menu to current menu ID)
+void switchGameContent(GAME_CONTENT selected, const std::string& initial_menu) {
+	if (selected == terGameContentBase) {
+		selected = terGameContentAvailable;
+	}
+	if (selected == terGameContentSelect) {
+		//Selected the already selected content, no need to restart
+		_shellIconManager.SwitchMenuScreens( SQSH_MM_CONTENT_CHOOSER_SCR, SQSH_MM_SINGLE_SCR );
+	} else {
+		//Set args and restart
+		std::vector<std::string> args;
+		args.emplace_back("tmp_initial_menu=" + initial_menu);
+		args.emplace_back("tmp_content_select=" + getGameContentEnumName(selected));
+		request_application_restart(&args);
+		_shellIconManager.SwitchMenuScreens( SQSH_MM_CONTENT_CHOOSER_SCR, RESTART_GAME );
+	}
+}
 
 //load game
 int delLoadSaveAction(float, float) {
@@ -1884,15 +1903,18 @@ bool setupMissionToExec(int pos) {
         return false;
     }
     checkMissionDescription(pos, savedGames, GT_SINGLE_PLAYER);
-    missionToExec = savedGames[pos];
+	
+	MissionDescription& desc = savedGames[pos];
 
     //Check if content is compatible
-    std::string missingContent = checkMissingContent(missionToExec);
+    std::string missingContent = checkMissingContent(desc);
     if (!missingContent.empty()) {
         setupOkMessageBox(nullptr, 0, missingContent, MBOX_BACK);
         showMessageBox();
         return false;
     }
+	
+	missionToExec = desc;
 
     //Setup according to mission type
     if (missionToExec.missionNumber == -1) {
