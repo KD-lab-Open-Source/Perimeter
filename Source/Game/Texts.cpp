@@ -2,22 +2,10 @@
 #include "qd_textdb.h"
 #include "xutl.h"
 
-void qdTextDB::load_replacement_texts(const std::string& locale) {
-    //Community credits
-    /*
-    if (startsWith(locale, "russian")) {
-        load_lines({
-           "Interface.Credits.Community=&FF3333Сообщество \"Периметра\"\n\n&FFFFFFPLACEHOLDER",
-        }, true, locale);
-    } else {
-        load_lines({
-           "Interface.Credits.Community=&FF3333\"Perimeter\" Community\n\n&FFFFFFPLACEHOLDER",
-       }, true, locale);
-    }
-    */
-    
+void qdTextDB::load_replacement_texts(const std::string& locale) {    
     //Used for all langs
     load_lines({
+       "Interface.Credits.Extra=",
        "Interface.Menu.ButtonLabels.<<<=<<<",
        "Interface.Menu.ButtonLabels.>>>=>>>",
        //Empty to not mess with ,'s

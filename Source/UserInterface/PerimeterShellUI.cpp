@@ -6393,14 +6393,11 @@ void CCreditsWindow::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
 
     textData = qdTextDB::instance().getText(attr->text);
-    if (startsWith(textData, convertToCodepage("АВТОРЫ", "russian"))) {
-        textData = textData.substr(6);
-    }
-    if (!startsWith(textData, "\n\n")) {
-        textData = "\n\n" + textData;
+    if (!endsWith(textData, "\n\n")) {
+        textData += "\n\n";
     }
     
-    textData = qdTextDB::instance().getText("Interface.Credits.Community") + textData;
+    textData += qdTextDB::instance().getText("Interface.Credits.Extra");
 
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);

@@ -2707,29 +2707,21 @@ void GameShell::preLoad() {
         historyScene.loadProgram("RESOURCE/scenario.hst");
     }
     bwScene.loadProgram("RESOURCE/menu.hst");
-#ifdef _FINAL_VERSION_
-    const char* comments_path = nullptr;
-#else
-    const char* comments_path = "RESOURCE/Texts_comments.btdb";
-#endif
-    std::string path = getLocDataPath() + "Text" + PATH_SEP + "Texts.btdb";
-    qdTextDB::instance().load(locale, path.c_str(), comments_path, true, true, false);
 
-    //Load texts, don't delete already loaded ones but replace existing ones
-    for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
-        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
-        std::string name = entry_path.filename().u8string();
-        name = string_to_lower(name.c_str());
-        //Ignore the main text file since its already loaded and also any . starting file like .DS_Store
-        if (name == "texts.btdb" || name[0] == '.') continue;
-        bool replace = name.rfind("_noreplace.") == std::string::npos;
-        bool txt = getExtension(name, true) == "txt";
-        qdTextDB::instance().load(locale, entry->path_content.c_str(), nullptr, false, replace, txt);
+    std::string path = getLocDataPath() + "Text";
+    qdTextDB& texts = qdTextDB::instance();
+    texts.clear();
+    texts.load_from_directory(locale, path, true);
+
+    //Iterate each mod Text folder for current locale and parse all files
+    for (const auto& pair : getGameMods()) {
+        if (!pair.second.enabled) continue;
+        texts.load_from_directory(locale, pair.second.path + getLocDataPath() + "Text", false);
     }
     
     //Load the builtin texts that might not be provided by mods
-    qdTextDB::instance().load_supplementary_texts(getLocale());
-    qdTextDB::instance().load_replacement_texts(getLocale());
+    texts.load_supplementary_texts(getLocale());
+    texts.load_replacement_texts(getLocale());
     
     //Setup initial menu
     const char* initial_menu_str = check_command_line("initial_menu");

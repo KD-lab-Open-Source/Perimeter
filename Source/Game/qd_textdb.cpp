@@ -94,16 +94,13 @@ void qdTextDB::add_entry(const std::string& id_str, const qdText& text, bool rep
 }
 
 bool qdTextDB::load(const std::string& locale, const char* file_name, const char* comments_file_name,
-                    bool clear_old_texts, bool replace_old_texts, bool format_txt)
+                    bool replace_old_texts, bool format_txt)
 {
     XStream fh(0);
+    fprintf(stdout, "Loading texts: %s replace: %d\n", file_name, replace_old_texts);
     if (!fh.open(convert_path_content(file_name), XS_IN)) {
         fprintf(stderr, "Error loading texts: %s\n", file_name);
         return false;
-    }
-
-    if (clear_old_texts) {
-        clear();
     }
     
     if (format_txt) {
@@ -238,7 +235,6 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
         if (id_str.empty()) continue;
         id_str = string_to_lower(id_str.c_str());
         std::string line_str = line.substr(pos + 1);
-        if (line_str.empty()) continue;
         
         qdText entry;
         
@@ -264,6 +260,26 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
         }
 
         add_entry(id_str, entry, replace_old_texts);
+    }
+}
+
+void qdTextDB::load_from_directory(const std::string& locale, const std::string& path, bool exclude_mods) {
+    for (const auto& entry: get_content_entries_directory(path)) {
+        //Only load files from non mod folders if exclude_mods is true, otherwise only load from mods
+        //This ensures every file is parsed only once, that mod can override base content if required and
+        if (startsWith(entry->key_content, "mods/") == exclude_mods) {
+            continue;
+        }
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
+        std::string name = entry_path.filename().u8string();
+        name = string_to_lower(name.c_str());
+        //Ignore any starting file with . like .DS_Store
+        if (name[0] == '.') continue;
+        //Always ignore files like "texts_comments.btdb"
+        if (endsWith(name, "_comments.btdb")) continue;
+        bool replace = name.rfind("_noreplace.") == std::string::npos;
+        bool txt = getExtension(name, true) == "txt";
+        load(locale, entry->path_content.c_str(), nullptr, replace, txt);
     }
 }
 
