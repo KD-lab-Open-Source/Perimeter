@@ -386,9 +386,9 @@ uint32_t WriteIniString(const char* section, const char* key, const char* value,
     return 1;
 }
 
-IniManager::IniManager(const char* fname, bool check_existence, bool full_path) {
+IniManager::IniManager(const char* fname, bool check_existence_, bool full_path) {
     fname_ = fname;
-    check_existence_ = check_existence;
+    check_existence = check_existence_;
     is_full_path = full_path;
 }
 
@@ -415,7 +415,7 @@ const char* IniManager::get(const char* section, const char* key)
     
 	if(!ReadIniString(section, key, NULL, buf, 256, path)){
 		*buf = 0;
-		if (check_existence_) {
+		if (check_existence) {
             fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);
         }
 	}

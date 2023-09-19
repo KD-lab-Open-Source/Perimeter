@@ -19,12 +19,18 @@ extern bool content_debug_flag;
 
 int firstMissionNumber = 0;
 
+static std::map<std::string, ModMetadata> gameMods;
+
 ///The identified content at the root of game content, this only can be one thing 
 GAME_CONTENT terGameContentBase = CONTENT_NONE;
 ///All available contents in this installation (base + addons)
 GAME_CONTENT terGameContentAvailable = CONTENT_NONE;
 ///Current selected content, can be several or only one in available content (when user chooses one)
 GAME_CONTENT terGameContentSelect = CONTENT_NONE;
+
+std::map<std::string, ModMetadata>& getGameMods() {
+    return gameMods;
+}
 
 bool mapContentPath(const std::string& source, const std::string& destination, const filesystem_scan_options* options = nullptr) {
     std::string source_path = convert_path_content(source);
@@ -250,16 +256,22 @@ void loadLocalizedResources(const std::string& content_path = "") {
     }
 }
 
+///Detects if path is Perimeter: ET
+bool isContentET(const std::string& path) {
+    return get_content_entry(path + "Resource/Missions/01x4.spg")
+    && get_content_entry(path + "Resource/Missions/25x2.spg");
+}
+
 ///Load ET content selectively
-void loadAddonET(const std::string& addonName, const std::string& addonDir) {
+void loadAddonET(ModMetadata& mod) {
     //This is ET content as addon, skip if main content is not Perimeter
     if (terGameContentBase != GAME_CONTENT::PERIMETER) {
-        printf("Skipping ET content as base content is not Perimeter: %s\n", addonName.c_str());
+        printf("Skipping ET content as base content is not Perimeter: %s\n", mod.mod_name.c_str());
         return;
     }
 
-    bool legacy = convert_path_content(addonDir + "Resource/Models/Main/inferno.l3d").empty();
-    printf("Detected ET content at: %s type: %s\n", addonName.c_str(), legacy ? "legacy" : "reworked");
+    bool legacy = convert_path_content(mod.path + "Resource/Models/Main/inferno.l3d").empty();
+    printf("Detected ET content at: %s type: %s\n", mod.mod_name.c_str(), legacy ? "legacy" : "reworked");
     
     //Add maps src to dst or src as dst if empty
     std::map<std::string, std::vector<std::string>> paths;
@@ -394,7 +406,7 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
     lang_paths.emplace_back("Resource/LocData/English/");
     lang_paths.emplace_back("Resource/LocData/Russian/");
     for (std::string& path : lang_paths) {
-        if (get_content_entry(addonDir + path)) {
+        if (get_content_entry(mod.path + path)) {
             std::string texts_path = path + "Text/Texts.btdb";
             //Override texts if game content selection is ET only
             if (terGameContentSelect == PERIMETER_ET) {
@@ -437,23 +449,24 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
     }
 
     //Map the ET resource paths into game
+    std::string modPath = mod.path;
     for (const auto& entry : paths) {
         if (entry.second.empty()) {
-            mapContentPath(addonDir + entry.first, entry.first);
+            mapContentPath(modPath + entry.first, entry.first);
         } else {
             for (const auto& path : entry.second) {
                 const std::string& destination = path.empty() ? entry.first : path;
-                mapContentPath(addonDir + entry.first, destination);
+                mapContentPath(modPath + entry.first, destination);
             }
         }
     }
 
     if (terGameContentSelect == PERIMETER_ET) {
         //Only load localized resources if set as active
-        loadLocalizedResources(addonDir);
+        loadLocalizedResources(modPath);
     } else {
         //Map music manually to avoid copying main menu music
-        for (filesystem_entry* entry : get_content_entries_directory(addonDir + "Resource/Music")) {
+        for (filesystem_entry* entry : get_content_entries_directory(modPath + "Resource/Music")) {
             if (endsWith(entry->key, "perimeter_main.ogg")) {
                 continue;
             }
@@ -472,11 +485,11 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
 }
 
 ///Load addon contents into root of virtual resources
-void loadAddon(const std::string& addonName, const std::string& addonDir) {
-    printf("Loading mod: %s\n", addonName.c_str());
+void loadMod(const ModMetadata& mod) {
+    printf("Loading mod: %s\n", mod.mod_name.c_str());
     
     //Skip certain resource dirs such as saves and replays
-    for (const auto& entry : get_content_entries_directory(addonDir + "Resource")) {
+    for (const auto& entry : get_content_entries_directory(mod.path + "Resource")) {
         std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
         std::string entry_name = entry_path.filename().u8string();
         std::string destination = std::string("Resource") + PATH_SEP + entry_name;
@@ -488,28 +501,29 @@ void loadAddon(const std::string& addonName, const std::string& addonDir) {
         mapContentPath(entry->path_content, destination);
     }
 
-    loadLocalizedResources(addonDir);
+    loadLocalizedResources(mod.path);
 
     //Load scripts
-    if (get_content_entry(addonDir + "Scripts") != nullptr) {
-        mapContentPath(addonDir + "Scripts", "Scripts");
+    if (get_content_entry(mod.path + "Scripts") != nullptr) {
+        mapContentPath(mod.path + "Scripts", "Scripts");
     }
 }
 
 ///Common addon loading code
-void loadAddonCommon(const std::string& addonName, const std::string& addonDir) {
-    if (!convert_path_content(addonDir + "Resource/Missions/01x4.spg").empty()) {
-        loadAddonET(addonName, addonDir);
+void loadModCommon(ModMetadata& mod) {
+    mod.campaign = get_content_entry(mod.path + "Resource/Missions") != nullptr; 
+    if (isContentET(mod.path)) {
+        loadAddonET(mod);
     } else {
-        loadAddon(addonName, addonDir);
+        loadMod(mod);
     }
 
-    std::string mapping = convert_path_content(addonDir + "content_mapping.txt");
+    std::string mapping = convert_path_content(mod.path + "content_mapping.txt");
     if (!mapping.empty()) {
         loadMappings(mapping);
     }
 
-    printf("Loaded mod: %s\n", addonName.c_str());
+    printf("Loaded mod: %s\n", mod.mod_name.c_str());
 }
 
 void applyWorkarounds() {
@@ -518,17 +532,24 @@ void applyWorkarounds() {
     }
 }
 
+struct SortModMetadatas {
+    inline bool operator ()(const ModMetadata& s1,const ModMetadata& s2) {
+        return s1.mod_name < s2.mod_name;
+    }
+};
+
 void detectGameContent() {
     //We may need to do some cleanup
     clear_content_entries();
     terGameContentAvailable = terGameContentBase = terGameContentSelect = GAME_CONTENT::CONTENT_NONE;
+    gameMods.clear();
     
     content_debug_flag = check_command_line("content_debug") != nullptr;
     
     findGameContent();
 
     //Do available content identification, leave Perimeter last just in case someone mixed both folders into one
-    if (!convert_path_content("Resource/Missions/01x4.spg").empty()) {
+    if (isContentET("")) {
         addGameContent(GAME_CONTENT::PERIMETER_ET);
         terGameContentBase = GAME_CONTENT::PERIMETER_ET;
     }
@@ -559,30 +580,78 @@ void detectGameContent() {
     loadLocalizedResources();
         
     //Detect if we have extra contents/mods
-    int loadAddons = 1;
-    check_command_line_parameter("mods", loadAddons);
-    std::vector<std::string> addons;
-    if (loadAddons) {
+    int loadMods = 1;
+    check_command_line_parameter("mods", loadMods);
+    std::vector<ModMetadata> foundMods;
+    if (loadMods) {
+        const std::string& locale = getLocale();
         for (const auto& entry: get_content_entries_directory("mods")) {
             if (entry->is_directory) {
                 std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
-                std::string addonName = entry_path.filename().u8string();
-                if (endsWith(addonName, ".off")) {
-                    printf("Skipping disabled mod: %s\n", addonName.c_str());
+                std::string modFolderName = entry_path.filename().u8string();
+                
+                ModMetadata data = {};
+                data.path = std::string("mods") + PATH_SEP + modFolderName + PATH_SEP;
+                data.enabled = !endsWith(modFolderName, ".off");
+
+                std::string path_ini = data.path + "mod.ini";
+                if (get_content_entry(path_ini)) {
+                    //Load mandatory .ini fields
+                    IniManager mod_ini = IniManager(path_ini.c_str(), true);
+                    data.mod_name = mod_ini.get("Mod", "name");
+                    data.mod_version = mod_ini.get("Mod", "version");
+                    if (data.mod_name.empty()) {
+                        fprintf(stderr, "Missing name in Mod section at %s, not loading", path_ini.c_str());
+                        continue; 
+                    } else if (data.mod_version.empty()) {
+                        fprintf(stderr, "Missing version in Mod section at %s, not loading", path_ini.c_str());
+                        continue;
+                    }
+
+                    //Load optional fields
+                    mod_ini.check_existence = false;
+                    //Try loading in current locale, then description, then english
+                    data.mod_description = mod_ini.get("Mod", ("description_" + locale).c_str());
+                    if (data.mod_description.empty()) {
+                        data.mod_description = mod_ini.get("Mod", "description");
+                        if (data.mod_description.empty() && locale != "english") {
+                            data.mod_description = mod_ini.get("Mod", "description_english");
+                        }
+                    }
+                    data.mod_authors = mod_ini.get("Mod", "authors");
+                    data.mod_url = mod_ini.get("Mod", "url");
+                } else if (isContentET(data.path)) {
+                    //Provide adhoc mod info for legacy ET folder
+                    bool isRussian = startsWith(locale, "russian");
+                    data.mod_name = "Perimeter: Emperor's Testament";
+                    data.mod_version = "2.0.0";
+                    data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
+                    data.mod_authors = "KD-LAB";
+                    data.mod_url = "https://kdlab.com";
+                } else {
+                    fprintf(stderr, "Mod folder %s has missing info file %s, not loading", modFolderName.c_str(), path_ini.c_str());
                     continue;
                 }
-                addons.emplace_back(addonName);
+                
+                foundMods.emplace_back(data);
             }
         }
     }
     
     //Sort it
-    std::sort(addons.begin(), addons.end());
+    std::sort(foundMods.begin(), foundMods.end(), SortModMetadatas());
 
     //Load addons
-    for (std::string& addonName : addons) {
-        std::string addonDir = std::string("mods") + PATH_SEP + addonName + PATH_SEP;
-        loadAddonCommon(addonName, addonDir);
+    for (ModMetadata& mod : foundMods) {
+        if (0 < gameMods.count(mod.mod_name)) {
+            fprintf(stderr, "Mod %s at %s was already loaded, not loading", mod.mod_name.c_str(), mod.path.c_str());
+            continue;
+        }
+        gameMods[mod.mod_name] = mod;
+        if (!mod.enabled) {
+            continue;
+        }
+        loadModCommon(mod);
     }
     
     //Do some workarounds

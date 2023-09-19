@@ -3,8 +3,8 @@
 Thanks to the availability of code we can modify any aspects of game and introduce some facilities for modding the game
 in a easier and cleaner manner than previously was possible when dealing with game assets.
 
-This file intends to document about some engine internals and changes done recently, any corrections or 
-updates to reflect current state of capabilities are welcomed.
+This file intends to document about some engine internals and changes done since open-source publication, 
+any corrections or updates to reflect current state of capabilities are welcomed.
 
 ## Command line
 
@@ -13,15 +13,37 @@ when launching the game. This may be useful to test some options or use alternat
 
 ## Mods folder
 
-Game now loads mods (each is a folder containing everything) that are located inside "mods" folder.
+Game now loads mods (each is a folder containing everything) that are located inside `mods` folder at game folder.
 
-Mods can be enabled/disabled in main menu by adding ".off" at end of folder name, can be done manually too.
+Mods can be enabled/disabled in `Main Menu > Community > Mods` by adding `.off` at end of folder name, can be done manually too.
 
-Perimeter Emperor Testament game folder can also be placed as a mod to include extra units in main game and missions,
+Perimeter: Emperor Testament game folder can also be placed as a mod to include extra units in main game and missions,
 this case is handled in special manner to allow loading certain files only when switching to ET campaign.
 
-Order of mods loading is done alphabetically (log file can be checked for actual order). This is important as a later
-loaded mod may replace same file that was replaced by previous mods.
+Order of mods loading is done alphabetically based on Mod name in `mod.ini` (log file can be checked for actual order).
+This is important as a later loaded mod may replace same file that was replaced by previous mods.
+
+The mod name acts as identifier so no mods with same name can exist, if this happens only one will be loaded.
+
+## Mod information in mod.ini
+
+Each mod needs a file in the folder named "mod.ini" with at least "name" and "version" filled in "Mod" section.
+This allows players and the game to know some basic info about it.
+
+If current locale description as "description_LOCALE" like "description_english" isn't present the generic "description" will be used.
+
+The following is a example for a mod having one generic description and translated descriptions:
+```
+[Mod]
+name=My first mod
+version=1.0.0
+description=&00FF00My first mod!\n&FFFFFFThis is a example of how to write &00FF00colored multiline\nmod description.
+description_english=&00FF00My first mod!\n&FFFFFFThis is a example of how to write &00FF00colored multiline\nmod description.
+description_russian=&00FF00Мой первый мод!\n&FFFFFFЭто пример написания цветного многострочного\nописания мода.
+description_spanish=&00FF00¡Mi primer mod!\n&FFFFFFEste es un ejemplo de cómo escribir una descripción de mod\nmultilínea coloreada.
+authors=First author name\nAnother author name\n3rd Author name
+url=https://kdlab.com
+```
 
 ## Overlay system
 
