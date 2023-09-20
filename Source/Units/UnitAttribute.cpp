@@ -686,7 +686,7 @@ void collect_model_crc(const ModelData& modelData) {
 void collect_content_crc() {
     contentCRC = 0;
     contentFiles.clear();
-    for (auto& i : attributeLibrary().map()) {
+    for (auto& i : attributeLibrary()) {
         AttributeBase* attribute = i.second;
         if (attribute->ID == UNIT_ATTRIBUTE_NONE) continue;
         //Avoid loading stuff that user may not have
@@ -756,7 +756,32 @@ enum UNIT_ATTRIBUTES_TYPE {
     UNIT_ATTRIBUTES_CAMPAIGN,
 };
 
-UNIT_ATTRIBUTES_TYPE _lastInitAttributesType = UNIT_ATTRIBUTES_TMP; 
+UNIT_ATTRIBUTES_TYPE _lastInitAttributesType = UNIT_ATTRIBUTES_TMP;
+
+template<class Key, class Type>
+void loadTypeLibraryFromMods(TypeLibrary<Key, Type>& lib, const std::string& obj_name) {
+    XPrmIArchive ia;
+    TypeLibrary<Key, Type> tmp;
+    for (const auto& pair : getGameMods()) {
+        if (!pair.second.enabled) continue;
+        std::string path = pair.second.path + "/Scripts/" + obj_name + "Extra";
+        if (ia.open(path.c_str())) {
+            ia >> makeObjectWrapper(tmp, obj_name.c_str(), nullptr);
+            for (auto& tmp_pair : tmp) {
+                lib.add(tmp_pair.first, tmp_pair.second);
+            }
+        }
+        if (_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN) {
+            path += "Campaign";
+            if (ia.open(path.c_str())) {
+                ia >> makeObjectWrapper(tmp, obj_name.c_str(), nullptr);
+                for (auto& tmp_pair : tmp) {
+                    lib.add(tmp_pair.first, tmp_pair.second);
+                }
+            }
+        }
+    }
+}
 
 void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
     //Check if we don't need to actually load if type is same
@@ -768,12 +793,14 @@ void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
             initAttrType = UNIT_ATTRIBUTES_CAMPAIGN;
         } else {
             for (const char* path: {
+                    "Scripts\\GlobalAttributesCampaign",
                     "Scripts\\RigidBodyPrmLibraryCampaign",
                     "Scripts\\AttributeLibraryCampaign",
-                    "Scripts\\GlobalAttributesCampaign"
+                    //This will detect any mod that has campaign specific attributes
+                    "Scripts\\RigidBodyPrmLibraryExtraCampaign",
+                    "Scripts\\AttributeLibraryExtraCampaign",
             }) {
-                std::string result = convert_path_native(path);
-                if (std::filesystem::exists(std::filesystem::u8path(result))) {
+                if (get_content_entry(path) != nullptr) {
                     initAttrType = UNIT_ATTRIBUTES_CAMPAIGN;
                     break;
                 }
@@ -792,8 +819,8 @@ void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
 //	soundScriptTable();
 
     //Clear previous data
-    rigidBodyPrmLibrary().map().clear();
-    attributeLibrary().map().clear();
+    rigidBodyPrmLibrary().clear();
+    attributeLibrary().clear();
     
     if (scriptsSerialized) {
         //Deserialize from buffer
@@ -828,6 +855,10 @@ void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
         check_command_line_parameter("override_attributes", override);
         copyRigidBodyTable(override);
         copyAttributes(override);
+		
+		//Load attributes from mods
+        loadTypeLibraryFromMods(rigidBodyPrmLibrary(), "RigidBodyPrmLibrary");
+        loadTypeLibraryFromMods(attributeLibrary(), "AttributeLibrary");
     }
 
 //	rigidBodyPrmLibrary.edit();
@@ -844,7 +875,7 @@ void initUnitAttributes() {
     const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK);
     AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
     
-    for (auto& i : attributeLibrary().map()) {
+    for (auto& i : attributeLibrary()) {
         AttributeBase* attribute = i.second;
         if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
             attribute->init();

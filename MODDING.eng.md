@@ -64,7 +64,6 @@ Disable mod if active/campaign game content matches exactly, may contain several
 Example: PERIMETER_ET
 ```
 
-
 ## Overlay system
 
 Files places inside mod folder overlays (places/replaces without changing real files structure) the previous
@@ -97,6 +96,15 @@ Multiplayer:
 Resource/Multiplayer/CoolMap.spg=Resource/Battle/CoolMap.spg
 Resource/Multiplayer/CoolMap.bin=Resource/Battle/CoolMap.bin
 ```
+
+## Extending AttributeLibrary
+
+While one can place `Scripts/AttributeLibrary` in mod to replace the existing attribute library, is better to extend it
+by creating `Scripts/AttributeLibraryExtra` which will be merged into already loaded attribute library replacing
+any existing data. `Scripts/AttributeLibraryExtraCampaign` can also be used to set attributes only when in a campaign
+mission. This also applies to RigidBodyPrmLibrary.
+
+Is important to remember that mod loading order still apply here as ones loading last will set the final data.
 
 ## Custom normal maps
 
@@ -161,7 +169,9 @@ The .txt files must be encoded as UTF-8 for all languages, the game handles any 
 Original custom `.btdb` format is also accepted but `.txt` may be lot easier to handle by modders.
 
 If you don't wish to replace existing texts if game already has loaded them you can add `_noreplace` to the file name
-such as `MyTexts_noreplace.txt` or `MyTexts_noreplace.btdb` 
+such as `MyTexts_noreplace.txt` or `MyTexts_noreplace.btdb`
+
+Is important to remember that mod loading order still apply here as ones loading last will set the final data.
 
 ## Stack Traces
 
