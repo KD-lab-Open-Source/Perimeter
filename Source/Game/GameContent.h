@@ -48,8 +48,18 @@ public:
 
     /// Minimum game version required
     /// Optional
-    /// Example: 3.11.0
+    /// Example: 3.0.11
     std::string content_game_minimum_version = {};
+
+    /// Required game content to be present and active, may contain several enums
+    /// Optional
+    /// Example: PERIMETER|PERIMETER_ET
+    std::string content_required_content = {};
+
+    /// Disable mod if active/campaign game content matches exactly, may contain several enums
+    /// Optional
+    /// Example: PERIMETER|PERIMETER_ET
+    std::string content_disallowed_content = {};
 
     ModMetadata() = default;
     ~ModMetadata() = default;
@@ -64,6 +74,8 @@ bool unavailableContentBelligerent(terBelligerent belligerent, GAME_CONTENT cont
 std::map<std::string, ModMetadata>& getGameMods();
 ///Decomposes each flags set in content into a separate list of enums for content 
 std::vector<GAME_CONTENT> getGameContentEnums(const uint32_t& content);
+///Composes a single GAME_CONTENT with flags from a list of GAME_CONTENT
+GAME_CONTENT mergeGameContentEnums(const std::vector<GAME_CONTENT>& list);
 ///Decomposes each flag name set in content into a separate list of enums for content
 std::vector<GAME_CONTENT> getGameContentFromEnumName(const std::string& content);
 ///Return's any content that is not available currently 

@@ -566,9 +566,7 @@ void detectGameContent() {
     //Check if we should select another content, this has to be done before loading addons
     const char* content_selection = check_command_line("content_select");
     if (content_selection) {
-        for (auto const& selected : getGameContentFromEnumName(content_selection)) {
-            terGameContentSelect = static_cast<GAME_CONTENT>(terGameContentSelect | selected);
-        }
+        terGameContentSelect = mergeGameContentEnums(getGameContentFromEnumName(content_selection));
     }
 
     //Store current game content type and the path in its settings
@@ -619,12 +617,41 @@ void detectGameContent() {
                     }
                     data.mod_authors = mod_ini.get("Mod", "authors");
                     data.mod_url = mod_ini.get("Mod", "url");
+                    
+                    //Check version
                     data.content_game_minimum_version = mod_ini.get("Content", "game_minimum_version");
-                    if (!data.content_game_minimum_version.empty()) {
+                    if (data.loaded && !data.content_game_minimum_version.empty()) {
                         int diff = compare_versions(currentVersionNumbers, data.content_game_minimum_version.c_str());
                         if (0 < diff) {
                             fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
-                                    data.content_game_minimum_version.c_str(), path_ini.c_str());
+                                    data.content_game_minimum_version.c_str(), data.path.c_str());
+                            data.loaded = false;
+                        }
+                    }
+
+                    //Check content requirement
+                    data.content_required_content = mod_ini.get("Content", "required_content");
+                    if (data.loaded && !data.content_required_content.empty()) {
+                        GAME_CONTENT required = mergeGameContentEnums(getGameContentFromEnumName(data.content_required_content));
+                        if (getMissingGameContent(terGameContentSelect, required).empty()) {
+                            if (getMissingGameContent(terGameContentAvailable, required).empty()) {
+                                fprintf(stderr, "Game content '%s' not installed which is a requirement for %s, not loading\n",
+                                        data.content_required_content.c_str(), data.path.c_str());
+                            } else {
+                                fprintf(stderr, "Game content '%s' installed but not enabled which is a requirement for %s, not loading\n",
+                                        data.content_required_content.c_str(), data.path.c_str());
+                            }
+                            data.loaded = false;
+                        }
+                    }
+
+                    //Check content disallowed
+                    data.content_disallowed_content = mod_ini.get("Content", "disallowed_content");
+                    if (data.loaded && !data.content_disallowed_content.empty()) {
+                        GAME_CONTENT disallowed = mergeGameContentEnums(getGameContentFromEnumName(data.content_disallowed_content));
+                        if ((terGameContentSelect & disallowed) == disallowed) {
+                            fprintf(stderr, "Game content '%s' is enabled which is not compatible for %s, not loading\n",
+                                    data.content_disallowed_content.c_str(), data.path.c_str());
                             data.loaded = false;
                         }
                     }
@@ -737,6 +764,14 @@ std::vector<GAME_CONTENT> getGameContentEnums(const uint32_t& content) {
         contentList = getEnumDescriptor(GAME_CONTENT()).keyCombination(content);
     }
     return contentList;
+}
+
+GAME_CONTENT mergeGameContentEnums(const std::vector<GAME_CONTENT>& list) {
+    GAME_CONTENT out = CONTENT_NONE;
+    for (auto const& c : list) {
+        out = static_cast<GAME_CONTENT>(out | c);
+    }
+    return out;
 }
 
 std::vector<GAME_CONTENT> getGameContentFromEnumName(const std::string& content) {

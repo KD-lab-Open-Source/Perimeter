@@ -46,8 +46,24 @@ authors=First author name\nAnother author name\n3rd Author name
 url=https://kdlab.com
 
 [Content]
-game_minimum_version=3.11.1
+game_minimum_version=3.0.11
 ```
+
+Content section optional fields:
+```
+- game_minimum_version
+Minimum game version required
+Example: 3.0.11
+
+- required_content
+Required game content to be present and active, may contain several enums
+Example: PERIMETER|PERIMETER_ET
+
+- disallowed_content
+Disable mod if active/campaign game content matches exactly, may contain several enums
+Example: PERIMETER_ET
+```
+
 
 ## Overlay system
 
