@@ -339,8 +339,13 @@ windowClientSize_(1024, 768)
                 fprintf(stderr, "File not found: %s\n", spgPath.c_str());
                 ErrH.Exit();
             }
-
-			HTManager::instance()->GameStart(MissionDescription(spgPath.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI)));
+            
+            MissionDescription md(spgPath.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI));
+            if (!md.isCampaign() && string_to_lower(spgPath.c_str()).find("resource" PATH_SEP_STR "missions" PATH_SEP_STR) != std::string::npos) {
+                //Workaround to load campaign attrs when using cmdline
+                md.missionNumber = 0;
+            }
+			HTManager::instance()->GameStart(md);
 		}
 
 		if(check_command_line("convert")){
