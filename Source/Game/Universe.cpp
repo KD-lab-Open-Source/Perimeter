@@ -957,15 +957,16 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     //Load each player
     std::vector<int> playerLoadIndices;
     for(int i = 0; i < mission.playersData.size(); i++){
-        if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
-            || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
-            || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
-            int playerIndex = mission.playersShufflingIndices[i];
-            if(gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
-                mission.playersData[i].colorIndex = belligerentPropertyTable.find(mission.playersData[i].belligerent).colorIndex;
+        auto& playerData = mission.playersData[i];
+        if (playerData.realPlayerType == REAL_PLAYER_TYPE_PLAYER
+            || playerData.realPlayerType == REAL_PLAYER_TYPE_AI
+            || playerData.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
+            if (mission.isCampaign()) {
+                playerData.colorIndex = belligerentPropertyTable.find(playerData.belligerent).colorIndex;
             }
 
-            terPlayer* player = addPlayer(mission.playersData[i]);
+            int playerIndex = mission.playersShufflingIndices[i];
+            terPlayer* player = addPlayer(playerData);
             if (playerIndex < manualData.players.size()) {
                 player->setTriggerChains(manualData.players[playerIndex]);
             }
@@ -973,7 +974,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
             playerLoadIndices.push_back(playerIndex);
             if(data.players.size() > playerIndex){
                 player->universalLoad(data.players[playerIndex]);
-                player->setDifficulty(mission.playersData[i].difficulty);
+                player->setDifficulty(playerData.difficulty);
             }
             //Check if UserCamera exists, otherwise use Camera as spline name for camera initialization
             std::string cameraSplineName = "UserCamera";

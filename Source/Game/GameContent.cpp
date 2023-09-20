@@ -383,20 +383,6 @@ void loadAddonET(ModMetadata& mod) {
         //This is a reworked ET
         
         paths["Resource/Models"] = {};
-        
-        if (terGameContentSelect == PERIMETER_ET) {
-            //Map mechanical spirit (inferno) and spirit trap (catcher) to harkback buildings for missions
-            paths["Resource/Models/Main/build_inferno.l3d"] = { "Resource/Models/Main/build_harkbackers_st.l3d" };
-            paths["Resource/Models/Main/build_inferno.m3d"] = { "Resource/Models/Main/build_harkbackers_st.m3d" };
-            paths["Resource/Models/Main/build_catcher.l3d"] = { "Resource/Models/Main/build_filth_navigator.l3d" };
-            paths["Resource/Models/Main/build_catcher.m3d"] = { "Resource/Models/Main/build_filth_navigator.m3d" };
-            paths["Resource/Models/Main/inferno.l3d"] = { "Resource/Models/Main/harkbackers_st.l3d" };
-            paths["Resource/Models/Main/inferno.m3d"] = { "Resource/Models/Main/harkbackers_st.m3d" };
-            paths["Resource/Models/Main/catcher.l3d"] = { "Resource/Models/Main/filth_navigator.l3d" };
-            paths["Resource/Models/Main/catcher.m3d"] = { "Resource/Models/Main/filth_navigator.m3d" };
-            paths["Resource/Models/Main/Frame_Imperia_Vice_infected.l3d"] = { "Resource/Models/Main/Frame_Imperia_Vice.l3d" };
-            paths["Resource/Models/Main/Frame_Imperia_Vice_infected.m3d"] = { "Resource/Models/Main/Frame_Imperia_Vice.m3d" };
-        }
     }
 
     //Load texts, first try current lang, then english, then russian
