@@ -278,7 +278,7 @@ std::string checkMissingContent(const MissionDescription& mission) {
     std::vector<GAME_CONTENT> missingContent;
     
     if (mission.isCampaign()) {
-		//Check if content for campaign matches the content of this campaign missiion
+		//Check if content for campaign matches the content of this campaign mission
 		if (getGameContentCampaign() != mission.gameContent) {
 			missingContent = getMissingGameContent(terGameContentAvailable, static_cast<GAME_CONTENT>(mission.gameContent.value()));
 			if (missingContent.empty()) {
@@ -294,7 +294,13 @@ std::string checkMissingContent(const MissionDescription& mission) {
 		//Check if selected content is valid for save content
 		missingContent = getMissingGameContent(terGameContentSelect, static_cast<GAME_CONTENT>(mission.gameContent.value()));
 		if (!missingContent.empty()) {
-			msg = qdTextDB::instance().getText("Interface.Menu.Messages.GameContentMissing");
+            if (getMissingGameContent(terGameContentAvailable, static_cast<GAME_CONTENT>(mission.gameContent.value())).empty()) {
+                //Content is available but not currently active, show message to switch it
+                msg = qdTextDB::instance().getText("Interface.Menu.Messages.GameContentSwitch");
+                missingContent = getGameContentEnums(terGameContentBase);
+            } else {
+                msg = qdTextDB::instance().getText("Interface.Menu.Messages.GameContentMissing");
+            }
 		}
 	} 
 
