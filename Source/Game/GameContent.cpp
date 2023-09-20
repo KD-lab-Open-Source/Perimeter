@@ -270,7 +270,7 @@ void loadAddonET(ModMetadata& mod) {
         return;
     }
 
-    bool legacy = convert_path_content(mod.path + "Resource/Models/Main/inferno.l3d").empty();
+    bool legacy = convert_path_content(mod.path + "/Resource/Models/Main/inferno.l3d").empty();
     printf("Detected ET content at: %s type: %s\n", mod.mod_name.c_str(), legacy ? "legacy" : "reworked");
     
     //Add maps src to dst or src as dst if empty
@@ -406,7 +406,7 @@ void loadAddonET(ModMetadata& mod) {
     lang_paths.emplace_back("Resource/LocData/English/");
     lang_paths.emplace_back("Resource/LocData/Russian/");
     for (std::string& path : lang_paths) {
-        if (get_content_entry(mod.path + path)) {
+        if (get_content_entry(mod.path + PATH_SEP + path)) {
             std::string texts_path = path + "Text/Texts.btdb";
             //Override texts if game content selection is ET only
             if (terGameContentSelect == PERIMETER_ET) {
@@ -449,7 +449,7 @@ void loadAddonET(ModMetadata& mod) {
     }
 
     //Map the ET resource paths into game
-    std::string modPath = mod.path;
+    std::string modPath = mod.path + PATH_SEP;
     for (const auto& entry : paths) {
         if (entry.second.empty()) {
             mapContentPath(modPath + entry.first, entry.first);
@@ -489,7 +489,7 @@ void loadMod(const ModMetadata& mod) {
     printf("Loading mod: %s\n", mod.mod_name.c_str());
     
     //Skip certain resource dirs such as saves and replays
-    for (const auto& entry : get_content_entries_directory(mod.path + "Resource")) {
+    for (const auto& entry : get_content_entries_directory(mod.path + "/Resource")) {
         std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
         std::string entry_name = entry_path.filename().u8string();
         std::string destination = std::string("Resource") + PATH_SEP + entry_name;
@@ -501,7 +501,7 @@ void loadMod(const ModMetadata& mod) {
         mapContentPath(entry->path_content, destination);
     }
 
-    loadLocalizedResources(mod.path);
+    loadLocalizedResources(mod.path + PATH_SEP);
 
     //Load scripts
     if (get_content_entry(mod.path + "Scripts") != nullptr) {
@@ -511,14 +511,14 @@ void loadMod(const ModMetadata& mod) {
 
 ///Common addon loading code
 void loadModCommon(ModMetadata& mod) {
-    mod.campaign = get_content_entry(mod.path + "Resource/Missions") != nullptr; 
-    if (isContentET(mod.path)) {
+    mod.campaign = get_content_entry(mod.path + "/Resource/Missions") != nullptr; 
+    if (isContentET(mod.path + PATH_SEP)) {
         loadAddonET(mod);
     } else {
         loadMod(mod);
     }
 
-    std::string mapping = convert_path_content(mod.path + "content_mapping.txt");
+    std::string mapping = convert_path_content(mod.path + "/content_mapping.txt");
     if (!mapping.empty()) {
         loadMappings(mapping);
     }
@@ -588,24 +588,23 @@ void detectGameContent() {
         for (const auto& entry: get_content_entries_directory("mods")) {
             if (entry->is_directory) {
                 std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
-                std::string modFolderName = entry_path.filename().u8string();
                 
                 ModMetadata data = {};
-                data.path = std::string("mods") + PATH_SEP + modFolderName + PATH_SEP;
-                data.enabled = !endsWith(modFolderName, ".off");
+                data.path = entry_path.u8string();
 
-                std::string path_ini = data.path + "mod.ini";
+                std::string path_ini = data.path + PATH_SEP + "mod.ini";
                 if (get_content_entry(path_ini)) {
                     //Load mandatory .ini fields
                     IniManager mod_ini = IniManager(path_ini.c_str(), true);
+                    data.loaded = true;
                     data.mod_name = mod_ini.get("Mod", "name");
                     data.mod_version = mod_ini.get("Mod", "version");
                     if (data.mod_name.empty()) {
-                        fprintf(stderr, "Missing name in Mod section at %s, not loading", path_ini.c_str());
-                        continue; 
+                        fprintf(stderr, "Missing name in Mod section at %s, not loading\n", path_ini.c_str());
+                        data.loaded = false;
                     } else if (data.mod_version.empty()) {
-                        fprintf(stderr, "Missing version in Mod section at %s, not loading", path_ini.c_str());
-                        continue;
+                        fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
+                        data.loaded = false;
                     }
 
                     //Load optional fields
@@ -620,18 +619,31 @@ void detectGameContent() {
                     }
                     data.mod_authors = mod_ini.get("Mod", "authors");
                     data.mod_url = mod_ini.get("Mod", "url");
+                    data.content_game_minimum_version = mod_ini.get("Content", "game_minimum_version");
+                    if (!data.content_game_minimum_version.empty()) {
+                        int diff = compare_versions(currentVersionNumbers, data.content_game_minimum_version.c_str());
+                        if (0 < diff) {
+                            fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
+                                    data.content_game_minimum_version.c_str(), path_ini.c_str());
+                            data.loaded = false;
+                        }
+                    }
                 } else if (isContentET(data.path)) {
                     //Provide adhoc mod info for legacy ET folder
                     bool isRussian = startsWith(locale, "russian");
+                    data.loaded = true;
                     data.mod_name = "Perimeter: Emperor's Testament";
                     data.mod_version = "2.0.0";
                     data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
                     data.mod_authors = "KD-LAB";
                     data.mod_url = "https://kdlab.com";
                 } else {
-                    fprintf(stderr, "Mod folder %s has missing info file %s, not loading", modFolderName.c_str(), path_ini.c_str());
-                    continue;
+                    fprintf(stderr, "Mod folder %s has missing info file %s, not loading\n", data.path.c_str(), path_ini.c_str());
+                    data.loaded = false;
+                    data.mod_name = entry_path.filename().u8string();
                 }
+                
+                data.enabled = data.loaded && !endsWith(entry_path.filename().u8string(), ".off");
                 
                 foundMods.emplace_back(data);
             }

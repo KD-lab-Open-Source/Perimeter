@@ -15,6 +15,8 @@ public:
     /// Has campaign missions?
     //TODO use this on "Change Campaign"
     bool campaign = false;
+    /// Is loaded?
+    bool loaded = false;
     /// Is enabled?
     bool enabled = false;
 
@@ -43,6 +45,11 @@ public:
     /// Optional
     /// Example: URL
     std::string mod_url = {};
+
+    /// Minimum game version required
+    /// Optional
+    /// Example: 3.11.0
+    std::string content_game_minimum_version = {};
 
     ModMetadata() = default;
     ~ModMetadata() = default;

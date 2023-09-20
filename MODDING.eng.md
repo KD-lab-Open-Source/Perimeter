@@ -32,7 +32,8 @@ This allows players and the game to know some basic info about it.
 
 If current locale description as "description_LOCALE" like "description_english" isn't present the generic "description" will be used.
 
-The following is a example for a mod having one generic description and translated descriptions:
+The following is a example for a mod having one generic description and translated descriptions while also having
+minimum version for game required to run:
 ```
 [Mod]
 name=My first mod
@@ -43,6 +44,9 @@ description_russian=&00FF00Мой первый мод!\n&FFFFFFЭто приме
 description_spanish=&00FF00¡Mi primer mod!\n&FFFFFFEste es un ejemplo de cómo escribir una descripción de mod\nmultilínea coloreada.
 authors=First author name\nAnother author name\n3rd Author name
 url=https://kdlab.com
+
+[Content]
+game_minimum_version=3.11.1
 ```
 
 ## Overlay system

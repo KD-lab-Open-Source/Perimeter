@@ -2716,7 +2716,7 @@ void GameShell::preLoad() {
     //Iterate each mod Text folder for current locale and parse all files
     for (const auto& pair : getGameMods()) {
         if (!pair.second.enabled) continue;
-        texts.load_from_directory(locale, pair.second.path + getLocDataPath() + "Text", false);
+        texts.load_from_directory(locale, pair.second.path + PATH_SEP + getLocDataPath() + "Text", false);
     }
     
     //Load the builtin texts that might not be provided by mods
