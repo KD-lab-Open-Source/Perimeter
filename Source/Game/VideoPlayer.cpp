@@ -421,7 +421,9 @@ void VideoPlayer::WriteAudioFrame(AVWrapperFrame* frame) {
     uint8_t* buf = nullptr;
     double pts = frame->getPresentationTime();
     if (pts + TIME_TOO_OLD_FRAMES < this->getPlayerTime()) {
-        fprintf(stderr, "Too old audio frame: %f\n", pts);
+        if (0 < pts) {
+            fprintf(stderr, "Too old audio frame: %f\n", pts);
+        }
         return;
     }
     double distance = 0;
@@ -459,7 +461,9 @@ AVWrapperFrame* VideoPlayer::popCurrentFrame(std::list<AVWrapperFrame*>& frames)
         
         //Remove too old frames
         if (pts + TIME_TOO_OLD_FRAMES < this->getPlayerTime()) {
-            fprintf(stderr, "Too old frame: %f\n", pts);
+            if (0 < pts) {
+                fprintf(stderr, "Too old frame: %f\n", pts);
+            }
             it = frames.erase(it);
             continue;
         }
