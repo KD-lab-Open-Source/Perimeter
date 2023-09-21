@@ -290,8 +290,13 @@ void MTGVector::AddToList(std::list<sPerQuant>& list, cIUnkClass* UnkObj) {
 
     //Try to add into existing list
     for (auto& per_quant : list) {
+        if (per_quant.processed) continue;
         //Check if we are not in past
-        xassert(per_quant.quant <= quant);
+        if (per_quant.quant > quant) {
+            fprintf(stderr, "Whoops we have in AddToList for quant %d but we are in %d!\n", per_quant.quant, quant);
+            xassert(0);
+            per_quant.processed = true;
+        }
         if (per_quant.quant == quant) {
             per_quant.list.push_back(obj);
             return;
@@ -378,7 +383,10 @@ void MTGVector::mtUpdate(int cur_quant) {
             add_list.begin(),
             add_list.end(),
             [this, cur_quant] (auto& per_quant) {
-        xassert(!per_quant.processed);
+        if (per_quant.processed) {
+            xxassert(0, "mtUpdate: Got processed quant in add_list");
+            return true;
+        }
         if (per_quant.quant > cur_quant) {
             return false;
         }
@@ -403,7 +411,10 @@ void MTGVector::mtUpdate(int cur_quant) {
             erase_list.begin(),
             erase_list.end(),
             [this, cur_quant] (auto& per_quant) {
-        xassert(!per_quant.processed);
+        if (per_quant.processed) {
+            xxassert(0, "mtUpdate: Got processed quant in erase_list");
+            return true;
+        }
         if (per_quant.quant > cur_quant) {
             return false;
         }
