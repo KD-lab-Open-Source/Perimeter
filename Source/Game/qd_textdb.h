@@ -47,6 +47,9 @@ public:
     ///Load texts from folder
     void load_from_directory(const std::string& locale, const std::string& path, bool exclude_mods);
 
+    ///Exports currently loaded texts starting with text_id or all if null/empty into Texts.txt file in game root
+    void exportTexts(const char* text_id);
+
 	typedef std::list<std::string> IdList;
 	void getIdList(const char* mask, IdList& idList);
 
@@ -57,9 +60,10 @@ private:
 	{
     public:
         qdText() = default;
-		qdText(std::string text, std::string snd) : text_(std::move(text)), sound_(std::move(snd)) { }
+		qdText(std::string id, std::string text, std::string snd) : id_(std::move(id)), text_(std::move(text)), sound_(std::move(snd)) { }
         ~qdText() = default;
 
+        std::string id_;
 		std::string text_;
 		std::string sound_;
 #ifndef _FINAL_VERSION_

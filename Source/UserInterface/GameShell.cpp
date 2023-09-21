@@ -2724,6 +2724,14 @@ void GameShell::preLoad() {
         texts.load_from_directory(locale, pair.second.path + PATH_SEP + getLocDataPath() + "Text", false);
     }
     
+    //Export text if desired
+    const char* export_texts = check_command_line("export_texts");
+    if (export_texts) {
+        texts.exportTexts(export_texts);
+        fprintf(stdout, "Texts exported %s\n", export_texts);
+        ErrH.Exit();
+    }
+    
     //Load the builtin texts that might not be provided by mods
     texts.load_supplementary_texts(getLocale());
     texts.load_replacement_texts(getLocale());

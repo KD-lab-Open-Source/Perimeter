@@ -7,6 +7,7 @@
 #include "files/files.h"
 #include "qd_textdb.h"
 #include "codepages/codepages.h"
+#include "Localization.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -37,6 +38,63 @@ qdTextDB::qdText* qdTextDB::get_entry(const char* id_str, qdText* default_text) 
         return &texts_.at(id_str);
     }
     return default_text;
+}
+
+void convert_text_to_txt(std::string& text) {
+    string_replace_all(text, "\\", "\\\\");
+    string_replace_all(text, "\r", "\\r");
+    string_replace_all(text, "\n", "\\n");
+}
+
+void qdTextDB::exportTexts(const char* text_id) {
+    const std::string& locale = getLocale();
+    std::string id_str;
+    if (text_id != nullptr && *(text_id) != 0) {
+        id_str = string_to_lower(text_id);
+    }
+
+    XStream f ("Texts_" + locale + ".txt", XS_OUT);
+    for (auto& t : texts_) {
+        if (id_str.empty() || startsWith(t.first, id_str)) {
+            //Write main text
+            f.write_str(t.second.id_);
+            f.write('=');
+            std::string line;
+            if (locale.empty()) {
+                line = t.second.text_;
+            } else {
+                line = convertToUnicode(t.second.text_, locale);
+            }
+            if (!line.empty()) {
+                convert_text_to_txt(line);
+                f.write_str(line);
+            }
+            f.write('\n');
+
+            //Write audio
+            line = t.second.sound_;
+            if (!line.empty()) {
+                convert_text_to_txt(line);
+                f.write_str(t.second.id_);
+                f.write_str(".text_audio=");
+                f.write_str(line);
+                f.write('\n');
+            }
+
+#ifndef _FINAL_VERSION_
+            //Write comment
+            line = t.second.comment_;
+            if (!line.empty()) {
+                convert_text_to_txt(line);
+                f.write_str(t.second.id_);
+                f.write_str(".text_comment=");
+                f.write_str(line);
+                f.write('\n');
+            }
+#endif
+        }
+    }
+    f.close();
 }
 
 const char* qdTextDB::getText(const char* text_id) const
@@ -88,8 +146,10 @@ const char* qdTextDB::getComment(const char* text_id) const
 
 void qdTextDB::add_entry(const std::string& id_str, const qdText& text, bool replace_old_texts) {
     //Avoid adding if text already exists
-    if (replace_old_texts || texts_.count(id_str) == 0) {
-        texts_[id_str] = text;
+    if (replace_old_texts) {
+        texts_.insert_or_assign(id_str, text);
+    } else {
+        texts_.insert(std::pair(id_str, text));
     }
 }
 
@@ -107,6 +167,7 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
         std::string acc_line;
         char c = 0;
         bool escape = false;
+        bool comment = false;
         std::vector<std::string> lines;
         
         do {
@@ -116,22 +177,34 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
             //Only handle special chars if not escaped
             if (escape) {
                 //Transform \ + n into \n
-                if (c == 'n') {
-                    c = '\n';
+                switch (c) {
+                    case 'n':
+                        c = '\n';
+                        break;
+                    case 'r':
+                        c = '\r';
+                        break;
+                    default:
+                        break;
                 }
                 escape = false;
             } else {
                 if (c == '\n') {
                     //Newline, store accumulator and clear
                     lines.emplace_back(acc_line);
+                    comment = false;
+                    escape = false;
                     acc_line.clear();
+                    continue;
+                } else if (comment || c == '#') {
+                    //This is a comment, skip
+                    comment = true;
                     continue;
                 } else if (c == '\\') {
                     //Escape char
                     escape = true;
                     continue;
-                } else if (c == '#' && acc_line.empty()) {
-                    //This is a comment, skip
+                } else if (c == '\r') {
                     continue;
                 }
             }
@@ -178,7 +251,7 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
                 discard = true;
             }
             if (!discard) {
-                add_entry(id_str_lwr, qdText(txt_str, snd_str), replace_old_texts);
+                add_entry(id_str_lwr, qdText(id_str, txt_str, snd_str), replace_old_texts);
             }
 
             free(id_str);
@@ -230,13 +303,13 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
         if(pos == std::string::npos) {
             continue;
         }
-
-        std::string id_str = line.substr(0, pos);
-        if (id_str.empty()) continue;
-        id_str = string_to_lower(id_str.c_str());
-        std::string line_str = line.substr(pos + 1);
         
         qdText entry;
+
+        entry.id_ = line.substr(0, pos);
+        if (entry.id_.empty()) continue;
+        std::string id_str = string_to_lower(entry.id_.c_str());
+        std::string line_str = line.substr(pos + 1);
         
         //Check where this string goes to
         if (endsWith(id_str, ".text_audio")) {
