@@ -32,7 +32,7 @@ void loadAddonsList() {
         combo->size = 1;
     } else {
         const ModInfo& info = gameModInfoList[0];
-        combo->size = info.mod->loaded ? combo->Array.size() : 1;
+        combo->size = info.mod->available ? combo->Array.size() : 1;
         combo->pos = info.wantedEnabled ? 1 : 0;
         list->SetCurSel(0);
     }
@@ -44,7 +44,7 @@ void updateAddonsList(CListBoxWindow* list) {
     list->Clear();
     for (const auto& info : gameModInfoList) {
         std::string name;
-        if (info.mod->loaded) {
+        if (info.mod->available) {
             name = info.wantedEnabled ? "&FFFFFF" : "&FF0000";
         } else {
             name = "&666666";
@@ -81,7 +81,7 @@ int addonsApplyConfirmationQuant(float, float) {
 
         //Apply changes from gameModInfoList
         for (auto& info : gameModInfoList) {
-            if (!info.mod->loaded) {
+            if (!info.mod->available) {
                 continue;
             }
             if (info.mod->enabled != info.wantedEnabled) {
@@ -145,7 +145,7 @@ void addonEnableSwitch(CListBoxWindow* list) {
     int pos = list->GetCurSel();
     if (pos >= 0 && pos < gameModInfoList.size()) {
         auto& addon = gameModInfoList[pos];
-        if (!addon.mod->loaded) {
+        if (!addon.mod->available) {
             return;
         }
         addon.wantedEnabled = !addon.wantedEnabled;
@@ -170,7 +170,7 @@ void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
             CComboWindow* combo = dynamic_cast<CComboWindow*>(_shellIconManager.GetWnd(SQSH_MM_ADDONS_ENABLE_COMBO));
             combo->Enable(true);
             //Only allow changing combo if loaded
-            combo->size = addon.mod->loaded ? combo->Array.size() : 1;
+            combo->size = addon.mod->available ? combo->Array.size() : 1;
             combo->pos = addon.wantedEnabled ? 1 : 0;
         }
     } else if ( code == EVENT_DOUBLECLICK && param == VK_LBUTTON) {

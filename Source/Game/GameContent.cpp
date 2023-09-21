@@ -573,23 +573,24 @@ void detectGameContent() {
             std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
             
             ModMetadata data = {};
-            data.loaded = false;
+            data.available = false;
             data.path = entry_path.u8string();
             data.mod_name = entry_path.filename().u8string();
 
             std::string path_ini = data.path + PATH_SEP + "mod.ini";
+            bool is_content_ET = isContentET(data.path);
             if (get_content_entry(path_ini)) {
                 //Load mandatory .ini fields
                 IniManager mod_ini = IniManager(path_ini.c_str(), true);
-                data.loaded = true;
+                data.available = true;
                 data.mod_name = mod_ini.get("Mod", "name");
                 data.mod_version = mod_ini.get("Mod", "version");
                 if (data.mod_name.empty()) {
                     fprintf(stderr, "Missing name in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.loaded = false;
+                    data.available = false;
                 } else if (data.mod_version.empty()) {
                     fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.loaded = false;
+                    data.available = false;
                 }
 
                 //Load optional fields
@@ -607,45 +608,22 @@ void detectGameContent() {
                 
                 //Check version
                 data.content_game_minimum_version = mod_ini.get("Content", "game_minimum_version");
-                if (data.loaded && !data.content_game_minimum_version.empty()) {
+                if (data.available && !data.content_game_minimum_version.empty()) {
                     int diff = compare_versions(currentVersionNumbers, data.content_game_minimum_version.c_str());
                     if (0 < diff) {
                         fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
                                 data.content_game_minimum_version.c_str(), data.path.c_str());
-                        data.loaded = false;
+                        data.available = false;
                     }
                 }
 
-                //Check content requirement
+                //Check content requirements
                 data.content_required_content = mod_ini.get("Content", "required_content");
-                if (data.loaded && !data.content_required_content.empty()) {
-                    GAME_CONTENT required = mergeGameContentEnums(getGameContentFromEnumName(data.content_required_content));
-                    if (getMissingGameContent(terGameContentSelect, required).empty()) {
-                        if (getMissingGameContent(terGameContentAvailable, required).empty()) {
-                            fprintf(stderr, "Game content '%s' not installed which is a requirement for %s, not loading\n",
-                                    data.content_required_content.c_str(), data.path.c_str());
-                        } else {
-                            fprintf(stderr, "Game content '%s' installed but not enabled which is a requirement for %s, not loading\n",
-                                    data.content_required_content.c_str(), data.path.c_str());
-                        }
-                        data.loaded = false;
-                    }
-                }
-
-                //Check content disallowed
                 data.content_disallowed_content = mod_ini.get("Content", "disallowed_content");
-                if (data.loaded && !data.content_disallowed_content.empty()) {
-                    GAME_CONTENT disallowed = mergeGameContentEnums(getGameContentFromEnumName(data.content_disallowed_content));
-                    if ((terGameContentSelect & disallowed) == disallowed) {
-                        fprintf(stderr, "Game content '%s' is enabled which is not compatible for %s, not loading\n",
-                                data.content_disallowed_content.c_str(), data.path.c_str());
-                        data.loaded = false;
-                    }
-                }
-            } else if (isContentET(data.path)) {
+            } else if (is_content_ET) {
                 //Provide adhoc mod info for legacy ET folder
                 bool isRussian = startsWith(locale, "russian");
-                data.loaded = true;
+                data.available = true;
                 data.mod_name = "Perimeter: Emperor's Testament";
                 data.mod_version = "2.0.0";
                 data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
@@ -655,25 +633,69 @@ void detectGameContent() {
                 fprintf(stderr, "Mod folder %s has missing info file %s, not loading\n", data.path.c_str(), path_ini.c_str());
             }
             
+            //Force disable all mods
             if (!loadMods) {
-                data.loaded = false;
+                data.available = false;
             }
-            data.enabled = data.loaded && !endsWith(entry_path.filename().u8string(), ".off");
+
+            //Avoid possible duplicates of ET
+            if (data.available && is_content_ET && (terGameContentAvailable & PERIMETER_ET)) {
+                fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading", data.path.c_str());
+                data.available = false;
+            }
             
-            foundMods.emplace_back(data);
+            //Mark as enabled if available and not named with .off at end
+            data.enabled = data.available && !endsWith(entry_path.filename().u8string(), ".off");
+            
+            //If is ET then load now so the rest of mods can act on content properly
+            if (data.enabled && is_content_ET) {
+                gameMods[data.mod_name] = data;
+                loadModCommon(data);
+            } else {
+                foundMods.emplace_back(data);
+            }
         }
+    }
+
+    //Ensure selected content is actually present
+    if (terGameContentSelect == GAME_CONTENT::CONTENT_NONE || (terGameContentSelect & terGameContentAvailable) != terGameContentSelect) {
+        terGameContentSelect = terGameContentAvailable;
     }
     
     //Sort it
     std::sort(foundMods.begin(), foundMods.end(), SortModMetadatas());
 
-    //Load addons
+    //Load mods
     for (ModMetadata& mod : foundMods) {
         if (0 < gameMods.count(mod.mod_name)) {
             fprintf(stderr, "Mod %s at %s was already loaded, not loading", mod.mod_name.c_str(), mod.path.c_str());
             continue;
         }
         gameMods[mod.mod_name] = mod;
+        
+        if (mod.enabled && !mod.content_required_content.empty()) {
+            GAME_CONTENT required = mergeGameContentEnums(getGameContentFromEnumName(mod.content_required_content));
+            if (getMissingGameContent(terGameContentSelect, required).empty()) {
+                if (getMissingGameContent(terGameContentAvailable, required).empty()) {
+                    fprintf(stderr, "Game content '%s' not installed which is a requirement for %s, not loading\n",
+                            mod.content_required_content.c_str(), mod.path.c_str());
+                } else {
+                    fprintf(stderr, "Game content '%s' installed but not enabled which is a requirement for %s, not loading\n",
+                            mod.content_required_content.c_str(), mod.path.c_str());
+                }
+                mod.available = mod.enabled = false;
+            }
+        }
+        if (mod.enabled && !mod.content_disallowed_content.empty()) {
+            GAME_CONTENT disallowed = mergeGameContentEnums(getGameContentFromEnumName(mod.content_disallowed_content));
+            if ((terGameContentSelect & disallowed) == disallowed) {
+                fprintf(stderr, "Game content '%s' is enabled which is not compatible for %s, not loading\n",
+                        mod.content_disallowed_content.c_str(), mod.path.c_str());
+                mod.available = mod.enabled = false;
+            }
+        }
+        
+        mod.enabled &= mod.available;
         if (!mod.enabled) {
             continue;
         }
@@ -682,11 +704,6 @@ void detectGameContent() {
     
     //Do some workarounds
     applyWorkarounds();
-    
-    //Ensure selected content is actually present
-    if (terGameContentSelect == GAME_CONTENT::CONTENT_NONE || (terGameContentSelect & terGameContentAvailable) != terGameContentSelect) {
-        terGameContentSelect = terGameContentAvailable;
-    }
     
     //Since Perimeter has tutorial, we need to set first mission as 1 (second) so the briefing is skipped
     if (terGameContentSelect & GAME_CONTENT::PERIMETER) {

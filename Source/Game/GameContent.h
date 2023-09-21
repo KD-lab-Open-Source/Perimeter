@@ -16,7 +16,7 @@ public:
     //TODO use this on "Change Campaign"
     bool campaign = false;
     /// Is loaded?
-    bool loaded = false;
+    bool available = false;
     /// Is enabled?
     bool enabled = false;
 
