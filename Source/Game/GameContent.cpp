@@ -715,6 +715,17 @@ bool unavailableContentUnitAttribute(terUnitAttributeID id, GAME_CONTENT content
         case UNIT_ATTRIBUTE_EFLAIR:
         case UNIT_ATTRIBUTE_IMPALER:
         case UNIT_ATTRIBUTE_CONDUCTOR:
+        case UNIT_ATTRIBUTE_FILTH_A_ANTS:
+        case UNIT_ATTRIBUTE_FILTH_A_CROW:
+        case UNIT_ATTRIBUTE_FILTH_A_DAEMON:
+        case UNIT_ATTRIBUTE_FILTH_A_DRAGON_HEAD:
+        case UNIT_ATTRIBUTE_FILTH_A_DRAGON_BODY:
+        case UNIT_ATTRIBUTE_FILTH_A_DRAGON_TAIL:
+        case UNIT_ATTRIBUTE_FILTH_A_EYE:
+        case UNIT_ATTRIBUTE_FILTH_A_RAT:
+        case UNIT_ATTRIBUTE_FILTH_A_SPIDER:
+        case UNIT_ATTRIBUTE_FILTH_A_WASP:
+        case UNIT_ATTRIBUTE_FILTH_A_WORM:
             return !(content & GAME_CONTENT::PERIMETER_ET);
         default:
             return false;

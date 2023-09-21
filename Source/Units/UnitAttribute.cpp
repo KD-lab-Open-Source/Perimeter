@@ -151,12 +151,7 @@ void AttributeBase::init()
         return;
     }
     initialized = true;
-    
-    //Avoid loading stuff that user may not have
-    if (unavailableContentUnitAttribute(ID) || unavailableContentBelligerent(belligerent)) {
-        return;
-    }
-    
+        
     //Specific workarounds
     switch (ID) {
         case UNIT_ATTRIBUTE_FRAME:
@@ -689,11 +684,6 @@ void collect_content_crc() {
     for (auto& i : attributeLibrary()) {
         AttributeBase* attribute = i.second;
         if (attribute->ID == UNIT_ATTRIBUTE_NONE) continue;
-        //Avoid loading stuff that user may not have
-        if (unavailableContentUnitAttribute(attribute->ID, terGameContentSelect) 
-        || unavailableContentBelligerent(attribute->belligerent)) {
-            continue;
-        }
         collect_model_crc(attribute->modelData);
         for (auto& model : attribute->additionalModelsData) {
             collect_model_crc(model);
@@ -859,6 +849,18 @@ void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
 		//Load attributes from mods
         loadTypeLibraryFromMods(rigidBodyPrmLibrary(), "RigidBodyPrmLibrary");
         loadTypeLibraryFromMods(attributeLibrary(), "AttributeLibrary");
+    }
+    
+    //Trim attributes that are unavailable
+    auto& attrLib = attributeLibrary().map();
+    for (auto first = attrLib.begin(), last = attrLib.end(); first != last;) {
+        const AttributeIDBelligerent& attribute = (*first).first;
+        if (unavailableContentUnitAttribute(attribute.attributeID(), terGameContentSelect)
+            || unavailableContentBelligerent(attribute.belligerent(), terGameContentSelect)) {
+            first = attrLib.erase(first);
+        } else {
+            ++first;
+        }
     }
 
 //	rigidBodyPrmLibrary.edit();
