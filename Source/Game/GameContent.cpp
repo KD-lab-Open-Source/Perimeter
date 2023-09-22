@@ -690,8 +690,8 @@ void detectGameContent() {
         
         if (mod.enabled && !mod.content_required_content.empty()) {
             GAME_CONTENT required = mergeGameContentEnums(getGameContentFromEnumName(mod.content_required_content));
-            if (getMissingGameContent(terGameContentSelect, required).empty()) {
-                if (getMissingGameContent(terGameContentAvailable, required).empty()) {
+            if (!getMissingGameContent(terGameContentSelect, required).empty()) {
+                if (!getMissingGameContent(terGameContentAvailable, required).empty()) {
                     fprintf(stderr, "Game content '%s' not installed which is a requirement for %s, not loading\n",
                             mod.content_required_content.c_str(), mod.path.c_str());
                 } else {
@@ -703,7 +703,7 @@ void detectGameContent() {
         }
         if (mod.enabled && !mod.content_disallowed_content.empty()) {
             GAME_CONTENT disallowed = mergeGameContentEnums(getGameContentFromEnumName(mod.content_disallowed_content));
-            if ((terGameContentSelect & disallowed) == disallowed) {
+            if (terGameContentSelect == disallowed) {
                 fprintf(stderr, "Game content '%s' is enabled which is not compatible for %s, not loading\n",
                         mod.content_disallowed_content.c_str(), mod.path.c_str());
                 mod.available = mod.enabled = false;
