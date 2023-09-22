@@ -396,7 +396,7 @@ float CUT_SCENE_BOTTOM = 0.390625f;
 int CUT_SCENE_FADEOUT_TIME = 700;
 int CUT_SCENE_FADEIN_TIME = 700;
 int CUT_SCENE_PAUSE_TIME = 700;
-float CREDITS_SCROLL_SPEED = 30.f;
+float CREDITS_SCROLL_SPEED = 50.f;
 int INTERVIDEO_ALPHA = 255;
 float sqshFontCountDownTimeColor[4] = { 1.f 
  , 0.f, 0.f, 1.f };
