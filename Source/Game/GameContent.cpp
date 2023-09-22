@@ -578,7 +578,7 @@ void detectGameContent() {
             data.mod_name = entry_path.filename().u8string();
 
             std::string path_ini = data.path + PATH_SEP + "mod.ini";
-            bool is_content_ET = isContentET(data.path);
+            bool is_content_ET = isContentET(data.path + PATH_SEP);
             if (get_content_entry(path_ini)) {
                 //Load mandatory .ini fields
                 IniManager mod_ini = IniManager(path_ini.c_str(), true);

@@ -1381,13 +1381,32 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
     }
 	gameShell->cancelMouseLook();
 
-    if (id_on == SQSH_MM_START_SCR && terGameContentAvailable != terGameContentSelect) {
-        //Content is selected and user wants to go main menu, switch back to default and restart
-		std::vector<std::string> args;
-		args.emplace_back("tmp_start_splash=0");
-		request_application_restart(&args);
-        //We play splash since "we are leaving the content" and user may not see content specific splash otherwise
-        id_on = SQSH_MM_SPLASH_LAST;
+    //Content is selected and user wants to go some menu that needs default content to be restored
+    if (terGameContentAvailable != terGameContentSelect) {
+        std::string initial_menu;
+        switch (id_on) {
+            case SQSH_MM_START_SCR:
+            //These are just in case
+            case SQSH_MM_BATTLE_SCR:
+            case SQSH_MM_MULTIPLAYER_LIST_SCR:
+            case SQSH_MM_ADDONS_SCR:
+                initial_menu = "START";
+                break;
+            //Required if user clicks on Community from Credits menu
+            case SQSH_MM_COMMUNITY_SCR:
+                initial_menu = "COMMUNITY";
+                break;
+        }
+        if (!initial_menu.empty()) {
+            std::vector<std::string> args;
+            args.emplace_back("tmp_start_splash=0");
+            if (initial_menu != "START") {
+                args.emplace_back("tmp_initial_menu=" + initial_menu);
+            }
+            request_application_restart(&args);
+            //We play splash since "we are leaving the content" and user may not see content specific splash otherwise
+            id_on = SQSH_MM_SPLASH_LAST;
+        }
     }
 
 	menuChangingDone = false;
