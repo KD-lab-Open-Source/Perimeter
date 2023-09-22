@@ -642,7 +642,7 @@ void detectGameContent() {
                 data.mod_name = "Perimeter: Emperor's Testament";
                 data.mod_version = "2.0.0";
                 data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
-                data.mod_authors = "KD-LAB";
+                data.mod_authors = "K-D LAB";
                 data.mod_url = "https://kdlab.com";
             } else {
                 fprintf(stderr, "Mod folder %s has missing info file %s, not loading\n", data.path.c_str(), path_ini.c_str());
