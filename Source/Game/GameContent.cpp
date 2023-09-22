@@ -386,6 +386,7 @@ void loadAddonET(ModMetadata& mod) {
     }
 
     //Load texts, first try current lang, then english, then russian
+    std::string locale = getLocale();
     std::string locpath = getLocDataPath();
     std::vector<std::string> lang_paths;
     lang_paths.emplace_back(locpath);
@@ -393,13 +394,27 @@ void loadAddonET(ModMetadata& mod) {
     lang_paths.emplace_back("Resource/LocData/Russian/");
     for (std::string& path : lang_paths) {
         if (get_content_entry(mod.path + PATH_SEP + path)) {
-            std::string texts_path = path + "Text/Texts.btdb";
-            //Override texts if game content selection is ET only
-            if (terGameContentSelect == PERIMETER_ET) {
-                paths[texts_path] = { locpath + "Text/Texts_ET.btdb" };
-                paths[path + "Voice"] = { locpath + "Voice" };
+            if (legacy) {
+                std::string texts_path = path + "Text/Texts.btdb";
+                //Override texts if game content selection is ET only
+                if (terGameContentSelect == PERIMETER_ET) {
+                    paths[texts_path] = {locpath + "Text/Texts_PerimeterET.btdb"};
+                } else {
+                    paths[texts_path] = {locpath + "Text/Texts_PerimeterET_noreplace.btdb"};
+                }
             } else {
-                paths[texts_path] = { locpath + "Text/Texts_ET_noreplace.btdb" };
+                std::string texts_path = "Text/Texts_PerimeterET_" + locale;
+                //Override texts if game content selection is ET only
+                if (terGameContentSelect == PERIMETER_ET) {
+                    paths[path + texts_path + ".txt"] = {};
+                } else {
+                    paths[path + texts_path + ".txt"] = {locpath + texts_path + "_noreplace.txt"};
+                }
+            }
+
+            //Override voices from ET
+            if (terGameContentSelect == PERIMETER_ET) {
+                paths[path + "Voice"] = {locpath + "Voice"};
             }
             printf("Addon ET: Using locale at %s\n", path.c_str());
             break;
@@ -409,13 +424,13 @@ void loadAddonET(ModMetadata& mod) {
     if (terGameContentSelect == PERIMETER_ET) {
         //Load mission required data and other ET stuff
         std::string path_scenario = "Resource/scenario.hst";
-        if (!legacy && startsWith(getLocale(), "russian")) {
+        if (!legacy && startsWith(locale, "russian")) {
             path_scenario = "Resource/scenario_russian.hst";
         }
         paths[path_scenario] = {
             "Resource/scenario.hst",
             //In case scenario_LOCALE.hst exists in base
-            "Resource/scenario_" + getLocale() + ".hst"
+            "Resource/scenario_" + locale + ".hst"
         };
         paths["Resource/Icons"] = {};
         paths["Resource/Missions"] = {};
