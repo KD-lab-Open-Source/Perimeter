@@ -273,7 +273,7 @@ void cInterfaceRenderDevice::SetTexture(uint32_t slot, cTexture* texture, float 
         SetTextureImage(slot, nullptr);
     } else {
         float nAllFrame = static_cast<float>(texture->GetNumberFrame());
-        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * phase * nAllFrame) : 0;
+        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * min(1.0f, phase) * nAllFrame) : 0;
         VISASSERT(0<=nFrame&&nFrame<texture->GetNumberFrame());
         TextureImage* tex = texture->GetFrameImage(nFrame);
         SetTextureImage(slot, tex);
