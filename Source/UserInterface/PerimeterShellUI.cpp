@@ -6392,12 +6392,7 @@ CCreditsWindow::~CCreditsWindow() {
 void CCreditsWindow::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
 
-    textData = qdTextDB::instance().getText(attr->text);
-    if (!endsWith(textData, "\n\n")) {
-        textData += "\n\n";
-    }
-    
-    textData += qdTextDB::instance().getText("Interface.Credits.Extra");
+    textData = qdTextDB::instance().getText(attr->text);    
 
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
@@ -6414,7 +6409,7 @@ void CCreditsWindow::Load(const sqshControl* attr) {
 	}
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1);
+	m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1_5);
 }
 
 void CCreditsWindow::Show(int bShow) {
