@@ -1102,7 +1102,9 @@ int SwitchMenuScreenQuant1( float, float ) {
                 case SQSH_MM_MULTIPLAYER_LIST_SCR:
                     {                        
                         std::string name = getStringSettings(regLanName);
-                        if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
+                        if (name.empty() && gameShell->currentSingleProfile.getCurrentProfileIndex() != -1) {
+                            name = gameShell->currentSingleProfile.getCurrentProfile().name;
+                        }
                         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
                         if (!name.empty()) {
                             input->SetText(name.c_str());

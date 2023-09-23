@@ -438,7 +438,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 		PlayerData* data = &CurrentMission.playersData[i];
         std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
-            if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+            if (currentSingleProfile.getCurrentProfileIndex() == -1 && currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
                 playerName = currentSingleProfile.getCurrentProfile().name;
             }
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
