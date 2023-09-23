@@ -2653,7 +2653,7 @@ float GetUnitUpgradeProgress(const terBuilding* p) {
 
 void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls) {
     //Get the base content and if is a campaign
-    bool isCampaign = 0 < gameShell->CurrentMission.missionNumber;
+    bool isCampaign = gameShell->CurrentMission.isCampaign();
     GAME_CONTENT content = static_cast<GAME_CONTENT>(gameShell->CurrentMission.gameContent.value());
     if (!content) content = isCampaign ? getGameContentCampaign() : terGameContentSelect;
     
