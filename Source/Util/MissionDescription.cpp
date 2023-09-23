@@ -269,30 +269,31 @@ void MissionDescription::simpleRead(XBuffer& in)
     in > StringInWrapper(missionName_);
     in > StringInWrapper(savePathKey_);
     in > StringInWrapper(originalSaveName.value());
-	unsigned char tmp;
-    in.read(&tmp, sizeof(tmp)); uint32_t playersDataLen = tmp;
+    uint8_t tu8;
+    int16_t ti16;
+    in.read(&tu8, sizeof(tu8)); uint32_t playersDataLen = tu8;
     std::string tmp_str;
     playersData.clear();
 	for (uint32_t i=0; i < playersDataLen; i++) {
         playersData.emplace_back();
-		in.read(&tmp, sizeof(tmp)); playersData[i].playerID=(int)tmp;
-		in.read(&tmp, sizeof(tmp)); playersData[i].realPlayerType=(RealPlayerType)tmp;
-		in.read(&tmp, sizeof(tmp)); playersData[i].belligerent=(terBelligerent)tmp;
-		in.read(&tmp, sizeof(tmp)); playersData[i].colorIndex=(int)tmp;
-		in.read(&tmp, sizeof(tmp)); playersData[i].clan=(int)tmp;
-		in.read(&tmp, sizeof(tmp)); playersData[i].difficulty=(Difficulty)tmp;
-		in.read(&tmp, sizeof(tmp)); playersData[i].handicap=(int)tmp;
+		in.read(&ti16, sizeof(ti16)); playersData[i].playerID = static_cast<int>(ti16);
+		in.read(&tu8, sizeof(tu8)); playersData[i].realPlayerType = static_cast<RealPlayerType>(tu8);
+		in.read(&tu8, sizeof(tu8)); playersData[i].belligerent = static_cast<terBelligerent>(tu8);
+		in.read(&tu8, sizeof(tu8)); playersData[i].colorIndex = static_cast<int>(tu8);
+		in.read(&tu8, sizeof(tu8)); playersData[i].clan = static_cast<int>(tu8);
+		in.read(&tu8, sizeof(tu8)); playersData[i].difficulty = static_cast<Difficulty>(tu8);
+		in.read(&tu8, sizeof(tu8)); playersData[i].handicap = static_cast<int>(tu8);
 		in.read(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
         in > StringInWrapper(tmp_str);
         playersData[i].setName(tmp_str);
         in > StringInWrapper(tmp_str);
         playersData[i].setNameInitial(tmp_str);
 	}
-	in.read(&tmp, sizeof(tmp)); playerAmountScenarioMax=(int)tmp;
-	in.read(&tmp, sizeof(tmp)); gameType_=(GameType)tmp;
-	in.read(&tmp, sizeof(tmp)); activePlayerID=(int)tmp;
-    in.read(&tmp, sizeof(tmp)); missionNumber=(int)tmp;
-    in.read(&tmp, sizeof(tmp)); gameContent=(int)tmp;
+	in.read(&tu8, sizeof(tu8)); playerAmountScenarioMax = static_cast<int>(tu8);
+	in.read(&tu8, sizeof(tu8)); gameType_ = static_cast<GameType>(tu8);
+	in.read(&tu8, sizeof(tu8)); activePlayerID = static_cast<int>(tu8);
+    in.read(&ti16, sizeof(ti16)); missionNumber = static_cast<int>(ti16);
+    in.read(&tu8, sizeof(tu8)); gameContent = static_cast<int>(tu8);
     refresh();
 }
 
@@ -303,25 +304,27 @@ void MissionDescription::simpleWrite(XBuffer& out) const
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(savePathKey_);
     out < StringOutWrapper(originalSaveName.value());
-	unsigned char tmp;
-    tmp=(unsigned char)playersData.size();		out.write(&tmp, sizeof(tmp));
+    uint8_t tu8;
+    int16_t ti16;
+    tu8=static_cast<uint8_t>(playersData.size());
+    out.write(&tu8, sizeof(tu8));
 	for (int i=0; i<playersData.size(); i++){
-		tmp=(unsigned char)playersData[i].playerID;			out.write(&tmp, sizeof(tmp));
-		tmp=(unsigned char)playersData[i].realPlayerType;	out.write(&tmp, sizeof(tmp));
-		tmp=(unsigned char)playersData[i].belligerent;		out.write(&tmp, sizeof(tmp));
-		tmp=(unsigned char)playersData[i].colorIndex;		out.write(&tmp, sizeof(tmp));
-		tmp=(unsigned char)playersData[i].clan;				out.write(&tmp, sizeof(tmp));
-		tmp=(unsigned char)playersData[i].difficulty;		out.write(&tmp, sizeof(tmp));
-		tmp=(unsigned char)playersData[i].handicap;			out.write(&tmp, sizeof(tmp));
+        ti16=static_cast<int16_t>(playersData[i].playerID);			out.write(&ti16, sizeof(ti16));
+		tu8=static_cast<uint8_t>(playersData[i].realPlayerType);	out.write(&tu8, sizeof(tu8));
+		tu8=static_cast<uint8_t>(playersData[i].belligerent);		out.write(&tu8, sizeof(tu8));
+		tu8=static_cast<uint8_t>(playersData[i].colorIndex);		out.write(&tu8, sizeof(tu8));
+		tu8=static_cast<uint8_t>(playersData[i].clan);				out.write(&tu8, sizeof(tu8));
+		tu8=static_cast<uint8_t>(playersData[i].difficulty);		out.write(&tu8, sizeof(tu8));
+		tu8=static_cast<uint8_t>(playersData[i].handicap);			out.write(&tu8, sizeof(tu8));
 		out.write(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
         out < StringOutWrapper(playersData[i].name());
         out < StringOutWrapper(playersData[i].nameInitial());
 	}
-	tmp=(unsigned char)playerAmountScenarioMax;		out.write(&tmp, sizeof(tmp));
-	tmp=(unsigned char)gameType_;					out.write(&tmp, sizeof(tmp));
-    tmp=(unsigned char)activePlayerID;				out.write(&tmp, sizeof(tmp));
-    tmp=(unsigned char)missionNumber;				out.write(&tmp, sizeof(tmp));
-    tmp=(unsigned char)gameContent;					out.write(&tmp, sizeof(tmp));
+	tu8=static_cast<uint8_t>(playerAmountScenarioMax);		out.write(&tu8, sizeof(tu8));
+	tu8=static_cast<uint8_t>(gameType_);					out.write(&tu8, sizeof(tu8));
+    tu8=static_cast<uint8_t>(activePlayerID);				out.write(&tu8, sizeof(tu8));
+    ti16=static_cast<int16_t >(missionNumber);				out.write(&ti16, sizeof(ti16));
+    tu8=static_cast<uint8_t>(gameContent);					out.write(&tu8, sizeof(tu8));
 }
 
 std::string MissionDescription::resolve_mission_path(const std::string& path) {
