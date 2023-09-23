@@ -686,7 +686,6 @@ void detectGameContent() {
             fprintf(stderr, "Mod %s at %s was already loaded, not loading", mod.mod_name.c_str(), mod.path.c_str());
             continue;
         }
-        gameMods[mod.mod_name] = mod;
         
         if (mod.enabled && !mod.content_required_content.empty()) {
             GAME_CONTENT required = mergeGameContentEnums(getGameContentFromEnumName(mod.content_required_content));
@@ -711,6 +710,8 @@ void detectGameContent() {
         }
         
         mod.enabled &= mod.available;
+        
+        gameMods[mod.mod_name] = mod;
         if (!mod.enabled) {
             continue;
         }
