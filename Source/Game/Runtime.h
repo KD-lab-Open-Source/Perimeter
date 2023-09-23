@@ -38,9 +38,6 @@ extern int terGrabInput;
 extern int terMapReflection;
 extern int terObjectReflection;
 
-extern int terWinVideoValid;
-extern int terWinVideoEnable;
-
 extern int terSoundEnable;		// 0,1
 extern int terMusicEnable;		// 0,1
 extern float terSoundVolume;	// 0..1
@@ -55,6 +52,7 @@ void SetShadowType(int shadow_map,int shadow_size,bool update);
 
 extern const char* currentVersion;
 extern const char* currentShortVersion;
+extern uint16_t currentVersionNumbers[];
 
 //-------------------------------------------------
 bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title);

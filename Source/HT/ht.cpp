@@ -9,6 +9,10 @@
 #include <thread>
 #include <SDL_thread.h>
 
+#ifdef _WIN32
+#include "objbase.h"
+#endif
+
 const SDL_threadID bad_thread_id=-1;
 
 HTManager* HTManager::self=nullptr;
@@ -343,4 +347,24 @@ void HTManager::Show()
 	if(debug_show_lag_stat)
 		lag_stat->Show();
 #endif //_FINAL
+}
+
+
+MTAutoSingleThread::MTAutoSingleThread() {
+    real_tls = MT_GET_TYPE();
+    if (real_tls == MT_GRAPH_THREAD) {
+        lock = HTManager::instance()->GetLockLogic();
+    }
+    if (lock) {
+        lock->Lock();
+    }
+    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
+}
+
+MTAutoSingleThread::~MTAutoSingleThread()
+{
+    MT_SET_TYPE(real_tls);
+    if (lock) {
+        lock->Unlock();
+    }
 }

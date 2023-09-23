@@ -15,13 +15,17 @@ IF(FFMPEG_FOUND)
     IF(OPTION_FFMPEG_MOVIES)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBSWSCALE_LIBRARIES} ${FFMPEG_LIBAVFILTER_LIBRARIES})
     ENDIF()
+    #Optionally link since static ffmpeg builds require libswresample
+    IF(FFMPEG_LIBSWRESAMPLE_FOUND)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
+    ENDIF()
 ENDIF()
 
 #simpleini
 FetchContent_Declare(simpleini
         GIT_REPOSITORY    https://github.com/brofield/simpleini
-        GIT_TAG           origin/master
-        GIT_SHALLOW       ON
+        GIT_TAG           "7350fcc9228f410309734c3fb6dae2bf513cdd98"
+        GIT_SHALLOW       OFF
 )
 FetchContent_MakeAvailable(simpleini)
 INCLUDE_DIRECTORIES(${simpleini_SOURCE_DIR})
@@ -32,8 +36,8 @@ IF(NOT PERIMETER_WINDOWS)
     #pevents retrieval
     FetchContent_Declare(pevents
             GIT_REPOSITORY    https://github.com/neosmart/pevents
-            GIT_TAG           origin/master
-            GIT_SHALLOW       ON
+            GIT_TAG           "d6afcbc629cf806f6465238849278e530e1d56fb"
+            GIT_SHALLOW       OFF
     )
     FetchContent_MakeAvailable(pevents)
     ADD_DEFINITIONS(-DWFMO)
@@ -44,50 +48,77 @@ IF(NOT PERIMETER_WINDOWS)
             "${pevents_SOURCE_DIR}/src"
     )
 
-    IF (OPTION_DXVK)
-        MESSAGE("Using DXVK-native for D3D9 API")
+    IF (OPTION_D3D9)
+        MESSAGE("Using DXVK for D3D9 API")
 
-        SET(DXVK_NATIVE_BUILD_COMMAND meson)
-        IF (MACOS AND CMAKE_OSX_ARCHITECTURES)
-            #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
-            SET(DXVK_NATIVE_BUILD_COMMAND
-                    ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
-                    ${CMAKE_OSX_ARCHITECTURES}
-                    ${PROJECT_SOURCE_DIR}/macos/
-            )
+        SET(DXVK_BUILD_OPTIONS --buildtype=release -Denable_d3d9=true -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false)
+        #DXVK wrapper lib retrieval and building
+        IF (MACOS)
+            IF (CMAKE_OSX_ARCHITECTURES)
+                #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
+                SET(DXVK_BUILD_COMMAND
+                        ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
+                        ${CMAKE_OSX_ARCHITECTURES}
+                        ${PROJECT_SOURCE_DIR}/macos/
+                )
+            ENDIF()
+            #TODO change this to upstream once DXVK2 works with MoltenVK and MacOS
+            SET(OPTION_DXVK_1 ON)
         ENDIF()
-        #DXVK-native wrapper lib retrieval and building
-        #TODO change this to upstream once changes are merged
-        ExternalProject_Add(dxvk-native
-                GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
-                GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
+        IF(OPTION_DXVK_1)
+            set(DXVK_GIT_URL https://github.com/IonAgorria/dxvk-native)
+            set(DXVK_GIT_TAG "43aedc756cbd620b9ee8b1cf2c17b17cc49b3781")
+        ELSE()
+            set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
+            set(DXVK_GIT_TAG "80e075406b1b7d9d2508c9dc05e9745b3d3cf7e2") # v2.3
+            set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
+        ENDIF()
+        IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
+            SET(DXVK_BUILD_COMMAND meson setup)
+        ENDIF()
+        IF(OPTION_DXVK_SOURCE_DIR)
+            MESSAGE("DXVK Source path provided: ${OPTION_DXVK_SOURCE_DIR}")
+            ExternalProject_Add(dxvk
+                SOURCE_DIR        ${OPTION_DXVK_SOURCE_DIR}
+                BUILD_ALWAYS      OFF
+                CONFIGURE_HANDLED_BY_BUILD ON
+                CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ${OPTION_DXVK_SOURCE_DIR} ${DXVK_BUILD_OPTIONS}
+                BUILD_COMMAND     ninja
+                INSTALL_COMMAND   ""
+            )
+        ELSE()
+            ExternalProject_Add(dxvk
+                GIT_REPOSITORY    ${DXVK_GIT_URL}
+                GIT_TAG           ${DXVK_GIT_TAG}
                 GIT_SHALLOW       OFF
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON
-                CONFIGURE_COMMAND ${DXVK_NATIVE_BUILD_COMMAND} ../dxvk-native --buildtype=release -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
+                CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk ${DXVK_BUILD_OPTIONS}
                 BUILD_COMMAND     ninja
                 INSTALL_COMMAND   ""
-        )
-        ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
-        set(DXVK_NATIVE_INCLUDE_DIRS
+            )
+        ENDIF()
+        ExternalProject_Get_property(dxvk SOURCE_DIR BINARY_DIR)
+        set(DXVK_INCLUDE_DIRS
                 "${SOURCE_DIR}/include/native/directx"
                 "${SOURCE_DIR}/include/native/windows"
         )
         IF (MACOS)
-            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
+            set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
         ELSE()
-            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+            set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
         ENDIF()
     
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
-        INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
-    ELSE()
-        MESSAGE("Not using D3D9 API providing library")
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_D3D9_LIB})
+        INCLUDE_DIRECTORIES("${DXVK_INCLUDE_DIRS}")
     ENDIF()
-ELSE()
+ELSEIF(OPTION_D3D9)
     #DirectX SDK libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
 ENDIF()
+
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL)
 
 ADD_SUBDIRECTORY("XPrm")
 ADD_SUBDIRECTORY("Scripts")
@@ -103,8 +134,11 @@ IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
-    IF (NOT OPTION_HEADLESS)
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ExodusD3D9)
+    IF (OPTION_D3D9)
+        #Make Exodus depend on lib that provides D3D9 API
+        ADD_DEPENDENCIES(Exodus dxvk)
+        #Make other modules depend on Exodus
+        ADD_DEPENDENCIES(dependencies Exodus)
     ENDIF()
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
@@ -167,15 +201,13 @@ INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
 )
 
-#This is the only way I know to force download of external project from any targets
-ADD_CUSTOM_TARGET(dependencies ALL)
-
 SET(perimeter_SRCS ${perimeter_SRCS}
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
         Game/VideoPlayer.cpp
         Game/qd_textdb.cpp
+        Game/Texts.cpp
         Units/Economic.cpp
         Game/Player.cpp
         Game/Universe.cpp
@@ -244,6 +276,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Util/SystemUtil.cpp
         Util/XPrmArchive.cpp
         Util/Localization.cpp
+        Util/ANIFile.cpp
         UserInterface/BGScene.cpp
         UserInterface/chaos.cpp
         UserInterface/controls.cpp
@@ -278,6 +311,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         UserInterface/MainMenu.cpp
         UserInterface/Menu/SingleMenu.cpp
         UserInterface/Menu/AddonsMenu.cpp
+        UserInterface/Menu/CommunityMenu.cpp
         UserInterface/Menu/MultiplayerList.cpp
         UserInterface/Menu/MultiplayerHost.cpp
         UserInterface/Menu/MultiplayerJoin.cpp
@@ -325,15 +359,20 @@ ENDIF()
 
 SET(perimeter_LINK_LIBS
         #Libraries
+        ${EXE_LINK_LIBS_PRE}
         ${perimeter_LINK_LIBS}
-        ${SDL2MAIN_LIBRARY}
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
+        ${EXE_LINK_LIBS_POST}
 )
 
-TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
+IF(PERIMETER_WINDOWS)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
+ENDIF()
+    
+TARGET_LINK_LIBRARIES(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 IF(OPTION_PROCESS_SCRIPTS)
     ADD_DEPENDENCIES(dependencies ScriptsCompile)
@@ -348,16 +387,6 @@ ELSE()
     MESSAGE("Not checking Scripts")
 ENDIF()
 
-IF(NOT PERIMETER_WINDOWS)
-    #Make Exodus D3D9 depend on lib that provides D3D9 API
-    IF (OPTION_DXVK)
-        ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
-    ENDIF()
-    IF (NOT OPTION_HEADLESS)
-        #Make other modules depend on Exodus D3D9
-        ADD_DEPENDENCIES(dependencies ExodusD3D9)
-    ENDIF()
-ENDIF()
 ADD_DEPENDENCIES(PluginMAX dependencies)
 ADD_DEPENDENCIES(Terra dependencies)
 ADD_DEPENDENCIES(tx3d dependencies)
@@ -365,4 +394,10 @@ ADD_DEPENDENCIES(Render dependencies)
 ADD_DEPENDENCIES(Sound dependencies)
 ADD_DEPENDENCIES(Network dependencies)
 ADD_DEPENDENCIES(perimeter dependencies)
-target_compile_options(perimeter PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(perimeter PRIVATE ${PERIMETER_COMPILE_OPTIONS})
+
+#Install rules
+IF(OPTION_D3D9 AND NOT PERIMETER_WINDOWS)
+    install (FILES ${DXVK_D3D9_LIB} TYPE LIB)
+ENDIF()
+install (TARGETS perimeter RUNTIME)

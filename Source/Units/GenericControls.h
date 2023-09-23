@@ -49,7 +49,7 @@ public:
 	//----------------------------------------------------
 	int collisionGroup() const { return collisionGroup_; }
 	void setCollisionGroup(int group) { collisionGroup_ = group; }
-	int excludeCollision() const { return attr().ExcludeCollision; }
+	int excludeCollision() const { return attr()->ExcludeCollision; }
 
 	int GetMapUpdatedCount() const { return MapUpdatedCount; }
 	void SetMapUpdatedCount(int count){ MapUpdatedCount = count; }
@@ -173,7 +173,7 @@ public:
 	virtual bool isConstructed() const { return true; }
 	virtual bool isUpgrading() const { return false; }
 
-	virtual bool isBuilding() const { return attr().isBuilding(); }
+	virtual bool isBuilding() const { return attr()->isBuilding(); }
 
 	virtual bool isBuildingEnable() const { return false; }
 	virtual bool readyToConnect() const { return false; }
@@ -192,7 +192,7 @@ public:
 
 	bool isEnemy(const terUnitBase* unit) const; // this should attack unit
 	bool isHarmful(const terUnitBase* unit) const; // this take damage from unit
-	bool checkFireClass(const terUnitBase* p) const { return p->unitClass() & attr().AttackClass; }
+	bool checkFireClass(const terUnitBase* p) const { return p->unitClass() & attr()->AttackClass; }
 
 	virtual void setActivity(bool activate) {} // To activate/deactivates some props by triggers
 	virtual bool activity() const { return true; } 
@@ -212,7 +212,7 @@ public:
 	virtual int isBuildingPowerOn(){ return 0; }
 	virtual int CanBuildingEnable(){ return 0; }
 	
-	const DamageData& damageData() const { return attr().unitDamage.mainDamage; }
+	const DamageData& damageData() const { return attr()->unitDamage.mainDamage; }
 
 	int possibleDamage() const { return possibleDamage_; }
 	void clearPossibleDamage(){ possibleDamage_ = 0; }
@@ -227,14 +227,13 @@ public:
 	virtual bool soundEvent(SoundEventID event_id);
 	bool soundEvent(const SoundEventSetup* ev) const;
 
-	//struct AttributeBase& Attribute;
 	terPlayer* Player;
 
 	void DeleteInterpolator();
 	virtual bool needCrater() const { return true; }
 
-	virtual const AttributeBase& attr() const {
-		return *attr_;
+	virtual const AttributeBase* attr() const {
+		return attr_;
 	}
 
 	VIRTUAL_SERIALIZE(ar) {

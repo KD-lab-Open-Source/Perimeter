@@ -51,8 +51,8 @@ struct CShellLogicDispatcher
 	ListQuantResType m_lstQRes;
 
 	int            m_nState;
-	RECT           m_rcTrack;
-	RECT           m_rcEnemy;
+	sRect           m_rcTrack;
+	sRect           m_rcEnemy;
 	int            m_nPickAction;
 	int            m_nPickData;
 	int            m_nMouseButtonsState;

@@ -95,8 +95,8 @@ void CameraCoordinate::check(bool restricted)
 	position_.y = clamp(position().y, scroll_border, vMap.V_SIZE - scroll_border);
 	position_.z = FieldCluster::ZeroGround;
 
+    distance_ = clamp(distance(), CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 	if(restricted){
-		distance_ = clamp(distance(), CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 		//максимально допустимый наклон на данной высоте
 		//  линейно от CAMERA_THETA_MIN на CAMERA_ZOOM_MIN
 		//          до CAMERA_THETA_MAX на CAMERA_ZOOM_MAX
@@ -104,12 +104,8 @@ void CameraCoordinate::check(bool restricted)
 		float theta_max = CAMERA_THETA_MIN + t*(CAMERA_THETA_MAX - CAMERA_THETA_MIN);
 
 		theta_ = clamp(theta(), 0, theta_max);
+    }
 
-//		distance_ = clamp(distance(), CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
-	}
-	else
-		distance_ = clamp(distance(), 100, 10000);
-	
 	//psi_ = cycle(psi(), 2*XM_PI);
 }
 
@@ -181,10 +177,8 @@ void terCameraType::update()
 		position.y += explodingFactor_*cameraExplodingPrm.y(t);
 		position.z += explodingFactor_*cameraExplodingPrm.z(t);
 	}
-	if(restricted())
-		position.z = clamp(position.z, CAMERA_MIN_HEIGHT, CAMERA_MAX_HEIGHT);
-	else
-		position.z = clamp(position.z, coordinate().height(), 10000);
+    
+    position.z = clamp(position.z, restricted() ? CAMERA_MIN_HEIGHT : coordinate().height(), CAMERA_MAX_HEIGHT);
 
 	matrix_ = MatXf::ID;
 	matrix_.rot() = Mat3f(coordinate().theta(), X_AXIS)*Mat3f(XM_PI/2 - coordinate().psi(), Z_AXIS);
@@ -469,7 +463,8 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
         limitValue(cameraZoomForce, CAMERA_ZOOM_SPEED_DELTA * zoom_force_limit);
 		cameraZoomVelocity += cameraZoomForce*CAMERA_ZOOM_SPEED_MASS * zoom_factor;
 		coordinate().distance() += cameraZoomVelocity*delta_time;
-		
+
+#if 0
 		if(restricted()){
 			//if(!cameraMouseTrack){
 			//при зуме камера должна принимать макс. допустимый наклон
@@ -478,7 +473,8 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 				cameraThetaForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
 			//}
 		}
-		
+#endif
+        
 		//move
 		cameraPositionVelocity += cameraPositionForce*CAMERA_SCROLL_SPEED_MASS*move_factor;
 		
@@ -574,7 +570,7 @@ void terCameraType::SetCameraFollow(terUnitBase* unit, int transitionTime)
 void terCameraType::destroyLink()
 {
 	if(unit_follow && (!unit_follow->alive() 
-	  || (unit_follow->attr().ID == UNIT_ATTRIBUTE_SQUAD && safe_cast<terUnitSquad*>(unit_follow)->Empty()))){
+	  || (unit_follow->attr()->ID == UNIT_ATTRIBUTE_SQUAD && safe_cast<terUnitSquad*>(unit_follow)->Empty()))){
 		SetCameraFollow(0);
 	}
 }

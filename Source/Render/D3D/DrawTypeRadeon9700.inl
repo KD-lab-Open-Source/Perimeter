@@ -146,7 +146,7 @@ void DrawTypeRadeon9700::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
 	}
 
 	SetMaterial(Data->MaterialAnimPhase,Data->Tex[0],pShadowMap,Data);
-	gb_RenderDevice3D->SetTexture(Data->Tex[1],Data->MaterialAnimPhase,3);
+	gb_RenderDevice3D->SetTexture(3,Data->Tex[1],Data->MaterialAnimPhase);
 	gb_RenderDevice3D->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	gb_RenderDevice3D->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 	gb_RenderDevice3D->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -236,10 +236,10 @@ void DrawTypeRadeon9700::SetMaterial(float Phase,cTexture *Texture0,cTexture *Te
 
 	if(Data->mat&MAT_BUMP)
 	{
-		gb_RenderDevice3D->SetPixelShaderConstant(20,(D3DXVECTOR4*)&Data->Ambient);
-		gb_RenderDevice3D->SetPixelShaderConstant(21,(D3DXVECTOR4*)&Data->Diffuse);
-		gb_RenderDevice3D->SetPixelShaderConstant(22,(D3DXVECTOR4*)&Data->Specular);
-        D3DXVECTOR4 power = D3DXVECTOR4(0,0,0,Data->Power);
+		gb_RenderDevice3D->SetPixelShaderConstant(20, reinterpret_cast<const Vect4f*>(&Data->Ambient));
+		gb_RenderDevice3D->SetPixelShaderConstant(21, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
+		gb_RenderDevice3D->SetPixelShaderConstant(22, reinterpret_cast<const Vect4f*>(&Data->Specular));
+        Vect4f power = Vect4f(0,0,0,Data->Power);
 		gb_RenderDevice3D->SetPixelShaderConstant(23,&power);
 	}
 
@@ -299,8 +299,8 @@ void DrawTypeRadeon9700::SetMaterialTilemap(cTileMap *TileMap)
 	gb_RenderDevice3D->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	gb_RenderDevice3D->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	gb_RenderDevice3D->SetSamplerState(3, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	gb_RenderDevice3D->SetTexture(pShadowMap,0,1);
-	gb_RenderDevice3D->SetTexture(pLightMap,0,3);
+	gb_RenderDevice3D->SetTexture(1,pShadowMap,0);
+	gb_RenderDevice3D->SetTexture(3,pLightMap,0);
 
 	TerraInterface* terra=TileMap->GetTerra();
 	pVSTileMapScene->SetWorldSize(Vect2f(terra->SizeX(),terra->SizeY()));
@@ -314,6 +314,6 @@ void DrawTypeRadeon9700::SetMaterialTilemapShadow()
 
 void DrawTypeRadeon9700::SetTileColor(sColor4f c)
 {
-	D3DXVECTOR4 cf(c.r,c.g,c.b,c.a);
+	Vect4f cf(c.r,c.g,c.b,c.a);
 	gb_RenderDevice3D->SetPixelShaderConstant(8,&cf);
 }

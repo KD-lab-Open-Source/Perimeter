@@ -2,43 +2,18 @@
 #define __UMATH_H__
 
 #include "xmath.h"
+#include <SDL_endian.h>
 
 #define ABS(a)										((a) >= 0 ? (a) :-(a))
 
-struct sVect3c
-{
-	char x,y,z;
-
-	sVect3c()										{ }
-	sVect3c(int _x,int _y,int _z)						{ x=_x; y=_y; z=_z; }
-	sVect3c(sVect3c &v)								{ x=v.x; y=v.y; z=v.z; }
-	sVect3c(Vect3f& v)								{ x=xm::round(v.x); y=xm::round(v.y); z=xm::round(v.z); }
-
-	inline int norm()								{ return xm::round(xm::sqrt((float) (x * x + y * y + z * z))); }
-	inline int norm2()								{ return x*x+y*y+z*z; }
-	inline int distance(const sVect3c &v)			{ int dx=v.x-x,dy=v.y-y,dz=v.z-z; return xm::round(
-                xm::sqrt((float) (dx * dx + dy * dy + dz * dz))); }
-	inline void normalize(int norma)					{ float f=(float)norma/(float) xm::sqrt(
-                (float) (x * x + y * y + z * z)); x=xm::round(x * f); y=xm::round(y * f); z=xm::round(z * f); }
-	inline void set(int x,int y,int z)				{ sVect3c::x=x; sVect3c::y=y; sVect3c::z=z; }
-	inline sVect3c& operator += (const sVect3c& v)	{ x+=v.x; y+=v.y; z+=v.z; return *this; }
-	inline sVect3c& operator -= (const sVect3c& v)	{ x-=v.x; y-=v.y; z-=v.z; return *this; }
-	inline sVect3c& operator *= (const sVect3c& v)	{ x*=v.x; y*=v.y; z*=v.z; return *this; }
-	inline sVect3c& operator *= (float f)			{ x=xm::round(x*f); y=xm::round(y*f); z=xm::round(z*f); return *this; }
-	inline sVect3c& operator /= (float f)			{ if(f!=0.f) f=1/f; else f=0.0001f; x=xm::round(x*f); y=xm::round(y*f); z=xm::round(z*f); return *this; }
-	inline sVect3c& operator = (const sVect3c& v)	{ x=v.x; y=v.y; z=v.z; return *this; }
-	inline sVect3c operator - (const sVect3c &v)	{ sVect3c tmp(x-v.x,y-v.y,z-v.z); return tmp; }
-	inline sVect3c operator + (const sVect3c &v)	{ sVect3c tmp(x+v.x,y+v.y,z+v.z); return tmp; }
-	inline sVect3c operator * (const sVect3c &v)	{ sVect3c tmp(x*v.x,y*v.y,z*v.z); return tmp; }
-	inline sVect3c operator * (float f)				{ sVect3c tmp(xm::round(x*f),xm::round(y*f),xm::round(z*f)); return tmp; }
-	inline sVect3c operator / (float f)				{ if(f!=0.f) f=1/f; else f=0.0001f; sVect3c tmp(xm::round(x*f),xm::round(y*f),xm::round(z*f)); return tmp; }
-	inline int operator == (const sVect3c& v)		{ return ((x==v.x)&&(y==v.y)&&(z==v.z)); }
-	inline operator float* () const					{ return (float*)this; }
-};
-
 struct sColor4f
 {
-	float r,g,b,a;
+    union {
+        struct {
+            float r, g, b, a;
+        };
+        Vect4f v;
+    };
 	
 	sColor4f() 											{ }
 	sColor4f(float r_,float g_,float b_,float a_=1.f)		{ r = r_; g = g_; b = b_; a = a_; }
@@ -69,9 +44,17 @@ struct sColor4f
 	inline bool operator != (const sColor4f &color) const { return !(*this == color); }
 };
 
+#define CONVERT_COLOR_TO_ARGB(c) (SDL_SwapLE32(c))
+#define CONVERT_COLOR_TO_ABGR(c) ((SDL_SwapBE32(c) & 0xFFFFFF00)  >> 8 | (SDL_SwapLE32(c) & 0xFF000000))
+
 struct sColor4c
 {
-	unsigned char b,g,r,a;
+    union {
+        struct {
+            uint8_t b, g, r, a;
+        };
+        uint32_t v;
+    };
 	
 	sColor4c()										{ }
 	sColor4c(const sColor4f& color)					{ set(color.GetR(),color.GetG(),color.GetB(),color.GetA()); }
@@ -89,12 +72,15 @@ struct sColor4c
 	inline sColor4c operator - (sColor4c &p)		{ return sColor4c(r-p.r,g-p.g,b-p.b,a-p.a); }
 	inline sColor4c operator * (int f) const 		{ return sColor4c(r*f,g*f,b*f,a*f); }
 	inline sColor4c operator / (int f) const 		{ if(f!=0) f=(1<<16)/f; else f=1<<16; return sColor4c((r*f)>>16,(g*f)>>16,(b*f)>>16,(a*f)>>16); }
-	inline uint32_t  RGBA() const 						{ return ((const uint32_t*)this)[0]; }
-	inline uint32_t& RGBA()							{ return ((uint32_t*)this)[0]; }
 	unsigned char& operator[](int i)				{ return ((unsigned char*)this)[i];}
+    inline uint32_t ARGB() const                    { return CONVERT_COLOR_TO_ARGB(v); }
+    inline void ARGB(uint32_t argb)                 { v = SDL_SwapLE32(argb); }
+    inline uint32_t ABGR() const                    { return CONVERT_COLOR_TO_ABGR(v); }
 
 	inline void interpolate(const sColor4c &u,const sColor4c &v,float f) { r=xm::round(u.r+(v.r-u.r)*f); g=xm::round(u.g+(v.g-u.g)*f); b=xm::round(u.b+(v.b-u.b)*f); a=xm::round(u.a+(v.a-u.a)*f); }
 };
+
+std::string toColorCode(const sColor4f& color);
 
 sColor4f::sColor4f(const sColor4c& color) 
 { 
@@ -208,10 +194,6 @@ struct sPlane4f
 							Vect3f(	-2*D*A,		-2*D*B,		-2*D*C));
 		out=in*RefSurface;
 	}
-	inline void GetReflectionVector(const Vect3f& in,Vect3f& out)
-	{ // out - поиск отражение вектора от плоскости
-		out=in-2*dot(GetNormal(),in)*GetNormal();
-	}
 };
 
 inline float GetDistFromPointToLine(Vect3f& Point,Vect3f& aLine,Vect3f& bLine)
@@ -219,14 +201,6 @@ inline float GetDistFromPointToLine(Vect3f& Point,Vect3f& aLine,Vect3f& bLine)
 	Vect3f v=bLine-aLine, n; 
 	n.cross( v, Point-aLine );
 	return xm::sqrt(n.norm2() / v.norm2());
-}
-inline float GetDistRaySphere(Vect3f& PointRay,Vect3f& DirectionRay,Vect3f& PosSphere,float Radius)
-{
-	Vect3f vRaySphere=PosSphere-PointRay, n;
-	n.cross( DirectionRay, vRaySphere );
-	float d = xm::sqrt(n.norm2() / DirectionRay.norm2());
-	if( d > Radius || vRaySphere.dot(DirectionRay)<0 ) return -1;
-	return d;
 }
 
 inline int ReturnBit(int a)
@@ -264,6 +238,16 @@ inline float CubicInterpolate(float v0,float v1,float v2,float v3,float x) // v0
 	return ((p*x+q)*x+r)*x+s;
 }
 
+void Vect3fNormalize(Vect3f* out, const Vect3f* pv);
+void Vect3fTransformNormal(Vect3f* out, const Vect3f* pv, const Mat4f* pm);
+Mat4f* Mat4fInverse(Mat4f* out, float* determinant, const Mat4f* mp);
+Mat4f* Mat4fLookAtLH(Mat4f *out, const Vect3f *eye, const Vect3f *at, const Vect3f *up);
+void Mat4fConvert(const Mat4f& m, const Vect3f& in,Vect3f& pv,Vect3f& pe);
+
+inline void Mat4fSetTransposedMatXf(Mat4f& mat4, const MatXf& matX) {
+    mat4.set(matX).xpose();
+}
+
 void MatrixInterpolate(MatXf& out,const MatXf& a,const MatXf& b,float f);
 
 float HermitSpline(float t,float p0,float p1,float p2,float p3);
@@ -273,15 +257,9 @@ Vect3f HermitSplineDerivation(float t,const Vect3f& p0,const Vect3f& p1,const Ve
 float HermitSplineDerivation2(float t,float p0,float p1,float p2,float p3);
 Vect3f HermitSplineDerivation2(float t,const Vect3f& p0,const Vect3f& p1,const Vect3f& p2,const Vect3f& p3);
 
-float TriangleArea(float x1,float y1,float x2,float y2,float x3,float y3);
 void CheckMatrix(const MatXf& m);
 
-inline float TriangleArea(const Vect3f v1,const Vect3f v2,const Vect3f v3)
-{
-	Vect3f n;
-	n.cross(v2-v1,v3-v1);
-	return 0.5f*n.norm();
-}
+void SetOrthographic(Mat4f& out, int width, int height, int near, int far);
 
 inline MatXf GetMatrix(const Vect3f& Pos,const Vect3f& Angle)
 {
@@ -317,16 +295,6 @@ inline void Translate(MatXf &Matrix,const Vect3f& v)
 }
 inline void Rotate(MatXf &Matrix,const QuatF &q)
 {
-/*
-	float xx2=q.x()*q.x()*2.f, yy2=q.y()*q.y()*2.f, zz2=q.z()*q.z()*2.f;
-	float wx2=q.s()*q.x()*2.f, wy2=q.s()*q.y()*2.f, wz2=q.s()*q.z()*2.f;
-	float xy2=q.x()*q.y()*2.f, xz2=q.x()*q.z()*2.f, yz2=q.y()*q.z()*2.f;
-	MatXf r(Mat3f(
-		Vect3f(	1.0f-yy2-zz2,	xy2-wz2,		xz2+wy2),
-		Vect3f(	xy2+wz2,		1.0f-xx2-zz2,	yz2-wx2),
-		Vect3f(	xz2-wy2,		yz2+wx2,		1.0f-xx2-yy2)),
-		Vect3f(	0,				0,				0)); 
-*/
 	MatXf r(Mat3f(q),Vect3f(0,0,0)); 
 	Matrix*=r;
 }
@@ -354,7 +322,7 @@ inline void GetScale(const MatXf &Matrix,Vect3f& v)
 	Vect3f zcol=Matrix.rot().zcol();
 	v.set(xcol.norm(),ycol.norm(),zcol.norm());
 }
-inline Vect3f GetMin(const Vect3f& u,Vect3f& v)
+inline Vect3f GetMin(const Vect3f& u,const Vect3f& v)
 {
 	Vect3f tmp=v;
 	if(u.x<tmp.x) tmp.x=u.x;
@@ -362,21 +330,13 @@ inline Vect3f GetMin(const Vect3f& u,Vect3f& v)
 	if(u.z<tmp.z) tmp.z=u.z;
 	return tmp;
 }
-inline Vect3f GetMax(const Vect3f& u,Vect3f& v)
+inline Vect3f GetMax(const Vect3f& u,const Vect3f& v)
 {
 	Vect3f tmp=v;
 	if(u.x>tmp.x) tmp.x=u.x;
 	if(u.y>tmp.y) tmp.y=u.y;
 	if(u.z>tmp.z) tmp.z=u.z;
 	return tmp;
-}
-inline void GetRotate(const MatXf &Matrix,QuatF &q)
-{
-	q.set(Matrix.rot());
-}
-inline void GetTranslate(const MatXf &Matrix,Vect3f& v)
-{
-	v=Matrix.trans();
 }
 
 inline void SetMatrix(MatXf &Matrix,const Vect3f& vPos, const Vect3f& vTarget)
@@ -421,30 +381,7 @@ inline void RightToLeft(Vect2f &v)
 {
 	v.set(XR2L(v.x),YR2L(v.y));
 }
-inline void RightToLeft(QuatF &q)
-{
-	q.set(XR2L(YR2L(ZR2L(q.s()))),XR2L(q.x()),YR2L(q.y()),ZR2L(q.z()));
-}
-inline void BuildMatrixProjectByPlane(MatXf &m,const sPlane4f &p,const Vect3f& v)
-{ // построение матрицы проецирования объекта на плоскость по направлению 
-	float dot=p.A*v.x+p.B*v.y+p.C*v.z;
-	m.rot()[0][0]=dot-v.x*p.A;
-	m.rot()[0][1]=0.f-v.x*p.B;
-	m.rot()[0][2]=0.f-v.x*p.C;
-	m.trans().x  =0.f-v.x*p.D;
 
-	m.rot()[1][0]=0.f-v.y*p.A;
-	m.rot()[1][1]=dot-v.y*p.B;
-	m.rot()[1][2]=0.f-v.y*p.C;
-	m.trans().y  =0.f-v.y*p.D;
-	
-	m.rot()[2][0]=0.f-v.z*p.A;
-	m.rot()[2][1]=0.f-v.z*p.B;
-	m.rot()[2][2]=dot-v.z*p.C;
-	m.trans().z  =0.f-v.z*p.D;
-}
-const float _0_47 = 0.47f;
-const float _1_47 = 1.47f;
 inline float FastInvSqrt(float x)
 { // return 1/xm::sqrt(x)
     const float x2 = x * 0.5F;
@@ -494,171 +431,5 @@ inline void FastNormalize(Vect3f& v)
 { 
 	v*=FastInvSqrt(v.norm2());
 }
-
-inline float CrossLine(float x1,float y1,float m1,float n1,
-					   float x2,float y2,float m2,float n2)
-{
-	float f = n2*m1-n1*m2;
-	if(xm::abs(f) < 0.0001f ) return -1e30f; // parallel
-	return (m2*(y1-y2)-n2*(x1-x2))/f;
-}
-
-#ifndef PERIMETER_D3D9
-class CMatrix {
-    float _11, _12, _13, _14,
-          _21, _22, _23, _24,
-          _31, _32, _33, _34,
-          _41, _42, _43, _44;
-#else //PERIMETER_D3D9
-#ifdef PERIMETER_EXODUS
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-// D3DXMATRIX = CMatrix -> D3DMATRIX
-#include <d3d9types.h>
-class CMatrix : public D3DMATRIX {
-#else //PERIMETER_EXODUS
-// CMatrix -> D3DXMATRIX -> D3DMATRIX 
-#include <d3dx9math.h>
-class CMatrix : public D3DXMATRIX {
-#endif //PERIMETER_EXODUS
-#endif //PERIMETER_D3D9
-public:
-    operator void*() { return reinterpret_cast<void*>(this); }
-    //operator D3DXMATRIX*() { return reinterpret_cast<D3DXMATRIX*>(this); }
-
-	CMatrix()													{}
-	CMatrix(float m11,float m12,float m13,float m14,
-			float m21,float m22,float m23,float m24,
-			float m31,float m32,float m33,float m34,
-			float m41,float m42,float m43,float m44)		{ _11=m11,_12=m12,_13=m13,_14=m14; _21=m21,_22=m22,_23=m23,_24=m24; _31=m31,_32=m32,_33=m33,_34=m34; _41=m41,_42=m42,_43=m43,_44=m44; }
-	inline void set(	
-			float m11,float m12,float m13,float m14,
-			float m21,float m22,float m23,float m24,
-			float m31,float m32,float m33,float m34,
-			float m41,float m42,float m43,float m44)		{ _11=m11,_12=m12,_13=m13,_14=m14; _21=m21,_22=m22,_23=m23,_24=m24; _31=m31,_32=m32,_33=m33,_34=m34; _41=m41,_42=m42,_43=m43,_44=m44; }
-	inline CMatrix& operator *= (float f)
-	{
-		_11*=f, _12*=f, _13*=f, _14*=f;
-		_21*=f, _22*=f, _23*=f, _24*=f; 
-		_31*=f, _32*=f, _33*=f, _34*=f;
-		_41*=f, _42*=f, _43*=f, _44*=f;
-		return *this;
-	}
-	inline CMatrix operator * (const CMatrix &m) const
-	{
-		return CMatrix( 
-			_11*m._11+_12*m._21+_13*m._31+_14*m._41, _11*m._12+_12*m._22+_13*m._32+_14*m._42, _11*m._13+_12*m._23+_13*m._33+_14*m._43, _11*m._14+_12*m._24+_13*m._34+_14*m._44,
-			_21*m._11+_22*m._21+_23*m._31+_24*m._41, _21*m._12+_22*m._22+_23*m._32+_24*m._42, _21*m._13+_22*m._23+_23*m._33+_24*m._43, _21*m._14+_22*m._24+_23*m._34+_24*m._44,
-			_31*m._11+_32*m._21+_33*m._31+_34*m._41, _31*m._12+_32*m._22+_33*m._32+_34*m._42, _31*m._13+_32*m._23+_33*m._33+_34*m._43, _31*m._14+_32*m._24+_33*m._34+_34*m._44,
-			_41*m._11+_42*m._21+_43*m._31+_44*m._41, _41*m._12+_42*m._22+_43*m._32+_44*m._42, _41*m._13+_42*m._23+_43*m._33+_44*m._43, _41*m._14+_42*m._24+_43*m._34+_44*m._44);
-	}
-	inline void postmult(const CMatrix &m)
-	{
-		set(_11*m._11+_12*m._21+_13*m._31+_14*m._41, _11*m._12+_12*m._22+_13*m._32+_14*m._42, _11*m._13+_12*m._23+_13*m._33+_14*m._43, _11*m._14+_12*m._24+_13*m._34+_14*m._44,
-			_21*m._11+_22*m._21+_23*m._31+_24*m._41, _21*m._12+_22*m._22+_23*m._32+_24*m._42, _21*m._13+_22*m._23+_23*m._33+_24*m._43, _21*m._14+_22*m._24+_23*m._34+_24*m._44,
-			_31*m._11+_32*m._21+_33*m._31+_34*m._41, _31*m._12+_32*m._22+_33*m._32+_34*m._42, _31*m._13+_32*m._23+_33*m._33+_34*m._43, _31*m._14+_32*m._24+_33*m._34+_34*m._44,
-			_41*m._11+_42*m._21+_43*m._31+_44*m._41, _41*m._12+_42*m._22+_43*m._32+_44*m._42, _41*m._13+_42*m._23+_43*m._33+_44*m._43, _41*m._14+_42*m._24+_43*m._34+_44*m._44);
-	}
-	inline void premult(const CMatrix &m)
-	{
-		set(m._11*_11+m._12*_21+m._13*_31+m._14*_41, m._11*_12+m._12*_22+m._13*_32+m._14*_42, m._11*_13+m._12*_23+m._13*_33+m._14*_43, m._11*_14+m._12*_24+m._13*_34+m._14*_44,
-			m._21*_11+m._22*_21+m._23*_31+m._24*_41, m._21*_12+m._22*_22+m._23*_32+m._24*_42, m._21*_13+m._22*_23+m._23*_33+m._24*_43, m._21*_14+m._22*_24+m._23*_34+m._24*_44,
-			m._31*_11+m._32*_21+m._33*_31+m._34*_41, m._31*_12+m._32*_22+m._33*_32+m._34*_42, m._31*_13+m._32*_23+m._33*_33+m._34*_43, m._31*_14+m._32*_24+m._33*_34+m._34*_44,
-			m._41*_11+m._42*_21+m._43*_31+m._44*_41, m._41*_12+m._42*_22+m._43*_32+m._44*_42, m._41*_13+m._42*_23+m._43*_33+m._44*_43, m._41*_14+m._42*_24+m._43*_34+m._44*_44);
-	}
-	inline CMatrix& operator *=(const CMatrix &m)
-	{
-		postmult(m);
-		return *this;
-	}
-	inline void identity()
-	{
-		_11=1, _12=0, _13=0; _14=0;
-		_21=0, _22=1, _23=0; _24=0;
-		_31=0, _32=0, _33=1; _34=0;
-		_41=0, _42=0, _43=0; _44=1;
-	}
-	inline void invert(const CMatrix &m)
-	{
-		_11=m._11, _12=m._21, _13=m._31; _14=m._14;
-		_21=m._12, _22=m._22, _23=m._32; _24=m._24;
-		_31=m._13, _32=m._23, _33=m._33; _34=m._34;
-		_41=-(_11*m._41+_21*m._42+_31*m._43);
-		_42=-(_12*m._41+_22*m._42+_32*m._43);
-		_43=-(_13*m._41+_23*m._42+_33*m._43);
-		_44=1;
-	}
-	inline void transpose(const CMatrix &m)
-	{
-		_11=m._11, _12=m._21, _13=m._31; _14=m._41;
-		_21=m._12, _22=m._22, _23=m._32; _24=m._42;
-		_31=m._13, _32=m._23, _33=m._33; _34=m._43;
-		_41=m._14, _42=m._24, _43=m._34; _44=m._44;
-	}
-	inline void xformPoint(const Vect3f in,Vect3f& out) const
-	{
-		out.x=_11*in.x+_21*in.y+_31*in.z+_41;
-		out.y=_12*in.x+_22*in.y+_32*in.z+_42;
-		out.z=_13*in.x+_23*in.y+_33*in.z+_43;
-	}
-	inline void xformVect(const Vect3f in,Vect3f& out) const
-	{
-		out.x=_11*in.x+_21*in.y+_31*in.z;
-		out.y=_12*in.x+_22*in.y+_32*in.z;
-		out.z=_13*in.x+_23*in.y+_33*in.z;
-	}
-	inline void invXformPoint(const Vect3f in,Vect3f& out) const
-	{
-		out.x=_11*(in.x-_41)+_12*(in.y-_42)+_13*(in.z-_43);
-		out.y=_21*(in.x-_41)+_22*(in.y-_42)+_23*(in.z-_43);
-		out.z=_31*(in.x-_41)+_32*(in.y-_42)+_33*(in.z-_43);
-	}
-	inline void invXformVect(const Vect3f in,Vect3f& out) const
-	{
-		out.x=_11*in.x+_12*in.y+_13*in.z;
-		out.y=_21*in.x+_22*in.y+_23*in.z;
-		out.z=_31*in.x+_32*in.y+_33*in.z;
-	}
-	inline void Convert(const Vect3f& in,Vect3f& pv,Vect3f& pe) const
-	{
-		pv.x = _11*in.x+_21*in.y+_31*in.z+_41;
-		pv.y = _12*in.x+_22*in.y+_32*in.z+_42;
-		pv.z = _13*in.x+_23*in.y+_33*in.z+_43;
-		float d=_14*in.x+_24*in.y+_34*in.z+_44;
-		if(d==0) d=1e30f; else d=1/d;
-		pe.x=pv.x*d;
-		pe.y=pv.y*d;
-		pe.z=pv.z*d;
-	}
-	inline void Convert(const Vect3f& in,Vect3f& out) const
-	{
-		out.x = _11*in.x+_21*in.y+_31*in.z+_41;
-		out.y = _12*in.x+_22*in.y+_32*in.z+_42;
-		out.z = _13*in.x+_23*in.y+_33*in.z+_43;
-		float d=_14*in.x+_24*in.y+_34*in.z+_44;
-		if(d==0) d=1e30f; else d=1/d;
-		out.x=out.x*d;
-		out.y=out.y*d;
-		out.z=out.z*d;
-	}
-	inline void Convert(const Vect3f& in,Vect4f &out) const
-	{
-		out.x=_11*in.x+_21*in.y+_31*in.z+_41;
-		out.y=_12*in.x+_22*in.y+_32*in.z+_42;
-		out.z=_13*in.x+_23*in.y+_33*in.z+_43;
-		out.w=_14*in.x+_24*in.y+_34*in.z+_44;
-		if(out.w==0) out.w=1e-30f;
-		float div=1/out.w;
-		out.x=out.x*div;
-		out.y=out.y*div;
-		out.z=out.z*div;
-		out.w=div;
-	}
-	inline Vect3f&  trans()							{ return *(Vect3f*)&_41; }
-	inline Vect3f&  xrow()							{ return *(Vect3f*)&_11; }
-	inline Vect3f&  yrow()							{ return *(Vect3f*)&_21; }
-	inline Vect3f&  zrow()							{ return *(Vect3f*)&_31; }
-	inline Vect4f&  row(int n)						{ return ((Vect4f*)this)[n]; }
-};
 
 #endif // __UMATH_H__

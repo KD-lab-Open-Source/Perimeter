@@ -260,7 +260,8 @@ void convertT(Archive& ar, T& t) {}
 #define REGISTER_CLASS_CONTAINER(baseClass, derivedClass, classNameAlt)
 #endif
 
-#define REGISTER_CLASS(baseClass, derivedClass, classNameAlt)  \
+#define REGISTER_CLASS(baseClass, derivedClass, classNameAlt) \
+    SERIALIZATION_TYPE_NAME_IMPL(derivedClass) \
 	REGISTER_CLASS_EDIT(baseClass, derivedClass, classNameAlt) \
 	REGISTER_CLASS_CONTAINER(baseClass, derivedClass, classNameAlt) \
 	REGISTER_CLASS_XPRM(baseClass, derivedClass, classNameAlt) \

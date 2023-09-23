@@ -9,6 +9,8 @@
 #include "CameraManager.h"
 #include "ExternalShow.h"
 #include "../HT/ht.h"
+#include "StdAfxRD.h"
+#include "DrawBuffer.h"
 
 #define ZFIX 2.0f
 
@@ -19,12 +21,16 @@
 #define GAME_SHELL_SHOW_REGION_U_STEP		0.01f
 #define GAME_SHELL_SHOW_REGION_U_SPEED		0.5f
 
+#define GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE 16
+
 float terExternalEnergyTextureStart = 0;
 float terExternalEnergyTextureEnd = GAME_SHELL_SHOW_REGION_U_STEP;
 //--------------------------------------------------
 void terExternalQuant()
 {
-	gameShell->BuildingInstaller.ShowCircle();
+    if (gameShell->BuildingInstallerInited()) {
+        gameShell->BuildingInstaller->ShowCircle();
+    }
 	
 
 	terExternalEnergyTextureStart = xm::fmod(terExternalEnergyTextureStart + (float)scale_time.delta()*0.001f*GAME_SHELL_SHOW_REGION_U_SPEED + 1.0f,1.0f);
@@ -184,6 +190,9 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 {
 	sColor4c diffuse(circleColor.color);
 	float width = circleColor.width;
+    indices_t* ib = nullptr;
+    sVertexXYZDT1* vb = nullptr;
+    
 	if (circleColor.dotted != 3) {
 
 		Vect2f tp,dn;
@@ -215,15 +224,13 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		bool selection = (circleColor.dotted == 4);
 
-		DrawStrip strip;
-		strip.Begin();
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+        
 
 		float v_pos = 0;
-		sVertexXYZDT1 p1,p2;
-		p1.diffuse = diffuse;
-		p1.v1() = selection ? terExternalEnergyTextureEnd : 1.0f;
-		p2.diffuse = diffuse;
-		p2.v1() = selection ? terExternalEnergyTextureStart : 0.05f;
+
+        uint32_t diffusev = gb_RenderDevice->ConvertColor(diffuse);
 
 		for(int i = 0;i <= num_da;i++)
 		{
@@ -237,21 +244,28 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			dn.y *= width;
 
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
+            
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
 
-			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
-			p1.u1() = selection ? v_pos : u;
+            vb[0].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+            vb[0].u1() = selection ? v_pos : u;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 		
-			p2.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
-			p2.u1() = selection ? v_pos : p1.u1();
+			vb[1].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+            vb[1].u1() = selection ? v_pos : vb[0].u1();
+            
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
+            
+            vb[0].diffuse = vb[1].diffuse = diffusev;
+            vb[0].v1() = selection ? terExternalEnergyTextureEnd : 1.0f;
+            vb[1].v1() = selection ? terExternalEnergyTextureStart : 0.05f;
 
-			strip.Set(p1,p2);
 			a += da;
 			u+=du;
 		}
-		strip.End();
 
+        db->AutoUnlock();
+        db->EndTriangleStrip();
 	} else {
 		int num = xm::round(2.0f * r / region_show_spline_space);
 		if (num < 2) {
@@ -260,71 +274,79 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		float v_pos = 0;
 
-		sVertexXYZDT1 p1,p2;
+		uint32_t diffusev = gb_RenderDevice->ConvertColor(diffuse);
 
-		p1.diffuse = diffuse;
-		p1.v1() = 1.0f;
-		p2.diffuse = diffuse;
-		p2.v1() = 0.05f;
-
-		DrawStrip vertStrip;
-		vertStrip.Begin();
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
 
 		float x1 = pos.x - width / 2.0f;
 		float x2 = x1 + width;
 		float y = pos.y - r;
 		for (int i = 0; i <= num; i++) {
-			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(pos.x)), vMap.YCYCL(xm::round(y))) >> VX_FRACTION);
-			p1.pos.set(x1, y, z0);
-			p1.u1() = v_pos;
-			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
-		
-			p2.pos.set(x2, y, z0);
-			p2.u1() = v_pos;
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+
+            float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(pos.x)), vMap.YCYCL(xm::round(y))) >> VX_FRACTION);
+            
+            vb[0].pos.set(x1, y, z0);
+            vb[0].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			vertStrip.Set(p1,p2);
+            vb[1].pos.set(x2, y, z0);
+            vb[1].u1() = v_pos;
+			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
+
+
+            vb[0].diffuse = vb[1].diffuse = diffusev;
+            vb[0].v1() = 1.0f;
+            vb[1].v1() = 0.05f;
+
 			y += region_show_spline_space;
 		}
 
-		vertStrip.End();
-
-		DrawStrip horizStrip;
-		horizStrip.Begin();
+        db->AutoUnlock();
+        db->EndTriangleStrip();
+        ib = nullptr;
+        vb = nullptr;
 
 		float y1 = pos.y - width / 2.0f;
 		float y2 = y1 + width;
 		float x = pos.x - r;
 		for (int i = 0; i <= num; i++) {
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(x)), vMap.YCYCL(xm::round(pos.y))) >> VX_FRACTION);
-			p1.pos.set(x, y1, z0);
-			p1.u1() = v_pos;
+			vb[0].pos.set(x, y1, z0);
+			vb[0].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 		
-			p2.pos.set(x, y2, z0);
-			p2.u1() = v_pos;
+			vb[1].pos.set(x, y2, z0);
+			vb[1].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			horizStrip.Set(p1,p2);
+
+            vb[0].diffuse = vb[1].diffuse = diffusev;
+            vb[0].v1() = 1.0f;
+            vb[1].v1() = 0.05f;
+
 			x += region_show_spline_space;
 		}
 
-		horizStrip.End();
+        db->AutoUnlock();
+        db->EndTriangleStrip();
 	}
 }
 
 
-void terExternalRegionShowUniform(Region* region,sColor4c color)
+void terExternalRegionShowUniform(Region* region,uint32_t color)
 {
 	float dt;
 	float t;
 	float t_max;
 	Vect2f tp,dn,pp1,pp2;
 	float z1,z2,z;
-	
-	if(!(region->spline().empty())){
-		cQuadBuffer<sVertexXYZDT1>* quad=terRenderDevice->GetQuadBufferXYZDT1();
-		quad->BeginDraw();
+
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+	if (!region->spline().empty()) {
 
 		dt = region->spline().suggest_dt(region_show_spline_space);
 
@@ -392,6 +414,9 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		bool first=true;
 		umap=0;
 		i=0;
+
+        indices_t* indices = nullptr;
+        sVertexXYZDT1* vertex_data = nullptr;
 		do{
 			tp = region->spline()(t);
 			dn = region->spline().inward_normal(t)*0.3f;
@@ -405,7 +430,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 
 			if(!first)
 			{
-				sVertexXYZDT1 *vertex_data=quad->Get();
+                db->AutoLockQuad(10, 1, vertex_data, indices);
 				vertex_data[0].pos=o1;
 				vertex_data[0].diffuse=color;
 				vertex_data[0].u1() = umap_old;
@@ -444,7 +469,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		}while((t += dt) < t_max);
 
 		{
-			sVertexXYZDT1 *vertex_data=quad->Get();
+            db->AutoLockQuad(10, 1, vertex_data, indices);
 			vertex_data[0].pos=o1;
 			vertex_data[0].diffuse=color;
 			vertex_data[0].u1() = umap_old;
@@ -466,7 +491,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 			vertex_data[3].v1() = 0.0f;
 		}
 
-		quad->EndDraw();
+        db->AutoUnlock();
 	}
 
 	Region::iterator i;
@@ -474,43 +499,46 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 		terExternalRegionShowUniform(*i,color);
 }
 
-void terExternalRegionShowLine(Region* region,sColor4c diffuse)
+void terExternalRegionShowLine(Region* region,uint32_t diffuse)
 {
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp,dn;
-		DrawStrip strip;
-		strip.Begin();
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
 
-		sVertexXYZDT1 p0,p1;
-		p0.diffuse = diffuse;
-		p0.u1() = terExternalEnergyTextureEnd;
-		p1.diffuse = diffuse;
-		p1.u1() = terExternalEnergyTextureStart;
+        indices_t* ib = nullptr;
+		sVertexXYZDT1* vb = nullptr;
 
 		do{
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+            
 			tp = region->spline()(t);
 			dn = region->spline().inward_normal(t)*0.02f;
 
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 
-			p0.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
-			p0.v1() = v_pos;
+			vb[0].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+			vb[0].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
-			p1.v1() = v_pos;
+			vb[1].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+			vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			strip.Set(p0,p1);
-		}while((t += dt) < t_max);
+            vb[0].diffuse = diffuse;
+            vb[0].u1() = terExternalEnergyTextureEnd;
+            vb[1].diffuse = diffuse;
+            vb[1].u1() = terExternalEnergyTextureStart;
+		} while((t += dt) < t_max);
 
-		strip.End();
+        db->AutoUnlock();
+        db->EndTriangleStrip();
 	}
 
 	Region::iterator i;
@@ -518,24 +546,21 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 		terExternalRegionShowLine(*i,diffuse);
 }
 
-void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
+void terExternalRegionShowLineZeroplast(Region* region,uint32_t diffuse)
 {
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp,dn;
-		DrawStrip strip;
-		strip.Begin();
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
 
-		float v_pos = 0;
+        float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
 
-		sVertexXYZDT1 p0,p1;
-		p0.diffuse = diffuse;
-		p0.u1() = terExternalEnergyTextureEnd;
-		p1.diffuse = diffuse;
-		p1.u1() = terExternalEnergyTextureStart;
+        indices_t* ib = nullptr;
+		sVertexXYZDT1* vb = nullptr;
 
 		do{
 			tp = region->spline()(t);
@@ -546,18 +571,24 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 				z0=vMap.hZeroPlast;
 			z0+=ZFIX;
 
-			p0.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
-			p0.v1() = v_pos;
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+
+            vb[0].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+            vb[0].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
-			p1.v1() = v_pos;
+			vb[1].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+			vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			strip.Set(p0,p1);
-		}while((t += dt) < t_max);
+            vb[0].diffuse = diffuse;
+            vb[0].u1() = terExternalEnergyTextureEnd;
+            vb[1].diffuse = diffuse;
+            vb[1].u1() = terExternalEnergyTextureStart;
+        } while((t += dt) < t_max);
 
-		strip.End();
+        db->AutoUnlock();
+        db->EndTriangleStrip();
 	}
 
 	Region::iterator i;
@@ -565,47 +596,50 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 		terExternalRegionShowLineZeroplast(*i,diffuse);
 }
 
-void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
+void terExternalRegionShowLineZeroplastVertical(Region* region,uint32_t diffuse)
 {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp;
-		DrawStrip strip;
-		strip.Begin();
+        gb_RenderDevice->SetWorldMat4f(nullptr);
+        DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
 		float t = 0;
 		float t_max = region->spline().t_max() + dt/2;
 
-		sVertexXYZDT1 p0,p1;
-		p0.diffuse = diffuse;
-		p0.u1() = terExternalEnergyTextureEnd;
-		p1.diffuse = diffuse;
-		p1.u1() = terExternalEnergyTextureStart;
+        indices_t* ib = nullptr;
+        sVertexXYZDT1* vb = nullptr;
 		float zero=vMap.hZeroPlast;
 		float zero_fix=zero-ZFIX;
 
+        
 		do{
+            db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
+            
 			tp = region->spline()(t);
 
 			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
-			if(z0>zero)
-				z0=zero;
+			if(z0>zero) z0=zero;
 
-			p0.pos.set(tp.x,tp.y,zero_fix);
-			p0.v1() = v_pos;
+            vb[0].pos.set(tp.x,tp.y,zero_fix);
+            vb[0].v1() = v_pos; 
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			p1.pos.set(tp.x,tp.y,z0);
-			p1.v1() = v_pos;
+            vb[1].pos.set(tp.x,tp.y,z0);
+            vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			strip.Set(p0,p1);
-		}while((t += dt) < t_max);
+            vb[0].diffuse = diffuse;
+            vb[0].u1() = terExternalEnergyTextureEnd;
+            vb[1].diffuse = diffuse;
+            vb[1].u1() = terExternalEnergyTextureStart;
+        } while((t += dt) < t_max);
 
-		strip.End();
+        db->AutoUnlock();
+        db->EndTriangleStrip();
 	}
 
 	Region::iterator i;
@@ -617,20 +651,14 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 void terExternalRegionShowColumn(Column* column,sColor4c color)
 {//Для дебага
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
-	cQuadBuffer<sVertexXYZDT1>& quad=*terRenderDevice->GetQuadBufferXYZDT1();
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
 
-	quad.BeginDraw();
 	float z=vMap.hZeroPlast-ZFIX;
-
-	vector<CellLine>::iterator it_line;
-	FOR_EACH(*column,it_line)
-	{
-		CellLine& cell=*it_line;
-		list<Cell>::iterator it;
-		FOR_EACH(cell,it)
-		{
-			Cell& c=*it;
-			sVertexXYZDT1* p=quad.Get();
+    indices_t* i;
+    sVertexXYZDT1* p;
+	for (CellLine& cell : *column) {
+		for (Cell& c : cell) {
+            db->AutoLockQuad<sVertexXYZDT1>(50, 1, p, i);
 			p[0].pos.x=c.xl;
 			p[0].pos.y=c.y;
 			p[0].pos.z=z;
@@ -654,45 +682,28 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 			p[3].pos.z=z;
 			p[3].diffuse=color;
 			p[3].u1()=p[0].v1()=0;
+            break;
 		}
+        break;
 	}
-
-	quad.EndDraw();
+    db->AutoUnlock();
 }
 /*/
 
-inline void AddTriangle(cVertexBuffer<sVertexXYZD>& buf,sVertexXYZD*& v,sVertexXYZD p[3],int& primitive)
-{
-	v[0]=p[0];
-	v[1]=p[1];
-	v[2]=p[2];
-	v+=3;
-	primitive++;
-
-	if((primitive+3)*3>=buf.GetSize())
-	{
-		buf.Unlock(primitive*3);
-		buf.DrawPrimitive(PT_TRIANGLELIST,primitive);
-		primitive=0;
-		v=buf.Lock();
-	}
-}
-
-void terExternalRegionShowColumn(Column* column,sColor4c color)
-{
+void terExternalRegionShowColumn(Column* column,uint32_t color) {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
-	cVertexBuffer<sVertexXYZD>& buf=*terRenderDevice->GetBufferXYZD();
+
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
 
 	float z=vMap.hZeroPlast-ZFIX;
-	int primitive=0;
 
-	std::vector<CellLine>::iterator it_line;
-	sVertexXYZD* v=buf.Lock();
+    const size_t locked = 100;
+    const size_t v_len = sizeof(sVertexXYZDT1) * 3;
 
-	int profile_num=0;
-
-	FOR_EACH(*column,it_line)
-	{
+    sVertexXYZDT1* vp = nullptr;
+    indices_t* ip = nullptr;
+    std::vector<CellLine>::iterator it_line;
+	FOR_EACH(*column, it_line) {
 		CellLine* cell=&*it_line;
 		CellLine* next_cell=NULL;
 		CellLine* prev_cell=NULL;
@@ -721,108 +732,99 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 		if(prev_cell)
 			it_prev=prev_cell->begin();
 
-		FOR_EACH(*cell,it)
-		{
-			int i=0;
-			Cell& c=*it;
-			//Эмулируем triangle fan
-			sVertexXYZD p[3];
+		for (const Cell& c : *cell) {
+			//Emulate/Эмулируем triangle fan
+			sVertexXYZDT1 p[3];
+            p[0].u1()=0, p[0].v1()=0;
+            p[1].u1()=0, p[1].v1()=0;
+            p[2].u1()=0, p[2].v1()=0;
 			p[0].diffuse=p[1].diffuse=p[2].diffuse=color;
 
 			p[0].pos.set(c.xl,c.y,z);
 			p[2].pos.set(c.xl,c.y+1,z);
 
-			if(next_cell)
-			for(;it_next!=next_cell->end();it_next++)
-			{//Добавляем доп. точки из нижней линии.
-				Cell& cn=*it_next;
-				if(cn.xr<=c.xl)
-					continue;
-				if(cn.xl>=c.xr)
-					break;
-				xassert(c.y+1==cn.y);
+			if(next_cell) {
+                for (; it_next != next_cell->end(); it_next++) {
+                    //Добавляем доп. точки из нижней линии.
+                    //Add extra point from the bottom line
+                    Cell& cn = *it_next;
+                    if (cn.xr <= c.xl)
+                        continue;
+                    if (cn.xl >= c.xr)
+                        break;
+                    xassert(c.y + 1 == cn.y);
 
-				if(cn.xl>c.xl && cn.xl<c.xr)
-				{
-					p[1]=p[2];
-					p[2].pos.set(cn.xl,cn.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
+                    if (cn.xl > c.xl && cn.xl < c.xr) {
+                        p[1] = p[2];
+                        p[2].pos.set(cn.xl, cn.y, z);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
 
-				if(cn.xr>c.xl && cn.xr<c.xr)
-				{
-					p[1]=p[2];
-					p[2].pos.set(cn.xr,cn.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
-			}
+                    if (cn.xr > c.xl && cn.xr < c.xr) {
+                        p[1] = p[2];
+                        p[2].pos.set(cn.xr, cn.y, z);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
+                }
+            }
 
 			p[1]=p[2];
 			p[2].pos.set(c.xr,c.y+1,z);
-			AddTriangle(buf,v,p,primitive);
-			i++;
+            db->AutoLockTriangle(locked, 1, vp, ip);
+            memcpy(vp, p, v_len);
 
 			bool first=true;
-			if(prev_cell)
-			for(;it_prev!=prev_cell->end();it_prev++)
-			{//Добавляем доп. точки из верхней линии.
-				Cell& cn=*it_prev;
-				if(cn.xr<=c.xl)
-					continue;
-				if(cn.xl>=c.xr)
-					break;
-				xassert(c.y-1==cn.y);
+            if (prev_cell) {
+                for (; it_prev != prev_cell->end(); it_prev++) {
+                    //Добавляем доп. точки из верхней линии.
+                    //Add extra point from the top line
+                    Cell& cn = *it_prev;
+                    if (cn.xr <= c.xl)
+                        continue;
+                    if (cn.xl >= c.xr)
+                        break;
+                    xassert(c.y - 1 == cn.y);
 
-				if(cn.xl>c.xl && cn.xl<c.xr)
-				{
-					if(first)
-						first=false;
-					else
-						p[0]=p[1];
-					p[1].pos.set(cn.xl,c.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
+                    if (cn.xl > c.xl && cn.xl < c.xr) {
+                        if (first)
+                            first = false;
+                        else
+                            p[0] = p[1];
+                        p[1].pos.set(cn.xl, c.y, z);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
 
-				if(cn.xr>c.xl && cn.xr<c.xr)
-				{
-					if(first)
-						first=false;
-					else
-						p[0]=p[1];
-					p[1].pos.set(cn.xr,c.y,z);
-					AddTriangle(buf,v,p,primitive);
-					i++;
-				}
-			}
+                    if (cn.xr > c.xl && cn.xr < c.xr) {
+                        if (first)
+                            first = false;
+                        else
+                            p[0] = p[1];
+                        p[1].pos.set(cn.xr, c.y, z);
+                        db->AutoLockTriangle(locked, 1, vp, ip);
+                        memcpy(vp, p, v_len);
+                    }
+                }
+            }
 
-			if(first)
-			{
+			if(first) {
 				p[1]=p[2];
 				p[2].pos.set(c.xr,c.y,z);
-			}else
-			{
+			} else {
 				p[0]=p[1];
 				p[1].pos.set(c.xr,c.y,z);
 			}
 
-			AddTriangle(buf,v,p,primitive);
-			i++;
-
-			if(i>4)
-			{
-				profile_num++;
-			}
+            db->AutoLockTriangle(locked, 1, vp, ip);
+            memcpy(vp, p, v_len);
 		}
 	}
 
-	buf.Unlock(primitive*3);
-	if(primitive)
-		buf.DrawPrimitive(PT_TRIANGLELIST,primitive);
+    db->AutoUnlock();
 }
-/**/
+//*/
 
 terRegionColumnMain::terRegionColumnMain()
 {

@@ -12,30 +12,45 @@
 class PerimeterTerraInterface:public StandartTerraInterface
 {
 public:
-	virtual class Column* GetColumn(int player)
-	{
+	class Column* GetColumn(int player) override {
 		terUniverse* tu=universe();
 		xassert(player>=0 && player<tu->Players.size());
 		return &tu->Players[player]->energyRegion().getEditColumn();
 	}
 
-	virtual void GetBorder(int player,borderCall call,void* data)
-	{
+	void GetBorder(int player,borderCall call,void* data) override {
 		terUniverse* tu=universe();
 		xassert(player>=0 && player<tu->Players.size());
 		tu->Players[player]->energyRegion().getBorder(call,data,true);
 	}
 
-	virtual void LockColumn()
-	{
+	void LockColumn() override {
 		terUniverse* tu=universe();
 		tu->EnergyRegionLocker()->Lock();
 	}
-	virtual void UnlockColumn()
-	{
+    
+	void UnlockColumn() override {
 		terUniverse* tu=universe();
 		tu->EnergyRegionLocker()->Unlock();
 	}
+
+    void GetTileColor(uint8_t* texture, uint32_t pitch, int xstart, int ystart, int xend, int yend, int step) override {
+        sColor4c color;
+        for(int y = ystart; y < yend; y += step) {
+            uint32_t * tx = reinterpret_cast<uint32_t*>(texture);
+            int yy=min(max(0,y),vMap.clip_mask_y);;
+            for (int x = xstart; x < xend; x += step) {
+                int xx=min(max(0,x),vMap.clip_mask_x);
+                color.v = vMap.getColor32(xx, yy);
+                color.v |= (GetZ(xx,yy)<=vMap.hZeroPlast) ? 0xFE000000 : 0xFF000000;
+
+                *tx = gb_RenderDevice->ConvertColor(color);
+                tx++;
+            }
+            texture += pitch;
+        }
+
+    }
 };
 
 TerraInterface* GreateTerraInterface()

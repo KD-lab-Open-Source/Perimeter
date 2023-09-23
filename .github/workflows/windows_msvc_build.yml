@@ -5,6 +5,7 @@ on:
   pull_request:
 
 env:
+  VCPKG_COMMIT_ID: '21bbb14c4113b89cd06402e852e075341722304f'
   buildDir: '${{ github.workspace }}/build/'
   outDir: '${{ github.workspace }}/artifact/'
 
@@ -25,7 +26,7 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: ${{matrix.env.arch}}-windows
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: lukka/get-cmake@latest
       - name: Restore artifacts, or run vcpkg, build (and cache artifacts as post step)
         uses: lukka/run-vcpkg@v10
@@ -33,7 +34,7 @@ jobs:
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           appendedCacheKey: '${{ env.VCPKG_DEFAULT_TRIPLET }}'
-          vcpkgGitCommitId: bd1ef2df46303989eeb048eb7aa9b816aa46365e
+          vcpkgGitCommitId: '${{ env.VCPKG_COMMIT_ID }}'
           vcpkgJsonGlob: 'vcpkg.json'
           runVcpkgInstall: false
       - name: Configure developer command prompt
@@ -55,12 +56,12 @@ jobs:
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/ogg.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbis.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbisfile.dll ${{ env.outDir }}
-          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swscale-5.dll ${{ env.outDir }}
-          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swresample-3.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swscale-*.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swresample-*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.pdb ${{ env.outDir }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Perimeter MSVC ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
           path: ${{ env.outDir }}

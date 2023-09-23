@@ -99,7 +99,7 @@ int joinHostHandler( float, float ) {
         } else {
             CEditWindow* playerNameInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT));
             std::string playerName = playerNameInput->GetText();
-            CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PASSWORD_INPUT));
+            CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_INPUT));
             std::string password = passwordInput->getText();
             gameShell->getNetClient()->JoinGame(conn, playerName, password);
         }
@@ -112,10 +112,10 @@ void onMMMultiplayerJoinNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
         CEditWindow* ipInput = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT);
-        if (input->getText().empty()) {
+        if (input->isEmptyText()) {
             setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
             showMessageBox();
-		} else if (ipInput->getText().empty()) {
+		} else if (ipInput->isEmptyText()) {
 			setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.IPEmpty"), MBOX_OK);
 			showMessageBox();
         } else {

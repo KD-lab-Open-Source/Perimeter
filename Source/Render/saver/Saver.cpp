@@ -102,7 +102,7 @@ CLoadDirectoryFile::CLoadDirectoryFile()
 
 CLoadDirectoryFile::~CLoadDirectoryFile()
 {
-	delete begin;
+	delete[] begin;
 }
 
 bool CLoadDirectoryFile::Load(const char* filename)

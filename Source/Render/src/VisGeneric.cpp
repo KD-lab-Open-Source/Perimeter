@@ -1,13 +1,13 @@
 #include "StdAfxRD.h"
+#ifdef PERIMETER_D3D9
+#include "D3DRender.h"
+#endif
 #include "VisGeneric.h"
 #include "ObjLibrary.h"
 #include "Scene.h"
 #include "Font.h"
-#include "../3dx/Lib3dx.h"
 #include "Localization.h"
-
-void Init3dxshader();
-void Done3dxshader();
+#include "SystemUtil.h"
 
 static void get_string(char*& str,char* s)
 {
@@ -119,7 +119,6 @@ cVisGeneric::cVisGeneric() : cUnknownClass(KIND_UI_VISGENERIC)//: SceneArray(KIN
 	// инициализация глобальных переменых
 	shaders=NULL;
 	ObjLibrary=new cObjLibrary();
-	Lib3dx=new cLib3dx;
 
 	FILE* f=fopen("VisGeneric.cfg","rt");
 	if( !f ) return;
@@ -181,10 +180,8 @@ cVisGeneric::~cVisGeneric()
 	FOR_EACH(effect_library,it)
 		delete (*it);
 
-	Done3dxshader();
 	ReleaseShaders();
 	RELEASE(ObjLibrary); 
-	delete Lib3dx;
 	ClearData();
 	gb_VisGeneric=0;
 	MTDONE(lock_effect_library);
@@ -249,8 +246,10 @@ void cVisGeneric::SetShadowType(eShadowType p,int shadow_size)
 	Option_DrawMeshShadow=shadow_size;
 	CalcIsShadowMap();
 
+#ifdef PERIMETER_D3D9
 	if(gb_RenderDevice3D)
 		gb_RenderDevice3D->SetAdvance();
+#endif
 }
 
 
@@ -264,10 +263,8 @@ cScene* cVisGeneric::CreateScene()
 //////////////////////////////////////////////////////////////////////////////////////////
 void cVisGeneric::SetData(cInterfaceRenderDevice *pData)
 { // функция для работы с окном вывода
-	cURenderDevice *IRenderDevice=(cURenderDevice*)pData;
-	VISASSERT(IRenderDevice&&IRenderDevice->GetKind(KIND_UI_RENDERDEVICE));
+	VISASSERT(pData&&pData->GetKind(KIND_UI_RENDERDEVICE));
 	InitShaders();
-	Init3dxshader();
 }
 void cVisGeneric::ClearData()
 { // функция для работы с окном вывода
@@ -280,11 +277,6 @@ void cVisGeneric::ClearData()
 cTexture* cVisGeneric::CreateTexture(const char *TextureName)
 {
 	return GetTexLibrary()->GetElement(TextureName,"NoMipMap NoBlur");
-}
-
-cTextureScale* cVisGeneric::CreateTextureScale(const char *TextureName,Vect2f scale)
-{
-	return GetTexLibrary()->GetElementScale(TextureName,scale);
 }
 
 cTexture* cVisGeneric::CreateRenderTexture(int width,int height,int attr,bool enable_assert)
@@ -302,24 +294,6 @@ cTexture* cVisGeneric::CreateTextureDefaultPool(int sizex,int sizey,bool alpha)
 	return GetTexLibrary()->CreateTextureDefaultPool(sizex,sizey,alpha);
 }
 
-cTexture* cVisGeneric::CreateBumpTexture(int sizex,int sizey)
-{
-	cTexture *Texture=new cTexture;
-
-	Texture->BitMap.resize(1);
-	Texture->BitMap[0]=0;
-	Texture->SetWidth(sizex);
-	Texture->SetHeight(sizey);
-
-	if(GetRenderDevice()->CreateBumpTexture(Texture))
-	{
-		delete Texture;
-		return NULL;
-	}
-
-	return Texture;
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////
 void cVisGeneric::CalcIsShadowMap()
 {
@@ -330,7 +304,7 @@ void cVisGeneric::CalcIsShadowMap()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-cURenderDevice* cVisGeneric::GetRenderDevice()
+cInterfaceRenderDevice* cVisGeneric::GetRenderDevice()
 {
 	return gb_RenderDevice;
 }
@@ -443,7 +417,7 @@ void DebugMemInfo()
 
 	p+=sprintf(p,"summary size=%i.\n",summary_size);
 	p+=sprintf(p,"summary num=%i.\n",summary_num);
-	MessageBox(gb_RenderDevice->GetWindowHandle(),text,"Memory info",MB_OK);
+	MessageBox(static_cast<HWND>(hWndVisGeneric),text,"Memory info",MB_OK);
 #endif //_DEBUG
 }
 
@@ -451,7 +425,7 @@ void DebugMemInfo()
 
 void dprintf(char *format, ...)
 {
-#ifdef _DEBUG
+#ifdef PERIMETER_DEBUG
   va_list args;
   char    buffer[512];
 
@@ -486,13 +460,21 @@ bool cVisGeneric::GetShowType(eShowType type)
 
 bool cVisGeneric::PossibilityBump()
 {
-	return gb_RenderDevice3D->hasAdvanceDrawType();
+#ifdef PERIMETER_D3D9
+	return gb_RenderDevice3D && gb_RenderDevice3D->hasAdvanceDrawType();
+#else
+    return false;
+#endif
 }
 
 void cVisGeneric::SetEnableBump(bool enable)
 {
 	Option_EnableBump=enable;
-	gb_RenderDevice3D->SetAdvance();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->SetAdvance();
+    }
+#endif
 }
 
 bool cVisGeneric::GetEnableBump()
@@ -549,27 +531,29 @@ void cVisGeneric::SetLinkEffectToModel(bool link)
 
 void cVisGeneric::SetAnisotropic(bool b)
 {
-	gb_RenderDevice3D->SetAnisotropic(b);
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->SetAnisotropic(b);
+    }
+#endif
 }
 
 bool cVisGeneric::GetAnisotropic()
 {
-	return gb_RenderDevice3D->GetAnisotropic();
+#ifdef PERIMETER_D3D9
+	return gb_RenderDevice3D && gb_RenderDevice3D->GetAnisotropic();
+#else
+    return false;
+#endif
 }
 
 void cVisGeneric::EnableOcclusion(bool b)
 {
 	Option_EnableOcclusion=b;
-	if(gb_RenderDevice3D)
-	{
-		if(!gb_RenderDevice3D->ReinitOcclusion())
-			Option_EnableOcclusion=false;
-	}
 }
 
-bool cVisGeneric::PossibilityOcclusion()
-{
-	return gb_RenderDevice3D->PossibilityOcclusion();
+bool cVisGeneric::PossibilityOcclusion() {
+    return true;
 }
 
 bool cVisGeneric::IsEnableOcclusion()
@@ -588,14 +572,15 @@ void cVisGeneric::EnablePointLight(bool enable)
 {
 	Option_EnablePointLight=enable;
 }
+
 bool cVisGeneric::IsEnablePointLight()
 {
 	return Option_EnablePointLight;
 }
 
-
 cTexture* cVisGeneric::CreateTextureScreen()
 {
+#ifdef PERIMETER_D3D9
 	LPDIRECT3DDEVICE9 device=gb_RenderDevice3D->lpD3DDevice;
 	HRESULT hr;
 	int dx=gb_RenderDevice3D->GetSizeX();
@@ -603,8 +588,8 @@ cTexture* cVisGeneric::CreateTextureScreen()
 
 	int dx_plain_surface=dx;
 	int dy_plain_surface=dy;
-#ifndef PERIMETER_EXODUS
-	if(!gb_RenderDevice3D->IsFullScreen())
+#ifdef _WIN32
+	if(!gb_RenderDevice->IsFullScreen())
 	{
 		dx_plain_surface=GetSystemMetrics(SM_CXSCREEN);
 		dy_plain_surface=GetSystemMetrics(SM_CYSCREEN);
@@ -656,6 +641,9 @@ cTexture* cVisGeneric::CreateTextureScreen()
 	RELEASE(sys_surface);
 
 	return pTextureBackground;
+#else
+    return nullptr;
+#endif
 }
 
 void cVisGeneric::SetGlobalParticleRate(float r)
@@ -666,26 +654,35 @@ void cVisGeneric::SetGlobalParticleRate(float r)
 
 bool cVisGeneric::PossibilityShadowMapSelf4x4()
 {
-	if(gb_RenderDevice3D->dtAdvanceOriginal)
-	{
+#ifdef PERIMETER_D3D9
+	if (gb_RenderDevice3D &&gb_RenderDevice3D->dtAdvanceOriginal) {
 		eDrawID id=gb_RenderDevice3D->dtAdvanceOriginal->GetID();
 		return id==DT_RADEON9700 || id==DT_GEFORCEFX;
 	}
+#endif
 	return false;
 }
 
 void cVisGeneric::SetShadowMapSelf4x4(bool b4x4)
 {
 	Option_ShadowMapSelf4x4=b4x4;
-	gb_RenderDevice3D->RestoreShader();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->RestoreShader();
+    }
+#endif
 }
 
 bool cVisGeneric::PossibilityBumpChaos()
 {
+#ifdef PERIMETER_D3D9
 #ifdef __APPLE__
     return false;
 #else
-	return gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP;
+	return gb_RenderDevice3D && (gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP);
+#endif
+#else
+    return false;
 #endif
 }
 
@@ -704,7 +701,7 @@ void cVisGeneric::ReloadAllFont()
 	}
 }
 
-cFont* cVisGeneric::CreateFont(const char* TextureFileName, int h, bool silentErr, std::string locale)
+cFont* cVisGeneric::CreateGameFont(const char* TextureFileName, int height, bool silentErr, std::string locale)
 {
 	if(TextureFileName==nullptr||TextureFileName[0]==0) return nullptr;
     
@@ -718,14 +715,14 @@ cFont* cVisGeneric::CreateFont(const char* TextureFileName, int h, bool silentEr
 		cFontInternal* f=*it;
 		if(stricmp(f->font_name.c_str(),TextureFileName)==0
         && f->locale==locale
-        && f->GetStatementHeight()==h)
+        && f->GetStatementHeight() == height)
 		{
 			return new cFont(f);
 		}
 	}
 
 	cFontInternal *UObj=new cFontInternal;
-	if(!UObj->Create(font_root_directory,locale,TextureFileName,h,silentErr))
+	if(!UObj->Create(font_root_directory, locale, TextureFileName, height, silentErr))
 	{
 		delete UObj;
 		return NULL;
@@ -765,7 +762,9 @@ MTTexObjAutoLock::MTTexObjAutoLock()
 void cVisGeneric::SetShadowHint(int hint)
 {
 	Option_ShadowHint=hint;
+#ifdef PERIMETER_D3D9
 	gb_RenderDevice3D->RestoreShader();
+#endif
 }
 
 int cVisGeneric::GetShadowHint()
@@ -774,35 +773,13 @@ int cVisGeneric::GetShadowHint()
 }
 
 
-bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
+bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<indices_t>& indices)
 {
 	VISASSERT(gb_VisGeneric);
 	cObjectNodeRoot* root=gb_VisGeneric->GetObjLib()->GetElement(filename,NULL);
 	if(!root)
 		return false;
-	root->GetAllTriangle(point,polygon);
+	root->GetAllTriangle(point,indices);
 	root->Release();
 	return true;
-}
-
-cTexture* cVisGeneric::CreateTextureU16V16(int sizex,int sizey,bool deafultpool)
-{
-	cTexture *Texture=new cTexture;
-	Texture->SetNumberMipMap(1);
-	Texture->SetAttribute(TEXTURE_U16V16);
-	if(deafultpool)
-		Texture->SetAttribute(TEXTURE_D3DPOOL_DEFAULT);
-
-	Texture->BitMap.resize(1);
-	Texture->BitMap[0]=0;
-	Texture->SetWidth(sizex);
-	Texture->SetHeight(sizey);
-
-	if(gb_RenderDevice3D->CreateTextureU16V16(Texture,deafultpool))
-	{
-		delete Texture;
-		return NULL;
-	}
-
-	return Texture;
 }

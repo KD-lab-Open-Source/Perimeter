@@ -285,7 +285,7 @@ void terPlayer::Quant()
     log_var(playerID());
 	for (auto ui : Units) {
         if (ui->alive()) {
-            log_var(getEnumName(ui->attr().ID));
+            log_var(getEnumName(ui->attr()->ID));
             log_var(ui->unitID());
             ui->Quant();
             log_var(terLogicRNDfrnd());
@@ -392,7 +392,7 @@ void terPlayer::MoveQuant()
     log_var(playerID());
 	for (auto ui : Units) {
         if (ui->alive()) {
-            log_var(getEnumName(ui->attr().ID));
+            log_var(getEnumName(ui->attr()->ID));
             log_var(ui->unitID());
             ui->MoveQuant();
             log_var(terLogicRNDfrnd());
@@ -465,31 +465,33 @@ void terPlayer::addUnit(terUnitBase* unit)
 	CUNITS_LOCK(this);
 	Units.push_back(unit);
 
-	if(unit->attr().isBuilding()){// && unit->isBuilding()
-		BuildingList[unit->attr().ID].push_back(safe_cast<terBuilding*>(unit));
+	if(unit->attr()->isBuilding()){// && unit->isBuilding()
+		BuildingList[unit->attr()->ID].push_back(safe_cast<terBuilding*>(unit));
 	}
 
-//	if(active() && (unit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ||
-//		unit->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER)){
+//	if(active() && (unit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ||
+//		unit->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER)){
 //			universe()->DeselectAll();
 //			universe()->SelectUnit(unit);
 //	}			
 
-	if(unit->attr().ID == UNIT_ATTRIBUTE_FRAME && !frame_)
+	if(unit->attr()->ID == UNIT_ATTRIBUTE_FRAME && !frame_)
 		frame_ = safe_cast<terFrame*>(unit);
 
-	universe()->checkEvent(EventUnitPlayer(Event::CREATE_OBJECT, unit, this));
+	EventUnitPlayer ev(Event::CREATE_OBJECT, unit, this);
+    universe()->checkEvent(&ev);
 }
 
 void terPlayer::removeUnit(terUnitBase* unit)
 {
-	universe()->checkEvent(EventUnitPlayer(Event::DESTROY_OBJECT, unit, this));
+	EventUnitPlayer ev(Event::DESTROY_OBJECT, unit, this);
+    universe()->checkEvent(&ev);
 
-	if(unit->attr().isBuilding()){
-		terBuildingList& list = BuildingList[unit->attr().ID];
+	if(unit->attr()->isBuilding()){
+		terBuildingList& list = BuildingList[unit->attr()->ID];
 		list.erase(remove(list.begin(), list.end(), safe_cast<terBuilding*>(unit)), list.end());
 
-		if(totalDefenceMode_ && unit->attr().ID == UNIT_ATTRIBUTE_CORE && list.empty())
+		if(totalDefenceMode_ && unit->attr()->ID == UNIT_ATTRIBUTE_CORE && list.empty())
 			totalDefenceMode_ = false;
 	}
 
@@ -714,7 +716,7 @@ terUnitBase* terPlayer::traceUnit(const Vect2f& pos)
 	UnitList::iterator i_unit;
 	FOR_EACH(Units, i_unit){
 		terUnitBase* unit = *i_unit;
-		if(unit->alive() && unit->selectAble() && unit->attr().ID != UNIT_ATTRIBUTE_SQUAD){
+		if(unit->alive() && unit->selectAble() && unit->attr()->ID != UNIT_ATTRIBUTE_SQUAD){
 			if(unit->avatar() && unit->avatar()->GetModelPoint()){
 				if(safe_cast<cObjectNode*>(unit->avatar()->GetModelPoint())->Intersect(v0,v1) &&
 					distMin > (dist = unit->position().distance2(v0))){
@@ -771,7 +773,7 @@ terUnitBase* terPlayer::findUnit(terUnitAttributeID id)
 	MTL();
 	UnitList::iterator ui;
 	FOR_EACH(Units,ui)
-		if((*ui)->attr().ID == id)
+		if((*ui)->attr()->ID == id)
 			return (*ui);
 		
 	return 0;
@@ -785,14 +787,14 @@ terUnitBase* terPlayer::findUnit(terUnitAttributeID id, const Vect2f& nearPositi
 	UnitList::iterator ui;
 	if(id != UNIT_ATTRIBUTE_ANY){
 		FOR_EACH(Units,ui)
-			if((*ui)->attr().ID == id && bestDist > (dist = nearPosition.distance2((*ui)->position2D())) && dist > sqr(distanceMin)){
+			if((*ui)->attr()->ID == id && bestDist > (dist = nearPosition.distance2((*ui)->position2D())) && dist > sqr(distanceMin)){
 				bestDist = dist;
 				bestUnit = *ui;
 			}
 	}
 	else{
 		FOR_EACH(Units,ui)
-			if((*ui)->attr().ID < UNIT_ATTRIBUTE_LEGIONARY_MAX && bestDist > (dist = nearPosition.distance2((*ui)->position2D())) && dist > sqr(distanceMin)){
+			if((*ui)->attr()->ID < UNIT_ATTRIBUTE_LEGIONARY_MAX && bestDist > (dist = nearPosition.distance2((*ui)->position2D())) && dist > sqr(distanceMin)){
 				bestDist = dist;
 				bestUnit = *ui;
 			}
@@ -1006,7 +1008,7 @@ void terPlayer::saveWorld(SavePrm& data) const {
 	MTL();
 	UnitList::const_iterator ui;
 	FOR_EACH(Units,ui){
-		switch((*ui)->attr().ID){
+		switch((*ui)->attr()->ID){
 		case UNIT_ATTRIBUTE_STATIC_NATURE:
 			data.environment.objects.push_back((*ui)->universalSave(0));
 			break;
@@ -1021,7 +1023,7 @@ void terPlayer::saveWorld(SavePrm& data) const {
 			data.worldObjects.alphaPotentials.push_back((*ui)->universalSave(0));
 			break;
 		default:
-			if((*ui)->attr().isBuilding())
+			if((*ui)->attr()->isBuilding())
 				data.nobodysBuildings.objects.push_back((*ui)->universalSave(0));
 		}
 	}
@@ -1076,16 +1078,16 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 				data.buildings.push_back(bi->universalSave(0));
 				xassert(data.buildings.back());
 			} else {
-                xassert_s(0 && "Ignoring building entry: ", (*bi)->attr().internalName(false));
+                xassert_s(0 && "Ignoring building entry: ", bi->attr()->internalName(false));
             }
 		}
 	}
 
 	for (auto& ui : Units) {
-		if (ui->attr().ID == UNIT_ATTRIBUTE_FRAME && ui != frame()){
+		if (ui->attr()->ID == UNIT_ATTRIBUTE_FRAME && ui != frame()){
 			data.catchedFrames.push_back(ui->universalSave(0));
 		}
-		else if(ui->attr().saveAsCommonObject){
+		else if(ui->attr()->saveAsCommonObject){
 			data.commonObjects.push_back(ui->universalSave(0));
 		}
 	}
@@ -1177,7 +1179,7 @@ void terPlayer::showFireCircles(terUnitAttributeID attribute_id, const Vect2f& p
 	const UnitList& unit_list=units();
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list,ui)
-		if((*ui)->alive() && (*ui)->attr().ID == attribute_id && point.distance2((*ui)->position2D()) < sqr(2*(*ui)->attr().fireRadius()))
+		if((*ui)->alive() && (*ui)->attr()->ID == attribute_id && point.distance2((*ui)->position2D()) < sqr(2*(*ui)->attr()->fireRadius()))
 			(*ui)->ShowCircles();
 	gbCircleShow->SetNoInterpolationUnlock();
 }
@@ -1190,8 +1192,8 @@ void terPlayer::showConnectionCircle(const Vect2f& point, bool includeFrame)
 	const UnitList& unit_list=units();
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list,ui)
-		if((*ui)->alive() && (dist = point.distance2((*ui)->position2D())) < sqr((*ui)->attr().ConnectionRadius)){
-			if((*ui)->attr().ID == UNIT_ATTRIBUTE_FRAME){
+		if((*ui)->alive() && (dist = point.distance2((*ui)->position2D())) < sqr((*ui)->attr()->ConnectionRadius)){
+			if((*ui)->attr()->ID == UNIT_ATTRIBUTE_FRAME){
 				if(includeFrame){
 					distBest = dist;
 					unitBest = *ui;
@@ -1205,7 +1207,7 @@ void terPlayer::showConnectionCircle(const Vect2f& point, bool includeFrame)
 		}
 
 	if(unitBest)
-		terCircleShowGraph(unitBest->position(), unitBest->attr().ConnectionRadius, circleColors.connectionRadius);
+		terCircleShowGraph(unitBest->position(), unitBest->attr()->ConnectionRadius, circleColors.connectionRadius);
 }
 
 int terEnergyBorderCheck(int x,int y)
@@ -1237,7 +1239,7 @@ int terPlayer::countUnits(terUnitAttributeID id) const
 	int count  = 0;
 	UnitList::const_iterator ui;
 	FOR_EACH(Units, ui)
-		if((*ui)->attr().ID == id)
+		if((*ui)->attr()->ID == id)
 			++count;
 	
 	return count;
@@ -1353,7 +1355,7 @@ void terPlayer::rebuildDefenceMapQuant()
 			if(index >= guns.size())
 				index -= guns.size();
 			else{
-				defenceMap_.addGun(guns[index]->position2D(), guns[index]->attr().fireRadius());
+				defenceMap_.addGun(guns[index]->position2D(), guns[index]->attr()->fireRadius());
 				return;
 			}
 		}
@@ -1385,7 +1387,7 @@ terUnitBase* terPlayer::findPathToTarget(DefenceMap& defenceMap, terUnitAttribut
 	UnitList targets;
 	UnitList::iterator ui;
 	FOR_EACH(Units, ui)
-		if((*ui)->attr().ID == id && !(*ui)->includingCluster() && *ui != ignoreUnit && !(*ui)->isUnseen() && (*ui)->isConstructed())
+		if((*ui)->attr()->ID == id && !(*ui)->includingCluster() && *ui != ignoreUnit && !(*ui)->isUnseen() && (*ui)->isConstructed())
 			targets.push_back(*ui);
 
 	return defenceMap.findPathToTarget(nearPosition, targets, path);
@@ -1408,41 +1410,41 @@ bool terPlayer::findPathToPoint(DefenceMap& defenceMap, const Vect2i& from_w, co
 	return defenceMap.findPathToPoint(from_w, to_w, out_path);
 }
 
-void PlayerStats::checkEvent(const Event& event, int playerID) {
-	switch (event.type()) {
+void PlayerStats::checkEvent(const Event* event, int playerID) {
+	switch (event->type()) {
 		case Event::CREATE_BASE_UNIT:
 			{
-				const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-				if(eventUnit.player()->playerID() == playerID)
+				const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+				if(eventUnit->player()->playerID() == playerID)
 						unitCount++;
 			}
 			break;
 		case Event::KILL_OBJECT:
 			{
-				const EventUnitMyUnitEnemy& eventUnit = safe_cast_ref<const EventUnitMyUnitEnemy&>(event);
-				if (eventUnit.unitMy()->playerID() == playerID) {
-					if (eventUnit.unitMy()->attr().ClassID == UNIT_CLASS_ID_LEGIONARY) {
-						if (eventUnit.unitMy()->unitClass() & UNIT_CLASS_BASE) {
+				const EventUnitMyUnitEnemy* eventUnit = safe_cast<const EventUnitMyUnitEnemy*>(event);
+				if (eventUnit->unitMy()->playerID() == playerID) {
+					if (eventUnit->unitMy()->attr()->ClassID == UNIT_CLASS_ID_LEGIONARY) {
+						if (eventUnit->unitMy()->unitClass() & UNIT_CLASS_BASE) {
 							unitLost++;
 						} else {
-							unitLost += eventUnit.unitMy()->attr().damageMolecula[0] + eventUnit.unitMy()->attr().damageMolecula[1] + eventUnit.unitMy()->attr().damageMolecula[2];
+							unitLost += eventUnit->unitMy()->attr()->damageMolecula[0] + eventUnit->unitMy()->attr()->damageMolecula[1] + eventUnit->unitMy()->attr()->damageMolecula[2];
 						}
-					} else if ( isBuilding(eventUnit.unitMy()->unitClass()) ) {
+					} else if ( isBuilding(eventUnit->unitMy()->unitClass()) ) {
 						buildingLost++;
 //					} else {
 //						unitLost++;
 					}
 				// temp until splash id
-				} else if (eventUnit.unitEnemy() && eventUnit.unitEnemy()->playerID() == playerID) {
-					if (eventUnit.unitMy()->Player->isWorld()) {
+				} else if (eventUnit->unitEnemy() && eventUnit->unitEnemy()->playerID() == playerID) {
+					if (eventUnit->unitMy()->Player->isWorld()) {
 						scourgeKilled++;
-					} else if (eventUnit.unitMy()->attr().ClassID == UNIT_CLASS_ID_LEGIONARY) {
-						if (eventUnit.unitMy()->unitClass() & UNIT_CLASS_BASE) {
+					} else if (eventUnit->unitMy()->attr()->ClassID == UNIT_CLASS_ID_LEGIONARY) {
+						if (eventUnit->unitMy()->unitClass() & UNIT_CLASS_BASE) {
 							unitKilled++;
 						} else {
-							unitKilled += eventUnit.unitMy()->attr().damageMolecula[0] + eventUnit.unitMy()->attr().damageMolecula[1] + eventUnit.unitMy()->attr().damageMolecula[2];
+							unitKilled += eventUnit->unitMy()->attr()->damageMolecula[0] + eventUnit->unitMy()->attr()->damageMolecula[1] + eventUnit->unitMy()->attr()->damageMolecula[2];
 						}
-					} else if ( isBuilding(eventUnit.unitMy()->unitClass()) ) {
+					} else if ( isBuilding(eventUnit->unitMy()->unitClass()) ) {
 						buildingRazed++;
 //					} else {
 //						unitKilled++;
@@ -1452,16 +1454,16 @@ void PlayerStats::checkEvent(const Event& event, int playerID) {
 			break;
 		case Event::COMPLETE_BUILDING:
 			{
-				const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-				if (eventUnit.player()->playerID() == playerID) {
+				const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+				if (eventUnit->player()->playerID() == playerID) {
 					buildings++;
 				}
 			}
 			break;
 		case Event::CAPTURE_BUILDING:
 			{
-				const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-				if (eventUnit.player()->playerID() == playerID) {
+				const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+				if (eventUnit->player()->playerID() == playerID) {
 					buildingCaptured++;
 				}
 			}

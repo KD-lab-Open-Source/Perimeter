@@ -1,11 +1,13 @@
 #include "StdAfxRD.h"
 
+#include "D3DRender.h"
+#include "DrawBuffer.h"
 #include "ObjNode.h"
 #include "ObjMesh.h"
 #include "MeshTri.h"
 #include "DrawType.h"
 #include "Scene.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 
 #define DEL(p) {if(p)delete p;}
 
@@ -21,12 +23,7 @@ void DrawType::DeleteShadowTexture()
 	RELEASE(pLightMap);
 }
 
-void DrawType::SetStream(cObjMesh *Mesh)
-{
-	cMeshTri *Tri=Mesh->GetTri();
-	gb_RenderDevice3D->SetFVF(*Tri->vb);
-	gb_RenderDevice3D->SetIndices(*Tri->ib);
-	gb_RenderDevice3D->SetStreamSource(*Tri->vb);
+void DrawType::SetStream(cObjMesh *Mesh) {
 }
 
 void DrawType::DrawPrimitive(cObjMesh *Mesh)
@@ -34,21 +31,16 @@ void DrawType::DrawPrimitive(cObjMesh *Mesh)
 	if(Option_DrawMeshScreen)
 	{
 		cMeshTri *Tri=Mesh->GetTri();
-		RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
-			0,
-			Tri->GetOffsetVertex(),Tri->GetNumberVertex(),
-			3*Tri->GetOffsetPolygon(),Tri->GetNumberPolygon()));
-
-		gb_RenderDevice3D->NumberPolygon+=Tri->GetNumberPolygon();
+        gb_RenderDevice->SubmitDrawBuffer(Tri->db, &Tri->dbr);
 		gb_RenderDevice3D->NumDrawObject++;
 	}
 }
 
 eBlendMode DrawType::SetMaterialSimply(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data,int texture_offset)
 {
-	gb_RenderDevice3D->SetTexture(Texture0,Phase,0+texture_offset);
-	gb_RenderDevice3D->SetTexture(Texture1,Phase,1+texture_offset);
-	gb_RenderDevice3D->SetTexture(NULL,Phase,2+texture_offset);
+	gb_RenderDevice3D->SetTexture(0+texture_offset, Texture0, Phase);
+	gb_RenderDevice3D->SetTexture(1+texture_offset, Texture1, Phase);
+	gb_RenderDevice3D->SetTextureImage(2+texture_offset, nullptr);
 
 	eBlendMode blend=ALPHA_NONE;
 	if(Texture0 && Texture0->IsAlphaTest())

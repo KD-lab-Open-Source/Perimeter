@@ -228,7 +228,7 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
     
     //Check magic
     if ((header & NC_HEADER_MASK) != NC_HEADER_MAGIC) {
-        fprintf(stderr, "TCP recv header failed mismatch %lx %s\n", header, SDLNet_GetError());
+        fprintf(stderr, "TCP recv header failed magic mismatch %lx %s\n", header, SDLNet_GetError());
         return -2;
     }
 
@@ -337,11 +337,12 @@ void NetConnectionHandler::pollConnections() {
         switch (connection->state) {
             case NC_STATE_ACTIVE: {
                 size_t total_recv = 0;
-                while (total_recv < 1024 * 1024) {
+                while (total_recv < PERIMETER_MESSAGE_MAX_SIZE * 10) {
                     InputPacket* packet = new InputPacket(connection->netid);
                     int len = connection->receive(*packet);
                     if (0 < len) {
                         net_center->m_InputPacketList.push_back(packet);
+                        total_recv += len;
                     } else {
                         delete packet;
                         break;
@@ -389,13 +390,13 @@ NetConnection* NetConnectionHandler::getConnection(NETID netid) const {
 bool NetConnectionHandler::startListening(uint16_t port) {
     stopListening();
     stopConnections();
-
-#ifdef PERIMETER_HEADLESS
-    max_connections = NETWORK_PLAYERS_MAX;
-#else
-    //Remove one since host is player too
-    max_connections = NETWORK_PLAYERS_MAX - 1;
-#endif
+    
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
+        max_connections = NETWORK_PLAYERS_MAX;
+    } else {
+        //Remove one since host is player too
+        max_connections = NETWORK_PLAYERS_MAX - 1;
+    }
 
     IPaddress addr;
     addr.host = INADDR_ANY;

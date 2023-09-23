@@ -9,8 +9,6 @@ DrawTypeFixedPipeline::~DrawTypeFixedPipeline()
 
 void DrawTypeFixedPipeline::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 {
-	cMeshTri *Tri=Mesh->GetTri();
-
 	bool specular=Data->Specular.r>=1/256.0f || 
 				  Data->Specular.g>=1/256.0f || 
 				  Data->Specular.b>=1/256.0f;
@@ -29,24 +27,24 @@ void DrawTypeFixedPipeline::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
 {
 	SetPointLight(Mesh->GetRootNode()->GetLight());
 
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	gb_RenderDevice3D->SetWorldMatXf(Mesh->GetGlobalMatrix());
 	if(Data->mat&MAT_TEXMATRIX_STAGE1)
 	{
-		D3DXMATRIX mat;
+		Mat4f mat;
 		MatXf &m=Data->TexMatrix;
 		memset(&mat,0,sizeof(mat));
-		mat._11 = m.rot()[0][0],	mat._12 = m.rot()[0][1];
-		mat._21 = m.rot()[1][0],	mat._22 = m.rot()[1][1];
-		mat._31 = m.trans().x,		mat._32 = m.trans().y;
-		RDCALL(gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE0,&mat));
+        mat.xx = m.rot()[0][0],	mat.xy = m.rot()[0][1];
+        mat.yx = m.rot()[1][0],	mat.yy = m.rot()[1][1];
+        mat.zx = m.trans().x,	mat.zy = m.trans().y;
+		RDCALL(gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
 	if(Data->mat&MAT_RENDER_SPHEREMAP)
 	{ // сферический мапинг
-		D3DXMATRIX mat;
+		Mat4f mat;
 		memset(&mat,0,sizeof(mat));
-		mat._11=mat._22=mat._41=mat._42=0.5f;
-		RDCALL(gb_RenderDevice3D->lpD3DDevice->SetTransform( D3DTS_TEXTURE1, &mat ));
+        mat.xx=mat.yy=mat.wx=mat.wy=0.5f;
+		RDCALL(gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
 	DrawPrimitive(Mesh);
@@ -71,7 +69,7 @@ void DrawTypeFixedPipeline::SetSimplyMaterialShadow(cObjMesh *Mesh,cTexture *Tex
 
 void DrawTypeFixedPipeline::DrawNoMaterialShadow(cObjMesh *Mesh)
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	gb_RenderDevice3D->SetWorldMatXf(Mesh->GetGlobalMatrix());
 	DrawPrimitive(Mesh);
 }
 

@@ -108,7 +108,7 @@ void DrawTypeGeforce3::EndDraw()
 {
 	for(int i=0;i<6;i++)
 	{
-		gb_RenderDevice3D->SetTexture(i,NULL);
+		gb_RenderDevice3D->SetTextureImage(i, nullptr);
 	}
 
 	gb_RenderDevice3D->SetVertexShader(NULL);
@@ -157,7 +157,8 @@ void DrawTypeGeforce3::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial *Dat
 	}
 
 	SetMaterial(Data->MaterialAnimPhase,Data->Tex[0],Data->Tex[1],Data);
-	gb_RenderDevice3D->SetTexture(0,ptZBuffer);
+    TextureImage teximg(ptZBuffer);
+	gb_RenderDevice3D->SetTextureImage(0,&teximg);
 	
 	SetStream(Mesh);
 }
@@ -201,7 +202,7 @@ void DrawTypeGeforce3::SetSimplyMaterialShadow(cObjMesh *Mesh,cTexture *Texture)
 
 void DrawTypeGeforce3::DrawNoMaterialShadow(cObjMesh *Mesh)
 {
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
+	gb_RenderDevice3D->SetWorldMatXf(Mesh->GetGlobalMatrix());
 	DrawPrimitive(Mesh);
 }
 
@@ -250,10 +251,10 @@ void DrawTypeGeforce3::SetMaterial(float Phase,cTexture *Texture0,cTexture *Text
 
 	if(Data->mat&MAT_BUMP)
 	{
-		D3DXVECTOR4 specular(Data->Specular.r,Data->Specular.g,Data->Specular.b,Data->Power);
-		gb_RenderDevice3D->SetPixelShaderConstant(4,(D3DXVECTOR4*)&Data->Ambient);
-		gb_RenderDevice3D->SetPixelShaderConstant(5,(D3DXVECTOR4*)&Data->Diffuse);
-		gb_RenderDevice3D->SetPixelShaderConstant(6,&specular);
+		Vect4f specular(Data->Specular.r,Data->Specular.g,Data->Specular.b,Data->Power);
+		gb_RenderDevice3D->SetPixelShaderConstant(4, reinterpret_cast<const Vect4f*>(&Data->Ambient));
+		gb_RenderDevice3D->SetPixelShaderConstant(5, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
+		gb_RenderDevice3D->SetPixelShaderConstant(6, &specular);
 	}
 
 	bool is_bump=IsBump(Data);
@@ -299,8 +300,9 @@ void DrawTypeGeforce3::SetMaterialTilemap(cTileMap *TileMap)
 {
 	pVSTileMapScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
 	pPSTileMapScene->Select();
-	gb_RenderDevice3D->SetTexture(0,ptZBuffer);
-	gb_RenderDevice3D->SetTexture(pLightMap,0,2);
+    TextureImage teximg(ptZBuffer);
+    gb_RenderDevice3D->SetTextureImage(0,&teximg);
+	gb_RenderDevice3D->SetTexture(2,pLightMap,0);
 
 	TerraInterface* terra=TileMap->GetTerra();
 	pVSTileMapScene->SetWorldSize(Vect2f(terra->SizeX(),terra->SizeY()));
@@ -319,7 +321,7 @@ void DrawTypeGeforce3::DeleteShadowTexture()
 
 void DrawTypeGeforce3::SetTileColor(sColor4f c)
 {
-	D3DXVECTOR4 cf(c.r,c.g,c.b,c.a);
+	Vect4f cf(c.r,c.g,c.b,c.a);
 	gb_RenderDevice3D->SetPixelShaderConstant(2,&cf);
 }
 

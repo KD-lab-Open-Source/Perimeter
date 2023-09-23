@@ -31,7 +31,7 @@ void RunTimeCompiler::loadSection(ParameterSection* prm)
 		if(!prm->needToReload())
 			return;
 
-		Compiler::clear();
+		Compiler::reload();
 
 		Section* sec = getSection(prm->name);
 		if(!sec){
@@ -199,10 +199,8 @@ void ParameterSection::add_parameter_section(ParameterSection* section)
 	getRunTimeCompiler().addSection(section);
 }
 
-#ifndef PERIMETER_EXODUS
 #ifdef _WIN32
 #include "windows.h"
-#endif
 
 FARPROC getPrmEditDLLFunction(const char* name)
 {

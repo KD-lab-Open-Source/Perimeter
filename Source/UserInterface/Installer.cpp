@@ -43,7 +43,7 @@ void terBuildingInstaller::Clear()
 	CancelObject();
 
 	if(BaseBuff)
-		delete BaseBuff;
+		delete[] BaseBuff;
 	BaseBuff = 0;
 	BaseBuffSX = BaseBuffSY = 0;
 
@@ -195,7 +195,7 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 
 		if(!BaseBuff || BaseBuffSX < (x1 - x0) || BaseBuffSY < (y1 - y0)){
 			if(BaseBuff)
-				delete BaseBuff;
+				delete[] BaseBuff;
 			BaseBuffSX = x1 - x0;
 			BaseBuffSY = y1 - y0;
 			BaseBuff = new char[BaseBuffSX * BaseBuffSY];
@@ -225,8 +225,8 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 				const UnitList& unit_list=player->units();
 				UnitList::const_iterator ui;
 				FOR_EACH(unit_list, ui)
-					if((*ui)->attr().ConnectionRadius && ((*ui)->isBuildingEnable() || (*ui)->attr().ID == UNIT_ATTRIBUTE_FRAME) &&
-					  (*ui)->position2D().distance2(position) < sqr((*ui)->attr().ConnectionRadius))
+					if((*ui)->attr()->ConnectionRadius && ((*ui)->isBuildingEnable() || (*ui)->attr()->ID == UNIT_ATTRIBUTE_FRAME) &&
+					  (*ui)->position2D().distance2(position) < sqr((*ui)->attr()->ConnectionRadius))
 						connected = true;
 			}
 
@@ -250,17 +250,19 @@ void terBuildingInstaller::InitTexture()
 	int dy = 1 << (BitSR(BaseBuffSY) + 1);
 	dx = dy = max(dx,dy);
 	pTexture = terVisGeneric->CreateTexture(dx,dy,true);
-	if(pTexture == 0)return;
+	if (!pTexture) return;
 
 	int Pitch;
-	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
-	for(int y=0;y<dy;y++)
-	{
-        uint32_t * c = (uint32_t*)(buf + y * Pitch);
-		for(int x = 0; x < dx; x++,c++)
-			*c = 0;
-	}
-	pTexture->UnlockTexture();
+	uint8_t* buf = pTexture->LockTexture(Pitch);
+    if (buf) {
+        for (int y = 0; y < dy; y++) {
+            uint32_t* c = reinterpret_cast<uint32_t*>(buf + y * Pitch);
+            for (int x = 0; x < dx; x++, c++) {
+                *c = 0;
+            }
+        }
+        pTexture->UnlockTexture();
+    }
 }
 
 void terBuildingInstaller::SetBuildPosition(const Vect2f& mousePos, terPlayer* player)
@@ -355,11 +357,11 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 		{
 			if((*p) & 1){
 				if((*p) & 2)
-					*c = cgood.RGBA();
+					*c = cgood.ARGB();
 				else
-					*c = cbad.RGBA();
+					*c = cbad.ARGB();
 			}else
-				*c = cempty.RGBA();
+				*c = cempty.ARGB();
 			p++;
 			c++;
 		}

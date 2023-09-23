@@ -391,7 +391,7 @@ void terFilthDragon::Collision(terUnitBase* p)
 	if(isEnemy(p) && (swarm && swarm->IsAttackable(p)))
 	{
 		if(p->unitClass()&UNIT_CLASS_FRAME)
-			p->setDamage(attr().unitDamage.splashDamage,this);
+			p->setDamage(attr()->unitDamage.splashDamage,this);
 		else
 			p->setDamage(damageData(),this);
 	}

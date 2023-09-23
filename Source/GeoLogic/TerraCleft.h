@@ -42,8 +42,8 @@ public:
 	CTerraCleft(const Vect2i& pos1, const Vect2i& pos2, int active = prcWait);
 	~CTerraCleft();
 
-	int  quant(RECT& r);
-	int  quant_g(RECT& r);
+	int  quant(sRect& r);
+	int  quant_g(sRect& r);
 
 	CTerraCleft& attach(CTerraCleft& cleft);
 	Vect2i& to(){

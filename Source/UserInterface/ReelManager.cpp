@@ -4,6 +4,7 @@
 #include "AudioPlayer.h"
 #include "GameShell.h"
 #include "GameShellSq.h"
+#include "CameraManager.h"
 
 extern MusicPlayer gb_Music;
 //extern GameShell* gameShell;
@@ -45,12 +46,12 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
         }
 	}
 
-	Vect2i showSize;
+    Vect2i picSize;
 	Vect2i showPos;
 	switch (sizeType) {
 		case REAL_SIZE:
 			showPos = pos;
-			player->getSize(showSize);
+			player->getSize(picSize);
 			bgTexture = gb_VisGeneric->CreateTextureScreen();
 			if (!bgTexture)	{
 				xassert_s(0, "Cannot create background texture to play video file");
@@ -59,7 +60,8 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
 			break;
 		case FULL_SCREEN:
 			{
-				player->getSize(showSize);
+                showPos = pos;
+				player->getSize(picSize);
 				if (alpha < 255) {
 					bgTexture = gb_VisGeneric->CreateTextureScreen();
 					if (!bgTexture)	{
@@ -71,7 +73,7 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
 			break;
 		default:
 			showPos = pos;
-			showSize = size;
+            picSize = size;
 			bgTexture = gb_VisGeneric->CreateTextureScreen();
 			if (!bgTexture)	{
 				xassert_s(0, "Cannot create background texture to play video file");
@@ -79,24 +81,24 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
 			}
 	}
 
+    terRenderDevice->SetDrawNode(terCamera->GetCamera());
 	visible = true;
 	while (isVisible() && !player->IsEnd()) {
         app_event_poll();
         
         if (player->Update() ) {
-            int screenWidth = terRenderDevice->GetSizeX();
-            int screenHeight = terRenderDevice->GetSizeY();
+            Vect2f showSize = picSize;
+            float screenWidth = static_cast<float>(terRenderDevice->GetSizeX());
+            float screenHeight = static_cast<float>(terRenderDevice->GetSizeY());
             if (sizeType == FULL_SCREEN) {
-                float realRatio = static_cast<float>(showSize.x) / static_cast<float>(showSize.y);
-                float screenRatio = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
-                if (realRatio >= screenRatio) {
-                    showSize.x = screenWidth;
-                    showSize.y = static_cast<int>(static_cast<float>(screenWidth) / realRatio);
-                    showPos.set(0, static_cast<int>(static_cast<float>(screenHeight - showSize.y) / 2.0f));
+                float sx = screenWidth / showSize.x;
+                float sy = screenHeight / showSize.y;
+                float scale = min(sx, sy);
+                showSize = picSize * scale;
+                if (sx < sy) {
+                    showPos.set(0, static_cast<int>((screenHeight - showSize.y) / 2.0f));
                 } else {
-                    showSize.y = screenHeight;
-                    showSize.x = static_cast<int>(static_cast<float>(screenHeight) * realRatio);
-                    showPos.set(static_cast<int>(static_cast<float>(screenWidth - showSize.x) / 2.0f), 0);
+                    showPos.set(static_cast<int>((screenWidth - showSize.x) / 2.0f), 0);
                 }
             }
             
@@ -104,12 +106,12 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
             terRenderDevice->BeginScene();
             if (bgTexture) {
                 terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
-                                            static_cast<float>(screenWidth) / static_cast<float>(bgTexture->GetWidth()),
-                                            static_cast<float>(screenHeight) / static_cast<float>(bgTexture->GetHeight()),
+                                            screenWidth / static_cast<float>(bgTexture->GetWidth()),
+                                            screenHeight / static_cast<float>(bgTexture->GetHeight()),
                                             bgTexture);
             }
 
-            player->Draw(showPos.x, showPos.y, showSize.x, showSize.y, alpha);
+            player->Draw(showPos.x, showPos.y, static_cast<int>(showSize.x), static_cast<int>(showSize.y), alpha);
 
             terRenderDevice->EndScene();
             terRenderDevice->Flush();

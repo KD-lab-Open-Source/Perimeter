@@ -65,8 +65,8 @@ public:
 	terBuilding(const UnitTemplate& data);
 	virtual ~terBuilding();
 
-	const AttributeBuilding& attr() const {
-		return safe_cast_ref<const AttributeBuilding&>(terUnitReal::attr());
+	const AttributeBuilding* attr() const override {
+		return safe_cast<const AttributeBuilding*>(terUnitReal::attr());
 	}
 
 	void Start();

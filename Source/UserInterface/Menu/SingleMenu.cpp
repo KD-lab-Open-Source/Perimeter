@@ -176,21 +176,7 @@ void selectedContentChooser() {
     int pos = list->GetCurSel();
     std::vector<GAME_CONTENT> contents = getGameContentEnums(terGameContentAvailable);
     if (0 <= pos && pos < contents.size()) {
-        GAME_CONTENT selected = contents[pos];
-        if (selected == terGameContentBase) {
-            selected = terGameContentAvailable;
-        }
-        if (selected == terGameContentSelect) {
-            //Selected the already selected content, no need to restart
-            _shellIconManager.SwitchMenuScreens( SQSH_MM_CONTENT_CHOOSER_SCR, SQSH_MM_SINGLE_SCR );
-        } else {
-            //Set args and restart
-            std::vector<std::string> args;
-            args.emplace_back("tmp_initial_menu=SINGLE");
-            args.emplace_back(std::string("tmp_content_select=") + getGameContentEnumName(selected));
-            request_application_restart(&args);
-            _shellIconManager.SwitchMenuScreens( SQSH_MM_CONTENT_CHOOSER_SCR, RESTART_GAME );
-        }
+        switchGameContent(contents[pos], "SINGLE");
     }
 }
 

@@ -178,7 +178,7 @@ terFilthEye::terFilthEye(const UnitTemplate& data) : terFilthGeneric(data)
 	sphere_node=NULL;
 	angle_z=0;
 	speed_angle_z=0.1f;
-	interpolate_angle_z=angle_z;
+	interpolate_angle_z.set(angle_z);
 
 	is_top=false;
 	pre_destruction=false;
@@ -305,7 +305,7 @@ void terFilthEye::AvatarQuant()
 	if(IsEnd())
 	{
 		angle_z+=speed_angle_z;
-		interpolate_angle_z=angle_z;
+		interpolate_angle_z.set(angle_z);
 	}
 
 	if(pre_destruction)

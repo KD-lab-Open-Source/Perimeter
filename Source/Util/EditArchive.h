@@ -618,7 +618,7 @@ class EditArchive : public EditOArchive, public EditIArchive
 {
 public:
 	EditArchive();
-	EditArchive(HWND hwnd, const TreeControlSetup& treeControlSetup);
+	EditArchive(void* hwnd, const TreeControlSetup& treeControlSetup);
 	~EditArchive();
 
 	void setTranslatedOnly(bool translatedOnly);
@@ -642,7 +642,7 @@ public:
 private:
 	const TreeNode* outputNode_;
 
-	HWND hwnd_;
+    void* hwnd_;
 	TreeControlSetup treeControlSetup_;
 };
 

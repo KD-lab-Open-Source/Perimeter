@@ -327,8 +327,8 @@ void terFilthGhost::Collision(terUnitBase* p)
 {
 	if(destruction)
 		return;
-	if((isEnemy(p) && p->attr().isBuilding()) || p->attr().isLegionary()){
-		p->setDamage(attr().unitDamage.splashDamage,this);
+	if((isEnemy(p) && p->attr()->isBuilding()) || p->attr()->isLegionary()){
+		p->setDamage(attr()->unitDamage.splashDamage,this);
 	}
 }
 

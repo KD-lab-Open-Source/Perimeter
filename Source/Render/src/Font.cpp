@@ -28,16 +28,16 @@ public:
 	}
 	virtual ~cFontImage()
 	{
-		delete ImageData;
+		delete[] ImageData;
 	}
 
-	virtual int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+	int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
 		cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
 								ImageData,1,GetX(),8,0,GetX(),GetY());
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+	int GetTextureRGB(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
 	{ 
 		memset(pointer,0xFF,yDst*bplDst);
 		return 0;
@@ -50,7 +50,7 @@ public:
 		y=size.y;
 		bpp=8;
 
-		if(ImageData)delete ImageData;
+		if(ImageData) delete[] ImageData;
 		size_t sz2=size.x*size.y;
 		ImageData=new uint8_t[sz2];
 		for(int i=0;i<sz2;i++)
@@ -181,7 +181,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	if(sz>=sizes_size)
 	{
 		for(i=0;i<256;i++)
-			delete chars[i].bits;
+			delete[] chars[i].bits;
 		ErrH.Abort("Couldn't find big enough image for this font", XERR_USER, sz, fontname);
 		return false;
 	}
@@ -228,7 +228,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	}
 
 	for(i=0;i<256;i++)
-		delete chars[i].bits;
+		delete[] chars[i].bits;
 
 	uint8_t* gray_out=new uint8_t[size.x * size.y];
 
@@ -273,7 +273,7 @@ bool cFontInternal::CreateTexture(const char* fontname, const char* filename, in
 	pTexture->SetHeight(FontImage.GetY());
 
 	bool err=false;
-	err=err || gb_VisGeneric->GetRenderDevice()->CreateTexture(pTexture,&FontImage,-1,-1)!=0;
+	err=err || gb_VisGeneric->GetRenderDevice()->CreateTexture(pTexture,&FontImage)!=0;
 
 	if(err)
 	{
@@ -286,7 +286,7 @@ bool cFontInternal::CreateTexture(const char* fontname, const char* filename, in
 
 bool cFontImage::Save(const char* fname)
 {
-	return SaveTga(fname,GetX(),GetY(),ImageData,GetBitPerPixel()/8);
+	return SaveTGA(fname,GetX(),GetY(),ImageData,GetBitPerPixel()/8);
 }
 
 bool cFontImage::Load(const char* fname)
@@ -360,7 +360,7 @@ void str_replace_slash(char* str)
 bool cFontInternal::Create(const std::string& root_dir, const std::string& locale_, const std::string& fname, int h, bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
-    xassert(0<ScreenY);
+    xassert(0<=ScreenY);
 
 	int height=(int) xm::round((float) (h * ScreenY) / 768.0f);
 	statement_height=h;
@@ -377,6 +377,10 @@ bool cFontInternal::Create(const std::string& root_dir, const std::string& local
     //Get path for font
     font_path = root_dir + font_path + font_name + ".font";
 
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
+        return true;
+    }
+    
 	if(!CreateTexture(texture_name.c_str(),font_path.c_str(),height))
 	{
 		if(!silentErr) VisError<<"Cannot load font: "<< font_path <<VERR_END;

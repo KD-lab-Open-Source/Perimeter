@@ -2,8 +2,8 @@
 #include <locale>
 #include <unordered_map>
 
-#include "codepages.h"
 #include "xutl.h"
+#include "codepages.h"
 
 bool isCodepageInit = false;
 typedef std::unordered_map<char32_t, uint8_t> CodepageMap;

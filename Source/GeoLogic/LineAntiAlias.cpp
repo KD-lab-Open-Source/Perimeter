@@ -10,7 +10,7 @@ inline void _PutAlt(int x, int y, int da)
 }
 
 
-RECT& geoLine(int xbeg, int ybeg, int sx, int sy, int width, RECT& r)
+sRect& geoLine(int xbeg, int ybeg, int sx, int sy, int width, sRect& r)
 {
 	int x_cur=xbeg<<16;
 	int y_cur=ybeg<<16;
@@ -65,7 +65,7 @@ RECT& geoLine(int xbeg, int ybeg, int sx, int sy, int width, RECT& r)
 	return r;
 };
 
-RECT& LineAA(int Xd, int Yd, int Xf, int Yf, RECT& r)
+sRect& LineAA(int Xd, int Yd, int Xf, int Yf, sRect& r)
 {
   int dX, dY;
   int Xinc, Yinc;

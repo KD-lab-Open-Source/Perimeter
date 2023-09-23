@@ -1,8 +1,8 @@
 #pragma once
-#include "Unknown.h"
 
 #include <xutil.h>
 #define VISASSERT(a)											xassert(a)
+#include "Unknown.h"
 #include "RenderMT.h"
 
 class cInterfaceRenderDevice;
@@ -17,8 +17,12 @@ class cIUnkClass : public cUnknownClass, protected sAttribute
 public:
 	// инициализационная часть 
 	cIUnkClass(int kind) : cUnknownClass(kind),IParent(0){ }
-	virtual ~cIUnkClass(){}
-	virtual	int Release();
+    ~cIUnkClass() override = default;
+	int64_t Release() override;
+
+#ifdef PERIMETER_DEBUG_ASSERT
+    int64_t IncRef() override;
+#endif
 
 	// общие функции для работы объектами cIUnkClass
 	virtual void PreDraw(cCamera *UCamera)=0;

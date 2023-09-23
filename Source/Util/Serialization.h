@@ -5,7 +5,6 @@
 #include <string>
 #include <typeinfo>
 #include "Handle.h"
-#include <boost/type_index.hpp>
 #include "SerializationMacro.h"
 #include "xutl.h"
 
@@ -49,7 +48,7 @@ static void process_type_name(std::string& name) {
 template<class CLASS_T>
 static std::string get_type_id(const CLASS_T* ptr = nullptr) {
     if (ptr) {}
-	std::string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
+	std::string name = ptr->type_class_name();
     process_type_name(name);
     //printf("get_type_id %s = %s\n", typeid(CLASS_T).name(), name.c_str());
     return name;
@@ -73,8 +72,8 @@ enum ArchiveType
 };
 
 /////////////////////////////////////////////////
-#ifndef _FINAL_VERSION_
-#define xassertStr(exp, str) { string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
+#ifdef PERIMETER_DEBUG_ASSERT
+#define xassertStr(exp, str) { std::string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
 #else
 #define xassertStr(exp, str) 
 #endif
@@ -207,7 +206,7 @@ public:
 		NameToKey::const_iterator i = nameToKey.find(name);
 		if(i != nameToKey.end())
 			return (Enum)i->second;
-		xassertStr(!strlen(name) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + name).c_str());
+		//xassertStr(!strlen(name) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + name).c_str());
 		return (Enum)0;
 	}
 
@@ -215,7 +214,7 @@ public:
 		NameToKey::const_iterator i = nameAltToKey.find(nameAlt);
 		if(i != nameAltToKey.end())
 			return (Enum)i->second;
-		xassertStr(!strlen(nameAlt) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + nameAlt).c_str());
+		//xassertStr(!strlen(nameAlt) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + nameAlt).c_str());
 		return (Enum)0;
 	}
 
@@ -420,7 +419,8 @@ public:
 	CustomString(CustomValueFunc customValueFunc, const char* value = "") : customValueFunc_(customValueFunc) { (*this) = value; }
 	CustomString& operator=(const char* value) { if(value) { value_ = value; zeroPointer_ = false; } else { value_ = ""; zeroPointer_ = true; } return *this; }
 	CustomString& operator=(const std::string& value) { value_ = value; zeroPointer_ = false; return *this; }
-	operator const char*() const { return !zeroPointer_ ? value_.c_str() : 0; }
+    const char* c_str() const { return !zeroPointer_ ? value_.c_str() : nullptr; }
+    operator const char*() const { return c_str(); }
 	
 	CustomValueFunc customValueFunc() const { return customValueFunc_; }
 
@@ -552,32 +552,39 @@ template<class T> bool editParameters(T& t, EditArchive& ea);
 template<class T>
 class SingletonPrm 
 {
+private:
+    static T& get_instance(bool load) {
+        static T* t;
+        if(!t){
+            static T tt;
+            t = &tt;
+            if (load) {
+                loadParameters(*t);
+            }
+        }
+        return *t;
+    }
+    
 public:
     static void load() {
-        return loadParameters(instance());
+        return loadParameters(get_instance(false));
     }
 
     static void save() {
-        return saveParameters(instance());
+        return saveParameters(get_instance(true));
     }
 
 	static bool edit(EditArchive& ea) {
-		return editParameters(instance(), ea);
+		return editParameters(get_instance(true), ea);
 	}
 
 	T& operator()() const {
-		return instance();
+		return get_instance(false);
 	}
-
-	static T& instance() {
-		static T* t;
-		if(!t){
-			static T tt;
-			t = &tt;
-			loadParameters(*t);
-		}
-		return *t;
-	}
+    
+    static T& instance() {
+        return get_instance(false);
+    }        
 };
 
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)

@@ -79,7 +79,7 @@ struct terUnitGridFireCheckIgnoreOperator : terUnitGridFireCheckOperator
 	int operator()(terUnitBase* p)
 	{
 		if(p->alive() && (CollisionGroup & p->collisionGroup()) && p != Owner && CheckProcess.intersection(p->position(),p->radius())){
-			if(!IgnorePoint && p->attr().IgnoreTargetTrace)
+			if(!IgnorePoint && p->attr()->IgnoreTargetTrace)
 				IgnorePoint = (terUnitBase*)p;
 			else{
 				Contact = (terUnitBase*)(p);
@@ -125,12 +125,12 @@ public:
 		position_ = owner_->position2D();
 		clusterID_ = owner_->includingCluster();
 
-		ignoreField_ = owner_->attr().checkWeaponFlag(WEAPON_IGNORE_FIELD);
-		excludeHolograms_ = owner_->attr().weaponSetup.excludeHolograms;
+		ignoreField_ = owner_->attr()->checkWeaponFlag(WEAPON_IGNORE_FIELD);
+		excludeHolograms_ = owner_->attr()->weaponSetup.excludeHolograms;
 
-		fireDistanceMin_ = sqr(owner->attr().fireRadiusMin());
-		fireDistanceMax_ = sqr(owner->attr().fireRadius());
-		sightDistance_ = sqr(owner->attr().sightRadius());
+		fireDistanceMin_ = sqr(owner->attr()->fireRadiusMin());
+		fireDistanceMax_ = sqr(owner->attr()->fireRadius());
+		sightDistance_ = sqr(owner->attr()->sightRadius());
 
 		bestFactor_ = 0;
 
@@ -145,7 +145,7 @@ public:
 		if(owner_->isEnemy(p) && p->alive() && p->damageMolecula().isAlive() && owner_->checkFireClass(p) && (ignoreField_ || p->includingCluster() == clusterID_)
 		  && p->GetLegionMorphing() && !p->isUnseen()){
 			float dist = p->position2D().distance2(position_);
-			float f = p->attr().kill_priority + 1.f/(1.f + dist);
+			float f = p->attr()->kill_priority + 1.f/(1.f + dist);
 
 			if(p->possibleDamage() >= p->damageMolecula().aliveElementCount())
 				f /= 1000 + dist;
@@ -199,8 +199,8 @@ public:
 	terUnitGridSplashDamageOperator(terUnitBase* source_unit, terUnitBase* owner_unit) 
 	: sourceUnit_(source_unit), ownerUnit_(owner_unit)
 	{
-		radius_ = sourceUnit_->attr().unitDamage.splashDamageRadius;
-		damage_ = sourceUnit_->attr().unitDamage.splashDamage;
+		radius_ = sourceUnit_->attr()->unitDamage.splashDamageRadius;
+		damage_ = sourceUnit_->attr()->unitDamage.splashDamage;
 	}
 
 	void operator()(terUnitBase* p)
@@ -238,7 +238,7 @@ public:
 
 	void operator()(terUnitBase* p)
 	{
-		if(p->attr().isLegionary() && p->unitClass() != UNIT_CLASS_BASE && sourceUnit_->isEnemy(p) && p->GetSquadPoint() && p->alive() && (clusterID_ == p->includingCluster())){
+		if(p->attr()->isLegionary() && p->unitClass() != UNIT_CLASS_BASE && sourceUnit_->isEnemy(p) && p->GetSquadPoint() && p->alive() && (clusterID_ == p->includingCluster())){
 			terUnitLegionary* lp = safe_cast<terUnitLegionary*>(p);
 			if(!lp->isDisintegrating()){
 				float dist = p->position2D().distance2(position_);
@@ -246,7 +246,7 @@ public:
 					terUnitLegionary* lp = safe_cast<terUnitLegionary*>(p);
 					TargetContainer::const_iterator it = find(targets_.begin(),targets_.end(),lp);
 					if(it == targets_.end()){
-						float factor = p->attr().kill_priority + 1.f/(1.f + dist);
+						float factor = p->attr()->kill_priority + 1.f/(1.f + dist);
 						targets_.push_back(Target(lp,factor));
 					}
 				}
@@ -317,7 +317,7 @@ public:
 
 	void operator()(terUnitBase* p)
 	{
-		if(p->attr().isLegionary() && p->attr().ID != sourceUnit_->attr().ID && !sourceUnit_->isEnemy(p) && p->alive()){
+		if(p->attr()->isLegionary() && p->attr()->ID != sourceUnit_->attr()->ID && !sourceUnit_->isEnemy(p) && p->alive()){
 			terUnitLegionary* lp = safe_cast<terUnitLegionary*>(p);
 			lp->setInvisibility(terInvisibilityTime);
 		}

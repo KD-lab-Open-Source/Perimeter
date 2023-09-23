@@ -52,7 +52,7 @@ int creatingHostDialogQuant(float, float ) {
         CEditWindow* portInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PORT_INPUT));
         NetAddress conn;
         std::string address = PERIMETER_IP_HOST_DEFAULT;
-        if (!portInput->getText().empty()) {
+        if (!portInput->isEmptyText()) {
             address += ":" + portInput->getText();
         }
         bool resolveFailed = !NetAddress::resolve(conn, address);
@@ -130,7 +130,7 @@ void onListSelect() {
     int pos = ((CListBoxWindow*) _shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST))->GetCurSel();
     if (0 <= pos) {
         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-        if (input->getText().empty()) {
+        if (input->isEmptyText()) {
             setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
             showMessageBox();
         } else {

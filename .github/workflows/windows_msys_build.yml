@@ -5,7 +5,7 @@ on:
   pull_request:
 
 env:
-  GH_CACHE_KEY: 6
+  GH_CACHE_KEY: 8
 
 jobs:
   build:
@@ -13,43 +13,44 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          #{bits: 32, build_type: Debug,   arch: i686,   arch_zip: x86},
-          {bits: 64, build_type: Debug,   arch: x86_64, arch_zip: x64},
-          {bits: 32, build_type: Release, arch: i686,   arch_zip: x86},
-          {bits: 64, build_type: Release, arch: x86_64, arch_zip: x64}
+          {sys: mingw64, build_type: Debug,   arch: x86_64, arch_zip: x64},
+          {sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86},
+          {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64},
         ]
-    name: ${{matrix.env.build_type}} ${{matrix.env.bits}} bits
+    name: ${{matrix.env.build_type}} ${{matrix.env.sys}}
     defaults:
       run:
         shell: msys2 {0}
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW${{matrix.env.bits}}
+          msystem: "${{matrix.env.sys}}"
           install:
-            mingw-w64-${{matrix.env.arch}}-ninja
-            mingw-w64-${{matrix.env.arch}}-gcc
-            mingw-w64-${{matrix.env.arch}}-cmake
-            mingw-w64-${{matrix.env.arch}}-make
-            mingw-w64-${{matrix.env.arch}}-SDL2
-            mingw-w64-${{matrix.env.arch}}-SDL2_image
-            mingw-w64-${{matrix.env.arch}}-SDL2_net
-            mingw-w64-${{matrix.env.arch}}-SDL2_mixer
-            mingw-w64-${{matrix.env.arch}}-boost
-            mingw-w64-${{matrix.env.arch}}-lld
-            mingw-w64-${{matrix.env.arch}}-libbacktrace
-            mingw-w64-${{matrix.env.arch}}-libvpx
-            mingw-w64-${{matrix.env.arch}}-nasm
-            mingw-w64-${{matrix.env.arch}}-yasm
-            mingw-w64-${{matrix.env.arch}}-zlib
             base-devel
             wget
             unzip
             git
             bash
-      - uses: actions/cache@v2
+            mingw-w64-cross-winpthreads
+          pacboy:
+            ninja:p
+            gcc:p
+            cmake:p
+            make:p
+            SDL2:p
+            SDL2_image:p
+            SDL2_net:p
+            SDL2_mixer:p
+            boost:p
+            lld:p
+            libbacktrace:p
+            libvpx:p
+            nasm:p
+            yasm:p
+            zlib:p
+      - uses: actions/cache@v3
         id: cache
         with:
           path: |
@@ -57,18 +58,22 @@ jobs:
             ${{ github.workspace }}\ffmpeg
           key: MSYS-${{matrix.env.arch}}-${{ env.GH_CACHE_KEY }}
       - name: SDL2 binaries -- download
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true' && matrix.env.arch_zip != ''
         run: |
           mkdir downloads
-          wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.5-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_image.zip
-          wget https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.4-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_mixer.zip
+          wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-2.6.3-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_image.zip
+          wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-2.6.3-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_mixer.zip
+          unzip downloads/SDL2_image.zip -d downloads/SDL2_image
+          unzip downloads/SDL2_mixer.zip -d downloads/SDL2_mixer
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone --depth 1 --branch n4.4.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        run: git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          ./configure --enable-shared --prefix=/mingw${{matrix.env.bits}} \
+          ./configure \
+          --prefix=/${{matrix.env.sys}} \
+          --enable-static --disable-shared \
           --disable-everything \
           --enable-swscale \
           --enable-swresample \
@@ -82,8 +87,10 @@ jobs:
           --enable-protocol=file \
           --disable-d3d11va \
           --disable-dxva2 \
+          --disable-vulkan \
+          --disable-network \
           --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg \
-          --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
+          --disable-bzlib --disable-libopenjpeg --disable-iconv
         working-directory: ffmpeg
       - name: ffmpeg -- build
         if: steps.cache.outputs.cache-hit != 'true'
@@ -97,40 +104,31 @@ jobs:
       - name: perimeter -- create build dir
         run: mkdir build
       - name: perimeter -- configure build
-        run: cmake -G Ninja .. -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}}
+        run: cmake -G Ninja
+          -S .. -B .
+          -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}}
+          -DOPTION_LINKER=lld
+          -DOPTION_LINK_LIBS="bcrypt;winpthread.a"
         working-directory: build
       - name: perimeter -- make
         run: ninja
         working-directory: build
       - name: perimeter -- prepare artifact folder
         run: |
-          unzip downloads/SDL2_image.zip -d /SDL2_image
-          unzip downloads/SDL2_mixer.zip -d /SDL2_mixer
           mkdir -p perimeter/bin
-          cp /mingw${{matrix.env.bits}}/bin/SDL2.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/SDL2_net.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/libgcc_*.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/libstdc++-6.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/libwinpthread-1.dll perimeter/bin/
-          #cp /mingw${{matrix.env.bits}}/bin/libbacktrace-0.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/avcodec-58.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/avfilter-7.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/avformat-58.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/avutil-56.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/swscale-5.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/swresample-3.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/zlib1.dll perimeter/bin/
-          cp /SDL2_image/SDL2_image.dll perimeter/bin/
-          cp /SDL2_image/libjpeg-9.dll perimeter/bin/
-          cp /SDL2_image/libpng16-16.dll perimeter/bin/
-          cp /SDL2_mixer/SDL2_mixer.dll perimeter/bin/
-          cp /SDL2_mixer/libogg-0.dll perimeter/bin/
-          cp /SDL2_mixer/libvorbis-0.dll perimeter/bin/
-          cp /SDL2_mixer/libvorbisfile-3.dll perimeter/bin/
+          cp /${{matrix.env.sys}}/bin/SDL2.dll perimeter/bin/
+          cp /${{matrix.env.sys}}/bin/SDL2_net.dll perimeter/bin/
+          if [[ -n "${{matrix.env.arch_zip}}" ]]; then
+            cp downloads/SDL2_image/*.dll perimeter/bin/
+            cp downloads/SDL2_mixer/*.dll perimeter/bin/
+          else
+            cp /${{matrix.env.sys}}/bin/SDL2_image.dll perimeter/bin/
+            cp /${{matrix.env.sys}}/bin/SDL2_mixer.dll perimeter/bin/
+          fi
           cp build/Source/perimeter.exe perimeter/bin/
       - name: perimeter -- strip binary
         run: strip -g -x perimeter/bin/perimeter.exe
       - uses: actions/upload-artifact@v1
         with:
-          name: Perimeter MSYS ${{matrix.env.build_type}} ${{matrix.env.bits}} bits
+          name: Perimeter MSYS ${{matrix.env.build_type}} ${{matrix.env.sys}}
           path: perimeter/bin/

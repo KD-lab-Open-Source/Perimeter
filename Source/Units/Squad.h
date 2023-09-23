@@ -51,8 +51,8 @@ public:
 	terUnitSquad(const UnitTemplate& data);
 	~terUnitSquad();
 
-	const AttributeSquad& attr() const {
-		return safe_cast_ref<const AttributeSquad&>(terUnitBase::attr());
+	const AttributeSquad* attr() const override {
+		return safe_cast<const AttributeSquad*>(terUnitBase::attr());
 	}
 
 	void Start();
@@ -166,9 +166,9 @@ public:
 	bool Empty() const { return Units.empty(); }
 	bool emptyForMutation() const { return !squadMutationMolecula().elementCount(); }
 	bool isFlying() const { return !Empty() && !isBase() && Units.front()->isFlying(); }
-	bool isDigging() const { return !Empty() && Units.front()->attr().LegionType == LEGION_SUBTERRANEAN; }
+	bool isDigging() const { return !Empty() && Units.front()->attr()->LegionType == LEGION_SUBTERRANEAN; }
 	terUnitAttributeID currentMutation() const { return currentMutation_; }
-	const AttributeLegionary* currentAttribute() const { xassert(!Empty()); return &(Units.front()->attr()); }
+	const AttributeLegionary* currentAttribute() const { xassert(!Empty()); return Units.front()->attr(); }
 	bool isBase() const { return currentMutation() == UNIT_ATTRIBUTE_NONE; }
 	float formationRadius() const;
 	int attackClass() const;
@@ -189,7 +189,7 @@ public:
 	
 	// Передвижение
 	void clearWayPoints();
-	void addWayPoint(const Vect2f& way_point);
+	void addWayPoint(const Vect2f& way_point, bool bypassPathfinder = false);
 	void goHome();
 	bool noWayPoints() const { return wayPoints_.empty(); }
 	int wayPointsNumber() const { return wayPoints_.size(); }

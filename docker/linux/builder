@@ -1,0 +1,73 @@
+#!/bin/bash
+set -e
+
+if [[ ! -n $WORK_DIR ]]; then
+  WORK_DIR=$PWD
+fi
+if [[ -z $LIBS_ROOT ]]; then
+  echo "Missing LIBS_ROOT env"
+fi
+BUILD_DIR=$WORK_DIR/build/docker-linux
+
+#Replace system SDL2 with ours
+if [[ -d "$LIBS_ROOT/sdl" ]]; then
+  cp -va $LIBS_ROOT/sdl/include/* /usr/include/
+  cp -va $LIBS_ROOT/sdl/lib/* /usr/lib/x86_64-linux-gnu/
+fi
+
+#rm -rf $BUILD_DIR
+
+#Image is using GCC 8 so stdc++fs must be linked for std::filesystem
+export LDFLAGS="-lstdc++fs"
+
+# Configure
+#Use DXVK 1.x as tooling is too old
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+cmake -S $WORK_DIR -B $BUILD_DIR -G Ninja \
+  -DFFMPEG_ROOT="$LIBS_ROOT/ffmpeg" \
+  -DOPTION_LINKER=lld \
+  -DOPTION_LINK_LIBS="stdc++fs;pthread" \
+  -DOPTION_STATIC_LIB_STD=ON \
+  -DOPTION_DEBUG_ASSERT=OFF \
+  -DOPTION_DXVK_1=ON \
+  -DCMAKE_INSTALL_DO_STRIP=OFF \
+  -DCMAKE_INSTALL_RPATH="\$ORIGIN" \
+  $@`
+`
+  #-DSDL2_INCLUDE_DIR="$LIBS_ROOT/sdl/include/SDL2" \
+  #-DSDL2_LIBRARY="$LIBS_ROOT/sdl/lib/libSDL2.so" \
+# Build dependencies
+ninja dependencies
+
+# Build project
+ninja
+
+# Install
+rm -rf $BUILD_DIR/output
+cmake --install . --prefix $BUILD_DIR/output
+
+# Strip
+if [[ -d $BUILD_DIR/output/lib ]]; then
+  strip -g -x $BUILD_DIR/output/lib/*
+fi
+strip -g -x $BUILD_DIR/output/bin/*
+
+# Prepare package
+mv $BUILD_DIR/output/bin/* $BUILD_DIR/output
+rmdir $BUILD_DIR/output/bin
+if [[ -d $BUILD_DIR/output/lib ]]; then
+  mv $BUILD_DIR/output/lib/* $BUILD_DIR/output
+  rmdir $BUILD_DIR/output/lib
+fi
+
+# Perms
+chmod 777 $BUILD_DIR/output
+chmod 666 $BUILD_DIR/output/*
+chmod 777 $BUILD_DIR/output/perimeter
+
+# Tar it
+cd $BUILD_DIR/output
+tar -cvf ../Perimeter.tar *
+mv ../Perimeter.tar .
+chmod 666 Perimeter.tar

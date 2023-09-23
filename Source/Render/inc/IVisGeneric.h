@@ -4,8 +4,6 @@
 #include "IVisGenericInternal.h"
 #include "../src/Scene.h"
 
-#include "../src/Trail.h"
-
 #include "../src/ObjLibrary.h"
 #include "../src/TexLibrary.h"
 
@@ -25,8 +23,6 @@
 #include "../src/lighting.h"
 
 #include "../client/ExternalObj.h"
-#include "../src/TileMap.h"
+#include "../tilemap/TileMap.h"
 
 #include "../inc/IncTerra.h"
-
-#include "../3dx/Node3DX.h"

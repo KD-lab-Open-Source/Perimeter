@@ -106,7 +106,7 @@ void terUnitSquad::addUnit(terUnitLegionary* unit, bool set_position)
 {
 	unit->SetSquadPoint(this);
 	
-	if(unit->attr().is_base_unit){
+	if(unit->attr()->is_base_unit){
 		Units.push_back(unit);
 		++n_base_units;
 	}
@@ -115,10 +115,10 @@ void terUnitSquad::addUnit(terUnitLegionary* unit, bool set_position)
 		++n_complex_units;
 	}
 
-	if(!unit->attr().is_base_unit)
+	if(!unit->attr()->is_base_unit)
 		unit->setInSquad();
 
-	if(!unit->attr().is_base_unit || isBase() || set_position){
+	if(!unit->attr()->is_base_unit || isBase() || set_position){
 		Vect2f localPos = position_generator.get(unit->formationRadius());
 		unit->setLocalPosition(localPos);
 		Vect2f globalPos = stablePose()*localPos;
@@ -134,7 +134,7 @@ void terUnitSquad::addUnit(terUnitLegionary* unit, bool set_position)
 		unit->addWayPoint(stablePose().trans);
 	}
 
-	DamageMolecula atom(unit->attr().damageMolecula);
+	DamageMolecula atom(unit->attr()->damageMolecula);
 	atom += unit->transportAtom();
 	squadMolecula_ += atom;
 	mutationEnergy_ += atom.elementCount();
@@ -142,7 +142,7 @@ void terUnitSquad::addUnit(terUnitLegionary* unit, bool set_position)
 
 void terUnitSquad::removeUnit(terUnitLegionary* unit)
 {
-	DamageMolecula atom(unit->attr().damageMolecula);
+	DamageMolecula atom(unit->attr()->damageMolecula);
 	atom += unit->transportAtom();
 	squadMolecula_ -= atom;
 	mutationEnergy_ -= atom.elementCount();
@@ -153,7 +153,7 @@ void terUnitSquad::removeUnit(terUnitLegionary* unit)
 	FOR_EACH(Units, ui)
 		if(*ui == unit) {
 			terUnitLegionary& unit = **ui;
-			if(unit.attr().is_base_unit)
+			if(unit.attr()->is_base_unit)
 				--n_base_units;
 			else
 				--n_complex_units;
@@ -221,7 +221,7 @@ void terUnitSquad::Quant()
 
 	followQuant();
 
-	if(currentMutation() != UNIT_ATTRIBUTE_NONE && !Units.empty() && Units.front()->attr().ID != currentMutation() && mutation_process.finished()){
+	if(currentMutation() != UNIT_ATTRIBUTE_NONE && !Units.empty() && Units.front()->attr()->ID != currentMutation() && mutation_process.finished()){
 		mutate(UNIT_ATTRIBUTE_NONE);
 		goHome();
 	}
@@ -243,7 +243,7 @@ void terUnitSquad::Quant()
 		
 			charge += (*ui)->chargeLevel();
 
-			if((*ui)->attr().ID != UNIT_ATTRIBUTE_TECHNIC)
+			if((*ui)->attr()->ID != UNIT_ATTRIBUTE_TECHNIC)
 				disable_offencive_mode = false;
 
 			count++;
@@ -263,7 +263,7 @@ void terUnitSquad::Quant()
 				if(mutationChargeConsumption_.charged())
 					mutationEnergy_ += 1;
 				if(!mutationChargeConsumption_.attached()){
-					ConsumptionData data = attr().productionConsumption;
+					ConsumptionData data = attr()->productionConsumption;
 					float factor = squadMolecula().elementCount();
 					int time = xm::round((float) data.time / factor);
 					if(time < 200){
@@ -323,7 +323,7 @@ void terUnitSquad::DestroyLink()
 	FOR_EACH(Units, ui){
 		terUnitLegionary& unit = **ui;
 		if(!unit.alive()){
-			if(unit.attr().is_base_unit)
+			if(unit.attr()->is_base_unit)
 				--n_base_units;
 			else
 				--n_complex_units;
@@ -354,7 +354,7 @@ void terUnitSquad::goHome()
 
 void terUnitSquad::setSquadToFollow(terUnitBase* squadToFollow) 
 { 
-	squadToFollow_ = squadToFollow ? (squadToFollow->attr().ID == UNIT_ATTRIBUTE_SQUAD ? squadToFollow : squadToFollow->GetSquadPoint()) : 0; 
+	squadToFollow_ = squadToFollow ? (squadToFollow->attr()->ID == UNIT_ATTRIBUTE_SQUAD ? squadToFollow : squadToFollow->GetSquadPoint()) : 0; 
 }
 
 void terUnitSquad::followQuant()
@@ -365,7 +365,7 @@ void terUnitSquad::followQuant()
 	Vect2f v0 = position2D();
 	Vect2f v1 = squadToFollow_->position2D();
 	float dist = v0.distance(v1);
-	float radiusRequired = (radius() + squadToFollow_->radius())*attr().followDistanceFactor;
+	float radiusRequired = (radius() + squadToFollow_->radius())*attr()->followDistanceFactor;
 	if(dist > radiusRequired){
 		clearWayPoints();
 		addWayPoint(v1 + (v0 - v1)*(radiusRequired/dist));
@@ -378,43 +378,46 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 																		 				   
 	switch(command.commandID()){
 	case COMMAND_ID_OBJECT:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
-			clearOrders();
+		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+            clearOrders();
+        }
 		if(command.unit()) {
-			if(isEnemy(command.unit())){
-				addTarget(command.unit());									  
-				if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
-					soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
-			}
-			else {
-				if(dynamic_cast<terUnitLegionary*>(command.unit()))
-					setSquadToFollow(command.unit());
-				else if(command.unit()->Player->isWorld())
-					addTarget(command.unit());
-				else
-					addWayPoint(command.unit()->position());
+			if (isEnemy(command.unit())) {
+				addTarget(command.unit());
+                if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+                    soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
+                }
+			} else {
+				if (dynamic_cast<terUnitLegionary*>(command.unit())) {
+                    setSquadToFollow(command.unit());
+                } else if(command.unit()->Player->isWorld()) {
+                    addTarget(command.unit());
+                } else {
+                    addWayPoint(command.unit()->position(), command.selectionMode() & COMMAND_SELECTED_MODE_OVERRIDE);
+                }
             }
         }
 		break;
 																			 
 	case COMMAND_ID_PATROL:
-		if(patrolPoints_.empty() || (patrolIndex_ == 1 && patrolPoints_.empty()))
-			addWayPoint(command.position());
+		if (patrolPoints_.empty() || (patrolIndex_ == 1 && patrolPoints_.empty())) {
+            addWayPoint(command.position());
+        }
 		patrolPoints_.push_back(command.position());
 		break;															  
 	case COMMAND_ID_ATTACK:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE){
+        if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			clearOrders();
 			soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
 		}
 		addTarget(command.position());
 		break;																			  
-	case COMMAND_ID_POINT:	
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE){
+	case COMMAND_ID_POINT:
+        if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			clearOrders();					
 			soundEvent(SOUND_VOICE_SQUAD_MOVES);
 		}
-		addWayPoint(command.position());
+		addWayPoint(command.position(), command.selectionMode() & COMMAND_SELECTED_MODE_OVERRIDE);
 		break;
 
 	case COMMAND_ID_RETURN_TO_BASE:
@@ -434,7 +437,7 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_STOP: 
 		clearOrders();
 		fireStop();
-		addWayPoint(position2D());
+		addWayPoint(position2D(), true);
 		clearOrders();
 		break; 
 
@@ -492,7 +495,7 @@ int terUnitSquad::countUnits(terUnitAttributeID id, bool inSquad) const
 	SquadUnitList::const_iterator ui;
 	FOR_EACH(Units,ui){
 		if((inSquad ? (*ui)->inSquad() : true) && !((*ui)->requestStatus() & LEGION_ACTION_STATUS_DISINTEGRATE)){
-			if((*ui)->attr().ID == id)
+			if((*ui)->attr()->ID == id)
 				counter++;
 			switch(id){
 			case UNIT_ATTRIBUTE_SOLDIER:
@@ -787,7 +790,7 @@ const terUnitLegionary* terUnitSquad::RequestTransportPoint(const terUnitBase* t
 	const terUnitLegionary* transport = 0;
 	SquadUnitList::const_iterator ui;
 	FOR_EACH(Units, ui){
-		if((*ui)->alive() && (*ui)->GetLegionMutable() && transported_unit != *ui && !(*ui)->attr().is_base_unit &&
+		if((*ui)->alive() && (*ui)->GetLegionMutable() && transported_unit != *ui && !(*ui)->attr()->is_base_unit &&
 			distBest > (dist = (*ui)->position2D().distance2(transported_unit->position2D()))){
 				distBest = dist;
 				transport = *ui;
@@ -803,7 +806,7 @@ bool terUnitSquad::addToTransport(const terUnitLegionary* unit)
 	int transport_count0 = 0;
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
-		if((*ui)->GetLegionMutable() && unit != *ui && !(*ui)->attr().is_base_unit){
+		if((*ui)->GetLegionMutable() && unit != *ui && !(*ui)->attr()->is_base_unit){
 			int transport_count = (*ui)->transportAtom().elementCount();
 			if(!transport || transport_count < transport_count0){
 				transport = *ui;
@@ -813,9 +816,9 @@ bool terUnitSquad::addToTransport(const terUnitLegionary* unit)
 	}
 
 	if(transport){
-		transport->addToTransport(unit->attr().ID - UNIT_ATTRIBUTE_SOLDIER);
+		transport->addToTransport(unit->attr()->ID - UNIT_ATTRIBUTE_SOLDIER);
 	
-		DamageMolecula atom(unit->attr().damageMolecula);
+		DamageMolecula atom(unit->attr()->damageMolecula);
 		squadMolecula_ += atom;
 		mutationEnergy_ += atom.elementCount();
 
@@ -906,7 +909,8 @@ void terUnitSquad::SupportQuant()
 					plant->setProduction(unit);
 					addUnit(unit, false);
 					atomsRequested_[i]--;
-					universe()->checkEvent(EventUnitPlayer(Event::CREATE_BASE_UNIT, unit, Player));
+                    EventUnitPlayer ev(Event::CREATE_BASE_UNIT, unit, Player);
+					universe()->checkEvent(&ev);
 				}
 			}
 			atomsProgress_[i] = progressMax*100;
@@ -982,7 +986,7 @@ int terUnitSquad::loadedTechnicsCount() const
 	int count = 0;
 	SquadUnitList::const_iterator ui;
 	FOR_EACH(Units,ui){
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_TECHNIC && (*ui)->isWeaponReady())
+		if((*ui)->attr()->ID == UNIT_ATTRIBUTE_TECHNIC && (*ui)->isWeaponReady())
 			count++;
 	}
 
@@ -997,7 +1001,7 @@ int terUnitSquad::dischargeTechnics(int count)
 
 	SquadUnitList::iterator it;
 	FOR_EACH(Units,it){
-		if((*it)->attr().ID == UNIT_ATTRIBUTE_TECHNIC && (*it)->isWeaponReady()){
+		if((*it)->attr()->ID == UNIT_ATTRIBUTE_TECHNIC && (*it)->isWeaponReady()){
 			int status;
 			if((*it)->fireRequest(&(*it)->position(),NULL,status)){
 				discharged_count++;
@@ -1101,9 +1105,9 @@ bool terUnitSquad::mutate(terUnitAttributeID newMutation)
 		SquadUnitList::iterator ui;
 		FOR_EACH(Units, ui){
 			if((*ui)->GetLegionMutable() && 
-			   (*ui)->attr().ID != UNIT_ATTRIBUTE_TECHNIC && 
-			   (*ui)->attr().ID != UNIT_ATTRIBUTE_OFFICER &&
-			   (*ui)->attr().ID != UNIT_ATTRIBUTE_SOLDIER){
+			   (*ui)->attr()->ID != UNIT_ATTRIBUTE_TECHNIC && 
+			   (*ui)->attr()->ID != UNIT_ATTRIBUTE_OFFICER &&
+			   (*ui)->attr()->ID != UNIT_ATTRIBUTE_SOLDIER){
 				sourceUnits.push_back((*ui));
 			}
 		}
@@ -1139,9 +1143,9 @@ void terUnitSquad::disintegrateUnitsQuant()
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
 		if((*ui)->isDisintegrating() && 
-		   (*ui)->attr().ID != UNIT_ATTRIBUTE_TECHNIC && 
-		   (*ui)->attr().ID != UNIT_ATTRIBUTE_OFFICER &&
-		   (*ui)->attr().ID != UNIT_ATTRIBUTE_SOLDIER){
+		   (*ui)->attr()->ID != UNIT_ATTRIBUTE_TECHNIC && 
+		   (*ui)->attr()->ID != UNIT_ATTRIBUTE_OFFICER &&
+		   (*ui)->attr()->ID != UNIT_ATTRIBUTE_SOLDIER){
 			sourceUnits.push_back((*ui));
 		}
 	}
@@ -1251,8 +1255,8 @@ void terUnitSquad::calcCenter()
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
 		terUnitLegionary& unit = **ui;
-		xassert(unit.inSquad() || unit.attr().is_base_unit);
-		if(!unit.inSquad() || (n_complex_units && unit.attr().is_base_unit)) // не учитывать не дошедших и базовых, когда есть производные
+		xassert(unit.inSquad() || unit.attr()->is_base_unit);
+		if(!unit.inSquad() || (n_complex_units && unit.attr()->is_base_unit)) // не учитывать не дошедших и базовых, когда есть производные
 			continue;
 		average_position += unit.position2D();
 		counter++;
@@ -1482,16 +1486,16 @@ void terUnitSquad::repositionToAttack(AttackPoint& attackPoint, bool repeated)
 	float dist = delta.norm();
 	delta /= dist + FLT_EPS;
 
-	if(Units.front()->attr().dynamicAttack){
+	if(Units.front()->attr()->dynamicAttack){
 		terUnitLegionary& unit = *Units.front();
-		delta *= Mat2f(terLogicRNDfrnd()*unit.attr().attackAngleDeviation);
-		target += delta*unit.attr().attackTurnRadius;
+		delta *= Mat2f(terLogicRNDfrnd()*unit.attr()->attackAngleDeviation);
+		target += delta*unit.attr()->attackTurnRadius;
 		reposition_to_attack_timer.start(squad_reposition_to_attack_delay_flying);
 	}
 	else{
 		float min_radius = currentAttribute()->fireRadiusMin();
 		float max_radius = currentAttribute()->fireRadius();// - formationRadius()*2*clamp(position_generator.numLines() - 1, 0.5, 100);
-		xassert_s(min_radius < max_radius, (string("Недостаточный радиус атаки у ") + currentAttribute()->internalName()).c_str());
+		xassert_s(min_radius < max_radius, (std::string("Insufficient attack range ") + currentAttribute()->internalName(false)).c_str());
 
 		if(dist < min_radius)
 			optimalRadius_ = min_radius*(1 + squad_reposition_to_attack_radius_tolerance);
@@ -1524,20 +1528,25 @@ void terUnitSquad::clearWayPoints()
 			(*it)->stop();
 }
 
-void terUnitSquad::addWayPoint(const Vect2f& point)
+void terUnitSquad::addWayPoint(const Vect2f& point, bool bypassPathfinder)
 {
 	Vect2iVect pathFindList;
-	if(squadMutationMolecula().elementCount() && !isFlying() 
-	  && ai_tile_map->findPath(wayPoints_.empty() ? position2D() : wayPoints_.back(), point, pathFindList, AITileMap::PATH_NORMAL)){
-		Vect2iVect::iterator i;
-		FOR_EACH(pathFindList, i)
-			wayPoints_.push_back(*i);
-	}
-	else
-		wayPoints_.push_back(point);
+    
+    if (squadMutationMolecula().elementCount() <= 0 || isFlying()) {
+        bypassPathfinder = true;
+    }
+    
+	if (!bypassPathfinder && ai_tile_map->findPath(wayPoints_.empty() ? position2D() : wayPoints_.back(), point, pathFindList, AITileMap::PATH_NORMAL)) {
+        for (auto& i : pathFindList) {
+            wayPoints_.push_back(i);
+        }
+	} else {
+        wayPoints_.push_back(point);
+    }
 
-	if(unitsWayPoinsSize_ < 2)
-		recalcWayPoints();
+	if (unitsWayPoinsSize_ < 2) {
+        recalcWayPoints();
+    }
 }
 
 void terUnitSquad::clearTargets()
@@ -1647,7 +1656,7 @@ public:
 		position = pos;
 
 		myUnit = squad.Units.front();
-		const AttributeBase* attr = &(myUnit->attr());
+		const AttributeBase* attr = myUnit->attr();
 
 		ignoreField_ = attr->checkWeaponFlag(WEAPON_IGNORE_FIELD);
 
@@ -1679,7 +1688,7 @@ public:
 		float dist2 = position.distance2(unit2->position2D());
 		if(dist2 < radius_max2)
 		{
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + xm::abs(optimal_radius2 - dist2));
+			float f = sqr(unit2->attr()->kill_priority) + 1.f/(1.f + xm::abs(optimal_radius2 - dist2));
 			if(dist2 <= radius_min2)
 				f /= 1000 + dist2;
 			if(dist2 >= fire_radius2)
@@ -1731,7 +1740,7 @@ public:
 		basicSquadMode_ = (squad.currentMutation() == UNIT_ATTRIBUTE_NONE);
 
 		myUnit_ = squad.squadUnits().front();
-		const AttributeBase* attr = (basicSquadMode_) ? squad.Player->unitAttribute(UNIT_ATTRIBUTE_SOLDIER) : &(myUnit_->attr());
+		const AttributeBase* attr = (basicSquadMode_) ? squad.Player->unitAttribute(UNIT_ATTRIBUTE_SOLDIER) : myUnit_->attr();
 
 		ignoreField_ = attr->checkWeaponFlag(WEAPON_IGNORE_FIELD);
 		excludeHolograms_ = attr->weaponSetup.excludeHolograms;
@@ -1774,7 +1783,7 @@ public:
 		if(dist2 > radiusMax_) return;
 
 		if(myUnit_->isEnemy(unit2) && !unit2->isUnseen() && unit2->unitClass() & attackClass_[0]){
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + dist2);
+			float f = sqr(unit2->attr()->kill_priority) + 1.f/(1.f + dist2);
 
 			if(unit2->possibleDamage() >= unit2->damageMolecula().aliveElementCount())
 				f /= 1000 + dist2;
@@ -1789,7 +1798,7 @@ public:
 		if(!basicSquadMode_) return;
 
 		if(myUnit_->isEnemy(unit2) && !unit2->isUnseen() && unit2->unitClass() & attackClass_[1]){
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + dist2) + 1.f/(1.f + unit2->freezeFactor());
+			float f = sqr(unit2->attr()->kill_priority) + 1.f/(1.f + dist2) + 1.f/(1.f + unit2->freezeFactor());
 
 			TargetDataList::const_iterator it = std::find(targets_[1].begin(),targets_[1].end(),unit2);
 			if(it == targets_[1].end())
@@ -1797,7 +1806,7 @@ public:
 		}
 
 		if(!myUnit_->isEnemy(unit2) && unit2->unitClass() & attackClass_[2] && unit2->repairRequest()){
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + dist2) + 1.f/unit2->damageMolecula().phase();
+			float f = sqr(unit2->attr()->kill_priority) + 1.f/(1.f + dist2) + 1.f/unit2->damageMolecula().phase();
 
 			TargetDataList::const_iterator it = std::find(targets_[2].begin(),targets_[2].end(),unit2);
 			if(it == targets_[2].end())
@@ -1866,7 +1875,7 @@ public:
 		if(dist2 > radiusMax_) return;
 
 		if(!myUnit_->isEnemy(unit2) && unit2->unitClass() & attackClass_ && unit2->repairRequest()){
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + dist2) + 1.f/unit2->damageMolecula().phase();
+			float f = sqr(unit2->attr()->kill_priority) + 1.f/(1.f + dist2) + 1.f/unit2->damageMolecula().phase();
 
 			TargetDataList::const_iterator it = find(targets_.begin(),targets_.end(),unit2);
 			if(it == targets_.end())
@@ -1905,7 +1914,7 @@ void terUnitSquad::attackQuant()
 			SquadUnitList::iterator ui;
 			FOR_EACH(Units, ui){
 				terUnitLegionary& unit = **ui;
-				if(unit.attr().ID != UNIT_ATTRIBUTE_TECHNIC){
+				if(unit.attr()->ID != UNIT_ATTRIBUTE_TECHNIC){
 					terUnitBase* t = attack_points.front().target(unit);
 					if(t){
 						target = t;
@@ -1935,8 +1944,8 @@ void terUnitSquad::attackQuant()
 			SquadUnitList::iterator ui;
 			FOR_EACH(Units, ui){
 				terUnitLegionary& unit = **ui;
-                const AttributeLegionary& attr = unit.attr();
-                if ((attr.AttackClass & UNIT_CLASS_GROUND) && attr.ID != UNIT_ATTRIBUTE_TECHNIC) {
+                const AttributeLegionary* attr = unit.attr();
+                if ((attr->AttackClass & UNIT_CLASS_GROUND) && attr->ID != UNIT_ATTRIBUTE_TECHNIC) {
                     canAttack = true;
                     unit.setAttackPosition(target, true);
                 }
@@ -2100,7 +2109,7 @@ void terUnitSquad::showDebugInfo()
 /////////////////////////////////////////////////
 terUnitSquad::AttackPoint::AttackPoint(terUnitBase* unit) : 
 	unit_(unit), 
-	squad_(unit_->attr().isLegionary() ? unit_->GetSquadPoint() : 0),
+	squad_(unit_->attr()->isLegionary() ? unit_->GetSquadPoint() : 0),
 	position_(0,0,0),
 	positionTarget_(false)
 {
@@ -2118,7 +2127,7 @@ bool terUnitSquad::killBaseUnit(const UnitCommand& command)
 {
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_SOLDIER + command.commandData()
+		if((*ui)->attr()->ID == UNIT_ATTRIBUTE_SOLDIER + command.commandData()
 			&& (*ui)->alive() && (*ui)->GetLegionMorphing() && (*ui)->damageMolecula().aliveElementCount() > 0){
 				(*ui)->damageMoleculaKill();
 				return true;
@@ -2186,7 +2195,7 @@ int terUnitSquad::attackClass() const
 	int attackClass = 0;
 	SquadUnitList::const_iterator ui;
 	FOR_EACH(Units, ui)
-		attackClass |= (*ui)->attr().AttackClass;
+		attackClass |= (*ui)->attr()->AttackClass;
 	return attackClass;
 }
 
@@ -2196,8 +2205,8 @@ int terUnitSquad::attackEnemyClass() const
 	SquadUnitList::const_iterator ui;
 	FOR_EACH(Units, ui) {
 		//bad but developers have no time til release
-		if ((*ui)->attr().ID != UNIT_ATTRIBUTE_TECHNIC) {
-			attackClass |= (*ui)->attr().AttackClass;
+		if ((*ui)->attr()->ID != UNIT_ATTRIBUTE_TECHNIC) {
+			attackClass |= (*ui)->attr()->AttackClass;
 		}
 	}
 	return attackClass;
@@ -2206,7 +2215,7 @@ int terUnitSquad::attackEnemyClass() const
 float terUnitSquad::formationRadius() const
 {
 	if(isBase() || Empty())
-		return attr().formationRadiusBase;
+		return attr()->formationRadiusBase;
 	return Units.front()->formationRadius();
 }
 
@@ -2228,7 +2237,7 @@ bool terUnitSquad::distributeAttackTarget(const AttackPoint& attack_point, terUn
 
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
-		if((unit_id == UNIT_ATTRIBUTE_NONE || (*ui)->attr().ID == unit_id) && !(*ui)->hasAttackTarget()){
+		if((unit_id == UNIT_ATTRIBUTE_NONE || (*ui)->attr()->ID == unit_id) && !(*ui)->hasAttackTarget()){
 			terUnitLegionary& unit = **ui;
 			terUnitBase* t = attack_point.target(unit);
 
@@ -2246,7 +2255,7 @@ bool terUnitSquad::distributeAttackTarget(const AttackPoint& attack_point, terUn
 		return ret_value;
 
 	FOR_EACH(Units, ui){
-		if((unit_id == UNIT_ATTRIBUTE_NONE || (*ui)->attr().ID == unit_id) && (*ui)->needAttackTarget()){
+		if((unit_id == UNIT_ATTRIBUTE_NONE || (*ui)->attr()->ID == unit_id) && (*ui)->needAttackTarget()){
 			terUnitLegionary& unit = **ui;
 			terUnitBase* t = attack_point.target(unit);
 
@@ -2271,7 +2280,7 @@ void terUnitSquad::techniciansQuant()
 
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_TECHNIC && !(*ui)->hasAttackTarget() && (*ui)->isWeaponReady()){
+		if((*ui)->attr()->ID == UNIT_ATTRIBUTE_TECHNIC && !(*ui)->hasAttackTarget() && (*ui)->isWeaponReady()){
 			flag = true;
 			break;
 		}
@@ -2291,7 +2300,7 @@ void terUnitSquad::techniciansQuant()
     TargetDataList::const_iterator ti = op.targets().begin();
 
 	FOR_EACH(Units, ui){
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_TECHNIC && !(*ui)->hasAttackTarget() && (*ui)->isWeaponReady()){
+		if((*ui)->attr()->ID == UNIT_ATTRIBUTE_TECHNIC && !(*ui)->hasAttackTarget() && (*ui)->isWeaponReady()){
 			(*ui)->setAttackPoint(const_cast<terUnitBase*>(ti->unit_), false);
 
 			++ti;

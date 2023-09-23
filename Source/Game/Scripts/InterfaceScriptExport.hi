@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: InterfaceScriptExportPrm
-//	Number of variables: 30
+//	Number of variables: 37
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct_ControlAction__
@@ -206,6 +206,7 @@ struct SqshBorder {
 extern float leftSolidEdge;
 extern float leftSolidWidth;
 extern float littleBtnHeight;
+extern float gameTopEdge;
 extern SqshBorder leftBottomBtn;
 extern SqshBorder rightBottomBtn;
 extern SqshBorder leftSeparateBottomBtn;
@@ -214,6 +215,12 @@ extern SqshBorder rightSeparateBottomBtn;
 extern SqshBorder mainMenuMap;
 extern int customUp;
 extern int customStep;
+extern int optionsGameUp;
+extern int optionsGameStep;
+extern int ingameGameUp;
+extern int ingameGameStep;
+extern int ingameGraphUp;
+extern int ingameGraphStep;
 extern int ingameCustomUp;
 extern int ingameCustomStep;
 extern int battleUp;

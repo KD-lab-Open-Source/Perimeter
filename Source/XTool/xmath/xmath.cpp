@@ -23,9 +23,11 @@ static_assert(sizeof(float) * CHAR_BIT == 32);
 static_assert(sizeof(double) * CHAR_BIT == 64);
 static_assert(FLT_RADIX == 2);
 static_assert(FLT_EVAL_METHOD == 0);
-#ifdef FLT_DECIMAL_DIG //Unavailable in Dockcross for some reason
+#ifdef FLT_DECIMAL_DIG
 static_assert(FLT_DECIMAL_DIG == 9);
 static_assert(DBL_DECIMAL_DIG == 17);
+#endif
+#ifdef FLT_HAS_SUBNORM
 static_assert(FLT_HAS_SUBNORM == 1);
 static_assert(DBL_HAS_SUBNORM == 1);
 #endif
@@ -78,6 +80,15 @@ const Mat3d Mat3d::ID   (Vect3d(1, 1, 1), Vect3d::ZERO);
 
 const Mat3f Mat3f::ZERO (Vect3f::ZERO, Vect3f::ZERO);
 const Mat3f Mat3f::ID   (Vect3f(1, 1, 1), Vect3f::ZERO);
+
+const Mat4f Mat4f::ZERO (0, 0, 0, 0,
+                         0, 0, 0, 0,
+                         0, 0, 0, 0,
+                         0, 0, 0, 0);
+const Mat4f Mat4f::ID   (1, 0, 0, 0,
+                         0, 1, 0, 0,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1);
 
 const MatXd MatXd::ID   (Mat3d::ID, Vect3d::ZERO);
 
@@ -445,6 +456,17 @@ Mat4f& Mat4f::postmult(const Mat4f& M)
 	 return mult(N, M);
 }
 
+bool Mat4f::eq(const Mat4f& v, float delta) const {
+    if (delta == 0) {
+        return memcmp(array, v.array, sizeof(float) * 16) == 0;
+    }
+    for (int i = 0; i < 16; ++i) {
+        if (!(xm::abs(array[i] - v.array[i]) < delta)) {
+            return false;
+        } 
+    }
+    return true;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

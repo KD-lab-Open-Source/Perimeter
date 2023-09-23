@@ -20,7 +20,7 @@ public:
 	typedef void (*borderCall)(void* data,Vect2f& p);
 	virtual void GetBorder(int player,borderCall call,void* data)=0;
 
-	virtual void GetTileColor(char* tile, uint32_t line_size, int xstart, int ystart, int xend, int yend, int step)=0;
+	virtual void GetTileColor(uint8_t* tile, uint32_t line_size, int xstart, int ystart, int xend, int yend, int step)=0;
 
 	//При многопоточности к функциям GetColumn,GetBorder можно обращаться, 
 	//только используя эти функции

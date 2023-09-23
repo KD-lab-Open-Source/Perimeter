@@ -91,7 +91,7 @@ public:
 
 	const Type* find(const Key& key) {
 		typename Map::const_iterator i = map_.find(key);
-		return i != map_.end() ? i->second() : 0;
+		return i != map_.end() ? i->second() : nullptr;
 	}
 
     SERIALIZE(ar) {
@@ -120,8 +120,12 @@ public:
 	}
 
 	void add(const Key& key, ShareHandle<Type> type) {
-		map_.insert(typename Map::value_type(key, type));
+		map_.insert_or_assign(key, type);
 	}
+
+    void clear() {
+        map_.clear();
+    }
 
 	Map& map() {
 		return map_;
@@ -130,6 +134,10 @@ public:
 	const char* comboList() const {
 		return comboList_.c_str();
 	}
+
+    typedef typename Map::iterator iterator;
+    iterator begin() noexcept { return map_.begin(); }
+    iterator end() noexcept { return map_.end(); }
 
 	static TypeLibrary& instance() {
 		return SingletonPrm<TypeLibrary>::instance();

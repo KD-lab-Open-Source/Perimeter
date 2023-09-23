@@ -389,7 +389,7 @@ void terFilthRat::AvatarQuant()
 	{
 		Vect3f pos=To3D(position());
 		float dz=position().z-pos.z;
-		if(dz<=-attr().boundRadius)
+		if(dz<=-attr()->boundRadius)
 			realAvatar()->setSight(0);
 		else
 			realAvatar()->setSight(1);

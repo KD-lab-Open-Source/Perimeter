@@ -1,53 +1,62 @@
 #pragma once
 
+//#define MTGVECTOR_USE_HANDLES
+
 class MTGVector
 {
+public:
+#ifdef MTGVECTOR_USE_HANDLES
+    using ptr_t = cUnknownHandle*;
+#else
+    using ptr_t = cIUnkClass*;
+#endif
+    
 protected:
-	std::vector<cIUnkClass*> slot;
-	std::vector<cIUnkClass*> add_list;
+    bool disable_changes = false;
+    std::vector<ptr_t> slot = {};
+    
+    struct sPerQuant {
+        bool processed = false;
+        int quant = 0;
+        std::vector<ptr_t> list = {};
+    };
+    std::list<sPerQuant> add_list;
+    std::list<sPerQuant> erase_list;
 
-	struct sErase
-	{
-		int quant;
-		std::list<cIUnkClass*> erase_list;
-	};
+#ifdef MTGVECTOR_USE_HANDLES
+    //A separate list of handles of objects we are holding alive for rendering
+    std::vector<ptr_t> objects_hold;
+#endif
 
-	std::list<sErase> erase_list;
+    bool ChangeNow(cIUnkClass* UnkObj) const;
+    void AddToList(std::list<sPerQuant>& list, cIUnkClass* UnkObj);
+    void RemoveFromList(std::list<sPerQuant>& list, cIUnkClass* UnkObj);
+
 	MTDECLARE(critical);
 public:
-	typedef std::vector<cIUnkClass*>::iterator iterator;
-	inline int size()	{ return slot.size(); }
-	cIUnkClass* operator[](int i){return slot[i];}
-	iterator begin(){return slot.begin();}
-	iterator end(){return slot.end();}
+    typedef std::vector<ptr_t>::const_iterator const_iterator;
+    inline ptr_t get(size_t i) const { return slot[i]; }
+	inline int size() { return slot.size(); }
+    const_iterator begin() const noexcept { return slot.cbegin(); }
+    const_iterator end() const noexcept { return slot.cend(); }
 
 	MTGVector();
 	~MTGVector();
 
 	//Attach, Detach - можно вызывать из другого потока
 	void Attach(cIUnkClass *UnkObj);
-	void Detach(cIUnkClass *UnkObj);
+    void Detach(cIUnkClass *UnkObj);
 	void Release();
 
 	//очищает add_list и erase_list в безопасный момент
 	//cur_quant == INT_MAX очистить всё
 	void mtUpdate(int cur_quant);
-};
-
-struct sGrid2d:public MTGVector
-{
-protected:
-	bool detach_now;
-	std::vector<cIUnkClass*> erase_list;
-public:
-	
-	sGrid2d():detach_now(true) { }
-	~sGrid2d() { }
-
-	void Detach(cIUnkClass *UnkObj);
-	void SetDetachNow(bool now){detach_now=now;}
-	void DetachAndIterate(sGrid2d::iterator& it);
-	bool IsLifeObject(){return erase_list.empty();}
+    
+    void DisableChanges(bool disable);
+#ifdef PERIMETER_DEBUG_ASSERT
+    void AssertNoObject(cIUnkClass* object);
+    size_t PendingChanges();
+#endif
 };
 
 class QuatTree

@@ -8,9 +8,8 @@ protected:
     int bpp; //Bits per pixel
     int length; //Amount of frames if is animated or 1
     int time; //Total time in ms if animated or 0
-    int fmt;
 public:
-	cFileImage()																{ x=y=length=bpp=time=fmt=0; }
+	cFileImage()																{ x=y=length=bpp=time=0; }
 	virtual ~cFileImage()														{}
 	virtual int load(void *pointer,int size)									{ return -1; }
 	virtual int load(const char *fname)												{ return -1; }
@@ -18,13 +17,12 @@ public:
 	virtual int close()															{ return -1; }
 	virtual int GetTextureAlpha(void *pointer,int time,int bpp,int bpl,
 		int aBitCount=8,int aBitShift=24,int xSize=-1,int ySize=-1)				{ return -1; }
-	virtual int GetTexture(void *pointer,int time,int bpp,int bpl,
-		int rBitCount,int gBitCount,int bBitCount,int aBitCount,
-		int rBitShift,int gBitShift,int bBitShift,int aBitShift,
+	virtual int GetTextureRGB(void *pointer,int time,int bpp,int bpl,
+		int rBitCount,int gBitCount,int bBitCount,
+		int rBitShift,int gBitShift,int bBitShift,
 		int xSize=-1,int ySize=-1)												{ return -1; }
 	inline int GetX()															{ if(x>=0) return x; return -x; }
 	inline int GetY()															{ if(y>=0) return y; return -y; }
-	inline int GetFmt()															{ return fmt; }
 	inline int GetTime()														{ return time; }
 	inline int GetLength()														{ return length; }
 	inline int GetBitPerPixel()													{ return bpp; }
@@ -50,9 +48,9 @@ public:
 	{
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int time,int bpp,int bpl,
-		int rBitCount,int gBitCount,int bBitCount,int aBitCount,
-		int rBitShift,int gBitShift,int bBitShift,int aBitShift,
+	virtual int GetTextureRGB(void *pointer,int time,int bpp,int bpl,
+		int rBitCount,int gBitCount,int bBitCount,
+		int rBitShift,int gBitShift,int bBitShift,
 		int xSize=-1,int ySize=-1);
 };
 
@@ -64,7 +62,7 @@ extern void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,
 extern void GetFileName(const char *FullName,char *fname);				// возвращает имя файла, обрезает каталог
 extern void GetFilePath(const char *FullName,char *path);				// возвращает каталог
 
-bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
+bool SaveTGA(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,int& byte_per_pixel);
 extern void GetDimTexture(int& dx,int& dy,int& count);
 

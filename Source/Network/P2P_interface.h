@@ -184,7 +184,9 @@ struct PClientData
 	std::vector<netCommand4H_BackGameInformation2> backGameInf2List;
 	unsigned int curLastQuant;
 
-	unsigned int lastTimeBackPacket;
+    unsigned int lastTimeBackPacket;
+    size_t latency = 0;
+    size_t last_time_latency_response = 0;
 
 	unsigned int confirmQuant;
     
@@ -298,6 +300,7 @@ enum e_PNCState{
     //Desync states
     PNC_STATE__CLIENT_DESYNC=PNC_State_GameRun|17,
     PNC_STATE__HOST_DESYNC=PNC_State_GameRun|PNC_State_Host|18,
+    PNC_STATE__HOST_SENDING_GAME=PNC_State_Host|20,
 
 	// Состояние завершения
 	PNC_STATE__ENDING_GAME=19
@@ -365,7 +368,7 @@ public:
 	//bool flag_missionDescriptionUpdate;
 	MissionDescription* hostMissionDescription = nullptr;
 
-	MissionDescription clientMissionDescription; //Only 1
+	MissionDescription* clientMissionDescription = nullptr; //Only 1
 
 	//string m_missionName;
 	
@@ -399,6 +402,7 @@ public:
 
 
 	void UpdateBattleData();
+    void SendBattleData();
 	void UpdateCurrentMissionDescription4C();
 	void CheckClients();
 	void DumpClients();
@@ -489,6 +493,7 @@ public:
 	void HostReceiveQuant();
 	void ClientPredReceiveQuant();
 
+    uint64_t last_latency_status = 0;
 
 	unsigned int m_quantInterval;
 

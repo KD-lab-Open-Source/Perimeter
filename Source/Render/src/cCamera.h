@@ -33,8 +33,6 @@ enum eTestVisible
 	VISIBLE_INSIDE=2,
 };
 
-struct IDirect3DSurface9;
-
 class cCamera : public cUnknownClass, public sAttribute
 {
 protected:
@@ -110,8 +108,8 @@ public:
 	void AttachFirst(cIUnkClass* zpalne);
 	void AttachNoRecursive(int pos,cIUnkClass* pbox);
 
-	inline cURenderDevice* GetRenderDevice()					{ return RenderDevice; }
-	inline class cD3DRender* GetRenderDevice3D()				{ return (class cD3DRender*)RenderDevice; }
+	inline cInterfaceRenderDevice* GetRenderDevice()					{ return RenderDevice; }
+
 	// инлайновые функции доступа к полям класса
 	inline cIUnkClass*& GetDraw(int pos,int number)				{ return DrawArray[pos][number]; }
 	inline int GetNumberDraw(int pos)							{ return DrawArray[pos].size(); }
@@ -128,7 +126,7 @@ public:
 	inline const Vect3f& GetWorldK()							{ return WorldK; }
 
 	inline cTexture* GetRenderTarget()							{ return RenderTarget; }
-	inline IDirect3DSurface9* GetZBuffer()						{ return pZBuffer;}
+	inline struct IDirect3DSurface9* GetZBuffer()				{ return pZBuffer;}
 	void SetRenderTarget(cTexture *pTexture,IDirect3DSurface9* pZBuf);
 
 	void EnableGridTest(int grid_dx,int grid_dy,int grid_size);
@@ -136,7 +134,7 @@ public:
 	
 	inline int GetHReflection(){VISASSERT(GetAttr(ATTRCAMERA_REFLECTION));return h_reflection;}
 
-	CMatrix			matProj,matView,matViewProj,matViewProjScr;
+	Mat4f			matProj,matView,matViewProj,matViewProjScr;
 	sViewPort		vp;
 
 	void GetFrustumPoint(Vect3f& p00,Vect3f& p01,Vect3f& p10,Vect3f& p11,Vect3f& d00,Vect3f& d01,Vect3f& d10,Vect3f& d11,float rmul=1.0f);
@@ -190,7 +188,7 @@ protected:
 	cScene			*IParent;														// интерфейс породивший данный класс
 
 	//cCamera
-	cURenderDevice				*RenderDevice;				// устройство растеризации
+    cInterfaceRenderDevice		*RenderDevice;				// устройство растеризации
 	cTexture					*RenderTarget;				// поверхность на которую выводится
 	IDirect3DSurface9*			pZBuffer;
 	Vect2f						RenderSize;					// размеры устройства вывода
@@ -216,7 +214,6 @@ protected:
 	void DrawShadowPlane();
 
 	std::vector<cIUnkClass*>	arZPlane;
-	void ClearZBuffer();
 	void ShowClip();
 
 	void CalcClipPlane();

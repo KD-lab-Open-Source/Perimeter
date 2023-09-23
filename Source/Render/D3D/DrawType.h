@@ -46,7 +46,7 @@ public:
 	virtual int GetOffsetTextureNumber(bool tilemap=false){return 0;}
 
 	virtual void SetFog(const sColor4f &color,const Vect2f &v){}
-	virtual D3DXVECTOR4 GetFogParam(){return D3DXVECTOR4(0,1,0,0);}
+	virtual Vect4f GetFogParam(){return Vect4f(0,1,0,0);}
 protected:
 	cTexture*		pShadowMap;
 	LPDIRECT3DSURFACE9	pZBuffer;
@@ -197,7 +197,7 @@ public:
 	virtual bool CreateShadowTexture(int xysize);
 	virtual void SetMaterialTilemap(cTileMap *TileMap);
 	virtual void SetMaterialTilemapShadow();
-	virtual IDirect3DTexture9* GetTilemapShadow0(){return pLookupMap->GetDDSurface(0);}
+	virtual IDirect3DTexture9* GetTilemapShadow0(){return pLookupMap->GetFrameImage(0)->d3d;}
 	virtual void SetTileColor(sColor4f color);
 protected:
 	void SetMaterial(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data);
@@ -233,7 +233,7 @@ class DrawTypeGeforce3:public DrawTypeFixedPipeline
 	VSScene*     last_vs;
 	PixelShader* last_ps;
 
-	D3DXVECTOR4 fog_param;
+	Vect4f fog_param;
 public:
 	DrawTypeGeforce3();
 	~DrawTypeGeforce3();
@@ -256,7 +256,7 @@ public:
 	virtual void SetTileColor(sColor4f color);
 	virtual int GetOffsetTextureNumber(bool tilemap=false);
 	virtual void SetFog(const sColor4f &color,const Vect2f &v);
-	virtual D3DXVECTOR4 GetFogParam(){return fog_param;}
+	virtual Vect4f GetFogParam(){return fog_param;}
 protected:
 	void SetMaterial(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data);
 };
@@ -318,7 +318,7 @@ class DrawTypeGeforceFX:public DrawTypeFixedPipeline
 	VSScene*     last_vs;
 	PixelShader* last_ps;
 
-	D3DXVECTOR4 fog_param;
+	Vect4f fog_param;
 public:
 	DrawTypeGeforceFX();
 	~DrawTypeGeforceFX();
@@ -341,7 +341,7 @@ public:
 	virtual void SetTileColor(sColor4f color);
 	virtual int GetOffsetTextureNumber(bool tilemap=false);
 	virtual void SetFog(const sColor4f &color,const Vect2f &v);
-	virtual D3DXVECTOR4 GetFogParam(){return fog_param;}
+	virtual Vect4f GetFogParam(){return fog_param;}
 protected:
 	void SetMaterial(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data);
 };

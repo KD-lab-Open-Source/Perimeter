@@ -7,6 +7,7 @@
 #include "files/files.h"
 #include "qd_textdb.h"
 #include "codepages/codepages.h"
+#include "Localization.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -37,6 +38,63 @@ qdTextDB::qdText* qdTextDB::get_entry(const char* id_str, qdText* default_text) 
         return &texts_.at(id_str);
     }
     return default_text;
+}
+
+void convert_text_to_txt(std::string& text) {
+    string_replace_all(text, "\\", "\\\\");
+    string_replace_all(text, "\r", "\\r");
+    string_replace_all(text, "\n", "\\n");
+}
+
+void qdTextDB::exportTexts(const char* text_id) {
+    const std::string& locale = getLocale();
+    std::string id_str;
+    if (text_id != nullptr && *(text_id) != 0) {
+        id_str = string_to_lower(text_id);
+    }
+
+    XStream f ("Texts_" + locale + ".txt", XS_OUT);
+    for (auto& t : texts_) {
+        if (id_str.empty() || startsWith(t.first, id_str)) {
+            //Write main text
+            f.write_str(t.second.id_);
+            f.write('=');
+            std::string line;
+            if (locale.empty()) {
+                line = t.second.text_;
+            } else {
+                line = convertToUnicode(t.second.text_, locale);
+            }
+            if (!line.empty()) {
+                convert_text_to_txt(line);
+                f.write_str(line);
+            }
+            f.write('\n');
+
+            //Write audio
+            line = t.second.sound_;
+            if (!line.empty()) {
+                convert_text_to_txt(line);
+                f.write_str(t.second.id_);
+                f.write_str(".text_audio=");
+                f.write_str(line);
+                f.write('\n');
+            }
+
+#ifndef _FINAL_VERSION_
+            //Write comment
+            line = t.second.comment_;
+            if (!line.empty()) {
+                convert_text_to_txt(line);
+                f.write_str(t.second.id_);
+                f.write_str(".text_comment=");
+                f.write_str(line);
+                f.write('\n');
+            }
+#endif
+        }
+    }
+    f.close();
 }
 
 const char* qdTextDB::getText(const char* text_id) const
@@ -88,28 +146,28 @@ const char* qdTextDB::getComment(const char* text_id) const
 
 void qdTextDB::add_entry(const std::string& id_str, const qdText& text, bool replace_old_texts) {
     //Avoid adding if text already exists
-    if (replace_old_texts || texts_.count(id_str) == 0) {
-        texts_[id_str] = text;
+    if (replace_old_texts) {
+        texts_.insert_or_assign(id_str, text);
+    } else {
+        texts_.insert(std::pair(id_str, text));
     }
 }
 
 bool qdTextDB::load(const std::string& locale, const char* file_name, const char* comments_file_name,
-                    bool clear_old_texts, bool replace_old_texts, bool format_txt)
+                    bool replace_old_texts, bool format_txt)
 {
     XStream fh(0);
+    fprintf(stdout, "Loading texts: %s replace: %d\n", file_name, replace_old_texts);
     if (!fh.open(convert_path_content(file_name), XS_IN)) {
         fprintf(stderr, "Error loading texts: %s\n", file_name);
         return false;
-    }
-
-    if (clear_old_texts) {
-        clear();
     }
     
     if (format_txt) {
         std::string acc_line;
         char c = 0;
         bool escape = false;
+        bool comment = false;
         std::vector<std::string> lines;
         
         do {
@@ -119,22 +177,34 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
             //Only handle special chars if not escaped
             if (escape) {
                 //Transform \ + n into \n
-                if (c == 'n') {
-                    c = '\n';
+                switch (c) {
+                    case 'n':
+                        c = '\n';
+                        break;
+                    case 'r':
+                        c = '\r';
+                        break;
+                    default:
+                        break;
                 }
                 escape = false;
             } else {
                 if (c == '\n') {
                     //Newline, store accumulator and clear
                     lines.emplace_back(acc_line);
+                    comment = false;
+                    escape = false;
                     acc_line.clear();
+                    continue;
+                } else if (comment || c == '#') {
+                    //This is a comment, skip
+                    comment = true;
                     continue;
                 } else if (c == '\\') {
                     //Escape char
                     escape = true;
                     continue;
-                } else if (c == '#' && acc_line.empty()) {
-                    //This is a comment, skip
+                } else if (c == '\r') {
                     continue;
                 }
             }
@@ -181,7 +251,7 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
                 discard = true;
             }
             if (!discard) {
-                add_entry(id_str_lwr, qdText(txt_str, snd_str), replace_old_texts);
+                add_entry(id_str_lwr, qdText(id_str, txt_str, snd_str), replace_old_texts);
             }
 
             free(id_str);
@@ -233,14 +303,13 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
         if(pos == std::string::npos) {
             continue;
         }
-
-        std::string id_str = line.substr(0, pos);
-        if (id_str.empty()) continue;
-        id_str = string_to_lower(id_str.c_str());
-        std::string line_str = line.substr(pos + 1);
-        if (line_str.empty()) continue;
         
         qdText entry;
+
+        entry.id_ = line.substr(0, pos);
+        if (entry.id_.empty()) continue;
+        std::string id_str = string_to_lower(entry.id_.c_str());
+        std::string line_str = line.substr(pos + 1);
         
         //Check where this string goes to
         if (endsWith(id_str, ".text_audio")) {
@@ -267,131 +336,24 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
     }
 }
 
-void qdTextDB::load_supplementary_texts(const std::string& locale) {
-    //Load per language texts
-    if (startsWith(locale, "russian")) {
-        load_lines({
-           "GAME_CONTENT.PERIMETER=Периметр",
-           "GAME_CONTENT.PERIMETER_ET=Периметр: Завет Императора",
-           "GAME_CONTENT.PERIMETER_HD=Периметр: HD",
-           "Interface.Menu.Messages.GameContentMissing=Содержит ресурсы, которые не представлены или не включены в этой копии игры, убедитесь, что они установлены и включены:\n",
-           "Interface.Menu.Messages.WorldMissing=Содержит карту, которая не представлена или не включена в этой копии игры, убедитесь, что она установлена и включена:\n\n",
-           "Interface.Menu.ButtonLabels.MULTIPLAYER=МУЛЬТИПЛЕЕР",
-           "Interface.Menu.ButtonLabels.MODS=МОДЫ",
-           "Interface.Menu.ButtonLabels.MOD ENABLE STATE=мод состояние:",
-           "Interface.Menu.ButtonLabels.CHANGE_CONTENTS=СМЕНИТЬ\nКАМПАНИЮ",
-           "Interface.Menu.ButtonLabels.DIRECT=ВВОД IP",
-           "Interface.Menu.ButtonLabels.Password=Пароль:",
-           "Interface.Menu.ButtonLabels.Port=Порт:",
-           "Interface.Menu.ButtonLabels.SERVER TYPE=Тип сервера:",
-           "Interface.Menu.ButtonLabels.CANCEL=ОТМЕНА",
-           "Interface.Menu.ButtonLabels.RUN IN BACKGROUND=ЗАПУСТИТЬ ИГРУ НА ФОНЕ",
-           "Interface.Menu.ButtonLabels.UI POSITION=ПОЗИЦИОНИРОВАНИЕ UI",
-           "Interface.Menu.ButtonLabels.GRAB INPUT=ЗАХВАТ ВВОДА",
-           "Interface.Menu.ButtonLabels.FOG=ТУМАН",
-           "Interface.Menu.ComboItems.Centered=По центру",
-           "Interface.Menu.ComboItems.Left side=Левая сторона",
-           "Interface.Menu.ComboItems.Right side=Правая сторона",
-           "Interface.Menu.ComboItems.Stretched=Растянутый",
-           "Interface.Menu.ComboItems.Screen=Экран",
-           "Interface.Menu.ComboItems.Windowed=Оконный",
-           "Interface.Menu.ComboItems.Private Server=Частный/Локальный сервер",
-           "Interface.Menu.ComboItems.Public Server=Публичный/Интернет сервер",
-           "Interface.Menu.Multiplayer.StartNewGame=Начать новую игру",
-           "Interface.Menu.Messages.WrongIPPort=Этот IP-адрес недоступен",
-           "Interface.Menu.Messages.Multiplayer.IncorrectContent=Сервер содержит другие игровые ресурсы",
-           "Interface.Menu.Messages.Multiplayer.IncorrectArch=Сервер имеет другую битность или архитектуру ЦПУ, другой тип билда (Debug/Release), операционную систему или использован другой компилятор (MSVC/Clang/GCC), пожалуйста, убедитесь, что они совпадают",
-           "Interface.Menu.Messages.Multiplayer.SignatureError=Проверка подписи или CRC не прошла, соединение может быть ненадёжным",
-           "Interface.Menu.Messages.Multiplayer.HostTerminated=Хост прекратил игру или отключился",
-           "Interface.Menu.Messages.Confirmations.PendingChanges=Отложенные изменения не будут применены, вернуться в главное меню?",
-           "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Чтобы применить изменения, требуется перезапуск игры, вы уверены?",
-           //Empty to not mess with ,'s
-           ""
-        }, false, locale);
+void qdTextDB::load_from_directory(const std::string& locale, const std::string& path, bool exclude_mods) {
+    for (const auto& entry: get_content_entries_directory(path)) {
+        //Only load files from non mod folders if exclude_mods is true, otherwise only load from mods
+        //This ensures every file is parsed only once, that mod can override base content if required and
+        if (startsWith(entry->key_content, "mods/") == exclude_mods) {
+            continue;
+        }
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
+        std::string name = entry_path.filename().u8string();
+        name = string_to_lower(name.c_str());
+        //Ignore any starting file with . like .DS_Store
+        if (name[0] == '.') continue;
+        //Always ignore files like "texts_comments.btdb"
+        if (endsWith(name, "_comments.btdb")) continue;
+        bool replace = name.rfind("_noreplace.") == std::string::npos;
+        bool txt = getExtension(name, true) == "txt";
+        load(locale, entry->path_content.c_str(), nullptr, replace, txt);
     }
-
-    //Load english ones to fill any previously missing texts
-    load_lines({
-       "GAME_CONTENT.PERIMETER=Perimeter",
-       "GAME_CONTENT.PERIMETER_ET=Perimeter: Emperor's Testament",
-       "GAME_CONTENT.PERIMETER_HD=Perimeter: HD",
-       "Interface.Menu.Messages.GameContentMissing=This contains game content that is not present or enabled in your installation, make sure these are installed and enabled in your game:\n",
-       "Interface.Menu.Messages.WorldMissing=This contains a map/world that is not present or enabled in your installation, make sure that is installed and enabled in your game:\n\n",
-       "Interface.Menu.ButtonLabels.MULTIPLAYER=MULTIPLAYER",
-       "Interface.Menu.ButtonLabels.MODS=MODS",
-       "Interface.Menu.ButtonLabels.MOD ENABLE STATE=Mod state:",
-       "Interface.Menu.ButtonLabels.CHANGE_CONTENTS=CHANGE\nCAMPAIGN",
-       "Interface.Menu.ButtonLabels.DIRECT=ENTER IP",
-       "Interface.Menu.ButtonLabels.Password=Password:",
-       "Interface.Menu.ButtonLabels.Port=Port:",
-       "Interface.Menu.ButtonLabels.SERVER TYPE=Server Type:",
-       "Interface.Menu.ButtonLabels.CANCEL=CANCEL",
-       "Interface.Menu.ButtonLabels.RUN IN BACKGROUND=RUN GAME IN BACKGROUND",
-       "Interface.Menu.ButtonLabels.UI POSITION=UI POSITIONING",
-       "Interface.Menu.ButtonLabels.GRAB INPUT=CAPTURE INPUT",
-       "Interface.Menu.ButtonLabels.FOG=FOG",
-       "Interface.Menu.ComboItems.Centered=Centered",
-       "Interface.Menu.ComboItems.Left side=Left side",
-       "Interface.Menu.ComboItems.Right side=Right side",
-       "Interface.Menu.ComboItems.Stretched=Stretched",
-       "Interface.Menu.ComboItems.Screen=Screen",
-       "Interface.Menu.ComboItems.Windowed=Windowed",
-       "Interface.Menu.ComboItems.Private Server=Private/Local Server",
-       "Interface.Menu.ComboItems.Public Server=Public/Online Server",
-       "Interface.Menu.Multiplayer.StartNewGame=Start a new game",
-       "Interface.Menu.Messages.WrongIPPort=IP port is wrong",
-       "Interface.Menu.Messages.Multiplayer.IncorrectContent=Server has different game content",
-       "Interface.Menu.Messages.Multiplayer.IncorrectArch=Server has different bits or CPU architecture, different build type (Debug/Release), Operating System or used a different compiler (MSVC/Clang/GCC), please ensure they match",
-       "Interface.Menu.Messages.Multiplayer.SignatureError=Signature or CRC checks failed, connection may be unreliable",
-       "Interface.Menu.Messages.Multiplayer.HostTerminated=Host has terminated session or disconnected",
-       "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
-       "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Game restart is required to apply changes, are you sure?",
-       //These should be in released games but seems to be absent sometimes
-       "Interface.Tips.ToClanPostfix=(&FF00FFto clan&FFFFFF)",
-       "Interface.Tips.ToAllPostfix=(&FF00FFto all&FFFFFF)",
-       "Interface.Tips.ToClanPrefix=&FF00FFTo clan&FFFFFF: ",
-       "Interface.Tips.ToAllPrefix=&FF00FFTo all&FFFFFF: ",
-       //Not translated
-       "Interface.Tips.mission_editor_help=Mission Editor:\n\n"
-       "Q - Player \"Me\"\n"
-       "W - Player \"World\"\n"
-       "E - Player \"Enemy\"\n\n"
-       "Working with an object:\n\n"
-       "F, INS - Create object\n"
-       "D, DEL - Delete object\n"
-       "Shift-D - Delete Object Silently\n\n"
-       "Ctrl-C - Save Object\n"
-       "Ctrl-V - Copy Object\n\n"
-       "V + mouse_move - Move object\n"
-       "Shift-V + mouse_move - Move object by Z\n"
-       "C + mouse_move - Rotate the object\n"
-       "Shift-C + mouse_move - Move object\n"
-       "Ctrl-Shift-C + mouse_move - Move object directly\n"
-       "X + mouse_move - Zoom in / out the object\n\n"
-       "F4 - Edit Text Data\n"
-       "Ctrl-Enter - Trigger Editor from Ilyuha\n"
-       "Ctrl-S - Record Mission\n"
-       "Ctrl-O - Open mission file\n"
-       "Ctrl-Shift-O - Reopen the current mission\n"
-       "Ctrl-M - Remember the camera of the current player\n\n"
-       "Ctrl-H - Enable / disable indestructibility editing\n"
-       "         Edit LeftMouse _clockwise_,\n"
-       "         Shift - destructible\n"
-       "Enter - End the current region (the right button is busy rotating)\n"
-       "Cancel - Cancel the current region\n"
-       "Ctrl-Alt-H - Erase All Indestructibility\n\n"
-       "Camera:\n"
-       "F9 - Add Spline Control Point\n"
-       "Shift-F9 - Delete the last point of the spline\n"
-       "Ctrl-F9 - start / stop playback\n"
-       "Ctrl-Shift-F9 - Clear Current Spline\n"
-       "Ctrl-Alt-F9 - write current spline ",
-       //Used for all langs
-       "Interface.Menu.ButtonLabels.<<<=<<<",
-       "Interface.Menu.ButtonLabels.>>>=>>>",
-       //Empty to not mess with ,'s
-       ""
-   }, false, locale);
 }
 
 void qdTextDB::getIdList(const char* mask, IdList& idList)

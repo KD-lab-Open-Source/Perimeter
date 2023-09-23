@@ -1,5 +1,7 @@
 #include "StdAfxRD.h"
 #include "UnkLight.h"
+#include "DrawBuffer.h"
+#include "VertexFormat.h"
 
 cUnkLight::cUnkLight() : cUnkObj(KIND_LIGHT)
 {
@@ -7,11 +9,10 @@ cUnkLight::cUnkLight() : cUnkObj(KIND_LIGHT)
 	CurrentTime=0;
 	TimeLife=1000;
 	NumberKey=0;
+    Key = nullptr;
 }
 
-cUnkLight::~cUnkLight()
-{
-}
+cUnkLight::~cUnkLight() = default;
 
 void cUnkLight::Animate(float dt)
 {
@@ -42,40 +43,42 @@ void cUnkLight::Draw(cCamera *DrawNode)
 {
 	if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION)&&(GetGlobalMatrix().trans().z<DrawNode->GetHReflection()))
 		return;
-	DrawStrip strip;
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,0,GetTexture());
 
 	Vect3f pv0,pe0,pv,pe;
 	const int NumberPlane=10;
-	sColor4c Diffuse(GetDiffuse().a*GetDiffuse().r,
+	uint32_t Diffuse = gb_RenderDevice->ConvertColor(sColor4c(GetDiffuse().a*GetDiffuse().r,
 					GetDiffuse().a*GetDiffuse().g,
-					GetDiffuse().a*GetDiffuse().b,1);
+					GetDiffuse().a*GetDiffuse().b,1));
 	float dr=2*GetRadius()/(NumberPlane+1);
 
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    
 	float tex=0;
 	Vect3f WorldK=DrawNode->GetPos()-GetPos();
 	FastNormalize(WorldK);
 
-	sVertexXYZDT1 v0,v1;
-	for(int i=0;i<NumberPlane;i++,tex+=1)
-	{ // NumberPlane>=2
+	sVertexXYZDT1* vb = db->LockTriangleStripSteps<sVertexXYZDT1>(NumberPlane);
+    
+	for(int i=0;i<NumberPlane;i++,tex+=1) {
 		float r=GetRadius()*(1-ABS(2.f*(i+1)/(NumberPlane+2)-1));
-		Vect3f sx=r*DrawNode->GetWorldI(),sy=r*DrawNode->GetWorldJ(),
-//			sz=(GetRadius()-(i+1)*dr)*DrawNode->GetWorldK();
-			sz=(GetRadius()-(i+1)*dr)*WorldK;
-		if(i&1)
-			v0.pos=GetPos()-sx+sy-sz,
-			v1.pos=GetPos()-sx-sy-sz;
-		else
-			v0.pos=GetPos()+sx+sy-sz,
-			v1.pos=GetPos()+sx-sy-sz;
+		Vect3f sx=r*DrawNode->GetWorldI(),sy=r*DrawNode->GetWorldJ(),sz=(GetRadius()-(i+1)*dr)*WorldK;
+        sVertexXYZDT1& v0 = vb[i*2];
+        sVertexXYZDT1& v1 = vb[i*2+1];
+		if (i&1) {
+            v0.pos = GetPos() - sx + sy - sz;
+            v1.pos = GetPos() - sx - sy - sz;
+        } else {
+            v0.pos = GetPos() + sx + sy - sz;
+            v1.pos = GetPos() + sx - sy - sz;
+        }
 		v0.GetTexel().set(tex,0); v1.GetTexel().set(tex,1);
 		v0.diffuse=v1.diffuse=Diffuse;
-		strip.Set(v0,v1);
 	}
 
-	strip.End();
+    db->Unlock();
+    db->EndTriangleStrip();
 }
 const MatXf& cUnkLight::GetPosition() const
 {

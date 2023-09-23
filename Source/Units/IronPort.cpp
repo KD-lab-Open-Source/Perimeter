@@ -56,7 +56,7 @@ void terCorridor::Quant()
 	switch(mode_){
 	case OPENING:
 		if(frame_ && realAvatar()->chainID() == CHAIN_OPENED){
-			if(attr().moveFrame){
+			if(attr()->moveFrame){
 				frame_->wayPoints().clear();
 				frame_->wayPoints().push_back(position());
 				frame_->wayPoints().push_back(position());
@@ -71,10 +71,10 @@ void terCorridor::Quant()
 		break;
 		
 	case FRAME_APPROACHING:
-		if(position2D().distance2(frame_->position2D()) < sqr(attr().distanceThreshould) || (attr().moveFrame && frame_->wayPoints().empty())){
+		if(position2D().distance2(frame_->position2D()) < sqr(attr()->distanceThreshould) || (attr()->moveFrame && frame_->wayPoints().empty())){
 			frame_->BodyPoint->makeStatic();
 			mode_ = FRAME_DISAPPEARING;
-			disappearingTimer_.start(attr().disappearingTime);
+			disappearingTimer_.start(attr()->disappearingTime);
 			PositionZ_ = frame_->position().z;
 			//frame_->Player->clearFrame();
 		}
@@ -82,16 +82,17 @@ void terCorridor::Quant()
 		
 	case FRAME_DISAPPEARING: {											  
 		frame_->BodyPoint->setPose(Se3f(frame_->BodyPoint->orientation(),
-			to3D(position2D(), PositionZ_ + attr().disappearingHeight*disappearingTimer_())));
+			to3D(position2D(), PositionZ_ + attr()->disappearingHeight*disappearingTimer_())));
 		frame_->realAvatar()->setSight(1 - disappearingTimer_());
 		if(disappearingTimer_() == 1){
-			universe()->checkEvent(EventUnitPlayer(Event::TELEPORTATION, this, frame_->Player));
+            EventUnitPlayer ev(Event::TELEPORTATION, this, frame_->Player);
+			universe()->checkEvent(&ev);
 			frame_->BodyPoint->setPose(Se3f(frame_->BodyPoint->orientation(), to3D(position2D(), 2000)));
 			frame_->realAvatar()->GetModelPoint()->SetAttr(ATTRUNKOBJ_IGNORE);
 			//frame_->Player->clearFrame();
 			frame_->Kill();
 			mode_ = IDLE;
-            if (!attr().moveFrame) {
+            if (!attr()->moveFrame) {
                 BodyPoint->setVelocity(Vect3f::ZERO);
             }
 			realAvatar()->requestChain(CHAIN_CLOSED);
@@ -147,7 +148,7 @@ void terCorridorAlpha::MoveQuant()
 
 	Vect2f delta = target - position2D();
 	float norm = delta.norm();
-	Vect2f acceleration = delta*(attr().potentialToAcceleration*clamp(norm/attr().accelerationDenominator, 0, 1)/(norm + 1));
+	Vect2f acceleration = delta*(attr()->potentialToAcceleration*clamp(norm/attr()->accelerationDenominator, 0, 1)/(norm + 1));
 
 	//show_vector(position(), to3D(acceleration, 0), WHITE);
 	BodyPoint->addAcceleration(Vect3f(acceleration.x, acceleration.y, 0));
@@ -220,7 +221,7 @@ void terCorridorAlpha::refreshPotentials()
 	const UnitList& unit_list=world->units();
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list, ui)
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_ALPHA_POTENTIAL){
+		if((*ui)->attr()->ID == UNIT_ATTRIBUTE_ALPHA_POTENTIAL){
 			potentials_.push_back((*ui)->position2D());
 			safe_cast<terUnitAplhaPotential*>(*ui)->setIndex(potentials_.size());
 		}
@@ -266,8 +267,8 @@ void terCorridorAlpha::ShowInfo()
 
 	if(marked()){
 		MTAuto lock(&potentials_lock_);
-		Vect3f posPrev = To3D(potentialPosition(-attr().pathVisualizationDelta));
-		for(float t = 0; t < potentials_.size(); t += attr().pathVisualizationDelta){
+		Vect3f posPrev = To3D(potentialPosition(-attr()->pathVisualizationDelta));
+		for(float t = 0; t < potentials_.size(); t += attr()->pathVisualizationDelta){
 			Vect3f pos = To3D(potentialPosition(t));
 			terRenderDevice->DrawLine(posPrev, pos, pathColor);
 			posPrev = pos;
@@ -278,9 +279,9 @@ void terCorridorAlpha::ShowInfo()
 void terCorridorAlpha::putPath(std::list<Vect2f>& miniMapPath) {
 //	refreshPotentials();
 
-//	miniMapPath.push_back(potentialPosition(-attr().pathVisualizationDelta));
+//	miniMapPath.push_back(potentialPosition(-attr()->pathVisualizationDelta));
 	MTAuto lock(&potentials_lock_);
-	for(float t = 0; t < potentials_.size(); t += attr().pathVisualizationDelta){
+	for(float t = 0; t < potentials_.size(); t += attr()->pathVisualizationDelta){
 		miniMapPath.push_back(potentialPosition(t));
 	}
 }
@@ -342,7 +343,7 @@ void terCorridorOmega::ShowInfo()
 	minedIcon_.quant();
 	if(mined()){
 		MatXf m = avatar()->matrix();
-		m.trans().z += radius()*attr().iconDistanceFactor;
+		m.trans().z += radius()*attr()->iconDistanceFactor;
 		minedIcon_.show(m.trans());
 	}
 }

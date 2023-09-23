@@ -296,7 +296,12 @@ void handleSignal(int sig) {
             sigName = "Illegal instruction";
             break;
         case SIGTERM:
+#ifdef PERIMETER_DEBUG
+            ErrH.Exit();
+            return;
+#else
             sigName = "Termination";
+#endif
             break;
 #ifdef SIGBUS
         case SIGBUS:
@@ -513,9 +518,10 @@ void XErrorHandler::Abort(const std::string& message, int code, int val, const c
 }
 
 bool XErrorHandler::ShowErrorMessage(const char* message) {
+    std::string text = BreakLongLines(message, 160);
     int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                                        "Perimeter error",
-                                       message,
+                                       text.c_str(),
                                        nullptr);
     if (err) {
         SDL_PRINT_ERROR("Creating error window");
@@ -547,14 +553,8 @@ void XErrorHandler::SetCrash(void (*cf)(void))
     crash_func = cf;
 }
 
-void XErrorHandler::RTC(const char *file, unsigned int line, const char *expr)
-{
-	char msg[256];
-	strcpy(msg, file);
-	strcat(msg,", LINE: ");
-    sprintf(convBuf, "%d", line);
-    strcat(msg, convBuf);
-    strcat(msg,"\r\n");
-    strcat(msg,expr);
-	Abort(rterrorMSG,XERR_USER,-1,msg);
+void ErrH_RTC(const char *file,unsigned int line, const char *expr) {
+    std::string msg = file;
+    msg += ":" + std::to_string(line) + "\r\n" + expr;
+    ErrH.Abort(rterrorMSG,XERR_USER,-1,msg.c_str());
 }

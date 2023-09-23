@@ -14,7 +14,7 @@ struct terFilthGeneric : terUnitReal
 	virtual void SetFreeDestroy()=0;
 	void UnitDamageCheck(){}
 
-	bool IsAttackable(terUnitBase* unit){return unit->unitClass() & attr().AttackClass;}
+	bool IsAttackable(terUnitBase* unit){return unit->unitClass() & attr()->AttackClass;}
 	virtual void FieldEffect();
 protected:
 

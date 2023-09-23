@@ -79,18 +79,23 @@ void AIPlayer::BuildingQuant()
 		}
 		break;
 
-	case DiggingCompleted:
-		finishPlacement();
-		checkEvent(EventPlayerState(PLAYER_STATE_UNABLE_TO_PLACE_CORE, false));
-		checkEvent(EventPlayerState(PLAYER_STATE_UNABLE_TO_PLACE_BUILDING, false));
-		break;
+	case DiggingCompleted: {
+        finishPlacement();
+        EventPlayerState evc(PLAYER_STATE_UNABLE_TO_PLACE_CORE, false);
+        universe()->checkEvent(&evc);
+        EventPlayerState evb(PLAYER_STATE_UNABLE_TO_PLACE_BUILDING, false);
+        universe()->checkEvent(&evb);
+        break;
+    }
 
 	case UnableToFindWhereToDig:
 		//xassert(0);
 		//placeSecond(new PlaceScanOp(UNIT_ATTRIBUTE_CORE, *this, aiPrm.placeCorePrm));
-		if(place_scan_op->generateUnableToPlaceEvent())
-			checkEvent(EventPlayerState(place_scan_op->attributeID() == UNIT_ATTRIBUTE_CORE ? 
-				PLAYER_STATE_UNABLE_TO_PLACE_CORE : PLAYER_STATE_UNABLE_TO_PLACE_BUILDING, true));
+		if(place_scan_op->generateUnableToPlaceEvent()) {
+            EventPlayerState evs(place_scan_op->attributeID() == UNIT_ATTRIBUTE_CORE ?
+                                 PLAYER_STATE_UNABLE_TO_PLACE_CORE : PLAYER_STATE_UNABLE_TO_PLACE_BUILDING, true);
+            universe()->checkEvent(&evs);
+        }
 		clearPlaceOp();
 		break;
 
@@ -135,7 +140,7 @@ void AIPlayer::installFrame()
     }
     
 	MetaRegionLock lock(RegionPoint);
-	ZeroRegionPoint->operateByCircle(frame()->position2D(), frame()->attr().ZeroLayerRadius, 1);
+	ZeroRegionPoint->operateByCircle(frame()->position2D(), frame()->attr()->ZeroLayerRadius, 1);
 	ZeroRegionPoint->postOperateAnalyze();
 	applyRegionChanges();
 

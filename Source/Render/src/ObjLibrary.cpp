@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "DrawBuffer.h"
 #include "ObjLibrary.h"
 #include "SceneMesh.h"
 #include "AnimChannel.h"
@@ -694,6 +695,7 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
 	}else
 	{
 		ObjNode=LoadM3D(fname.c_str(),TexturePath.c_str(),DefTexturePath.c_str(),enable_error_not_found);
+        GetTexLibrary()->SetCurrentBumpScale(1);
 	}
 
 	cObjectNodeRoot *tmp=NULL;
@@ -791,7 +793,8 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 	MeshScene.Read(f);
 	f.Close();
 
-	gb_RenderDevice3D->SetCurrentConvertDot3Mul(MeshScene.bump_scale);
+    GetTexLibrary()->SetCurrentBumpScale(MeshScene.bump_scale);
+
 	int nChannel;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{

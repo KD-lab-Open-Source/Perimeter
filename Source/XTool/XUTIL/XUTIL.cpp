@@ -55,13 +55,28 @@ void setup_argcv(int argc, char *argv[]) {
 }
 
 void decode_version(const char* version_str, uint16_t version[3]) {
+    if (version_str == nullptr) return;
     XBuffer buf(const_cast<char*>(version_str), strlen(version_str) + 1);
+    version[0] = 0;
+    version[1] = 0;
+    version[2] = 0;
     char c;
+    if (*buf.buf == 'v') {
+        //Old versions had v before numbers, skip it
+        buf > c;
+    }
     buf >= version[0];
-    buf > c; if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 0, version_str);
+    buf > c;
+    if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 1, version_str);
     buf >= version[1];
-    buf > c; if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 1, version_str);
-    buf >= version[2];
+    buf > c;
+    if (c != '.') {
+        //Old x.YY format, transform to X.0.Y
+        version[2] = version[1];
+        version[1] = 0;
+    } else {
+        buf >= version[2];
+    }
 }
 
 int compare_versions(const uint16_t left[3], const uint16_t right[3]) {
@@ -439,3 +454,29 @@ void encode_raw_double(XBuffer* buffer, double value) {
     (*buffer) < 'X' <= (*value_raw);
 }
 
+std::string BreakLongLines(const char* ptext, size_t max_width, char endline) {
+    std::string text;
+    if (ptext) {
+        size_t line_len = 0;
+        while (true) {
+            const char c = *ptext;
+            if (c == '\0') {
+                break;
+            }
+
+            ptext++;
+            if (c == endline) {
+                line_len = 0;
+                text += endline;
+            } else {
+                text += c;
+                line_len += 1;
+                if (line_len >= max_width) {
+                    line_len = 0;
+                    text += endline;
+                }
+            }
+        }
+    }
+    return text;
+}

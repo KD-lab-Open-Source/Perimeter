@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+# Compile smaller version of FFMPEG with only what project needs
+git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git /opt/src/ffmpeg
+
+cd /opt/src/ffmpeg
+
+./configure \
+          --prefix=/opt/out/ffmpeg \
+          --enable-static --disable-shared \
+          --disable-everything \
+          --enable-swscale \
+          --enable-swresample \
+          --enable-zlib \
+          --enable-libvpx \
+          --enable-libvorbis \
+          --enable-demuxer=avi,rawvideo,bink,matroska \
+          --enable-decoder=png,rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9 \
+          --enable-parser=png,vp9 \
+          --enable-filter=aresample,aformat \
+          --enable-protocol=file \
+          --disable-d3d11va \
+          --disable-dxva2 \
+          --disable-vulkan \
+          --disable-network \
+          --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg \
+          --disable-bzlib --disable-libopenjpeg --disable-iconv
+
+make -j4
+make install

@@ -163,7 +163,7 @@ bool terUnitBuildingBlock::findTarget()
 			terBuilding* p = safe_cast<terBuilding*>(*it);
 			if(p->repairRequest()){
 				float dist = p->position2D().distance2(position2D());
-				float f = p->attr().constructionPriority + 1.f/(1.f + dist);
+				float f = p->attr()->constructionPriority + 1.f/(1.f + dist);
 
 				if(f > max || !targetPoint_){
 					targetPoint_ = p;

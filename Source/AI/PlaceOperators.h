@@ -111,14 +111,14 @@ public:
 	void operator()(terUnitBase* unit2)
 	{
 		// Учитыаем только здания и Фрейм
-		if(!unit2->isBuilding() && unit2->attr().ID != UNIT_ATTRIBUTE_FRAME)
+		if(!unit2->isBuilding() && unit2->attr()->ID != UNIT_ATTRIBUTE_FRAME)
 			return;
 
 		// Касание здания
 		Vect2f pos2 = unit2->position2D();
 		Vect2f p = pos2 - position_;
-		Vect2f p1 = p + unit2->attr().BasementMin;
-		Vect2f p2 = p + unit2->attr().BasementMax;
+		Vect2f p1 = p + unit2->attr()->BasementMin;
+		Vect2f p2 = p + unit2->attr()->BasementMax;
 		if(!(p2.x < bound_min.x || p1.x > bound_max.x || p2.y < bound_min.y || p1.y > bound_max.y)){
 			invalidPosition_ = true;
 			return;
@@ -131,24 +131,24 @@ public:
 		float distance = position_.distance(pos2);
 
 		// Проверяем подключение Core to Frame, Core, CoreGenerator, Transmitter
-		if(!zeroLayerConnection_ && unit2->attr().ConnectionRadius && (unit2->attr().ID == UNIT_ATTRIBUTE_FRAME || safe_cast<terBuilding*>(unit2)->isConnected())
-		  && unit2->attr().ConnectionRadius - ai_connection_radius_tolerance - distance > 0){
+		if(!zeroLayerConnection_ && unit2->attr()->ConnectionRadius && (unit2->attr()->ID == UNIT_ATTRIBUTE_FRAME || safe_cast<terBuilding*>(unit2)->isConnected())
+		  && unit2->attr()->ConnectionRadius - ai_connection_radius_tolerance - distance > 0){
 			connected_ = true;
 			good_connecting_building = pos2;
 		}
 
-		if(attributeID() == unit2->attr().ID)
+		if(attributeID() == unit2->attr()->ID)
 			good_factor += prm_.sameTypeDistanceFactor*prm_.scanRadius/(distance + 1);
 		
-		if(prm_.connectBuildingFactor && !unit2->attr().MakeEnergy){
-			if(distance < attribute_->ZeroLayerRadius + unit2->attr().BasementInscribedRadius) // позволяем свободно перемещать ядро, лишь бы оно покрывало здание
+		if(prm_.connectBuildingFactor && !unit2->attr()->MakeEnergy){
+			if(distance < attribute_->ZeroLayerRadius + unit2->attr()->BasementInscribedRadius) // позволяем свободно перемещать ядро, лишь бы оно покрывало здание
 				good_factor += prm_.connectBuildingFactor;
 		}
 
-		if(prm_.escapeMakingZeroLayerFactor && unit2->attr().MakeEnergy){
-		  //(unit2->attr().ID != UNIT_ATTRIBUTE_FRAME || !safe_cast<terFrame*>(unit2)->attached())){
-		  //unit2->attr().ID != UNIT_ATTRIBUTE_FRAME){
-			float overlap = (attribute_->ZeroLayerRadius + unit2->attr().ZeroLayerRadius)*prm_.corePlacementCompactness - distance;
+		if(prm_.escapeMakingZeroLayerFactor && unit2->attr()->MakeEnergy){
+		  //(unit2->attr()->ID != UNIT_ATTRIBUTE_FRAME || !safe_cast<terFrame*>(unit2)->attached())){
+		  //unit2->attr()->ID != UNIT_ATTRIBUTE_FRAME){
+			float overlap = (attribute_->ZeroLayerRadius + unit2->attr()->ZeroLayerRadius)*prm_.corePlacementCompactness - distance;
 			if(overlap > 0)
 				good_factor += prm_.escapeMakingZeroLayerFactor*overlap;
 		}

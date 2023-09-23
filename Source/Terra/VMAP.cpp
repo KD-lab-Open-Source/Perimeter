@@ -83,6 +83,73 @@ bool isWorldIDValid(int worldID) {
 	return (worldID < vMap.maxWorld && worldID >= 0);
 }
 
+void vrtMap::compressWorlds(int mode) {
+    fprintf(stdout, "compressWorlds: mode %d\n", mode);
+    sVmpHeader VmpHeader;
+    XStream fstream;
+    fstream.ErrHUsed = false;
+    for (int id = 0; id < vMap.maxWorld; ++id) {
+        std::string output_vmp = GetTargetName(id, worldDataFileLinear);
+        fprintf(stdout, "%s\n", vMap.wTable[id].name.c_str());
+        
+        //Read file
+        XBuffer fmap(0, true);
+        if (!fstream.open(output_vmp, XS_IN)) {
+            fprintf(stderr, "VMP file not found\n");
+            continue;
+        }
+        fstream.seek(0,XS_BEG);
+        fstream.read(&VmpHeader,sizeof(VmpHeader));
+        int64_t flen = fstream.size() - fstream.tell();
+        
+        //Decode header
+        if (VmpHeader.cmpID("S2T0")) {
+            if (mode == 0) {
+                continue;
+            }
+            fmap.realloc(flen);
+            fstream.read(fmap.buf, flen);
+            fmap.set(flen, XB_BEG);
+        } else if (VmpHeader.cmpID("S2T1")) {
+            if (mode == 1) {
+                continue;
+            }
+            XBuffer tmp(flen, false);
+            fstream.read(tmp.buf, flen);
+            if (tmp.uncompress(fmap) != 0) {
+                ErrH.Abort("Error decompressing world");
+            }
+        }
+        fstream.close();
+        
+        //Act on mode
+        if (mode == 0) {
+            VmpHeader.setID("S2T0");
+            //fmap is already uncompressed
+        } else if (mode == 1) {
+            VmpHeader.setID("S2T1");
+            XBuffer tmp(fmap.length(), true);
+            int result = fmap.compress(tmp);
+            if (result != 0) {
+                ErrH.Abort("Error compressing world");
+            }
+            fmap = std::move(tmp);
+        } else {
+            ErrH.Abort("Unsupported compression mode");
+        }
+
+        //Write back
+        fprintf(stdout, "%s %s\n", VmpHeader.id, output_vmp.c_str());
+        if (!fstream.open(output_vmp, XS_OUT)) {
+            ErrH.Abort("Error opening VMP for write");
+        }
+        fstream.seek(0,XS_BEG);
+        fstream.write(&VmpHeader, sizeof(VmpHeader));
+        fstream.write(fmap.buf, fmap.tell());
+        fstream.close();
+    }
+}
+
 std::string GetTargetName(int numWorld, const char* name)
 {
 	if ( !isWorldIDValid(numWorld) ) ErrH.Abort("World Index out of range");
@@ -106,9 +173,7 @@ std::string safeGetTargetName(int numWorld, const char* name)
     return GetTargetName(numWorld, name);
 }
 
-vrtMap::vrtMap(void)
-: fmap(0)//, kmap(0)
-{
+vrtMap::vrtMap() {
 	GeonetMESH=200;
 	cWorld = -1;
 
@@ -179,7 +244,7 @@ vrtMap::~vrtMap(void)
 {
 	cWorld = -1;
 
-	if(changedT) { delete changedT; changedT = NULL; }
+	if(changedT) { delete[] changedT; changedT = NULL; }
 	if(gridChAreas) { delete [] gridChAreas; gridChAreas = NULL; }
 	if(gridChAreas2) { delete [] gridChAreas2; gridChAreas2 = NULL;}
 
@@ -299,6 +364,10 @@ int vrtMap::getWorld_V_SIZE(int idxWorld)
 	return V_size;
 }
 
+bool vrtMap::hasWorldData() {
+    std::string path = GetTargetName(worldDataFileLinear);
+    return !path.empty() && std::filesystem::exists(std::filesystem::u8path(path));
+}
 
 void vrtMap::analyzeINI(const char* name)
 {
@@ -391,16 +460,14 @@ void vrtMap::selectUsedWorld(char* _patch2World)
 	releaseChAreaBuf();
 	allocChAreaBuf();
 
-	int exist = 1;
-	if(!fmap.open(GetTargetName(worldDataFileLinear),XS_IN)) exist = 0;
-	else fmap.close();
+	bool exist = hasWorldData();
 
 	if(!exist) {
-		if(buildWorld()) exist=1;
+		if(buildWorld()) exist=true;
 	}
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear));
-
+	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName("").c_str());
+    
 	LoadVPR();
 	RenderPrepare1();
 
@@ -420,7 +487,7 @@ void vrtMap::prepare(char* name)
 
 	//Scan resources worlds and create table with name and path
 	wTable.clear();
-    for (const auto& entry : get_content_entries_directory("resource/worlds")) {
+    for (const auto& entry : get_content_entries_directory(name)) {
         if (entry->is_directory) {
             std::filesystem::path path = std::filesystem::u8path(entry->path_content);
             wTable.emplace_back(path.filename().u8string(), entry->key);
@@ -428,6 +495,12 @@ void vrtMap::prepare(char* name)
     }
     maxWorld = wTable.size();
     if(maxWorld < 1) ErrH.Abort("Empty world list");
+
+    int compress_mode = -1;
+    check_command_line_parameter("compress_worlds", compress_mode);
+    if (0 <= compress_mode) { 
+        compressWorlds(compress_mode);
+    }
 }
 
 //Для Периметра
@@ -457,15 +530,13 @@ void vrtMap::selectUsedWorld(int nWorld)
 	releaseChAreaBuf();
 	allocChAreaBuf();
 
-	int exist = 1;
-	if(!fmap.open(GetTargetName(worldDataFileLinear),XS_IN)) exist = 0;
-	else fmap.close();
+	bool exist = hasWorldData();
 
 	if(!exist) {
-		if(buildWorld()) exist=1;
+		if(buildWorld()) exist=true;
 	}
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear).c_str());
+	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName("").c_str());
 
 	LoadVPR();
 	RenderPrepare1();
@@ -505,7 +576,7 @@ void vrtMap::setupGeneralVariable()
 
 void vrtMap::releaseChAreaBuf()
 {
-	if(changedT){ delete changedT; changedT = 0; }
+	if(changedT){ delete[] changedT; changedT = 0; }
 
 	if(gridChAreas) { delete [] gridChAreas; gridChAreas=0; }
 	if(gridChAreas2) { delete [] gridChAreas2; gridChAreas2=0; }
@@ -565,16 +636,15 @@ void vrtMap::newLoad(const char* dirName)
 	releaseChAreaBuf();
 	allocChAreaBuf();
 
-	int exist = 1;
-	if(!fmap.open(GetTargetName(worldDataFileLinear),XS_IN)) exist = 0;
-	else fmap.close();
 
-	if(!exist) {
-		if(buildWorld()) exist=1;
-	}
+    bool exist = hasWorldData();
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear).c_str());
+    if(!exist) {
+        if(buildWorld()) exist=true;
+    }
 
+    if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName("").c_str());
+    
 	LoadVPR();
 	RenderPrepare1();
 
@@ -804,14 +874,31 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 	if(VxGBuf!=0) releaseMem4Buf();
 	allocMem4Buf();
 
-	if (!fmap.open(GetTargetName(worldDataFileLinear), XS_IN)) {
+    //Read file
+    XBuffer fmap(0, true);
+    XStream fstream;
+	if (!fstream.open(GetTargetName(worldDataFileLinear), XS_IN)) {
         ErrH.Abort("VMP file not found");
     }
-
-	//const char id[4]={'S','2','T','0'};
-	fmap.seek(0,XS_BEG);
-	fmap.read(&VmpHeader,sizeof(VmpHeader));
-	if (VmpHeader.cmpID("S2T0")) { //(*(int*)VmpHeader.id == *(int*)id )
+    fstream.seek(0,XS_BEG);
+    fstream.read(&VmpHeader,sizeof(VmpHeader));
+    int64_t flen = fstream.size() - fstream.tell();
+    
+    //Read content according to header ID
+	if (VmpHeader.cmpID("S2T0")) {
+        fmap.realloc(flen);
+        fstream.read(fmap.buf, flen);
+    } else if (VmpHeader.cmpID("S2T1")) {
+        XBuffer tmp(flen, false);
+        fstream.read(tmp.buf, flen);
+        if (tmp.uncompress(fmap) != 0) {
+            ErrH.Abort("Error decompressing VMP");
+        }
+        fmap.set(0, XB_BEG);
+    }
+    
+    fstream.close();
+    if (0 < fmap.length()) {
 		fmap.read(&VxGBuf[0],XS_Buf*YS_Buf);
 		fmap.read(&VxDBuf[0],XS_Buf*YS_Buf);
 		fmap.read(&AtrBuf[0],XS_Buf*YS_Buf);
@@ -837,10 +924,9 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 		//	changedT[i]=0;
 		//	RenderStr(i);
 		//}
-	}
-	else ErrH.Abort("VMP file is not TRUE version");
-
-	fmap.close();
+	} else {
+        ErrH.Abort("VMP file format unknown");
+    }
 
 	loadLeveledTexture(); //необходимо вызывать после загрузки VxDBuf и палитры
 
@@ -1401,6 +1487,7 @@ void vrtMap::convertPal2TableTexCol()
 void vrtMap::save3BufOnly(void)
 {
 	sVmpHeader VmpHeader;
+    XStream fmap;
 	fmap.open(GetTargetName(worldDataFileLinear), XS_OUT);
 	//const char id[4]={'S','2','T','0'};
 	//int i;
@@ -1449,7 +1536,7 @@ bool vrtMap::saveAllWorldAs(const char* _patch2world)
 	XBuffer strIn, strOut;
 	strIn < wTable[0].dir < "\\" < worldIniFile;
 	strOut < _patch2world < "\\" < worldIniFile;
-	if(!CopyFile(strIn, strOut, FALSE)){
+	if(!CopyFile(strIn, strOut, false)){
 		return 0;
 	}
 	free(wTable[0].name);
@@ -1471,6 +1558,7 @@ void vrtMap::restore3Buf(void)
 	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
 	loadGeoDamPal();
 
+    XStream fmap;
 	fmap.open(GetTargetName(worldDataFileLinear),XS_IN | XS_OUT);
 	//const char id[4]={'S','2','T','0'};
 	fmap.seek(0,XS_BEG);
@@ -3100,7 +3188,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 	XBuffer strIn, strOut;
 	strIn < wTable[0].dir < "\\" < worldIniFile;
 	strOut < _patch2New2x2World < "\\" < worldIniFile;
-	if(!CopyFile(strIn, strOut, FALSE)){
+	if(!CopyFile(strIn, strOut, false)){
 		return;// 0;
 	}
 	XBuffer tbuf;

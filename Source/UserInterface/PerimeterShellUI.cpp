@@ -18,6 +18,7 @@
 #include "../Game/MusicManager.h"
 #include "files/files.h"
 #include "Localization.h"
+#include "codepages/codepages.h"
 
 #define _RELEASE(p) if(p) {(p)->Release(); (p) = 0;}
 
@@ -320,12 +321,15 @@ void CShellWindow::loadAnchor() {
             case SQSH_SPEED_150:
                 anchor_children = anchor = SHELL_ANCHOR_LEFT;
                 break;
+            case SQSH_NET_LATENCY_INFO_ID:
+                anchor_children = anchor = SHELL_ANCHOR_RIGHT;
+                break;
             default:
                 break;
         }
     } else if (m_attr_cont) {
         //Menus are always centered
-        if (m_attr_cont->load_group == SHELL_LOAD_GROUP_MENU) {
+        if (m_attr_cont->load_group & SHELL_LOAD_GROUP_MENU) {
             anchor_children = anchor = SHELL_ANCHOR_MENU;
         } else {
             switch (m_attr_cont->id) {
@@ -334,11 +338,9 @@ void CShellWindow::loadAnchor() {
                     anchor = SHELL_ANCHOR_SCALED;
                     break;
                 //Specific in-game screens that need manual menu anchoring
-                case SQSH_MM_MISSION_TASK_SCR:
                 case SQSH_MM_SAVE_REPLAY_SCR:
                 case SQSH_MM_STATS_SCR:
                 case SQSH_MM_ENDMISSION_SCR:
-                case SQSH_MM_SUBMIT_DIALOG_SCR:
                 case SQSH_MM_INMISSION_SCR:
                 case SQSH_MM_INGAME_CUSTOM_SCR:
                 case SQSH_MM_LOAD_IN_GAME_SCR:
@@ -380,7 +382,7 @@ void CShellWindow::LoadMenuWnd(const sqshControlContainer* attr)
 	sy = absoluteY(attr->sy);
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont, defaultFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, defaultFontSize);
 }
 
 void CShellWindow::createHotKeyString() {
@@ -518,7 +520,8 @@ bool CShellWindow::actionPerformed(InterfaceEventCode code, int param) {
 		&&	((state & SQSH_VISIBLE) || !checkHotKeyVisibility)	) {
 
 		if (universe()) {
-			universe()->checkEvent(EventClickOnButton( (ShellControlID)ID) );
+            EventClickOnButton ev(static_cast<ShellControlID>(ID));
+			universe()->checkEvent(&ev);
 		}
 
 		m_handler(this, code, param);
@@ -652,7 +655,7 @@ void CShellWindow::OnFormatHotKeyPopupMessage(char* cbBuffer) {
 CComboWindow::CComboWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(id, pParent, p)
 {
 	target=-1;
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont, comboBoxFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, comboBoxFontSize);
 	m_fStringHeight = comboBoxRowHeight;
 
 	pos = size = 0;
@@ -1374,10 +1377,10 @@ void CShellComplexPushButton::Load(const sqshControl* attr)
 	m_label_y = absoluteY(_buttonLabelY);
 
 	_RELEASE(m_hFontLabel);
-	m_hFontLabel = terVisGeneric->CreateFont(sqshShellMainFont2, inGameLegionDigit);
+	m_hFontLabel = terVisGeneric->CreateGameFont(sqshShellMainFont2, inGameLegionDigit);
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont, inGameButtonFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, inGameButtonFontSize);
 }
 
 
@@ -1866,7 +1869,7 @@ void CShellLegionButton::Load(const sqshControl* attr)
 	CShellComplexPushButton::Load(attr);
 
 	_RELEASE(m_hFontLabel);
-	m_hFontLabel = terVisGeneric->CreateFont(sqshShellMainFont2, inGameLegionDigit);
+	m_hFontLabel = terVisGeneric->CreateGameFont(sqshShellMainFont2, inGameLegionDigit);
 }
 
 static sColor4f sColorGreen(0, 1, 1, 1);
@@ -1907,7 +1910,7 @@ void CShellLegionButton::SetTotalUnitCount(int count, bool append)
 
 CShellAtomButton::CShellAtomButton(int id, CShellWindow* pParent, EVENTPROC p) : CShellComplexPushButton(id, pParent, p)
 {
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont, defaultFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, defaultFontSize);
 	*m_cb1 = 0;
 	m_bTextLeft = false;
 	button_atom_x = 0;
@@ -2152,11 +2155,12 @@ CUITabSheet::CUITabSheet(int id, CShellWindow* pParent, EVENTPROC p) : CShellWin
 
 	m_nTabHover = -1;
 
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, inGameLegionDigit);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont2, inGameLegionDigit);
 
 	flashTimers.resize(5, -1);
 	m_squad_icon_list.resize(5);
 	m_page_numbers.resize(5);
+    tabAttrs.resize(5);
 	tabXs.resize(5);
 	tabYs.resize(5);
 	tabSXs.resize(5);
@@ -2347,7 +2351,7 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 		_RELEASE(*it);
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, inGameLegionDigit);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont2, inGameLegionDigit);
 
 
     m_tabattr = attr;
@@ -2357,7 +2361,7 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 
 	for (int i = 0; i < attr->pages.size(); i++) {
 		const sqshTabElement& page = attr->pages[i];
-		tabAttrs.push_back(&page);
+		tabAttrs[i] = &page;
 		tabTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.icon.image)).c_str());
 		tabHighlightTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.icon.image_h)).c_str());
 		tabCheckedTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.icon.image_check)).c_str());
@@ -2794,7 +2798,7 @@ CMapWindow::~CMapWindow()
 		_RELEASE(eventTx[i]);
 	}
 
-	delete m_bitmap;
+	delete[] m_bitmap;
 	_bitmap = 0;
 }
 
@@ -2831,7 +2835,7 @@ void CMapWindow::Load(const sqshControl* attr)
 	map_xs = sx / vMap.H_SIZE;
 	map_ys = sy / vMap.V_SIZE; 
 
-	delete m_bitmap;
+	delete[] m_bitmap;
 	m_bitmap = new sColor4c[int(sx)*int(sy)];
 	_bitmap = m_bitmap;
 	_map_x1 = x;
@@ -2842,7 +2846,7 @@ void CMapWindow::Load(const sqshControl* attr)
 	_map_ys_bound = sy; 
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, defaultFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, defaultFontSize);
 }
 
 void CMapWindow::draw(int bFocus)
@@ -2860,7 +2864,10 @@ void CMapWindow::draw(int bFocus)
 
 			_map_draw = true;
 
-			LogicData* logicData = gameShell->getLogicUpdater().getLogicData();
+            LogicUpdater& updater = gameShell->getLogicUpdater();
+            updater.lock(); //Lock to avoid use-after-free in logicData->alphaPath
+            
+			LogicData* logicData = updater.getLogicData();
 			if (logicData->getMiniMap() &&  (logicData->getWidth() == sx) && (logicData->getHeight() == sy)) {
 				drawBitmap(logicData->getMiniMap());
 			} else {
@@ -2889,17 +2896,34 @@ void CMapWindow::draw(int bFocus)
 
 			int x1, y1, x2, y2; 
 			terRenderDevice->GetClipRect(&x1, &y1, &x2, &y2);
-			terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
-			std::list<Vect2f>::iterator pi;
-			FOR_EACH(logicData->miniMapLabels, pi) {
-				terRenderDevice->DrawSprite(x + map_xs * (*pi).x - activeObjectSx / 2, y + map_ys * (*pi).y - activeObjectSy / 2, activeObjectSx, activeObjectSy, 0, 0, 1, 1, activeObjectTx, sColor4c(255,255,255,255),
-                                            xm::fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period);
+            terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
+            
+			for (const auto& ii : logicData->miniMapLabels) {
+				terRenderDevice->DrawSprite(
+                        x + map_xs * ii.x - activeObjectSx / 2,
+                        y + map_ys * ii.y - activeObjectSy / 2,
+                        activeObjectSx,
+                        activeObjectSy, 
+                        0, 0, 1, 1,
+                        activeObjectTx,
+                        sColor4c(255,255,255,255),
+                        xm::fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period
+                );
 			}
-			std::list<MiniMapEventIcon>::iterator ii;
-			FOR_EACH(_shellIconManager.getMiniMapEventIcons(), ii) {
-				float timeElapsed = (*ii).period - (*ii).timeRemain;
-				if (timeElapsed <= (*ii).animTime) {
-					terRenderDevice->DrawSprite(x + map_xs * (*ii).pos.x - eventSx[(*ii).code] / 2, y + map_ys * (*ii).pos.y - eventSy[(*ii).code] / 2, eventSx[(*ii).code], eventSy[(*ii).code], 0, 0, 1, 1, eventTx[(*ii).code], sColor4c(255,255,255,255), timeElapsed / (*ii).animTime);
+
+            updater.unlock();
+
+            for (const auto& ii : _shellIconManager.getMiniMapEventIcons()) {
+				float timeElapsed = ii.period - ii.timeRemain;
+				if (timeElapsed <= ii.animTime) {
+					terRenderDevice->DrawSprite(
+                            x + map_xs * ii.pos.x - eventSx[ii.code] / 2,
+                            y + map_ys * ii.pos.y - eventSy[ii.code] / 2,
+                            eventSx[ii.code], eventSy[ii.code],
+                            0, 0, 1, 1, eventTx[ii.code],
+                            sColor4c(255,255,255,255),
+                            timeElapsed / ii.animTime
+                    );
 				}
 			}
 			
@@ -2968,12 +2992,12 @@ void CMapWindow::drawBitmap(sColor4c* bitmap) {
 		sColor4c* line = bitmap;
 		int x1 = 0;
 		sColor4c clr1;
-		clr1.RGBA() = 0;
+        clr1.v = 0;
 
 		for (int xMap = 0; xMap < w; xMap++, line++) {
 			sColor4c nclr = *line;
-			if (nclr.RGBA() != clr1.RGBA()) {
-				if (clr1.RGBA()) {
+			if (nclr.v != clr1.v) {
+				if (clr1.v) {
 					terRenderDevice->DrawLine(x + x1, y + yMap, x + xMap, y + yMap, clr1);
 				}
 				clr1 = nclr;
@@ -3019,16 +3043,16 @@ void CTextWindow::Load(const sqshControl* attr)
 	switch(m_attr->font_group)
 	{
 		case 4:
-			m_hFont = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size1_5);
+			m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1_5);
 			break;
 		case 2:
-			m_hFont = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size1);
+			m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1);
 			break;
 		case 3:
-			m_hFont = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size3);
+			m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size3);
 			break;
 		default:
-			m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, defaultFontSize);
+			m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, defaultFontSize);
 	}
 }
 
@@ -3434,10 +3458,10 @@ void CListBoxWindow::Load(const sqshControl* attr)
 
 	_RELEASE(m_hFont);
 	if (m_attr->font_group == 1) {
-		m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, statsHeadTableFontSize);
+		m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsHeadTableFontSize);
 	} else {
 		//?
-		m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, statsHeadTableFontSize);
+		m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsHeadTableFontSize);
 	}
 //	m_vTexPos[0] = Vect2f(attr->image._ix, attr->image._iy);
 //	m_vTexPos[1] = Vect2f(attr->image.ix, attr->image.iy);
@@ -3771,7 +3795,7 @@ void CStatListBoxWindow::Load(const sqshControl* attr) {
     }
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, statsTableFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsTableFontSize);
 	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
 	txtdy = absoluteY(attr->txt_dy);
 }
@@ -4042,19 +4066,19 @@ void ChatWindow::setupLocaleFonts(int size) {
             if (m_hFont1251) {
                 continue;
             }
-            m_hFont1251 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false, locale);
+            m_hFont1251 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false, locale);
         } else {
             if (m_hFont1250) {
                 continue;
             }
-            m_hFont1250 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false, locale);
+            m_hFont1250 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false, locale);
         }
     }
 
     if (m_hFont1250 == nullptr && m_hFont1251 == nullptr) {
         //Not supposed to happen
         xassert(0);
-        m_hFont1250 = m_hFont1251 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false);
+        m_hFont1250 = m_hFont1251 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false);
     } else if (m_hFont1250 == nullptr) {
         m_hFont1250 = m_hFont1251;
     } else if (m_hFont1251 == nullptr) {
@@ -4437,7 +4461,7 @@ void CMultiTexWindow::init() {
 	if(strlen(m_attr_cont->image2.texture))
 		m_hTexture2 = terVisGeneric->CreateTexture( m_attr_cont->image2.texture );
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont, defaultFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, defaultFontSize);
 }
 
 void CMultiTexWindow::draw(int bFocus)
@@ -5079,9 +5103,9 @@ void CEditWindow::Load(const sqshControl* attr)
 	}
 	_RELEASE(m_hFont);
 	if (m_attr->font_group == 4) {
-		m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, 16);
+		m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont2, 16);
 	} else {
-		m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, editBoxFontSize);
+		m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont2, editBoxFontSize);
 	}
 }
 void CEditWindow::draw(int bFocus)
@@ -5187,6 +5211,49 @@ void CEditWindow::OnChar(char key)
 	}
 }
 
+void CEditWindow::SetText(const char* lpszText) {
+    m_data.clear();
+    while (true) {
+        char c = *lpszText;
+        if (c == '\0') break;
+        //Make sure all chars pass filter
+        OnChar(c);
+        lpszText++;
+    }
+}
+
+bool CEditWindow::isEmptyText() const {
+    for (auto c : m_data) {
+        if (c != ' ' && c != '\t' && c != '\n') {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool CEditWindow::isValidFilename() const {
+    bool empty = true;
+    for (auto c : m_data) {
+        //Nothing good below these chars
+        if (c < 32
+            //Path separators might have unforeseen consequences
+            || c == '/' || c == '\\'
+            //TODO Dots mess up with extension parsing, so they are forbidden for now
+            || c == '.'
+                ) {
+            return false;
+        }
+        //Only alphanumb?
+        if (m_attr->alnum && !isalnum(c)) {
+            return false;
+        }
+        //Set flag if there is non whitespace char
+        if (c != ' ') {
+            empty = false;
+        }
+    }
+    return !empty;
+}
 
 CChatInGameEditWindow::CChatInGameEditWindow(int id, CShellWindow* pParent, EVENTPROC p) : CEditWindow(id, pParent, p) {
 	alliesOnlyMode = false;
@@ -5206,9 +5273,9 @@ void CChatInGameEditWindow::Load(const sqshControl* attr) {
     
     _RELEASE(m_hFont);
     if (m_attr->font_group == 4) {
-        m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, 16);
+        m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont2, 16);
     } else {
-        m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, editBoxFontSize);
+        m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont2, editBoxFontSize);
     }
 }
 
@@ -5607,7 +5674,7 @@ void CProgressCollected::draw(int bFocus)
 void CProgressCollected::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, collectedEnergyBarFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, collectedEnergyBarFontSize);
 }
 void CProgressCollected::OnWindow(int enable)
 {
@@ -5777,7 +5844,7 @@ void CProgressUnitCharge::draw(int bFocus)
 
 CInfoWindow::CInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p)
 {
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, infoWndFontSize);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, infoWndFontSize);
 	*m_cbText = 0;
 	m_pFmtProc = 0;
 	m_bCentered = false;
@@ -5846,7 +5913,7 @@ void CInfoWindow::draw(int bFocus)
 
 
 CHintWindow::CHintWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, HINT_FONT_SIZE);
+	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, HINT_FONT_SIZE);
 	cutSceneX = 0;
 	cutSceneY = 0;
 	cutSceneSX = 800;
@@ -5994,6 +6061,95 @@ void CChatInfoWindow::draw(int bFocus) {
 		}
 	}
 }
+
+
+CNetLatencyInfoWindow::CNetLatencyInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
+    m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, infoWndFontSize);
+}
+
+CNetLatencyInfoWindow::~CNetLatencyInfoWindow() {
+    _RELEASE(m_hFont);
+}
+
+void CNetLatencyInfoWindow::Load(const sqshControl* attr) {
+    CShellWindow::Load(attr);
+}
+
+void CNetLatencyInfoWindow::SetText(const std::string& brief, const std::string& full) {
+    briefData = brief;
+    fullData = full;
+}
+
+void CNetLatencyInfoWindow::OnWindow(int enable) {
+    CShellWindow::OnWindow(enable);
+    on_window = enable;
+}
+
+void CNetLatencyInfoWindow::draw(int bFocus) {
+    if(state & SQSH_VISIBLE) {
+        terRenderDevice->SetFont(m_hFont);
+        const float margin = 3;
+
+        //Draw brief button
+        Vect2f pos, size, v1, v2;
+        OutTextRect(0, 0 , briefData.c_str(), -1, v1, v2);
+        size.x = v2.x - v1.x;
+        size.y = v2.y - v1.y;
+        pos.x = x + margin;
+        pos.y = y;
+#if 1 && defined(PERIMETER_DEBUG)
+        //terRenderDevice->DrawRectangle(x, y, sx, sy, sColor4f(1, 0, 0, 1), 2);
+#endif
+        /*
+        terRenderDevice->DrawRectangle(
+                pos.x - margin, y - margin,
+                size.x + margin * 2, size.y + margin * 2,
+                sColor4f(1, 1, 1, 1),
+                1
+        ); */
+        terRenderDevice->OutText(
+                pos.x,
+                pos.y,
+                briefData.c_str(),
+                sColor4f(1, 1, 1, 1),
+                -1
+        );
+        
+        //Draw full info
+        if (bFocus || on_window) {
+            std::string text = fullData;
+#if 1 && defined(PERIMETER_DEBUG)
+            text += "\n\n&FFFFFF" + universe()->GetNetInfo();
+#endif
+            pos.y += size.y + margin * 3;
+            OutTextRect(0, 0 , text.c_str(), -1, v1, v2);;
+            //Round width so it doesn't flicker when text changes fast
+            const float roundStep = 50;
+            size.x = v2.x - v1.x + margin * 2;
+            size.x = xm::ceil((size.x + roundStep * 0.5f) / roundStep) * roundStep;
+            size.y = v2.y - v1.y + margin * 2;
+            pos.x = x + sx * 0.5f - size.x * 0.5f;
+			if (pos.x + size.x >= terRenderDevice->GetSizeX()) {
+				//Failsafe, in case doesn't fit
+				pos.x = terRenderDevice->GetSizeX() - size.x - margin;
+			}
+            if (m_hTexture) {
+                terRenderDevice->DrawSprite(pos.x - margin, pos.y - margin, size.x, size.y, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255));
+            }
+
+            terRenderDevice->OutText(pos.x, pos.y, text.c_str(), sColor4f(1, 1, 1, 1), -1);
+            terRenderDevice->SetFont(nullptr);
+            
+            terRenderDevice->DrawRectangle(
+                    pos.x - margin, pos.y - margin,
+                    size.x, size.y,
+                    sColor4f(1, 1, 1, 1),
+                    1
+            );
+        }
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -6236,7 +6392,7 @@ CCreditsWindow::~CCreditsWindow() {
 void CCreditsWindow::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
 
-	textData = qdTextDB::instance().getText(attr->text);
+    textData = qdTextDB::instance().getText(attr->text);    
 
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
@@ -6253,7 +6409,7 @@ void CCreditsWindow::Load(const sqshControl* attr) {
 	}
 
 	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size1);
+	m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1_5);
 }
 
 void CCreditsWindow::Show(int bShow) {

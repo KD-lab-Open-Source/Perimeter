@@ -23,25 +23,24 @@ void cExternalObj::PreDraw(cCamera *DrawNode)
 }
 void cExternalObj::Draw(cCamera *DrawNode)
 {
-	cURenderDevice *Render=DrawNode->GetRenderDevice();
-	extern void terExternalShowCall(int ObjType,void *pointer,int TestSizePerByte);
+	cInterfaceRenderDevice *Render=DrawNode->GetRenderDevice();
 
-	Render->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
+    uint32_t cull = Render->GetRenderState(RS_CULLMODE);
+	Render->SetRenderState( RS_CULLMODE, CULL_NONE );
 
-	if(GetTexture()->GetAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST))
-	{
+	if(GetTexture()->GetAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST)) {
 		Render->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
-	}else
-	{
+	} else {
 		Render->SetNoMaterial(ALPHA_NONE,GetFrame()->GetPhase(),GetTexture());
 	}
 
-	uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
-	if(sort_pass)
-		gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+	uint32_t zwrite = Render->GetRenderState(RS_ZWRITEENABLE);
+    if (sort_pass) {
+        Render->SetRenderState(RS_ZWRITEENABLE, false);
+    }
 
 	func();
-	
-	gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, zwrite );
-	Render->SetRenderState(RS_CULLMODE,-1);
+
+    Render->SetRenderState(RS_ZWRITEENABLE, zwrite);
+    Render->SetRenderState(RS_CULLMODE, cull);
 }

@@ -70,6 +70,8 @@ RandomGenerator terEffectRND;
 
 float AttributeBase::energyPerElement_ = 0;
 
+SERIALIZATION_TYPE_NAME_IMPL(GeometryAttribute);
+
 SINGLETON_PRM(AttributeLibrary, "AttributeLibrary", "Scripts\\AttributeLibrary") attributeLibrary;
 
 REGISTER_CLASS(AttributeBase, AttributeBase, "Базовые свойства")
@@ -145,11 +147,11 @@ EffectLib(0)
 
 void AttributeBase::init()
 {
-    //Avoid loading stuff that user may not have
-    if (unavailableContentUnitAttribute(ID) || unavailableContentBelligerent(belligerent)) {
+    if (initialized) {
         return;
     }
-    
+    initialized = true;
+        
     //Specific workarounds
     switch (ID) {
         case UNIT_ATTRIBUTE_FRAME:
@@ -175,13 +177,14 @@ void AttributeBase::init()
 	if(strlen(interfaceNameTag())) {
 		std::string path = std::string("Interface.Tips.NAMES.") + interfaceNameTag();
 		InterfaceName = qdTextDB::instance().getText(path.c_str());
-		if(InterfaceName.empty())
-			InterfaceName = interfaceNameTag();
+		if (InterfaceName.empty()) {
+            InterfaceName = interfaceNameTag();
+        }
 	}
 
-	EffectLib = effectsData.effects.size() ? effectLibraryDispatcher().register_library(effectsData.libraryFileName) : 0;
+	EffectLib = effectsData.effects.empty() ? nullptr : effectLibraryDispatcher().register_library(effectsData.libraryFileName);
 
-	initGeometryAttribute(modelData, *this);
+	initGeometryAttribute(modelData, this);
 }
 
 EffectKey* AttributeBase::getEffect(terEffectID effect_id) const
@@ -230,7 +233,7 @@ GeometryAttribute::GeometryAttribute()
 	logicObjectBound = logicObjectBoundOriginal;
 }
 
-void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const AttributeBase& attribute)
+void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const AttributeBase* attribute)
 {
 	float modelScaleOld = modelScale;
 
@@ -249,11 +252,11 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
     logic->Release();
 
 	modelScale = 1;
-	if(attribute.ID == UNIT_ATTRIBUTE_FRAME || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)
+	if(attribute->ID == UNIT_ATTRIBUTE_FRAME || attribute->ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || attribute->ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)
 		modelScale *= debuScales.frame;
-	else if(attribute.MilitaryUnit)
+	else if(attribute->MilitaryUnit)
 		modelScale *= debuScales.legion;
-	else if(attribute.isBuilding())
+	else if(attribute->isBuilding())
 		modelScale *= debuScales.buildins;
 	else
 		modelScale *= debuScales.other;
@@ -274,8 +277,9 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute.InstallBound || modelScaleOld != modelScale) {
-		cObjectNodeRoot* model = createObject(modelData.modelName, attribute.belligerent);
+    //Calculate if model scale is different or unit does Install/Uninstall
+	if(attribute->InstallBound || modelScaleOld != modelScale) {
+		cObjectNodeRoot* model = createObject(modelData.modelName, attribute->belligerent);
 
 		int vertex_num = 0;
 		int index_num = 0;
@@ -646,6 +650,10 @@ uint32_t contentCRC = 0;
 std::map<std::string, uint32_t> contentFiles;
 
 uint32_t get_content_crc() {
+    if (contentCRC == 0) {
+        xassert(0);
+        fprintf(stderr, "WARNING: content CRC is 0!\n");
+    }
     return contentCRC;
 }
 
@@ -673,40 +681,15 @@ void collect_model_crc(const ModelData& modelData) {
 void collect_content_crc() {
     contentCRC = 0;
     contentFiles.clear();
-    for (auto& i : attributeLibrary().map()) {
+    for (auto& i : attributeLibrary()) {
         AttributeBase* attribute = i.second;
         if (attribute->ID == UNIT_ATTRIBUTE_NONE) continue;
-        //Avoid loading stuff that user may not have
-        if (unavailableContentUnitAttribute(attribute->ID, terGameContentSelect) 
-        || unavailableContentBelligerent(attribute->belligerent)) {
-            continue;
-        }
         collect_model_crc(attribute->modelData);
         for (auto& model : attribute->additionalModelsData) {
             collect_model_crc(model);
         }
     }
 }
-
-//---------------------------------
-//void initAttributes()
-//{ 
-//	AttributeLibrary::
-//	for(i = 0;i < table.size();i++){
-//		AttributeBase& cell = data[table[i].ID];
-//		if(cell.ID == UNIT_ATTRIBUTE_NONE || belligerent == table[i].belligerent)
-//			cell.init(table[i]); 
-//	}
-//  
-//	AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(100*DamageMolecula(table.BuildingBlock.damageMolecula).elementCount()));
-//
-//	for (i = 0; i < UNIT_ATTRIBUTE_MAX; i++) {
-//		AttributeBase& cell = data[i];
-//		if (cell.ID != UNIT_ATTRIBUTE_NONE) {
-//			cell.initIntfBalanceData((cell.weaponSetup && cell.weaponSetup->missileID != UNIT_ATTRIBUTE_NONE) ? &data[cell.weaponSetup->missileID] : 0);
-//		}
-//	}
-//}
 
 const char* AttributeBase::internalName(bool alt) const
 {
@@ -757,33 +740,127 @@ void initInterfaceAttributes() {
     copyInterfaceAttributesIndispensable();
 }
 
-void initAttributes(XBuffer* scriptsSerialized)
-{
+enum UNIT_ATTRIBUTES_TYPE {
+    UNIT_ATTRIBUTES_TMP = 0,
+    UNIT_ATTRIBUTES_NORMAL,
+    UNIT_ATTRIBUTES_CAMPAIGN,
+};
+
+UNIT_ATTRIBUTES_TYPE _lastInitAttributesType = UNIT_ATTRIBUTES_TMP;
+
+template<class Key, class Type>
+void loadTypeLibraryFromMods(TypeLibrary<Key, Type>& lib, const std::string& obj_name) {
+    XPrmIArchive ia;
+    TypeLibrary<Key, Type> tmp;
+    for (const auto& pair : getGameMods()) {
+        if (!pair.second.enabled) continue;
+        std::string path = pair.second.path + "/Scripts/" + obj_name + "Extra";
+        if (ia.open(path.c_str())) {
+            ia >> makeObjectWrapper(tmp, obj_name.c_str(), nullptr);
+            for (auto& tmp_pair : tmp) {
+                lib.add(tmp_pair.first, tmp_pair.second);
+            }
+        }
+        if (_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN) {
+            path += "Campaign";
+            if (ia.open(path.c_str())) {
+                ia >> makeObjectWrapper(tmp, obj_name.c_str(), nullptr);
+                for (auto& tmp_pair : tmp) {
+                    lib.add(tmp_pair.first, tmp_pair.second);
+                }
+            }
+        }
+    }
+}
+
+void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
+    //Check if we don't need to actually load if type is same
+    UNIT_ATTRIBUTES_TYPE initAttrType = scriptsSerialized ? UNIT_ATTRIBUTES_TMP : UNIT_ATTRIBUTES_NORMAL;
+    
+    //If campaign then check if there is any campaign specific attrs to load, else use normal
+    if (campaign) {
+        if (_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN) {
+            initAttrType = UNIT_ATTRIBUTES_CAMPAIGN;
+        } else {
+            for (const char* path: {
+                    "Scripts\\GlobalAttributesCampaign",
+                    "Scripts\\RigidBodyPrmLibraryCampaign",
+                    "Scripts\\AttributeLibraryCampaign",
+                    //This will detect any mod that has campaign specific attributes
+                    "Scripts\\RigidBodyPrmLibraryExtraCampaign",
+                    "Scripts\\AttributeLibraryExtraCampaign",
+            }) {
+                if (get_content_entry(path) != nullptr) {
+                    initAttrType = UNIT_ATTRIBUTES_CAMPAIGN;
+                    break;
+                }
+            }
+        }
+    }
+    
+    fprintf(stdout, "initAttributes %d -> %d\n", _lastInitAttributesType, initAttrType);
+    if (initAttrType != UNIT_ATTRIBUTES_TMP
+    && _lastInitAttributesType != UNIT_ATTRIBUTES_TMP
+    && initAttrType == _lastInitAttributesType) {
+        return;
+    }
+    _lastInitAttributesType = initAttrType;
+    
 //	soundScriptTable();
 
     //Clear previous data
-    rigidBodyPrmLibrary().map().clear();
-    attributeLibrary().map().clear();
+    rigidBodyPrmLibrary().clear();
+    attributeLibrary().clear();
     
     if (scriptsSerialized) {
         //Deserialize from buffer
         XPrmIArchive ia;
         std::swap(ia.buffer(), *scriptsSerialized);
-        ia.buffer().set(0);
+        ia.reset();
         ia >> WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
         ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
         ia >> WRAP_NAME(globalAttr(), "globalAttr");
+
     } else {
         //Deserialize from files
-        SingletonPrm<RigidBodyPrmLibrary>::load();
-        SingletonPrm<AttributeLibrary>::load();
-        SingletonPrm<GlobalAttributes>::load();
+        XPrmIArchive ia;
+        if(_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN && ia.open("Scripts\\RigidBodyPrmLibraryCampaign")) {
+            ia >> makeObjectWrapper(SingletonPrm<RigidBodyPrmLibrary>::instance(), "RigidBodyPrmLibrary", nullptr);
+        } else {
+            SingletonPrm<RigidBodyPrmLibrary>::load();
+        }
+        if(_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN && ia.open("Scripts\\AttributeLibraryCampaign")) {
+            ia >> makeObjectWrapper(SingletonPrm<AttributeLibrary>::instance(), "AttributeLibrary", nullptr);
+        } else {
+            SingletonPrm<AttributeLibrary>::load();
+        }
+        if(_lastInitAttributesType == UNIT_ATTRIBUTES_CAMPAIGN && ia.open("Scripts\\GlobalAttributesCampaign")) {
+            ia >> makeObjectWrapper(SingletonPrm<GlobalAttributes>::instance(), "GlobalAttributes", nullptr);
+        } else {
+            SingletonPrm<GlobalAttributes>::load();
+        }
 
         //Copy hardcoded data in this executable that is missing in files
         int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
         check_command_line_parameter("override_attributes", override);
         copyRigidBodyTable(override);
         copyAttributes(override);
+		
+		//Load attributes from mods
+        loadTypeLibraryFromMods(rigidBodyPrmLibrary(), "RigidBodyPrmLibrary");
+        loadTypeLibraryFromMods(attributeLibrary(), "AttributeLibrary");
+    }
+    
+    //Trim attributes that are unavailable
+    auto& attrLib = attributeLibrary().map();
+    for (auto first = attrLib.begin(), last = attrLib.end(); first != last;) {
+        const AttributeIDBelligerent& attribute = (*first).first;
+        if (unavailableContentUnitAttribute(attribute.attributeID(), terGameContentSelect)
+            || unavailableContentBelligerent(attribute.belligerent(), terGameContentSelect)) {
+            first = attrLib.erase(first);
+        } else {
+            ++first;
+        }
     }
 
 //	rigidBodyPrmLibrary.edit();
@@ -791,21 +868,24 @@ void initAttributes(XBuffer* scriptsSerialized)
 //	interfaceAttr.edit();
 //	ErrH.Exit();
 
-	const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK); 
-    AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
-
-    for (auto& i : attributeLibrary().map()) {
-		AttributeBase* attribute = i.second;
-		if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
-            attribute->initIntfBalanceData(
-                (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
-                ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0
-            );
-        }
-	}
-
     if (!scriptsSerialized) {
         collect_content_crc();
+    }
+}
+
+void initUnitAttributes() {
+    const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK);
+    AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
+    
+    for (auto& i : attributeLibrary()) {
+        AttributeBase* attribute = i.second;
+        if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
+            attribute->init();
+            attribute->initIntfBalanceData(
+                    (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
+                    ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0
+            );
+        }
     }
 }
 

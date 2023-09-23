@@ -89,8 +89,8 @@ enum terEventID
 
 	NETCOM_4H_ID_START_LOAD_GAME,
 
-	NETCOM_4C_ID_ALIFE_PACKET,
-	NETCOM_4H_ID_ALIFE_PACKET,
+	NETCOM_4C_ID_LATENCY_STATUS,
+	NETCOM_4H_ID_LATENCY_RESPONSE,
 
 	NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE,
 
@@ -140,19 +140,33 @@ struct netCommand4G_Exit : netCommandGeneral
 
 struct netCommand4C_StartLoadGame : netCommandGeneral {
 
-	MissionDescription missionDescription_;
+	MissionDescription* missionDescription_ = nullptr;
 
-	netCommand4C_StartLoadGame(const MissionDescription& missionDescription, int playerID) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
-		missionDescription_=missionDescription;
-        missionDescription_.activePlayerID = playerID;
+	netCommand4C_StartLoadGame(const MissionDescription* missionDescription) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
+        if (missionDescription) {
+            missionDescription_ = new MissionDescription(*missionDescription);
+        }
 	}
+    
+    ~netCommand4C_StartLoadGame() override {
+        delete missionDescription_;
+    }
 
 	netCommand4C_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
-		missionDescription_.read(in);
+        bool hasMission = false;
+        in.read(&hasMission, sizeof(hasMission));
+		if (hasMission) {
+            missionDescription_ = new MissionDescription();
+            missionDescription_->read(in);
+        }
 	}
 
 	void Write(XBuffer& out) const override {
-		missionDescription_.write(out);
+        bool hasMission = missionDescription_ != nullptr;
+        out.write(&hasMission, sizeof(hasMission));
+		if (hasMission) {
+            missionDescription_->write(out);
+        }
 	}
 };
 
@@ -262,7 +276,7 @@ public:
 		in.read(pData_, dataSize_);
 	}
 	~netCommand4G_Region() override {
-		delete pData_;
+		delete[] pData_;
 		pData_= nullptr;
 	}
 	
@@ -342,8 +356,8 @@ public:
 		in.read(pGData_, GDataSize_);
 	}
 	~netCommand4H_BackGameInformation (void){
-		delete pVData_;
-		delete pGData_;
+		delete[] pVData_;
+		delete[] pGData_;
 	}
 	
 	void Write(XBuffer& out) const override {
@@ -466,7 +480,7 @@ public:
 		in.read(pDAData_, DASize_);
 	}
 	~netCommand4C_DisplayDistrincAreas(void){
-		delete pDAData_;
+		delete[] pDAData_;
 	}
 	
 	void Write(XBuffer& out) const override {
@@ -506,7 +520,7 @@ public:
     std::unique_ptr<MissionDescription> missionDescription;
     XBuffer netlog = XBuffer(0, true);
 
-    netCommand4H_DesyncAcknowledge(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
+    netCommand4H_DesyncAcknowledge(std::unique_ptr<MissionDescription> missionDescription_) : netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE), missionDescription(std::move(missionDescription_)) {
     }
 
     netCommand4H_DesyncAcknowledge(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
@@ -527,7 +541,7 @@ public:
     int desync_amount;
     std::unique_ptr<MissionDescription> missionDescription;
 
-    netCommand4C_DesyncRestore(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE) {
+    netCommand4C_DesyncRestore(std::unique_ptr<MissionDescription> missionDescription_) : netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE), missionDescription(std::move(missionDescription_)) {
         desync_amount = 0;
     }
 
@@ -710,7 +724,7 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 		in.read(pData, sizeCommandBuf);
 	}
 	~netCommand4H_ResponceLastQuantsCommands(void){
-		delete pData;
+		delete[] pData;
 	}
 	void Write(XBuffer& out) const override {
 		out.write(&beginQuantCommandTransmit, sizeof(beginQuantCommandTransmit));
@@ -757,24 +771,97 @@ struct netCommandC_PlayerReady : netCommandGeneral
 	}
 };
 
-/*
-struct netCommandStartGame : netCommandGeneral
-{
-	netCommandStartGame() : netCommandGeneral(NETCOM_ID_START_GAME){}
-	netCommandStartGame(XBuffer& in) : netCommandGeneral(NETCOM_ID_START_GAME){}
-	//void Write(XBuffer& out) const override;
-};
-*/
-struct netCommand4C_AlifePacket : netCommandGeneral
-{
-	netCommand4C_AlifePacket() : netCommandGeneral(NETCOM_4C_ID_ALIFE_PACKET){}
-	netCommand4C_AlifePacket(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_ALIFE_PACKET){}
+
+struct NetLatencyInfo {
+    //Timestamp when this info was sent, also to return for the next latency status round
+    uint64_t timestamp = 0;
+    //Server quant
+    size_t quant = 0;
+    //Client player ids
+    std::vector<int> player_ids = {};
+    //Client pings in us
+    std::vector<size_t> player_pings = {};
+    //Client last packet in us (use with server provided timestamp above) 
+    std::vector<size_t> player_last_seen = {};
+    //Client quant number
+    std::vector<size_t> player_quants = {};
+    
+    void clear() {
+		timestamp = 0;
+		quant = 0;
+        player_ids.clear();
+        player_pings.clear();
+        player_last_seen.clear();
+        player_quants.clear();
+    }
+
+    void read(XBuffer& in) {
+		in.read(timestamp);
+		in.read(quant);
+        uint32_t amount = 0;
+        in.read(amount);
+        for (size_t i = 0; i < amount; ++i) {
+            int ei = 0;
+            in.read(ei);
+            player_ids.push_back(ei);
+            size_t e = 0;
+            in.read(e);
+            player_pings.push_back(e);
+            in.read(e);
+            player_last_seen.push_back(e);
+            in.read(e);
+            player_quants.push_back(e);
+        }
+    }
+
+    void write(XBuffer& out) const {
+		out.write(timestamp);
+		out.write(quant);
+        uint32_t amount = player_ids.size();
+        out.write(amount);
+        for (size_t i = 0; i < amount; ++i) {
+            int ei = player_ids[i];
+            out.write(ei);
+            size_t e = player_pings[i];
+            out.write(e);
+            e = player_last_seen[i];
+            out.write(e);
+            e = player_quants[i];
+            out.write(e);
+        }
+    }
 };
 
-struct netCommand4H_AlifePacket : netCommandGeneral
+struct netCommand4C_LatencyStatus : netCommandGeneral
+{    
+    //Contains server info about clients from last round
+    NetLatencyInfo info;
+    
+	netCommand4C_LatencyStatus() : netCommandGeneral(NETCOM_4C_ID_LATENCY_STATUS) {
+    }
+    
+	explicit netCommand4C_LatencyStatus(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_LATENCY_STATUS){
+        info.read(in);
+    }
+    
+    void Write(XBuffer& out) const override {
+        info.write(out);
+    }
+};
+
+struct netCommand4H_LatencyResponse : netCommandGeneral
 {
-	netCommand4H_AlifePacket() : netCommandGeneral(NETCOM_4H_ID_ALIFE_PACKET){}
-	netCommand4H_AlifePacket(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_ALIFE_PACKET){}
+    uint64_t timestamp = 0;
+    netCommand4H_LatencyResponse() : netCommandGeneral(NETCOM_4H_ID_LATENCY_RESPONSE) {
+    }
+    
+    explicit netCommand4H_LatencyResponse(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_LATENCY_RESPONSE){
+        in.read(timestamp);
+    }
+    
+    void Write(XBuffer& out) const override {
+        out.write(timestamp);
+    }
 };
 
 

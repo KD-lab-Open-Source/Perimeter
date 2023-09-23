@@ -60,7 +60,7 @@ public:
 	
 	~ShareHandle() 
 	{ 
-		if(ptr && !ptr->decrRef()) 
+		if(ptr && ptr->decrRef() <= 0) 
 			delete ptr; 
 	}
 

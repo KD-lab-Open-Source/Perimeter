@@ -272,8 +272,8 @@ public:
 	CReplayPlayerPushButton(int id, CShellWindow* pParent, EVENTPROC p = 0);
 	virtual ~CReplayPlayerPushButton();
 
-	void Load(const sqshControl* attr);
-	void draw(int bFocus);
+	void Load(const sqshControl* attr) override;
+	void draw(int bFocus) override;
 	void setPlayer(const std::string& newName, const sColor4f& newColor) {
 		labelText = newName;
 		color = newColor;
@@ -816,7 +816,7 @@ public:
 	CTextStringWindow(int id, CShellWindow* pParent, EVENTPROC p = 0) : CTextWindow(id, pParent, p) {
 	};
 
-	void draw(int bFocus);
+	void draw(int bFocus) override;
 };
 
 //////////////////////////////////////////////////////////
@@ -836,15 +836,6 @@ public:
 	virtual void draw(int bFocus);
 	virtual void Show(int bShow);
 
-	void SetText(const char* text) {
-		textData = text;
-	}
-	void setText(const std::string& text) {
-		textData = text;
-	}
-	const std::string& getText() const {
-		return textData;
-	}
 	virtual int EffectSupported() {
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
@@ -932,15 +923,6 @@ public:
 };
 
 ////////////////////
-
-/*
-struct sItem
-{
-	float x;
-	deque<string>	m_data;
-	int id;
-};
-*/
 
 class ChatWindow : public CShellWindow {
     
@@ -1108,15 +1090,15 @@ public:
 	virtual int  EffectSupported(){
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
-	void SetText(const char* lpszText){
-		m_data = lpszText;
-	}
+	void SetText(const char* lpszText);
 	const char* GetText(){
 		return m_data.c_str();
 	}
 	const std::string& getText() const {
 		return m_data;
 	}
+    bool isEmptyText() const;
+    bool isValidFilename() const;
 protected:
 	std::string   m_data;
 
@@ -1130,10 +1112,10 @@ public:
 	CChatInGameEditWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
 	~CChatInGameEditWindow();
 
-	void Load(const sqshControl* attr);
+	void Load(const sqshControl* attr) override;
 
-	void draw(int bFocus);
-	void OnChar(char key);
+	void draw(int bFocus) override;
+	void OnChar(char key) override;
 
 	bool alliesOnlyMode;
 
@@ -1343,7 +1325,7 @@ class CPlayerColorWnd : public CShellWindow {
 	public:
 		CPlayerColorWnd(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
 		}
-		void draw(int bFocus);
+		void draw(int bFocus) override;
 };
 
 
@@ -1432,9 +1414,25 @@ public:
     
 	int HitTest(float _x, float _y) override;
 
-    void Load(const sqshControl* attr);
+    void Load(const sqshControl* attr) override;
     
-	void draw(int bFocus);
+	void draw(int bFocus) override;
+};
+
+class CNetLatencyInfoWindow : public CShellWindow
+{
+    std::string fullData;
+    std::string briefData;
+    bool on_window = false;
+
+public:
+    CNetLatencyInfoWindow(int id, CShellWindow* pParent, EVENTPROC p);
+    ~CNetLatencyInfoWindow();
+
+    void Load(const sqshControl* attr) override;
+    void SetText(const std::string& brief, const std::string& full);
+    void OnWindow(int enable) override;
+    void draw(int bFocus) override;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1451,24 +1449,25 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+class ANIFile;
+
 //курсоры
 class CShellCursorManager
 {
-	struct CURSOR
+	struct CShellCursor
 	{
-		union
-		{
-			cTexture* hCursorProgram;
-		};
-		char bHotspotCentred;
+        cTexture* texture;
+        ANIFile* anifile;
+		char bHotspotCentered; //This is used for toolzers
+        //Size
 		float sx, sy;
 	};
 
 	float m_ftime;
 	float cur_x, cur_y;
-	std::deque<CURSOR> m_cursors;
-	CURSOR*       m_pActiveCursor;
-    CURSOR*       m_pCursorDefault;
+	std::deque<CShellCursor> m_cursors;
+    CShellCursor* m_pActiveCursor;
+    CShellCursor* m_pCursorDefault;
 	int           m_nCursorShift;
 
 	cFont*        m_hFontCursorWorkarea;
@@ -1518,6 +1517,7 @@ public:
 	void OnMouseMove(float x, float y);
 
 	void draw();
+    static void DrawCursor(CShellCursor* cursor, int x, int y, float phase = 0, float scale = 1.0f);
 
 	float GetSize();
 	void  SetSize(float sx);
@@ -1629,7 +1629,7 @@ class CShellIconManager
 	bool handleEvent(const iEvent* ev);
 
 	//icons status
-	void ShowUpgradeBuildProcessIcons(terUnitBase* pUnit);
+	void ShowUpgradeBuildProcessIcons(const terUnitBase* pUnit);
 	void ShowActionIcons(const UnitInterfacePrm& intf_prm, const UnitInterfaceActions& actions, terUnitBase* pUnit);
 	void UpdateActionStatus(terUnitBase* pUnit);
 	void UpdateIcons();
@@ -1875,17 +1875,21 @@ void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void showSingleMenu(CShellWindow* pWnd);
 void onMMSingleButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMMultiplayerButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //addons
+void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
+//community
+void onMMCommunityButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMCommunityLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //briefing
 void onMMNomadNameBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2077,6 +2081,8 @@ void OnComboSoundEffects(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGameStartSplash(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGameCameraMode(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnSliderScrollRate(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2234,10 +2240,11 @@ inline void draw_rect(const Vect2i& a, const Vect2i& b, const sColor4c& c)
 
 inline void draw_rect_empty(const Vect2f& a, const Vect2f& b, const sColor4f& c = sColor4f(0, 0, 0, 1))
 {
-	draw_line(Vect2f(a.x, a.y), Vect2f(b.x, a.y), c);
-	draw_line(Vect2f(b.x, a.y), Vect2f(b.x, b.y), c);
-	draw_line(Vect2f(b.x, b.y), Vect2f(a.x, b.y), c);
-	draw_line(Vect2f(a.x, b.y), Vect2f(a.x, a.y), c);
+    int x1 = a.x;
+    int x2 = b.x;
+    int y1 = a.y;
+    int y2 = b.y;
+    terRenderDevice->DrawRectangle(x1, y1, x2-x1, y2-y1, c, 1.0f);
 }
 inline void draw_line(const Vect2i& a, const Vect2i& b, const sColor4f& c = sColor4f(1, 1, 1, 1))
 {
@@ -2290,11 +2297,5 @@ inline std::string getTextFromBase(const char *keyStr) {
 	const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
 	return (*stringFromBase) ? stringFromBase : keyStr;
 }
-
-//inline cTextureScale* createTextureScale(const char* texture)
-//{
-//	return terVisGeneric->CreateTextureScale( texture,  Vect2f(terRenderDevice->GetSizeX() / SQSH_COORD_WIDTH_SCALE,terRenderDevice->GetSizeY() / SQSH_COORD_HEIGHT_SCALE));
-//}
-
 
 #endif //_PERIMETERSHELLUI_H

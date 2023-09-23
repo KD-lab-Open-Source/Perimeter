@@ -1,16 +1,35 @@
 #pragma once
-//interface IDirect3DTexture9;
-struct IDirect3DTexture9;
+
+//Universal handle for diff backends texture pointers
+struct TextureImage {
+    union {
+        void* ptr;
+#ifdef PERIMETER_D3D9
+        struct IDirect3DTexture9* d3d;
+#endif
+#ifdef PERIMETER_SOKOL
+        struct SokolTexture2D* sg;
+#endif
+    };
+
+    TextureImage() : ptr(nullptr) {
+    }
+    explicit TextureImage(void* p) : ptr(p) {
+    }
+    ~TextureImage() = default;
+};
 
 class cTexture : public cUnknownClass, public sAttribute
 {	// класс с анимацией, является динамическим указателем, то есть может удалzться через Release()
 	std::string		name;				// имя файла из которого загружена текстура
-	short		_x,_y;				// битовый размер текстуры
+    short		_x,_y;				// битовый размер текстуры
+    short		_w,_h;				// битовый размер текстуры
 	int			TimePerFrame;		// фремя проигрывания
 	int			number_mipmap;
 public:
+    float       bump_scale = 1;
 	sColor4c	skin_color;
-	std::vector<IDirect3DTexture9*>	BitMap;
+	std::vector<TextureImage> frames;
 
 	cTexture(const char *TexName=0);
 	~cTexture();
@@ -21,11 +40,11 @@ public:
 
 	inline int GetTimePerFrame();
 	inline void SetTimePerFrame(int tpf);
-	inline int GetNumberFrame() {return BitMap.size(); };
+	inline int GetNumberFrame() {return frames.size();};
 	inline int GetX() const{return _x;};
 	inline int GetY() const{return _y;};
-	inline int GetWidth()const{return 1<<GetX();};
-	inline int GetHeight()const{return 1<<GetY();};
+	inline int GetWidth()const{return _w;};
+	inline int GetHeight()const{return _h;};
 
 	void SetWidth(int xTex);
 	void SetHeight(int yTex);
@@ -33,15 +52,23 @@ public:
 	inline bool IsAlpha();
 	inline bool IsAlphaTest();
 
-	IDirect3DTexture9*& GetDDSurface(int n);
+    TextureImage* GetFrameImage(int n) {
+        if (0<=n&&n<frames.size()) {
+            return &frames[n];
+        } else {
+            xassert(0);
+            return nullptr;
+        }
+    }
+    
 	inline void New(int number);
 	inline eSurfaceFormat GetFmt();
 
 	uint8_t* LockTexture(int& Pitch);
-	uint8_t* LockTexture(int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size);
 	void UnlockTexture();
-	virtual bool IsScaleTexture(){return false;}
 	virtual bool IsAviScaleTexture(){return false;}
+    
+    void ConvertBumpToNormal(uint8_t* buffer);
 };
 
 class cTextureAviScale : public cTexture
@@ -91,42 +118,6 @@ public:
 		return pos[i];
 	}
 	virtual bool IsAviScaleTexture(){return true;}
-}; 
-class cTextureScale:public cTexture
-{
-	Vect2f scale;
-	Vect2f uvscale;
-	Vect2f inv_size;
-public:
-	cTextureScale(const char *TexName=0):cTexture(TexName)
-	{
-		scale.set(1,1);
-		uvscale.set(1,1);
-		inv_size.set(1,1);
-	}
-
-	inline Vect2f GetCreateScale(){return scale;};
-	inline const Vect2f& GetUVScale(){return uvscale;}
-	virtual bool IsScaleTexture(){return true;}
-	virtual bool IsAviScaleTexture(){return false;}
-
-	void SetScale(Vect2f scale_,Vect2f uvscale_)
-	{
-		scale=scale_;
-		uvscale=uvscale_;
-		inv_size.x=1.0f/GetWidth();
-		inv_size.y=1.0f/GetHeight();
-	}
-
-	void ConvertUV(float& u,float& v)
-	{
-		u*=uvscale.x;
-		v*=uvscale.y;
-	}
-
-	void DXY2DUV(int dx,int dy,float& du,float& dv)
-	{
-		du=dx*inv_size.x;
-		dv=dy*inv_size.y;
-	}
 };
+
+void ApplySkinColor(uint8_t* buffer,int dx,int dy,sColor4c skin_color);

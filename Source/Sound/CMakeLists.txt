@@ -15,4 +15,4 @@ SET(Sound_SRCS
 )
 
 ADD_LIBRARY(Sound STATIC ${Sound_SRCS})
-target_compile_options(Sound PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(Sound PRIVATE ${PERIMETER_COMPILE_OPTIONS})

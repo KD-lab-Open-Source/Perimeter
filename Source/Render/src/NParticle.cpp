@@ -3,16 +3,21 @@
 #include "Scene.h"
 #include <algorithm>
 #include "NParticleID.h"
-#include "TileMap.h"
+#include "tilemap/TileMap.h"
 #include "ForceField.h"
+#include "DrawBuffer.h"
 #include "MeshBank.h"
 #include "ObjMesh.h"
 #include "xmath.h"
 #include "files/files.h"
+#include "DrawBuffer.h"
+
+const int PARTICLE_BUF_LOCK_LEN = 50;
 
 static RandomGenerator rnd;
 static std::vector<Vect2f> rotate_angle;
 
+float GlobalParticleRate = 1.0f;
 KeyFloat::value KeyFloat::none=0;
 KeyPos::value KeyPos::none=Vect3f::ZERO;
 KeyRotate::value KeyRotate::none=QuatF::ID;
@@ -22,13 +27,13 @@ static const float INV_2_PI=1/(2*XM_PI);
 
 float cEffect::GetParticleRateReal()const
 {
-	return particle_rate*Option_ParticleRate;
+	return particle_rate*GlobalParticleRate*Option_ParticleRate;
 }
 ///////////////////////////cEmitterInterface///////////////////////////
 cEmitterInterface::cEmitterInterface()
-:cUnkObj(NULL)
+:cUnkObj(0)
 {
-	parent=NULL;
+	parent=nullptr;
 
 	time=0;
 	old_time=0;
@@ -37,7 +42,7 @@ cEmitterInterface::cEmitterInterface()
 	cycled=false;
 	start_time=0;
 	emitter_life_time=1;
-	unical_id=NULL;
+	unical_id=nullptr;
 	no_show_obj_editor=false;
 }
 
@@ -62,7 +67,7 @@ void cEmitterInterface::SetCycled(bool cycled_)
 ///////////////////////////cEmitterBase////////////////////////////////
 cEmitterBase::cEmitterBase()
 {
-	parent=NULL;
+	parent=nullptr;
 
 	sprite_blend=ALPHA_BLEND;
 
@@ -78,7 +83,7 @@ cEmitterBase::cEmitterBase()
 	chPlume = false;
 	TraceCount = 1;
 	PlumeInterval = 0.01f;
-	other = NULL;
+	other = nullptr;
 }
 
 cEmitterBase::~cEmitterBase()
@@ -328,7 +333,7 @@ inline Vect3f* cEmitterBase::GetNormal(const int& ix)
 			return &normal_position[ix];
 		break;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
@@ -394,7 +399,7 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 	#undef num
 }
 
-bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm /*= NULL*/)
+bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm)
 {
 	cur_one_pos=-1;
 	float size_pos=100;
@@ -505,15 +510,15 @@ cEmitterInt::~cEmitterInt()
 {
 }
 
-template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, Vect3f& npos, float& dt,
-                                                                 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-                                                                 const sColor4c& color, const Vect3f& PosCamera,
+template<class nParticle> FORCEINLINE int ParticlePutToBuf(cEmitterBase* emitter, nParticle& p, Vect3f& npos, float& dt,
+                                                                 DrawBuffer* db, sVertexXYZDT1*& v, indices_t*& ib,
+                                                                 const uint32_t& color, const Vect3f& PosCamera,
                                                                  const float& size, const cTextureAviScale::RECT& rt,
-                                                                 const uint8_t mode, MatXf* iGM)
+                                                                 const uint8_t mode, MatXf* iGM = nullptr)
 
 {
 	xassert(!p.plume_pos.empty());
-	float dv1 = (rt.right - rt.left)/TraceCount;
+	float dv1 = (rt.right - rt.left)/emitter->GetTraceCount();
 	float v1 = rt.left;
 	Vect3f prev_lt,prev_lb;
 	Vect3f sy;
@@ -527,7 +532,7 @@ template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, V
 	prev_lb = npos + sy;
 
 	Vect3f prev_pos = npos;
-	float interval = PlumeInterval/TraceCount;
+	float interval = emitter->GetPlumeInterval()/emitter->GetTraceCount();
 	float real_interval;
 	float bt;
 	int i;
@@ -550,11 +555,11 @@ template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, V
 		}
 		real_interval = 1-bt;
 		bt =1;
-		v1+=((interval-real_interval)+i*interval)/PlumeInterval*(rt.right - rt.left);
+		v1+=((interval-real_interval)+i*interval)/emitter->GetPlumeInterval()*(rt.right - rt.left);
 	}
-	while(bt>=0&&i<TraceCount)
+	while(bt>=0&&i<emitter->GetTraceCount())
 	{
-		sVertexXYZDT1* v = pBuf->Get();
+        db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
 		v[0].pos=prev_lt; v[0].diffuse=color; v[0].GetTexel().set(v1, rt.top);		//	(0,0);
 		v[1].pos=prev_lb; v[1].diffuse=color; v[1].GetTexel().set(v1, rt.bottom);	//	(0,1);
 
@@ -562,7 +567,8 @@ template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, V
 		pos+= (prev_pos - pos)*(dt/(real_interval+dt));
 		if(mode&2) 
 		{
-			xassert(dynamic_cast<cEmitterZ*>(this));
+            cEmitterZ* emitterZ = dynamic_cast<cEmitterZ*>(emitter);
+			xassert(emitter);
 			/*if (relative)
 			{
 				xassert(iGM);
@@ -573,7 +579,9 @@ template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, V
 				pp.z = ((cEmitterZ*)this)->CalcZ(pp.x,pp.y); 
 				pos.z = (iGM->rot().zrow().x*pp.x + iGM->rot().zrow().y*pp.y + iGM->rot().zrow().z*pp.z) + iGM->trans().z;
 			}else*/
-				pos.z = ((cEmitterZ*)this)->CalcZ(pos.x,pos.y); 
+            if (emitterZ) {
+                pos.z = emitterZ->CalcZ(pos.x, pos.y);
+            } 
 		}
 		if(mode&1) vCameraToObject.set(0,0,1);
 		else vCameraToObject = PosCamera - /*GetGlobalMatrix()*/pos;
@@ -608,249 +616,150 @@ template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, V
 	{
 		p.time_summary+=dt;
 		
-		if (p.time_summary-1>PlumeInterval)
+		if (p.time_summary-1>emitter->GetPlumeInterval())
 			p.time=100;
 		else return true;
 	}
 	return false;
 }
 
-
 const cTextureAviScale::RECT cTextureAviScale::RECT::ID(0.0f, 0.0f, 1.0f, 1.0f);
-const float pl_death_time = 0.99f;
 void cEmitterInt::Draw(cCamera *pCamera)
 {
 	MTG();
 	if(no_show_obj_editor)
 		return;
-	cURenderDevice* rd=pCamera->GetRenderDevice();
-	if(false)
-	{
-		std::vector<Vect3f>& begin_position=parent->GetPos();
-		std::vector<Vect3f>& normal_position=parent->GetNorm();
-		if(normal_position.empty())
-		{
-			std::vector<Vect3f>::iterator it;
-			FOR_EACH(begin_position,it)
-			{
-				Vect3f p=*it;
+    
+    cInterfaceRenderDevice* rd = pCamera->GetRenderDevice();
 
-				rd->DrawLine(p,p+Vect3f(2,2,2),sColor4c(255,255,0,255));
-			}
-		}else
-		{
-			xassert(begin_position.size()==normal_position.size());
-			for(int i=0;i<begin_position.size();i++)
-			{
-				Vect3f p=begin_position[i];
-				Vect3f n=normal_position[i];
+    if(false)
+    {
+        std::vector<Vect3f>& begin_position=parent->GetPos();
+        std::vector<Vect3f>& normal_position=parent->GetNorm();
+        if(normal_position.empty())
+        {
+            std::vector<Vect3f>::iterator it;
+            FOR_EACH(begin_position,it)
+            {
+                Vect3f p=*it;
 
-				rd->DrawLine(p,p+n*3,sColor4c(255,255,0,255));
-			}
-		}
-		rd->FlushPrimitive3D();
-	}
+                rd->DrawLine(p,p+Vect3f(2,2,2),sColor4c(255,255,0,255));
+            }
+        }else
+        {
+            xassert(begin_position.size()==normal_position.size());
+            for(int i=0;i<begin_position.size();i++)
+            {
+                Vect3f p=begin_position[i];
+                Vect3f n=normal_position[i];
 
-	
-	float dtime_global=(time-old_time);
+                rd->DrawLine(p,p+n*3,sColor4c(255,255,0,255));
+            }
+        }
+        rd->FlushPrimitive3D();
+    }
 
-	MatXf mat=pCamera->GetMatrix();
-	Bound.SetInvalidBox();
-	cTextureAviScale* texture = NULL;
-//	cTextureAviScale* plume_texture = NULL;
-	if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture())
-		texture = (cTextureAviScale*)GetTexture(0);
+    
+    float dtime_global=(time-old_time);
 
-	cQuadBuffer<sVertexXYZDT1>* pBuf=rd->GetQuadBufferXYZDT1();
-/*
-	Vect3f pos;
-	float dtime;
-	bool NeedPlume = chPlume;
-	if (NeedPlume&&GetTexture(1))
-	{
-		if (GetTexture(1)->IsAviScaleTexture())
-			plume_texture = (cTextureAviScale*)GetTexture(1);
-		rd->SetNoMaterial(sprite_blend, 0, GetTexture(1));
-		pBuf->BeginDraw();
-		int size=Particle.size();
-		for(int i=size-1;i>=0;i--)
-		{
-			nParticle& p=Particle[i];
-			if(p.key<0)continue;
-			PutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
-									mat, p,	pBuf, pos, dtime );
-		}
-		pBuf->EndDraw();
-		NeedPlume = false;
-	}
-*/
-	rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
-	Vect3f CameraPos;
-	if (relative)
-	{
-		if (chPlume)
-		{
-			MatXf invGlobMatrix(GetGlobalMatrix());
-			invGlobMatrix.invert();
-			CameraPos = invGlobMatrix*pCamera->GetPos();
-		}
-		pBuf->BeginDraw(GetGlobalMatrix());
-	}else
-	{
-		if (chPlume) CameraPos = pCamera->GetPos();
-		pBuf->BeginDraw();
-	}
-	int size=Particle.size();
-	for(int i=size-1;i>=0;i--)
-	{
+    MatXf mat=pCamera->GetMatrix();
+    Bound.SetInvalidBox();
+    cTextureAviScale* texture = nullptr;
+//	cTextureAviScale* plume_texture = nullptr;
+    if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture()) {
+        texture = (cTextureAviScale*) GetTexture(0);
+    }
+    
+    rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
+    Vect3f CameraPos;
+    if (relative) {
+        if (chPlume) {
+            MatXf invGlobMatrix(GetGlobalMatrix());
+            invGlobMatrix.invert();
+            CameraPos = invGlobMatrix*pCamera->GetPos();
+        }
+        rd->SetWorldMatXf(GetGlobalMatrix());
+    } else {
+        if (chPlume) CameraPos = pCamera->GetPos();
+        rd->SetWorldMat4f(nullptr);
+    }
+
+    indices_t* ib = nullptr;
+    sVertexXYZDT1 *v = nullptr;
+    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    size_t size=Particle.size();
+    for (int i=size-1;i>=0;i--) {
 /*		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		if (NeedPlume)
-			PutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
-									mat, p,	pBuf, pos, dtime );
-		const cTextureAviScale::RECT& rt = texture?
-					((cTextureAviScale*)texture)->GetFramePos(p.time_summary) :
-					cTextureAviScale::RECT::ID;	
-		p.PutToBuf(dtime_global, keys[p.key], keys[p.key+1],
-					Bound, rt, mat, pBuf, this, pos, dtime, p.time, 1.0f);
+        if(p.key<0)continue;
+        if (NeedPlume)
+            PutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
+                                    mat, p,	pBuf, pos, dtime );
+        const cTextureAviScale::RECT& rt = texture?
+                    ((cTextureAviScale*)texture)->GetFramePos(p.time_summary) :
+                    cTextureAviScale::RECT::ID;	
+        p.PutToBuf(dtime_global, keys[p.key], keys[p.key+1],
+                    Bound, rt, mat, pBuf, this, pos, dtime, p.time, 1.0f);
 */
 
-		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		Vect3f pos;
-		float angle;
-		sColor4f fcolor;
-		float psize;
+        nParticle& p=Particle[i];
+        if(p.key<0)continue;
+        Vect3f pos;
+        float angle;
+        sColor4f fcolor;
+        float psize;
 
-		float dtime=dtime_global*p.inv_life_time;
-		KeyParticleInt& k0=keys[p.key];
-		KeyParticleInt& k1=keys[p.key+1];
-		
-		float& t=p.time;
-		float ts=t*k0.inv_dtime;
-		if (calc_pos)
-			pos = p.pos0+p.vdir*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g*((p.gvel0+t*k0.gravity*0.5f)*t);
-		else pos = p.pos0; ///temp
-		Bound.AddBound(pos);
-		angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-		fcolor = k0.color+(k1.color-k0.color)*ts;
-		psize = k0.size+(k1.size-k0.size)*ts;
+        float dtime=dtime_global*p.inv_life_time;
+        KeyParticleInt& k0=keys[p.key];
+        KeyParticleInt& k1=keys[p.key+1];
+        
+        float& t=p.time;
+        float ts=t*k0.inv_dtime;
+        if (calc_pos)
+            pos = p.pos0+p.vdir*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g*((p.gvel0+t*k0.gravity*0.5f)*t);
+        else pos = p.pos0; ///temp
+        Bound.AddBound(pos);
+        angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
+        fcolor = k0.color+(k1.color-k0.color)*ts;
+        psize = k0.size+(k1.size-k0.size)*ts;
 
-		//Добавить в массив
-		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
-		rot*=psize*=p.begin_size;
-		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
+        //Добавить в массив
+        Vect3f sx,sy;
+        Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
+        rot*=psize*=p.begin_size;
+        mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
+        mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-		sColor4c color(xm::round(fcolor.r * p.begin_color.r), xm::round(fcolor.g * p.begin_color.g),
-                       xm::round(fcolor.b * p.begin_color.b), xm::round(fcolor.a));
-		const cTextureAviScale::RECT& rt = texture?
-						((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
-						cTextureAviScale::RECT::ID;	
-		if (chPlume)
-		{
-			if (PutToBuf(p,pos,dtime,pBuf,color,CameraPos,psize, rt, false))
-				continue;
-		}
-		else 
-		{
-			sVertexXYZDT1 *v=pBuf->Get();
+        uint32_t color = rd->ConvertColor(sColor4c(
+                xm::round(fcolor.r * p.begin_color.r), xm::round(fcolor.g * p.begin_color.g),
+                xm::round(fcolor.b * p.begin_color.b), xm::round(fcolor.a)
+        ));
+        const cTextureAviScale::RECT& rt = texture?
+                        ((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
+                        cTextureAviScale::RECT::ID;	
+        if (chPlume)
+        {
+            if (ParticlePutToBuf(this, p,pos,dtime,db,v,ib,color,CameraPos,psize, rt, false))
+                continue;
+        } else {
+            db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
 
-			v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//	(0,0);
-			v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//	(0,1);
-			v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//  (1,0);
-			v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//  (1,1);
-			#ifdef  NEED_TREANGLE_COUNT
-				parent->AddCountTriangle(2);
-				parent->AddSquareTriangle(psize*psize);
-			#endif
-		}
-		ProcessTime(p,dtime,i,pos);
-	}
-
-	pBuf->EndDraw();
+            v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//	(0,0);
+            v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//	(0,1);
+            v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//  (1,0);
+            v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//  (1,1);
+            #ifdef  NEED_TREANGLE_COUNT
+                parent->AddCountTriangle(2);
+                parent->AddSquareTriangle(psize*psize);
+            #endif
+        }
+        ProcessTime(p,dtime,i,pos);
+    }
+    db->AutoUnlock();
+    
 	Particle.Compress();
-
 	old_time=time;
 }
-/*
-inline void cEmitterInt::PutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime)
-{																										
-	float tt = p.time;																		
-	int key = p.key;																		
-	float timesummary = p.time_summary;														
-	float interval = PlumeInterval;															
-	xassert(PlumeInterval>0.0f && PlumeInterval<1.0f);										
-	float tr_size = 1.0f;																	
-	for(int j=0;j<TraceCount;j++)															
-	{																						
-		tt-=interval;																		
-		timesummary-=interval;																
-		while(tt<0)																			
-		{																					
-//			if (key==0)
-				return;			
-			float dt = keys[key-1].dtime;
-			tt += keys[--key].dtime;														
-		}																					
-		const cTextureAviScale::RECT* rt;													
-		if(plume_texture)																	
-			rt = &plume_texture->GetFramePos((float)j/TraceCount);							
-		else if (texture)																	
-			rt = &texture->GetFramePos(timesummary);										
-		else rt = &cTextureAviScale::RECT::ID;												
-		tr_size*=PlumeSizeScaling;															
-		p.PutToBuf(dtime_global, keys[key], keys[key+1],									
-					Bound, *rt, mat, pBuf, this, pos, dtime, tt, tr_size);					
-		interval*=PlumeTimeScaling;															
-	}																						
-}																								
 
-inline void cEmitterInt::nParticle::PutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
-								const KeyParticleInt& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								const cEmitterInt* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float trace_size)
-{
-	float angle;
-	sColor4f fcolor;
-	float psize;
-	dtime=dtime_global*inv_life_time; 
-
-//	float& t=time;
-	float ts=t*k0.inv_dtime;
-	pos = pos0+vdir*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+emi->g*((gvel0+t*k0.gravity*0.5f)*t);
-	Bound.AddBound(pos);
-	angle = angle0+ angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-	fcolor = k0.color+(k1.color-k0.color)*ts;
-	psize = k0.size+(k1.size-k0.size)*ts;
-
-	//Добавить в массив
-	Vect3f sx,sy;
-	Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
-	rot*=psize*begin_size*trace_size;
-	mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-	mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
-
-	sColor4c color(round(fcolor.r*begin_color.r),round(fcolor.g*begin_color.g),
-				round(fcolor.b*begin_color.b),xm::round(fcolor.a));
-
-	sVertexXYZDT1 *v=pBuf->Get();
-
-	v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//	(0,0);
-	v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//	(0,1);
-	v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//  (1,0);
-	v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//  (1,1);
-
-	xassert(emi->parent->AddToCountTriangle(1));
-}
-*/
 void cEmitterInt::ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos)
 {
 	float& t=p.time;
@@ -1316,284 +1225,120 @@ cEmitterSpl::cEmitterSpl()
 cEmitterSpl::~cEmitterSpl()
 {
 }
-/*
-inline void cEmitterSpl::nParticle::PutToBuf(const float& dtime_global, HeritKey& k, const KeyParticleSpl& k0, 
-								const KeyParticleSpl& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								cEmitterSpl* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float& trace_size, const float& htime)
-{
-	float angle;
-	sColor4f fcolor;
-	float psize;
-	dtime=dtime_global*inv_life_time;
 
-	{
-//		HeritKey& k=emi->hkeys[hkey];
-		float ts=htime*k.inv_dtime;
-		k.Get(pos,ts);
-		this->pos.xformPoint(pos);
-		Bound.AddBound(pos);
-	}
-	{
-//		float& t=p.time;
-//		KeyParticleSpl& k0=keys[p.key];
-//		KeyParticleSpl& k1=keys[p.key+1];
-		
-		float ts=t*k0.inv_dtime;
-		angle = angle0+ angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-		fcolor = k0.color+(k1.color-k0.color)*ts;
-		psize = k0.size+(k1.size-k0.size)*ts;
-	}
-	//Добавить в массив
-	Vect3f sx,sy;
-	Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
-	rot*=psize*begin_size*trace_size;
-	mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-	mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
-
-	sColor4c color(round(fcolor.r),round(fcolor.g),xm::round(fcolor.b),round(fcolor.a));
-		
-	sVertexXYZDT1 *v=pBuf->Get();
-	v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-	v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-	v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-	v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
-
-	xassert(emi->parent->AddToCountTriangle(1));
-}
-inline void cEmitterSpl::PutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime)
-{																										
-	float tt = p.time;																		
-	int key = p.key;																		
-	float timesummary = p.time_summary;		
-	float htime = p.htime;
-	float interval = PlumeInterval;															
-	xassert(PlumeInterval>0.0f && PlumeInterval<1.0f);										
-	float tr_size = 1.0f;																	
-	for(int j=0;j<TraceCount;j++)															
-	{																						
-		tt-=interval;																		
-		timesummary-=interval;																
-		htime-=interval;
-		while(tt<0)																			
-		{																					
-//			if (key==0)																	
-				return;																		
-			tt += keys[--key].dtime;														
-			htime+=hkeys[key].dtime;
-		}																					
-		const cTextureAviScale::RECT* rt;													
-		if(plume_texture)																	
-			rt = &plume_texture->GetFramePos((float)j/TraceCount);							
-		else if (texture)																	
-			rt = &texture->GetFramePos(timesummary);										
-		else rt = &cTextureAviScale::RECT::ID;												
-		tr_size*=PlumeSizeScaling;															
-		p.PutToBuf(dtime_global, hkeys[key], keys[key], keys[key+1],									
-					Bound, *rt, mat, pBuf, this, pos, dtime, tt, tr_size, htime);					
-		interval*=PlumeTimeScaling;															
-	}																						
-}																								
-*/
 void cEmitterSpl::Draw(cCamera *pCamera)
 {
 	if(no_show_obj_editor)
 		return;
-	
-	float dtime_global=(time-old_time);
+
+    float dtime_global=(time-old_time);
 
 	MatXf mat=pCamera->GetMatrix();
 	Bound.SetInvalidBox();
-	cURenderDevice* rd=pCamera->GetRenderDevice();
-
-	cTextureAviScale* texture = NULL;
-//	cTextureAviScale* plume_texture = NULL;
-	if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture())
-		texture = (cTextureAviScale*)GetTexture(0);
-
-	cQuadBuffer<sVertexXYZDT1>* pBuf=rd->GetQuadBufferXYZDT1();
-/*
-	Vect3f pos;
-	float dtime;
-	bool NeedPlume = chPlume;
-	if (NeedPlume&&GetTexture(1))
-	{
-		if (GetTexture(1)->IsAviScaleTexture())
-			plume_texture = (cTextureAviScale*)GetTexture(1);
-		rd->SetNoMaterial(sprite_blend, 0, GetTexture(1));
-		rd->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
-		pBuf->BeginDraw();
-		int size=Particle.size();
-		for(int i=size-1;i>=0;i--)
-		{
-			nParticle& p=Particle[i];
-			if(p.key<0)continue;
-			PutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
-									mat, p,	pBuf, pos, dtime );
-		}
-		pBuf->EndDraw();
-		NeedPlume = false;
-	}
-*/
-	rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
-	rd->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
-	Vect3f CameraPos;
-	if (relative)
-	{
-		if (chPlume)
-		{
-			MatXf invGlobMatrix(GetGlobalMatrix());
-			invGlobMatrix.invert();
-			CameraPos = invGlobMatrix*pCamera->GetPos();
-		}
-		pBuf->BeginDraw(GetGlobalMatrix());
-	}else
-	{
-		if (chPlume) CameraPos = pCamera->GetPos();
-		pBuf->BeginDraw();
-	}
-	int size=Particle.size();
-	for(int i=size-1;i>=0;i--)
-	{
+        
+    cTextureAviScale* texture = nullptr;
+//	cTextureAviScale* plume_texture = nullptr;
+    if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture()) {
+        texture = (cTextureAviScale*) GetTexture(0);
+    }
+    
+    cInterfaceRenderDevice* rd = pCamera->GetRenderDevice();
+    
+    rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
+    rd->SetRenderState( RS_CULLMODE, CULL_NONE );
+    Vect3f CameraPos;
+    if (relative)
+    {
+        if (chPlume)
+        {
+            MatXf invGlobMatrix(GetGlobalMatrix());
+            invGlobMatrix.invert();
+            CameraPos = invGlobMatrix*pCamera->GetPos();
+        }
+        rd->SetWorldMatXf(GetGlobalMatrix());
+    } else {
+        if (chPlume) CameraPos = pCamera->GetPos();
+        rd->SetWorldMat4f(nullptr);
+    }
+    indices_t* ib = nullptr;
+    sVertexXYZDT1 *v = nullptr;
+    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    size_t size=Particle.size();
+    for(int i=size-1;i>=0;i--)
+    {
 /*		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		if (NeedPlume)
-			PutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
-									mat, p,	pBuf, pos, dtime );
-		const cTextureAviScale::RECT& rt = texture?
-					((cTextureAviScale*)texture)->GetFramePos(p.time_summary) :
-					cTextureAviScale::RECT::ID;	
-		p.PutToBuf(dtime_global, hkeys[p.key], keys[p.key], keys[p.key+1],
-					Bound, rt, mat, pBuf, this, pos, dtime, p.time, 1.0f, p.htime);
-		ProcessTime(p,dtime,i);
+        if(p.key<0)continue;
+        if (NeedPlume)
+            PutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
+                                    mat, p,	pBuf, pos, dtime );
+        const cTextureAviScale::RECT& rt = texture?
+                    ((cTextureAviScale*)texture)->GetFramePos(p.time_summary) :
+                    cTextureAviScale::RECT::ID;	
+        p.PutToBuf(dtime_global, hkeys[p.key], keys[p.key], keys[p.key+1],
+                    Bound, rt, mat, pBuf, this, pos, dtime, p.time, 1.0f, p.htime);
+        ProcessTime(p,dtime,i);
 */
-		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		Vect3f pos;
-		float angle;
-		sColor4f fcolor;
-		float psize;
+        nParticle& p=Particle[i];
+        if(p.key<0)continue;
+        Vect3f pos;
+        float angle;
+        sColor4f fcolor;
+        float psize;
 
-		float dtime=dtime_global*p.inv_life_time;
+        float dtime=dtime_global*p.inv_life_time;
 
-		{
-			HeritKey& k=hkeys[p.hkey];
-			float ts=p.htime*k.inv_dtime;
-			k.Get(pos,ts);
-			p.pos.xformPoint(pos);
-			Bound.AddBound(pos);
-		}
+        {
+            HeritKey& k=hkeys[p.hkey];
+            float ts=p.htime*k.inv_dtime;
+            k.Get(pos,ts);
+            p.pos.xformPoint(pos);
+            Bound.AddBound(pos);
+        }
 
-		{
-			float& t=p.time;
-			KeyParticleSpl& k0=keys[p.key];
-			KeyParticleSpl& k1=keys[p.key+1];
-			
-			float ts=t*k0.inv_dtime;
-			angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-			fcolor = k0.color+(k1.color-k0.color)*ts;
-			psize = k0.size+(k1.size-k0.size)*ts;
-		}
+        {
+            float& t=p.time;
+            KeyParticleSpl& k0=keys[p.key];
+            KeyParticleSpl& k1=keys[p.key+1];
+            
+            float ts=t*k0.inv_dtime;
+            angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
+            fcolor = k0.color+(k1.color-k0.color)*ts;
+            psize = k0.size+(k1.size-k0.size)*ts;
+        }
 
-		//Добавить в массив
-		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
-		rot*=psize*=p.begin_size;
-		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
+        //Добавить в массив
+        Vect3f sx,sy;
+        Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
+        rot*=psize*=p.begin_size;
+        mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
+        mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-		sColor4c color(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a));
-		const cTextureAviScale::RECT& rt = texture ?
-			((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
-						cTextureAviScale::RECT::ID;	
-		if (chPlume)
-		{
-			if (PutToBuf(p,pos,dtime,pBuf,color,CameraPos,psize, rt, false))
-				continue;
-		}
-		else 
-		{
-			sVertexXYZDT1 *v=pBuf->Get();
-			v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-			v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-			v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-			v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
-			#ifdef  NEED_TREANGLE_COUNT
-				parent->AddCountTriangle(2);
-				parent->AddSquareTriangle(psize*psize);
-			#endif
-		}
-		ProcessTime(p,dtime,i);
-	}
+        uint32_t color = rd->ConvertColor(sColor4c(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a)));
+        const cTextureAviScale::RECT& rt = texture ?
+            ((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
+                        cTextureAviScale::RECT::ID;	
+        if (chPlume)
+        {
+            if (ParticlePutToBuf(this, p,pos,dtime,db,v,ib,color,CameraPos,psize, rt, false))
+                continue;
+        }
+        else 
+        {
+            db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
+            v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
+            v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
+            v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
+            v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
+            #ifdef  NEED_TREANGLE_COUNT
+                parent->AddCountTriangle(2);
+                parent->AddSquareTriangle(psize*psize);
+            #endif
+        }
+        ProcessTime(p,dtime,i);
+    }
 
-	pBuf->EndDraw();
-/*
-	cQuadBuffer<sVertexXYZDT1>* pBuf=pCamera->GetRenderDevice()->GetQuadBufferXYZDT1();
-	pCamera->GetRenderDevice()->SetNoMaterial(sprite_blend,0,texture);
-	pCamera->GetRenderDevice()->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
-	pBuf->BeginDraw();
-	bool isAviTexture = texture&&texture->IsAviScaleTexture();
-	int size=Particle.size();
-	for(int i=size-1;i>=0;i--)
-	{
-		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		Vect3f pos;
-		float angle;
-		sColor4f fcolor;
-		float psize;
-
-		float dtime=dtime_global*p.inv_life_time;
-
-		{
-			HeritKey& k=hkeys[p.hkey];
-			float ts=p.htime*k.inv_dtime;
-			k.Get(pos,ts);
-			p.pos.xformPoint(pos);
-			Bound.AddBound(pos);
-		}
-
-		{
-			float& t=p.time;
-			KeyParticleSpl& k0=keys[p.key];
-			KeyParticleSpl& k1=keys[p.key+1];
-			
-			float ts=t*k0.inv_dtime;
-			angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-			fcolor = k0.color+(k1.color-k0.color)*ts;
-			psize = k0.size+(k1.size-k0.size)*ts;
-		}
-
-		//Добавить в массив
-		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
-		rot*=psize*p.begin_size;
-		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
-
-		sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),xm::round(fcolor.a));
-		
-		sVertexXYZDT1 *v=pBuf->Get();
-		const cTextureAviScale::RECT& rt = isAviTexture ?
-					((cTextureAviScale*)texture)->GetFramePos(p.time) :
-					cTextureAviScale::RECT::ID;	
-
-		v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-		v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-		v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-		v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
-
-		ProcessTime(p,dtime,i);
-	}
-
-	pBuf->EndDraw();
-*/
+    db->AutoUnlock();
+        
 	Particle.Compress();
 	old_time=time;
 }
@@ -1941,14 +1686,13 @@ void cEmitterSpl::DummyQuant()
 
 ////////////////////////cEffect//////////////////////////
 cEffect::cEffect()
-:cIUnkObjScale(NULL)
+:cIUnkObjScale(0)
 {
 	link.SetParent(this);
-	link3dx.SetParent(this);
 	time=0;
 	auto_delete_after_life=false;
 	particle_rate=1;
-	func_getz=NULL;
+	func_getz=nullptr;
 }
 
 cEffect::~cEffect()
@@ -2277,18 +2021,8 @@ void cEffect::LinkToNode(class cObjectNode* node)
 		SetPosition(node->GetGlobalPosition());
 }
 
-void cEffect::LinkToNode(class cObject3dx* object,int inode)
-{
-	link3dx.Link(object,inode);
-	if(object)
-		link3dx.Update();
-}
-
 const MatXf& cEffect::GetCenter3DModel()
 {
-	if(link3dx.IsInitialized())
-		return link3dx.GetRootMatrix();
-
 	if(link.GetNode())
 		return link.GetNode()->GetRootNode()->GetLocalMatrix();
 	return GetGlobalMatrix();
@@ -2307,27 +2041,6 @@ void cEffect::EffectObserverLink::Link(class cObjectNode* node_)
 void cEffect::EffectObserverLink::Update()
 {
 	effect->SetPosition(node->GetGlobalPosition());
-}
-
-void cEffect::EffectObserverLink3dx::Link(class cObject3dx* object_,int inode)
-{
-	if(observer)observer->BreakLink(this);
-	object=object_;
-	node=inode;
-
-	if(object)
-		object->AddLink(this);
-}
-
-const MatXf& cEffect::EffectObserverLink3dx::GetRootMatrix()
-{
-	return object->GetPosition();
-}
-
-void cEffect::EffectObserverLink3dx::Update()
-{
-	const MatXf& mat=object->GetNodePosition(node);
-	effect->SetPosition(mat);
 }
 
 void cEffect::StopAndReleaseAfterEnd()
@@ -3402,7 +3115,7 @@ EffectKey* EffectLibrary::Get(const char* name) const
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool EffectLibrary::Load(const char* fname,const char* texture_path)
@@ -3531,7 +3244,7 @@ class FunctorMapZ:public FunctorGetZ
 public:
 	FunctorMapZ()
 	{
-		terra=NULL;
+		terra=nullptr;
 		terra_x=terra_y=0;
 	}
 
@@ -3583,7 +3296,7 @@ cEmitterZ::cEmitterZ()
 	base_angle=XM_PI/2;
 
 	use_force_field=false;
-	func_getz=NULL;
+	func_getz=nullptr;
 }
 
 cEmitterZ::~cEmitterZ()
@@ -3657,331 +3370,143 @@ void cEmitterZ::ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos)
 	t+=dt;
 	p.time_summary+=dt;
 }
-/*
-inline void cEmitterInt::nParticle::ZPutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
-								const KeyParticleInt& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								cEmitterZ* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float trace_size)
-{
-	float angle;
-	sColor4f fcolor;
-	float psize;
 
-	/*float * /dtime=dtime_global*inv_life_time;
-
-//	KeyParticleInt& k0=keys[p.key];
-//	KeyParticleInt& k1=keys[p.key+1];
-
-//	float& t=p.time;
-	float ts=t*k0.inv_dtime;
-	pos.x = pos0.x+vdir.x*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+emi->g.x*((gvel0+t*k0.gravity*0.5f)*t);
-	pos.y = pos0.y+vdir.y*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+emi->g.y*((gvel0+t*k0.gravity*0.5f)*t);
-	pos.z = emi->CalcZ(pos.x,pos.y);//pos0.z;
-	Bound.AddBound(pos);
-	angle = angle0+ angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-	fcolor = k0.color+(k1.color-k0.color)*ts;
-	psize = k0.size+(k1.size-k0.size)*ts;
-
-	//Добавить в массив
-	Vect3f sx,sy;
-	Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
-	rot*=psize*begin_size*trace_size;
-	if(emi->planar)
-	{
-		sx.x=+rot.x;
-		sx.y=-rot.y;
-		sx.z=0;
-		sy.x=+rot.y;
-		sy.y=+rot.x;
-		sy.z=0;
-	}else
-	{
-		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
-	}
-
-	sColor4c color(xm::round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
-
-	sVertexXYZDT1 *v=pBuf->Get();
-
-	v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-	v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-	v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-	v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
-
-	xassert(emi->parent->AddToCountTriangle(1));
-}
-
-
-inline void cEmitterInt::ZPutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime )
-{
-	float tt = p.time;																		
-	int key = p.key;																		
-	float timesummary = p.time_summary;														
-	float interval = PlumeInterval;															
-	xassert(PlumeInterval>0.0f && PlumeInterval<1.0f);										
-	float tr_size = 1.0f;																	
-	for(int j=0;j<TraceCount;j++)															
-	{																						
-		tt-=interval;																		
-		timesummary-=interval;																
-		while(tt<0)																			
-		{																					
-//			if (key==0)
-				return;																		
-			tt += keys[--key].dtime;														
-		}																					
-		const cTextureAviScale::RECT* rt;													
-		if(plume_texture)																	
-			rt = &plume_texture->GetFramePos((float)j/TraceCount);							
-		else if (texture)																	
-			rt = &texture->GetFramePos(timesummary);										
-		else rt = &cTextureAviScale::RECT::ID;												
-		tr_size*=PlumeSizeScaling;															
-		p.ZPutToBuf(dtime_global, keys[key], keys[key+1],									
-					Bound, *rt, mat, pBuf, (cEmitterZ*)this, pos, dtime, tt, tr_size);					
-		interval*=PlumeTimeScaling;															
-	}																						
-}
-*/
 void cEmitterZ::Draw(cCamera *pCamera)
 {
 	if(no_show_obj_editor)
 		return;
-	cURenderDevice* rd=pCamera->GetRenderDevice();
-	if(false)
-	{
-		std::vector<Vect3f>::iterator it;
-		std::vector<Vect3f>& begin_position=parent->GetPos();
-		FOR_EACH(begin_position,it)
-		{
-			Vect3f p=*it;
 
-			rd->DrawLine(p,p+Vect3f(2,2,2),sColor4c(255,255,0,255));
-		}
-		rd->FlushPrimitive3D();
-	}
+    cInterfaceRenderDevice* rd = pCamera->GetRenderDevice();
 
-	
-	float dtime_global=(time-old_time);
+    if(false)
+    {
+        std::vector<Vect3f>::iterator it;
+        std::vector<Vect3f>& begin_position=parent->GetPos();
+        FOR_EACH(begin_position,it)
+        {
+            Vect3f p=*it;
 
-	MatXf mat=pCamera->GetMatrix();
-	Bound.SetInvalidBox();
+            rd->DrawLine(p,p+Vect3f(2,2,2),sColor4c(255,255,0,255));
+        }
+        rd->FlushPrimitive3D();
+    }
 
-	cTextureAviScale* texture = NULL;
-//	cTextureAviScale* plume_texture = NULL;
-	if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture())
-		texture = (cTextureAviScale*)GetTexture(0);
+    
+    float dtime_global=(time-old_time);
 
-	cQuadBuffer<sVertexXYZDT1>* pBuf=rd->GetQuadBufferXYZDT1();
-/*
-	Vect3f pos;
-	float dtime;
-	bool NeedPlume = chPlume;
-	if (NeedPlume&&GetTexture(1))
-	{
-		if (GetTexture(1)->IsAviScaleTexture())
-			plume_texture = (cTextureAviScale*)GetTexture(1);
-		rd->SetNoMaterial(sprite_blend, 0, GetTexture(1));
-		pBuf->BeginDraw();
-		int size=Particle.size();
-		for(int i=size-1;i>=0;i--)
-		{
-			nParticle& p=Particle[i];
-			if(p.key<0)continue;
-			ZPutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
-									mat, p,	pBuf, pos, dtime );
-		}
-		pBuf->EndDraw();
-		NeedPlume = false;
-	}
-*/
-	MatXf GM;
-	MatXf iGM;
-	Vect3f CameraPos;
-	uint8_t mode;
-	if (chPlume)
-	{
-		CameraPos = relative ? iGM*pCamera->GetPos() : pCamera->GetPos();
-		mode = (uint8_t)planar + (smooth? 0:2);
-	}
-	rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
-	if (relative)
-	{
-		GM = GetGlobalMatrix();
-		iGM = GM;
-		iGM.invert();
-		pBuf->BeginDraw(GM);
-	}
-	else pBuf->BeginDraw();
-	int size=Particle.size();
-	for(int i=size-1;i>=0;i--)
-	{
-/*		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		if (NeedPlume)
-			ZPutPlumeParticle(dtime_global, Bound, texture, plume_texture, 
-									mat, p,	pBuf, pos, dtime );
-		const cTextureAviScale::RECT& rt = texture?
-					((cTextureAviScale*)texture)->GetFramePos(p.time_summary) :
-					cTextureAviScale::RECT::ID;	
-		p.ZPutToBuf(dtime_global, keys[p.key], keys[p.key+1],
-					Bound, rt, mat, pBuf, this, pos, dtime, p.time, 1.0f);
-		ProcessTime(p,dtime,i,pos);
-*/
-		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		Vect3f pos;
-		float angle;
-		sColor4f fcolor;
-		float psize;
+    MatXf mat=pCamera->GetMatrix();
+    Bound.SetInvalidBox();
 
-		float dtime=dtime_global*p.inv_life_time;
-		
-		KeyParticleInt& k0=keys[p.key];
-		KeyParticleInt& k1=keys[p.key+1];
-		
-		float& t=p.time;
-		float ts=t*k0.inv_dtime;
-		pos.x = p.pos0.x+p.vdir.x*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g.x*((p.gvel0+t*k0.gravity*0.5f)*t);
-		pos.y = p.pos0.y+p.vdir.y*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g.y*((p.gvel0+t*k0.gravity*0.5f)*t);
+    cTextureAviScale* texture = nullptr;
+    
+    if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture())
+        texture = (cTextureAviScale*)GetTexture(0);
+
+    indices_t* ib = nullptr;
+    sVertexXYZDT1 *v = nullptr;
+    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    
+    MatXf GM;
+    MatXf iGM;
+    Vect3f CameraPos;
+    uint8_t mode;
+    if (chPlume)
+    {
+        CameraPos = relative ? iGM*pCamera->GetPos() : pCamera->GetPos();
+        mode = (uint8_t)planar + (smooth? 0:2);
+    }
+    rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
+    if (relative) {
+        GM = GetGlobalMatrix();
+        iGM = GM;
+        iGM.invert();
+        rd->SetWorldMatXf(GM);
+    } else {
+        rd->SetWorldMat4f(nullptr);
+    }
+    int size=Particle.size();
+    for(int i=size-1;i>=0;i--)
+    {
+        nParticle& p=Particle[i];
+        if(p.key<0)continue;
+        Vect3f pos;
+        float angle;
+        sColor4f fcolor;
+        float psize;
+
+        float dtime=dtime_global*p.inv_life_time;
+        
+        KeyParticleInt& k0=keys[p.key];
+        KeyParticleInt& k1=keys[p.key+1];
+        
+        float& t=p.time;
+        float ts=t*k0.inv_dtime;
+        pos.x = p.pos0.x+p.vdir.x*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g.x*((p.gvel0+t*k0.gravity*0.5f)*t);
+        pos.y = p.pos0.y+p.vdir.y*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g.y*((p.gvel0+t*k0.gravity*0.5f)*t);
 /*		if (relative)
-		{
-			Vect3f pp; //word coordinate
-			pos.z=0;
-			pp = GM*pos;
-			pp.z = CalcZ(pp.x,pp.y); 
-			pos = iGM*pp;
-		}
-		else*/ 
-			pos.z = CalcZ(pos.x,pos.y); 
+        {
+            Vect3f pp; //word coordinate
+            pos.z=0;
+            pp = GM*pos;
+            pp.z = CalcZ(pp.x,pp.y); 
+            pos = iGM*pp;
+        }
+        else*/ 
+            pos.z = CalcZ(pos.x,pos.y); 
 //		pp.x = (GM.rot().xrow().x*pos.x + GM.rot().xrow().y*pos.y)  +  GM.trans().x;
 //		pp.y = (GM.rot().yrow().x*pos.x + GM.rot().yrow().y*pos.y)  +  GM.trans().y;
 //		pp.z = CalcZ(pp.x,pp.y); 
 //		pos.z = (iGM.rot().zrow().x*pp.x + iGM.rot().zrow().y*pp.y + iGM.rot().zrow().z*pp.z) + iGM.trans().z;
-		Bound.AddBound(pos);
-		angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-		fcolor = k0.color+(k1.color-k0.color)*ts;
-		psize = k0.size+(k1.size-k0.size)*ts;
+        Bound.AddBound(pos);
+        angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
+        fcolor = k0.color+(k1.color-k0.color)*ts;
+        psize = k0.size+(k1.size-k0.size)*ts;
 
-		//Добавить в массив
-		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
-		rot*=psize*=p.begin_size;
-		if(planar)
-		{
-			sx.x=+rot.x;
-			sx.y=-rot.y;
-			sx.z=0;
-			sy.x=+rot.y;
-			sy.y=+rot.x;
-			sy.z=0;
-		}else
-		{
-			mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-			mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
-		}
+        //Добавить в массив
+        Vect3f sx,sy;
+        Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
+        rot*=psize*=p.begin_size;
+        if(planar)
+        {
+            sx.x=+rot.x;
+            sx.y=-rot.y;
+            sx.z=0;
+            sy.x=+rot.y;
+            sy.y=+rot.x;
+            sy.z=0;
+        }else
+        {
+            mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
+            mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
+        }
 
-		sColor4c color(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a));
-		const cTextureAviScale::RECT& rt = texture ?
-						((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
-						cTextureAviScale::RECT::ID;	
-		if (chPlume)
-		{
-			if (PutToBuf(p,pos,dtime,pBuf,color,CameraPos,psize, rt, mode, &iGM))
-				continue;
-		}
-		else 
-		{
-			sVertexXYZDT1 *v=pBuf->Get();
+        uint32_t color = rd->ConvertColor(sColor4c(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a)));
+        const cTextureAviScale::RECT& rt = texture ?
+                        ((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
+                        cTextureAviScale::RECT::ID;	
+        if (chPlume)
+        {
+            if (ParticlePutToBuf(this, p,pos,dtime,db,v,ib,color,CameraPos,psize, rt, mode, &iGM))
+                continue;
+        }
+        else 
+        {
+            db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
 
-			v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-			v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-			v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-			v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
-			#ifdef  NEED_TREANGLE_COUNT
-				parent->AddCountTriangle(2);
-				parent->AddSquareTriangle(psize*psize);
-			#endif
+            v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
+            v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
+            v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
+            v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
+            #ifdef  NEED_TREANGLE_COUNT
+                parent->AddCountTriangle(2);
+                parent->AddSquareTriangle(psize*psize);
+            #endif
+        }
+        ProcessTime(p,dtime,i,pos);
+    }
 
-		}
-		ProcessTime(p,dtime,i,pos);
-	}
-
-	pBuf->EndDraw();
-
-/*
-	cQuadBuffer<sVertexXYZDT1>* pBuf=rd->GetQuadBufferXYZDT1();
-	rd->SetNoMaterial(sprite_blend,0,texture);
-	pBuf->BeginDraw();
-
-	bool isAviTexture = texture&&texture->IsAviScaleTexture();
-	int size=Particle.size();
-	for(int i=size-1;i>=0;i--)
-	{
-		nParticle& p=Particle[i];
-		if(p.key<0)continue;
-		Vect3f pos;
-		float angle;
-		sColor4f fcolor;
-		float psize;
-
-		float dtime=dtime_global*p.inv_life_time;
-		
-		KeyParticleInt& k0=keys[p.key];
-		KeyParticleInt& k1=keys[p.key+1];
-		
-		float& t=p.time;
-		float ts=t*k0.inv_dtime;
-		pos.x = p.pos0.x+p.vdir.x*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g.x*((p.gvel0+t*k0.gravity*0.5f)*t);
-		pos.y = p.pos0.y+p.vdir.y*(t*(k0.vel+ts*0.5f*(k1.vel-k0.vel)))+g.y*((p.gvel0+t*k0.gravity*0.5f)*t);
-		pos.z = p.pos0.z;
-		Bound.AddBound(pos);
-		angle = p.angle0+ p.angle_dir*(k0.angle_vel*t+t*ts*0.5f*(k1.angle_vel-k0.angle_vel));
-		fcolor = k0.color+(k1.color-k0.color)*ts;
-		psize = k0.size+(k1.size-k0.size)*ts;
-
-		//Добавить в массив
-		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
-		rot*=psize*p.begin_size;
-		if(planar)
-		{
-			sx.x=+rot.x;
-			sx.y=-rot.y;
-			sx.z=0;
-			sy.x=+rot.y;
-			sy.y=+rot.x;
-			sy.z=0;
-		}else
-		{
-			mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
-			mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
-		}
-
-		sColor4c color(round(fcolor.r),round(fcolor.g),xm::round(fcolor.b),round(fcolor.a));
-		
-		sVertexXYZDT1 *v=pBuf->Get();
-		const cTextureAviScale::RECT& rt = isAviTexture ?
-					((cTextureAviScale*)texture)->GetFramePos(p.time) :
-					cTextureAviScale::RECT::ID;	
-
-		v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-		v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-		v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-		v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
-
-		ProcessTime(p,dtime,i,pos);
-	}
-
-	pBuf->EndDraw();
-*/
+    db->AutoUnlock();
+    
 	Particle.Compress();
 
 	old_time=time;
@@ -4176,7 +3701,7 @@ void cEmitterZ::SetEmitterKey(EmitterKeyZ& k,cEmitter3dObject* models)
 ///////////////////////////////////cEmitterLight/////////////////////
 cEmitterLight::cEmitterLight()
 {
-	light=NULL;
+	light=nullptr;
 }
 
 cEmitterLight::~cEmitterLight()
@@ -4221,7 +3746,7 @@ void cEmitterLight::Animate(float dt)
 		float size=emitter_size.Get(t);
 		light->SetScale(Vect3f(size,size,size));
 		sColor4f color=emitter_color.Get(t);
-		light->SetColor(NULL,&color);
+		light->SetColor(nullptr,&color);
 		light->SetPosition(GlobalMatrix);
 	}else
 	{

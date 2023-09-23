@@ -22,7 +22,7 @@ public:
 	void removeUnit(terUnitBase* p);
 	void Quant();
 	void triggerQuant();
-	void checkEvent(const Event& event);
+	void checkEvent(const Event* event);
 
 	void TerrainWorkingComplete(int x,int y,int sx,int sy);
 

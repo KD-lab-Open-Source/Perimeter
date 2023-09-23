@@ -1,6 +1,6 @@
 #include "tweaks.h"
 
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 #define open _open
 #endif
 
@@ -275,7 +275,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         || startsWith(entry_key, "cache")
         || startsWith(entry_key, "mods")
         || startsWith(entry_key, "scripts")
-        || startsWith(entry_key, "autosave")
+        || startsWith(entry_key, "crashdata")
         || endsWith(entry_key, ".ini")) {
         
         bool path_is_directory = std::filesystem::is_directory(std::filesystem::u8path(path_content));
@@ -354,7 +354,12 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
 
 bool scan_resource_paths(std::string destination_path, std::string source_path, const filesystem_scan_options* options) {    
     //Use destination as source path assuming its a call to refresh subdir resources in root
-    if (source_path.empty() && !destination_path.empty()) {
+    if (source_path.empty()) {
+        if (destination_path.empty()) {
+            fprintf(stderr, "Attempted to rescan a empty path\n");
+            xassert(0);
+            return false;
+        }
         source_path = destination_path;
     }
     bool same_paths = source_path == destination_path;
@@ -436,10 +441,6 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     filesystem_entries = paths;
     first_scan_flag = false;
     return true;
-}
-
-bool scan_resource_paths(const std::string& path) {
-    return scan_resource_paths(path, path);
 }
 
 int file_open(const char* path, int oflags, int sflags) {

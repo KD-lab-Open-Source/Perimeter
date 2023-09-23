@@ -481,14 +481,8 @@ int alpha_delta = 5;
 
 int _bDebugDisplayAllIcons = 0;
 
-float nBaseUnitsDisplayX = 890.0f / 1024.0f;
-float nBaseUnitsDisplayY = 3.0f / 768.0f;
-
 float countDownTimerX = 920.0f / 1024.0f;
 float countDownTimerY = 33.0f / 768.0f;
-
-float totalTimerX = 730.0f / 1024.0f;
-float totalTimerY = 1.0f / 768.0f;
 
 string sRegionTextureAbyss = "Resource\\Effect\\Region Down.tga";
 string sRegionTextureEnergy = "Resource\\Effect\\fx.tga";
@@ -684,24 +678,12 @@ struct Reel {
 };
 
 Reel reels[int REEL_COUNT] = {
-//	{name = "RESOURCE\\VIDEO\\cm.bik"; abortEnabled = 1;},
-//	{name = "RESOURCE\\VIDEO\\CMLegalScreen.tga"; abortEnabled = 0; video = 0;},
-	{name = "RESOURCE\\VIDEO\\1c.bik"; abortEnabled = 1;},
-	{name = "RESOURCE\\VIDEO\\kd.bik"; abortEnabled = 1;},
-//	{name = "RESOURCE\\VIDEO\\ati.bik"; abortEnabled = 1;},
-	{name = "RESOURCE\\VIDEO\\perimeter.bik"; abortEnabled = 1;},
-	{name = "RESOURCE\\VIDEO\\intro.bik"; abortEnabled = 1;}
+	{name = "RESOURCE\\VIDEO\\kd"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\perimeter"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\intro"; abortEnabled = 1;}
 };
 
-Reel demoReels[int DEMO_REEL_COUNT] = {
-	{name = "start_splash.tga"; abortEnabled = 0; localized = 1; video = 0;},
-	{name = "RESOURCE\\VIDEO\\CMLegalScreen.tga"; abortEnabled = 0; video = 0;},
-	{name = "RESOURCE\\Icons\\logo.tga"; abortEnabled = 1; video = 0;}
-};
-
-Reel lastReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
-//Reel lastDemoReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
-Reel lastDemoReel = {name = "splash_out.tga"; abortEnabled = 0; localized = 1; video = 0;time = -1;};
+Reel lastReel = {name = "RESOURCE\\VIDEO\\out"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
 
 _V2i imageRacePos[] = {
 	{x = 0; y = 0;},
@@ -721,7 +703,7 @@ int CUT_SCENE_FADEOUT_TIME = 700;
 int CUT_SCENE_FADEIN_TIME = 700;
 int CUT_SCENE_PAUSE_TIME = 700;
 
-float CREDITS_SCROLL_SPEED = 30;
+float CREDITS_SCROLL_SPEED = 50;
 
 int INTERVIDEO_ALPHA = 255;
 

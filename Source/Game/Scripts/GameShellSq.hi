@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: SquadShellUIPrm
-//	Number of variables: 292
+//	Number of variables: 285
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct__V2i__
@@ -201,12 +201,8 @@ extern char const* progress_texture;
 extern int splash_delay_time;
 extern int alpha_delta;
 extern int _bDebugDisplayAllIcons;
-extern float nBaseUnitsDisplayX;
-extern float nBaseUnitsDisplayY;
 extern float countDownTimerX;
 extern float countDownTimerY;
-extern float totalTimerX;
-extern float totalTimerY;
 extern char const* sRegionTextureAbyss;
 extern char const* sRegionTextureEnergy;
 extern char const* sRegionTextureTriangle;
@@ -342,10 +338,7 @@ struct Reel {
 #endif  // __XScript_struct_Reel__
 extern int REEL_COUNT;
 extern Reel reels[];
-extern int DEMO_REEL_COUNT;
-extern Reel demoReels[];
 extern Reel lastReel;
-extern Reel lastDemoReel;
 extern _V2i imageRacePos[3];
 extern _V2i imageRaceSize[3];
 extern float CUT_SCENE_TOP;

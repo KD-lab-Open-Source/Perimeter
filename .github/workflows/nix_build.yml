@@ -1,0 +1,47 @@
+name: Nix Build
+
+on:
+  push:
+  pull_request:
+
+env:
+  GH_CACHE_KEY: 1
+
+
+jobs:
+#  build:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        target: [
+#          #{ pkg: "aarch64-darwin", on: "macos-latest" },
+#          #{ pkg: "x86_64-darwin", on: "macos-latest" },
+#          { pkg: "x86_64-linux", on: "ubuntu-latest" },
+#          #{ pkg: "aarch64-linux", on: "ubuntu-latest" },
+#        ]
+#        env: [
+#          {name: "Release", flake: ""},
+#          {name: "Debug", flake: "_debug"},
+#        ]
+#    name: ${{matrix.target.pkg}} ${{matrix.env.name}}
+#    runs-on: ${{matrix.target.on}}
+#    steps:
+#    - uses: actions/checkout@v3
+#    - uses: actions/cache@v3
+#      id: cache
+#      with:
+#        path: /nix/store
+#        key: NIX-${{matrix.target.pkg}}-${{matrix.env.name}}-${{ env.GH_CACHE_KEY }}
+#    - uses: cachix/install-nix-action@v20
+#      with:
+#        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+#    - run: nix build ".#platform_${{matrix.target.pkg}}${{matrix.env.flake}}"
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: nix flake check

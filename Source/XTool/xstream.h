@@ -2,6 +2,7 @@
 #define __XSTREAM_H
 
 #include <cstring>
+#include <cstdint>
 #include <string>
 
 #define XS_CONV_BUFFER_LEN	63
@@ -44,6 +45,7 @@ struct XStream
 	void	close();
 	int64_t read(void* buf, int64_t len);
     int64_t write(const void* buf, int64_t len);
+    int64_t write_str(const std::string& str);
     int64_t	seek(int64_t offset, int dir);
     int64_t	tell() const { return pos; }
 	char*	getline(char* buf, int64_t len);

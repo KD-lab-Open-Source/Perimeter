@@ -21,7 +21,7 @@ void ControlsConverter::LoadKeyNameTable()
 	}
 	std::string strCtrl = KeyToName[VK_CONTROL] + " + ";
 	std::string strShift = KeyToName[VK_SHIFT] + " + ";
-	std::string strAlt = KeyToName[VK_MENU] + " + ";
+	std::string strAlt = KeyToName[VK_ALT] + " + ";
 	for(int i=256; i<2048; i++ )
 		if(!KeyToName[i & 255].empty())
 		{
@@ -31,7 +31,7 @@ void ControlsConverter::LoadKeyNameTable()
 				str += strShift;
 			if( i & KBD_CTRL && (i & 255) != VK_CONTROL) 
 				str += strCtrl;
-			if( i & KBD_MENU && (i & 255) != VK_MENU) 
+			if(i & KBD_ALT && (i & 255) != VK_ALT) 
 				str += strAlt;
 			str += KeyToName[i & 255];
 		}

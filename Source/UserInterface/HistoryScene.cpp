@@ -10,9 +10,9 @@
 extern GameShell* gameShell;
 extern cInterfaceRenderDevice* terRenderDevice;
 extern cVisGeneric* terVisGeneric;
-extern HWND hWndVisGeneric;
 extern int terSoundEnable;
 extern float terSoundVolume;
+extern float GlobalParticleRate;
 
 extern MusicPlayer gb_Music;
 
@@ -89,11 +89,9 @@ void HistoryScene::init(cVisGeneric* visGeneric, bool bw, bool addBlendAlphaMode
 
 	bwMode = bw;
 
-	fnt = terVisGeneric->CreateFont("Arial", HISTORY_SCENE_LOG_FONT_SIZE);
-	logFnt = terVisGeneric->CreateFont("Arial", BRIEFING_LOG_FONT_SIZE);
+	fnt = terVisGeneric->CreateGameFont("Arial", HISTORY_SCENE_LOG_FONT_SIZE);
+	logFnt = terVisGeneric->CreateGameFont("Arial", BRIEFING_LOG_FONT_SIZE);
 	m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
-
-	//TODO this crashes on resync? terVisGeneric->EnableOcclusion(false);
 
 	addBlendAlpha = addBlendAlphaMode;
 
@@ -436,8 +434,8 @@ void HistoryScene::drawPopup() {
 	Vect2f mousePos = historyCamera->getMousePos();
 	World* w = traceWorld(mousePos);
 
-	POINT pt = {xm::round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()),
-                xm::round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
+	sPoint pt = {xm::round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()),
+                 xm::round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
 
 	//TODO is this needed to port?
 	//ClientToScreen(hWndVisGeneric, &pt);
@@ -478,7 +476,7 @@ void HistoryScene::drawPopup() {
 		Vect2f va(pos_x - 2, delta_y);
 		Vect2f vb(va.x + v2.x - v1.x + 2, va.y + v2.y - v1.y + 2);
 
-		terRenderDevice->DrawRectangle(va.x, va.y, vb.x - va.x, vb.y - va.y, sColor4c(255, 255, 255, 255), true);
+		terRenderDevice->DrawRectangle(va.x, va.y, vb.x - va.x, vb.y - va.y, sColor4c(255, 255, 255, 255), 1);
 		terRenderDevice->FlushPrimitive2D();
 
 	}
@@ -512,6 +510,10 @@ void HistoryScene::drawSprites() {
 }
 
 void HistoryScene::draw() {
+    //Workaround to reduce lag caused by particles when frames move
+    //we make sure % is never 100% even when options specify 100%
+    float rate = GlobalParticleRate;
+    GlobalParticleRate = 0.5f;
 	sceneSky->Draw(cameraSky);
 	scene->Draw(historyCamera->getCamera());
 
@@ -531,6 +533,7 @@ void HistoryScene::draw() {
                 sColor4f(1, 1, 1, BRIEFING_LOG_ALPHA) );
 		terRenderDevice->SetFont( NULL );
 	}
+    GlobalParticleRate = rate;
 }
 void HistoryScene::postDraw() {
 	sceneSky->PostDraw(cameraSky);

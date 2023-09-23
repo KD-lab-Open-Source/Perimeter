@@ -1,12 +1,12 @@
 #pragma once
 #include "UnkLight.h"
-#include "cZPlane.h"
+#include "cPlane.h"
 #include "NParticle.h"
 #include "SpriteNode.h"
-#include "../3dx/Node3DX.h"
 
 class cObjectNodeRoot;
 class terUnitBase;
+class cEffect;
 #include "VisGrid2d.h"
 
 class cScene : public cUnknownClass
@@ -24,10 +24,6 @@ public:
 	virtual int GetTime();
 	// функции для работы с объектами
 	virtual cObjectNodeRoot* CreateObject(const char* fname,const char *TexturePath=NULL);
-	virtual cObject3dx* CreateObject3dx(const char* fname,const char *TexturePath=NULL);
-	virtual cObject3dx* CreateLogic3dx(const char* fname);
-	// функции для работы с объектами
-	virtual cIUnkClass* CreateSprite(const char* TexFName);
 	virtual cSpriteManager* CreateSpriteManager(const char* TexFName);
 	// функции для работы с источниками света, влияющими на освещение объектов текущей сцены
 	virtual cUnkLight* CreateLight(int Attribute=0, const char* TextureName = 0);
@@ -37,23 +33,17 @@ public:
 	//TexFNameZ - текстура которая видна после закрытия ландшафтом
 	virtual class cLine3d* CreateLine3d(const char* TexFName,
 							const char* TexFNameZ=NULL);
-	// функции для работы со следами
-	virtual class cTrail* CreateTrail(const char* TextureName,float TimeLife=1000.f);
     
 	// функции для работы с системой частиц
-    //TODO not used? virtual class cParticle* CreateParticle(const char* TextureName,float TimeLife=1000.f,Vect2f *vTexSize=&Vect2f(1,1));
     virtual cEffect* CreateEffect(EffectKey& el,cEmitter3dObject* models,float scale=1.0f,bool auto_delete_after_life=false);
 
 	//Берет размеры по модели
 	virtual cEffect* CreateScaledEffect(EffectKey& el,cObjectNodeRoot* models,bool auto_delete_after_life=false);
-	virtual cEffect* CreateScaledEffect(EffectKey& el,cObject3dx* models,bool auto_delete_after_life=false);
 
 	// функции для работы с полигональным объектом
 	virtual cPlane* CreatePlaneObj();
 
-	virtual cIUnkClass* CreateZPlaneObj(const char* Tex0,const char* Tex1,float k0,float k1,int op,float v0x,float v0y,float v1x,float v1y);
 	virtual class cChaos* CreateChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump);
-	virtual cIUnkClass* CreateBox(Vect3f size, const char* str_cube);
 	virtual cIUnkClass* CreateSkySpere(const char* str_name, const char* str_texture, int h_size);
 
 	// функции для работы с диспетчером регионов
@@ -78,8 +68,8 @@ public:
 	cObjLibrary* GetObjLibrary()									{ return ObjLibrary; }
 	virtual void SetObjLibrary(cObjLibrary *pObjLibrary);
 	// доступ к переменным
-	inline int GetNumberLight()									{ return UnkLightArray.size(); }
-	inline cUnkLight* GetLight(int number)						{ return (cUnkLight*)UnkLightArray[number]; }
+	inline int GetNumberLight() { return UnkLightArray.size(); }
+	cUnkLight* GetLight(int number);						
 	void AttachLight(cUnkLight* ULight);
 	void DetachLight(cUnkLight* ULight);
 	void GetLighting(const Vect3f &pos,sColor4f &diffuse,sColor4f &specular);
@@ -93,6 +83,11 @@ public:
 	inline Vect2i GetWorldSize(){return Size;}
 	void DisableTileMapVisibleTest();
 	void DeleteAutoObject();
+
+#ifdef PERIMETER_DEBUG_ASSERT
+    void AssertNoObject(cIUnkClass* object);
+    void CheckPendingObjects(std::vector<cIUnkClass*>& allowed);
+#endif
 
 	/* TODO unused?
 	template<class Caller>
@@ -120,7 +115,7 @@ private:
 	double				CurrentTime,PreviousTime;	// текущее и предыдущее время
 	Vect2i				Size;						// размер мира
 	MTGVector			UnkLightArray;				// массив источников света сцены
-	sGrid2d				grid;
+    MTGVector			grid;
 	QuatTree			tree;
 
 	class cTileMap *TileMap;

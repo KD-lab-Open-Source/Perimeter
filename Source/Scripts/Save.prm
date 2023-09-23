@@ -2089,7 +2089,7 @@ delegate:
 	bool selected_;
 
 	void quant(AIPlayer& aiPlayer, PlayerStrategy& playerStrategy);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	void activate(AIPlayer& aiPlayer, PlayerStrategy& playerStrategy);
 	bool removeLinkByChild(Trigger* child);
 	void copy(const Trigger& trigger);
@@ -2155,7 +2155,7 @@ delegate:
 
 	void buildLinks();
 	void quant(AIPlayer& aiPlayer);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	Trigger* find(const char* name);
 
 	bool removeLink(int parentIndex, int childIndex);

@@ -1,5 +1,9 @@
 #pragma once
 
+
+#define UNKNOWNCLASS_USE_ATOMIC
+
+
 enum eKindUnknownClass
 {	// unsigned short
 	KIND_NULL				=		0,
@@ -45,8 +49,12 @@ enum eKindUnknownClass
 	KIND_MAX
 };
 
-#ifndef _FINAL_VERSION_
-#define C_CHECK_DELETE
+#ifdef UNKNOWNCLASS_USE_ATOMIC
+#include <atomic>
+#endif
+
+#ifdef PERIMETER_DEBUG
+//#define C_CHECK_DELETE
 #endif 
 
 #ifdef C_CHECK_DELETE
@@ -72,36 +80,101 @@ public:
 
 #endif //C_CHECK_DELETE
 
+class cUnknownHandle;
+
+
 // базовый класс для всех
 // любой класс наследованный как TYPE_CLASS_POINTER, должен уметь удаляться по обращению к Release()
 class cUnknownClass
 #ifdef C_CHECK_DELETE
 : public cCheckDelete
 #endif //C_CHECK_DELETE
-{	
-	int					m_cRef;
-	eKindUnknownClass	Kind;
+{
+private:
+    friend cUnknownHandle;
+    eKindUnknownClass	Kind;
+    
+    //Refcount for this object
+#ifdef UNKNOWNCLASS_USE_ATOMIC
+    std::atomic<int64_t>
+#else
+    int64_t
+#endif
+    m_cRef = 1;
+    
+    //Handle for this object if any
+#ifdef UNKNOWNCLASS_USE_ATOMIC
+    std::atomic<cUnknownHandle*>
+#else
+    cUnknownHandle*
+#endif
+    currentHandle = nullptr;
+    
+    void FreeHandle(cUnknownHandle* handle);
 public:
-	cUnknownClass(int kind=KIND_NULL)
-	{ 
-		m_cRef=1; 
-		Kind=eKindUnknownClass(kind);
-	}
-	virtual ~cUnknownClass()								
-	{ 
-	}
-	virtual int Release()
-	{ 
-		if(DecRef()>0) 
-			return m_cRef;
-		delete this;
-		return 0;
-	}
-	inline int GetKind(int kind) const								{ return Kind==kind; }
-	inline int GetKind() const										{ return Kind; }
-	inline int GetRef()	const										{ return m_cRef; }
-	inline int IncRef()												{ return ++m_cRef; }
-	inline int DecRef()												{ return --m_cRef; }
+	explicit cUnknownClass(int kind=KIND_NULL) : Kind(static_cast<eKindUnknownClass>(kind)) {
+    }
+    
+	virtual ~cUnknownClass();
+    
+	virtual int64_t Release();
+    
+	inline bool GetKind(eKindUnknownClass kind) const { return Kind==kind; }
+	inline eKindUnknownClass GetKind() const { return Kind; }
+	inline int64_t GetRef()	const { return m_cRef; }
+#ifdef PERIMETER_DEBUG
+    virtual
+#endif
+    inline int64_t IncRef()	{ return ++m_cRef; }
+    inline int64_t DecRef() {
+        int64_t r = --m_cRef;
+        if (0 <= r) {
+            return r;
+        } else {
+            xassert(0);
+            m_cRef = 0;
+            return 0;
+        }
+    }
+
+    int64_t CountHandles() const;
+    cUnknownHandle* AcquireHandle();
+};
+
+class cUnknownHandle: public cUnknownClass {
+private:
+    friend cUnknownClass;
+    cUnknownClass* ptr;
+
+    explicit cUnknownHandle(cUnknownClass* ptr);
+
+public:
+    ~cUnknownHandle() override;
+
+    cUnknownClass* Get() const { return ptr; };
+};
+
+template<class TP>
+class cAutoRelease {
+private:
+    TP* ptr;
+public:
+    explicit cAutoRelease(TP* _ptr): ptr(_ptr) {
+        xassert(ptr);
+        if (ptr) {
+            ptr->IncRef();
+        }
+    }
+    
+    ~cAutoRelease() {
+        if (ptr) {
+            ptr->Release();
+        }
+        ptr = nullptr;
+    }
+
+    cAutoRelease(const cAutoRelease&) = delete;
+    cAutoRelease& operator=(cAutoRelease const&) = delete;
 };
 
 #define RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }

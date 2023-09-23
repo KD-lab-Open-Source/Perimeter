@@ -5,7 +5,7 @@
 #include "P2P_interface.h"
 
 
-#ifdef PERIMETER_DEBUG
+#ifdef PERIMETER_DEBUG_ASSERT
 #define xassertStr2(exp, str) { std::string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
 #else
 #define xassertStr2(exp, str) 

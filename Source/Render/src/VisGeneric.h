@@ -4,9 +4,8 @@
 
 class cScene;
 class cObjLibrary;
-class cURenderDevice;
+class cInterfaceRenderDevice;
 class cTexture;
-class cTextureScale;
 class cFont;
 class EffectLibrary;
 
@@ -33,6 +32,8 @@ enum eShowType
 	SHOW_MAX
 };
 
+bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<indices_t>& indices);
+
 class cVisGeneric : public cUnknownClass
 {
 public:
@@ -42,7 +43,7 @@ public:
 	// общие функции
 	virtual void SetData(cInterfaceRenderDevice *pData1);
 	virtual void ClearData();
-	cURenderDevice* GetRenderDevice();
+    cInterfaceRenderDevice* GetRenderDevice();
 	// функции для работы со сценой
 	virtual cScene* CreateScene();
 
@@ -53,24 +54,19 @@ public:
 
 	//Создаёт фонт. height - высота фонта в логических единицах.
 	//в 1024x768 логическая единица равна пикселю.
-    cFont* CreateFont(const char *TextureFileName,int height=20, bool silentErr=false, std::string locale="");
+    cFont* CreateGameFont(const char *TextureFileName, int height= 20, bool silentErr= false, std::string locale= "");
 	virtual cFont* CreateDebugFont();
 
 	// функции для работы со спрайтами
 	virtual cTexture* CreateTexture(const char *TextureName);
 	virtual cTexture* CreateTexture(int sizex,int sizey,bool alpha);//Всегда 32 битная текстура
-	virtual cTexture* CreateBumpTexture(int sizex,int sizey);
 	virtual cTexture* CreateRenderTexture(int width,int height,int attr=0,bool enable_assert=true);
-	virtual cTextureScale* CreateTextureScale(const char *TextureName,Vect2f scale);
 
 	virtual cTexture* CreateTextureDefaultPool(int sizex,int sizey,bool alpha);//Всегда 32 битная текстура
 
 	//Возвращает 32 битную текстуру, в которой хранится изображение экрана.
 	virtual cTexture* CreateTextureScreen();
-
-	//Текстура в формате U16V16
-	virtual cTexture* CreateTextureU16V16(int sizex,int sizey,bool deafultpool);
-
+    
 	void SetEffectLibraryPath(const char* effect_path,const char* texture_path);
 	EffectLibrary* GetEffectLibrary(const char* filename,bool quiet=false);
 
@@ -145,7 +141,6 @@ public:
 private:
 	int			logic_quant,graph_logic_quant;
 	cObjLibrary				*ObjLibrary;
-	class cLib3dx			*Lib3dx;
 	std::string font_root_directory;
 	std::vector<class cFontInternal*>	fonts;
 	friend class cD3DRender;

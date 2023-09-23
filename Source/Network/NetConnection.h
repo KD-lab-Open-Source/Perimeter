@@ -5,7 +5,7 @@
 #define PERIMETER_IP_HOST_DEFAULT "127.0.0.1"
 const uint32_t PERIMETER_MESSAGE_MAX_SIZE = 32 * 1024 * 1024;
 const uint32_t PERIMETER_MESSAGE_COMPRESSION_SIZE = 128*1024;
-const uint16_t PERIMETER_MESSAGE_FLAG_COMPRESSED = 1;
+const uint16_t PERIMETER_MESSAGE_FLAG_COMPRESSED = 1 << 0;
 ///How many milliseconds extra to wait for the data part once getting header
 const int RECV_DATA_AFTER_HEADER_TIMEOUT = 10000;
 ///How many milliseconds to wait for handshake to be sent/recv
@@ -165,7 +165,7 @@ private:
     size_t max_connections = 0;
     PNetCenter* net_center = nullptr;
     TCPsocket accept_socket = nullptr;
-    typedef std::map<NETID, NetConnection*> NetConnectionMap;
+    typedef std::unordered_map<NETID, NetConnection*> NetConnectionMap;
     NetConnectionMap connections;
 
     NetConnection* newConnectionFromSocket(TCPsocket socket, bool host);

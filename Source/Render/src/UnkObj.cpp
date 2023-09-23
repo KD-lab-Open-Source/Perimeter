@@ -103,42 +103,55 @@ cIUnkObj::cIUnkObj(int kind):cIUnkClass(kind)
 	Radius=0;
 }
 
-cIUnkObj::~cIUnkObj()
-{
-}
+cIUnkObj::~cIUnkObj() = default;
 
-int cIUnkClass::Release()
-{
-	if(DecRef()>0) 
-	{
+int64_t cIUnkClass::Release() {
+    int64_t cnt = DecRef();
+	if (0 < cnt) {
 		VISASSERT(!GetAttribute(ATTRUNKOBJ_DELETED));
 		return GetRef(); 
 	}
 
 //	bool is_deleted=GetAttribute(ATTRUNKOBJ_DELETED);
-	if(IParent && !GetAttribute(ATTRUNKOBJ_DELETED))
-	{
+	if (IParent && !GetAttribute(ATTRUNKOBJ_DELETED)) {
 		SetAttribute(ATTRUNKOBJ_DELETED|ATTRUNKOBJ_IGNORE);
 		//IParent=NULL;
 		IParent->DetachObj(this);
+        
+        //DetachObj might have IncRef this object for removal, so check again
+        cnt = GetRef();
 	}
 
-	if(GetRef()<=0)
-	{
+	if (cnt<=0)	{
 //		if(IParent && is_deleted)
 //		{
 //			MTG();
 //		}
 
 //		xassert(!GetAttribute(ATTRUNKOBJ_TEMP_USED));
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (IParent) {
+            IParent->AssertNoObject(this);
+        }
+#endif
 		VISASSERT(GetRef()==0);
 		delete this;
 		return 0;
 	}
 
-	return GetRef();
+	return cnt;
 }
 
+#ifdef PERIMETER_DEBUG_ASSERT
+int64_t cIUnkClass::IncRef() {
+    int64_t cnt = cUnknownClass::IncRef();
+    if (1 < cnt) {
+        //Make sure we are not overusing a deleted object pending removal at MTGVector
+        VISASSERT(!GetAttribute(ATTRUNKOBJ_DELETED));
+    }
+    return cnt;
+}
+#endif
 
 void cIUnkObj::SetCopy(cIUnkObj *UObj)
 { 

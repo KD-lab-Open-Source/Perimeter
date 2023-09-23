@@ -47,12 +47,12 @@ struct sBorderDim {
 	}
 };
 
-struct sRect {
-	short x, y;
-	short dx, dy;
+struct sRectS {
+	int16_t x, y;
+	int16_t dx, dy;
 
-	sRect(){ x = y = dx = dy = 0; }
-	sRect(short _x, short _y, short _dx, short _dy){ x = _x; y = _y; dx = _dx; dy = _dy; }
+	sRectS(){ x = y = dx = dy = 0; }
+	sRectS(int16_t _x, int16_t _y, int16_t _dx, int16_t _dy){ x = _x; y = _y; dx = _dx; dy = _dy; }
 	void addBound(const Vect2i& v) { 
 		if(dx){ 
 			if(x > v.x) 
@@ -71,8 +71,8 @@ struct sRect {
 			dy = 1;
 		}
 	}
-	short x1() const { return x + dx; }
-	short y1() const { return y + dy; }
+	int16_t x1() const { return x + dx; }
+	int16_t y1() const { return y + dy; }
 };
 
 //для работы с цветом
@@ -200,11 +200,11 @@ struct vrtMap {
 
 	unsigned char* changedT;
 
-	std::list<sRect> changedAreas;
+	std::list<sRectS> changedAreas;
 	unsigned char* gridChAreas;
 	unsigned char* gridChAreas2;
 
-	std::list<sRect> renderAreas;
+	std::list<sRectS> renderAreas;
 
 ///////////////////////////////////////////////////////////////////
 	std::list<sPreChangedArea> preCAs;
@@ -361,9 +361,6 @@ struct vrtMap {
 	std::vector<vrtWorld> wTable;
 
 
-	XStream fmap,pmap;//,kmap
-
-
 
 	vrtMap(void);
 	~vrtMap(void);
@@ -481,12 +478,14 @@ struct vrtMap {
 //	PUBLIC fuction для использования 
 	int getWorld_H_SIZE(int idxWorld);
 	int getWorld_V_SIZE(int idxWorld);
-
+    bool hasWorldData();
+    
 #ifdef _SURMAP_
 	void prepare();
 	void selectUsedWorld(char* _patch2WorldIniFile);
 #elif _PERIMETER_
 	void prepare(char* name);
+    void compressWorlds(int mode);
 	void selectUsedWorld(int nWorld);
 #endif
 	void ShadowControl(bool shadow);
@@ -889,6 +888,8 @@ struct vrtMap {
 					PutAltGeo(offset,V); 
 				}
 				break;
+            default:
+                break;
 		}
 	}
 	void PutAlt(int x,int y,int V) {
@@ -966,7 +967,7 @@ struct vrtMap {
 
 	void RenderRegStr(int Yh,int Yd);
 	void regRender(int LowX,int LowY,int HiX,int HiY,int changed = 1);
-	void regRender(const sRect& rect, int changed = 1) { regRender(rect.x, rect.y, rect.x1(), rect.y1(), changed); }
+	void regRender(const sRectS& rect, int changed = 1) { regRender(rect.x, rect.y, rect.x1(), rect.y1(), changed); }
 	int renderBox(int LowX,int LowY,int HiX,int HiY, int changed);
 
 	void RenderPrepare1(void);

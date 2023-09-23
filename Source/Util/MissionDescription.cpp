@@ -66,7 +66,7 @@ void PlayerData::write(XBuffer& out) const
 //-------------------------------------------------
 void MissionDescription::init()
 {
-	version = currentShortVersion;
+    version = currentShortVersion;
 	worldName_ = "";
 	difficulty = DIFFICULTY_HARD;
 	missionNumber = - 1;
@@ -205,7 +205,11 @@ void MissionDescription::read(XBuffer& in)
             in.read(&playersShufflingIndices[i], sizeof(playersShufflingIndices[0]));
         }
     }
-	in.read(&gameType_,sizeof(gameType_));
+    GameType tmp_type;
+    in.read(&tmp_type, sizeof(tmp_type));
+    if (gameType_ != GT_PLAY_RELL) {
+        gameType_ = tmp_type;
+    }
     in.read(&gameContent,sizeof(gameContent));
     uint32_t difficultyVal = 0;
     in > difficultyVal; difficulty.value() = static_cast<Difficulty>(difficultyVal);
@@ -233,7 +237,7 @@ void MissionDescription::read(XBuffer& in)
 
 void MissionDescription::write(XBuffer& out) const 
 {
-    out < StringOutWrapper(version.value());
+    out < StringOutWrapper(currentShortVersion);
     out < StringOutWrapper(worldName_.value());
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(missionDescriptionID.value());
@@ -294,7 +298,7 @@ void MissionDescription::simpleRead(XBuffer& in)
 
 void MissionDescription::simpleWrite(XBuffer& out) const 
 {
-    out < StringOutWrapper(version.value());
+    out < StringOutWrapper(currentShortVersion);
     out < StringOutWrapper(worldName_.value());
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(savePathKey_);

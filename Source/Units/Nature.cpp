@@ -12,8 +12,8 @@
 
 terNatureObject::terNatureObject(const UnitTemplate& data) : terUnitGeneric(data)
 {
-	radius_ = attr().boundRadius;
-	ModelName = attr().modelData.modelName;
+	radius_ = attr()->boundRadius;
+	ModelName = attr()->modelData.modelName;
 	ChainName = "main";
 	NatureFlag = NATURE_FLAG_LIGHT;
 	visible_ = true;
@@ -97,7 +97,7 @@ void terNatureObject::setModelName(const char* name)
 		if(name)
 			ModelName = name;
 		else
-			ModelName = attr().modelData.modelName;
+			ModelName = attr()->modelData.modelName;
 
 		avatar()->SetModel(ModelName.c_str());
 
@@ -117,7 +117,7 @@ void terNatureObject::setModelName(const char* name)
 
 			if(!BodyPoint)
 				BodyPoint = new RigidBody;
-			BodyPoint->build(*attr().rigidBodyPrm, avatar()->GetModelPoint(), logicObjectBound.min*scale, logicObjectBound.max*scale);
+			BodyPoint->build(*attr()->rigidBodyPrm, avatar()->GetModelPoint(), logicObjectBound.min*scale, logicObjectBound.max*scale);
 		}
 
 		avatar()->setPose(pose());
@@ -382,18 +382,18 @@ void terNatureWorm::Quant()
 
 		float a = getDeltaAngle(cycleAngle(v.psi() - XM_PI * 0.5f), angleZ());
 
-		if(s > attr().GroundPlaneSpeed)
-			s = attr().GroundPlaneSpeed;
+		if(s > attr()->GroundPlaneSpeed)
+			s = attr()->GroundPlaneSpeed;
 
 		if(a < 0){
-			if(a < -attr().GroundAngleSpeed){
-				a = -attr().GroundAngleSpeed;
-				s = attr().GroundPlaneSpeed * 0.25f;
+			if(a < -attr()->GroundAngleSpeed){
+				a = -attr()->GroundAngleSpeed;
+				s = attr()->GroundPlaneSpeed * 0.25f;
 			}
 		}else{
-			if(a > attr().GroundAngleSpeed){
-				a = attr().GroundAngleSpeed;
-				s = attr().GroundPlaneSpeed * 0.25f;
+			if(a > attr()->GroundAngleSpeed){
+				a = attr()->GroundAngleSpeed;
+				s = attr()->GroundPlaneSpeed * 0.25f;
 			}
 		}
 
@@ -429,7 +429,7 @@ terNatureTorpedo::terNatureTorpedo(const UnitTemplate& data) : terNatureTerrain(
 	Direction.x = 1.0f;
 	Direction.y = 0;
 	Contact = -1;
-	Distance = attr().fireRadius()*3;
+	Distance = attr()->fireRadius()*3;
 	ClusterID = 0;
 }
 
@@ -559,19 +559,19 @@ void terNatureFace::Quant()
 		if(!headGeoAction.quant(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))))
 			Kill();
 
-		float speed = clamp(dist, 0, attr().GroundPlaneSpeed);
+		float speed = clamp(dist, 0, attr()->GroundPlaneSpeed);
 
 		float angle = getDeltaAngle(cycleAngle(xm::atan2(delta.y, delta.x) - XM_PI * 0.5f), angleZ());
 		if(angle < 0){
-			if(angle < -attr().GroundAngleSpeed){
-				angle = -attr().GroundAngleSpeed;
-				speed = attr().GroundPlaneSpeed*0.25f;
+			if(angle < -attr()->GroundAngleSpeed){
+				angle = -attr()->GroundAngleSpeed;
+				speed = attr()->GroundPlaneSpeed*0.25f;
 			}
 		}
 		else{
-			if(angle > attr().GroundAngleSpeed){
-				angle = attr().GroundAngleSpeed;
-				speed = attr().GroundPlaneSpeed*0.25f;
+			if(angle > attr()->GroundAngleSpeed){
+				angle = attr()->GroundAngleSpeed;
+				speed = attr()->GroundPlaneSpeed*0.25f;
 			}
 		}
 

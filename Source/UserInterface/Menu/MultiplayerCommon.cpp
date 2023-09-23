@@ -6,6 +6,8 @@
 #include "../../HT/ht.h"
 #include "Localization.h"
 #include "MultiplayerCommon.h"
+#include "BelligerentSelect.h"
+#include "codepages/codepages.h"
 
 //This file handles mostly ingame multiplayer stuff but some parts are shared with main menu
 
@@ -15,6 +17,14 @@ extern MusicPlayer gb_Music;
 
 std::vector<MissionDescription> multiplayerMaps;
 std::vector<MissionDescription> multiplayerSaves;
+
+///Used to pass from logic to render thread
+std::vector<LocalizedText> toChatText = {};
+NetLatencyInfo toNetInfo;
+
+void clearMultiplayerVars() {
+    toChatText.clear();
+}
 
 void loadMultiplayerList() {
     if (multiplayerMaps.empty()) {
@@ -38,6 +48,7 @@ int SwitchMultiplayerToLoadQuant(float, float ) {
     if (menuChangingDone) {
         gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::MULTIPLAYER);
 
+        clearMultiplayerVars();
         gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
         _shellIconManager.SwitchMenuScreens(SQSH_MM_MULTIPLAYER_LOBBY_SCR, SQSH_MM_LOADING_MISSION_SCR);
         return 0;
@@ -48,8 +59,7 @@ int SwitchMultiplayerToLoadQuant(float, float ) {
 int SwitchMultiplayerToRestoreQuant(float, float ) {
     if (menuChangingDone) {
         if (missionToExec.gameType_ == GT_MULTI_PLAYER_RESTORE_PARTIAL) {
-            MTAuto lock(HTManager::instance()->GetLockLogic());
-            MTAutoSkipAssert skip_assert;
+            MTAutoSingleThread skip_assert;
             universe()->clear();
             universe()->universalLoad(missionToExec, gameShell->savePrm(), nullptr);
             missionToExec.gameType_ = GT_MULTI_PLAYER_LOAD;
@@ -58,6 +68,7 @@ int SwitchMultiplayerToRestoreQuant(float, float ) {
         } else {
             gb_Music.FadeVolume(_fEffectButtonTotalTime * 0.001f);
             HTManager::instance()->GameClose();
+            clearMultiplayerVars();
             _shellIconManager.SetModalWnd(0);
             _shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
             _shellIconManager.SwitchMenuScreens(-1, SQSH_MM_LOADING_MISSION_SCR);
@@ -109,6 +120,26 @@ int multiplayerMapNotFoundQuant(float, float ) {
     return 1;
 }
 
+void GameShell::MultiplayerGameStarting() {
+    //SHow text message in chat so players know is about to start
+    const char* text = qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.StartingGame");
+    addStringToChatWindow(false, text, getLocale());
+    
+    //
+    const MissionDescription& mission = getNetClient()->getLobbyMissionDescription();
+    BELLIGERENT_FACTION faction = FACTION_NONE;
+    for (auto& player : mission.playersData) {
+        if (mission.activePlayerID == player.playerID) {
+            faction = getBelligerentFaction(player.belligerent);
+            break;
+        }
+    }
+    if (faction != FACTION_NONE) {
+        setBelligerentFactionSound(faction);
+        SND2DPlaySound("Frame_Teleportation");
+    }
+}
+
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {
     std::string missingContent = checkMissingContent(mission);
     if (!missingContent.empty()) {
@@ -150,7 +181,8 @@ int showMessageInGameQuant( float, float ) {
 }
 
 void GameShell::showConnectFailedInGame(const std::string& playerList) {
-    messageBoxText = qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.WaitingForPlayers") + playerList;
+    messageBoxText = qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.WaitingForPlayers");
+    messageBoxText += "\n" + playerList;
     _shellIconManager.AddDynamicHandler(showMessageInGameQuant, CBCODE_QUANT);
 }
 
@@ -261,7 +293,7 @@ void chatWindowInput(CChatInGameEditWindow* chatInput, bool ingame) {
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
-        if (!chatInput->getText().empty()) {
+        if (!chatInput->isEmptyText()) {
             chatWindowInput(chatInput, false);
         }
     }
@@ -271,29 +303,32 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         terPlayer* activePlayer = universe()->activePlayer();
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
-        if (activePlayer && !chatInput->getText().empty()) {
+        if (activePlayer && !activePlayer->shouldIgnoreIntfCommands() && !chatInput->isEmptyText()) {
             chatWindowInput(chatInput, true);
         }
     }
 }
 
-
-LocalizedText toChatText;
-
 int addStringToChatWindowQuant( float, float ) {
     ChatWindow* chatWnd = (ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT);
-    chatWnd->AddString(&toChatText);
+    for (auto& t : toChatText) {
+        chatWnd->AddString(&t);
+    }
+    toChatText.clear();
     return 0;
 }
 
 int addStringToChatHintWindowQuant( float, float ) {
-    _shellIconManager.addChatString(&toChatText);
+    for (auto& t : toChatText) {
+        _shellIconManager.addChatString(&t);
+    }
+    toChatText.clear();
     return 0;
 }
 
 void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale) {
-    toChatText.set(newString, locale);
     if (_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT)) {
+        toChatText.emplace_back(newString, locale);
         _shellIconManager.AddDynamicHandler( addStringToChatWindowQuant, CBCODE_QUANT );
     } else {
         //We add postfix on client side so the text can have local language
@@ -309,11 +344,84 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
                 postfix = "clan";
             }
         }
+        std::string text = newString;
         if (!postfix.empty()) {
-            toChatText.text.insert(0, " ")
+            text.insert(0, " ")
             .insert(0, postfix)
             .insert(0, "&FFFFFF");
         }
+        toChatText.emplace_back(text, locale);
         _shellIconManager.AddDynamicHandler( addStringToChatHintWindowQuant, CBCODE_QUANT );
     }
+}
+
+////////// Latency info ////////////
+
+int updateLatencyInfoWindowQuant( float, float ) {
+    CNetLatencyInfoWindow* wnd = safe_cast<CNetLatencyInfoWindow*>(_shellIconManager.GetWnd(SQSH_NET_LATENCY_INFO_ID));
+
+    std::string briefData, fullData;
+    
+    std::string mslabel = startsWith(getLocale(), "russian") ? convertToCodepage("мс", "russian") : "ms";
+
+    for (int i : toNetInfo.player_ids) {
+        int playerID = toNetInfo.player_ids[i];
+        terPlayer* player = universe()->findPlayer(playerID);
+        if (!player) {
+            xassert(0);
+            continue;
+        }
+
+        //Get player name
+        if (!fullData.empty()) fullData += "\n";
+        std::string name = player->name();
+        while (name.length() < PLAYER_MAX_NAME_LEN) {
+            name += " ";
+        }
+        fullData += "&" + toColorCode(player->unitColor()) + name;
+
+        //Get quant text
+        uint64_t quant = toNetInfo.quant - toNetInfo.player_quants[i];
+        std::string quantText = std::to_string(quant);
+        while (quantText.length() < 2) {
+            quantText = " " + quantText;
+        }
+        sColor4f quantColor = sColor4f(
+                50 < quant ? 1 : 0,
+                quant < 100 ? 1 : 0,
+                0, 1
+        );
+        quantText = " &" + toColorCode(quantColor) + quantText;
+        
+        //Get ping text
+        size_t ping = toNetInfo.player_pings[i]; // toNetInfo.timestamp - toNetInfo.player_last_seen[i];
+        ping = static_cast<size_t>(xm::ceil(static_cast<double>(ping) / 1000.0));
+        sColor4f pingColor = sColor4f(
+                1000 < ping ? 1 : 0,
+                ping < 2000 ? 1 : 0,
+                0, 1
+        );
+        std::string pingText = std::to_string(ping);
+        while (pingText.length() < 4) {
+            pingText = " " + pingText;
+        }
+        pingText = " &" + toColorCode(pingColor) + pingText + mslabel;
+
+        fullData += quantText + pingText;
+        
+        if (playerID == gameShell->CurrentMission.activePlayerID) {
+            briefData = qdTextDB::instance().getText("Interface.Menu.ButtonLabels.Network");
+            briefData += quantText + pingText;
+        }
+    }
+    
+    wnd->SetText(briefData, fullData);
+    
+    return 0;
+}
+
+
+void GameShell::updateLatencyInfo(const NetLatencyInfo& info) {    
+    toNetInfo = info;
+    _shellIconManager.AddDynamicHandler( updateLatencyInfoWindowQuant, CBCODE_QUANT );
 }

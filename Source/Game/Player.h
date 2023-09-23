@@ -159,7 +159,7 @@ class PlayerStats : public SavePlayerStats
 			buildingCaptured = 0;
 			buildingLost = 0;
 		}
-		void checkEvent(const Event& event, int playerID);
+		void checkEvent(const Event* event, int playerID);
 		void update(const terFrameStatisticsType& frameStats, terEnergyDataType& energyData);
 
 		int getTotalScore(int totalTimeMillis) const;
@@ -382,7 +382,7 @@ public:
 	//-----------------------------
 	virtual void Quant();
 	virtual void triggerQuant() {}
-	virtual void checkEvent(const Event& event) {
+	virtual void checkEvent(const Event* event) {
 		stats.checkEvent(event, playerID());
 	}
 

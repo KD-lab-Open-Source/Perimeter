@@ -76,8 +76,8 @@ public:
 	terUnitLegionary(const UnitTemplate& data);
 	~terUnitLegionary() {}
 
-	const AttributeLegionary& attr() const override {
-		return safe_cast_ref<const AttributeLegionary&>(terUnitReal::attr());
+	const AttributeLegionary* attr() const override {
+		return safe_cast<const AttributeLegionary*>(terUnitReal::attr());
 	}
 
 	void Start();
@@ -144,7 +144,7 @@ public:
 	void AvatarQuant();
 	
 	//-----------------------------
-	int GetFireControlCheck(terUnitBase* target){ return (target->unitClass() & attr().AttackClass); };
+	int GetFireControlCheck(terUnitBase* target){ return (target->unitClass() & attr()->AttackClass); };
 
 	const DamageMolecula& transportAtom() const { return transportAtom_; }
 	void addToTransport(int atom_id, int numAtoms = 1);

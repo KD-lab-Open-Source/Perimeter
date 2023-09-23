@@ -575,7 +575,7 @@ public:
 
   // constructors //////////////////////////////////////////////////////////////
 
-  xm_inline Vect3f() {}
+  xm_inline Vect3f() = default;
   xm_inline Vect3f(float x_, float y_, float z_) {x = x_; y = y_; z = z_;}
   xm_inline Vect3f(const Vect2f& v, float z_) { x = v.x; y = v.y; z = z_;}
 
@@ -2150,13 +2150,18 @@ public:
 class Mat4f 
 {
 
-  // (stored in row-major order)
-  float xx, xy, xz, xw,
-       yx, yy, yz, yw,
-       zx, zy, zz, zw,
-       wx, wy, wz, ww;
-
 public:
+
+  union {
+      struct {
+          // (stored in row-major order)
+          float xx, xy, xz, xw,
+                yx, yy, yz, yw,
+                zx, zy, zz, zw,
+                wx, wy, wz, ww;
+      };
+      struct { float array[16];  };
+  };
 
   // constructors //////////////////////////////////////////////////////////////
 
@@ -2172,6 +2177,11 @@ public:
   xm_inline Mat4f(const Mat3f& rot) { set(rot); }
   xm_inline Mat4f(const Mat3f& rot, const Vect3f& trans) { set(rot, trans); }
   xm_inline Mat4f(const MatXf& X) { set(X); }
+
+  //  Logical operations  ////////////////////////////////
+  bool eq(const Mat4f& v, float delta = FLT_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const Mat4f& v) const { return eq(v); }
+  xm_inline int operator!= (const Mat4f& v) const { return !eq(v); }
 
   // setters / accessors ///////////////////////////////////////////////////////
   
@@ -2219,7 +2229,7 @@ public:
   xm_inline float& operator ()(int i,int j){ return (&xx)[(i - 1)*4 + j - 1]; }
 
   //  Determinant  of matrix  /////////
-  xm_inline float det() const;
+  //xm_inline float det() const;
 
   //  Mat4f - Mat4f multiplication  ///////////
   Mat4f& mult(const Mat4f& M, const Mat4f& N);     // M * N	   [!]
@@ -2234,9 +2244,9 @@ public:
   xm_inline friend Mat4f xpose(const Mat4f& M) { Mat4f N; return N.xpose(M); }
 
   //  Invertion  ////////////////////
-  int  invert();  // this^-1, returns one if the matrix was not invertible, otherwise zero.
-  int  invert(const Mat4f& M);    // M^-1	   [!]
-  xm_inline friend Mat4f invert(const Mat4f& M) { Mat4f N; N.invert(M); return N; }
+  //int  invert();  // this^-1, returns one if the matrix was not invertible, otherwise zero.
+  //int  invert(const Mat4f& M);    // M^-1	   [!]
+  //xm_inline friend Mat4f invert(const Mat4f& M) { Mat4f N; N.invert(M); return N; }
 
 
   // Transforming Vect4f ///////////////////////////////////////////////////////

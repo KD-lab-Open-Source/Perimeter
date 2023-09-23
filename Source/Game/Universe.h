@@ -54,9 +54,9 @@ public:
 
 	bool soundEvent(SoundEventID event_id);
 
-	void checkEvent(const class Event& event);
+    void checkEvent(const class Event* event);
 
-	void ShowInfo();
+	void ShowInfo() override;
 
 	void makeCommand(CommandID id, int data);
 	void makeCommand2D(CommandID command_id, const Vect3f& position, CommandSelectionMode mode);
@@ -93,7 +93,7 @@ public:
 
 	void changeOwner(terUnitBase* unit, terPlayer* player);
 
-	void updateClusterColumn(const struct sRect& rect);
+	void updateClusterColumn(const struct sRectS& rect);
 	const Column& clusterColumn() const { return cluster_column_; }
 
 	int quantCounter() const { return quant_counter_; }
@@ -166,8 +166,6 @@ private:
 inline terUniverse* universe() { return terUniverse::universe_; }
 
 extern class FieldDispatcher* field_dispatcher;
-
-extern struct CEffectManager* terEffectD;
 
 //inline int terObjectBoxTest(const Vect3f& min, const Vect3f& max, sPlane4f* p)
 //{

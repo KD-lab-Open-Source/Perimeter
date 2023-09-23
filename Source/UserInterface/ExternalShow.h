@@ -2,11 +2,11 @@
 
 void terExternalQuant();
 
-void terExternalRegionShowUniform(Region* region,sColor4c color);
-void terExternalRegionShowLine(Region* region,sColor4c diffuse);
-void terExternalRegionShowColumn(Column* column,sColor4c color);
-void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse);
-void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse);
+void terExternalRegionShowUniform(Region* region,uint32_t color);
+void terExternalRegionShowLine(Region* region,uint32_t diffuse);
+void terExternalRegionShowColumn(Column* column,uint32_t color);
+void terExternalRegionShowLineZeroplast(Region* region,uint32_t diffuse);
+void terExternalRegionShowLineZeroplastVertical(Region* region,uint32_t diffuse);
 
 void terCircleShowGraph(const Vect3f& pos,float r, const struct CircleColor& circleColor);
 void terCircleShow(const Vect3f& pos0,const Vect3f& pos1,float r, const struct CircleColor& circleColor);

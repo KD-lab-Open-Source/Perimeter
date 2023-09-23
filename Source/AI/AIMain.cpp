@@ -67,7 +67,7 @@ void AIPlayer::addUnit(terUnitBase* p)
 {
 	terPlayer::addUnit(p);
 
-	switch(p->attr().ID){
+	switch(p->attr()->ID){
 	case UNIT_ATTRIBUTE_TERRAIN_MASTER:
 		BrigadierList.push_back(p);
 		break;
@@ -79,12 +79,16 @@ void AIPlayer::addUnit(terUnitBase* p)
 				*si = safe_cast<terUnitSquad*>(p);
 				return;
 			}
-			if((*si)->commander()->attr().ID != UNIT_ATTRIBUTE_FRAME && !(*si)->commander()->isBuildingEnable())
-				break;
+            terUnitBase* comm = (*si)->commander();
+			if (comm && comm->attr()->ID != UNIT_ATTRIBUTE_FRAME && !comm->isBuildingEnable()) {
+                break;
+            }
 		}
 		squads.insert(si, safe_cast<terUnitSquad*>(p));
 		break;
 		}
+    default:
+        break;
 	}
 }
 
@@ -92,7 +96,7 @@ void AIPlayer::removeUnit(terUnitBase* p)
 {
 	terPlayer::removeUnit(p);
 
-	switch(p->attr().ID)
+	switch(p->attr()->ID)
 	{
 	case UNIT_ATTRIBUTE_TERRAIN_MASTER:
 		BrigadierList.erase(remove(BrigadierList.begin(), BrigadierList.end(), p), BrigadierList.end());
@@ -119,6 +123,8 @@ void AIPlayer::removeUnit(terUnitBase* p)
 		}
 		}
 		break;
+    default:
+        break;
 	}
 }
 
@@ -242,7 +248,7 @@ void AIPlayer::MoveBrigadiersToPoint(const Vect2f& pos,float radius)
 	float width = (-0.5f - (float)BrigadierList.size()/2)*ai_brigadier_width;
 	UnitList::iterator ui;
 	FOR_EACH(BrigadierList,ui)
-		(*ui)->executeCommand(UnitCommand(COMMAND_ID_POINT, To3D(target + normal*(width += ai_brigadier_width)), 0, COMMAND_SELECTED_MODE_SINGLE));
+		(*ui)->executeCommand(UnitCommand(COMMAND_ID_POINT, To3D(target + normal*(width += ai_brigadier_width)), 0, COMMAND_SELECTED_MODE_NONE));
 }
 
 Vect2f AIPlayer::GetBrigadierCenter()
@@ -367,27 +373,29 @@ void AIPlayer::showDebugInfo()
 void AIPlayer::triggerQuant() 
 { 
 	TriggerChains::iterator i;
-	FOR_EACH(triggerChains_, i)
-		i->quant(*this);
+    for (TriggerChain& tc : triggerChains_) {
+        tc.quant(*this);
+    }
 }
 
-void AIPlayer::checkEvent(const Event& event) 
+void AIPlayer::checkEvent(const Event* event) 
 { 
 	terPlayer::checkEvent(event);
 
-	TriggerChains::iterator i;
-	FOR_EACH(triggerChains_, i)
-		i->checkEvent(*this, event); 
+	for (TriggerChain& tc : triggerChains_) {
+        tc.checkEvent(*this, event);
+    }
 
-	if(isAI() && automaticUsingFieldTimer_() && event.type() == Event::ATTACK_OBJECT){
-		const EventUnitMyUnitEnemy& eventUnit = safe_cast_ref<const EventUnitMyUnitEnemy&>(event);
-		if(eventUnit.unitMy()->Player == this && eventUnit.unitEnemy()){
-			if(eventUnit.unitMy()->attr().ID == UNIT_ATTRIBUTE_CORE)
-				safe_cast<terProtector*>(eventUnit.unitMy())->startField();
-			else if(!onlyIfCoreDamaged_ && eventUnit.unitMy()->isBuilding()){
-				terUnitBase* unit = findUnit(UNIT_ATTRIBUTE_CORE, eventUnit.unitMy()->position2D());
-				if(unit)
-					safe_cast<terProtector*>(unit)->startField();
+	if(isAI() && automaticUsingFieldTimer_() && event->type() == Event::ATTACK_OBJECT){
+		const EventUnitMyUnitEnemy* eventUnit = safe_cast<const EventUnitMyUnitEnemy*>(event);
+		if(eventUnit->unitMy()->Player == this && eventUnit->unitEnemy()){
+			if(eventUnit->unitMy()->attr()->ID == UNIT_ATTRIBUTE_CORE)
+				safe_cast<terProtector*>(eventUnit->unitMy())->startField();
+			else if(!onlyIfCoreDamaged_ && eventUnit->unitMy()->isBuilding()){
+				terUnitBase* unit = findUnit(UNIT_ATTRIBUTE_CORE, eventUnit->unitMy()->position2D());
+				if(unit) {
+                    safe_cast<terProtector*>(unit)->startField();
+                }
 			}
 		}
 	}
@@ -408,10 +416,15 @@ void AIPlayer::checkLevelingAreaQuant()
 	start_timer_auto(checkLevelingAreaQuant, STATISTICS_GROUP_AI);
 	
 	zeroRegion->clear();
-	zeroRegion->operateByCircle(frame()->position2D(), frame()->attr().ZeroLayerRadius, 1);
+	zeroRegion->operateByCircle(frame()->position2D(), frame()->attr()->ZeroLayerRadius, 1);
 	for(int i = UNIT_ATTRIBUTE_CORE; i < UNIT_ATTRIBUTE_STRUCTURE_MAX; i++){
 		terBuildingList::iterator bi;
-		FOR_EACH(buildingList(i), bi)
-			zeroRegion->operateByCircle((*bi)->position2D(), (*bi)->attr().ZeroLayerRadius ? (*bi)->attr().ZeroLayerRadius : (*bi)->radius(), 1);
+		for (auto bi : buildingList(i)) {
+            zeroRegion->operateByCircle(
+                    bi->position2D(),
+                    bi->attr()->ZeroLayerRadius ? bi->attr()->ZeroLayerRadius : bi->radius(),
+                    1
+            );
+        }
 	}
 }

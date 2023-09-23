@@ -366,7 +366,7 @@ void TriggerEditorView::setScrollRanges()
 	CPoint bak = getViewportOrg();
 	setViewportOrg(0, 0);
 	CRect scaledTR(getWorkArea());
-	log2Scr(reinterpret_cast<POINT*>(&scaledTR), 2);
+	log2Scr(reinterpret_cast<sPoint*>(&scaledTR), 2);
 	setViewportOrg(bak);
 
 	if (rectClient.Width() < scaledTR.Width()) {

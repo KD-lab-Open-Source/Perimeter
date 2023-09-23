@@ -487,7 +487,6 @@ void copyAttributes(bool override)
 			data = new AttributeBase;
 
 		copy(*data, src);
-		data->init();
         AttributeIDBelligerent attr(data->ID, data->belligerent);
         if (override || !attributeLibrary().find(attr)) {
             attributeLibrary().add(attr, data);

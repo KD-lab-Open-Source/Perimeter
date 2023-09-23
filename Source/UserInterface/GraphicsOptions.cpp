@@ -214,12 +214,14 @@ void GraphOptions::apply() {
     
     if (terGrabInput != grabInput) {
         terGrabInput = grabInput;
+        check_command_line_parameter("GrabInput", terGrabInput);
         if (terGrabInput && !terFullScreen) {
             SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
         } else {
             SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
         }
     }
+    shell_anchor = static_cast<SHELL_ANCHOR>(uiAnchor);
     
 	customOptions.apply();
 }

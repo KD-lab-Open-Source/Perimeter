@@ -38,7 +38,7 @@ int sign(int value){
 	return value < 0? -1 : 1;
 }
 
-int calcLineEquation(POINT const& a, POINT const& b, POINT const& p)
+int calcLineEquation(sPoint const& a, sPoint const& b, sPoint const& p)
 {
 	int const A = b.y - a.y;
 	int const B = b.x - a.x;
@@ -93,7 +93,7 @@ CPoint const getLinkEnd(TriggerLink const& link)
 }
 
 CSize getLinkOffset(const CPoint& ptFrom, const CPoint& ptTo, 
-										const RECT& bound)
+										const sRect& bound)
 {
 	CPoint pts[4];
 	pts[0] = CPoint(bound.left, bound.top);

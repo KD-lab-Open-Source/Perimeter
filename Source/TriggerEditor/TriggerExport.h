@@ -2,14 +2,9 @@
 #define __TRIGGER_EXPORT_H__
 
 #ifndef _FINAL_VERSION_
+#ifdef _WIN32
 #include <atltypes.h> //MFC stuff
-#else
-//Avoid including MFC stuff by just bridging these
-class CPoint : public POINT {
-};
-class CRect : public RECT {
-};
-
+#endif
 #endif
 
 #include "Serialization.h"
@@ -134,7 +129,7 @@ struct Condition : ShareHandleBaseSerializeVirtual // Не выполняетс�
 	bool checkDebug(AIPlayer& aiPlayer) { 
 		return state_ = check(aiPlayer); 
 	}
-	virtual_ void checkEvent(AIPlayer& aiPlayer, const class Event& event) {}
+	virtual_ void checkEvent(AIPlayer& aiPlayer, const class Event* event) {}
 	virtual_ void clear() {}
 	virtual_ void writeInfo(XBuffer& buffer, std::string offset) const {}
 
@@ -204,7 +199,7 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 	}
 
 	bool check(AIPlayer& aiPlayer);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	void clear();
 	void writeInfo(XBuffer& buffer, std::string offset) const;
 
@@ -240,7 +235,7 @@ struct Action : ShareHandleBaseSerializeVirtual // Пустое действие
 
 
 //-----------------------------
-struct CPointSerialized : CPoint
+struct CPointSerialized : sPoint
 {
 	CPointSerialized() {
 		x = y = INT_MIN;
@@ -256,7 +251,7 @@ struct CPointSerialized : CPoint
 	}
 };
 
-struct CRectSerialized : CRect
+struct CRectSerialized : sRect
 {
 	CRectSerialized() {
 		left = top = right = bottom = INT_MIN;
@@ -333,15 +328,15 @@ struct TriggerLink // Связь
 	const CPointSerialized& parentOffset() const {
 		return parentOffset_;
 	}
-	void setParentOffset(const CPoint& offset) {
-		static_cast<CPoint&>(parentOffset_) = offset;
+	void setParentOffset(const sPoint& offset) {
+		static_cast<sPoint&>(parentOffset_) = offset;
 	}
     
 	const CPointSerialized& childOffset() const {
 		return childOffset_;
 	}
-	void setChildOffset(const CPoint& offset) {
-		static_cast<CPoint&>(childOffset_) = offset;
+	void setChildOffset(const sPoint& offset) {
+		static_cast<sPoint&>(childOffset_) = offset;
 	}
 
 	SERIALIZE(ar) {
@@ -389,7 +384,7 @@ public:
 	void initialize();
 
 	void quant(AIPlayer& aiPlayer, TriggerChain& triggerChain);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	void activate(AIPlayer& aiPlayer, TriggerChain& triggerChain);
 	bool removeLinkByChild(Trigger* child);
 
@@ -433,15 +428,15 @@ public:
 		cellIndex_.x = x;
         cellIndex_.y = y;
 	}
-	void setCellIndex(const CPoint& cellIndex) {
-		static_cast<CPoint&>(cellIndex_) = cellIndex;
+	void setCellIndex(const sPoint& cellIndex) {
+		static_cast<sPoint&>(cellIndex_) = cellIndex;
 	}
 
 	const CRectSerialized& boundingRect() const {
 		return boundingRect_;
 	}
-	void setBoundingRect(const CRect& boundingRect) {
-		static_cast<CRect&>(boundingRect_) = boundingRect;
+	void setBoundingRect(const sRect& boundingRect) {
+		static_cast<sRect&>(boundingRect_) = boundingRect;
 	}
 
 	const OutcomingLinksList& outcomingLinks() const {
@@ -536,7 +531,7 @@ public:
 
 	void buildLinks();
 	void quant(AIPlayer& aiPlayer);
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 	Trigger* find(const char* name);
 
 	bool removeLink(int parentIndex, int childIndex);
@@ -564,15 +559,15 @@ public:
 	const CRectSerialized& boundingRect() const {
 		return boundingRect_;
 	}
-	void setBoundingRect(const RECT& boundingRect) {
-		static_cast<RECT&>(boundingRect_) = boundingRect;
+	void setBoundingRect(const sRect& boundingRect) {
+		static_cast<sRect&>(boundingRect_) = boundingRect;
 	}
 
 	const CRectSerialized& viewRect() const {
 		return viewRect_;
 	}
-	void setViewRect(const RECT& viewRect) {
-		static_cast<RECT&>(viewRect_) = viewRect;
+	void setViewRect(const sRect& viewRect) {
+		static_cast<sRect&>(viewRect_) = viewRect;
 	}
 
 	SERIALIZE(ar) {

@@ -132,35 +132,37 @@ void terUniverse::clear() {
     enableEventChecking_ = false;
     
     clearLogList();
+
+    stream_interpolator.ClearData();
     
     select.DeselectAll();
 
-    PlayerVect::iterator pi;
-    FOR_EACH(Players, pi) {
-        (*pi)->killAllUnits();
+    for (terPlayer* p : Players) {
+        p->killAllUnits();
     }
     
-    FOR_EACH(Players, pi) {
-        (*pi)->removeUnits();
+    for (terPlayer* p : Players) {
+        p->removeUnits();
     }
     
     monks.Done();
     
     HTManager::instance()->ClearDeleteUnit(true);
     
-    FOR_EACH(Players, pi) {
-        delete *pi;
-    }
-    
+    for (terPlayer* p : Players) {
+        delete p;
+    }    
     Players.clear();
 
     active_player_ = nullptr;
+
+    terScene->DeleteAutoObject();
 }
 
 terUniverse::~terUniverse()
 {
 	DBGCHECK;
-    
+
     clear();
 
 	delete ai_tile_map;
@@ -178,7 +180,6 @@ terUniverse::~terUniverse()
 	RELEASE(pSpriteCongregation);
 	RELEASE(pSpriteCongregationProtection);
 	RELEASE(pSpriteCongregationAnnihilation);
-	terScene->DeleteAutoObject();
 
 	xassert(this == universe());
 	universe_ = nullptr;
@@ -274,11 +275,12 @@ void terUniverse::Quant()
 	FOR_EACH(changeOwnerList,iChange)
 		if(iChange->unit_->alive()){
 			iChange->unit_->ChangeUnitOwner(iChange->player_);
-			checkEvent(EventUnitPlayer(Event::CAPTURE_BUILDING, iChange->unit_, iChange->player_));
+            EventUnitPlayer ev(Event::CAPTURE_BUILDING, iChange->unit_, iChange->player_);
+			checkEvent(&ev);
 		}
 	changeOwnerList.clear();
 
-	std::list<sRect>::iterator i_area;
+	std::list<sRectS>::iterator i_area;
 	FOR_EACH(vMap.changedAreas,i_area){
 		terMapUnitUpdateOperator unit_op((int)(i_area->x),(int)(i_area->y),(int)(i_area->x + i_area->dx),(int)(i_area->y + i_area->dy));
 		UnitGrid.Scan(unit_op.x0, unit_op.y0, unit_op.x1, unit_op.y1, unit_op);
@@ -301,7 +303,7 @@ void terUniverse::Quant()
 	clearLinkAndDelete();
 
 	cluster_column_.setUnchanged();
-	std::list<sRect>::iterator rc;
+	std::list<sRectS>::iterator rc;
 	FOR_EACH(vMap.changedAreas,rc){
 		ai_tile_map->UpdateRect(rc->x,rc->y,rc->dx,rc->dy);
 		updateClusterColumn(*rc);
@@ -498,7 +500,7 @@ terUnitBase* terUniverse::TraceUnit(const Vect2f& pos, terUnitID* unit_filter)
                 continue;
             }
 			//if(unit->alive() && unit->selectAble() && (unit->collisionGroup() & (COLLISION_GROUP_ENEMY | COLLISION_GROUP_SELECTED)))
-			if(unit->alive() && unit->selectAble() && unit->attr().ID != UNIT_ATTRIBUTE_SQUAD){
+			if(unit->alive() && unit->selectAble() && unit->attr()->ID != UNIT_ATTRIBUTE_SQUAD){
 				if(unit->avatar() && unit->avatar()->GetModelPoint()){
 					//safe_cast<cObjectNodeRoot*>(unit->avatar()->GetModelPoint())->Update();
 					if(safe_cast<cObjectNode*>(unit->avatar()->GetModelPoint())->Intersect(v0,v1) &&
@@ -583,7 +585,7 @@ int terUniverse::SelectUnit(terUnitBase* p)
 //---------------------------------------------------------
 
 void MissionDescription::refresh() {
-    if(gameType_ != GT_PLAY_RELL){
+    //if(gameType_ != GT_PLAY_RELL){
         if (!savePathKey_.empty()) {
             savePathContent_ = resolve_mission_path(savePathKey_);
         }
@@ -593,9 +595,11 @@ void MissionDescription::refresh() {
                 missionDescriptionStr_ = missionDescriptionID;
             }
         }
-    }
+    //}
 
-    version = currentShortVersion;
+    if (version.empty()) {
+        version = currentShortVersion;
+    }
 
     if (!worldName_.empty()) {
         worldID_ = vMap.getWorldID(worldName_.value().c_str());
@@ -612,9 +616,9 @@ void MissionDescription::refresh() {
 void MissionDescription::loadDescription() {    
     if (gameType_ == GT_PLAY_RELL) {
         init();
-        getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
-        //Set this again otherwise the game type of replay is set
+        //Set this again after init
         gameType_ = GT_PLAY_RELL;
+        getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
     } else {
         if (!savePathContent_.empty()) {
             if (getExtension(savePathContent_, true) == "spg") {
@@ -643,8 +647,20 @@ void MissionDescription::loadDescription() {
                 pd.flag_playerGameReady = false;
                 switch (gameType_) {
                     case GT_SINGLE_PLAYER:
-                        pd.clan = i;
-                        pd.realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
+                        if (isCampaign()) {
+                            switch (pd.realPlayerType) {
+                                case REAL_PLAYER_TYPE_CLOSE:
+                                case REAL_PLAYER_TYPE_WORLD:
+                                case REAL_PLAYER_TYPE_OPEN:
+                                    break;
+                                case REAL_PLAYER_TYPE_PLAYER:
+                                case REAL_PLAYER_TYPE_AI:
+                                case REAL_PLAYER_TYPE_PLAYER_AI:
+                                    pd.clan = i;
+                                    pd.realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
+                                    break;
+                            }
+                        }
                         break;
                     case GT_SINGLE_PLAYER_ALL_AI:
                         pd.clan = i;
@@ -659,16 +675,13 @@ void MissionDescription::loadDescription() {
                         pd.realPlayerType = REAL_PLAYER_TYPE_OPEN;
                         break;
                     case GT_MULTI_PLAYER_LOAD:
-                        //Old multi saves have opened players with empty name when not in use, mark as closed
-                        if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN && strlen(pd.name()) == 0) {
-                            pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
-                        }
                         switch (pd.realPlayerType) {
+                            case REAL_PLAYER_TYPE_OPEN:
+                                pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
                             case REAL_PLAYER_TYPE_CLOSE:
                             case REAL_PLAYER_TYPE_WORLD:
                             case REAL_PLAYER_TYPE_AI:
                                 break;
-                            case REAL_PLAYER_TYPE_OPEN:
                             case REAL_PLAYER_TYPE_PLAYER:
                             case REAL_PLAYER_TYPE_PLAYER_AI:
                                 pd.setNameInitial(pd.name());
@@ -714,7 +727,7 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 {
 	MissionDescription data = *this;
     
-    data.gameContent = missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    data.gameContent = isCampaign() ? getGameContentCampaign() : terGameContentSelect;
 
 	if(!userSave) {
         data.playerAmountScenarioMax = static_cast<int>(savePrm.manualData.players.size());
@@ -856,7 +869,13 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
 
     SavePrmBinary savePrmBinary;
 
-    if (binarySavePrmBinary.length()) {
+    size_t binSavePrm_len = binarySavePrmBinary.length();
+    if (binSavePrm_len) {
+        //Make sure is null terminated or XPrmIArchive will attempt out of bounds read
+        if (binarySavePrmBinary[binSavePrm_len - 1] != 0) {
+            binarySavePrmBinary.realloc(binSavePrm_len + 1);
+            binarySavePrmBinary[binSavePrm_len] = 0;
+        }
         XPrmIArchive ia;
         std::swap(ia.buffer(), binarySavePrmBinary);
         ia.reset();
@@ -874,9 +893,10 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
 
     //---------------------
 
-    if (mission.scriptsData.length()) {
-        initAttributes(&mission.scriptsData);
-    }
+    //If a campaign mission then load campaign attributes
+    bool campaign = mission.isCampaign();
+    loadUnitAttributes(campaign, mission.scriptsData.length() ? &mission.scriptsData : nullptr);
+    initUnitAttributes();
 
     if (loadProgressUpdate) loadProgressUpdate(0.7f);
 
@@ -892,7 +912,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
         //Load save data into IA and deserialize
         XPrmIArchive ia;
         std::swap(ia.buffer(), mission.saveData);
-        ia.buffer().set(0);
+        ia.reset();
         ia >> WRAP_NAME(data, "SavePrm");
     } else {
         mission.loadMission(data);
@@ -937,15 +957,16 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     //Load each player
     std::vector<int> playerLoadIndices;
     for(int i = 0; i < mission.playersData.size(); i++){
-        if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
-            || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
-            || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
-            int playerIndex = mission.playersShufflingIndices[i];
-            if(gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
-                mission.playersData[i].colorIndex = belligerentPropertyTable.find(mission.playersData[i].belligerent).colorIndex;
+        auto& playerData = mission.playersData[i];
+        if (playerData.realPlayerType == REAL_PLAYER_TYPE_PLAYER
+            || playerData.realPlayerType == REAL_PLAYER_TYPE_AI
+            || playerData.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
+            if (mission.isCampaign()) {
+                playerData.colorIndex = belligerentPropertyTable.find(playerData.belligerent).colorIndex;
             }
 
-            terPlayer* player = addPlayer(mission.playersData[i]);
+            int playerIndex = mission.playersShufflingIndices[i];
+            terPlayer* player = addPlayer(playerData);
             if (playerIndex < manualData.players.size()) {
                 player->setTriggerChains(manualData.players[playerIndex]);
             }
@@ -953,7 +974,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
             playerLoadIndices.push_back(playerIndex);
             if(data.players.size() > playerIndex){
                 player->universalLoad(data.players[playerIndex]);
-                player->setDifficulty(mission.playersData[i].difficulty);
+                player->setDifficulty(playerData.difficulty);
             }
             //Check if UserCamera exists, otherwise use Camera as spline name for camera initialization
             std::string cameraSplineName = "UserCamera";
@@ -1019,7 +1040,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
 
     ai_tile_map->InitialUpdate();
     cluster_column_.setUnchanged();
-    updateClusterColumn(sRect(0, 0, vMap.H_SIZE, vMap.V_SIZE));
+    updateClusterColumn(sRectS(0, 0, vMap.H_SIZE, vMap.V_SIZE));
 
     //-----------------
     vMap.WorldRender();
@@ -1078,9 +1099,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
         }
 	} else {
         //Clear soundtracks so players don't get wrong belligerent soundtracks
-        for (int i = 0; i < 3; i++) {
-            data.manualData.soundTracks[i].clear();
-        }
+        data.manualData.clearSoundTracks();
     }
 
 	PlayerVect playersToSave(mission.playersData.size(), nullptr);
@@ -1260,18 +1279,7 @@ void terUniverse::SetActivePlayer(int id)
 	select.Quant();
 
     BELLIGERENT_FACTION faction = getBelligerentFaction(activePlayer()->belligerent());
-	switch(faction){
-    default:
-	case EXODUS:
-		SNDSetBelligerentIndex(0);
-		break;
-	case HARKBACK:
-		SNDSetBelligerentIndex(1);
-		break;
-	case EMPIRE:
-		SNDSetBelligerentIndex(2);
-		break;
-	}
+    setBelligerentFactionSound(faction);
 
 	field_dispatcher->Update();
 
@@ -1431,7 +1439,7 @@ float GetRealHeight(float x,float y,float r)
 	return op.Height;
 }
 
-void terUniverse::updateClusterColumn(const sRect& rect)
+void terUniverse::updateClusterColumn(const sRectS& rect)
 {
 	int x0 = rect.x;
 	int y0 = rect.y;
@@ -1485,7 +1493,7 @@ terUnitBase* terUniverse::findCorridor() const
 	return 0;
 }
 
-void terUniverse::checkEvent(const Event& event)
+void terUniverse::checkEvent(const Event* event)
 {
 	if(!enableEventChecking_)
 		return;

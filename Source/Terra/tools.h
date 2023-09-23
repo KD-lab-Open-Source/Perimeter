@@ -2,6 +2,7 @@
 #define __TOOLS_H__
 
 #ifdef _PERIMETER_
+#include <string>
 #include "../Render/inc/Umath.h"
 #include "../Util/DebugUtil.h"
 #include "../Units/UnitAttribute.h"

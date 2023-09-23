@@ -19,17 +19,17 @@
 
 std::vector<cShader*> cShader::all_shader;
 
-void cD3DRender::SetVertexShaderConstant(int start,const D3DXMATRIX *pMat)
+void cD3DRender::SetVertexShaderConstant(int start,const Mat4f *pMat)
 {
 	RDCALL(lpD3DDevice->SetVertexShaderConstantF(start,(float*)pMat,4));
 }
 
-void cD3DRender::SetVertexShaderConstant(int start,const D3DXVECTOR4 *pVect)
+void cD3DRender::SetVertexShaderConstant(int start,const Vect4f *pVect)
 {
 	RDCALL(lpD3DDevice->SetVertexShaderConstantF(start,(float*)pVect,1));
 }
 
-void cD3DRender::SetPixelShaderConstant(int start,const D3DXVECTOR4 *pVect)
+void cD3DRender::SetPixelShaderConstant(int start,const Vect4f *pVect)
 {
 	RDCALL(lpD3DDevice->SetPixelShaderConstantF(start,(float*)pVect,1));
 }
@@ -113,45 +113,45 @@ void cVertexShader::Restore()
 	//_controlfp(fp,0xFFFFFFFFul);
 }
 
-inline void cVertexShader::SetMatrix(const SHADER_HANDLE& h,const D3DXMATRIX* mat)
+inline void cVertexShader::SetMatrix(const SHADER_HANDLE& h,const Mat4f* mat)
 {
 	if(h.num_register)
 	{
-		D3DXMATRIX out;
-		D3DXMatrixTranspose(&out,mat);
+		Mat4f out;
+        out.xpose(*mat);
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->
 			SetVertexShaderConstantF(h.begin_register,(float*)&out,h.num_register));
 //		pConstantTable->SetMatrix(gb_RenderDevice3D->lpD3DDevice,h,mat);
 	}
 }
 
-inline void cVertexShader::SetMatrix4x4(const SHADER_HANDLE& h,int index,const D3DXMATRIX* mat)
+inline void cVertexShader::SetMatrix4x4(const SHADER_HANDLE& h,int index,const Mat4f* mat)
 {
 	const int size=4;
 	if(h.num_register)
 	{
-		D3DXMATRIX out;
-		D3DXMatrixTranspose(&out,mat);
+		Mat4f out;
+        out.xpose(*mat);
 		xassert(index*size<=h.num_register);
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->
 			SetVertexShaderConstantF(h.begin_register+index*size,(float*)&out,size));
 	}
 }
 
-inline void cVertexShader::SetMatrix4x3(const SHADER_HANDLE& h,int index,const D3DXMATRIX* mat)
+inline void cVertexShader::SetMatrix4x3(const SHADER_HANDLE& h,int index,const Mat4f* mat)
 {
 	const int size=3;
 	if(h.num_register)
 	{
-		D3DXMATRIX out;
-		D3DXMatrixTranspose(&out,mat);
+		Mat4f out;
+        out.xpose(*mat);
 		xassert(index*size<=h.num_register);
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->
 			SetVertexShaderConstantF(h.begin_register+index*size,(float*)&out,size));
 	}
 }
 
-inline void cVertexShader::SetVector(const SHADER_HANDLE& h,const D3DXVECTOR4* vect)
+inline void cVertexShader::SetVector(const SHADER_HANDLE& h,const Vect4f* vect)
 {
 	if(h.num_register)
 	{
@@ -164,7 +164,7 @@ inline void cVertexShader::SetFloat(const SHADER_HANDLE& h,const float vect)
 {
 	if(h.num_register)
 	{
-        D3DXVECTOR4 v(vect,vect,vect,vect);
+        Vect4f v(vect,vect,vect,vect);
 		gb_RenderDevice3D->SetVertexShaderConstant(h.begin_register,&v);
 //		pConstantTable->SetFloat(gb_RenderDevice3D->lpD3DDevice,h,vect);
 	}
@@ -218,13 +218,13 @@ void cVertexShader::GetVariableByName(SHADER_HANDLE& sh,const char* name)
 
 void VSScene::SetLight(SHADER_HANDLE& spos,SHADER_HANDLE& scolor,SHADER_HANDLE& sparam,cUnkLight* l)
 {
-	sColor4f color=l->GetDiffuse();;
+	sColor4f color=l->GetDiffuse();
 	Vect3f pos=l->GetPos();
 	float radius=max(l->GetRadius(),1.0f);
-	D3DXVECTOR4 position(pos.x,pos.y,pos.z,1);
-	D3DXVECTOR4 r(1,1/radius/radius,0,0.5f);
+	Vect4f position(pos.x,pos.y,pos.z,1);
+	Vect4f r(1,1/radius/radius,0,0.5f);
 	SetVector(spos,&position);
-	SetVector(scolor,(D3DXVECTOR4*)&color);
+	SetVector(scolor, reinterpret_cast<const Vect4f*>(&color));
 	SetVector(sparam,&r);
 }
 
@@ -260,10 +260,10 @@ void PixelShader::Delete()
 
 void VSShadow::Select(const MatXf& world)
 {
-	D3DXMATRIX mat;
-	cD3DRender_SetMatrix(mat,world);
-	D3DXMatrixMultiply(&mat,&mat,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
-	D3DXMatrixTranspose(&mat,&mat);
+	Mat4f mat;
+    Mat4fSetTransposedMatXf(mat, world);
+    mat = mat * gb_RenderDevice3D->GetDrawNode()->matViewProj;
+    mat.xpose();
 
 	gb_RenderDevice3D->SetVertexShaderConstant(0, &mat);
 
@@ -273,7 +273,7 @@ void VSShadow::Select(const MatXf& world)
 void cVertexShader::SetTextureTransform(MatXf& m)
 {
 /*
-	D3DXVECTOR4 c0(m.rot()[0][0],m.rot()[1][0],m.trans().x,0),
+	Vect4f c0(m.rot()[0][0],m.rot()[1][0],m.trans().x,0),
 				c1(m.rot()[0][1],m.rot()[1][1],m.trans().y,0);
 
 	gb_RenderDevice3D->SetVertexShaderConstant(26,&c0);
@@ -291,8 +291,8 @@ void VSChaos::Select(float umin,float vmin,float umin2,float vmin2,
 {
 	SetFog();
 	SetMatrix(mWVP, &gb_RenderDevice3D->GetDrawNode()->matViewProj);
-    D3DXVECTOR4 uv(umin,vmin,umin2,vmin2);
-    D3DXVECTOR4 uvb(umin_b0,vmin_b0,umin_b1,vmin_b1);
+    Vect4f uv(umin,vmin,umin2,vmin2);
+    Vect4f uvb(umin_b0,vmin_b0,umin_b1,vmin_b1);
 	SetVector(mUV,&uv);
 	SetVector(mUVBump,&uvb);
 	SetMatrix(mWorldView, &gb_RenderDevice3D->GetDrawNode()->matView);
@@ -328,7 +328,7 @@ void PSChaos::Restore()
 
 void VSChaos::SetFog()
 {
-    D3DXVECTOR4 v = gb_RenderDevice3D->dtAdvance->GetFogParam();
+    Vect4f v = gb_RenderDevice3D->dtAdvance->GetFogParam();
     SetVector(vFog,&v);
 }
 
@@ -336,6 +336,3 @@ void VSChaos::SetFog()
 #include "ShadersRadeon9700.inl"
 #include "ShadersPS14.inl"
 #include "ShadersGeforceFX.inl"
-
-#include "ShaderSkin.inl"
-#include "ShaderWater.inl"

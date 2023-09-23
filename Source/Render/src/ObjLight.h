@@ -8,10 +8,6 @@ class cObjLight : public cObjectNode
 
 	cTexture		*Texture;
 	sColor4f		Diffuse;
-
-	double fade;
-	double prev_time;
-	cOcclusionQuery occlusion;
 public:
 	cObjLight();
 	virtual ~cObjLight();
@@ -37,7 +33,5 @@ public:
 	void SetTextureLight(cTexture *pTexture,int attr=0);
 
 	virtual void ChangeBank(cAllMeshBank* new_root);
-
-	void OcclusionTest();
 };
 

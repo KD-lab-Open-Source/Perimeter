@@ -5,14 +5,15 @@
 
 class terSoundController;
 
-
+//NOTE: We can't override attr() with AttributeProjectile or terProjectileDebris will fail casting it as they have AttributeReal
 class AttributeProjectile : public AttributeReal
 {
 public:
 	AttributeProjectile();
 
-private:
-	RigidBodyPrm rigidBodyPrm_;
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeReal::serialize_template(ar);
+    }
 };
 
 /// Базовый класс для снарядов, ракет, бомб и т.д.
@@ -21,11 +22,7 @@ class terProjectileBase : public terUnitReal
 public:
 	terProjectileBase(const UnitTemplate& data);
 
-	const AttributeProjectile& attr() const {
-		return safe_cast_ref<const AttributeProjectile&>(terUnitReal::attr());
-	}
-
-	void Collision(terUnitBase* p);
+    void Collision(terUnitBase* p);
 	void AvatarQuant();
 
 	void DestroyLink();

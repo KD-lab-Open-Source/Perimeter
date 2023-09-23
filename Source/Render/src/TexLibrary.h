@@ -1,7 +1,6 @@
 #pragma once
 
 class cTexture;
-class cTextureScale;
 
 class cTexLibrary
 {
@@ -15,8 +14,6 @@ public:
 	bool EnableError(bool enable);
 	cTexture* GetElementAviScale(const char* TextureName,char *pMode =0);
 	cTexture* GetElement(const char *pTextureName,char *pMode=0);
-	cTextureScale* GetElementScale(const char *pTextureName,Vect2f scale);
-	cTexture* GetElementColor(const char *pTextureName,sColor4c color,char *pMode=0);
 
 	inline int GetNumberTexture()							{ return textures.size(); }
 	inline cTexture* GetTexture(int number)					{ return textures[number]; }
@@ -27,19 +24,24 @@ public:
 
 	MTSection* GetLock(){return &lock;}
 	void ReloadAllTexture();
+    
+    void SetCurrentBumpScale(float scale) { current_bump_scale = scale; }
 private:
 	cTexture* CreateTexture(int sizex,int sizey,bool alpha,bool default_pool);
 	bool enable_error;
+    float current_bump_scale = 1;
 	std::vector<cTexture*> textures;
+    std::unordered_map<std::string, float> texture_bump_scale;
 	void FreeOne(FILE* f);
 
-	bool LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale);
-	bool ReLoadTexture(cTexture* Texture,Vect2f kscale);
+	bool LoadTexture(cTexture* Texture,char *pMode);
 	bool ReLoadTexture(cTexture* Texture);
 
 	void Error(cTexture* Texture);
 
+#ifdef PERIMETER_D3D9
 	bool ReLoadDDS(cTexture* Texture);
+#endif
 	MTSection lock;
 };
 

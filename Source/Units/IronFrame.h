@@ -95,8 +95,8 @@ public:
 	terFrame(const UnitTemplate& data);
 	~terFrame();
 	
-	const AttributeFrame& attr() const {
-		return safe_cast_ref<const AttributeFrame&>(terUnitReal::attr());
+	const AttributeFrame* attr() const override {
+		return safe_cast<const AttributeFrame*>(terUnitReal::attr());
 	}
 
 	void DestroyLink();

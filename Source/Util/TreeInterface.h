@@ -249,18 +249,14 @@ private:
 
 struct TreeControlSetup
 {
-#ifdef _WIN32
-	RECT window;
-#endif
+	sRect window;
 	bool expandAllNodes_;
 
 	TreeControlSetup(int left, int top, int right, int bottom, const char* configName, bool expandAllNodes = false) {
-#ifdef _WIN32
 		window.left = left; 
 		window.top = top; 
 		window.right = right; 
 		window.bottom = bottom;
-#endif
         expandAllNodes_ = expandAllNodes;
 		configName_ = configName;
 		assert(configName_);
@@ -282,7 +278,7 @@ private:
 
 // Копирует дерево, возвращает указатель на статические данные, либо 0.
 extern "C" DLL_API TreeNode const* treeControlEdit(const TreeNode* treeNode, 
-										 HWND hwnd, TreeControlSetup& treeControlSetup);
+										 void* hwnd, TreeControlSetup& treeControlSetup);
 // Очищает статические данные
 extern "C" DLL_API void treeControlFree(TreeNode const* );
 
@@ -292,7 +288,7 @@ extern "C" DLL_API void treeControlFree(TreeNode const* );
 
 #else // _FINAL_VERSION_
 
-inline TreeNode const* treeControlEdit(const TreeNode* treeNode, HWND hwnd, TreeControlSetup& treeControlSetup){ return 0; }
+inline TreeNode const* treeControlEdit(const TreeNode* treeNode, void* hwnd, TreeControlSetup& treeControlSetup){ return 0; }
 inline void treeControlFree(TreeNode const* ){}
 
 #endif // _FINAL_VERSION_

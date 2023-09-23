@@ -42,7 +42,7 @@ void CheckBuildTerrainUnit(terUnitAttributeID nAttrID)
 	for(int k=0;k<5;k++)
 	{
 		terUnitBase* p = slots[k].unit;
-		if(p && p->attr().ID==nAttrID)
+		if(p && p->attr()->ID==nAttrID)
 		{
 			count_unit++;
 		}
@@ -84,8 +84,9 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	if(code == EVENT_PRESSED)
 	{
-		if(gameShell->BuildingInstaller.inited())
-			gameShell->BuildingInstaller.CancelObject();
+		if (gameShell->BuildingInstallerInited()) {
+            gameShell->BuildingInstaller->CancelObject();
+        }
 
 		CheckBuildTerrainUnit(UNIT_ATTRIBUTE_TERRAIN_MASTER);
 
@@ -331,7 +332,7 @@ void CShellLogicDispatcher::OnOverUnit(terUnitBase* p)
 		OnOverFriend(p);
 	else
 	{
-		switch(p->attr().ID)
+		switch(p->attr()->ID)
 		{
 		case UNIT_ATTRIBUTE_FRAME:
 			OnOverFrame();
@@ -1128,8 +1129,10 @@ void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 			CheckBuildTerrainUnit(UNIT_ATTRIBUTE_BUILD_MASTER);
 
-			gameShell->BuildingInstaller.InitObject(universe()->activePlayer()->unitAttribute(n_struct));
-			gameShell->BuildingInstaller.SetBuildPosition(gameShell->mousePosition(), universe()->activePlayer());
+            if (gameShell->BuildingInstaller) {
+                gameShell->BuildingInstaller->InitObject(universe()->activePlayer()->unitAttribute(n_struct));
+                gameShell->BuildingInstaller->SetBuildPosition(gameShell->mousePosition(), universe()->activePlayer());
+            }
 		}
 	} else if (code == EVENT_PRESSED_DISABLED) {
 		CShellComplexPushButton* pBtn = (CShellComplexPushButton*)pWnd;
@@ -1238,7 +1241,7 @@ void OnButtonTogether(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		UnitList::const_iterator selIt;
 		for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
 			if ((*selIt) != pSquadSelected && !((terUnitSquad*)(*selIt))->Empty() && ((terUnitSquad*)(*selIt))->isBase()) {
-				pSquadSelected->commandOutcoming(UnitCommand(COMMAND_ID_ADD_SQUAD, *selIt, COMMAND_SELECTED_MODE_SINGLE));
+				pSquadSelected->commandOutcoming(UnitCommand(COMMAND_ID_ADD_SQUAD, *selIt, COMMAND_SELECTED_MODE_NONE));
 			}
 		}
 	}
@@ -1356,15 +1359,16 @@ void OnMapWindowClicked(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 		if (x > 0 && y > 0 && x < vMap.H_SIZE && y < vMap.V_SIZE && gameShell->m_ShellDispatcher.GetSelectedUnit() && !gameShell->m_ShellDispatcher.GetSelectedUnit()->isBuilding()) {
 			Vect3f v(x, y, 0);
-			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, COMMAND_SELECTED_MODE_SINGLE);
+			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, isControlPressed() ? COMMAND_SELECTED_MODE_OVERRIDE : COMMAND_SELECTED_MODE_NONE);
 		}
 	}
 }
 
 void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
-	if(code == EVENT_PRESSED)
-		universe()->makeCommand(COMMAND_ID_RETURN_TO_BASE, 0, COMMAND_SELECTED_MODE_SINGLE);
+	if(code == EVENT_PRESSED) {
+        universe()->makeCommand(COMMAND_ID_RETURN_TO_BASE, 0, isControlPressed() ? COMMAND_SELECTED_MODE_OVERRIDE : COMMAND_SELECTED_MODE_NONE);
+    }
 }
 
 static CShellWindow* _pBtnLastRequest = 0;
@@ -1418,7 +1422,7 @@ void OnButtonTerrainBuild(CShellWindow* pWnd, InterfaceEventCode code, int param
 //			HT-SELECT!!!
 			if (mt_interface_quant) {
 				TerrainButtonData* slotData = &(gameShell->getLogicUpdater().getLogicData()->slots[nSlot]);
-				universe()->select.unitToSelection(slotData->unit, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+				universe()->select.unitToSelection(slotData->unit, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 			}
 		}
 	}
@@ -1468,7 +1472,7 @@ void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		SquadPageData& squad_data=logicData->squads[param];
 		
 		if (squad_data.enabled) {
-			universe()->select.unitToSelection(pSquad, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE, true);
+			universe()->select.unitToSelection(pSquad, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE, true);
 //			universe()->DeselectAll();
 	
 //			universe()->SelectSquad(pSquad);
@@ -1484,13 +1488,13 @@ void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	{
 		CSELECT_AUTOLOCK();
 		const UnitList& selList=universe()->select.GetSelectList();
-		if (selList.empty() || !(selList.front()->attr().ID == UNIT_ATTRIBUTE_SQUAD)) {
+		if (selList.empty() || !(selList.front()->attr()->ID == UNIT_ATTRIBUTE_SQUAD)) {
 			return;
 		}
 		UnitList::const_iterator selIt;
 		for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
 			if ((*selIt) != pSquad) {
-				(*selIt)->commandOutcoming(UnitCommand(COMMAND_ID_FOLLOW_SQUAD, pSquad, 0, COMMAND_SELECTED_MODE_SINGLE));
+				(*selIt)->commandOutcoming(UnitCommand(COMMAND_ID_FOLLOW_SQUAD, pSquad, 0, COMMAND_SELECTED_MODE_NONE));
 			}
 		}
 	}
@@ -1546,13 +1550,13 @@ void OnButtonAttack(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		terUnitBase* pUnit = _pShellDispatcher->GetSelectedUnit();
 		if (pUnit) {
 			const AttributeBase* attr = 0;
-			if (pUnit->attr().ID == UNIT_ATTRIBUTE_SQUAD) {
+			if (pUnit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
 				terUnitAttributeID id = safe_cast<terUnitSquad*>(pUnit)->currentMutation();
 				if (id != UNIT_ATTRIBUTE_NONE) {
 					attr = pUnit->Player->unitAttribute(id);
 				}
 			} else {
-				attr = &(pUnit->attr());
+				attr = pUnit->attr();
 			}
 
 //			if (attr && (attr->AttackClass & UNIT_CLASS_GROUND)) {
@@ -1629,7 +1633,7 @@ void OnButtonBackToFrame(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 		if(pUnit){
 			pUnit->soundEvent(SOUND_VOICE_MMP_BACK_TO_FRAME);
-			universe()->makeCommand(COMMAND_ID_OBJECT, universe()->activePlayer()->frame(), COMMAND_SELECTED_MODE_SINGLE);
+			universe()->makeCommand(COMMAND_ID_OBJECT, universe()->activePlayer()->frame(), COMMAND_SELECTED_MODE_NONE);
 		}
 	}
 }
@@ -1713,7 +1717,7 @@ void OnButtonBrigadierChange(CShellWindow* pWnd, InterfaceEventCode code, int pa
 				TerrainButtonData* slotData = &(gameShell->getLogicUpdater().getLogicData()->slots[i]);
 				if(slotData->unit == pUnit){
 					universe()->activePlayer()->ClusterPick(
-						pUnit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ? COMMAND_ID_BUILD_MASTER_INC : COMMAND_ID_TERRAIN_MASTER_INC, i);
+						pUnit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ? COMMAND_ID_BUILD_MASTER_INC : COMMAND_ID_TERRAIN_MASTER_INC, i);
 
 					universe()->activePlayer()->soundEvent(SOUND_VOICE_MMP_CONVERT_COMMAND);
 					break;

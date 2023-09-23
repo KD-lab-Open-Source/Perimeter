@@ -33,15 +33,15 @@ extern bool  bNoTracking;
 extern char _bMenuMode;
 
 
-inline int _is_track(RECT& rc)
+inline int _is_track(sRect& rc)
 {
 	return rc.left || rc.top || rc.right || rc.bottom;
 }
-inline int rect_width(RECT& rc)
+inline int rect_width(sRect& rc)
 {
 	return rc.right - rc.left;
 }
-inline int rect_height(RECT& rc)
+inline int rect_height(sRect& rc)
 {
 	return rc.bottom - rc.top;
 }
@@ -131,7 +131,7 @@ void CShellLogicDispatcher::quant(bool game_active)
 			if(m_nEditRegion == editRegion1)
 				_shellCursorManager.SetActiveCursor(m_bCanFlip && _shellIconManager.getCurrentEnabledOperation() ? CShellCursorManager::workarea_in : CShellCursorManager::workarea_out, 1);
 
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 			//TODO idk what is this for, apparently for not calling OnMouseMove if mouse is moving
 			MSG msg;
 			if(!PeekMessage(&msg, hWndVisGeneric, WM_MOUSEMOVE, WM_MOUSEMOVE, PM_NOREMOVE))
@@ -147,7 +147,7 @@ void CShellLogicDispatcher::quant(bool game_active)
 							m_fMousePressY - 0.5f,
 							m_fMouseCurrentX - 0.5f,
 							m_fMouseCurrentY - 0.5f,
-							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 //		} else {
 //			universe()->select.selectCurrentSelection();
 		}
@@ -161,7 +161,7 @@ void CShellLogicDispatcher::quant(bool game_active)
             lastMouseMoveHoverCheck = clockf();
 
             terPlayer* pPlayer = universe()->activePlayer();
-            if(pPlayer && !gameShell->BuildingInstaller.inited()) //если не тащим здание
+            if(pPlayer && !gameShell->BuildingInstallerInited()) //если не тащим здание
             {
                 //Find unit we may be hovering in mouse, in case we already are hovering one pass it as prev unit
                 terUnitBase* hoveringUnit = universe()->TraceUnit(Vect2f(m_fMouseCurrentX - 0.5f, m_fMouseCurrentY - 0.5f));
@@ -214,7 +214,7 @@ void CShellLogicDispatcher::quant(bool game_active)
             //Mark it
             if(_pUnitHover()) {
                 if((m_nState == STATE_DEFAULT) && _bCursorVisible &&
-                   !gameShell->BuildingInstaller.inited() && m_nEditRegion == editRegionNone)
+                   !gameShell->BuildingInstallerInited() && m_nEditRegion == editRegionNone)
                     _pUnitHover->Mark();
             }
         }
@@ -406,7 +406,7 @@ void SoundOnSetUnitTarget(terUnitBase* p)
 {
 	if(p)
 	{
-		switch(p->attr().ID)
+		switch(p->attr()->ID)
 		{
 		case UNIT_ATTRIBUTE_SQUAD:
 //			SND2DPlaySound("squad_moves");
@@ -427,7 +427,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 	case SHELL_PICK_UNIT_TARGET:
 		if(terCamera->cursorTrace(Vect2f(m_fMouseCurrentX-0.5f, m_fMouseCurrentY-0.5f), v))
 		{
-			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, COMMAND_SELECTED_MODE_SINGLE);
+			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, COMMAND_SELECTED_MODE_NONE);
 			m_nPickAction = SHELL_PICK_NONE;
 			setArrowCursor();
 			bRet = true;
@@ -442,7 +442,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 					universe()->select.makeCommandWithCanAttackFilter(_pUnitHover());
 //				else if (_pShellDispatcher->m_nPickData == 1) { // Стреляет по земле
 				else { // Стреляет по земле
-					if (pUnit->attr().ID == UNIT_ATTRIBUTE_SQUAD) {
+					if (pUnit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
 						universe()->select.makeCommandWithCanAttackFilter(v);
 					} else {
 						universe()->select.makeCommand2DWithCanAttackFilter(v);
@@ -461,7 +461,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 	case SHELL_PICK_UNIT_PATROL:
 		{
 			terUnitBase* pUnit = GetSelectedUnit();
-			if(pUnit == 0 || pUnit->attr().ID != UNIT_ATTRIBUTE_SQUAD)
+			if(pUnit == 0 || pUnit->attr()->ID != UNIT_ATTRIBUTE_SQUAD)
 			{
 				m_nPickAction = SHELL_PICK_NONE;
 				setArrowCursor();
@@ -470,7 +470,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 			{
 				if(m_nPickData == 1)
 				{
-					universe()->makeCommandSubtle(COMMAND_ID_PATROL, v, COMMAND_SELECTED_MODE_SINGLE);
+					universe()->makeCommandSubtle(COMMAND_ID_PATROL, v, COMMAND_SELECTED_MODE_NONE);
 					m_nPickData = 0;
 				}
 				else
@@ -491,7 +491,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 					&&	unitNeedRepairOrBuild(_pUnitHover())
 				) {
 
-				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), COMMAND_SELECTED_MODE_SINGLE);
+				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), COMMAND_SELECTED_MODE_NONE);
 			}
 
 			m_nPickAction = SHELL_PICK_NONE;
@@ -513,7 +513,7 @@ int CShellLogicDispatcher::OnLButtonDown(float x, float y)
 	if(!pPlayer)
 		return 0;
 
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstallerInited()) {
 		return 0;
 	}
 
@@ -530,7 +530,7 @@ int CShellLogicDispatcher::OnLButtonDown(float x, float y)
 				//над юнитом
 				if (_pUnitHover->playerID() == pPlayer->playerID()) {
 					//свой
-					universe()->select.unitToSelection(_pUnitHover(), isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+					universe()->select.unitToSelection(_pUnitHover(), isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 					SoundOnUnitPick(_pUnitHover());
 				} else {
 					//чужой
@@ -558,7 +558,7 @@ int CShellLogicDispatcher::OnLButtonUp(float x, float y)
 	if((m_nMouseButtonsState & MK_LBUTTON) == 0)
 		return 0;
 
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstallerInited()) {
 		return 0;
 	}
 
@@ -574,7 +574,7 @@ int CShellLogicDispatcher::OnLButtonUp(float x, float y)
 							m_fMousePressY - 0.5f,
 							m_fMouseCurrentX - 0.5f,
 							m_fMouseCurrentY - 0.5f,
-							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 			SoundOnUnitPick(_pUnitHover());
 		}
 	
@@ -589,7 +589,7 @@ int CShellLogicDispatcher::OnLButtonUp(float x, float y)
 }
 int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 {
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstallerInited()) {
 		return 0;
 	}
 	if (_pUnitHover()) {
@@ -609,7 +609,7 @@ int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 
 int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 {
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstallerInited()) {
 		return 0;
 	}
 
@@ -638,13 +638,15 @@ int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 				return 0;
 			}
 //			if (_pUnitHover() && _pUnitHover->Attribute.ID != UNIT_ATTRIBUTE_STATIC_NATURE && (_pUnitHover->playerID() != pPlayer->playerID())) {
-			if (_pUnitHover() && _pUnitHover->attr().ID != UNIT_ATTRIBUTE_STATIC_NATURE) {
-				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(),  !isShiftPressed() ? COMMAND_SELECTED_MODE_SINGLE : COMMAND_SELECTED_MODE_NEGATIVE);
+            CommandSelectionMode mode = isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE;
+            if (isControlPressed()) mode = static_cast<CommandSelectionMode>(mode | COMMAND_SELECTED_MODE_OVERRIDE);
+			if (_pUnitHover() && _pUnitHover->attr()->ID != UNIT_ATTRIBUTE_STATIC_NATURE) {
+				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), mode);
  				//SoundOnSetUnitEnemy(pSelected);
 			} else if (GetSelectedUnit() && !GetSelectedUnit()->isBuilding()) {
 				Vect3f v;
 				if (terCamera->cursorTrace(Vect2f(m_fMouseCurrentX-0.5f, m_fMouseCurrentY-0.5f), v)) {
-					universe()->makeCommandSubtle(COMMAND_ID_POINT, v, !isShiftPressed() ? COMMAND_SELECTED_MODE_SINGLE : COMMAND_SELECTED_MODE_NEGATIVE);
+					universe()->makeCommandSubtle(COMMAND_ID_POINT, v, mode);
 					SoundOnSetUnitTarget(GetSelectedUnit());
 				}
 			}
@@ -656,7 +658,7 @@ int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 }
 int CShellLogicDispatcher::OnRButtonUp(float x, float y)
 {
-	if (gameShell->BuildingInstaller.inited()) {
+	if (gameShell->BuildingInstallerInited()) {
 		return 0;
 	}
 
@@ -673,17 +675,17 @@ void CShellLogicDispatcher::SoundOnUnitPick(terUnitBase* p)
 {
 	if(!p)
 		return;
-	if (p->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER) {
+	if (p->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER) {
 		return;
 	}
 
-	if(p->GetSquadPoint() && p->attr().MilitaryUnit)
+	if(p->GetSquadPoint() && p->attr()->MilitaryUnit)
 	{
 		p->soundEvent(SOUND_VOICE_SQUAD_SELECTED);
 		return;
 	}
 
-	if(p->attr().ID == UNIT_ATTRIBUTE_FRAME){
+	if(p->attr()->ID == UNIT_ATTRIBUTE_FRAME){
 		terFrame* fp = safe_cast<terFrame*>(p);
 		if(fp->powered())
 			fp->soundEvent(SOUND_EVENT_SELECT_ALTERNATE);
@@ -711,7 +713,7 @@ int CShellLogicDispatcher::GetSelectedUnitsCount(int TypeID)
 	const UnitList& select_list=universe()->select.GetSelectList();
 	UnitList::const_iterator i;
 	FOR_EACH(select_list, i)
-		if((*i)->attr().ID == TypeID)
+		if((*i)->attr()->ID == TypeID)
 			n++;
 
 	return n;

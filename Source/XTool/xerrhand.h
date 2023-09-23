@@ -8,7 +8,7 @@
 #define NULL	0L
 #endif
 
-#define CRASH_DIR "perimeter_crash"
+#define CRASH_DIR "CrashData"
 
 #define X_WINNT 		0x0001
 #define X_WIN32S		0x0002
@@ -57,9 +57,10 @@ struct XErrorHandler
 std::string decodeStackAddress(const void* addr);
 
 extern XErrorHandler ErrH;
+extern void ErrH_RTC(const char *file,unsigned int line, const char *expr);
 
 // Use this macro for after any operation for errors diagnostic
-#define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
+#define XAssert(expr) ErrH_RTC(__FILE__,__LINE__,expr)
 
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG_ASSERT)) && !defined(NASSERT)

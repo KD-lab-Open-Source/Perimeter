@@ -612,7 +612,7 @@ void TEBaseWorkMode::moveLinkEnd(CPoint const& point)
 	case LAT_BEGIN:
 	{
 		Trigger const& linkOwner = getStrategyTrigger(getLinkOwnerIndex());
-		RECT const& boundingRect = linkOwner.boundingRect();
+		sRect const& boundingRect = linkOwner.boundingRect();
 		if (PtInRect(&boundingRect, point)) 
 		{
 			TriggerLink const& activeLink = 
@@ -1318,8 +1318,8 @@ bool TEBaseWorkMode::initTrigger(TriggerEditorView* source,
 	return true;
 }
 
-void TEBaseWorkMode::add2StrategyRect(TriggerChain &chain, 
-									  RECT const& rect4Add)
+void TEBaseWorkMode::add2StrategyRect(TriggerChain &chain,
+                                      sRect const& rect4Add)
 {
 	//прямоугольники охватывающий цепочку
 	CRect rcStrategy(chain.boundingRect());

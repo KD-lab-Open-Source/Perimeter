@@ -30,6 +30,12 @@
 #include "HistoryScene.h"
 #include "BelligerentSelect.h"
 
+#include "ANIFile.h"
+
+namespace scripts_export {
+#include "Scripts/InterfaceScriptExport.hi"
+}
+
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
 extern UnitInterfacePrm interface_frame_uninstalled;
@@ -75,7 +81,7 @@ _handlertbl[] = {
 	//start menu
 	{SQSH_MM_SINGLE_BTN, onMMSingleButton},
     {SQSH_MM_MULTIPLAYER_BTN, onMMMultiplayerButton},
-    {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
+    {SQSH_MM_COMMUNITY_BTN, onMMCommunityButton},
 	{SQSH_MM_OPTIONS_BTN, onMMOptionsButton},
 	{SQSH_MM_CREDITS_BTN, onMMCreditsButton},
     {SQSH_MM_QUIT_BTN, onMMQuitButton},
@@ -100,6 +106,14 @@ _handlertbl[] = {
     {SQSH_MM_ADDONS_APPLY_BTN, onMMAddonsApplyButton},
     {SQSH_MM_ADDONS_ENABLE_COMBO, onMMAddonsEnableCombo},
     {SQSH_MM_BACK_FROM_ADDONS_BTN, onMMAddonsBackButton},
+    
+    //community menu
+    {SQSH_MM_COMMUNITY_1_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_2_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_3_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_4_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
+    {SQSH_MM_BACK_FROM_COMMUNITY_BTN, onMMBackButton},
 
 	//profile editor
 	{SQSH_MM_NEW_PROFILE_BTN, onMMNewProfileButton},
@@ -150,6 +164,7 @@ _handlertbl[] = {
 	{SQSH_MM_MAP_LIST, onMMMapList},
 
 	//credits
+    {SQSH_MM_CREDITS_COMMUNITY_BTN, onMMCommunityButton},
 	{SQSH_MM_BACK_CREDITS_BTN, onMMBackButton},
 
 
@@ -326,6 +341,8 @@ _handlertbl[] = {
 	{SQSH_MM_GRAPHICS_FURROWS_COMBO,OnComboGraphicsFurrows},
 	{SQSH_MM_GAME_TOOLTIPS_COMBO,OnComboGameTooltips},
     {SQSH_MM_GAME_RUN_BACKGROUND_COMBO,OnComboGameRunBackground},
+    {SQSH_MM_GAME_START_SPLASH_COMBO,OnComboGameStartSplash},
+    {SQSH_MM_GAME_CAMERA_MODE_COMBO,OnComboGameCameraMode},
     {SQSH_MM_GRAPHICS_UI_ANCHOR_COMBO,OnComboGraphicsUIAnchor},
     {SQSH_MM_GRAPHICS_GRAB_INPUT_COMBO,OnComboGraphicsInputGrab},
     {SQSH_MM_GRAPHICS_FOG_COMBO,OnComboGraphicsFog},
@@ -506,9 +523,14 @@ CShellCursorManager::~CShellCursorManager()
 }
 void CShellCursorManager::Done()
 {
-	std::deque<CURSOR>::iterator i;
-	FOR_EACH(m_cursors, i)
-        _RELEASE(i->hCursorProgram);
+    for (auto& cur : m_cursors) {
+        _RELEASE(cur.texture);
+        if (cur.anifile) {
+            delete cur.anifile;
+            cur.anifile = nullptr;
+        }
+    }
+    m_cursors.clear();
 
 	_RELEASE(m_hFontCursorWorkarea);
 	_RELEASE(hFontMainmenu1);
@@ -519,17 +541,28 @@ void CShellCursorManager::Done()
 
 void CShellCursorManager::Load()
 {
-	CURSOR _c;
-	for(int i=0; i<_sqsh_cursor_count; i++)
-	{
+    CShellCursor _c;
+	for (int i=0; i<_sqsh_cursor_count; i++) {
 		sqshCursor& cc = _sqsh_cursors[i];
 
+        _c.anifile = nullptr;
 		_c.sx = cc.sx; 
 		_c.sy = cc.sy;
-		_c.bHotspotCentred = cc.hotspot_center;
-        _c.hCursorProgram = terVisGeneric->CreateTexture(cc.image);
+		_c.bHotspotCentered = cc.hotspot_center;
+        _c.texture = terVisGeneric->CreateTexture(cc.image);
 
-		m_cursors.push_back(_c);
+        //Load ANI file metadata
+        if (isANIFile(cc.image)) {
+            _c.anifile = new ANIFile();
+            int err = _c.anifile->load(cc.image, false);
+            if (err) {
+                fprintf(stderr, "Error %d loading ANI metadata for cursor %s\n", err, cc.image);
+                delete _c.anifile;
+                _c.anifile = nullptr;
+            }
+        }
+
+		m_cursors.emplace_back(_c);
 	}
 
 	//The default one is the first one (RESOURCE\\cursors\\arrow.cur)
@@ -537,7 +570,7 @@ void CShellCursorManager::Load()
 
 	SetActiveCursor(arrow);	
 
-	m_hFontCursorWorkarea = terVisGeneric->CreateFont(sqshShellMainFont, sqshCursorWorkAreaSize);
+	m_hFontCursorWorkarea = terVisGeneric->CreateGameFont(sqshShellMainFont, sqshCursorWorkAreaSize);
 }
 void CShellCursorManager::SetActiveCursor(int cursor, char bPermanent)
 {
@@ -552,7 +585,11 @@ void CShellCursorManager::SetActiveCursor(int cursor, char bPermanent)
 
 void CShellCursorManager::OnWMSetCursor()
 {
+#ifdef PERIMETER_DEBUG
+    SDL_ShowCursor(SDL_TRUE);
+#else
     SDL_ShowCursor(SDL_FALSE);
+#endif
     
 	if(!m_pActiveCursor)
 		return;
@@ -604,6 +641,30 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 	}
 }
 
+void CShellCursorManager::DrawCursor(CShellCursor* cursor, int x, int y, float phase, float scale) {
+    int sx = static_cast<int>(cursor->sx * scale);
+    int sy = static_cast<int>(cursor->sy * scale);
+    ANIFile* ani = cursor->anifile;
+    if (ani) {
+        int i = static_cast<int>(phase * 1000) / ani->tpf;
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (i >= ani->slices.size()) {
+            ErrH.Abort("Attempted to read slice " + std::to_string(i) + " which is out of bounds " + std::to_string(ani->slices.size()));
+        }
+#endif
+        size_t fi = ani->slices[i];
+#ifdef PERIMETER_DEBUG_ASSERT
+        if (fi >= ani->frames.size()) {
+            ErrH.Abort("Attempted to read frame " + std::to_string(fi) + " which is out of bounds " + std::to_string(ani->frames.size()));
+        }
+#endif
+        auto& hotspot = ani->frames[fi].hotspot;
+        x -= static_cast<int>(hotspot.x * scale);
+        y -= static_cast<int>(hotspot.y * scale);
+    }
+    terRenderDevice->DrawSprite(x, y, sx, sy, 0, 0, 1, 1, cursor->texture, sColor4c(255, 255, 255, 255), phase);
+}
+
 void CShellCursorManager::draw()
 {
 	m_ftime += frame_time.delta();
@@ -617,30 +678,22 @@ void CShellCursorManager::draw()
 			Vect3f v1,e1;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&gameShell->mapMoveStartPoint(), &v1, &e1);
 
-			CURSOR* pCursor = &m_cursors[map_move];
+            CShellCursor* pCursor = &m_cursors[map_move];
 
 			e1.x -= 16;
 			e1.y -= 16;
 
-			terRenderDevice->DrawSprite(e1.x, e1.y, pCursor->sx, pCursor->sy,
-				0, 0, 1, 1, pCursor->hCursorProgram, sColor4c(255, 255, 255, 255));
+            DrawCursor(pCursor, e1.x, e1.y);
 
 			return;
 		}
 		if(gameShell->cameraMouseTrack)
 		{
-			CURSOR* pCursor;
-			if(terCamera->tilting())
-				 pCursor = &m_cursors[tilt];
-			else
-				 pCursor = &m_cursors[rotate];
-
-			int x = (gameShell->mousePressControl().x + 0.5f)*terScreenSizeX - 16;
-			int y = (gameShell->mousePressControl().y + 0.5f)*terScreenSizeY - 16;
-
-			terRenderDevice->DrawSprite(x, y, pCursor->sx, pCursor->sy,
-				0, 0, 1, 1, pCursor->hCursorProgram, sColor4c(255, 255, 255, 255));
-
+            DrawCursor(
+                &m_cursors[terCamera->tilting() ? tilt : rotate],
+                static_cast<int>((gameShell->mousePressControl().x + 0.5f)*terScreenSizeX) - 16,
+                static_cast<int>((gameShell->mousePressControl().y + 0.5f)*terScreenSizeY) - 16
+            );
 			return;
 		}
 	}
@@ -676,14 +729,17 @@ void CShellCursorManager::draw()
 		}
 
 		//сдвиг карты
-		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * cur_x) + dx, xm::round(terScreenSizeY * cur_y) + dy,
-                                    m_cursors[m_nCursorShift].sx, m_cursors[m_nCursorShift].sy,
-                                    0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), xm::fmod(m_ftime, 1000)/1000.f);
+        DrawCursor(
+            &m_cursors[m_nCursorShift],
+            xm::round(terScreenSizeX * cur_x) + dx,
+            xm::round(terScreenSizeY * cur_y) + dy,
+            xm::fmod(m_ftime, 1000) / 1000.f
+        );
 		return;
 	}
 
 	//Draw normal cursor
-	CURSOR* cursor = m_pActiveCursor;	
+    CShellCursor* cursor = m_pActiveCursor;	
 	if(_bCursorVisible && !m_nCursorShift && cursor)
 	{
         //If game is running then set default cursor if user is hovering on a control
@@ -709,30 +765,36 @@ void CShellCursorManager::draw()
             printf("%s\n", text.c_str());
         }
 #endif
+        bool is_cursor_workarea = (cursor == &m_cursors[workarea_in]) || (cursor == &m_cursors[workarea_out]);
+        bool is_cursor_toolzer = (cursor == &m_cursors[rov]) || is_cursor_workarea;
         
 	    //Get cursor scale factor
 		float fScale = 1.0f;
-		if((cursor == &m_cursors[workarea_in]) || (cursor == &m_cursors[workarea_out])) {
+		if (is_cursor_workarea) {
             fScale = fCursorWorkareaDefaultHeight / terCamera->coordinate().distance();
         }
 
 		//Apply offset for cursor position
-        float draw_cur_x = cur_x;
-        float draw_cur_y = cur_y;
-        if(cursor->bHotspotCentred)
+        float draw_cur_x = cur_x;// - cursor->hotspot.x;
+        float draw_cur_y = cur_y;// - cursor->hotspot.y;
+        if (cursor->bHotspotCentered)
         {
-            draw_cur_x -= fScale*cursor->sx/terScreenSizeX*fWorkAreaCenterX;
-            draw_cur_y -= fScale*cursor->sy/terScreenSizeY*fWorkAreaCenterY;
+            draw_cur_x -= fScale*cursor->sx/terScreenSizeX*(is_cursor_toolzer ? fWorkAreaCenterX : 0.5f);
+            draw_cur_y -= fScale*cursor->sy/terScreenSizeY*(is_cursor_toolzer ? fWorkAreaCenterY : 0.5f);
         }
 
         //Draw it
-		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * draw_cur_x), xm::round(terScreenSizeY * draw_cur_y),
-			fScale*cursor->sx, fScale*cursor->sy,
-                                    0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), xm::fmod(m_ftime, 1000)/1000.f);
+		DrawCursor(
+            cursor,
+            xm::round(terScreenSizeX * draw_cur_x),
+            xm::round(terScreenSizeY * draw_cur_y),
+            xm::fmod(m_ftime, 1000) / 1000.f,
+            fScale
+        );
 
 	    //высота до зерослоя / Text for toolzer
 	    if(!_pShellDispatcher->m_bToolzerSizeChangeMode
-	    && (cursor == &m_cursors[workarea_in] || cursor == &m_cursors[workarea_out]))
+	    && (is_cursor_toolzer))
 		{
 			Vect3f v;
 			if(terCamera->cursorTrace(Vect2f(_pShellDispatcher->m_fMouseCurrentX-0.5f, _pShellDispatcher->m_fMouseCurrentY-0.5f), v))
@@ -1137,10 +1199,10 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 	}
 
 	//post load
-	hFontMainmenu1 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size1);
-	hFontMainmenu2 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size2);
-	hFontMainmenu3 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size3);
-	hFontMainmenu4 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size4);
+	hFontMainmenu1 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1);
+	hFontMainmenu2 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size2);
+	hFontMainmenu3 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size3);
+	hFontMainmenu4 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size4);
 
 	switch(nGroup)
 	{
@@ -1164,8 +1226,8 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 			_shellCursorManager.m_bShowSideArrows = 1;
 			_bMenuMode = 0;
 
-			m_hFontPopup = terVisGeneric->CreateFont(sqshFontPopup, infoWndFontSize);
-			m_hFontCountDownTime = terVisGeneric->CreateFont(sqshFontCountDownTime, sqshFontCountDownTimeSize);
+			m_hFontPopup = terVisGeneric->CreateGameFont(sqshFontPopup, infoWndFontSize);
+			m_hFontCountDownTime = terVisGeneric->CreateGameFont(sqshFontCountDownTime, sqshFontCountDownTimeSize);
 			m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
 
 			PostLoadTabSheets();
@@ -1572,6 +1634,10 @@ CShellWindow* CShellIconManager::CreateWnd(int id, ShellControlType type, CShell
 		pWnd = new CInfoWindow(id, pParent, proc);
 		break;
 
+    case SQSH_NETLATENCYINFOWND_TYPE:
+        pWnd = new CNetLatencyInfoWindow(id, pParent, proc);
+        break;
+
 	case SQSH_CHATINFO_WND_TYPE:
 		pWnd = new CChatInfoWindow(id, pParent, proc);
 		break;
@@ -1618,16 +1684,15 @@ void CShellIconManager::AddDynamicHandler(DYNCALLBACK _p, int code, int delay)
 
 //	fout < "AddDynamicHandler\n";
 
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH(m_dyn_queue, i)
-		if((i->cbproc == _p) && (i->code == code))
-		{
-			i->bDelete = 0;
-			i->time_delay = delay;
-			return;
-		}
+	for (auto& i : m_dyn_queue) {
+        if ((i.cbproc == _p) && (i.code == code)) {
+            i.bDelete = 0;
+            i.time_delay = delay;
+            return;
+        }
+    }
 
-	m_dyn_queue.push_back(DYN_QUEUE_ITEM(_p, code, delay));
+	m_dyn_queue.emplace_back(_p, code, delay);
 }
 void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
 {
@@ -1635,21 +1700,19 @@ void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
 
 //	fout < "DelDynamicHandler\n";
 
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH(m_dyn_queue, i)
-		if(( (i->cbproc == _p) || (_p == 0) ) && ( (i->code == code) || (code == 0) ))
-		{
-			i->bDelete = 1;
-			break;
-		}
+    for (auto& i : m_dyn_queue) {
+        if (((i.cbproc == _p) || (_p == 0)) && ((i.code == code) || (code == 0))) {
+            i.bDelete = 1;
+            break;
+        }
+    }
 }
 
 bool CShellIconManager::HasDynamicHandler(DYNCALLBACK _p, int code) {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
 
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH (m_dyn_queue, i) {
-		if (( (i->cbproc == _p) || (_p == 0) ) && ( (i->code == code) || (code == 0) )) {
+    for (auto const& i : m_dyn_queue) {
+		if (( (i.cbproc == _p) || (_p == 0) ) && ( (i.code == code) || (code == 0) )) {
 			return true;
 		}
 	}
@@ -1782,7 +1845,8 @@ int CShellIconManager::OnLButtonDown(float x, float y)
 		}
 		(m_pLastClicked = m_pFocus = pWnd)->OnLButtonDown(x, y);
 		if (universe()) {
-			universe()->checkEvent(EventClickOnButton((ShellControlID)pWnd->ID));
+            EventClickOnButton ev((ShellControlID)pWnd->ID);
+			universe()->checkEvent(&ev);
 		}
 		m_fTimePressed = frame_time();
 		r = 1;
@@ -1947,8 +2011,9 @@ void CShellIconManager::DrawControls(CShellWindow* pTop)
 		pTop->draw(m_pLastClicked == pTop);
 
 	std::list<CShellWindow*>::iterator i;
-	FOR_EACH(pTop->m_children, i)
-		DrawControls(*i);
+    for (auto i : pTop->m_children) {
+        DrawControls(i);
+    }
 
 	if (pTop->ID == SQSH_GAME_SCREEN_ID) {
 		terRenderDevice->FlushPrimitive2D();		
@@ -1962,7 +2027,7 @@ int CShellIconManager::ProcessDynQueue(int code, float x, float y)
 
 	int r = 0;
 
-	std::list<DYN_QUEUE_ITEM>::iterator i = m_dyn_queue.begin();
+	auto i = m_dyn_queue.begin();
 	while (i != m_dyn_queue.end()) {
 //		fout < "	 DYN_QUEUE_ITEM=" < ((DWORD)i->cbproc) < "\n";
 		if (i->bDelete) {
@@ -1986,15 +2051,14 @@ int CShellIconManager::ProcessDynQueue(int code, float x, float y)
 void CShellIconManager::QuantDynQueue(int dt)
 {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
-
-	std::list<DYN_QUEUE_ITEM>::iterator i;
-	FOR_EACH(m_dyn_queue, i)
-		i->time_delay -= dt;
+    for (auto& i : m_dyn_queue) {
+        i.time_delay -= dt;
+    }
 }
 
 bool CShellIconManager::isDynQueueEmpty() {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
-	return (m_dyn_queue.size() == 0);
+	return m_dyn_queue.empty();
 }
 
 void CShellIconManager::quant(float dTime)
@@ -2039,20 +2103,30 @@ void CShellIconManager::quant(float dTime)
 		m_nPromptMessageDelayTime -= dTime;
 		m_fPhase += dTime;
 	}
+    
+    //Set net info visibility
+    CShellWindow* wnd = GetWnd(SQSH_NET_LATENCY_INFO_ID);
+    if (wnd) {
+        bool visible = false;
+        if (gameShell->getNetClient()) {
+            visible = gameShell->getNetClient()->isGameRun();
+        }
+        wnd->Show(visible);
+    }
 
 	QuantDynQueue(dTime);
 	ProcessDynQueue(CBCODE_QUANT);
 }
 
-inline int _is_track(RECT& rc)
+inline int _is_track(sRect& rc)
 {
 	return rc.left || rc.top || rc.right || rc.bottom;
 }
-inline int rect_width(RECT& rc)
+inline int rect_width(sRect& rc)
 {
 	return rc.right - rc.left;
 }
-inline int rect_height(RECT& rc)
+inline int rect_height(sRect& rc)
 {
 	return rc.bottom - rc.top;
 }
@@ -2379,7 +2453,7 @@ void CShellIconManager::draw()
 					}
 //					else if(_pUnitHover && (_pUnitHover->playerID() == universe()->activePlayer()->playerID()))
 					else if (_pUnitHover())
-						FormatUnitPopup(&_pUnitHover->attr(), cbPopupBuffer, false, _pUnitHover());
+						FormatUnitPopup(_pUnitHover->attr(), cbPopupBuffer, false, _pUnitHover());
 //					else if(_pShellDispatcher->m_pUnitInfo)
 //						FormatUnitPopup(_pShellDispatcher->m_pUnitInfo, cbPopupBuffer, false, 0);
 
@@ -2426,37 +2500,45 @@ void CShellIconManager::draw()
 			}
 		}
 		if (!_bMenuMode) {
-			if (gameShell->GameActive && !_bMenuMode && gameShell->getCountDownTime() != "") {
-				terRenderDevice->SetFont(m_hFontCountDownTime);
-                sColor4f c(sqshFontCountDownTimeColor);
-				OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &c, -1);
-				terRenderDevice->SetFont(0);
-			}
+            //Number of base units
+            terRenderDevice->SetFont(m_hFontPopup);
+            static char _cb[256];
+            sprintf(_cb, units.c_str(), m_nTotalUnitsBaseCount, globalAttr().baseUnitsMax);
+            std::string topLine = _cb;
+            Vect2f v1, v2;
+            OutTextRect(0, 0 , topLine.c_str(), -1, v1, v2);
+            float w = v2.x - v1.x;
 
-			if (gameShell->GameActive && !_bMenuMode) {
-				terRenderDevice->SetFont(m_hFontPopup);
-                sColor4f c(1, 1, 1, 1);
-				OutText(absoluteX(totalTimerX), absoluteY(totalTimerY), (totalTime + gameShell->getTotalTime()).c_str(), &c, -1);
-				terRenderDevice->SetFont(0);
-			}
-
-			//общее кол-во базовых юнитов
-			static char _cb[25];
-			sprintf(_cb, units.c_str(), m_nTotalUnitsBaseCount, globalAttr().baseUnitsMax);
-			terRenderDevice->SetFont(m_hFontPopup);
-
-			Vect2f v1, v2;
-			OutTextRect(0, 0 , _cb, -1, v1, v2);
-			float baseUnitsX = absoluteX(nBaseUnitsDisplayX);
-			float baseUnitsY = absoluteY(nBaseUnitsDisplayY);
+            //Render text
+            const float separationX = 30.0f;
+			int baseUnitsX = terRenderDevice->GetSizeX() - w - separationX;
+			int baseUnitsY = absoluteY(scripts_export::gameTopEdge);
             sColor4f c(1, 1, 1, 1);
-			OutText(baseUnitsX, baseUnitsY, _cb, &c, -1);
-			terRenderDevice->SetFont(0);
+			OutText(baseUnitsX, baseUnitsY, topLine.c_str(), &c, -1);
 
-			Vect2f va(baseUnitsX - 2, baseUnitsY - 2);
-			Vect2f vb(va.x + v2.x-v1.x + 2, va.y + v2.y-v1.y + 2);
+            //Render rect
+            const float margin = 3;
+            Vect2f va(baseUnitsX - margin, baseUnitsY - margin);
+			Vect2f vb(va.x + w + margin * 2, va.y + v2.y-v1.y + margin * 2);
+			draw_rect_empty(va, vb, c);
 
-			draw_rect_empty(va, vb, sColor4f(1, 1, 1, 1));
+            if (gameShell->GameActive) {
+                //Draw countdown
+                if (!gameShell->getCountDownTime().empty()) {
+                    terRenderDevice->SetFont(m_hFontCountDownTime);
+                    sColor4f c(sqshFontCountDownTimeColor);
+                    OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &c, -1);
+                }
+
+                //Add total time
+                terRenderDevice->SetFont(m_hFontPopup);
+                topLine = totalTime + gameShell->getTotalTime();
+                OutTextRect(0, 0 , topLine.c_str(), -1, v1, v2);
+                baseUnitsX -= v2.x - v1.x + separationX;
+                OutText(baseUnitsX, baseUnitsY, topLine.c_str(), &c, -1);
+            }
+            
+            terRenderDevice->SetFont(0);
 		}
 
 	} else if (m_pDesktop) {
@@ -2522,8 +2604,6 @@ void CShellIconManager::draw()
 		}
 
 	}
-
-	_shellCursorManager.draw();
 }
 
 void CShellIconManager::forceDraw() {
@@ -2562,7 +2642,7 @@ float GetUnitBuildProgress(terUnitBase* p) {
 	return res > 0 ? res : FLT_EPS;
 }
 
-float GetUnitUpgradeProgress(terBuilding* p) {
+float GetUnitUpgradeProgress(const terBuilding* p) {
 	if(p->isConstructed())
 		return 1.0f;
 
@@ -3084,10 +3164,10 @@ inline void CheckBuildingPowerButton(terUnitBase* pUnit)
 	CShellComplexPushButton* pBtnOn = (CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SELPANEL_POWERON_ID);
 	CShellComplexPushButton* pBtnOff = (CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SELPANEL_POWEROFF_ID);
 	if (pBtnOn && pBtnOff) {
-		pBtnOn->Show(TRUE);
-		pBtnOff->Show(TRUE);
-		pBtnOn->Enable(pUnit == 0 ? TRUE : (!pUnit->isBuildingPowerOn()));
-		pBtnOff->Enable(pUnit == 0 ? TRUE : (pUnit->isBuildingPowerOn()));
+		pBtnOn->Show(true);
+		pBtnOff->Show(true);
+		pBtnOn->Enable(pUnit == 0 ? true : (!pUnit->isBuildingPowerOn()));
+		pBtnOff->Enable(pUnit == 0 ? true : (pUnit->isBuildingPowerOn()));
 	}
 }
 
@@ -3095,28 +3175,28 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 {
 	CShellComplexPushButton* pBtn;
 
-#define SHOW_ICON_IF(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(TRUE); pBtn->Enable(enbl);}}
-#define SHOW_ICON_IF2(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(TRUE); pBtn->Enable(enbl || pBtn->GetCheck());}}
+#define SHOW_ICON_IF(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(true); pBtn->Enable(enbl);}}
+#define SHOW_ICON_IF2(cond, enbl, id)  if(cond){pBtn = (CShellComplexPushButton*)GetWnd(id); if(pBtn){ pBtn->Show(true); pBtn->Enable(enbl || pBtn->GetCheck());}}
 
 //	bool bShowAttack = actions.op_attack && pUnit->isBuildingPowerOn() && pUnit->CanBuildingEnable();
 
-	SHOW_ICON_IF(actions.op_move,   TRUE, SQSH_SELPANEL_MOVE_ID);
-	SHOW_ICON_IF(actions.op_stop,   TRUE, SQSH_SELPANEL_STOP_ID);
-	SHOW_ICON_IF(actions.op_stop2,  TRUE, SQSH_SELPANEL_STOP2_ID);
-	SHOW_ICON_IF(actions.op_attack,	TRUE, SQSH_SELPANEL_SQ_ATTACK_ID);
-	SHOW_ICON_IF(actions.op_back,   TRUE, SQSH_SELPANEL_SQ_BACK_ID);
-	SHOW_ICON_IF(actions.op_offdeff,TRUE, SQSH_SELPANEL_SQ_OFDEF_ID);
-	SHOW_ICON_IF(actions.op_patrol, TRUE, SQSH_SELPANEL_SQ_PATROL_ID);
-	SHOW_ICON_IF(actions.op_sell,   TRUE, SQSH_SELPANEL_SELL_ID);
-	SHOW_ICON_IF(actions.op_install,TRUE, SQSH_SELPANEL_FRAME_INSTALL_ID);
-	SHOW_ICON_IF(actions.op_teleportate,TRUE, SQSH_SELPANEL_FRAME_TELEPORTATE_ID);
-	SHOW_ICON_IF(actions.op_alarm,  TRUE, SQSH_SELPANEL_FRAME_ALARM_ID);
-	SHOW_ICON_IF(actions.op_brig_back, TRUE, SQSH_SELPANEL_BRIG_BACK_ID);
-	SHOW_ICON_IF(actions.op_brig_change,TRUE, SQSH_SELPANEL_BRIG_CHANGE_ID);
-	SHOW_ICON_IF(actions.op_brig_build, TRUE, SQSH_SELPANEL_BRIG_BUILD_ID);
+	SHOW_ICON_IF(actions.op_move,   true, SQSH_SELPANEL_MOVE_ID);
+	SHOW_ICON_IF(actions.op_stop,   true, SQSH_SELPANEL_STOP_ID);
+	SHOW_ICON_IF(actions.op_stop2,  true, SQSH_SELPANEL_STOP2_ID);
+	SHOW_ICON_IF(actions.op_attack,	true, SQSH_SELPANEL_SQ_ATTACK_ID);
+	SHOW_ICON_IF(actions.op_back,   true, SQSH_SELPANEL_SQ_BACK_ID);
+	SHOW_ICON_IF(actions.op_offdeff,true, SQSH_SELPANEL_SQ_OFDEF_ID);
+	SHOW_ICON_IF(actions.op_patrol, true, SQSH_SELPANEL_SQ_PATROL_ID);
+	SHOW_ICON_IF(actions.op_sell,   true, SQSH_SELPANEL_SELL_ID);
+	SHOW_ICON_IF(actions.op_install,true, SQSH_SELPANEL_FRAME_INSTALL_ID);
+	SHOW_ICON_IF(actions.op_teleportate,true, SQSH_SELPANEL_FRAME_TELEPORTATE_ID);
+	SHOW_ICON_IF(actions.op_alarm,  true, SQSH_SELPANEL_FRAME_ALARM_ID);
+	SHOW_ICON_IF(actions.op_brig_back, true, SQSH_SELPANEL_BRIG_BACK_ID);
+	SHOW_ICON_IF(actions.op_brig_change,true, SQSH_SELPANEL_BRIG_CHANGE_ID);
+	SHOW_ICON_IF(actions.op_brig_build, true, SQSH_SELPANEL_BRIG_BUILD_ID);
 	SHOW_ICON_IF(actions.op_upgrade && pUnit->isBuildingPowerOn() && pUnit->CanBuildingEnable(), 
 		safe_cast<terBuilding*>(pUnit)->canUpgrade(), intf_prm.upgrade_button_id);
-	SHOW_ICON_IF(actions.op_charging, TRUE, SQSH_SELPANEL_UNIT_CHARGE_ID);
+	SHOW_ICON_IF(actions.op_charging, true, SQSH_SELPANEL_UNIT_CHARGE_ID);
 
 	updateButtonLabel(intf_prm.upgrading_button_id, 0, 0, false, true);
 	updateButtonLabel(intf_prm.upgrade_button_id, 0, 0, false, true);
@@ -3127,7 +3207,7 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 	if (actions.op_power_onoff && pUnit->CanBuildingEnable()) {
 		CShellComplexPushButton* pBtnOn = (CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SELPANEL_POWERON_ID);
 		if (pBtnOn) {
-			pBtnOn->Show(TRUE);
+			pBtnOn->Show(true);
 			bool powerOn = false;
 			CSELECT_AUTOLOCK();
 			const UnitList& selList=universe()->select.GetSelectList();
@@ -3147,8 +3227,8 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 	{
 		CShellComplexPushButton* pBtnOn = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_FIELDON_ID);
 		CShellComplexPushButton* pBtnCharge = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_START_CHARGE_ID);
-		pBtnOn->Show(TRUE);
-		pBtnCharge->Show(TRUE);
+		pBtnOn->Show(true);
+		pBtnCharge->Show(true);
 		bool fieldOn = false;
 		bool fieldOff = false;
 		bool chargeDisabled = false;
@@ -3181,7 +3261,7 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 
 	if (actions.op_offdeff) {
 		CShellComplexPushButton* pBtnOffDef = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_SQ_OFDEF_ID);
-		pBtnOffDef->Show(TRUE);
+		pBtnOffDef->Show(true);
 		pBtnOffDef->SetCheck(true);
 		CSELECT_AUTOLOCK();
 		//!!! В SelectList не обязательно сквад !!!
@@ -3297,21 +3377,21 @@ void CShellIconManager::UpdateActionStatus(terUnitBase* pUnit)
 //		pBtn->SetCheck(safe_cast<terUnitSquad*>(pUnit)->GetInterfaceOffensiveMode() == 0);
 //	}
 }
-void CShellIconManager::ShowUpgradeBuildProcessIcons(terUnitBase* pUnit)
+void CShellIconManager::ShowUpgradeBuildProcessIcons(const terUnitBase* pUnit)
 {
-	if(pUnit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ||
-		pUnit->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER)
+	if(pUnit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER ||
+		pUnit->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER)
 		return;
 
-	if (pUnit->attr().isUpgrade || pUnit->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)	{
-		GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Enable(FALSE);
-		_shellIconManager.GetWnd(SQSH_SELPANEL_SELL_ID)->Show(pUnit->attr().ID != UNIT_ATTRIBUTE_CORRIDOR_OMEGA);
-		_shellIconManager.GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Show(TRUE);
-		terBuilding* b = safe_cast<terBuilding*>(pUnit);
-		updateButtonLabel(pUnit->attr().interfacePrm.upgrading_button_id, 0, GetUnitUpgradeProgress(b), b->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION, true);
+	if (pUnit->attr()->isUpgrade || pUnit->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)	{
+		GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Enable(false);
+		_shellIconManager.GetWnd(SQSH_SELPANEL_SELL_ID)->Show(pUnit->attr()->ID != UNIT_ATTRIBUTE_CORRIDOR_OMEGA);
+		_shellIconManager.GetWnd(pUnit->attr()->interfacePrm.upgrading_button_id)->Show(true);
+		const terBuilding* b = safe_cast<const terBuilding*>(pUnit);
+		updateButtonLabel(pUnit->attr()->interfacePrm.upgrading_button_id, 0, GetUnitUpgradeProgress(b), b->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION, true);
 	} else {
 		ShellControlID ids[] = { SQSH_SELPANEL_SELL_ID };
-		ShowControls(TRUE, ids, sizeof(ids)/sizeof(ShellControlID));
+		ShowControls(true, ids, sizeof(ids)/sizeof(ShellControlID));
 	}
 }
 
@@ -3337,12 +3417,12 @@ void CShellIconManager::UpdateSelectionIcons()
 		SQSH_SELPANEL_UPGRADE_EMPIRE1_ID,SQSH_SELPANEL_UPGRADE_EMPIRE2_ID,
 		SQSH_SELPANEL_UPGRADE_HARKBACK1_ID,SQSH_SELPANEL_UPGRADE_HARKBACK2_ID };
 
-	ShowControls(FALSE, ids, sizeof(ids)/sizeof(ShellControlID));
+	ShowControls(false, ids, sizeof(ids)/sizeof(ShellControlID));
 
 	const UnitInterfacePrm* unit_prm = 0;
 	UnitInterfaceActions    actions;
 
-	terUnitBase*          pUnit = 0;
+	terUnitBase*          pUnit = nullptr;
 	const AttributeBase* attr = 0;
 
 	actions.set();
@@ -3355,10 +3435,9 @@ void CShellIconManager::UpdateSelectionIcons()
 		if(list_units.empty())
 			return;
 
-		FOR_EACH(list_units, i_unit)
-		{
-			pUnit = *i_unit;
-			attr = &(pUnit->attr());
+		for (terUnitBase* unit : list_units) {
+            pUnit = unit;
+			attr = pUnit->attr();
 
 	/*		if(framePowered_)
 			{
@@ -3373,16 +3452,16 @@ void CShellIconManager::UpdateSelectionIcons()
 			{
 				if(attr->interfacePrm.actions.op_sell){
 					ShellControlID ids[] = { SQSH_SELPANEL_SELL_ID };
-					ShowControls(TRUE, ids, sizeof(ids)/sizeof(ShellControlID));
+					ShowControls(true, ids, sizeof(ids)/sizeof(ShellControlID));
 				}
 			}
 	*/
 
-			switch(pUnit->attr().ID)
+			switch(pUnit->attr()->ID)
 			{
 			case UNIT_ATTRIBUTE_SQUAD:
 				{
-					terUnitSquad* sq = safe_cast<terUnitSquad*>(pUnit);
+					const terUnitSquad* sq = safe_cast<const terUnitSquad*>(pUnit);
 					if(sq->Empty())
 					{
 						attr = 0;
@@ -3411,8 +3490,9 @@ void CShellIconManager::UpdateSelectionIcons()
 				break;
 
 			case UNIT_ATTRIBUTE_FRAME:
-				if(safe_cast<terFrame*>(pUnit)->frameStatus() == terFrame::MOBILE)
-					unit_prm = &interface_frame_uninstalled;
+				if(safe_cast<const terFrame*>(pUnit)->frameStatus() == terFrame::MOBILE) {
+                    unit_prm = &interface_frame_uninstalled;
+                }
 
 				if (pUnit != universe()->activePlayer()->frame()) {
 					unit_prm = 0;
@@ -3655,7 +3735,7 @@ void CShellIconManager::UpdateSquadIcons()
         bool disableTogetherBtn = false;
         bool showTogetherBtn = false;
 		if (	(_pShellDispatcher->GetSelectedUnitsCount() > 1) && 
-				(_pShellDispatcher->GetSelectedUnit()->attr().ID == UNIT_ATTRIBUTE_SQUAD)
+				(_pShellDispatcher->GetSelectedUnit()->attr()->ID == UNIT_ATTRIBUTE_SQUAD)
 			) {
 			terUnitBase* b = _pShellDispatcher->GetSelectedUnit();
 
@@ -4071,7 +4151,7 @@ void LogicUpdater::updateSlotsData() {
 
 			slotData->unit = (terUnitReal*) units[i];
 			slotData->productionPhase = phase[i] / 100.0f;
-			slotData->isBrig = !units[i] || (units[i]->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER);
+			slotData->isBrig = !units[i] || (units[i]->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER);
 			slotData->enabled = (id[i] < 0) || units[i];
 			slotData->isInChanging = units[i] && (units[i]->GetInterfaceLegionMode() & INTERFACE_LEGION_MODE_EXCHANGE);
 			slotData->requestedAttr = id[i];
@@ -4405,18 +4485,18 @@ void LogicUpdater::updateMiniMap() {
 					color = player->unitColor();
 					pos = (*ui)->position2D();
 				} else if (	(unitClass & (UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH) ) 
-							&& (*ui)->attr().ID != UNIT_ATTRIBUTE_FILTH_VOLCANO
+							&& (*ui)->attr()->ID != UNIT_ATTRIBUTE_FILTH_VOLCANO
 							) {
 					color = filthMapColor;
 					pos = (*ui)->position2D();
 				} else if ( unitClass & UNIT_CLASS_CORRIDOR && !(*ui)->isUnseen()) {
 					color = player->unitColor();
 					pos = (*ui)->position2D();
-					if ((*ui)->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) {
+					if ((*ui)->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) {
 						safe_cast<terCorridorAlpha*>(*ui)->putPath(logicData->alphaPath);
 					}
 				} else {
-					switch ((*ui)->attr().ClassID) {
+					switch ((*ui)->attr()->ClassID) {
 						case UNIT_CLASS_ID_TERRAIN_MASTER:
 						case UNIT_CLASS_ID_BUILD_MASTER:
 							color = player->unitColor();

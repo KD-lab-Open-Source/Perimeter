@@ -31,16 +31,16 @@ terCorpseDynamic::~terCorpseDynamic()
 
 void terCorpseDynamic::setParent(terUnitBase* p)
 {
-	OriginalAttribute = &p->attr();
+	OriginalAttribute = p->attr();
 	avatar()->SetModelPoint(p->avatar()->GetModelPoint());
 	
-	BodyPoint->build(*attr().rigidBodyPrm, avatar()->GetModelPoint(), p->GetRigidBodyPoint()->boxMin(), p->GetRigidBodyPoint()->boxMax());
+	BodyPoint->build(*attr()->rigidBodyPrm, avatar()->GetModelPoint(), p->GetRigidBodyPoint()->boxMin(), p->GetRigidBodyPoint()->boxMax());
 
 	setPose(p->pose(),false);
 //	avatar()->setPose(p->pose());
 	
-	if(p->needCrater() && p->attr().craterRadius())
-		setCrater(p->attr().craterRadius(),p->attr().craterDelay(),p->attr().craterID());
+	if(p->needCrater() && p->attr()->craterRadius())
+		setCrater(p->attr()->craterRadius(),p->attr()->craterDelay(),p->attr()->craterID());
 
 	if(p->GetRigidBodyPoint())
 		BodyPoint->setVelocity(p->GetRigidBodyPoint()->velocity());

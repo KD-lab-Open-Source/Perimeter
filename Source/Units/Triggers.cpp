@@ -176,37 +176,37 @@ bool ConditionObjectExists::check(AIPlayer& aiPlayer)
 	return false;
 }
 
-void ConditionCreateObject::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionCreateObject::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::CREATE_OBJECT){
-		const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-		if(checkPlayer(&aiPlayer, eventUnit.player(), playerType) && object == eventUnit.unit()->attr().ID)
+	if(event->type() == Event::CREATE_OBJECT){
+		const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+		if(checkPlayer(&aiPlayer, eventUnit->player(), playerType) && object == eventUnit->unit()->attr()->ID)
 			++created_;
 	}
-	else if(event.type() == Event::DESTROY_OBJECT){
-		const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-		if(checkPlayer(&aiPlayer, eventUnit.player(), playerType) && object == eventUnit.unit()->attr().ID)
+	else if(event->type() == Event::DESTROY_OBJECT){
+		const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+		if(checkPlayer(&aiPlayer, eventUnit->player(), playerType) && object == eventUnit->unit()->attr()->ID)
 			--created_;
 	}
 }
 
-void ConditionKillObject::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionKillObject::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::ATTACK_OBJECT){
-		const EventUnitMyUnitEnemy& eventUnit = safe_cast_ref<const EventUnitMyUnitEnemy&>(event);
-		if(checkPlayer(&aiPlayer, eventUnit.unitMy()->Player, playerType)
-			&& eventUnit.unitMy()->attr().ID == object
-			&& !eventUnit.unitMy()->damageMolecula().isAlive()){
+	if(event->type() == Event::ATTACK_OBJECT){
+		const EventUnitMyUnitEnemy* eventUnit = safe_cast<const EventUnitMyUnitEnemy*>(event);
+		if(checkPlayer(&aiPlayer, eventUnit->unitMy()->Player, playerType)
+			&& eventUnit->unitMy()->attr()->ID == object
+			&& !eventUnit->unitMy()->damageMolecula().isAlive()){
 				++killed_;
 		}
 	}
 }
 
-void ConditionCaptureBuilding::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionCaptureBuilding::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::CAPTURE_BUILDING){
-		const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-		if(checkPlayer(&aiPlayer, eventUnit.player(), playerType) && object == eventUnit.unit()->attr().ID)
+	if(event->type() == Event::CAPTURE_BUILDING){
+		const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+		if(checkPlayer(&aiPlayer, eventUnit->player(), playerType) && object == eventUnit->unit()->attr()->ID)
 			setSatisfied(60*60*1000);
 	}
 }
@@ -216,34 +216,34 @@ bool ConditionObjectByLabelExists::check(AIPlayer& aiPlayer)
 	return universe()->findUnitByLabel(label);
 }
 
-void ConditionKillObjectByLabel::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionKillObjectByLabel::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::DESTROY_OBJECT){
-		const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-		if(!strcmp(label, eventUnit.unit()->label()))
+	if(event->type() == Event::DESTROY_OBJECT){
+		const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+		if(!strcmp(label, eventUnit->unit()->label()))
 			setSatisfied();
 	}
 }
 
-void ConditionTimeMatched::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionTimeMatched::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::TIME){
-		const EventTime& eventTime = safe_cast_ref<const EventTime&>(event);
-		if(eventTime.time() < time*1000)
+	if(event->type() == Event::TIME){
+		const EventTime* eventTime = safe_cast<const EventTime*>(event);
+		if(eventTime->time() < time*1000)
 			setSatisfied();
 	}
 }
 
-void ConditionMouseClick::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionMouseClick::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::MOUSE_CLICK)
+	if(event->type() == Event::MOUSE_CLICK)
 		setSatisfied();
 }
 
-void ConditionClickOnButton::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionClickOnButton::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
-	if(event.type() == Event::CLICK_ON_BUTTON &&
-	  safe_cast_ref<const EventClickOnButton&>(event).controlID() == controlID)
+	if(event->type() == Event::CLICK_ON_BUTTON &&
+       safe_cast<const EventClickOnButton*>(event)->controlID() == controlID)
 			counter_++;
 }
 
@@ -282,16 +282,17 @@ bool ConditionSetSquadWayPoint::check(AIPlayer& aiPlayer)
 	return false;
 }
 
-void ConditionActivateSpot::checkEvent(AIPlayer& aiPlayer, const Event& event)
+void ConditionActivateSpot::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
-	if(event.type() == Event::ACTIVATE_SPOT){
-		if(safe_cast_ref<const EventActivateSpot&>(event).isFilth()){
-			if(type & FILTH)
-				setSatisfied();
-		}
-		else{
-			if(type & GEO)
-				setSatisfied();
+	if(event->type() == Event::ACTIVATE_SPOT){
+		if(safe_cast<const EventActivateSpot*>(event)->isFilth()){
+			if(type & FILTH) {
+                setSatisfied();
+            }
+		} else {
+			if(type & GEO) {
+                setSatisfied();
+            }
 		}
 	}
 }
@@ -300,8 +301,9 @@ bool ConditionObjectNearObjectByLabel::check(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
-		return false;
+		fprintf(stderr, "Object by label not found: %s\n", label.c_str());
+        xassert_s(0, "Object by label not found");
+        return false;
 	}												
 	else{
 		terUnitBase* unit2 = getPlayer(aiPlayer, playerType)->findUnit(object, unit->position2D());
@@ -324,13 +326,13 @@ bool ConditionWeaponIsFiring::check(AIPlayer& aiPlayer)
 	return list.front()->isFiring();
 }
 
-void ConditionTeleportation::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionTeleportation::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 { 
-	if(event.type() == Event::TELEPORTATION){
-		const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
-		if(checkPlayer(&aiPlayer, eventUnit.player(), playerType) &&
-			((teleportationType == TELEPORTATION_TYPE_ALPHA && eventUnit.unit()->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) ||
-			(teleportationType == TELEPORTATION_TYPE_OMEGA && eventUnit.unit()->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA))){
+	if(event->type() == Event::TELEPORTATION){
+		const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);
+		if(checkPlayer(&aiPlayer, eventUnit->player(), playerType) &&
+			((teleportationType == TELEPORTATION_TYPE_ALPHA && eventUnit->unit()->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) ||
+			(teleportationType == TELEPORTATION_TYPE_OMEGA && eventUnit->unit()->attr()->ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA))){
 				setSatisfied();
 		}
 	}
@@ -366,26 +368,26 @@ bool ConditionNumberOfBuildingByCoresCapacity::check(AIPlayer& aiPlayer)
 	return compare((int) xm::round(player->countUnits(building) * factor), player->countUnits(building2), compareOp);
 }
 
-void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event& event)
+void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
-	if(event.type() == Event::ATTACK_OBJECT){
-		const EventUnitMyUnitEnemy& eventUnit = safe_cast_ref<const EventUnitMyUnitEnemy&>(event);
-		if((playerType == AI_PLAYER_TYPE_ANY || checkPlayer(&aiPlayer, eventUnit.unitMy()->Player, playerType))
-			&& (eventUnit.unitMy()->unitClass() & victimUnitClass)
-			&& (!eventUnit.unitEnemy() || (eventUnit.unitEnemy()->unitClass() & agressorUnitClass)) 
-			&& (1 - eventUnit.unitMy()->life())*100 >= damagePercent){
+	if(event->type() == Event::ATTACK_OBJECT){
+		const EventUnitMyUnitEnemy* eventUnit = safe_cast<const EventUnitMyUnitEnemy*>(event);
+		if((playerType == AI_PLAYER_TYPE_ANY || checkPlayer(&aiPlayer, eventUnit->unitMy()->Player, playerType))
+			&& (eventUnit->unitMy()->unitClass() & victimUnitClass)
+			&& (!eventUnit->unitEnemy() || (eventUnit->unitEnemy()->unitClass() & agressorUnitClass)) 
+			&& (1 - eventUnit->unitMy()->life())*100 >= damagePercent){
 				setSatisfied();
 		}
 	}
 }
 
-void ConditionUnitClassIsGoingToBeAttacked::checkEvent(AIPlayer& aiPlayer, const Event& event)
+void ConditionUnitClassIsGoingToBeAttacked::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
-	if(event.type() == Event::AIM_AT_OBJECT){
-		const EventUnitMyUnitEnemy& eventUnit = safe_cast_ref<const EventUnitMyUnitEnemy&>(event);
-		if(&aiPlayer == eventUnit.unitMy()->Player
-			&& (eventUnit.unitMy()->unitClass() & victimUnitClass)
-			&& (eventUnit.unitEnemy()->unitClass() & agressorUnitClass)){
+	if(event->type() == Event::AIM_AT_OBJECT){
+		const EventUnitMyUnitEnemy* eventUnit = safe_cast<const EventUnitMyUnitEnemy*>(event);
+		if(&aiPlayer == eventUnit->unitMy()->Player
+			&& (eventUnit->unitMy()->unitClass() & victimUnitClass)
+			&& (eventUnit->unitEnemy()->unitClass() & agressorUnitClass)){
 				setSatisfied();
 		}
 	}
@@ -493,12 +495,12 @@ bool ConditionBuildingNearBuilding::check(AIPlayer& aiPlayer)
 	return false;
 }
 
-void ConditionPlayerState::checkEvent(AIPlayer& aiPlayer, const Event& event)
+void ConditionPlayerState::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
-	if(event.type() == Event::PLAYER_STATE){
-		const EventPlayerState& eventState = safe_cast_ref<const EventPlayerState&>(event);
-		if(eventState.playerState() == playerState){
-			active_ = eventState.activate();
+	if(event->type() == Event::PLAYER_STATE){
+		const EventPlayerState* eventState = safe_cast<const EventPlayerState*>(event);
+		if(eventState->playerState() == playerState){
+			active_ = eventState->activate();
 		}
 	}
 }
@@ -543,7 +545,8 @@ bool ActionDelay::workedOut(AIPlayer& aiPlayer)
 { 
 	if(showTimer){
 		gameShell->setCountDownTime(timer() ? timer() : -1);
-		aiPlayer.checkEvent(EventTime(timer()));
+        EventTime ev(timer());
+		aiPlayer.checkEvent(&ev);
 	}
 	return !timer(); 
 }
@@ -691,7 +694,7 @@ terUnitBase* ActionSellBuilding::findBuilding(AIPlayer& aiPlayer) const
 				terUnitBase* unit1 = guns[index_];
 				Vect2f position = unit1->position2D();
 				terUnitBase* unit2 = aiPlayer.enemyPlayer()->findUnitByUnitClass(UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN, position);
-				if(unit2 && position.distance2(unit2->position2D()) > sqr(unit1->attr().fireRadius()))
+				if(unit2 && position.distance2(unit2->position2D()) > sqr(unit1->attr()->fireRadius()))
 					return unit1;
 
 				index_++;
@@ -1008,7 +1011,7 @@ bool ActionSquadAttack::workedOut(AIPlayer& aiPlayer)
 					#ifndef _FINAL_VERSION_
 						//XBuffer buf(512, true);
 						//buf < "Не назначен класс атаки у " < getEnumNameAlt(squad->currentMutation())
-						//	< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
+						//	< ", чтобы атаковать " < getEnumNameAlt(target->attr()->ID);
 						//xassert_s(squad->squadUnits().front()->checkFireClass(target), buf);
 					#endif
 					if(!path.empty()){
@@ -1094,7 +1097,7 @@ bool ActionAttackBySpecialWeapon::automaticCondition(AIPlayer& aiPlayer) const
 	if(!unit || !safe_cast<terUnitReal*>(unit)->isWeaponLoaded())
 		return false;
 
-	return findTarget(aiPlayer, unit->position2D(), unit->attr().fireRadiusMin());
+	return findTarget(aiPlayer, unit->position2D(), unit->attr()->fireRadiusMin());
 }
 
 void ActionAttackBySpecialWeapon::activate(AIPlayer& aiPlayer)
@@ -1102,11 +1105,11 @@ void ActionAttackBySpecialWeapon::activate(AIPlayer& aiPlayer)
 	terUnitBase* unit = aiPlayer.findUnit(weapon);
 	if(unit){
 		terBuildingMilitary* warBuilding = safe_cast<terBuildingMilitary*>(unit);
-		terUnitBase* target = findTarget(aiPlayer, warBuilding->position2D(), unit->attr().fireRadiusMin());
+		terUnitBase* target = findTarget(aiPlayer, warBuilding->position2D(), unit->attr()->fireRadiusMin());
 		#ifndef _FINAL_VERSION_
 			XBuffer buf(512, true);
-			buf < "Не назначен класс атаки у " < getEnumNameAlt(unit->attr().ID)
-				< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
+			buf < "Не назначен класс атаки у " < getEnumNameAlt(unit->attr()->ID)
+				< ", чтобы атаковать " < getEnumNameAlt(target->attr()->ID);
 			xassert_s(unit->checkFireClass(target), buf);
 		#endif
 		if(target)
@@ -1238,7 +1241,7 @@ void ActionRepareObjectByLabel::activate(AIPlayer& aiPlayer)
 		xassert_s(0 && "Объект по метке не найден: ", label);
 	}
 	else{
-		unit->setDamageMolecula(unit->attr().damageMolecula);
+		unit->setDamageMolecula(unit->attr()->damageMolecula);
 	}
 }
 
@@ -1393,7 +1396,7 @@ void ActionSelectUnit::activate(AIPlayer& aiPlayer)
 	const UnitList& unit_list=aiPlayer.units();
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list, ui)
-		if((*ui)->attr().ID == unitID){
+		if((*ui)->attr()->ID == unitID){
 			universe()->select.allLikeUnitToSelection(*ui);
 			break;
 		}
@@ -1435,7 +1438,7 @@ void ActionActivateAllSpots::activate(AIPlayer& aiPlayer)
 	const UnitList& unit_list=world->units();
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list, ui)
-		switch((*ui)->attr().ID){
+		switch((*ui)->attr()->ID){
 		case UNIT_ATTRIBUTE_FILTH_SPOT:
 		case UNIT_ATTRIBUTE_GEO_INFLUENCE:
 		case UNIT_ATTRIBUTE_GEO_BREAK:
@@ -1454,7 +1457,7 @@ void ActionDeactivateAllSpots::activate(AIPlayer& aiPlayer)
 	const UnitList& unit_list=world->units();
 	UnitList::const_iterator ui;
 	FOR_EACH(unit_list, ui)
-		switch((*ui)->attr().ID){
+		switch((*ui)->attr()->ID){
 		case UNIT_ATTRIBUTE_FILTH_SPOT:
 		case UNIT_ATTRIBUTE_GEO_INFLUENCE:
 		case UNIT_ATTRIBUTE_GEO_BREAK:
@@ -1522,7 +1525,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	}
 }
 
-void Trigger::checkEvent(AIPlayer& aiPlayer, const Event& event)
+void Trigger::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
 	if(state_ == CHECKING && condition)
 		condition->checkEvent(aiPlayer, event);
@@ -1585,11 +1588,12 @@ void TriggerChain::save() const
 
 void TriggerChain::initializeTriggersAndLinks()
 {
-    FOR_EACH_AUTO(triggers, ti){
-		ti->state_ = Trigger::SLEEPING;
-		ti->executionCounter_ = 0;
-        FOR_EACH_AUTO(ti->outcomingLinks_, li)
-			li->active_ = false;
+    for (auto& ti : triggers) {
+		ti.state_ = Trigger::SLEEPING;
+		ti.executionCounter_ = 0;
+        for (auto& li : ti.outcomingLinks_) {
+            li.active_ = false;
+        }
 	}
 	find("START")->state_ = Trigger::CHECKING;
 }
@@ -1604,11 +1608,11 @@ void TriggerChain::quant(AIPlayer& aiPlayer)
     }
 }
 
-void TriggerChain::checkEvent(AIPlayer& aiPlayer, const Event& event)
+void TriggerChain::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
-	ActiveTriggers::iterator ti;
-	FOR_EACH(activeTriggers_, ti)
-		(*ti)->checkEvent(aiPlayer, event);
+	for (auto& ti : activeTriggers_) {
+        ti->checkEvent(aiPlayer, event);
+    }
 }
 
 void TriggerChain::activateTrigger(Trigger* trigger)
@@ -1700,6 +1704,12 @@ void SaveManualData::copyCamera(int playerID, const char* triggerName, const cha
         spline->path.emplace_back(path);
     }
     spline->useAsSpline = sourceSpline->useAsSpline;
+}
+
+void SaveManualData::clearSoundTracks() {
+    for (int i = 0; i < 3; i++) {
+        soundTracks[i].clear();
+    }
 }
 
 //------------------------------------------------------

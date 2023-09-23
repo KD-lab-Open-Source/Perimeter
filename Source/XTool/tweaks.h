@@ -10,8 +10,9 @@
 // disable FP contractions
 #ifdef _MSC_VER
 #pragma fp_contract (off)
-#endif
+#else
 #pragma STDC FP_CONTRACT OFF
+#endif
 
 #ifdef __ICL
 #pragma warning( disable : 880 1125)
@@ -66,5 +67,9 @@
 #define strdup _strdup
 #define THREAD_ID DWORD
 #endif
+
+#define NO_COPY_CONSTRUCTOR(T) \
+    T(const T&) = delete; \
+    T& operator=(T const&) = delete;
 
 #endif // __TWEAKS_H__

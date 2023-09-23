@@ -7,11 +7,7 @@
 #include <algorithm>
 #include <climits>
 #include <SDL_net.h>
-#include <map>
-
-//#ifdef PERIMETER_D3D9
-//#include <d3d9.h>
-//#endif
+#include <unordered_map>
 
 #include "tweaks.h"
 #include "xutil.h"

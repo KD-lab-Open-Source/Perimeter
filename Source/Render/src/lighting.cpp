@@ -1,5 +1,7 @@
 #include "StdAfxRD.h"
 #include "lighting.h"
+#include "DrawBuffer.h"
+#include "VertexFormat.h"
 
 LightingParameters::LightingParameters()
 {
@@ -71,8 +73,9 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 	float a=1-time;
 	sColor4c diffuse(255,255*a,255,a*255);
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLENDALPHA,0,pTexture);
-	DrawStrip strip;
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    db->Backwind();
 	float size=5+time*15;
 	sVertexXYZDT1 v1,v2;
 	v1.diffuse=diffuse;
@@ -104,32 +107,31 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 
 		v1.u1()=v2.u1()=t;
 		v1.v1()=0;v2.v1()=1;
-		strip.Set(v1,v2);
+		db->AutoTriangleStripStep(v1,v2);
 	}
-	strip.End();
+    db->DrawStrip();
 /**/
 	float a=1-time;
-	sColor4c diffuse(255,255*a,255,a*255);
+    uint32_t diffuse = gb_RenderDevice->ConvertColor(sColor4c(255,255*a,255,a*255));
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLENDALPHA,0,parent->pTexture);
-	DrawStrip strip;
-	strip.Begin();
+    gb_RenderDevice->SetWorldMat4f(nullptr);
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
+    
 	float size=parent->param.strip_width_begin+time*parent->param.strip_width_time;
-	sVertexXYZDT1 v1,v2;
-	v1.diffuse=diffuse;
-	v2.diffuse=diffuse;
-	for(int i=0;i<strip_list.size();i++)
-	{
-		OneStrip& p=strip_list[i];
-		v1.pos=p.pos;
-		v2.pos=p.pos;
-		v1.pos-=size*p.n;
-		v2.pos+=size*p.n;
-
-		v1.u1()=v2.u1()=p.u;
-		v1.v1()=0;v2.v1()=1;
-		strip.Set(v1,v2);
+    sVertexXYZDT1 *vb = db->LockTriangleStripSteps<sVertexXYZDT1>(strip_list.size());
+    for (size_t i = 0; i < strip_list.size(); ++i) {
+        const OneStrip& p = strip_list[i];
+        sVertexXYZDT1& v1 = vb[i*2];
+        sVertexXYZDT1& v2 = vb[i*2+1];
+        v1.diffuse = v2.diffuse = diffuse;
+        v1.pos=p.pos-(size*p.n);
+        v2.pos=p.pos+(size*p.n);
+        v1.u1()=v2.u1()=p.u;
+        v1.v1()=0;v2.v1()=1;
 	}
-	strip.End();
+    
+    db->Unlock();
+    db->EndTriangleStrip();
 }
 
 void cLighting::Animate(float dt)

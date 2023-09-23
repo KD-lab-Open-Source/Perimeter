@@ -4,11 +4,14 @@
 #include "NParticleKey.h"
 #include "observer.h"
 #include "Texture.h"
-#define EXPORT_TO_GAME 1
+#include "VertexFormat.h"
+
 #ifndef _FINAL_VERSION_
 	#define NEED_TREANGLE_COUNT 
 	#define EFFECTTOOL
 #endif
+
+const int EXPORT_TO_GAME = 1;
 
 class cEffect;
 
@@ -242,7 +245,7 @@ public:
 struct EmitterKeyInterface
 {
 	EmitterKeyInterface();
-	virtual ~EmitterKeyInterface(){};
+	virtual ~EmitterKeyInterface() = default;
 	virtual void Save(CSaver& s)=0;
 	virtual void Load(CLoadDirectory rd)=0;
 	virtual void RelativeScale(float scale)=0;
@@ -282,7 +285,7 @@ public:
 struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 {
 	EmitterKeyBase();
-	virtual ~EmitterKeyBase();
+	~EmitterKeyBase() override;
 	virtual void Save(CSaver& s)=0;
 	virtual void Load(CLoadDirectory rd)=0;
 	virtual void RelativeScale(float scale);
@@ -342,7 +345,7 @@ protected:
 struct EmitterKeyInt:public EmitterKeyBase
 {
 	EmitterKeyInt();
-	~EmitterKeyInt();
+	~EmitterKeyInt() override;
 
 	void Save(CSaver& s);
 	void Load(CLoadDirectory rd);
@@ -392,7 +395,7 @@ protected:
 struct EmitterKeySpl:public EmitterKeyBase
 {
 	EmitterKeySpl();
-	~EmitterKeySpl();
+	~EmitterKeySpl() override;
 
 	void Save(CSaver& s);
 	void Load(CLoadDirectory rd);
@@ -418,7 +421,7 @@ public:
 	std::vector<EmitterKeyInterface*> key;
 
 	EffectKey();
-	~EffectKey();
+	virtual ~EffectKey();
 
 	void Save(CSaver& s);
 	void Load(CLoadDirectory rd);
@@ -447,7 +450,7 @@ class cEmitterInterface:public cUnkObj
 	friend class cEffect;
 public:
 	cEmitterInterface();
-	~cEmitterInterface();
+	~cEmitterInterface() override;
 
 	virtual bool IsLive()=0;
 	virtual bool IsVisible(cCamera *pCamera)=0;
@@ -484,7 +487,7 @@ class cEmitterBase:public cEmitterInterface
 public:
 	cEmitterBase* other;
 	cEmitterBase();
-	~cEmitterBase();
+	~cEmitterBase() override;
 
 	virtual void PreDraw(cCamera *pCamera);
 	virtual void Animate(float dt);
@@ -496,6 +499,8 @@ public:
 
 	bool IsVisible(cCamera *pCamera);
 
+    float GetPlumeInterval() const { return PlumeInterval; }
+    int GetTraceCount() const { return TraceCount; }
 
 protected:
 
@@ -535,13 +540,6 @@ protected:
 	bool  chPlume;
 	int   TraceCount;
 	float PlumeInterval;
-
-	template<class nParticle> int PutToBuf(nParticle& p, Vect3f& npos, float& dt,
-										cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-										const sColor4c& color, const Vect3f& PosCamera,
-										const float& size, const cTextureAviScale::RECT& rt,
-										const uint8_t planar, MatXf* iGM = NULL);
-
 
 	enum 
 	{
@@ -605,20 +603,6 @@ public:
 
 		Vect3f normal;
 		std::vector<Vect3f> plume_pos;
-/*
-		void PutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
-								const KeyParticleInt& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								const cEmitterInt* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float trace_size);
-		void ZPutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
-								const KeyParticleInt& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								cEmitterZ* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float trace_size);
-*/
 	};
 protected:
 	BackVector<nParticle>	Particle;
@@ -632,7 +616,7 @@ protected:
 	CKey velocity_delta;
 public:
 	cEmitterInt();
-	~cEmitterInt();
+	~cEmitterInt() override;
 
 	virtual void Draw(cCamera *pCamera);
 
@@ -642,17 +626,6 @@ public:
 protected:
 	bool use_light;
 	cObjMaterial material;
-/*	void PutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime );
-	void ZPutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime );
-*/
 	void SetKeys(std::vector<KeyParticleInt>& k);
 
 	void EmitInstantly(float tmin,float tmax);
@@ -692,15 +665,15 @@ class cEmitterZ:public cEmitterInt
 	FunctorGetZ* func_getz;
 public:
 	cEmitterZ();
-	~cEmitterZ();
-	void Draw(cCamera *pCamera);
-	virtual void ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos);
+	~cEmitterZ() override;
+	void Draw(cCamera *pCamera) override;
+	virtual void ProcessTime(nParticle& p,float dt,int i,Vect3f& cur_pos) override;
 	void SetEmitterKey(EmitterKeyZ& k,cEmitter3dObject* models);
 
-	void SetParent(cEffect* parent);
+	void SetParent(cEffect* parent) override;
 	float CalcZ(float pos_x,float pos_y);
-	void SetFunctorGetZ(FunctorGetZ* func){RELEASE(func_getz);func_getz=func;func_getz->IncRef();};
-	virtual void AddZ(float z){add_z+=z;}
+	void SetFunctorGetZ(FunctorGetZ* func) override {RELEASE(func_getz);func_getz=func;func_getz->IncRef();};
+	void AddZ(float z) {add_z+=z;}
 protected:
 	virtual bool GetRndPos(Vect3f& pos, Vect3f* norm);
 	virtual void EmitOne(int ix_cur/*nParticle& cur*/,float begin_time);
@@ -750,13 +723,6 @@ class cEmitterSpl:public cEmitterBase
 		float angle0,angle_dir;
 		//color0,size0 - константы
 		float begin_size;
-/*		void PutToBuf(const float& dtime_global, HeritKey& k, const KeyParticleSpl& k0, 
-								const KeyParticleSpl& k1, sBox6f& Bound, 
-								const cTextureAviScale::RECT& rt,
-								const MatXf& mat, cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-								cEmitterSpl* emi, Vect3f& pos, float& dtime, 
-								const float& t, const float& trace_size, const float& htime);
-*/
 	};
 
 	BackVector<nParticle>	Particle;
@@ -766,19 +732,13 @@ class cEmitterSpl:public cEmitterBase
 	EMITTER_TYPE_DIRECTION_SPL direction;
 public:
 	cEmitterSpl();
-	~cEmitterSpl();
+	~cEmitterSpl() override;
 
 	virtual void Draw(cCamera *pCamera);
 	bool IsLive(){return !Particle.is_empty() || time<emitter_life_time || cycled;}
 
 	void SetEmitterKey(EmitterKeySpl& k,cEmitter3dObject* models);
 protected:
-//	friend cEmitterSpl::nParticle;
-/*	void PutPlumeParticle(const float& dtime_global, sBox6f& Bound, 
-						 cTextureAviScale*& texture, cTextureAviScale*& plume_texture, 
-						 const MatXf& mat, nParticle& p,
-						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
-						 Vect3f& pos, float& dtime);*/
 	void SetKeys(std::vector<KeyParticleSpl>& k);
 
 	void EmitInstantly(float tmin,float tmax);
@@ -795,7 +755,7 @@ class cEmitterLight:public cEmitterInterface
 {
 public:
 	cEmitterLight();
-	~cEmitterLight();
+	~cEmitterLight() override;
 	void Animate(float dt);
 
 	bool IsLive(){return time<emitter_life_time || cycled;}
@@ -831,25 +791,9 @@ class cEffect:public cIUnkObjScale
 		virtual void Update();
 		cObjectNode* GetNode(){return observer?node:NULL;}
 	} link;
-
-	class EffectObserverLink3dx:protected ObserverLink
-	{
-		class cObject3dx* object;
-		int node;
-		cEffect* effect;
-	public:
-		EffectObserverLink3dx():object(0),node(-1),effect(0){}
-		void SetParent(cEffect* effect_){effect=effect_;}
-
-		void Link(class cObject3dx* object,int inode);
-		virtual void Update();
-
-		bool IsInitialized(){return object!=0;}
-		const MatXf& GetRootMatrix();
-	} link3dx;
 public:
 	cEffect();
-	~cEffect();
+	~cEffect() override;
 
 	virtual void Animate(float dt);
 	virtual void PreDraw(cCamera *pCamera);
@@ -887,7 +831,6 @@ public:
 	inline float GetParticleRate()const{return particle_rate;}
 
 	void LinkToNode(class cObjectNode* node);
-	void LinkToNode(class cObject3dx* object,int inode);
 	inline float GetParticleRateReal()const;
 
 	std::vector<Vect3f>& GetPos(){return begin_position;}

@@ -33,14 +33,14 @@ public:
   struct OnePoint;
   typedef std::multimap<TypeH, OnePoint*> type_point_map;
 #else
-  typedef std::multimap<TypeH,POINT> type_point_map;
+  typedef std::multimap<TypeH,sPoint> type_point_map;
 #endif
 
 	struct OnePoint
 	{
 		TypeH g;//Затраты на продвижение до этой точки
 		TypeH h;//Предполагаемые затраты на продвижение до финиша
-		DWORD used;
+		uint32_t used;
 		OnePoint* parent;
 		bool is_open;
 
@@ -56,7 +56,7 @@ protected:
 	OnePoint* chart;
 	type_point_map open_map;
 
-	DWORD is_used_num;//Если is_used_num==used, то ячейка используется
+	uint32_t is_used_num;//Если is_used_num==used, то ячейка используется
 
 	int num_point_examine;//количество посещённых ячеек
 	int num_find_erase;//Сколько суммарно искали ячейки для удаления
@@ -66,21 +66,21 @@ public:
 	~AIAStar();
 
 	void Init(int dx,int dy);
-	bool FindPath(POINT from,Heuristic* h, std::vector<POINT>& path);
+	bool FindPath(sPoint from, Heuristic* h, std::vector<sPoint>& path);
 	void GetStatistic(int* num_point_examine,int* num_find_erase);
 
 	//Debug
 	OnePoint* GetInternalBuffer(){return chart;};
-	DWORD GetUsedNum(){return is_used_num;}
+	uint32_t GetUsedNum(){return is_used_num;}
 protected:
 	void clear();
-	inline POINT PosBy(OnePoint* p)
+	inline sPoint PosBy(OnePoint* p)
 	{
 #if FAST_ERASE
 		return p->pt;
 #else
 		int offset=p-chart;
-		POINT pos;
+		sPoint pos;
 		pos.x=offset%dx;
 		pos.y=offset/dx;
 		return pos;
@@ -121,7 +121,7 @@ AIAStar<Heuristic,TypeH>::~AIAStar()
 }
 
 template<class Heuristic,class TypeH>
-bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<POINT>& path)
+bool AIAStar<Heuristic,TypeH>::FindPath(sPoint from, Heuristic* hr, std::vector<sPoint>& path)
 {
 	num_point_examine=0;
 	num_find_erase=0;
@@ -160,7 +160,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<PO
 		OnePoint* parent=low->second;
 		POINT pt = parent->pt;
 #else
-		POINT pt=(*low).second;
+		sPoint pt=(*low).second;
 		OnePoint* parent=chart+pt.y*dx+pt.x;
 #endif
 
@@ -170,7 +170,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<PO
 		if(heuristic->IsEndPoint(pt.x,pt.y))
 		{
 			//сконструировать путь
-			POINT p;
+			sPoint p;
 			while(parent)
 			{
 				p=PosBy(parent);;
@@ -178,7 +178,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<PO
 
 				if(parent->parent)
 				{
-					POINT pp;
+					sPoint pp;
 					pp=PosBy(parent->parent);
 					xassert(xm::abs(p.x - pp.x) <= 1 && xm::abs(p.y - pp.y) <= 1);
 				}
@@ -193,7 +193,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<PO
 		//для каждого наследника child узла parent
 		for(int i=0;i<size_child;i++)
 		{
-			POINT child={pt.x+sx[i],pt.y+sy[i]};
+			sPoint child={pt.x + sx[i], pt.y + sy[i]};
 			num_point_examine++;
 
 			if(child.x<0 || child.y<0 || 
@@ -302,7 +302,7 @@ public:
 	{
 		TypeH g;//Затраты на продвижение до этой точки
 		TypeH h;//Предполагаемые затраты на продвижение до финиша
-		DWORD used;
+		uint32_t used;
 		OnePoint* parent;
 		bool is_open;
 
@@ -315,7 +315,7 @@ protected:
 	std::vector<OnePoint> chart;
 	type_point_map open_map;
 
-	DWORD is_used_num;//Если is_used_num==used, то ячейка используется
+	uint32_t is_used_num;//Если is_used_num==used, то ячейка используется
 
 	int num_point_examine;//количество посещённых ячеек
 	int num_find_erase;//Сколько суммарно искали ячейки для удаления
@@ -332,7 +332,7 @@ public:
 
 	//Debug
 	OnePoint* GetInternalBuffer(){return chart;};
-	DWORD GetUsedNum(){return is_used_num;}
+	uint32_t GetUsedNum(){return is_used_num;}
 protected:
 	void clear();
 	inline Node* PosBy(OnePoint* p)
@@ -480,9 +480,9 @@ struct Maps
 
 //Ищет минимальное значение, но не по всей карте
 template<class Maps>
-POINT AIFindMinium(int x,int y,
-				  Maps& maps,
-				  int dx,int dy)
+sPoint AIFindMinium(int x, int y,
+                    Maps& maps,
+                    int dx, int dy)
 {
 	typename Maps::TypeH optium=maps.Get(x,y);
 	int optiumx=x,optiumy=y;
@@ -553,6 +553,6 @@ POINT AIFindMinium(int x,int y,
 			break;
 	}
 
-	POINT p={optiumx,optiumy};
+	sPoint p={optiumx, optiumy};
 	return p;
 }

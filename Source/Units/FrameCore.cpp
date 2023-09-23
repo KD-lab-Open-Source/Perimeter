@@ -61,7 +61,7 @@ terEffectID terBuildingEnergy::explosionID() const
 			return EFFECT_ID_EXPLOSION;
 	}
 
-	if(attr().getEffectData(EFFECT_ID_EXPLOSION_ALTERNATE))
+	if(attr()->getEffectData(EFFECT_ID_EXPLOSION_ALTERNATE))
 		return EFFECT_ID_EXPLOSION_ALTERNATE;
 
 	return EFFECT_ID_EXPLOSION;

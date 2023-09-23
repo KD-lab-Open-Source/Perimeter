@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+# Add backports to sources and update
+echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list
+apt-get update
+
+#Backport git version doesn't work properly
+apt-get install -y git
+
+# Install dependencies from backports to have latest
+#ffmpeg / Perimeter deps
+apt-get install -t buster-backports -y \
+  lld \
+  nasm \
+  libstdc++6 \
+  libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev \
+  libboost-dev \
+  zlib1g-dev \
+  libvorbis-dev \
+  libvulkan-dev glslang-tools \
+  build-essential \
+  cmake meson ninja-build

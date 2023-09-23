@@ -13,9 +13,9 @@ class terRealPhaseControllerType
 
 public:
 	terRealPhaseControllerType(cObjectNode* object);
-	void setPhase(float phase) { phase_ = phase; }
-	void setAngleX(float angle_x) { angle_x_ = angle_x; }
-	void setAngleZ(float angle_z) { angle_z_ = angle_z; }
+	void setPhase(float phase) { phase_.set(phase); }
+	void setAngleX(float angle_x) { angle_x_.set(angle_x); }
+	void setAngleZ(float angle_z) { angle_z_.set(angle_z); }
 	void SetChain(const char* name);
 	void Update();
 };
@@ -37,8 +37,8 @@ public:
 
 	bool isPlaying() const { return (isPlaying_ || needStart_); }
 
-	void setVolume(float volume) { volume_ = volume; }
-	void setFrequency(float frequency) { frequency_ = frequency; }
+	void setVolume(float volume) { volume_.set(volume); }
+	void setFrequency(float frequency) { frequency_.set(frequency); }
 	void setPosition(const Vect3f& position); // не интерполируется!
 
 	void update();

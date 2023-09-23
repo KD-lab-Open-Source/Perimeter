@@ -1,101 +1,139 @@
+#ifndef _WIN32
+//For SDL_WINDOW_VULKAN constant
+#include <SDL_video.h>
+#endif
 #include "StdAfxRD.h"
+#include "D3DRender.h"
 #include "Font.h"
 #include "files/files.h"
+#include "DrawBuffer.h"
+#include "RenderTracker.h"
+#include "DebugUtil.h"
+#include "SystemUtil.h"
 
-int sVertexXYZ::fmt		=	D3DFVF_XYZ;
-int sVertexXYZD::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE;
-int sVertexXYZT1::fmt	=	D3DFVF_XYZ|D3DFVF_TEX1;
-int sVertexXYZDS::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_SPECULAR;
-int sVertexXYZDST1::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX1;
-int sVertexXYZDST2::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX2;
-int sVertexXYZDT1::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1;
-int sVertexXYZDT2::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX2;
-int sVertexXYZN::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL;
-int sVertexXYZND::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE;
-int sVertexXYZNDS::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_SPECULAR;
-int sVertexXYZNDST1::fmt=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX1;
-int sVertexXYZNDST2::fmt=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX2;
-int sVertexXYZNT1::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
-int sVertexXYZW::fmt	=	D3DFVF_XYZRHW;
-int sVertexXYZWD::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE;
-int sVertexXYZWT1::fmt	=	D3DFVF_XYZRHW|D3DFVF_TEX1;
-int sVertexXYZWDT1::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1;
-int sVertexXYZWDT2::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX2;
-int sVertexXYZDP::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_PSIZE;
-int sVertexDot3::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)| D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#define execv _execv
+//Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
+#include <SDL_syswm.h>
+#include <commdlg.h>
+#endif
 
-int sVertexXYZINT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB1|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
-int sVertexXYZW4INT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB5|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
+static uint32_t ColorConvertARGB(const sColor4c& c) { return CONVERT_COLOR_TO_ARGB(c.v); };
 
-uint8_t& cSkinVertex::GetWeight(int idx)
-{
-	VISASSERT(num_weight>0);
-	uint8_t* b=(uint8_t*)(7 + cur);
-	switch(idx)
-	{
-	case 0:
-		return b[2];
-	case 1:
-		return b[1];
-	case 2:
-		return b[0];
-	case 3:
-		return b[3];
-	}
+cD3DRender *gb_RenderDevice3D = nullptr;
 
-	VISASSERT(0);
-	return b[0];
-}
-int cSkinVertex::GetFormat()
-{
-	//int fmt=D3DFVF_XYZ|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
-	int fmt=D3DFVF_XYZ|D3DFVF_LASTBETA_D3DCOLOR|D3DFVF_NORMAL;
-	
-	switch(num_weight+1)
-	{
-	case 1:
-		fmt|=D3DFVF_XYZB1;
-		break;
-	case 2:
-		xassert(0);
-	case 3:
-	case 4:
-	case 5:
-		fmt|=D3DFVF_XYZB1|D3DFVF_DIFFUSE;
-		break;
-	default:
-		xassert(0);
-	}
-
-	if(bump)
-		fmt|=D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
-	else
-		fmt|=D3DFVF_TEX1;
-	return fmt;
-}
-
-class cD3DRender *gb_RenderDevice3D=NULL;
 void IsDeleteAllDefaultTextures();
 
-int GetMaskBitCount(unsigned int BitMask)
+FILE* fRD= nullptr;
+
+char* GetErrorText(HRESULT hr)
 {
-	int BitCount;
-    for(BitCount=0;BitMask;BitMask>>=1)
-        BitCount+=(BitMask&0x1);
-	return BitCount;
+    switch(hr)
+    {
+        case D3D_OK :
+            return "No error occurred. ";
+        case D3DERR_CONFLICTINGRENDERSTATE :
+            return "The currently set render states cannot be used together. ";
+        case D3DERR_CONFLICTINGTEXTUREFILTER :
+            return "The current texture filters cannot be used together. ";
+        case D3DERR_CONFLICTINGTEXTUREPALETTE :
+            return "The current textures cannot be used simultaneously. This generally occurs when a multitexture device requires that all palletized textures simultaneously enabled also share the same palette. ";
+        case D3DERR_DEVICELOST :
+            return "The device is lost and cannot be restored at the current time, so rendering is not possible. ";
+        case D3DERR_DEVICENOTRESET :
+            return "The device cannot be reset. ";
+        case D3DERR_DRIVERINTERNALERROR :
+            return "Internal driver error. ";
+        case D3DERR_INVALIDCALL :
+#ifdef E_INVALIDCALL
+        case E_INVALIDCALL:
+#endif
+            return "The method call is invalid. For example, a method's parameter may have an invalid value. ";
+        case D3DERR_INVALIDDEVICE :
+            return "The requested device type is not valid. ";
+        case D3DERR_MOREDATA :
+            return "There is more data available than the specified buffer size can hold. ";
+        case D3DERR_NOTAVAILABLE :
+            return "This device does not support the queried technique. ";
+        case D3DERR_NOTFOUND :
+            return "The requested item was not found. ";
+        case D3DERR_OUTOFVIDEOMEMORY :
+            return "Direct3D does not have enough display memory to perform the operation. ";
+        case D3DERR_TOOMANYOPERATIONS :
+            return "The application is requesting more texture-filtering operations than the device supports. ";
+        case D3DERR_UNSUPPORTEDALPHAARG :
+            return "The device does not support a specified texture-blending argument for the alpha channel. ";
+        case D3DERR_UNSUPPORTEDALPHAOPERATION :
+            return "The device does not support a specified texture-blending operation for the alpha channel. ";
+        case D3DERR_UNSUPPORTEDCOLORARG :
+            return "The device does not support a specified texture-blending argument for color values. ";
+        case D3DERR_UNSUPPORTEDCOLOROPERATION :
+            return "The device does not support a specified texture-blending operation for color values. ";
+        case D3DERR_UNSUPPORTEDFACTORVALUE :
+            return "The device does not support the specified texture factor value. ";
+        case D3DERR_UNSUPPORTEDTEXTUREFILTER :
+            return "The device does not support the specified texture filter. ";
+        case D3DERR_WRONGTEXTUREFORMAT :
+            return "The pixel format of the texture surface is not valid. ";
+        case E_FAIL :
+            return "An undetermined error occurred inside the Direct3D subsystem. ";
+        case E_INVALIDARG :
+            return "An invalid parameter was passed to the returning function ";
+        case E_OUTOFMEMORY :
+            return "Direct3D could not allocate sufficient memory to complete the call. ";
+        case E_NOTIMPL :
+            return "Not implemented. ";
+        case E_NOINTERFACE :
+            return "No object interface is available. ";
+        default:
+            fprintf(stderr, "Unknown D3D error: %d\n", hr);
+            return "Unknown D3D error. ";
+    }
+};
+
+void RDOpenLog(char *fname="RenderDevice.!!!")
+{
+#ifndef _FINAL_VERSION_
+    fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
+	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
+#endif
 }
-int GetMaskBitShift(unsigned int BitMask)
+int RDWriteLog(HRESULT err,char *exp,char *file,int line)
 {
-	if(BitMask==0) return 0;
-	int BitShift;
-    for(BitShift=0;(BitMask&1)==0;BitMask>>=1)
-        BitShift++;
-	return BitShift;
+#ifndef _FINAL_VERSION_
+    if (fRD==nullptr) RDOpenLog();
+	fprintf(fRD,"%s line: %i - %s = 0x%X , %s\n",file,line,exp,err,GetErrorText(err));
+	fflush(fRD);
+#endif
+    return err;
+}
+void RDWriteLog(char *exp,int size)
+{
+#ifndef _FINAL_VERSION_
+    if (fRD==nullptr) RDOpenLog();
+	if(size==-1)
+		size=strlen(exp);
+	fwrite(exp,size,1,fRD);
+	fprintf(fRD,"\n");
+	fflush(fRD);
+#endif
 }
 
-cD3DRender::cD3DRender()
+cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 {
-	gb_RenderDevice3D=this;
+    ConvertColor = ColorConvertARGB;
+    NumberPolygon=0;
+    NumDrawObject=0;
+    RenderMode=0;
+    xScrMin=yScrMin=xScrMax=yScrMax=0;
+
+    bActiveScene=0;
+    nSupportTexture=0;
+
+    DrawNode=0;
+    DefaultFont=CurrentFont=0;
 	hWnd=0;
 	
 	lpD3D=0;
@@ -113,65 +151,70 @@ cD3DRender::cD3DRender()
 
 	MaxTextureAspectRatio=0;
 
-	dtFixed=NULL;
-	dtAdvance=NULL;
-	dtAdvanceOriginal=NULL;
-	current_bump_scale=1.0f;
 	texture_interpolation=D3DTEXF_LINEAR;
 }
 
 cD3DRender::~cD3DRender()
 {
 	Done();
-    gb_RenderDevice3D=nullptr;
+    VISASSERT(RenderMode==0);
+    VISASSERT(ScreenSize.x==0&&ScreenSize.y==0&&xScrMin==0&&yScrMin==0&&xScrMax==0&&yScrMax==0);
+    VISASSERT(ScreenSize.x==0&&ScreenSize.y==0);
 }
 
-bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
+uint32_t cD3DRender::GetD3DFVFFromFormat(vertex_fmt_t fmt) {
+    switch (fmt) {
+        case sVertexXYZ::fmt:
+            return D3DFVF_XYZ;
+        case sVertexXYZT1::fmt:
+            return D3DFVF_XYZ|D3DFVF_TEX1;
+        case sVertexXYZDT1::fmt:
+            return D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1;
+        case sVertexXYZDT2::fmt:
+            return D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX2;
+        case sVertexXYZNT1::fmt:
+            return D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
+        case sVertexDot3::fmt:
+            return D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4
+                  |D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
+        default:
+            xassert(0);
+            return fmt;
+    }
+}
+
+uint32_t cD3DRender::GetWindowCreationFlags() const {
+    uint32_t flags = cInterfaceRenderDevice::GetWindowCreationFlags();
+#ifndef _WIN32
+    //On non Windows we use dxvk which uses Vulkan
+    flags |= SDL_WINDOW_VULKAN;
+#endif
+    return flags;
+}
+
+int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRateInHz)
 {
-	uint32_t Adapter=0;
-	if(!lpD3D)
-	{
-		//lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
-		lpD3D=Direct3DCreate9(D3D_SDK_VERSION);
-		if(!lpD3D)
-			return false;
-	}
-
-	if(Mode&RENDERDEVICE_MODE_WINDOW)
-		return true;
-
-	D3DFORMAT BackBufferFormat=GetBackBufferFormat(Mode);
-	uint32_t modes=lpD3D->GetAdapterModeCount(Adapter, BackBufferFormat);
-
-	for(int i=0;i<modes;i++)
-	{
-		D3DDISPLAYMODE mode;
-		if(FAILED(lpD3D->EnumAdapterModes(Adapter,
-				BackBufferFormat,
-				i,
-				&mode
-		)))
-			return false;
-
-		if(mode.Width==xscr && mode.Height==yscr && 
-			mode.Format==BackBufferFormat)
-			return true;
-	}
-
-	return false;
-}
-
-
-int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz)
-{ 
-	if(lphWnd==0) return 1;
-	Done();
+    RenderSubmitEvent(RenderEvent::INIT, "D3D9 start");
+    Done();
+    int ret = cInterfaceRenderDevice::Init(xscr, yscr, Mode, wnd, RefreshRateInHz);
+    if (ret != 0) return ret;
+    if (wnd == nullptr) return 1;
+    gb_RenderDevice3D = this;
 
 	memset(CurrentTexture,0,sizeof(CurrentTexture));
 	memset(ArrayRenderState,0xEF,sizeof(ArrayRenderState));
 
-	hWnd=(HWND)lphWnd;
-	RenderMode=Mode;
+#ifdef _WIN32
+    //Get HWND from SDL window
+    SDL_SysWMinfo wm_info;
+    SDL_VERSION(&wm_info.version);
+    SDL_GetWindowWMInfo(sdlWindow, &wm_info);
+    
+    this->hWnd = hWndVisGeneric = wm_info.info.win.window;
+#else
+    //dxvk-native uses HWND as SDL2 window handle, so this is allowed
+    this->hWnd = static_cast<HWND>(sdl_window);
+#endif
 
 	if(!lpD3D)
 		RDERR((lpD3D=Direct3DCreate9(D3D_SDK_VERSION))==0);
@@ -179,7 +222,13 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 		
 	if(lpD3D==0) return 2;
 	D3DDISPLAYMODE d3ddm;
-	uint32_t Adapter=0/*D3DADAPTER_DEFAULT*/;
+    
+    IniManager ini("Perimeter.ini", false);
+    int adapter_int = D3DADAPTER_DEFAULT; 
+    ini.getInt("Graphics", "Adapter", adapter_int);
+    check_command_line_parameter("d3d_adapter", adapter_int);
+    Adapter = adapter_int;
+    
 	RDERR(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(Mode&RENDERDEVICE_MODE_WINDOW) {
 		if(d3ddm.Format==D3DFMT_X8R8G8B8||d3ddm.Format==D3DFMT_R8G8B8||d3ddm.Format==D3DFMT_A8R8G8B8)
@@ -190,21 +239,14 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 	if(!(RenderMode&RENDERDEVICE_MODE_RGB32))
 		RenderMode|=RENDERDEVICE_MODE_RGB16;
-		
-//	if(TexFmtData[SURFMT_RENDERMAP].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLORALPHA].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLOR].TexFmtD3D==D3DFMT_UNKNOWN)
-//		return 5; // don't support render to texture
+
 	RDCALL(lpD3D->GetDeviceCaps(Adapter,D3DDEVTYPE_HAL,&DeviceCaps));
     memset(&d3dpp, 0, sizeof(d3dpp));
-	d3dpp.BackBufferWidth			= xScr=xscr;
-	d3dpp.BackBufferHeight			= yScr=yscr;
-	d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;
-	d3dpp.MultiSampleQuality		= 0;
-	d3dpp.SwapEffect				= D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow				= (HWND)lphWnd;
-
-	d3dpp.EnableAutoDepthStencil	= TRUE;
-	d3dpp.Flags						= D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
-	d3dpp.FullScreen_RefreshRateInHz= (Mode&RENDERDEVICE_MODE_WINDOW)?0:RefreshRateInHz;
+    d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;
+    d3dpp.MultiSampleQuality		= 0;
+    d3dpp.SwapEffect				= D3DSWAPEFFECT_COPY;
+    d3dpp.EnableAutoDepthStencil	= TRUE;
+    d3dpp.Flags						= D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
     d3dpp.PresentationInterval		= D3DPRESENT_INTERVAL_IMMEDIATE;
 	UpdateRenderMode();
 
@@ -229,7 +271,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 		if(lpD3D->CreateDevice(Adapter,D3DDEVTYPE_HAL,hWnd,D3DCREATE_MIXED_VERTEXPROCESSING|mt,&d3dpp,&lpD3DDevice))
 			RDERR(lpD3D->CreateDevice(Adapter,D3DDEVTYPE_HAL,hWnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING|mt,&d3dpp,&lpD3DDevice));
 
-	if(lpD3DDevice==0) return 3;
+	if(lpD3DDevice==nullptr) return 3;
 
 	if(Mode&RENDERDEVICE_MODE_WINDOW)
 	{
@@ -244,7 +286,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 	}
 
-	SetClipRect(xScrMin=0,yScrMin=0,xScrMax=xScr,yScrMax=yScr);
+	SetClipRect(xScrMin=0,yScrMin=0,xScrMax=ScreenSize.x,yScrMax=ScreenSize.y);
 
 	RDCALL(lpD3DDevice->GetDeviceCaps(&DeviceCaps));
 	dwSuportMaxSizeTextureX=DeviceCaps.MaxTextureWidth;
@@ -253,7 +295,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	bSupportVertexFog=(DeviceCaps.RasterCaps&D3DPRASTERCAPS_FOGVERTEX)?1:0;
 	bSupportTableFog=(DeviceCaps.RasterCaps&D3DPRASTERCAPS_FOGTABLE)?1:0;
 	CurrentMod4 = (DeviceCaps.TextureOpCaps&D3DTEXOPCAPS_MODULATE4X)?D3DTOP_MODULATE4X:((DeviceCaps.TextureOpCaps&D3DTEXOPCAPS_MODULATE2X)?D3DTOP_MODULATE2X:D3DTOP_MODULATE);
-	CurrentBumpMap = DeviceCaps.TextureOpCaps&D3DTEXOPCAPS_BUMPENVMAP ? D3DTOP_BUMPENVMAP : 0;
 
 	MaxTextureAspectRatio=DeviceCaps.MaxTextureAspectRatio;
 	nSupportTexture=min(DeviceCaps.MaxTextureBlendStages,TEXTURE_MAX-1);
@@ -267,13 +308,10 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	delete f;
 	delete lpBuffer;
 */
-	InitVertexBuffers();
 	Fill(0,0,0,255);
 	BeginScene();
-	DrawRectangle(0,0,xScr-1,yScr-1,sColor4c(0,0,0,255));
+	DrawRectangle(0,0,ScreenSize.x-1,ScreenSize.y-1,sColor4c(0,0,0,255));
 	EndScene();
-	
-	VISASSERT(gb_RenderDevice==this);
 
 	Flush();
 
@@ -299,29 +337,31 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 		dtAdvanceOriginal=new DrawTypeRadeon8500;
 #endif
 
-	VISASSERT(occlusion_query.empty());
-
 	SetAdvance();
-
-	InitStandartIB();
 
 	if(bSupportTableFog)
 	{
 		if(!(dtAdvanceOriginal && (dtAdvanceOriginal->GetID()!=DT_GEFORCE3 && dtAdvanceOriginal->GetID()!=DT_GEFORCEFX)))
 			bSupportTableFog=false;
 	}
+    
+    gb_RenderDevice3D = this;
+    
+    //Workaround for Linux setting window bigger than originally requested 
+    if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
+        SDL_SetWindowSize(sdl_window, ScreenSize.x, ScreenSize.y);
+    }
 
+    RenderSubmitEvent(RenderEvent::INIT, "D3D9 end");
 	return 0;
 }
 
-D3DFORMAT cD3DRender::GetBackBufferFormat(int Mode)
+D3DFORMAT cD3DRender::GetBackBufferFormat(uint32_t Mode)
 {
-	uint32_t Adapter=0;
 	D3DFORMAT BackBufferFormat=D3DFMT_X8R8G8B8;
 	if(Mode&RENDERDEVICE_MODE_WINDOW)
 	{
 		D3DDISPLAYMODE d3ddm;
-		uint32_t Adapter=0;
 		RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 		BackBufferFormat = d3ddm.Format;
 	}else
@@ -363,15 +403,23 @@ void cD3DRender::UpdateRenderMode()
 		is32zbuffer=(RenderMode&RENDERDEVICE_MODE_RGB32)?true:false;
 	}
 
-	d3dpp.AutoDepthStencilFormat= is32zbuffer?D3DFMT_D24S8:D3DFMT_D16;
-	d3dpp.BackBufferFormat=GetBackBufferFormat(RenderMode);
+    D3DDISPLAYMODE d3ddm;
+    RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
+    MaxScreenSize.x = max(MaxScreenSize.x, static_cast<int>(d3ddm.Width));
+    MaxScreenSize.y = max(MaxScreenSize.y, static_cast<int>(d3ddm.Height));
+    
+	d3dpp.AutoDepthStencilFormat    = is32zbuffer ? D3DFMT_D24S8 : D3DFMT_D16;
+	d3dpp.BackBufferFormat          = GetBackBufferFormat(RenderMode);
+    d3dpp.hDeviceWindow				= hWnd;
+    d3dpp.Windowed					= (RenderMode&RENDERDEVICE_MODE_WINDOW)?TRUE:FALSE;
+    d3dpp.FullScreen_RefreshRateInHz= d3dpp.Windowed ? 0 : ScreenHZ;
+	d3dpp.BackBufferCount			= (d3dpp.Windowed | (RenderMode&RENDERDEVICE_MODE_ONEBACKBUFFER)) ? 1 : 2;
 
-	d3dpp.BackBufferCount			= (RenderMode&RENDERDEVICE_MODE_WINDOW)?1:2;
-	d3dpp.Windowed					= (RenderMode&(RENDERDEVICE_MODE_WINDOW|RENDERDEVICE_MODE_ONEBACKBUFFER))?TRUE:FALSE;
+    //Set biggest size the window can have so we don't have to reinit render device each time user resizes the window
+    d3dpp.BackBufferWidth = MaxScreenSize.x;
+    d3dpp.BackBufferHeight = MaxScreenSize.y;
+    fprintf(stdout, "D3D Backbuffer size: %dx%d\n", d3dpp.BackBufferWidth, d3dpp.BackBufferHeight);
 
-	D3DDISPLAYMODE d3ddm;
-	uint32_t Adapter=0;
-	RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(RenderMode&RENDERDEVICE_MODE_COMPRESS)
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT5)==0)
@@ -466,6 +514,13 @@ void cD3DRender::UpdateRenderMode()
 	{
 		TexFmtData[SURFMT_U16V16].Set(4, 16,16,16,16, 0,0,0,16,D3DFMT_V16U16);
 	}
+
+    orthoVP = Mat4f::ZERO;
+    SetOrthographic(orthoVP, ScreenSize.x, -ScreenSize.y, 10, -10);
+    if (isOrthographicProjSet) {
+        isOrthographicProjSet = false;
+        UseOrthographicProjection();
+    }
 }
 
 bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
@@ -474,15 +529,28 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
     
     int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW
                  |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
+
+    bool same_size = ScreenSize.x == xscr && ScreenSize.y == yscr;
+    ScreenSize.x = xscr;
+    ScreenSize.y = yscr;
     
-	if (xScr==xscr && yScr==yscr && (RenderMode&mode_mask) == mode) {
-        return true; //Nothing to do
-	}
+    if (!same_size && ((RenderMode&mode_mask) == (mode&mode_mask)) 
+    && ScreenSize.x <= MaxScreenSize.x && ScreenSize.y <= MaxScreenSize.y) {
+        //We can change window size without reinitializing graphics
+        UpdateRenderMode();
+        return true;
+    }
+
+    MaxScreenSize.x = max(MaxScreenSize.x, ScreenSize.x);
+    MaxScreenSize.y = max(MaxScreenSize.y, ScreenSize.y);
 	
 	KillFocus();
-
+    
+    uint32_t mode_old = RenderMode;
 	RenderMode&=~mode_mask;
-	RenderMode|=mode;
+	RenderMode|=(mode&mode_mask);
+    fprintf(stdout, "RenderMode %d new %d with %d\n", mode_old, RenderMode, mode);
+    
 	if(RenderMode&RENDERDEVICE_MODE_WINDOW)
 	{
 		D3DDISPLAYMODE mode;
@@ -496,11 +564,17 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 
 	}
 
-	d3dpp.BackBufferWidth	= xScr=xscr;
-	d3dpp.BackBufferHeight	= yScr=yscr;
-	UpdateRenderMode();
+    UpdateRenderMode();
 
-	return SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
+    fprintf(stdout, "d3dpp %dx%d Count %d Hz %d\n", d3dpp.BackBufferWidth, d3dpp.BackBufferHeight, d3dpp.BackBufferCount, d3dpp.FullScreen_RefreshRateInHz);
+
+	bool result = SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
+    if (!result) {
+        RestoreDeviceIfLost();
+        result = SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
+    }
+    
+    return result;
 }
 
 
@@ -524,6 +598,7 @@ bool cD3DRender::IsEnableSelfShadow()
 
 int cD3DRender::Done()
 {
+    RenderSubmitEvent(RenderEvent::DONE, "D3D9 start");
 	KillFocus();
 
 	if(dtFixed)
@@ -539,47 +614,33 @@ int cD3DRender::Done()
 		delete dtAdvanceOriginal;
 		dtAdvanceOriginal=NULL;
 	}
-
-	DeleteIndexBuffer(standart_ib);
-	BufferXYZDT1.Destroy();
-	BufferXYZDT2.Destroy();
-	BufferXYZWD.Destroy();
-	BufferXYZD.Destroy();
-	BufferXYZWDT1.Destroy();
-	BufferXYZWDT2.Destroy();
-	QuadBufferXYZDT1.Destroy();
-	QuadBufferXYZWDT1.Destroy();
-	QuadBufferXYZWDT2.Destroy();
-	BufferXYZOcclusion.Destroy();
 /*
 	for(int i=0;i<LibVB.size();i++)
 	{
 		sSlotVB& s=LibVB[i];
 		VISASSERT(!s.init);
 	}
+*/
+    LibVB.clear();
+    LibIB.clear();
 
-	for(i=0;i<LibIB.size();i++)
-	{
-		sSlotIB& s=LibIB[i];
-		VISASSERT(!s.init);
-	}
-*/	
-	LibVB.clear();
-	LibIB.clear();
-	TexLibrary.Free();
+    int ret = cInterfaceRenderDevice::Done();
 	
 	bActiveScene=0;
 	RELEASE(lpD3DDevice);
 	RELEASE(lpD3D);
-	
-	xScr=yScr=xScrMin=yScrMin=xScrMax=yScrMax=0;
-	hWnd=0;	RenderMode=0;
 
-	return 0;
+    ScreenSize.x=ScreenSize.y=xScrMin=yScrMin=xScrMax=yScrMax=0;
+	hWnd=0;	RenderMode=0;
+    
+    gb_RenderDevice3D=nullptr;
+
+    RenderSubmitEvent(RenderEvent::DONE, "D3D9 end");
+	return ret;
 }
 int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
 {
-	if(lpD3DDevice==0) return -1;
+	if (lpD3DDevice == nullptr) return -1;
 	D3DVIEWPORT9 vp;
 	RDCALL(lpD3DDevice->GetViewport(&vp));
 	*xmin=xScrMin=vp.X; *xmax=xScrMax=vp.X+vp.Width;
@@ -588,14 +649,19 @@ int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
 }
 int cD3DRender::SetClipRect(int xmin,int ymin,int xmax,int ymax)
 {
-	if(lpD3DDevice==0) return -1;
+	if (lpD3DDevice == nullptr) return -1;
+    if (xScrMin==xmin && yScrMin==ymin && xScrMax==xmax && yScrMax==ymax) {
+        return 0;
+    }
+    FlushActiveDrawBuffer();
+    
 	xScrMin=xmin;
 	yScrMin=ymin;
 	xScrMax=xmax;
 	yScrMax=ymax;
 
-	D3DVIEWPORT9 vp={xScrMin,yScrMin,xScrMax-xScrMin,yScrMax-yScrMin,0.0f,1.0f};
-	RDCALL(lpD3DDevice->SetViewport(&vp));
+    sRect vp = { xScrMin, yScrMin, xScrMax, yScrMax };
+	RDCALL(lpD3DDevice->SetScissorRect(reinterpret_cast<RECT*>(&vp)));
 	return 0;
 }
 
@@ -605,7 +671,7 @@ int cD3DRender::Fill(int r,int g,int b,int a)
 	if(lpD3DDevice==0) return -1;
 	RestoreDeviceIfLost();
 
-	D3DVIEWPORT9 vp={0,0,xScr,yScr,0.0f,1.0f};
+	D3DVIEWPORT9 vp={0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
 	RDCALL(lpD3DDevice->SetViewport(&vp));
 	RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|((RenderMode&RENDERDEVICE_MODE_STRENCIL)?D3DCLEAR_STENCIL:0),
 		D3DCOLOR_RGBA(r,g,b,a),1,0));
@@ -613,12 +679,16 @@ int cD3DRender::Fill(int r,int g,int b,int a)
 	return 0;
 }
 
+void cD3DRender::ClearZBuffer() {
+    RDCALL(lpD3DDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
+}
+
 void cD3DRender::RestoreDeviceIfLost()
 {
 	int hr;
 	while(FAILED(hr=lpD3DDevice->TestCooperativeLevel()))
     { // Test the cooperative level to see if it's okay to render
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
         if( D3DERR_DEVICELOST == hr )
 		{
 			MSG msg;
@@ -643,61 +713,65 @@ void cD3DRender::RestoreDeviceIfLost()
     }
 }
 
-int cD3DRender::Flush(HWND wnd)
+int cD3DRender::Flush(bool wnd)
 { 
 	if(bActiveScene) EndScene();
 	MTG();
 	RestoreDeviceIfLost();
 
-	//RDCALL(lpD3DDevice->Present(NULL,NULL,wnd,NULL))
-	lpD3DDevice->Present(NULL,NULL,wnd,NULL);
+	RECT rect { 0, 0, ScreenSize.x, ScreenSize.y };
+	lpD3DDevice->Present(&rect, &rect, wnd ? hWnd : nullptr, nullptr);
 
 	if(Option_DrawNumberPolygon) 
 	{
 		char str[256];
 		sprintf(str,"poly=%i, obj=%i",NumberPolygon,NumDrawObject);
 		OutText(10,100,str);
-		
+
+        /*
 		int dbg_MemVertexBuffer=0,dbg_NumVertexBuffer=0;
 
-		for(int i=0; i<LibVB.size(); i++ )
-			if( LibVB[i]->p )
-			{
-				D3DVERTEXBUFFER_DESC dsc;
-				LibVB[i]->p->GetDesc( &dsc );
-				dbg_MemVertexBuffer += dsc.Size;
-				dbg_NumVertexBuffer++;
-			}
+        for (int i = 0; i < LibVB.size(); i++) {
+            if (LibVB[i]->d3d) {
+                D3DVERTEXBUFFER_DESC dsc;
+                LibVB[i]->d3d->GetDesc(&dsc);
+                dbg_MemVertexBuffer += dsc.Size;
+                dbg_NumVertexBuffer++;
+            };
+        }
 		sprintf(str,"vb=%i,nvb=%i",dbg_MemVertexBuffer,dbg_NumVertexBuffer);
 		OutText(10,80,str);
 
 		int dbg_MemIndexBuffer=0,dbg_NumIndexBuffer=0;
 		int i;
-		for(i=0; i<LibIB.size(); i++ )
-			if( LibIB[i]->p )
-			{
-				D3DINDEXBUFFER_DESC dsc;
-				LibIB[i]->p->GetDesc( &dsc );
-				dbg_MemIndexBuffer += dsc.Size;
-				dbg_NumIndexBuffer++;
-			}
+        for (i = 0; i < LibIB.size(); i++) {
+            if (LibIB[i]->d3d) {
+                D3DINDEXBUFFER_DESC dsc;
+                LibIB[i]->d3d->GetDesc(&dsc);
+                dbg_MemIndexBuffer += dsc.Size;
+                dbg_NumIndexBuffer++;
+            };
+        }
 		sprintf(str,"ib=%i,nib=%i",dbg_MemIndexBuffer,dbg_NumIndexBuffer);
 		OutText(10,60,str);
+        */
 
 		int dbg_MemTexture=0;
-		for( i=0; i<TexLibrary.GetNumberTexture(); i++ )
+		for(int i=0; i<TexLibrary->GetNumberTexture(); i++ )
 		{
-			cTexture* pTexture=TexLibrary.GetTexture(i);
-			if(pTexture)
-			for(int nFrame=0;nFrame<pTexture->GetNumberFrame();nFrame++)
-			if( pTexture->GetDDSurface(nFrame)) 
-			{
-				D3DSURFACE_DESC dsc;
-				pTexture->GetDDSurface(nFrame)->GetLevelDesc( 0, &dsc );
-				int sz=GetTextureFormatSize(dsc.Format);
-				int size=dsc.Width*dsc.Height*sz;
-				dbg_MemTexture += (size/8);
-			}
+			cTexture* pTexture=TexLibrary->GetTexture(i);
+            if (pTexture) {
+                for (int nFrame = 0; nFrame < pTexture->GetNumberFrame(); nFrame++) {
+                    TextureImage* tf = pTexture->GetFrameImage(nFrame);
+                    if (tf->d3d) {
+                        D3DSURFACE_DESC dsc;
+                        tf->d3d->GetLevelDesc(0, &dsc);
+                        int sz = GetTextureFormatSize(dsc.Format);
+                        int size = dsc.Width * dsc.Height * sz;
+                        dbg_MemTexture += (size / 8);
+                    }
+                }
+            }
 		}
 		sprintf(str,"tex=%i",dbg_MemTexture);
 		OutText(10,40,str);
@@ -708,20 +782,22 @@ int cD3DRender::Flush(HWND wnd)
 		{
 			cTexture* pTexture=(*it)->GetTexture();
 			if(pTexture)
-			for(int nFrame=0;nFrame<pTexture->GetNumberFrame();nFrame++)
-			if( pTexture->GetDDSurface(nFrame)) 
-			{
-				D3DSURFACE_DESC dsc;
-				pTexture->GetDDSurface(nFrame)->GetLevelDesc( 0, &dsc );
-				int sz=GetTextureFormatSize(dsc.Format);
-				int size=dsc.Width*dsc.Height*sz;
-				dbg_MemTexture += (size/8);
-			}
+			for(int nFrame=0;nFrame<pTexture->GetNumberFrame();nFrame++) {
+                IDirect3DTexture9* tex = pTexture->GetFrameImage(nFrame)->d3d;
+                if (!tex) continue;
+                
+                D3DSURFACE_DESC dsc;
+                tex->GetLevelDesc(0, &dsc);
+                int sz = GetTextureFormatSize(dsc.Format);
+                int size = dsc.Width * dsc.Height * sz;
+                dbg_MemTexture += (size / 8);
+            }
 		}
 
 		sprintf(str,"font_mem=%i",dbg_MemTexture);
 		OutText(10,180,str);
 
+        /*
 		int FreeTileMemoty,TotalTileMemory;
 		vertex_pool_manager.GetUsedMemory(TotalTileMemory,FreeTileMemoty);
 		
@@ -748,6 +824,7 @@ int cD3DRender::Flush(HWND wnd)
 		else
 			sprintf(str,"TileIndex=0 byte, slack=0%%");
 		OutText(10,160,str);
+        */
 /*
 		extern void CalcNumParticleClass(int& num_object,int& num_particle);
 		int num_particle_obj,num_particle;
@@ -765,6 +842,9 @@ int cD3DRender::BeginScene()
 	if(lpD3DDevice==0) return -1;
 	if(bActiveScene) return 1; bActiveScene=1;
 	HRESULT hr=lpD3DDevice->BeginScene();
+    
+    int ret = cInterfaceRenderDevice::BeginScene();
+    if (ret) return ret;
 	
 	NumberPolygon=0;
 	NumDrawObject=0;
@@ -810,27 +890,20 @@ int cD3DRender::BeginScene()
 
 //	SetRenderState(D3DRS_TEXTUREPERSPECTIVE,TRUE);
 //	SetRenderState(D3DRS_ANTIALIAS,D3DANTIALIAS_NONE);
-	SetRenderState(D3DRS_ZENABLE,D3DZB_TRUE);
-	SetRenderState(D3DRS_FILLMODE,bWireFrame==0?FILL_SOLID:FILL_WIREFRAME);
-	SetRenderState(D3DRS_SHADEMODE,D3DSHADE_GOURAUD);
-	SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
-	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
+    SetRenderState(D3DRS_SHADEMODE,D3DSHADE_GOURAUD);
 	SetRenderState(D3DRS_LASTPIXEL,TRUE);
-	SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
-	SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
-	SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
-	SetRenderState(D3DRS_ALPHAREF,0);
-	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER); //D3DCMP_ALWAYS
-
-	bool hicolor=(RenderMode&RENDERDEVICE_MODE_RGB16)?true:false;
-	SetRenderState(D3DRS_DITHERENABLE,hicolor);
-	SetRenderState(D3DRS_ALPHABLENDENABLE,FALSE);
+    
+    SetRenderState(D3DRS_ZENABLE,D3DZB_TRUE);
+    SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
+    
+    bool hicolor=(RenderMode&RENDERDEVICE_MODE_RGB16)?true:false;
+    SetRenderState(D3DRS_DITHERENABLE,hicolor);    
 	SetRenderState(D3DRS_SPECULARENABLE,FALSE);
 	SetRenderState(D3DRS_DEPTHBIAS,0);
 	SetRenderState(D3DRS_TEXTUREFACTOR,0xFFFFFFFF);
 
-	SetRenderState(D3DRS_CLIPPING,TRUE);
+    SetRenderState(D3DRS_CLIPPING,TRUE);
+    SetRenderState(D3DRS_SCISSORTESTENABLE,TRUE);
 	SetRenderState(D3DRS_LIGHTING,FALSE);
 
 	SetRenderState(D3DRS_AMBIENT,0xFFFFFFFF);
@@ -858,29 +931,34 @@ int cD3DRender::BeginScene()
 	}else
 		SetRenderState( D3DRS_FOGTABLEMODE,  D3DFOG_NONE ),
 		SetRenderState( D3DRS_FOGVERTEXMODE,  D3DFOG_NONE );
+    
+    D3DVIEWPORT9 vp = {0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+    RDCALL(lpD3DDevice->SetViewport(&vp));
+    
 	return hr;
 }
 
 int cD3DRender::EndScene()
 { 
 	if(lpD3DDevice==0) return -1;
-	if(!bActiveScene) return 1; 
+	if(!bActiveScene) return 1;
+    
+    FlushActiveDrawBuffer();
 
 //	D3DVIEWPORT9 vpall={0,0,xScr,yScr,0.0f,1.0f};
 //	RDCALL(lpD3DDevice->SetViewport(&vpall));
-	FlushPrimitive2D();
-	FlushPrimitive3D();
+
+    int ret = cInterfaceRenderDevice::EndScene();
+    if (ret) return ret;
 
 	bActiveScene=0;
 	HRESULT hr=lpD3DDevice->EndScene();
 	return hr;
 }
 
-void cD3DRender::FlushPrimitive2D()
-{
-	FlushPixel();
-	FlushLine();
-	FlushFilledRect();
+void cD3DRender::FlushPrimitive2D() {
+    VISASSERT(bActiveScene);
+    FlushActiveDrawBuffer();
 }
 
 void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffuse,sColor4f *Specular)
@@ -913,22 +991,158 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	lpD3DDevice->SetLight(0,&GlobalLight);
 	lpD3DDevice->LightEnable(0,TRUE);
 }
-int cD3DRender::SetRenderState(eRenderStateOption option,int value)
+uint32_t cD3DRender::GetRenderState(eRenderStateOption option) {
+
+    switch (option) {
+        default:
+            break;
+        case RS_WIREFRAME:
+            option = static_cast<eRenderStateOption>(D3DRS_FILLMODE);
+            break;
+        case RS_ALPHA_TEST_MODE:
+            option = static_cast<eRenderStateOption>(D3DRS_ALPHAREF);
+            break;
+    }
+    uint32_t value = GetRenderState(static_cast<D3DRENDERSTATETYPE>(option));
+    switch (option) {
+        default:
+            break;
+        case RS_ALPHA_TEST_MODE:
+            if (GetRenderState(D3DRS_ALPHATESTENABLE)) {
+                value = ALPHATEST_NONE;
+            } else {
+                switch (value) {
+                    default:
+                        value = ALPHATEST_GT_0;
+                        break;
+                    case 1:
+                        value = ALPHATEST_GT_1;
+                        break;
+                    case 254:
+                        value = ALPHATEST_GT_254;
+                        break;
+                }
+            }
+            break;
+        case RS_ZENABLE:
+            value = value != D3DZB_FALSE;
+            break;
+        case RS_WIREFRAME:
+            value = value == D3DFILL_WIREFRAME;
+            break;
+        case RS_CULLMODE:
+            switch (value) {
+                default:
+                    break;
+                case D3DCULL_NONE:
+                    value = CULL_NONE;
+                    break;
+                case D3DCULL_CW:
+                    value = CULL_CW;
+                    break;
+                case D3DCULL_CCW:
+                    value = CULL_CCW;
+                    break;
+            }
+            break;
+        case RS_ZFUNC:
+            switch (value) {
+                default:
+                    break;
+                case D3DCMP_LESSEQUAL:
+                    value = CMP_LESSEQUAL;
+                    break;
+                case D3DCMP_GREATER:
+                    value = CMP_GREATER;
+                    break;
+                case D3DCMP_GREATEREQUAL:
+                    value = CMP_GREATEREQUAL;
+                    break;
+                case D3DCMP_ALWAYS:
+                    value = CMP_ALWAYS;
+                    break;
+            }
+            break;
+    }
+    return value;
+}
+int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
 { 
-    if(lpD3DDevice==0||!bActiveScene) return 1;
-	switch(option)
-	{
-		case RS_FILLMODE:
-			bWireFrame=(value==FILL_WIREFRAME);
+    if(lpD3DDevice==0) {
+        xassert(0);
+        return 1;
+    }
+	switch (option) {
+        default:
+            break;
+        case RS_ALPHA_TEST_MODE:
+            SetRenderState(D3DRS_ALPHATESTENABLE, value != ALPHATEST_NONE);
+            option = static_cast<eRenderStateOption>(D3DRS_ALPHAREF);
+            switch (value) {
+                default:
+                case ALPHATEST_GT_0:
+                    value = 0;
+                    break;
+                case ALPHATEST_GT_1:
+                    value = 1;
+                    break;
+                case ALPHATEST_GT_254:
+                    value = 254;
+                    break;
+            }
+            break;
+        case RS_ZENABLE:
+            value = value ? D3DZB_TRUE : D3DZB_FALSE;
+            break;
+		case RS_WIREFRAME:
+            WireframeMode = value != 0;
+            option = static_cast<eRenderStateOption>(D3DRS_FILLMODE);
+            value = value ? D3DFILL_WIREFRAME : D3DFILL_SOLID;
 			break;
 		case RS_ZWRITEENABLE:
-			if(value) SetRenderState(D3DRS_CULLMODE,CurrentCullMode);
-			else SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
+			if (value) {
+                SetRenderState(RS_CULLMODE, CameraCullMode);
+            } else {
+                SetRenderState(RS_CULLMODE, CULL_NONE);
+            }
 			break;
 		case RS_CULLMODE:
-			if(value<0) value=CurrentCullMode;
+            switch (value) {
+                default:
+                    xassert(0);
+                case CULL_CAMERA:
+                    return SetRenderState(RS_CULLMODE, CameraCullMode);
+                case CULL_NONE:
+                    value = D3DCULL_NONE;
+                    break;
+                case CULL_CW:
+                    value = D3DCULL_CW;
+                    break;
+                case CULL_CCW:
+                    value = D3DCULL_CCW;
+                    break;
+            }
 			break;
+        case RS_ZFUNC:
+            switch (value) {
+                default:
+                    break;
+                case CMP_LESSEQUAL:
+                    value = D3DCMP_LESSEQUAL;
+                    break;
+                case CMP_GREATER:
+                    value = D3DCMP_GREATER;
+                    break;
+                case CMP_GREATEREQUAL:
+                    value = D3DCMP_GREATEREQUAL;
+                    break;
+                case CMP_ALWAYS:
+                    value = D3DCMP_ALWAYS;
+                    break;
+            }
+            break;
 		case RS_BILINEAR:
+            FlushActiveDrawBuffer();
 			if(value)
 			{
 				SetSamplerState(0, D3DSAMP_MINFILTER, texture_interpolation );
@@ -942,456 +1156,19 @@ int cD3DRender::SetRenderState(eRenderStateOption option,int value)
 			}
 			return 0;
 	}
-	SetRenderState((D3DRENDERSTATETYPE)option,value);
+	SetRenderState(static_cast<D3DRENDERSTATETYPE>(option),value);
 	return 0; 
 }
 
-void cD3DRender::DrawLine(int x1,int y1,int x2,int y2,sColor4c color)
-{ 
+void cD3DRender::FlushPrimitive3D() {
 	VISASSERT(bActiveScene);
-	if(x1<=x2) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(y1<=y2) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	PointStruct v;
-	v.x=(float)x1;
-	v.y=(float)y1;
-	v.diffuse=color;
-	lines.push_back(v);
-	v.x=(float)x2;
-	v.y=(float)y2;
-	lines.push_back(v);
+    FlushActiveDrawBuffer();
 }
-
-void cD3DRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool outline)
-{ 
-   	VISASSERT(bActiveScene);
-	int x2=x1+dx,y2=y1+dy;
-	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(dy>=0) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	if(outline)
-	{
-		PointStruct v;
-		v.diffuse=color;
-		v.x=(float)x1; v.y=(float)y1; lines.push_back(v);
-		v.x=(float)x2; v.y=(float)y1; lines.push_back(v);
-
-		v.x=(float)x2; v.y=(float)y1; lines.push_back(v);
-		v.x=(float)x2; v.y=(float)y2; lines.push_back(v);
-
-		v.x=(float)x2; v.y=(float)y2; lines.push_back(v);
-		v.x=(float)x1; v.y=(float)y2; lines.push_back(v);
-
-		v.x=(float)x1; v.y=(float)y2; lines.push_back(v);
-		v.x=(float)x1; v.y=(float)y1; lines.push_back(v);
-	}else
-	{
-		RectStruct s;
-		s.x1=x1;s.x2=x2;
-		s.y1=y1;s.y2=y2;
-		s.diffuse=color;
-		rectangles.push_back(s);
-	}
-}
-
-void cD3DRender::FlushPrimitive3D()
-{
-	VISASSERT(bActiveScene);
-	FlushLine3D();
-	FlushPoint3D();
-}
-
-
-void cD3DRender::FlushLine3D()
-{
-	if(lines3d.empty())return;
-
-	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_FOGENABLE,FALSE);
-	SetNoMaterial(ALPHA_BLEND);
-	SetMatrix(D3DTS_WORLD,MatXf::ID);
-
-
-	VISASSERT((lines3d.size()&1)==0);
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<sVertexXYZD>::iterator it;
-	FOR_EACH(lines3d,it)
-	{
-		v[npoint]=*it;
-		npoint++;
-		if(((npoint&1)==0) && npoint>=BufferXYZD.GetSize()-2)
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
-
-	lines3d.clear();
-	SetRenderState(D3DRS_ZFUNC,prev_zfunc);
-	SetRenderState(D3DRS_FOGENABLE,prev_fog);
-}
-
-void cD3DRender::FlushPoint3D()
-{
-	if(points3d.empty())return;
-
-	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_FOGENABLE,FALSE);
-	SetNoMaterial(ALPHA_BLEND);
-	SetMatrix(D3DTS_WORLD,MatXf::ID);
-
-
-	int npoint=0;
-	sVertexXYZD* v=BufferXYZD.Lock();
-	std::vector<sVertexXYZD>::iterator it;
-	FOR_EACH(points3d,it)
-	{
-		v[npoint]=*it;
-		npoint++;
-		if(npoint>=BufferXYZD.GetSize()-2)
-		{
-			BufferXYZD.Unlock(npoint);
-			BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
-			v=BufferXYZD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZD.Unlock(npoint);
-	if(npoint)
-		BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
-
-	points3d.clear();
-	SetRenderState(D3DRS_ZFUNC,prev_zfunc);
-	SetRenderState(D3DRS_FOGENABLE,prev_fog);
-}
-
-void cD3DRender::DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color)
-{
-	VISASSERT(bActiveScene);
-	sVertexXYZD v;
-	v.pos=v1;
-	v.diffuse=color;
-	lines3d.push_back(v);
-	v.pos=v2;
-	lines3d.push_back(v);
-}
-
-void cD3DRender::DrawPoint(const Vect3f &v1,sColor4c color)
-{
-	VISASSERT(bActiveScene);
-	sVertexXYZD v;
-	v.pos=v1;
-	v.diffuse=color;
-	points3d.push_back(v);
-}
-
-void cD3DRender::DrawPixel(int x1,int y1,sColor4c color)
-{ 
-    if(!bActiveScene) return;
-	if(x1<xScrMin||x1>xScrMax||y1<yScrMin||y1>yScrMax) return;
-	PointStruct v;
-	v.x=(float)x1;
-	v.y=(float)y1;
-	v.diffuse=color;
-	points.push_back(v);
-	return; 
-}
-
-void cD3DRender::FlushPixel()
-{
-	if(points.empty())return;
-	SetNoMaterial(ALPHA_BLEND);
-	SetRenderState(D3DRS_ZWRITEENABLE, FALSE); 
-	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_ALWAYS);
-	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
-
-	int npoint=0;
-	sVertexXYZWD* v=BufferXYZWD.Lock();
-	std::vector<PointStruct>::iterator it;
-	FOR_EACH(points,it)
-	{
-		PointStruct& p=*it;
-		sVertexXYZWD& cv=v[npoint];
-		cv.x=p.x;
-		cv.y=p.y;
-		cv.z=0.001f;
-		cv.w=0.001f;
-		cv.diffuse=p.diffuse;
-
-		npoint++;
-		if(npoint>=BufferXYZWD.GetSize())
-		{
-			BufferXYZWD.Unlock(npoint);
-			BufferXYZWD.DrawPrimitive(PT_POINTLIST,npoint);
-			v=BufferXYZWD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZWD.Unlock(npoint);
-	if(npoint)
-		BufferXYZWD.DrawPrimitive(PT_POINTLIST,npoint);
-
-	points.clear();
-}
-
-void cD3DRender::FlushLine()
-{
-	if(lines.empty())return;
-	SetNoMaterial(ALPHA_BLEND);
-
-	VISASSERT((lines.size()&1)==0);
-	int npoint=0;
-	sVertexXYZWD* v=BufferXYZWD.Lock();
-	std::vector<PointStruct>::iterator it;
-	FOR_EACH(lines,it)
-	{
-		PointStruct& p=*it;
-		sVertexXYZWD& cv=v[npoint];
-		cv.x=p.x;
-		cv.y=p.y;
-		cv.z=0.001f;
-		cv.w=0.001f;
-		cv.diffuse=p.diffuse;
-
-		npoint++;
-		if(((npoint&1)==0) && npoint>=BufferXYZWD.GetSize()-2)
-		{
-			BufferXYZWD.Unlock(npoint);
-			BufferXYZWD.DrawPrimitive(PT_LINELIST,npoint/2);
-			v=BufferXYZWD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZWD.Unlock(npoint);
-	if(npoint)
-		BufferXYZWD.DrawPrimitive(PT_LINELIST,npoint/2);
-
-	lines.clear();
-}
-
-void cD3DRender::FlushFilledRect()
-{
-	if(rectangles.empty())return;
-	SetNoMaterial(ALPHA_BLEND);
-
-	int npoint=0;
-	sVertexXYZWD* v=BufferXYZWD.Lock();
-	std::vector<RectStruct>::iterator it;
-	FOR_EACH(rectangles,it)
-	{
-		RectStruct& p=*it;
-
-		sVertexXYZWD* pv=v+npoint;
-		pv[0].x=p.x1; pv[0].y=p.y1; pv[0].z=0.001f; pv[0].w=0.001f; pv[0].diffuse=p.diffuse;
-		pv[1].x=p.x1; pv[1].y=p.y2; pv[1].z=0.001f; pv[1].w=0.001f; pv[1].diffuse=p.diffuse;
-		pv[2].x=p.x2; pv[2].y=p.y1; pv[2].z=0.001f; pv[2].w=0.001f; pv[2].diffuse=p.diffuse;
-
-		pv[3].x=p.x2; pv[3].y=p.y1; pv[3].z=0.001f; pv[3].w=0.001f; pv[3].diffuse=p.diffuse;
-		pv[4].x=p.x1; pv[4].y=p.y2; pv[4].z=0.001f; pv[4].w=0.001f; pv[4].diffuse=p.diffuse;
-		pv[5].x=p.x2; pv[5].y=p.y2; pv[5].z=0.001f; pv[5].w=0.001f; pv[5].diffuse=p.diffuse;
-
-		npoint+=6;
-		if(npoint>=BufferXYZWD.GetSize()-6)
-		{
-			BufferXYZWD.Unlock(npoint);
-			BufferXYZWD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
-			v=BufferXYZWD.Lock();
-			npoint=0;
-		}
-	}
-
-	BufferXYZWD.Unlock(npoint);
-	if(npoint)
-		BufferXYZWD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
-
-	rectangles.clear();
-}
-
-void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float du,float dv,
-		cTexture *Texture,const sColor4c &ColorMul,float phase,eBlendMode mode)
-{
-    if (!Texture) return;
-    VISASSERT(bActiveScene);
-	int x2=x1+dx,y2=y1+dy;
-	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(dy>=0) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	bool alpha=ColorMul.a<255 || Texture->IsAlpha();
-	if(mode<=ALPHA_TEST && alpha)
-		mode=ALPHA_BLEND;
-	SetNoMaterial(mode,phase,Texture);
-
-	sVertexXYZWDT1* v=BufferXYZWDT1.Lock(4);
-	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
-	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
-	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
-	v[0].u1()=u1;    v[0].v1()=v1;
-	v[1].u1()=u1;    v[1].v1()=v1+dv;
-	v[2].u1()=u1+du; v[2].v1()=v1;
-	v[3].u1()=u1+du; v[3].v1()=v1+dv;
-	BufferXYZWDT1.Unlock(4);
-
-	BufferXYZWDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
-}
-
-void cD3DRender::DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase)
-{
-	DrawSprite2(x,y,dx,dy,u,v,du,dv,u,v,du,dv,
-		Tex1,Tex2,ColorMul,phase);
-}
-
-void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
-							 float u0,float v0,float du0,float dv0,
-							 float u1,float v1,float du1,float dv1,
-		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase,
-		eColorMode mode,eBlendMode blend_mode)
-{
-    if (!Tex1 || !Tex2) return;
-    VISASSERT(bActiveScene);
-	int x2=x1+dx,y2=y1+dy;
-	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(dy>=0) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	bool alpha=ColorMul.a<255;
-	if(blend_mode==ALPHA_NONE)
-		SetNoMaterial(alpha?ALPHA_BLEND:ALPHA_NONE,phase,Tex1,Tex2,mode);
-	else
-		SetNoMaterial(blend_mode,phase,Tex1,Tex2,mode);
-
-	sVertexXYZWDT2* v=BufferXYZWDT2.Lock(4);
-	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
-	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
-	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
-
-	v[0].u1()=u0;     v[0].v1()=v0;
-	v[1].u1()=u0;     v[1].v1()=v0+dv0;
-	v[2].u1()=u0+du0; v[2].v1()=v0;
-	v[3].u1()=u0+du0; v[3].v1()=v0+dv0;
-
-	v[0].u2()=u1;     v[0].v2()=v1;
-	v[1].u2()=u1;     v[1].v2()=v1+dv1;
-	v[2].u2()=u1+du1; v[2].v2()=v1;
-	v[3].u2()=u1+du1; v[3].v2()=v1+dv1;
-	BufferXYZWDT2.Unlock(4);
-	
-	BufferXYZWDT2.DrawPrimitive(PT_TRIANGLESTRIP,2);
-}
-
-void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
-							 float u0,float v0,float du0,float dv0,
-							 float u1,float v1,float du1,float dv1,
-		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha,float phase,
-		eColorMode mode,eBlendMode blend_mode)
-{
-    if (!Tex1 || !Tex2) return;
-    VISASSERT(bActiveScene);
-	int x2=x1+dx,y2=y1+dy;
-	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
-	else if(x1<xScrMin||x2>xScrMax) return;
-	if(dy>=0) { if(y2<yScrMin||y1>yScrMax) return; }
-	else if(y1<yScrMin||y2>yScrMax) return;
-
-	sColor4c ColorMul(sColor4f(1,1,1,alpha));
-	if(blend_mode==ALPHA_NONE)
-		SetNoMaterial((ColorMul.a<255)?ALPHA_BLEND:ALPHA_NONE,phase,Tex2,Tex1,mode);
-	else
-		SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
-
-	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
-	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
-	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,1);
-
-	sColor4c lerp(255*lerp_factor,255*lerp_factor,255*lerp_factor,255*(1-lerp_factor));
-
-	{
-		SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
-		SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
-		SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
-		SetRenderState(D3DRS_TEXTUREFACTOR,lerp.RGBA());
-
-		SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
-		SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);
-		SetTextureStageState(1,D3DTSS_ALPHAARG2,D3DTA_DIFFUSE);
-
-//		SetTextureStageState(1,D3DTSS_COLOROP,D3DTOP_MODULATE);
-		SetTextureStageState(1,D3DTSS_COLORARG1,D3DTA_TEXTURE);
-		SetTextureStageState(1,D3DTSS_COLORARG2,D3DTA_CURRENT);
-	}
-
-	sVertexXYZWDT2* v=BufferXYZWDT2.Lock(4);
-	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
-	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
-	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
-
-	v[0].u1()=u1;     v[0].v1()=v1;
-	v[1].u1()=u1;     v[1].v1()=v1+dv1;
-	v[2].u1()=u1+du1; v[2].v1()=v1;
-	v[3].u1()=u1+du1; v[3].v1()=v1+dv1;
-
-	v[0].u2()=u0;     v[0].v2()=v0;
-	v[1].u2()=u0;     v[1].v2()=v0+dv0;
-	v[2].u2()=u0+du0; v[2].v2()=v0;
-	v[3].u2()=u0+du0; v[3].v2()=v0+dv0;
-	BufferXYZWDT2.Unlock(4);
-	
-	BufferXYZWDT2.DrawPrimitive(PT_TRIANGLESTRIP,2);
-
-	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
-	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,index1);
-
-	SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
-	SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-
-	SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
-	SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-
-	SetTextureStageState( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
-	SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT );
-
-	SetTextureStageState( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
-	SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-
-}
-
 
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *FontName,int size,int bold,int italic,int underline)
 {
     if(hWnd==0) return;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	HDC hDC=0;
     HFONT hFont=CreateFontA(size,0,0,0,bold?FW_BOLD:FW_NORMAL,italic,underline,0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,VARIABLE_PITCH,FontName);
@@ -1406,15 +1183,13 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *
 	SelectObject(hDC,hFontOld);
 	DeleteObject(hFont);
 	ReleaseDC(hWnd,hDC);
-#else
-    //TODO implement this
 #endif
 }
 
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 {
 	if(hWnd==0) return;
-#ifndef PERIMETER_EXODUS
+#ifdef _WIN32
 	HDC hDC=GetDC(hWnd);
 	if(hDC==0) return;
 	SetTextColor(hDC,RGB(r,g,b));
@@ -1422,8 +1197,6 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 	RECT rect={xScrMin,yScrMin,xScrMax,yScrMax};
 	RDCALL(!ExtTextOutA(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlenA(string),0));
 	ReleaseDC(hWnd,hDC);
-#else
-    //TODO implement this
 #endif
 }
 
@@ -1441,111 +1214,221 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	return 0;
 }
 
-void cD3DRender::CreateVertexBuffer(sPtrVertexBuffer &vb,int NumberVertex,int format,int dynamic)
-{
-	int size = GetSizeFromFmt(format);
-	CreateVertexBufferBySizeFormat(vb,NumberVertex,size,format,dynamic);
+void cD3DRender::DeleteDynamicBuffers() {
+    MTG();
+    for (auto vb : LibVB) {
+        if (vb && vb->d3d) {
+            auto d3d = vb->d3d;
+            vb->d3d = nullptr;
+            d3d->Release();
+        }
+    }
+    LibVB.clear();
+    for (auto ib : LibIB) {
+        if (ib && ib->d3d) {
+            auto d3d = ib->d3d;
+            ib->d3d = nullptr;
+            d3d->Release();
+        }
+    }
+    LibIB.clear();
 }
 
-void cD3DRender::CreateVertexBufferBySize(struct sPtrVertexBuffer &vb,int NumberVertex,int size,int dynamic)
-{
-	CreateVertexBufferBySizeFormat(vb,NumberVertex,size,0,dynamic);
+const uint32_t D3D_LOCK_FLAGS_STATIC = D3DLOCK_NOSYSLOCK | D3DLOCK_NO_DIRTY_UPDATE;
+const uint32_t D3D_LOCK_FLAGS_DYNAMIC = D3D_LOCK_FLAGS_STATIC | D3DLOCK_DISCARD;
+
+void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
+    xassert(!vb->burned);
+    vb->burned = true;
+    xassert(len <= vb->data_len);
+    if (!vb->d3d) {
+        MTG();
+        uint32_t fvf = GetD3DFVFFromFormat(vb->fmt);
+        uint32_t flags = D3DUSAGE_WRITEONLY;
+        if (vb->dynamic) {
+            flags |= D3DUSAGE_DYNAMIC;
+        }
+
+        RDCALL(lpD3DDevice->CreateVertexBuffer(
+                vb->dynamic ? vb->data_len : len,
+                flags,
+                fvf,
+                vb->dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
+                &vb->d3d,
+                nullptr
+        ));
+        xassert(vb->d3d);
+        
+        if (vb->dynamic) {
+            LibVB.emplace_back(vb);
+        }
+    }
+    VISASSERT( vb->d3d );
+    vb->dirty = false;
+    void* lock_ptr = nullptr;
+    uint32_t flags = vb->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
+    RDCALL(vb->d3d->Lock(0, len, &lock_ptr, flags));
+    memcpy(lock_ptr, vb->data, len);
+    vb->d3d->Unlock();
 }
 
-void cD3DRender::CreateVertexBufferBySizeFormat(struct sPtrVertexBuffer &vb,int NumberVertex,int size,int format,int dynamic)
-{
-	xassert(NumberVertex>=0 || NumberVertex<=65536);
-	vb.ptr=LibVB.NewSlot();
-	vb.size = size;
+void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
+    xassert(!ib->burned);
+    ib->burned = true;
+    xassert(len <= ib->data_len);
+    if (!ib->d3d) {
+        MTG();
+        uint32_t flags = D3DUSAGE_WRITEONLY;
+        if (ib->dynamic) {
+            flags |= D3DUSAGE_DYNAMIC;
+        }
 
-	sSlotVB& s=*vb.ptr;
-	s.VertexSize=size;
-	s.fmt=format;
-	s.dynamic = dynamic;
-	s.NumberVertex=NumberVertex;
-	s.p=NULL;
-	if(dynamic)
-		RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex*vb.size,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY,format,D3DPOOL_DEFAULT,&s.p,NULL))
-	else
-		RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex*vb.size,D3DUSAGE_WRITEONLY,format,D3DPOOL_MANAGED,&s.p,NULL))
-}
-
-void cD3DRender::DeleteVertexBuffer(sPtrVertexBuffer &vb)
-{
-	MTG();
-	if(!vb.IsInit()) return;
-	sSlotVB& s=*vb.ptr;
-	VISASSERT(s.init);
-	RELEASE(s.p); 
-	LibVB.DeleteSlot(vb.ptr);
-	vb.ptr=NULL;
-}
-
-void cD3DRender::DeleteDynamicVertexBuffer()
-{
-	for(int i=0;i<LibVB.size();i++)
-	{
-		sSlotVB& s=*LibVB[i];
-		if(s.init && s.dynamic)
-		{
-			RELEASE(s.p);
-		}
-	}
+        RDCALL(lpD3DDevice->CreateIndexBuffer(
+                ib->dynamic ? ib->data_len : len,
+                flags,
+                D3DFMT_INDEX16,
+                ib->dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
+                &ib->d3d,
+                nullptr
+        ));
+        xassert(ib->d3d);
+        
+        if (ib->dynamic) {
+            LibIB.emplace_back(ib);
+        }
+    }
+    VISASSERT( ib->d3d );
+    ib->dirty = false;
+    void* lock_ptr = nullptr;
+    uint32_t flags = ib->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
+    RDCALL(ib->d3d->Lock(0, len, &lock_ptr, flags));
+    memcpy(lock_ptr, ib->data, len);
+    ib->d3d->Unlock();
 }
 
-void cD3DRender::RestoreDynamicVertexBuffer()
-{
-	for(int i=0;i<LibVB.size();i++)
-	{
-		sSlotVB& s=*LibVB[i];
-		if(s.init && s.dynamic)
-		{
-			VISASSERT(s.p==NULL);
-			RDCALL(lpD3DDevice->CreateVertexBuffer(s.NumberVertex*s.VertexSize,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY,s.fmt,D3DPOOL_DEFAULT,&s.p,NULL))
-		}
-	}
+void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    RenderSubmitEvent(RenderEvent::DELETE_VERTEXBUF, "", &vb);
+#endif
+    if (vb.d3d) {
+        MTG();
+        if (vb.dynamic) {
+            auto removed = std::remove(LibVB.begin(), LibVB.end(), &vb);
+            LibVB.erase(removed, LibVB.end());
+        }
+        vb.d3d->Release();
+        vb.d3d = nullptr;
+    }
+    cInterfaceRenderDevice::DeleteVertexBuffer(vb);
 }
 
-void* cD3DRender::LockVertexBuffer(sPtrVertexBuffer &vb)
-{
-	void *p=0;
-	VISASSERT( vb.IsInit() && vb.ptr->p );
-	RDCALL(vb.ptr->p->Lock(0,0,&p, vb.ptr->dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
-	return p;
+void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib) {
+#ifdef PERIMETER_RENDER_TRACKER_RESOURCES
+    RenderSubmitEvent(RenderEvent::DELETE_INDEXBUF, "", &ib);
+#endif
+    if (ib.d3d) {
+        MTG();
+        if (ib.dynamic) {
+            auto removed = std::remove(LibIB.begin(), LibIB.end(), &ib);
+            LibIB.erase(removed, LibIB.end());
+        }
+        ib.d3d->Release();
+        ib.d3d = nullptr;
+    }
+    cInterfaceRenderDevice::DeleteIndexBuffer(ib);
 }
-void cD3DRender::UnlockVertexBuffer(sPtrVertexBuffer &vb)
-{
-	VISASSERT( vb.IsInit() && vb.ptr->p );
-	RDCALL(vb.ptr->p->Unlock());
-}
-void cD3DRender::CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberPolygon,int size)
-{
-	DeleteIndexBuffer(ib);
 
-	sSlotIB* slot=LibIB.NewSlot();
-	RDCALL(lpD3DDevice->CreateIndexBuffer(NumberPolygon*size,D3DUSAGE_WRITEONLY,D3DFMT_INDEX16,D3DPOOL_MANAGED,&slot->p,NULL));
-	ib.ptr=slot;
+void cD3DRender::FlushActiveDrawBuffer() {
+    if (activeDrawBuffer) {
+        DrawBuffer* db = activeDrawBuffer;
+        activeDrawBuffer = nullptr;
+        if (db->IsLocked()) {
+            db->Unlock();
+        }
+        db->Draw();
+    }
 }
-void cD3DRender::DeleteIndexBuffer(sPtrIndexBuffer &ib)
-{
-	if(!ib.IsInit()) return;
-	sSlotIB& s=*ib.ptr;
-	VISASSERT(s.init);
-	RELEASE(s.p);
-	LibIB.DeleteSlot(ib.ptr);
-	ib.ptr=NULL;
+
+void cD3DRender::SetActiveDrawBuffer(DrawBuffer* db) {
+    //printf("%p -> %p\n", activeDrawBuffer, db);
+    if (activeDrawBuffer && activeDrawBuffer != db) {
+        FlushActiveDrawBuffer();
+    }
+    cInterfaceRenderDevice::SetActiveDrawBuffer(db);
 }
-sPolygon* cD3DRender::LockIndexBuffer(sPtrIndexBuffer &ib)
-{
-	void *p=0;
-	VISASSERT( ib.IsInit() && ib.ptr->p );
-	ib.ptr->p->Lock(0,0,&p,0);
-	return (sPolygon*)p;
+
+void cD3DRender::SubmitDrawBuffer(DrawBuffer* db, DrawRange* range) {
+    if (activeDrawBuffer) {
+        if (activeDrawBuffer == db) {
+            //Avoid drawing twice
+            activeDrawBuffer = nullptr;
+        } else {
+            FlushActiveDrawBuffer();
+        }
+    }
+    if (!db->written_vertices) {
+        xassert(0);
+        return;
+    }
+    
+    SubmitBuffers(db->primitive, &db->vb, db->written_vertices, &db->ib, db->written_indices, range);
+    
+    db->PostDraw();
 }
-void cD3DRender::UnlockIndexBuffer(sPtrIndexBuffer &ib)
-{
-	VISASSERT( ib.IsInit() && ib.ptr->p );
-	ib.ptr->p->Unlock();
+
+void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices, DrawRange* range) {
+    if (vb->dirty) {
+        UpdateD3DVertexBuffer(vb, vertices * vb->VertexSize);
+    } else if (!vb->d3d) {
+        xassert(0);
+        return;
+    }
+
+    if (0 < indices && ib->dirty) {
+        UpdateD3DIndexBuffer(ib, indices * sizeof(indices_t));
+    }
+
+    uint32_t fvf = GetD3DFVFFromFormat(vb->fmt);
+    RDCALL(lpD3DDevice->SetFVF(fvf));
+    RDCALL(lpD3DDevice->SetStreamSource(0, vb->d3d, 0, vb->VertexSize));
+    D3DPRIMITIVETYPE d3dType;
+    switch (primitive) {
+        default:
+        case PT_TRIANGLESTRIP:
+            d3dType = D3DPT_TRIANGLESTRIP;
+            break;
+        case PT_TRIANGLES:
+            d3dType = D3DPT_TRIANGLELIST;
+            break;
+    }
+    
+    size_t offset = range ? range->offset : 0;
+    if (indices) {
+        if (range) {
+            xassert((range->offset + range->len) <= indices);
+            indices = range->len;
+        }
+        RDCALL(lpD3DDevice->SetIndices(ib->d3d));
+        size_t polys = (primitive == PT_TRIANGLESTRIP
+                        ? (indices - 2)
+                        : static_cast<size_t>(xm::floor(static_cast<double>(indices) / sPolygon::PN)));
+        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawIndexedPrimitive(
+                d3dType,
+                0, 0, vertices,
+                offset, polys
+        ));
+        NumberPolygon += polys;
+    } else {
+        if (range) {
+            xassert((range->offset + range->len) <= vertices);
+            vertices = range->len;
+        }
+        vertices = range ? range->len : vertices;
+        xassert(0);
+        RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, vertices));
+    }
+    if (vb->dynamic) vb->burned = false;
+    if (ib->dynamic) ib->burned = false;
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)
@@ -1565,13 +1448,7 @@ void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)
 }
 int cD3DRender::KillFocus()
 {
-	if(lpD3DDevice==0) return 1;
-
-	{
-		std::vector<cOcclusionQuery*>::iterator it;
-		FOR_EACH(occlusion_query,it)
-			(*it)->Done();
-	}
+	if (lpD3DDevice== nullptr) return 1;
 
 	RELEASE(lpZBuffer);
 	RELEASE(lpBackBuffer);
@@ -1580,36 +1457,43 @@ int cD3DRender::KillFocus()
 	if(dtAdvanceOriginal)
 		dtAdvanceOriginal->DeleteShadowTexture();
 
-	for(int i=0;i<TexLibrary.GetNumberTexture();i++)
-	{
-		cTexture* pTexture=TexLibrary.GetTexture(i);
-		if(pTexture&&pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
-			DeleteTexture(pTexture);
+	for(int i=0;i<TexLibrary->GetNumberTexture();i++) {
+		cTexture* pTexture=TexLibrary->GetTexture(i);
+		if(pTexture&&pTexture->GetAttribute(TEXTURE_POOL_DEFAULT)) {
+            DeleteTexture(pTexture);
+        }
 	}
 //	IsDeleteAllDefaultTextures();
 
-	DeleteDynamicVertexBuffer();
+    DeleteDynamicBuffers();
 	DeleteShader();
 		
 	ClearTilemapPool();
-	vertex_pool_manager.Clear();
-	index_pool_manager.Clear();
+	//vertex_pool_manager.Clear();
+	//index_pool_manager.Clear();
 	return 0;
 }
 
 bool cD3DRender::SetFocus(bool wait,bool focus_error)
 {
+    MTG();
 	{
-		HRESULT hres=D3D_OK;
+        HRESULT hrescoop=D3D_OK;
+        HRESULT hres=D3D_OK;
 		int imax=wait?10:1;
 		for(int i=0;i<imax;i++)
 		{
 			hres=lpD3DDevice->Reset(&d3dpp);
-			if(hres!=D3D_OK && wait)
-				Sleep(1000);
+			if (FAILED(hres)) {
+                hrescoop=lpD3DDevice->TestCooperativeLevel();
+                fprintf(stderr, "D3D::SetFocus coop level after reset %s\n", GetErrorText(hrescoop));
+                if (wait) {
+                    Sleep(1000);
+                }
+            }
 		}
-		if(hres!=D3D_OK)
-		{
+		if (FAILED(hres)) {
+            fprintf(stderr, "D3D::SetFocus failed reset %s\n", GetErrorText(hres));
 			if(focus_error)
 			{
 				VisError<<"Internal error. Cannot reinitialize graphics"<<VERR_END;
@@ -1620,13 +1504,13 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 
 	RDCALL(lpD3DDevice->EvictManagedResources());
 	 
-	for(int i=0;i<TexLibrary.GetNumberTexture();i++)
+	for(int i=0;i<TexLibrary->GetNumberTexture();i++)
 	{
-		cTexture* pTexture=TexLibrary.GetTexture(i);
-		if(pTexture && pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
-		{
-			if(pTexture->GetRef()>1)
-				CreateTexture(pTexture,0,-1,-1);
+		cTexture* pTexture=TexLibrary->GetTexture(i);
+		if(pTexture && pTexture->GetAttribute(TEXTURE_POOL_DEFAULT)) {
+			if (pTexture->GetRef()>1) {
+                CreateTexture(pTexture, 0);
+            }
 		}
 	}
 
@@ -1637,10 +1521,8 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 	RDCALL(lpD3DDevice->GetRenderTarget(0,&lpBackBuffer)); 
 
 	RestoreShader();
-	RestoreDynamicVertexBuffer();
 	RestoreTilemapPool();
 
-	ReinitOcclusion();
 	return true;
 }
 
@@ -1696,9 +1578,9 @@ void cD3DRender::SetBlendState(eBlendMode blend)
 void cD3DRender::SetNoMaterial(eBlendMode blend,float Phase,cTexture *Texture0,
 							   cTexture *Texture1,eColorMode color_mode)
 {
-	SetTexture(Texture0,Phase,0);
-	SetTexture(Texture1,Phase,1);
-	SetTexture(NULL,Phase,2);
+	SetTexture(0, Texture0, Phase);
+	SetTexture(1, Texture1, Phase);
+	SetTextureImage(2, nullptr);
 
 	if(Texture0)
 	{
@@ -1752,226 +1634,6 @@ void cD3DRender::SetNoMaterial(eBlendMode blend,float Phase,cTexture *Texture0,
 
 	SetTextureStageState( 2, D3DTSS_COLOROP, D3DTOP_DISABLE );
 }
-
-void cD3DRender::InitVertexBuffers()
-{
-	const int size=32768;
-	const int sizemin=8192;
-	BufferXYZDT1.Create(size);
-	BufferXYZDT2.Create(sizemin);
-	BufferXYZWD.Create(sizemin);
-	BufferXYZD.Create(sizemin);
-	QuadBufferXYZDT1.Create();
-	QuadBufferXYZWDT1.Create();
-	QuadBufferXYZWDT2.Create();
-
-	BufferXYZWDT1.Create(sizemin);
-	BufferXYZWDT2.Create(sizemin);
-	BufferXYZOcclusion.Create(sizemin);
-}
-////////////////////////////////////////////////////////////
-
-void sPtrVertexBuffer::Destroy()
-{
-	if(ptr)
-		gb_RenderDevice->DeleteVertexBuffer(*this);
-	ptr=NULL;
-}
-
-sPtrIndexBuffer::~sPtrIndexBuffer()
-{
-	if(ptr)
-		gb_RenderDevice->DeleteIndexBuffer(*this);
-	ptr=NULL;
-}
-
-////////////////////////////////////////////////////////////
-cVertexBufferInternal::cVertexBufferInternal()
-{
-	MTG();
-	numvertex=0;
-	cur_min_vertex=0;
-	start_vertex=0;
-}
-
-void cVertexBufferInternal::Destroy()
-{
-	MTG();
-	vb.Destroy();
-}
-
-cVertexBufferInternal::~cVertexBufferInternal()
-{
-}
-
-uint8_t* cVertexBufferInternal::Lock(int minvertex)
-{
-	MTG();
-	void* min_index=NULL;
-
-	LPDIRECT3DVERTEXBUFFER9 pvb=gb_RenderDevice3D->GetVB(vb);
-	if(GetSize()>minvertex)
-	{
-		RDCALL(pvb->Lock(cur_min_vertex*vb.size,GetSize()*vb.size,
-			&min_index,D3DLOCK_NOOVERWRITE));
-	}else
-	{
-		RDCALL(pvb->Lock(0,0,&min_index,D3DLOCK_DISCARD));
-		cur_min_vertex=0;
-	}
-
-	return (uint8_t*)min_index;
-}
-
-void cVertexBufferInternal::Unlock(int num_write_vertex)
-{
-	MTG();
-	cD3DRender* rd=gb_RenderDevice3D;
-	RDCALL(rd->GetVB(vb)->Unlock());
-
-	start_vertex=cur_min_vertex;
-	cur_min_vertex+=num_write_vertex;
-	VISASSERT(cur_min_vertex<=numvertex);
-}
-
-void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
-{
-	MTG();
-	numvertex=bytesize/vertexsize;
-	fmt=_fmt;
-	gb_RenderDevice3D->CreateVertexBuffer(vb,numvertex,fmt,TRUE);
-	xassert(vertexsize==vb.size);
-}
-
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
-{
-	MTG();
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,m);
-	DrawPrimitive(Type,Count);
-}
-
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
-{
-	MTG();
-	cD3DRender* rd=gb_RenderDevice3D;
-	rd->SetFVF(fmt);
-	rd->SetStreamSource(vb);
-	RDCALL(rd->lpD3DDevice->DrawPrimitive((D3DPRIMITIVETYPE)Type,start_vertex,Count));
-}
-
-void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)
-{
-	MTG();
-	cD3DRender* rd=gb_RenderDevice3D;
-	rd->SetFVF(fmt);
-	rd->SetStreamSource(vb);
-	rd->SetIndices(rd->GetStandartIB());
-	RDCALL(rd->lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
-		0, start_vertex, Count*2, (start_vertex>>2)*6, Count ));
-}
-
-/////////////////////////cQuadBufferInternal///////////////////////////////
-
-cQuadBufferInternal::cQuadBufferInternal()
-{
-	start_vertex=NULL;
-}
-
-cQuadBufferInternal::~cQuadBufferInternal()
-{
-}
-
-void cQuadBufferInternal::Destroy()
-{
-	cVertexBufferInternal::Destroy();
-}
-
-void cQuadBufferInternal::Create(int vertexsize,int _fmt)
-{
-	cVertexBufferInternal::Create(vertexsize*POLYGONMAX*2,vertexsize,_fmt);
-}
-
-void cQuadBufferInternal::SetMatrix(const MatXf &m)
-{
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,m);
-}
-
-void cQuadBufferInternal::BeginDraw()
-{
-	VISASSERT(start_vertex==NULL);
-	start_vertex=cVertexBufferInternal::Lock(4);
-	vertex_index=0;
-}
-
-void* cQuadBufferInternal::Get()
-{
-	if(vertex_index+4>=GetSize())
-	{
-		EndDraw();
-		BeginDraw();
-	}
-
-	uint8_t* cur= start_vertex + vertex_index * vb.size;
-	vertex_index+=4;
-	return cur;
-}
-
-void cQuadBufferInternal::EndDraw()
-{
-	Unlock(vertex_index);
-	if(vertex_index>0)
-		DrawIndexedPrimitive(vertex_index>>1);
-	start_vertex=NULL;
-}
-
-void DrawStrip::Begin()
-{
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,MatXf::ID);
-	buf=gb_RenderDevice->GetBufferXYZDT1();
-	pointer=buf->Lock(8);
-	num=0;
-}
-
-void DrawStrip::End()
-{
-	buf->Unlock(num);
-	if(num>=4)
-	{
-		buf->DrawPrimitive(PT_TRIANGLESTRIP,num-2);
-	}
-}
-
-void DrawStripT2::Begin(const MatXf& mat)
-{
-	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,mat);
-	buf=gb_RenderDevice->GetBufferXYZDT2();
-	pointer=buf->Lock(8);
-	num=0;
-}
-
-void DrawStripT2::End()
-{
-	buf->Unlock(num);
-	if(num>=4)
-	{
-		buf->DrawPrimitive(PT_TRIANGLESTRIP,num-2);
-	}
-}
-
-void cD3DRender::InitStandartIB()
-{
-	CreateIndexBuffer(standart_ib,POLYGONMAX);
-	sPolygon* polygon=LockIndexBuffer(standart_ib);
-
-	for(int nPolygon=0; nPolygon<POLYGONMAX; nPolygon+=2 )
-	{
-		polygon[nPolygon+0].set(2*nPolygon+0,2*nPolygon+1,2*nPolygon+2);
-		polygon[nPolygon+1].set(2*nPolygon+2,2*nPolygon+1,2*nPolygon+3);
-	}
-
-	UnlockIndexBuffer(standart_ib);
-}
-
 
 void cD3DRender::SaveStates(const char* fname)
 {
@@ -2133,36 +1795,16 @@ void cD3DRender::SaveStates(const char* fname)
 	fclose(f);
 }
 
-
-void cD3DRender::DrawSpriteScale(int x,int y,int dx,int dy,float u,float v,
-	cTextureScale *Texture,const sColor4c &ColorMul,float phase,eBlendMode mode)
-{
-	float du,dv;
-	Texture->ConvertUV(u,v);
-	Texture->DXY2DUV(dx,dy,du,dv);
-	DrawSprite(x,y,dx,dy,u,v,du,dv,
-		Texture,ColorMul,phase,mode);
-}
-
-void cD3DRender::DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,
-		cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c &ColorMul,float phase)
-{
-	DrawSpriteScale2(x,y,dx,dy,u,v,u,v,
-		Tex1,Tex2,ColorMul,phase);
-}
-
-void cD3DRender::DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,float u1,float v1,
-		cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c &ColorMul,float phase,eColorMode mode)
-{
-	float du,dv,du1,dv1;
-	Tex1->ConvertUV(u,v);
-	Tex2->ConvertUV(u1,v1);
-	Tex1->DXY2DUV(dx,dy,du,dv);
-	Tex2->DXY2DUV(dx,dy,du1,dv1);
-
-	DrawSprite2(x,y,dx,dy,u,v,du,dv,u1,v1,du1,dv1,
-		Tex1,Tex2,ColorMul,phase,mode);
-
+void cD3DRender::UseOrthographicProjection() {
+    if (isOrthographicProjSet) return;
+    FlushActiveDrawBuffer();
+    isOrthographicProjSet = true;
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&orthoVP)));
+    //SetDrawTransform may have changed viewport, set screen viewport just in case
+    D3DVIEWPORT9 vp={0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+    RDCALL(lpD3DDevice->SetViewport(&vp));
 }
 
 bool cD3DRender::PossibleAnisotropic()
@@ -2185,28 +1827,6 @@ bool cD3DRender::GetAnisotropic()
 	return texture_interpolation==D3DTEXF_ANISOTROPIC;
 }
 
-bool cD3DRender::ReinitOcclusion()
-{
-	bool ok=true;
-	std::vector<cOcclusionQuery*>::iterator it;
-	FOR_EACH(occlusion_query,it)
-	{
-		bool b=(*it)->Init();
-		ok = ok && b;
-	}
-
-	return ok;
-}
-
-bool cD3DRender::PossibilityOcclusion()
-{
-	HRESULT hr;
-	IDirect3DQuery9* pQuery=NULL;
-	hr=gb_RenderDevice3D->lpD3DDevice->CreateQuery(D3DQUERYTYPE_OCCLUSION,&pQuery);
-	RELEASE(pQuery);
-	return SUCCEEDED(hr);
-}
-
 #ifndef _FINAL_VERSION_
 void IsDeleteAllDefaultTextures()
 {
@@ -2216,10 +1836,10 @@ void IsDeleteAllDefaultTextures()
 		cTexture* p=dynamic_cast<cTexture*>(cur);
 		if(p)
 		{
-			if(p->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
+			if(p->GetAttribute(TEXTURE_POOL_DEFAULT))
 			{
 				for(int nFrame=0;nFrame<p->GetNumberFrame();nFrame++)
-				if(p->GetDDSurface(nFrame)) 
+				if(p->GetFrameImage(nFrame)) 
 				{
 					dprintf("D3DPOOL_DEFAULT size=(%i,%i)",p->GetWidth(),p->GetHeight());
 					num_undeleted++;
@@ -2227,9 +1847,9 @@ void IsDeleteAllDefaultTextures()
 			}else
 			{
 				for(int nFrame=0;nFrame<p->GetNumberFrame();nFrame++)
-				if(p->GetDDSurface(nFrame)) 
+				if(p->GetFrameImage(nFrame)) 
 				{
-					IDirect3DTexture9* surface=p->GetDDSurface(nFrame);
+					IDirect3DTexture9* surface=p->GetFrameImage(nFrame);
 					D3DSURFACE_DESC desc;
 					RDCALL(surface->GetLevelDesc(0,&desc));
 					if(desc.Pool==D3DPOOL_DEFAULT)
@@ -2250,15 +1870,3 @@ void IsDeleteAllDefaultTextures()
 }
 #endif 
 
-void cD3DRender::SetDialogBoxMode(bool enable)
-{
-	if(RenderMode&RENDERDEVICE_MODE_WINDOW)
-		return;
-	if(enable)
-		RenderMode|=RENDERDEVICE_MODE_ONEBACKBUFFER;
-	else
-		RenderMode&=~(uint32_t)RENDERDEVICE_MODE_ONEBACKBUFFER;
-
-	KillFocus();
-	SetFocus(false);
-}

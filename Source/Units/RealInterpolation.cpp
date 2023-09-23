@@ -13,7 +13,7 @@
 
 terInterpolationReal::terInterpolationReal(terUnitBase* owner)
 : terInterpolationPose(owner),
-  node(!owner->attr().animationDataTable.empty() ? &owner->attr().animationDataTable[0] : 0)
+  node(!owner->attr()->animationDataTable.empty() ? &owner->attr()->animationDataTable[0] : 0)
 {
 	ObjectPoint = 0;
 
@@ -30,9 +30,9 @@ terInterpolationReal::terInterpolationReal(terUnitBase* owner)
 	life_ = 1.0f;
 	hologram_ = 0;
 
-	if(owner->attr().soundSetup.enabled()){
-		for(int i = 0; i < owner->attr().soundSetup.sounds.size(); i++)
-			soundControllers_.push_back(terSoundController(owner->attr().soundSetup.sounds[i]));
+	if(owner->attr()->soundSetup.enabled()){
+		for(int i = 0; i < owner->attr()->soundSetup.sounds.size(); i++)
+			soundControllers_.push_back(terSoundController(owner->attr()->soundSetup.sounds[i]));
 	}
 }
 
@@ -112,7 +112,7 @@ void terInterpolationReal::Start()
 		sColorInterpolate c;
 		c.color=color;
 		c.add_color=add_color;
-		color_=c;
+		color_.set(c);
 
 		ObjectPoint->ClearAttr(ATTRUNKOBJ_IGNORE);//perfomance warning
 
@@ -181,7 +181,7 @@ void terInterpolationReal::interpolate()
 		sColorInterpolate c;
 		c.color=color;
 		c.add_color=add_color;
-		color_=c;
+		color_.set(c);
 		color_(ObjectPoint);
 
 		PhaseListType::iterator pi;
@@ -221,7 +221,7 @@ void terInterpolationReal::SetModel(const char* name,float scale)
 		NewObjectPoint->SetScale(Vect3f(scale,scale,scale));
 	NewObjectPoint->Update();
 
-	const std::vector<AnimationData>& animationTable = Owner->attr().animationDataTable;
+	const std::vector<AnimationData>& animationTable = Owner->attr()->animationDataTable;
 	if(!animationTable.empty()){
 		const AnimationData* data = &animationTable[0];
 		if(data->groupName)
@@ -368,9 +368,9 @@ terRealPhaseControllerType::terRealPhaseControllerType(cObjectNode* object)
 {
 	ObjectPoint = object;
 
-	phase_ = 0;
-	angle_x_ = 0;
-	angle_z_ = 0;
+	phase_.set(0);
+	angle_x_.set(0);
+	angle_z_.set(0);
 }
 
 void terRealPhaseControllerType::SetChain(const char* name)
@@ -406,8 +406,8 @@ terSoundController::terSoundController(const char* name,int cycled)
 
 	needStart_ = isPlaying_ = false;
 
-	volume_ = 0;
-	frequency_ = 0;
+	volume_.set(0);
+	frequency_.set(0);
 	cycled_ = cycled;
 }
 
@@ -420,8 +420,8 @@ terSoundController::terSoundController(const SoundControllerSetup& setup)
 
 	needStart_ = isPlaying_ = false;
 
-	volume_ = 1;
-	frequency_ = 1;
+	volume_.set(1);
+	frequency_.set(1);
 
 	cycled_ = setup.cycled;
 }
@@ -678,7 +678,7 @@ void terInterpolationLaser::UpdateSkinColor()
 
 void terInterpolationLaser::CreateLaserPoint()
 {
-	const terWeaponSetup* p = &Owner->attr().weaponSetup;
+	const terWeaponSetup* p = &Owner->attr()->weaponSetup;
 	xassert(p);
 
 	line_ = safe_cast<cLine3d*>(terScene->CreateLine3d(terTextureLaser[p->weaponIndex],terTextureLaserZ[p->weaponIndex]));
@@ -858,7 +858,7 @@ void terInterpolationCore::Start()
 	sColor4f color = sColor4f(0,1.0f,0,1.0f) * protection_parameter_;
 	color += Owner->Player->unitColor() * (1 - protection_parameter_);
 	color.a *= sight_;
-	protection_color_=color;
+	protection_color_.set(color);
 
 	if(HideFlag)
 		ProtectionPoint->SetAttr(ATTRUNKOBJ_IGNORE);
@@ -918,7 +918,7 @@ void terInterpolationCore::interpolate()
 			color += Owner->Player->unitColor() * (1 - protection_parameter_);
 			color.a *= sight_;
 
-			protection_color_=color;
+			protection_color_.set(color);
 			protection_color_(ProtectionPoint);
 			ProtectionPoint->ClearAttr(ATTRUNKOBJ_IGNORE);
 		}
@@ -944,8 +944,8 @@ void terInterpolationLeech::SetModel(const char* name,float scale)
 {
 	terInterpolationReal::SetModel(name,scale);
 
-	if(!Owner->attr().ConnectionPointNames.empty())
-		connectionPoint_ = ObjectPoint->FindObject(Owner->attr().ConnectionPointNames[0]);
+	if(!Owner->attr()->ConnectionPointNames.empty())
+		connectionPoint_ = ObjectPoint->FindObject(Owner->attr()->ConnectionPointNames[0]);
 }
 
 Vect3f terInterpolationLeech::getConnectionPosition() const
@@ -986,8 +986,8 @@ void terInterpolationConnection::SetModel(const char* name,float scale)
 
 	ConnectionPoints.clear();
 
-	for(int i = 0; i < Owner->attr().ConnectionPointNames.size(); i++)
-		if(cObjectNode* cp = ObjectPoint->FindObject(Owner->attr().ConnectionPointNames[i]))
+	for(int i = 0; i < Owner->attr()->ConnectionPointNames.size(); i++)
+		if(cObjectNode* cp = ObjectPoint->FindObject(Owner->attr()->ConnectionPointNames[i]))
 			ConnectionPoints.push_back(cp);
 }
 

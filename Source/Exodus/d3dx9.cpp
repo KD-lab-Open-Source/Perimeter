@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <d3d9.h>
 #include <xerrhand.h>
+#include "xmath.h"
 #include "d3dx9.h"
 
 #define WARN(...) fprintf(stdout, __VA_ARGS__)
@@ -843,19 +844,5 @@ HRESULT D3DXLoadSurfaceFromMemory(IDirect3DSurface9 *dst_surface,
 HRESULT D3DXCreateTextureFromFileInMemory(IDirect3DDevice9 *device, const void *srcdata, UINT srcdatasize, struct IDirect3DTexture9 **texture) {
     //TODO
     WARN("Called unimplemented D3DXCreateTextureFromFileInMemory\n");
-    return 1;
-}
-
-HRESULT D3DXCreateCubeTextureFromFileA(IDirect3DDevice9 *device,
-                                       const char *srcfile, struct IDirect3DCubeTexture9 **cube) {
-    //TODO
-    WARN("Called unimplemented D3DXCreateCubeTextureFromFileA\n");
-    return 1;
-}
-
-HRESULT D3DXCreateCubeTextureFromFileInMemory(struct IDirect3DDevice9 *device,
-                                              const void *data, UINT datasize, struct IDirect3DCubeTexture9 **texture) {
-    //TODO
-    WARN("Called unimplemented D3DXCreateCubeTextureFromFileInMemory\n");
     return 1;
 }

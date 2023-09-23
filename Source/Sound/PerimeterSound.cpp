@@ -51,7 +51,7 @@ void logs(const char *format, ...)
 	  char    buffer[512];
 	  va_start(args,format);
 	  vsprintf(buffer,format,args);
-	  fprintf(snd_error,buffer);
+	  fprintf(snd_error,"%s",buffer);
 	}
 }
 
@@ -257,9 +257,10 @@ bool SNDScriptPrmEnable(const SoundScriptPrm& prm)
 
 bool SNDScriptPrmEnableAll()
 {
-	std::vector<SoundScriptPrm>::const_iterator i;
-	FOR_EACH(soundScriptTable().table, i)
-		SNDScriptPrmEnable(*i);
+    SingletonPrm<SoundScriptTable>::load();
+	for (const auto& i : soundScriptTable().table) {
+        SNDScriptPrmEnable(i);
+    }
 
 	return true;
 }

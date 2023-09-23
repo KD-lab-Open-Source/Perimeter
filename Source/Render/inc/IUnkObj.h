@@ -4,7 +4,7 @@ class cIUnkObj : public cIUnkClass
 { // базовый класс объектов
 public:
 	cIUnkObj(int kind);
-	virtual ~cIUnkObj();
+	~cIUnkObj() override;
 
 	virtual void Animate(float dt)													{ }
 	virtual void PreDraw(cCamera *UClass)											{ }
@@ -35,7 +35,7 @@ class cIUnkObjScale : public cIUnkObj
 {
 public:
 	cIUnkObjScale(int kind);
-	virtual ~cIUnkObjScale();
+	~cIUnkObjScale() override;
 
 	virtual const Vect3f& GetScale() const 			{ return Scale; }
 	virtual void SetScale(const Vect3f& scale);

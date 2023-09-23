@@ -3,7 +3,6 @@
 #include "StdAfx.h"
 #include "SystemUtil.h"
 #include "files/files.h"
-#include "../Render/D3D/RenderDevice.h"
 #include "Runtime.h"
 #include "Sample.h"
 #include "VideoPlayer.h"
@@ -18,7 +17,7 @@ const int VIDEO_DECODE_AHEAD = 30; //Video frames
 const double AUDIO_DECODE_AHEAD = 0.5; //Secs
 const double AUDIO_BUFFER_SIZE = 4.0; //Secs
 const double TIME_MAX_STEP = 1.0/10.0; //Secs
-const double TIME_TOO_OLD_FRAMES = 1.0; //Secs
+const double TIME_TOO_OLD_FRAMES = 1.5; //Secs
 const double TIME_VIDEO_AHEAD = 0.25; //Secs
 const double TIME_AUDIO_AHEAD = 0.25; //Secs
 const double AUDIO_MIN_SILENCE = 0.005; //Secs
@@ -203,7 +202,7 @@ bool VideoPlayer::Init(const char* path) {
     wrapper->setupVideoScaler(
         wrapper->getVideoWidth(),
         wrapper->getVideoHeight(),
-        AVPixelFormat::AV_PIX_FMT_BGRA,
+        gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9 ? AVPixelFormat::AV_PIX_FMT_BGRA : AVPixelFormat::AV_PIX_FMT_RGBA,
         SWS_BILINEAR
     );
     
@@ -385,22 +384,27 @@ bool VideoPlayer::InternalUpdate() {
 void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
     //Lock texture
     int pitch=0;
-    static const Vect2i lockMin = Vect2i(0,0);
-    static Vect2i lockMax;
-    getSize(lockMax);
-    uint8_t* ptr = pTexture->LockTexture(pitch,lockMin,lockMax);
+    static Vect2i size;
+    getSize(size);
+    uint8_t* ptr = pTexture->LockTexture(pitch);
 
     //Dump frame into texture
     frame->copyBuffer(&ptr);
 
     //Fix pitch, since texture itself has extra padding we need to relocate the scanlines to corresponding position
-    int bufferPitch = lockMax.x * 4;
+    int bufferPitch = size.x * 4;
     if (bufferPitch < pitch) {
-        for (int y = lockMax.y - 1; 0 <= y; y--) {
+        for (int y = size.y - 1; 0 <= y; y--) {
             memmove(
                     ptr + pitch * y,
                     ptr + bufferPitch * y,
                     bufferPitch
+            );
+            //Avoid texture bleeding due to old relocated image data
+            memset(
+                ptr + pitch * y + bufferPitch,
+                0x0,
+                pitch - bufferPitch
             );
         }
     }
@@ -417,7 +421,9 @@ void VideoPlayer::WriteAudioFrame(AVWrapperFrame* frame) {
     uint8_t* buf = nullptr;
     double pts = frame->getPresentationTime();
     if (pts + TIME_TOO_OLD_FRAMES < this->getPlayerTime()) {
-        fprintf(stderr, "Too old audio frame: %f\n", pts);
+        if (0 < pts) {
+            fprintf(stderr, "Too old audio frame: %f\n", pts);
+        }
         return;
     }
     double distance = 0;
@@ -455,7 +461,9 @@ AVWrapperFrame* VideoPlayer::popCurrentFrame(std::list<AVWrapperFrame*>& frames)
         
         //Remove too old frames
         if (pts + TIME_TOO_OLD_FRAMES < this->getPlayerTime()) {
-            fprintf(stderr, "Too old frame: %f\n", pts);
+            if (0 < pts) {
+                fprintf(stderr, "Too old frame: %f\n", pts);
+            }
             it = frames.erase(it);
             continue;
         }

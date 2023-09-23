@@ -28,8 +28,8 @@ void drawMark2d( cInterfaceRenderDevice *IRender, float x, float y, float phase,
 	float length = (health * markHealthWidthCoeffA + markHealthWidthCoeffB) * terRenderDevice->GetSizeX() * radiusFactor;
 	int half = length / 2.0f;
 
-	terRenderDevice->DrawRectangle(x - half - 1, y, length + 1, 2, colorBG, true);
-//	terRenderDevice->DrawRectangle(x - half - 1, y - 1, length + 1, 3, colorBG, true);
+	terRenderDevice->DrawRectangle(x - half - 1, y, length + 1, 2, colorBG, 1);
+//	terRenderDevice->DrawRectangle(x - half - 1, y - 1, length + 1, 3, colorBG, 1);
 //	terRenderDevice->DrawRectangle(x - half - 1, y - 1, length + 1, 3, colorBG);
 	terRenderDevice->DrawRectangle(x - half, y, length * phase, 2, color);
 }
@@ -87,10 +87,10 @@ void terUnitGeneric::UnitDamageCheck()
 
 bool terUnitGeneric::createCorpse()
 {
-	if(attr().hasCorpse()){
-		if(attr().corpseID()!=UNIT_ATTRIBUTE_CORPSE_DYNAMIC)
+	if(attr()->hasCorpse()){
+		if(attr()->corpseID()!=UNIT_ATTRIBUTE_CORPSE_DYNAMIC)
 		{
-			terUnitCorpse* p = safe_cast<terUnitCorpse*>(Player->buildUnit(attr().corpseID()));
+			terUnitCorpse* p = safe_cast<terUnitCorpse*>(Player->buildUnit(attr()->corpseID()));
 			p->setParent(this);
 			p->Start();
 			return true;
@@ -108,11 +108,11 @@ bool terUnitGeneric::createCorpse()
 
 void terUnitGeneric::explode()
 {
-	if(attr().corpseID()!=UNIT_ATTRIBUTE_CORPSE_DYNAMIC)
+	if(attr()->corpseID()!=UNIT_ATTRIBUTE_CORPSE_DYNAMIC)
 	{
 		soundEvent(SOUND_EVENT_EXPLOSION);
-		if(const terUnitEffectData* eff_data = attr().getEffectData(explosionID())){
-			if(EffectKey* key = attr().getEffect(eff_data->effectName)){
+		if(const terUnitEffectData* eff_data = attr()->getEffectData(explosionID())){
+			if(EffectKey* key = attr()->getEffect(eff_data->effectName)){
 				cEffect* eff = terScene->CreateScaledEffect(*key,avatar()->GetModelPoint(),true);
 
 				MatXf pos = (eff_data->needOrientation) ? avatar()->matrix() : MatXf(Mat3f::ID,avatar()->matrix().trans());
@@ -124,8 +124,8 @@ void terUnitGeneric::explode()
 		}
 	}
 
-	for(int i = 0; i < attr().debrisNumber(); i++){
-		const terDebrisData& db = attr().debrisData(i);
+	for(int i = 0; i < attr()->debrisNumber(); i++){
+		const terDebrisData& db = attr()->debrisData(i);
 		int num = db.count;
 
 		if(db.countRnd == -1)
@@ -145,11 +145,11 @@ void terUnitGeneric::explode()
 		}
 	}
 
-	if(needCrater() && attr().corpseID()!=UNIT_ATTRIBUTE_CORPSE_DYNAMIC){
-		if(!attr().craterDelay() && attr().craterRadius()){
-			terUnitBase* p = Player->buildUnit(attr().craterID());
+	if(needCrater() && attr()->corpseID()!=UNIT_ATTRIBUTE_CORPSE_DYNAMIC){
+		if(!attr()->craterDelay() && attr()->craterRadius()){
+			terUnitBase* p = Player->buildUnit(attr()->craterID());
 			p->setPose(Se3f(QuatF::ID, position()), true);
-			p->setRadius(attr().craterRadius());
+			p->setRadius(attr()->craterRadius());
 			p->Start();
 		}
 	}
@@ -196,17 +196,17 @@ void terUnitCorpse::setParent(terUnitBase* p)
 	avatar()->SetModelPoint(p->avatar()->GetModelPoint());
 	avatar()->setPose(p->pose());
 
-	setLifeTime(p->attr().corpseLifeTime());
+	setLifeTime(p->attr()->corpseLifeTime());
 
-	if(p->attr().craterDelay() && p->needCrater())
-		setCrater(p->attr().craterRadius(),p->attr().craterDelay(),p->attr().craterID());
+	if(p->attr()->craterDelay() && p->needCrater())
+		setCrater(p->attr()->craterRadius(),p->attr()->craterDelay(),p->attr()->craterID());
 }
 
 //----------------------------------------
 
 terCrater::terCrater(const UnitTemplate& data) : terUnitBase(data),
 	effect_(NULL),
-	toolzer_(attr().toolzerSetup)
+	toolzer_(attr()->toolzerSetup)
 {
 	radius_ = 32.0f;
 }
@@ -224,10 +224,10 @@ void terCrater::Start()
 	toolzer_.setScale(radius()/toolzer_.radius());
 	toolzer_.start();
 
-	if(attr().LifeTime)
-		lifeTimer_.start(attr().LifeTime);
+	if(attr()->LifeTime)
+		lifeTimer_.start(attr()->LifeTime);
 
-	if(EffectKey* key = attr().getEffect(terEffectID(EFFECT_ID_CRATER_EFFECT))){
+	if(EffectKey* key = attr()->getEffect(terEffectID(EFFECT_ID_CRATER_EFFECT))){
 		effect_ = terScene->CreateEffect(*key,NULL);
 		effect_->SetPosition(MatXf(Mat3f::ID,position()));
 		effect_->SetParticleRate(1.0f);
@@ -245,7 +245,7 @@ void terCrater::Quant()
 	if(effect_)
 		effect_->SetPosition(MatXf(Mat3f::ID,To3D(position2D())));
 	
-	if((toolzer_.isFinished() && !attr().LifeTime) || (attr().LifeTime && !lifeTimer_())){
+	if((toolzer_.isFinished() && !attr()->LifeTime) || (attr()->LifeTime && !lifeTimer_())){
 		if(effect_){
 /*
 			effect_->SetCycled(false);

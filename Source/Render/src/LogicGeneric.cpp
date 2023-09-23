@@ -480,10 +480,8 @@ cLogicObject::cLogicObject(const char *fname_):cIUnkObjScale(KIND_LOGIC_OBJ)
 }
 cLogicObject::~cLogicObject()
 {
-	vtiles::iterator it;
-	FOR_EACH(tiles,it)
-	{
-		delete *it;
+	for (auto& tile : tiles) {
+		tile->Release();
 	}
 }
 void cLogicObject::SetScale(const Vect3f& scale)

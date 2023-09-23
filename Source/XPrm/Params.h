@@ -279,8 +279,6 @@ extern char const* progress_texture;
 extern int splash_delay_time;
 extern int alpha_delta;
 extern int _bDebugDisplayAllIcons;
-extern int nBaseUnitsDisplayX;
-extern int nBaseUnitsDisplayY;
 extern char const* sRegionTextureMain;
 extern char const* sRegionTextureWall;
 extern char const* sRegionTextureAbyss;

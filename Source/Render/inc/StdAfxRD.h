@@ -10,6 +10,7 @@
 #include <list>
 #include <stack>
 #include <map>
+#include <unordered_map>
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 #include <iostream>
@@ -20,13 +21,12 @@
 #include <d3dx9.h>
 #endif
 
+#include "../inc/RenderTypes.h"
+
 #include "../inc/Umath.h"
 #include "../../PluginMAX/Src/BaseClass.h"
 #include "../inc/IVisGenericInternal.h"
 #include "IRenderDevice.h"
-#ifdef PERIMETER_D3D9
-#include "RenderDevice.h"
-#endif
 #include "../src/VisError.h"
 #include "../inc/VisGenericDefine.h"
 #include "../inc/RenderMT.h"
@@ -105,10 +105,6 @@ extern class cVisGeneric		*gb_VisGeneric;
 
 #ifdef _DEBUG
 //#define TEXTURE_NOTFREE
-#endif
-
-#ifdef PERIMETER_D3D9
-#include "D3DRender.h"
 #endif
 
 int ResourceFileRead(const char *fname,char *&buf,int &size);

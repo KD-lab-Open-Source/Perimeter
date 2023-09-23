@@ -39,7 +39,7 @@ bool isPressed(uint32_t key) {
             return SDL_GetModState() & KMOD_SHIFT;
         case VK_CONTROL:
             return SDL_GetModState() & KMOD_CTRL;
-        case VK_MENU:
+        case VK_ALT:
             return SDL_GetModState() & KMOD_ALT;
         case VK_BACK:           keycode = SDLK_BACKSPACE; break;
         case VK_TAB:            keycode = SDLK_TAB; break;
@@ -146,7 +146,7 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_LCTRL:
         case SDLK_RCTRL:        key = VK_CONTROL; break;
         case SDLK_LALT:
-        case SDLK_RALT:         key = VK_MENU; break;
+        case SDLK_RALT:         key = VK_ALT; break;
         case SDLK_PAUSE:        key = VK_PAUSE; break;
         case SDLK_CAPSLOCK:     key = VK_CAPITAL; break;
         case SDLK_ESCAPE:       key = VK_ESCAPE; break;
@@ -231,15 +231,15 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         ctrl |= 1;
     }
     if ((mod & KMOD_ALT) != 0) {
-        fullkey |= KBD_MENU;
-        menu |= 1;
+        fullkey |= KBD_ALT;
+        alt |= 1;
     }
     
     // Same as normal sKey constructor
     if(set_by_async_funcs){
         ctrl = isControlPressed();
         shift = isShiftPressed();
-        menu = isAltPressed();
+        alt = isAltPressed();
     }
 
     // добавляем расширенные коды для командных кодов
@@ -247,8 +247,8 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         ctrl |= 1;
     if(key == VK_SHIFT)
         shift |= 1;
-    if(key == VK_MENU)
-        menu |= 1;
+    if(key == VK_ALT)
+        alt |= 1;
 }
 
 sKey::sKey(int key_, bool set_by_async_funcs) {
@@ -256,15 +256,15 @@ sKey::sKey(int key_, bool set_by_async_funcs) {
     if(set_by_async_funcs){
         ctrl = isControlPressed();
         shift = isShiftPressed();
-        menu = isAltPressed();
+        alt = isAltPressed();
     }
     // добавляем расширенные коды для командных кодов
     if(key == VK_CONTROL)
         ctrl |= 1;
     if(key == VK_SHIFT)
         shift |= 1;
-    if(key == VK_MENU)
-        menu |= 1;
+    if(key == VK_ALT)
+        alt |= 1;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -272,16 +272,56 @@ sKey::sKey(int key_, bool set_by_async_funcs) {
 /////////////////////////////////////////////////////////////////////////////////
 
 bool create_directories(const std::string& path, std::error_code* error) {
-    bool result;
-    std::string pathstr = convert_path_native(path);
-    std::filesystem::path path_fs = std::filesystem::u8path(pathstr);
-    if (error) {
-        result = std::filesystem::create_directories(path_fs, *error);
-    } else {
-        result = std::filesystem::create_directories(path_fs);
+    std::string current;
+    std::string part;
+    size_t size = path.size();
+    for (int i = 0; i < size; ++i) {
+        char c = path[i];
+        if (c != '\\' && c != '/') {
+            part += c;
+            
+            //If this is last char then continue by creating dir on last part
+            if (i + 1 < size) {
+                continue;
+            }
+        }
+        
+        //Use native PATH_SEP and add path until now to parent
+        if (!current.empty()) {
+            current += PATH_SEP;
+        }
+        current += part;
+        part.clear();
+        
+        //Check if parent path exists, if so don't do anything
+        //We use our function for case-insensitivity
+        std::string path_content = convert_path_content(current);
+        if (!path_content.empty()) {
+            //In case real path has different case than one provided
+            current = path_content;
+            continue;
+        }
+        
+        //Create dir since doesn't exist
+        std::filesystem::path current_fs = std::filesystem::u8path(current);
+        bool result;
+        if (error) {
+            result = std::filesystem::create_directory(current_fs, *error);
+        } else {
+            result = std::filesystem::create_directory(current_fs);
+        }
+        
+        //Add this new dir to paths
+        xassert(result);
+        if (result) {
+            scan_resource_paths(current);
+        }
     }
-    if (result || std::filesystem::is_directory(path_fs)) {
-        scan_resource_paths(pathstr);
+    xassert(part.empty());
+    std::filesystem::path current_fs = std::filesystem::u8path(current);
+    bool result = std::filesystem::is_directory(current_fs);
+    if (result) {
+        scan_resource_paths(current);
     }
     return result;
 }
@@ -292,7 +332,7 @@ bool create_directories(const std::string& path, std::error_code* error) {
 uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
                        char* returnBuffer, uint32_t bufferSize, const std::string& filePath) {
     //Load file content
-    std::ifstream istream(std::filesystem::u8path(filePath));
+    std::ifstream istream(std::filesystem::u8path(filePath), std::ios::in | std::ios::binary);
     CSimpleIniA ini;
     SI_Error rc = ini.LoadData(istream);
     if (rc < 0) {
@@ -316,7 +356,7 @@ uint32_t ReadIniString(const char* section, const char* key, const char* default
 
 uint32_t WriteIniString(const char* section, const char* key, const char* value, const std::string& filePath) {
     //Load file content
-    std::ifstream istream(std::filesystem::u8path(filePath));
+    std::ifstream istream(std::filesystem::u8path(filePath), std::ios::in | std::ios::binary);
     CSimpleIniA ini;
     SI_Error rc = ini.LoadData(istream);
     if (rc < 0) {
@@ -333,8 +373,8 @@ uint32_t WriteIniString(const char* section, const char* key, const char* value,
     }
     
     //Save file changes
-    std::ofstream ostream(std::filesystem::u8path(filePath));
-    ini.Save(ostream);
+    std::ofstream ostream(std::filesystem::u8path(filePath), std::ios::out | std::ios::binary);
+    rc = ini.Save(ostream);
     if (rc < 0) {
         fprintf(stderr, "Error writing %s file: %d\n", filePath.c_str(), rc);
         return 0;
@@ -346,9 +386,9 @@ uint32_t WriteIniString(const char* section, const char* key, const char* value,
     return 1;
 }
 
-IniManager::IniManager(const char* fname, bool check_existence, bool full_path) {
+IniManager::IniManager(const char* fname, bool check_existence_, bool full_path) {
     fname_ = fname;
-    check_existence_ = check_existence;
+    check_existence = check_existence_;
     is_full_path = full_path;
 }
 
@@ -375,7 +415,7 @@ const char* IniManager::get(const char* section, const char* key)
     
 	if(!ReadIniString(section, key, NULL, buf, 256, path)){
 		*buf = 0;
-		if (check_existence_) {
+		if (check_existence) {
             fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);
         }
 	}
@@ -385,8 +425,7 @@ const char* IniManager::get(const char* section, const char* key)
 void IniManager::put(const char* section, const char* key, const char* val)
 {
     std::string path = getFilePath();
-
-
+    
     WriteIniString(section, key, val, path);
 }
 
@@ -437,6 +476,44 @@ void IniManager::putFloatArray(const char* section, const char* key, int size, c
 	put(section, key, buf);
 }
 
+// ---  Files ------------------------------
+
+std::string getExtension(const std::string& file_name, bool process) {
+    std::string str = convert_path_posix(file_name);
+    size_t pos_dot = str.rfind('.');
+    size_t pos_path = str.rfind('/');
+    //Only get extension if dot is after the last path sep if any
+    if (pos_dot != std::string::npos && (pos_path == std::string::npos || pos_path < pos_dot)) {
+        str.erase(0, pos_dot + 1);
+        if (process) {
+            str = string_to_lower(str.c_str());
+            while (isspace(str[str.size() - 1])) {
+                str.erase(str.size() - 1);
+            }
+        }
+        return str;
+    } else {
+        return "";
+    }
+}
+
+std::string setExtension(const std::string& file_name, const char* extension) {
+    std::string str = file_name;
+    std::string old_ext = getExtension(file_name, false);
+    if (!old_ext.empty()) {
+        str.erase(str.size() - old_ext.length() - 1, str.size());
+    }
+    if (extension) {
+        if (!endsWith(str, ".")) {
+            str += ".";
+        }
+        str += extension;
+    }
+    return str;
+}
+
+// --- Settings ------
+
 static IniManager* settingsManager;
 
 IniManager* getSettings() {
@@ -478,26 +555,6 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
         res = result;
     }
     
-    //In case of Windows try checking registry if this fails
-#ifdef _WIN32
-    if (!found) {
-        HKEY hKey;
-        char name[PERIMETER_CONTROL_NAME_SIZE];
-        DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
-        int32_t lRet = RegOpenKeyExA( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
-    
-        if ( lRet == ERROR_SUCCESS ) {
-            lRet = RegQueryValueExA( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
-    
-            if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
-                found = true;
-                res = name;
-            }
-    
-            RegCloseKey( hKey );
-        }
-    }
-#endif
     return found ? res : defaultValue;
 }
 
@@ -506,6 +563,8 @@ void putStringSettings(const std::string& keyName, const std::string& value) {
     std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getGameContentEnumName(terGameContentBase); 
     ini->put(key.c_str(), keyName.c_str(), value.c_str());
 }
+
+// --- Formatting ------
 
 std::string formatTimeWithHour(int timeMilis) {
 	std::string res;

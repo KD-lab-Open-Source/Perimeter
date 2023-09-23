@@ -17,6 +17,7 @@
 #include "EditArchive.h"
 #include "qd_textdb.h"
 #include "codepages/codepages.h"
+#include "../HT/ht.h"
 
 //------------------------------------------------
 MissionEditor::MissionEditor()
@@ -42,7 +43,7 @@ void MissionEditor::quant()
 {
 	terUnitBase* unit = universe()->selectedObject();
 	if(unit){
-		MTAutoSkipAssert auto_skip;
+		MTAutoSingleThread auto_skip;
 		if(isPressed('V')){
 			float factor = unit->position().distance(terCamera->GetCamera()->GetPos())*2;
 			Vect3f delta = Vect3f::ZERO;
@@ -93,7 +94,7 @@ void MissionEditor::quant()
 
 bool MissionEditor::keyPressed(const sKey& Key)
 {
-	MTAutoSkipAssert mtAutoSkipAssert;
+	MTAutoSingleThread mtAutoSkipAssert;
 
 	switch(Key.fullkey)
 	{
@@ -175,9 +176,11 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		else{
 			terUnitBase* unit = universe()->selectedObject();
 			if(unit){
-				terRenderDevice->Flush(hWndVisGeneric);
+				terRenderDevice->Flush(true);
                 SDL_ShowCursor(SDL_TRUE);
 				ShareHandle<SaveUnitData> data = unit->universalSave(0);
+#ifdef _WIN32
+                //TODO we should port editArchive to ingame UI and remove win32 window stuff
                 HWND hwnd = static_cast<HWND>(hWndVisGeneric);
 				EditArchive editArchive(hwnd, TreeControlSetup(0, 0, 500, 400, "editObjectPropsSetup"));
 				if(editArchive.edit(data)){
@@ -186,7 +189,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 					UnitList::const_iterator ui;
 					FOR_EACH(select_list, ui){
 						terUnitBase* unit1 = *ui;
-						if(unit1->attr().ID == unit->attr().ID){
+						if(unit1->attr()->ID == unit->attr()->ID){
 							if(unit1 != unit){
 								SaveUnitData* data1 = unit1->universalSave(0);
 								*data = *data1; // pos, ori, rad, label
@@ -197,6 +200,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 						}												
 					}
 				}
+#endif
 				terCamera->setFocus(HardwareCameraFocus);
                 SDL_ShowCursor(SDL_FALSE);
 				RestoreFocus();
@@ -209,9 +213,8 @@ bool MissionEditor::keyPressed(const sKey& Key)
 	case VK_ESCAPE | KBD_SHIFT:
 		if(editingHardness_) {
             hardnessPolygon_.clear();
+            return true;
         }
-		return true; 
-
 	}
     
     //Player selector 0 and Tilde are handled in switch above
@@ -510,11 +513,11 @@ const char* MissionEditor::info()
         } else {
             info_ += "Object: ";
         }
-        info_ += convertToCodepage(unit->attr().internalName(false), locale);
+        info_ += convertToCodepage(unit->attr()->internalName(false), locale);
         if (russian) {
             //Most alt names are in russian anyway
             info_ += " - ";
-            info_ += convertToCodepage(unit->attr().internalName(true), locale);
+            info_ += convertToCodepage(unit->attr()->internalName(true), locale);
         }
         info_ += "\n";
 		if (unit->GetModelName()) {
@@ -574,7 +577,7 @@ void MissionEditor::copyUnit()
 	if(!unit)
 		return;
 
-	copiedID_ = unit->attr().ID;
+	copiedID_ = unit->attr()->ID;
 	if(copiedData_){
 		delete copiedData_;
 		copiedData_ = 0;

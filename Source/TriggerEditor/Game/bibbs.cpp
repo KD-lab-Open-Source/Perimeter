@@ -16,10 +16,10 @@ SyncroTimer::SyncroTimer(void)
 
 //-------------------------------------------------
 
-void ConditionCreateObject::checkEvent(AIPlayer& aiPlayer, const Event& event) { }
-void ConditionCaptureBuilding::checkEvent(AIPlayer& aiPlayer, const Event& event) {  }
-void ConditionTeleportation::checkEvent(AIPlayer& aiPlayer, const Event& event) {  }
-void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event& event) {  }
+void ConditionCreateObject::checkEvent(AIPlayer& aiPlayer, const Event* event) { }
+void ConditionCaptureBuilding::checkEvent(AIPlayer& aiPlayer, const Event* event) {  }
+void ConditionTeleportation::checkEvent(AIPlayer& aiPlayer, const Event* event) {  }
+void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event* event) {  }
 void ConditionKillObjectByLabel::checkEvent(class AIPlayer &,class Event const &) {  }
 
 void ConditionPlayerState::checkEvent(class AIPlayer &,class Event const &){}

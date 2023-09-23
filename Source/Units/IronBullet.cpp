@@ -80,7 +80,7 @@ void terProjectileBase::setTarget(terUnitBase* p,const Vect3f& target,float targ
 
 	if(p){
 		targetPosition_ = p->position();
-		p->addPossibleDamage(attr().estimatedDamage());
+		p->addPossibleDamage(attr()->estimatedDamage());
 	}
 	else
 		targetPosition_ = target;
@@ -92,8 +92,8 @@ void terProjectileBase::setTarget(terUnitBase* p,const Vect3f& target,float targ
 		targetPosition_.y += radius * xm::sin(angle);
 	}
 
-	if(attr().LifeTime)
-		killTimer_.start(attr().LifeTime);
+	if(attr()->LifeTime)
+		killTimer_.start(attr()->LifeTime);
 }
 
 bool terProjectileBase::confirmCollision(const terUnitBase* p) const 
@@ -130,7 +130,7 @@ void terProjectileBase::Kill()
 	terUnitReal::Kill();
 
 	if(target_)
-		target_->addPossibleDamage(-attr().estimatedDamage());
+		target_->addPossibleDamage(-attr()->estimatedDamage());
 
 	realAvatar()->GetModelPoint()->SetAttr(ATTRUNKOBJ_IGNORE);
 }
@@ -349,12 +349,12 @@ void terProjectileUnderground::Quant()
 {
 	terProjectileBase::Quant();
 
-	if(attr().effectsData.movementCraterID != UNIT_ATTRIBUTE_NONE){
+	if(attr()->effectsData.movementCraterID != UNIT_ATTRIBUTE_NONE){
 		Vect2f pos = position2D();
-		if(lastCraterPosition_.distance2(position2D()) >= sqr(attr().effectsData.movementCraterDelta)){
+		if(lastCraterPosition_.distance2(position2D()) >= sqr(attr()->effectsData.movementCraterDelta)){
 			lastCraterPosition_ = position2D();
 
-			terUnitBase* p = Player->buildUnit(attr().effectsData.movementCraterID);
+			terUnitBase* p = Player->buildUnit(attr()->effectsData.movementCraterID);
 			p->setPose(Se3f(QuatF::ID,position()),true);
 			p->Start();
 

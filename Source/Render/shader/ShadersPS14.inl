@@ -1,123 +1,35 @@
 ////////////////////////ps.1.4//////////
-/*
-void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
-{
-	D3DXMATRIX matShadowModelTex,*matViewProj,mat;
-	matViewProj=gb_RenderDevice3D->GetDrawNode()->matViewProj;
-	if(world)
-	{
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixTranspose(&mat,&mat);
-		gb_RenderDevice3D->SetVertexShaderConstant(28,&mat);
 
-		D3DXMatrixTranspose(&mat,gb_RenderDevice3D->GetDrawNode()->matView);
-		gb_RenderDevice3D->SetVertexShaderConstant(40,&mat);
-
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiplyTranspose(&mat,&mat,matViewProj);
-	}else
-		D3DXMatrixTranspose(&mat,matViewProj);
-	gb_RenderDevice3D->SetVertexShaderConstant(0,&mat);
-
-	D3DXMATRIX matlight;
-	if(world)
-	{
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&matlight,&mat,pmatlight);
-	}else
-		matlight=*pmatlight;
-	D3DXMatrixTranspose(&mat, &matlight);
-	gb_RenderDevice3D->SetVertexShaderConstant(4,&mat);
-
-	D3DXMATRIX matTexAdj(	0.5,      0,        0,        0,
-							0,        -0.5,     0,        0,
-							0,        0,        0,        0,
-							0,		  0,		1,        1);
-
-
-	if(gb_RenderDevice3D->GetTexture(1)==gb_RenderDevice3D->GetTexture(2))
-	{
-		//Четыре сэмпла выбираются
-		float fC1 = 0.1f / shadow_map_size;
-		float fC2 = 0.9f / shadow_map_size;
-
-		matTexAdj._41 = 0.5f + fC1;
-		matTexAdj._42 = 0.5f + fC1;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(8,&mat);
-
-		matTexAdj._41 = 0.5f + fC1;
-		matTexAdj._42 = 0.5f + fC2;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(12,&mat);
-
-		matTexAdj._41 = 0.5f + fC2;
-		matTexAdj._42 = 0.5f + fC1;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(16,&mat);
-
-		matTexAdj._41 = 0.5f + fC2;
-		matTexAdj._42 = 0.5f + fC2;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(20,&mat);
-	}else
-	{
-		//Три сэмпла выбираются
-		//x=0.5+0.4*xm::sin(2*PI/3*i),y=0.5+0.4*xm::cos(2*PI/3*i)
-
-		matTexAdj._41 = 0.5f + 0.1f/shadow_map_size;
-		matTexAdj._42 = 0.5f + 0.1f/shadow_map_size;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(8,&mat);
-
-		matTexAdj._41 = 0.5f + 0.9f/shadow_map_size;
-		matTexAdj._42 = 0.5f + 0.1f/shadow_map_size;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(12,&mat);
-
-		matTexAdj._41 = 0.5f + 0.5f/shadow_map_size;
-		matTexAdj._42 = 0.5f + 0.9f/shadow_map_size;
-		D3DXMatrixMultiplyTranspose( &mat, &matlight, &matTexAdj );
-		gb_RenderDevice3D->SetVertexShaderConstant(16,&mat);
-	}
-	
-	D3DXVECTOR4	vZBias = D3DXVECTOR4( -0.01f, 0.0f, 0.0f, 0.0f );
-	gb_RenderDevice3D->SetVertexShaderConstant(24,&vZBias);
-
-	cVertexShader::Select();
-}
-*/
-
-void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
+void VS14Scene::Select(const Mat4f* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
-	D3DXMATRIX mat;
+	Mat4f mat;
 	if(world)
 	{
-		cD3DRender_SetMatrix(mat,*world);
+        Mat4fSetTransposedMatXf(mat, *world);
 		SetMatrix(mWorld,&mat);//for light
 		SetMatrix(mView,&gb_RenderDevice3D->GetDrawNode()->matView);
 
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&mat,&mat,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
+        Mat4fSetTransposedMatXf(mat, *world);
+        mat *= gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}else
 	{
-		mat=*(D3DXMATRIX*)&gb_RenderDevice3D->GetDrawNode()->matViewProj;
+		mat = gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}
 
 	SetMatrix(mWVP,&mat);
 
-	D3DXMATRIX matlight;
+	Mat4f matlight;
 	if(world)
 	{
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&matlight,&mat,pmatlight);
+        Mat4fSetTransposedMatXf(mat, *world);
+        matlight = mat * *pmatlight;
 	}else
 		matlight=*pmatlight;
 
 	SetMatrix(mWorldToLight,&matlight);
 
-	D3DXMATRIX matTexAdj(	0.5,      0,        0,        0,
+	Mat4f matTexAdj(	0.5,      0,        0,        0,
 							0,        -0.5,     0,        0,
 							0,        0,        0,        0,
 							0,		  0,		1,        1);
@@ -125,53 +37,53 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 	const float c1=0.1f,c2=0.9f,c3=0.5f;
 //	const c1=0.1-0.4f,c2=0.9f+0.4f,c3=0.5f+0.4f;
 
-	if(gb_RenderDevice3D->GetTexture(1)==gb_RenderDevice3D->GetTexture(2))
+	if(gb_RenderDevice3D->GetTextureD3D(1) == gb_RenderDevice3D->GetTextureD3D(2))
 	{
 		//Четыре сэмпла выбираются
 		float fC1 = c1 / shadow_map_size;
 		float fC2 = c2 / shadow_map_size;
 
-		matTexAdj._41 = 0.5f + fC1;
-		matTexAdj._42 = 0.5f + fC1;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + fC1;
+		matTexAdj.wz = 0.5f + fC1;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow0,&mat);
 
-		matTexAdj._41 = 0.5f + fC1;
-		matTexAdj._42 = 0.5f + fC2;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + fC1;
+		matTexAdj.wz = 0.5f + fC2;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow1,&mat);
 
-		matTexAdj._41 = 0.5f + fC2;
-		matTexAdj._42 = 0.5f + fC1;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + fC2;
+		matTexAdj.wz = 0.5f + fC1;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow2,&mat);
 
-		matTexAdj._41 = 0.5f + fC2;
-		matTexAdj._42 = 0.5f + fC2;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + fC2;
+		matTexAdj.wz = 0.5f + fC2;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow3,&mat);
 	}else
 	{
 		//Три сэмпла выбираются
 		//x=0.5+0.4*xm::sin(2*PI/3*i),y=0.5+0.4*xm::cos(2*PI/3*i)
 
-		matTexAdj._41 = 0.5f + c1/shadow_map_size;
-		matTexAdj._42 = 0.5f + c1/shadow_map_size;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + c1/shadow_map_size;
+		matTexAdj.wz = 0.5f + c1/shadow_map_size;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow0,&mat);
 
-		matTexAdj._41 = 0.5f + c2/shadow_map_size;
-		matTexAdj._42 = 0.5f + c1/shadow_map_size;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + c2/shadow_map_size;
+		matTexAdj.wz = 0.5f + c1/shadow_map_size;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow1,&mat);
 
-		matTexAdj._41 = 0.5f + c3/shadow_map_size;
-		matTexAdj._42 = 0.5f + c2/shadow_map_size;
-		D3DXMatrixMultiply( &mat, &matlight, &matTexAdj );
+		matTexAdj.wy = 0.5f + c3/shadow_map_size;
+		matTexAdj.wz = 0.5f + c2/shadow_map_size;
+        mat = matlight * matTexAdj;
 		SetMatrix(mShadow2,&mat);
 	}
 	
-	D3DXVECTOR4	zbias = D3DXVECTOR4( -0.005f, 0.0f, 0.0f, 0.0f );
+	Vect4f	zbias = Vect4f( -0.005f, 0.0f, 0.0f, 0.0f );
 	SetVector(vZBias,&zbias);
 
 	if(light)
@@ -216,20 +128,20 @@ void VS14ObjectSceneLight::GetHandle()
 
 void VS14ObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 {
-	SetVector(vAmbient,(D3DXVECTOR4*)&Data->Ambient);
-	SetVector(vDiffuse,(D3DXVECTOR4*)&Data->Diffuse);
-	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
+	SetVector(vAmbient, reinterpret_cast<const Vect4f*>(&Data->Ambient));
+	SetVector(vDiffuse, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
+	SetVector(vSpecular, reinterpret_cast<const Vect4f*>(&Data->Specular));
 	SetFloat(fSpecularPower,Data->Power);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    Vect4f cam(p.x,p.y,p.z,0);
     SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    Vect4f light(l.x,l.y,l.z,0);
     SetVector(vLightDirection,&light);
 }
 
-void VS14ObjectSceneLight::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
+void VS14ObjectSceneLight::Select(const Mat4f* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	if(light)
 	{
@@ -261,7 +173,7 @@ void VS14TileMapScene::GetHandle()
 
 void VS14TileMapScene::SetWorldSize(Vect2f sz)
 {
-    D3DXVECTOR4 v(1/sz.x,1/sz.y,0,0);
+    Vect4f v(1/sz.x,1/sz.y,0,0);
 	SetVector(fInvWorldSize,&v);
 }
 
@@ -299,7 +211,7 @@ void PS14ObjectSceneLight::Restore()
 
 void VS14ObjectScene::SetMaterial(sDataRenderMaterial *Data)
 {
-	SetVector(vDiffuse,(D3DXVECTOR4*)&Data->Diffuse);
+	SetVector(vDiffuse, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
 }
 
 void VS14ObjectScene::GetHandle()
@@ -327,7 +239,7 @@ void VS14ObjectSceneLight2::GetHandle()
 
 void VS14ObjectSceneLight2::SetTextureTransform(MatXf& m)
 {
-	D3DXVECTOR4 u(m.rot()[0][0],m.rot()[1][0],m.trans().x,0),
+	Vect4f u(m.rot()[0][0],m.rot()[1][0],m.trans().x,0),
 				v(m.rot()[0][1],m.rot()[1][1],m.trans().y,0);
 	SetVector(vUtrans,&u);
 	SetVector(vVtrans,&v);
@@ -346,14 +258,14 @@ void PS14ObjectSceneLight2::Restore()
 void VS14ObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 {
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    Vect4f cam(p.x,p.y,p.z,0);
     SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    Vect4f light(l.x,l.y,l.z,0);
     SetVector(vLightDirection,&light);
 
-    D3DXVECTOR4 c(0.5,0.5,0.5,0);
+    Vect4f c(0.5,0.5,0.5,0);
 	SetVector(c05,&c);
 }
 
@@ -367,21 +279,21 @@ void VS14ObjectSceneBump::GetHandle()
 	VAR_HANDLE(c05);
 }
 
-void VS14ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
+void VS14ObjectSceneBump::Select(const Mat4f* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
-	D3DXMATRIX mat;
-	cD3DRender_SetMatrix(mat,*world);
-	D3DXMatrixInverse(&mat,NULL,&mat);
+    Mat4f mat;
+    Mat4fSetTransposedMatXf(mat, *world);
+	Mat4fInverse(&mat,NULL,&mat);
 	SetMatrix(mInvWorld,&mat);
 
 	Vect3f l;
-	D3DXVECTOR3 out;
+    Vect3f out;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
 	l=-l;
 
-	D3DXVec3TransformNormal(&out,(D3DXVECTOR3*)&l,&mat);
-	D3DXVec3Normalize(&out,&out);
-    D3DXVECTOR4 lv(out.x,out.y,out.z,0);
+    Vect3fTransformNormal(&out, &l, &mat);
+    Vect3fNormalize(&out, &out);
+    Vect4f lv(out.x,out.y,out.z,0);
     SetVector(vLightDirectionInvWorld,&lv);
 
 	if(light)

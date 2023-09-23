@@ -160,8 +160,8 @@ CSize CCoolDialogBar::CalcDynamicLayout(int nLength, uint32_t dwMode)
 	// Rob Wolpov 10/15/98 Added support for diagonal sizing
 	if (IsFloating())
 	{
-		RECT	window_rect;
-		POINT	cursor_pt;
+		sRect	window_rect;
+		sPoint	cursor_pt;
 		
 		GetCursorPos(&cursor_pt);
 		GetParent()->GetParent()->GetWindowRect(&window_rect);

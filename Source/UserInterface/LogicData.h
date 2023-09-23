@@ -142,7 +142,7 @@ struct LogicData {
 
 	~LogicData() {
 		if (miniMap) {
-			delete miniMap;
+			delete[] miniMap;
 		}
 	}
 
@@ -209,7 +209,7 @@ struct LogicData {
 
 	void createMiniMap(int width, int height) {
 		if (miniMap) {
-			delete miniMap;
+			delete[] miniMap;
 		}
 		miniMap = new sColor4c[ width * height ];
 		sx = width;

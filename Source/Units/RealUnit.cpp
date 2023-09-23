@@ -63,8 +63,8 @@ terUnitReal::terUnitReal(const UnitTemplate& data) : terUnitGeneric(data),
 
 	LogicObjectPoint = 0;
 
-	if(attr().weaponSetup.enabled())
-		weapon_ = terWeapon::create(attr().weaponSetup.weaponType,this);
+	if(attr()->weaponSetup.enabled())
+		weapon_ = terWeapon::create(attr()->weaponSetup.weaponType,this);
 
 	accumulatedEnergy_ = 0;
 	checkFieldCluster_ = 0;
@@ -89,16 +89,16 @@ terUnitReal::~terUnitReal()
 void terUnitReal::setRealModel(int modelIndex, float scale)
 {
 	if(modelIndex == -1)
-		modelIndex = terLogicRND(1 + attr().additionalModelsData.size());
-	else if(modelIndex >= attr().additionalModelsData.size())
+		modelIndex = terLogicRND(1 + attr()->additionalModelsData.size());
+	else if(modelIndex >= attr()->additionalModelsData.size())
 		modelIndex = 0;
 
-	const ModelData& modelData = !modelIndex ? attr().modelData : attr().additionalModelsData[modelIndex - 1];
+	const ModelData& modelData = !modelIndex ? attr()->modelData : attr()->additionalModelsData[modelIndex - 1];
 	sBox6f LogicObjectBound;
 	if(!modelIndex){ 
-		Scale = attr().modelScale*scale;
-		LogicObjectBound = attr().logicObjectBound; 
-		setRadius(attr().boundRadius);
+		Scale = attr()->modelScale*scale;
+		LogicObjectBound = attr()->logicObjectBound; 
+		setRadius(attr()->boundRadius);
 	}
 	else{
 		GeometryAttribute geometryAttribute;
@@ -123,22 +123,22 @@ void terUnitReal::setRealModel(int modelIndex, float scale)
 		LogicObjectPoint->SetScale(Vect3f(Scale,Scale,Scale));
 		
 		DockList.clear();
-		if(!attr().dockingSlots.empty()){ 
-			DockList.reserve(attr().dockingSlots.size());
-			for(int i = 0; i < attr().dockingSlots.size(); i++){
+		if(!attr()->dockingSlots.empty()){ 
+			DockList.reserve(attr()->dockingSlots.size());
+			for(int i = 0; i < attr()->dockingSlots.size(); i++){
 				DockList.push_back(terDockingSlot());
-				DockList.back().init(LogicObjectPoint, attr().dockingSlots[i]);
+				DockList.back().init(LogicObjectPoint, attr()->dockingSlots[i]);
 			}
 		}
 	}
 
 	avatar()->setLogicObject(LogicObjectPoint);
 	avatar()->SetModel(modelData.modelName, Scale);
-	BodyPoint->build(*attr().rigidBodyPrm, avatar()->GetModelPoint(), LogicObjectBound.min, LogicObjectBound.max);
-	if(attr().forwardVelocity)
-		BodyPoint->setForwardVelocity(attr().forwardVelocity);
-	if(attr().flyingHeight)
-		BodyPoint->setFlyingHeight(attr().flyingHeight);
+	BodyPoint->build(*attr()->rigidBodyPrm, avatar()->GetModelPoint(), LogicObjectBound.min, LogicObjectBound.max);
+	if(attr()->forwardVelocity)
+		BodyPoint->setForwardVelocity(attr()->forwardVelocity);
+	if(attr()->flyingHeight)
+		BodyPoint->setFlyingHeight(attr()->flyingHeight);
 
 	if(weapon_){
 		if(isConstructed()){
@@ -193,12 +193,12 @@ public:
 
 bool terUnitReal::basementReady()
 {
-	if(attr().InstallBound){
+	if(attr()->InstallBound){
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		std::vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr()->BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
-			v = mx2*attr().BasementPoints[i];
+			v = mx2*attr()->BasementPoints[i];
 			v >>= kmGrid;
 		}
 
@@ -214,10 +214,10 @@ float terUnitReal::basementDamage()
 {
 	if(basementInstalled()){
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		std::vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr()->BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
-			v = mx2*attr().BasementPoints[i];
+			v = mx2*attr()->BasementPoints[i];
 			v >>= kmGrid;
 		}
 		
@@ -243,13 +243,13 @@ public:
 
 void terUnitReal::installBasement()
 {
-	if(!basementInstalled_ && attr().InstallBound){
+	if(!basementInstalled_ && attr()->InstallBound){
 		basementInstalled_ = true;
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		std::vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr()->BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
-			v = mx2*attr().BasementPoints[i];
+			v = mx2*attr()->BasementPoints[i];
 			v >>= kmGrid;
 		}
         terScanInstallLineOp op = terScanInstallLineOp();
@@ -271,13 +271,13 @@ public:
 
 void terUnitReal::uninstallBasement()
 {
-	if(basementInstalled_ && attr().InstallBound){
+	if(basementInstalled_ && attr()->InstallBound){
 		basementInstalled_ = false;
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		std::vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr()->BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
-			v = mx2*attr().BasementPoints[i];
+			v = mx2*attr()->BasementPoints[i];
 			v >>= kmGrid;
 		}
         terScanUninstallLineOp op = terScanUninstallLineOp();
@@ -294,22 +294,22 @@ void terUnitReal::Start()
 	AvatarQuant();
 	avatar()->Start();
 
-	for(int i = 0; i < attr().effectsData.effects.size(); i++){
-		terEffectID id=attr().effectsData.effects[i].effectID;
+	for(int i = 0; i < attr()->effectsData.effects.size(); i++){
+		terEffectID id=attr()->effectsData.effects[i].effectID;
 		switch(id){
 		case EFFECT_ID_UNIT_SMOKE:
 		case EFFECT_ID_UNIT_MOVE:
-			if(EffectKey* key = attr().getEffect(attr().effectsData.effects[i].effectName)){
+			if(EffectKey* key = attr()->getEffect(attr()->effectsData.effects[i].effectName)){
 				cEffect* effect = terScene->CreateScaledEffect(*key,avatar()->GetModelPoint());
 				effect->SetPosition(avatar()->matrix());
 				if(id==EFFECT_ID_UNIT_SMOKE)
 					effect->SetParticleRate(0);
-				effectControllers_.push_back(terEffectController(&attr().effectsData.effects[i],effect));
+				effectControllers_.push_back(terEffectController(&attr()->effectsData.effects[i],effect));
 			}
 			break;
 		case EFFECT_ID_LASER_HIT:
-			if(EffectKey* key = attr().getEffect(attr().effectsData.effects[i].effectID))
-				effectControllers_.push_back(terEffectController(&attr().effectsData.effects[i],NULL));
+			if(EffectKey* key = attr()->getEffect(attr()->effectsData.effects[i].effectID))
+				effectControllers_.push_back(terEffectController(&attr()->effectsData.effects[i],NULL));
             break;
         default:
             break;
@@ -380,7 +380,7 @@ void terUnitReal::Quant()
 	FOR_EACH(effectControllers_,it)
 		it->quant(this);
 
-	if(attr().hasAnimationSetup()){
+	if(attr()->hasAnimationSetup()){
 		ChainID request = chainRequest();
 		if(request != CHAIN_NONE && realAvatar()->chainID() != request)
 			realAvatar()->requestChain(request);
@@ -409,10 +409,10 @@ void terUnitReal::Quant()
 	if(BodyPoint->diggingMode() || isMoving())
 		toolzerController_.quant(position().xi(),position().yi(),Player->zerolayer(position2D()));
 
-	if(attr().environmentalDamage.enabled() && !BodyPoint->underMutation()){
+	if(attr()->environmentalDamage.enabled() && !BodyPoint->underMutation()){
 		float damage_ratio = 0.0f;
 
-		switch(attr().environmentalDamage.damageType){
+		switch(attr()->environmentalDamage.damageType){
 		case ENV_DAMAGE_CHAOS:
 			damage_ratio = BodyPoint->chaosCollidingFactor();
 			break;
@@ -423,27 +423,27 @@ void terUnitReal::Quant()
             break;
 		}
 
-		if(damage_ratio >= attr().environmentalDamage.damageRatioMin){
-			if(attr().environmentalDamage.period){
+		if(damage_ratio >= attr()->environmentalDamage.damageRatioMin){
+			if(attr()->environmentalDamage.period){
 				if(envDamageTimer_.get_start_time()){
-					int delta = xm::round(float(attr().environmentalDamage.periodDelta) * (1.0f - damage_ratio));
+					int delta = xm::round(float(attr()->environmentalDamage.periodDelta) * (1.0f - damage_ratio));
 
 					if(envDamageTimer_() >= delta){
-						DamageData damage = attr().environmentalDamage.damage(damage_ratio);
+						DamageData damage = attr()->environmentalDamage.damage(damage_ratio);
 
 						if(damage.width == -1)
 							damage.width = damageMolecula().atomCount();
 
 						setDamage(damage);
 
-						envDamageTimer_.start(attr().environmentalDamage.period);
+						envDamageTimer_.start(attr()->environmentalDamage.period);
 					}
 				}
 				else
-					envDamageTimer_.start(attr().environmentalDamage.period);
+					envDamageTimer_.start(attr()->environmentalDamage.period);
 			}
 			else {
-				DamageData damage = attr().environmentalDamage.damage(damage_ratio);
+				DamageData damage = attr()->environmentalDamage.damage(damage_ratio);
 
 				if(damage.width == -1)
 					damage.width = damageMolecula().atomCount();
@@ -481,7 +481,7 @@ void terUnitReal::DestroyLink()
 void terUnitReal::setPose(const Se3f& pose, bool initPose)
 {
 	if(initPose)
-		BodyPoint->initPose(pose, !attr().lockInitialPosition);
+		BodyPoint->initPose(pose, !attr()->lockInitialPosition);
 	else
 		BodyPoint->setPose(pose);
 
@@ -509,8 +509,8 @@ SaveUnitData* terUnitReal::universalSave(SaveUnitData* baseData)
 	terUnitBase::universalSave(data);
 	
 	data->basementInstalled = basementInstalled();
-	if(attr().energyCapacity)
-		data->accumulatedEnergy = accumulatedEnergy()/attr().energyCapacity;
+	if(attr()->energyCapacity)
+		data->accumulatedEnergy = accumulatedEnergy()/attr()->energyCapacity;
 	data->zeroLayerCounter = zeroLayerCounter_;
 
 	data->wayPoints = wayPoints_;
@@ -534,7 +534,7 @@ void terUnitReal::universalLoad(SaveUnitData* baseData)
 	if(data->basementInstalled)
 		installBasement();
 
-	accumulatedEnergy_ = clamp(data->accumulatedEnergy*Player->handicap(), 0, 1)*attr().energyCapacity;
+	accumulatedEnergy_ = clamp(data->accumulatedEnergy*Player->handicap(), 0, 1)*attr()->energyCapacity;
 	zeroLayerCounter_ = data->zeroLayerCounter;
 
 	wayPoints_ = data->wayPoints;
@@ -710,15 +710,16 @@ void terUnitReal::executeCommand(const UnitCommand& command)
 
 	switch(command.commandID()){
 	case COMMAND_ID_POINT:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE){
+		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			wayPoints_.clear();
 			soundEvent(SOUND_VOICE_UNIT_MOVE);
 		}
 		wayPoints_.push_back(command.position());
 		break;
 	case COMMAND_ID_OBJECT:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
-			wayPoints_.clear();
+		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+            wayPoints_.clear();
+        }
 		targetUnit_ = safe_cast<terUnitBase*>(command.unit());
 		break;
 	case COMMAND_ID_STOP: 
@@ -732,7 +733,7 @@ void terUnitReal::executeCommand(const UnitCommand& command)
 
 void terUnitReal::moveToPoint(const Vect3f& v)
 {
-	if(!attr().enablePathFind){
+	if(!attr()->enablePathFind){
 		BodyPoint->way_points.push_back(v);
 		return;
 	}
@@ -782,7 +783,7 @@ public:
 	
 	void operator()(terUnitBase* p)
 	{
-		if(unit_ != p && p->attr().considerInFieldPathFind){
+		if(unit_ != p && p->attr()->considerInFieldPathFind){
 			Vect2f delta = position_ - p->position2D();
 			direction_ += delta/(delta.norm2() + 1);
 		}
@@ -817,7 +818,7 @@ void terUnitReal::showPath(const std::vector<Vect3f>& wayPoints) {
 		return;
 
 	if (selected()) {
-		if(attr().showPath && !wayPoints.empty()){
+		if(attr()->showPath && !wayPoints.empty()){
 			Vect3f posPrev = interpolatedPosition();
 			std::vector<Vect3f>::const_iterator i;
 			FOR_EACH(wayPoints, i){
@@ -844,7 +845,7 @@ void terUnitReal::ShowInfo()
 	}
 /*
 	if(selected()){
-		if(attr().showPath && !BodyPoint->way_points.empty()){
+		if(attr()->showPath && !BodyPoint->way_points.empty()){
 			Vect3f posPrev = interpolatedPosition();
 			Vect3fList::const_iterator i;
 			FOR_EACH(BodyPoint->way_points, i){
@@ -876,14 +877,14 @@ void terUnitReal::ShowInfo()
 		}
 
 		if (pv.z > 0) {
-			drawMark2d(terRenderDevice, e.xi(), e.yi() + r * attr().SelectionDistance, life(), maxHealth(), radiusFactor);
+			drawMark2d(terRenderDevice, e.xi(), e.yi() + r * attr()->SelectionDistance, life(), maxHealth(), radiusFactor);
 		}
 /*
 		DrawSelect2d(terRenderDevice,Player->pTextureUnitSelection,Player->unitColor(),
-			e.xi() - r * attr().SelectionSize,
-			e.yi() + r * attr().SelectionDistance,
-			r*2 * attr().SelectionSize,
-			r*2 * attr().SelectionSize,0, life());
+			e.xi() - r * attr()->SelectionSize,
+			e.yi() + r * attr()->SelectionDistance,
+			r*2 * attr()->SelectionSize,
+			r*2 * attr()->SelectionSize,0, life());
 */
 	}
 }
@@ -1007,7 +1008,7 @@ void terUnitReal::explode()
 {
 	terUnitGeneric::explode();
 
-	if(attr().isBuilding())
+	if(attr()->isBuilding())
 		soundEvent(SOUND_VOICE_BUILDING_DESTROYED);
 	else
 		soundEvent(SOUND_VOICE_UNIT_DESTROYED);
@@ -1017,9 +1018,9 @@ void terUnitReal::explode()
 
 void terUnitReal::splashDamage()
 {
-	if(!(BodyPoint->clusterColliding()) && attr().unitDamage.splashDamageRadius){
+	if(!(BodyPoint->clusterColliding()) && attr()->unitDamage.splashDamageRadius){
 		terUnitGridSplashDamageOperator op(this, ownerUnit_ ? ownerUnit_ : this);
-		universe()->UnitGrid.Scan(xm::round(position().x), xm::round(position().y), attr().unitDamage.splashDamageRadius, op);
+		universe()->UnitGrid.Scan(xm::round(position().x), xm::round(position().y), attr()->unitDamage.splashDamageRadius, op);
 	}
 }
 
@@ -1039,7 +1040,7 @@ void terUnitReal::removeMissileReference(terUnitBase* p)
 
 float terUnitReal::addAccumulatedEnergy(float delta) 
 { 
-	float energy = clamp(accumulatedEnergy() + delta, 0, attr().energyCapacity); 
+	float energy = clamp(accumulatedEnergy() + delta, 0, attr()->energyCapacity); 
 	float used = energy - accumulatedEnergy();
 	accumulatedEnergy_ = energy;
 	return used;
@@ -1049,7 +1050,7 @@ float terUnitReal::productionProgress()
 {
 	float progress = productionConsumption_.progress();
 	if(!productionConsumption_.attached()){
-		productionConsumption_.attach(Player, attr().productionConsumption);
+		productionConsumption_.attach(Player, attr()->productionConsumption);
 	}
 	productionConsumption_.requestCharge();
 	return progress;
@@ -1162,10 +1163,10 @@ void terUnitReal::placeZeroLayer(bool restore)
 			if(*pli != Player && (*pli)->structureColumn().area())
 				columns.push_back(&(*pli)->structureColumn());
 
-		Player->structureColumn().addCircleThenSub(position2D(), attr().ZeroLayerRadius, columns);
+		Player->structureColumn().addCircleThenSub(position2D(), attr()->ZeroLayerRadius, columns);
 
-		plotCircleZL(position2D().x, position2D().y, attr().ZeroLayerRadius);
-		terMapPoint->UpdateMap(position2D(), attr().ZeroLayerRadius);
+		plotCircleZL(position2D().x, position2D().y, attr()->ZeroLayerRadius);
+		terMapPoint->UpdateMap(position2D(), attr()->ZeroLayerRadius);
 	}
 }
 
@@ -1177,8 +1178,8 @@ public:
 	FreeZeroLayerOp(terUnitBase* unit) : unit_(unit) {}
 	void operator()(terUnitBase* p)
 	{		
-		if(p->alive() && unit_ != p && p->attr().ZeroLayerRadius > 0
-			&& unit_->position2D().distance2(p->position2D()) < sqr(unit_->attr().ZeroLayerRadius + p->attr().ZeroLayerRadius)){
+		if(p->alive() && unit_ != p && p->attr()->ZeroLayerRadius > 0
+			&& unit_->position2D().distance2(p->position2D()) < sqr(unit_->attr()->ZeroLayerRadius + p->attr()->ZeroLayerRadius)){
 				terUnitReal* unit = safe_cast<terUnitReal*>(p);
 				if(unit->zeroLayerPlaced())
 					umap.insert(Map::value_type(unit->zeroLayerPlaced(), unit));
@@ -1202,12 +1203,12 @@ void terUnitReal::freeZeroLayer()
 	if(zeroLayerPlaced()){
 		zeroLayerCounter_ = 0;
 
-		eraseCircleZL(position2D().x, position2D().y, attr().ZeroLayerRadius);
-		Player->structureColumn().operateByCircle(position2D(), attr().ZeroLayerRadius, 0);
-		terMapPoint->UpdateMap(position2D(), attr().ZeroLayerRadius);
+		eraseCircleZL(position2D().x, position2D().y, attr()->ZeroLayerRadius);
+		Player->structureColumn().operateByCircle(position2D(), attr()->ZeroLayerRadius, 0);
+		terMapPoint->UpdateMap(position2D(), attr()->ZeroLayerRadius);
 
         FreeZeroLayerOp op = FreeZeroLayerOp(this);
-		universe()->UnitGrid.Scan(position().xi(), position().yi(), xm::round(attr().ZeroLayerRadius * 2.5), op);
+		universe()->UnitGrid.Scan(position().xi(), position().yi(), xm::round(attr()->ZeroLayerRadius * 2.5), op);
 	}
 }
 
@@ -1238,7 +1239,7 @@ terEffectController::terEffectController(const terUnitEffectData* setup,cEffect*
 	effect_(effect)
 {
 	xassert(setup_);
-	effectRate_ = 0.0f;
+	effectRate_.set(0.0f);
 }
 
 terEffectController::~terEffectController()
@@ -1271,7 +1272,7 @@ void terEffectController::avatarQuant(terUnitReal* owner)
 		}
 	}
 
-	effectRate_ = rate;
+	effectRate_.set(rate);
 }
 
 void terEffectController::quant(terUnitReal* owner)
@@ -1296,7 +1297,7 @@ void terEffectController::quant(terUnitReal* owner)
         break;
 	}
 
-	effectPose_=pos;
+	effectPose_.set(pos);
 }
 
 void terEffectController::avatarInterpolation()
@@ -1321,7 +1322,7 @@ bool terEffectController::createEffect(terUnitReal* owner)
 {
 	RELEASE(effect_);
 
-	if(EffectKey* key = owner->attr().getEffect(setup_->effectID)){
+	if(EffectKey* key = owner->attr()->getEffect(setup_->effectID)){
 		effect_ = terScene->CreateScaledEffect(*key,owner->avatar()->GetModelPoint());
 		effect_->SetPosition(owner->avatar()->matrix());
 		effect_->SetAutoDeleteAfterLife(false);

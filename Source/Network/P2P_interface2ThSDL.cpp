@@ -21,9 +21,9 @@ bool PNetCenter::Init()
     if (server_arch_mask_str) {
         server_arch_mask = strtoull(server_arch_mask_str, nullptr, 16);
     }
-    
+
     //Reset our attributes in case we played before
-    initAttributes();
+    loadUnitAttributes(false, nullptr);
     
     server_content_crc = get_content_crc();
     
@@ -39,7 +39,7 @@ bool PNetCenter::Init()
 }
 
 bool PNetCenter::ServerStart()
-{
+{    
     m_hostNETID = m_localNETID = NETID_NONE;
     flag_connected = connectionHandler.startListening(hostConnection.port());
     if (!flag_connected) {
@@ -57,6 +57,7 @@ void PNetCenter::SetConnectionTimeout(int _ms) {
 
 void PNetCenter::RemovePlayer(NETID netid)
 {
+    fprintf(stdout, "RemovePlayer: %lu\n", netid);
     if(isHost() && netid==m_localNETID && netid==m_hostNETID){
         ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
         ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
@@ -78,7 +79,7 @@ void PNetCenter::Close(bool flag_immediate)
 bool PNetCenter::Connect() {
     LogMsg("Connect %s\n", hostConnection.getString().c_str());
     m_hostNETID = m_localNETID = NETID_NONE;
-    std::string extraInfo = "";
+    std::string extraInfo;
 
     GameShell::e_JoinGameReturnCode rc = GameShell::JG_RC_CONNECTION_ERR;
     NetConnection* connection = connectionHandler.startConnection(&hostConnection);
@@ -360,11 +361,11 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
         }
     }
     if(m_bStarted){
-        int idx=clientMissionDescription.findPlayer(netid);
+        int idx=clientMissionDescription->findPlayer(netid);
         //xassert(idx!=-1);
         if(idx!=-1){
             //отсылка сообщения о том, что игрок вышел
-            PlayerData& pd = clientMissionDescription.playersData[idx];
+            PlayerData& pd = clientMissionDescription->playersData[idx];
             std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
                 pd.name(), getLocale()
             );
@@ -374,7 +375,7 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
             );
         }
         //Удаление игрока из clientMD
-        clientMissionDescription.disconnectPlayer2PlayerDataByNETID(netid);
+        clientMissionDescription->disconnectPlayer2PlayerDataByNETID(netid);
     }
 
 }

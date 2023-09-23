@@ -2,7 +2,7 @@
 #include <climits>
 #include "tweaks.h"
 
-#ifndef PERIMETER_HEADLESS
+#ifdef PERIMETER_D3D9
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #endif
@@ -35,7 +35,7 @@ bool ConditionSwitcher::check(AIPlayer& aiPlayer)
 	}
 }
 
-void ConditionSwitcher::checkEvent(AIPlayer& aiPlayer, const Event& event) 
+void ConditionSwitcher::checkEvent(AIPlayer& aiPlayer, const Event* event) 
 {
     FOR_EACH_AUTO(conditions, ci)
 		if(ci->condition)

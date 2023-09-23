@@ -36,123 +36,24 @@ private:
 	inline void checkDelta();
 };
 
-//-------------------------------------
-/*
 template<class T>
-class DefaultInterpolationOp
-{
-public:
-	void operator()(T& x, const T& x0, const T& x1, float t) const { float t_ = 1 - t; x = x0*t_ + x1*t; }
-};
-
-class Se3fInterpolationOp
-{
-public:
-	void operator()(Se3f& s, const Se3f& s0, const Se3f& s1, float t) const 
-	{ 
-		s.trans().interpolate(s0.trans(), s1.trans(), t);
-		s.rot().slerp(s0.rot(), s1.rot(), t);
-	}
-};
-
-class PhaseInterpolationOp
-{
-public:
-	void operator()(float& phase, const float& phase0, const float& phase1, float t) const 
-	{ 
-		phase = cycle(phase0 + getDist(phase1, phase0, 1 + FLT_EPS)*t, 1 + FLT_EPS);
-	}
-};
-
-class AngleInterpolationOp
-{
-public:
-	void operator()(float& angle, const float& angle0, const float& angle1, float t) const 
-	{ 
-		angle = cycle(angle0 + getDist(angle1, angle0, 2*XM_PI)*t, 2*XM_PI);
-	}
-};
-
-class Vect3fInterpolationOp
-{
-public:
-	void operator()(Vect3f& p, const Vect3f& p0, const Vect3f& p1, float t) const 
-	{ 
-		float t_ = 1 - t; 
-		p.x = p0.x*t_ + p1.x*t; 
-		p.y = p0.y*t_ + p1.y*t; 
-		p.z = p0.z*t_ + p1.z*t; 
-	}
+class DefaultInterpolationOp {
 };
 
 template<class T, class InterpolationOp = DefaultInterpolationOp<T> >
 class Interpolator
 {
 protected:
-	T x0_, x1_;
-	mutable T xt_;
-	bool inited_;
-	int quant_;
+	T x_[2] = {};
+	bool inited_ = false;
+	bool update_ = false;
 				 
 public:
 	Interpolator() { initialize(); }
 
-	void initialize() { inited_ = false; }
+	void initialize() { inited_ = false; update_=false; memset(x_, 0, sizeof(T) * 2); }
 	
-	void operator=(const T& x) 
-	{ 
-		if(inited_){ 
-			xt_ = x0_ = x1_; 
-			x1_ = x; 
-		} 
-		else{ 
-			inited_ = true; 
-			xt_ = x0_ = x1_ = x; 
-		} 
-		quant_ = quantCounter();
-	}
-	
-	const T& operator()() const 
-	{ 
-		if(quant_ == quantCounter())
-			InterpolationOp()(xt_, x0_, x1_, interpolationFactor()); 
-		else
-			xt_ = x1_;
-
-		return xt_; 
-	}
-	
-	bool fresh() const { return quant_ == quantCounter(); }
-
-	const T& x1() const { return x1_; }
-};
-
-typedef Interpolator<Se3f, Se3fInterpolationOp> InterpolatorPose;
-typedef Interpolator<float, PhaseInterpolationOp> InterpolatorPhase;
-typedef Interpolator<float, AngleInterpolationOp> InterpolatorAngle;
-typedef Interpolator<float> InterpolatorFloat;
-
-typedef Interpolator<Vect3f, Vect3fInterpolationOp> InterpolatorVect3f;
-*/
-
-template<class T>
-class DefaultInterpolationOp {
-};
-
-template<class T ,class InterpolationOp = DefaultInterpolationOp<T> >
-class Interpolator
-{
-protected:
-	T x_[2];
-	bool inited_;
-	bool update_;
-				 
-public:
-	Interpolator() { initialize(); }
-
-	void initialize() { inited_ = false; update_=false;}
-	
-	void operator=(const T& x) 
+	void set(const T& x) 
 	{ 
 		if(inited_){ 
 			x_[0] = x_[1]; 
@@ -169,134 +70,64 @@ public:
 	const T& x0() const { return x_[0]; } //Устаревшее роложение
 	const T& x1() const { return x_[1]; } //Положение на текущий логический квант
 
-	void operator()(cIUnkObj* cur)
+	void operator()(cUnknownClass* cur)
 	{ 
-		if(update_)
-			InterpolationOp()(cur,x_);
-		update_=false;
+		if (update_) {
+            InterpolationOp()(cur, x_);
+            update_=false;
+        }
 	}
 };
-
-class SpriteInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,Vect3f p[2])
-	{
-		stream_interpolator.set(fSpriteInterpolation,cur)<<p;
-	}
+#define InterpolationOpStruct(NAME, T) \
+struct NAME##InterpolationOp { \
+	void operator()(cUnknownClass* cur, const T p[2]) { \
+        if (stream_interpolator.set(f##NAME##Interpolation, cur)) { stream_interpolator << p[0] << p[1]; }; \
+    } \
 };
 
-class Se3fInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,Se3f p[2])
-	{
-//		xassert(cur->GetAttr(ATTRUNKOBJ_DELETED)==0);
-//		cur->SetAttr(ATTRUNKOBJ_TEMP_USED);
-		stream_interpolator.set(fSe3fInterpolation,cur)<<p;
-	}
-};
-class PhaseInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,float p[2])
-	{
-		xassert(0);
-	}
+#define InterpolatorWithOp(NAME, T) \
+InterpolationOpStruct(NAME,T) \
+using Interpolator##NAME = Interpolator<T, NAME##InterpolationOp>;
+
+
+InterpolatorWithOp(Sprite, Vect3f);
+InterpolatorWithOp(Float, float);
+InterpolatorWithOp(Color, sColorInterpolate);
+InterpolatorWithOp(ColorDiffuse, sColor4f);
+InterpolatorWithOp(ParticleRate, float);
+InterpolationOpStruct(Se3f, Se3f);
+using InterpolatorPose = Interpolator<Se3f, Se3fInterpolationOp>;
+
+struct UnusedAssertOp {
+    void operator()(cUnknownClass*, float[2]) { xassert(0); }
 };
 
-class AngleInterpolationOp
-{
+class InterpolatorAngle: public Interpolator<float, UnusedAssertOp> {
 public:
-	void operator()(cIUnkObj* cur,float p[2])
-	{
-		xassert(0);
-	}
-};
-
-class FloatInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,float p[2])
-	{
-		stream_interpolator.set(fFloatInterpolation,cur)<<p;
-	}
-};
-
-class ColorInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,sColorInterpolate p[2])
-	{
-		stream_interpolator.set(fColorInterpolation,cur)<<p;
-	}
-};
-
-class ColorDiffuseInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,sColor4f p[2])
-	{
-		stream_interpolator.set(fColorDiffuseInterpolation,cur)<<p;
-	}
-};
-
-class ParticleRateInterpolationOp
-{
-public:
-	void operator()(cIUnkObj* cur,float p[2])
-	{
-		stream_interpolator.set(fParticleRateInterpolation,cur)<<p;
-	}
-};
-
-typedef Interpolator<Vect3f, SpriteInterpolationOp> InterpolatorSprite;
-typedef Interpolator<Se3f, Se3fInterpolationOp> InterpolatorPose;
-typedef Interpolator<float, FloatInterpolationOp> InterpolatorFloat;
-typedef Interpolator<sColorInterpolate, ColorInterpolationOp> InterpolatorColor;
-typedef Interpolator<sColor4f, ColorDiffuseInterpolationOp> InterpolatorColorDiffuse;
-typedef Interpolator<float, ParticleRateInterpolationOp> InterpolatorParticleRate;
-
-class InterpolatorAngle:public Interpolator<float, AngleInterpolationOp>
-{
-public:
-	void operator=(const float& x) 
-	{
-		(*(Interpolator<float, AngleInterpolationOp>*)this)=x;
-	}
-
-	void operator()(cIUnkObj* cur,eAxis axis)
-	{ 
-		if(update_)
-		{
-			stream_interpolator.set(fAngleInterpolation,cur)<<x_<<(int)axis;
+	void operator()(cUnknownClass* cur,eAxis axis) {
+		if(update_) {
+			if (stream_interpolator.set(fAngleInterpolation,cur)) {
+                stream_interpolator << x_ << static_cast<uint8_t>(axis);
+            }
 		}
 		update_=false;
 	}
 };
 
-class InterpolatorPhase:public Interpolator<float, PhaseInterpolationOp>
-{
+class InterpolatorPhase: public Interpolator<float, UnusedAssertOp> {
 public:
-	void operator=(const float& x) 
-	{
-		(*(Interpolator<float, PhaseInterpolationOp>*)this)=x;
-	}
-
-	void operator()(cIUnkObj* cur,int recursive)
-	{ 
-		if(update_)
-		{
-			stream_interpolator.set(fPhaseInterpolation,cur)<<x_<<recursive;
+	void operator()(cUnknownClass* cur,int recursive) {
+		if(update_) {
+			if (stream_interpolator.set(fPhaseInterpolation,cur)) {
+                stream_interpolator << x_ << recursive;
+            }
 		}
 		update_=false;
 	}
 };
 
-class InterpolatorLine
-{
+class InterpolatorLine {
 public:
-
 	InterpolatorLine() { initialize(); set(Vect3f(0,0,0), Vect3f(0,0,0)); }
 
 	void initialize() { update_ = false; }
@@ -325,10 +156,13 @@ public:
 		update_ = true;
 	}
 
-	void operator()(cIUnkObj* cur)
+	void operator()(cUnknownClass* cur)
 	{ 
-		if(update_)
-			stream_interpolator.set(fLineInterpolation,cur)<<x0_<<x1_;
+		if(update_) {
+            if (stream_interpolator.set(fLineInterpolation, cur)) {
+                stream_interpolator << x0_ << x1_;
+            }
+        }
 
 		update_=false;
 	}
@@ -370,7 +204,7 @@ public:
 	void setAnimationSpeed(float speed); // модуляция скорости анимации (..1..)
 	void setPhase(float phase) 
 	{ 
-		phase_ = phase; 
+		phase_.set(phase); 
 		phaseIterator_.setPhase(phase);
 	}
 //	float phase() const { return phase_(); }
@@ -469,7 +303,7 @@ class terInterpolationPose: public terInterpolationBase
 {
 public:
 	terInterpolationPose(class terUnitBase* owner);
-	void setPose(const Se3f& pose) { pose_ = pose; matrix_ = pose; }
+	void setPose(const Se3f& pose) { pose_.set(pose); matrix_ = pose; }
 	void interpolate() { }
 	const Vect3f& pos0() const{return pose_.x0().trans();};
 	const Vect3f& pos1() const{return pose_.x1().trans();};

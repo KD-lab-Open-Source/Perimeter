@@ -34,6 +34,7 @@ uint8_t getSelectableBelligerentIndex(terBelligerent belligerent);
 terBelligerent getBelligerentFromIndex(uint8_t index);
 std::string getBelligerentName(terBelligerent belligerent);
 BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent);
+void setBelligerentFactionSound(BELLIGERENT_FACTION faction);
 std::string getBelligerentFactionName(BELLIGERENT_FACTION faction);
 std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::string& separator = "\n");
 void setupFrameButton(CShellWindow* pWnd, InterfaceEventCode code, int number, bool sendNetCommand);

@@ -1,42 +1,23 @@
 #pragma once
 
-class cSpriteNode : public cAnimUnkObj
-{
-	float	Intensity;
-public:
-	cSpriteNode();
-	virtual ~cSpriteNode();
-	// общие интерфейсные функции унаследованы от cUnkObj
-	virtual void Animate(float dt);
-	virtual void PreDraw(cCamera *UCamera);
-	virtual void Draw(cCamera *UCamera);
-	inline float& GetRadius() 						{ return Scale.z; }
-	inline float& GetIntensity()					{ return Intensity; }
-};
-
-class cSprite
+class cSprite : public cUnknownClass
 {
 public:
-	cSprite()
-	{
-		pos.set(0,0,0);
-		color.set(255,255,255,255);
-		radius=10;
-		ignore=false;
-	}
+	cSprite() : cUnknownClass(0) {}
+    ~cSprite() override = default;
 
-	void Release();
+	int64_t Release() override;
 	void SetPos(const Vect3f& p){pos=p;};
 	void SetColor(sColor4c c){color=c;}
 	void SetRadius(float r){radius=r;}
 	void SetIgnore(bool b){ignore=b;}
 protected:
-	Vect3f pos;
-	sColor4c color;
-	float radius;
-	bool ignore;
+	Vect3f pos = Vect3f(0,0,0);
+	sColor4c color = sColor4c(255,255,255,255);
+	float radius = 10;
+	bool ignore = false;
 
-	class cSpriteManager* manager;
+	class cSpriteManager* manager = nullptr;
 	friend class cSpriteManager;
 };
 
@@ -52,7 +33,7 @@ public:
 
 	cSprite* Create();
 protected:
-	std::list<cSprite> sprites;
+	std::vector<cSprite*> sprites;
 	MTDECLARE(sprite_lock);
 
 	void DeleteSprite(cSprite* sprite);

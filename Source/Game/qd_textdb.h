@@ -30,17 +30,25 @@ public:
 
 	/// Загрузка базы.
 	/**
-	Если clear_old_texts == true, то загруженная в данный момент база очищается.
 	В финальной версии база комментариев игнорируется.
 	*/
-	bool load(const std::string& locale, const char* file_name, const char* comments_file_name, bool clear_old_texts, bool replace_old_texts, bool format_txt);
+	bool load(const std::string& locale, const char* file_name, const char* comments_file_name, bool replace_old_texts, bool format_txt);
 
     ///Loads texts from lines using a basic format as:
     ///text_id=text content\nmore content etc
     void load_lines(const std::vector<std::string>& lines, bool replace_old_texts, const std::string& locale = "");
 
+    ///Includes texts that must be set always
+    void load_replacement_texts(const std::string& locale);
+
     ///Includes texts that are not usually in retail game translations, these only are added if DB don't have them already
     void load_supplementary_texts(const std::string& locale);
+    
+    ///Load texts from folder
+    void load_from_directory(const std::string& locale, const std::string& path, bool exclude_mods);
+
+    ///Exports currently loaded texts starting with text_id or all if null/empty into Texts.txt file in game root
+    void exportTexts(const char* text_id);
 
 	typedef std::list<std::string> IdList;
 	void getIdList(const char* mask, IdList& idList);
@@ -52,9 +60,10 @@ private:
 	{
     public:
         qdText() = default;
-		qdText(std::string text, std::string snd) : text_(std::move(text)), sound_(std::move(snd)) { }
+		qdText(std::string id, std::string text, std::string snd) : id_(std::move(id)), text_(std::move(text)), sound_(std::move(snd)) { }
         ~qdText() = default;
 
+        std::string id_;
 		std::string text_;
 		std::string sound_;
 #ifndef _FINAL_VERSION_

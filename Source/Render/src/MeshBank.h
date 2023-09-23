@@ -8,34 +8,26 @@ class cMeshTri;
 
 struct cMeshStatic:public cUnknownClass
 {
-	sPtrIndexBuffer				ib;
-	sPtrVertexBuffer			vb;
-	int							ib_polygon;//Количество полигонов в ib
+	DrawBuffer				db;
 	std::string					MaterialName;
 	std::vector<cMeshTri*>		meshes;
 	sAttribute				Material;
 	cAnimChannelMaterial    AnimChannelMat;
 	//ATTRUNKOBJ_COLLISIONTRACE ATTRUNKOBJ_NOLIGHT
 	sAttribute				ObjectAttribute;
-	struct TEMP
-	{
-		std::vector<sVertexXYZNT1> vertex;
-		std::vector<sPolygon> polygons;
-	};
-
-	TEMP* temp;
+    std::vector<sVertexXYZNT1> vertexes;
+    std::vector<sPolygon> polygons;
 
 	//////////////////////////////
-	cMeshStatic(const char* materialname);
+	explicit cMeshStatic(const char* materialname);
 	~cMeshStatic();
 
 	void BeginBuildMesh();
 	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);
 	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<Vect3f> &Normal, std::vector<Vect2f> &Texel);
-
 	void EndBuildMesh(bool bump);
+    
 protected:
-	inline sVertexXYZNT1& GetVertex(void *pVertex,int n)	{ return ((sVertexXYZNT1*)((char*)pVertex+n*vb.size))[0]; }
 	void SortPolygon(sPolygon* polygon,int n_polygon);
 	void DeleteSingularPolygon(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon,
 		std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);

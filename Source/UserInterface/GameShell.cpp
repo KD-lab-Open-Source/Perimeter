@@ -114,7 +114,7 @@ GameShell::GameShell(bool mission_edit) :
 chaos(0),
 NetClient(0), 
 missionEditor_(0),
-BuildingInstaller(),
+BuildingInstaller(nullptr),
 windowClientSize_(1024, 768)
 {
 	gameShell = this;
@@ -143,13 +143,15 @@ windowClientSize_(1024, 768)
 	reelAbortEnabled = true;
 	gamePausedByMenu = false;
 
-	MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
-
     IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
     IniManager("Perimeter.ini", false).getInt("Game","DoubleClickDistance", doubleClickDistance);
 
 	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
 
+    terShowFPS = IniManager("Perimeter.ini").getInt("Game","ShowFPS");
+    check_command_line_parameter("show_fps", terShowFPS);
+
+    MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 	check_command_line_parameter("mainmenu", MainMenuEnable);
 	if(mission_edit)
 		MainMenuEnable = false;
@@ -217,7 +219,7 @@ windowClientSize_(1024, 768)
 	mousePressControl_ = Vect2f::ZERO;
 	mapMoveStartPoint_ = Vect3f::ZERO;
 
-	debugFont_ = terVisGeneric->CreateFont(sqshFontPopup, 15);
+	debugFont_ = terVisGeneric->CreateGameFont(sqshFontPopup, 15);
 
 	hotKeyManager = new HotKeyManager();
 	_shellCursorManager.Load();
@@ -265,8 +267,10 @@ windowClientSize_(1024, 768)
 		startedWithMainmenu = true;
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
-
-        if (IniManager("Perimeter.ini").getInt("Game","StartSplash") || check_command_line("start_splash")) {
+        
+        int splash = IniManager("Perimeter.ini").getInt("Game","StartSplash");
+        check_command_line_parameter("start_splash", splash);
+        if (splash) {
 			_bCursorVisible = 0;
 //			_shellIconManager.GetWnd(SQSH_MM_SPLASH1)->Show(1);
 //			_shellIconManager.SetModalWnd(SQSH_MM_SPLASH1);
@@ -335,8 +339,13 @@ windowClientSize_(1024, 768)
                 fprintf(stderr, "File not found: %s\n", spgPath.c_str());
                 ErrH.Exit();
             }
-
-			HTManager::instance()->GameStart(MissionDescription(spgPath.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI)));
+            
+            MissionDescription md(spgPath.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI));
+            if (!md.isCampaign() && string_to_lower(spgPath.c_str()).find("resource" PATH_SEP_STR "missions" PATH_SEP_STR) != std::string::npos) {
+                //Workaround to load campaign attrs when using cmdline
+                md.missionNumber = 0;
+            }
+			HTManager::instance()->GameStart(md);
 		}
 
 		if(check_command_line("convert")){
@@ -448,6 +457,10 @@ void GameShell::GameStart(const MissionDescription& mission)
 	triggersDisabled_ = false;
 	cutSceneSkipped_ = false;
 	lastSkipTime_.stop();
+    
+    if (!BuildingInstaller) {
+        BuildingInstaller = new terBuildingInstaller();
+    }
 		
 	//vMap.selectUsedWorld(CurrentMission.worldID());
 
@@ -577,11 +590,13 @@ void GameShell::GameClose()
 		chaos = 0;
 	}
 
-	if(universe())
-		delete universe();
+	if (universe()) {
+        universe()->allSavePlayReel();
+        delete universe();
+    }
 
-
-	BuildingInstaller.Clear();
+    delete BuildingInstaller;
+    BuildingInstaller = nullptr;
 
 	terScene->Compact();
 
@@ -603,12 +618,17 @@ void GameShell::GameClose()
 	MusicCloseWorld();
 	cVisGeneric::SetAssertEnabled(true);
 	debugPrm_.save();
+
+#if 1 && defined(PERIMETER_DEBUG_ASSERT)
+    std::vector<cIUnkClass*> allowed;
+    allowed.push_back(terLight);
+    terScene->CheckPendingObjects(allowed);
+#endif
 }
 
 bool GameShell::universalSave(const char* name, bool userSave, MissionDescription* missionOutput)
 {
-	MTAuto lock(HTManager::instance()->GetLockLogic());
-	MTAutoSkipAssert skip_assert;
+	MTAutoSingleThread skip_assert;
 
     MissionDescription* mission;
     if (missionOutput) {
@@ -618,7 +638,7 @@ bool GameShell::universalSave(const char* name, bool userSave, MissionDescriptio
         mission = new MissionDescription(CurrentMission);
     }
     mission->missionNumber = currentSingleProfile.getCurrentMissionNumber();
-    mission->gameContent = mission->missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    mission->gameContent = mission->isCampaign() ? getGameContentCampaign() : terGameContentSelect;
     if (userSave) {
         mission->globalTime = global_time();
         mission->gameSpeed = game_speed ? game_speed : game_speed_to_resume;
@@ -693,12 +713,12 @@ bool GameShell::showEnergy() const
 	{
 		CSELECT_AUTOLOCK();
 		const UnitList& select=universe()->select.GetSelectList();
-		if(BuildingInstaller.inited())
-			return true;
-		else {
+		if (BuildingInstallerInited()) {
+            return true;
+        } else {
 			UnitList::const_iterator ui;
 			FOR_EACH(select,ui)
-				if((*ui)->attr().MakeEnergy > 0)
+				if((*ui)->attr()->MakeEnergy > 0)
 					return true;
 		}
 	}
@@ -707,7 +727,7 @@ bool GameShell::showEnergy() const
 
 void TestText()
 {
-	cFont* pFont=terVisGeneric->CreateFont(sqshFontPopup, 70);
+	cFont* pFont= terVisGeneric->CreateGameFont(sqshFontPopup, 70);
 	cTexture* pTexture=terVisGeneric->CreateTexture("RESOURCE\\Models\\MENU\\Textures\\tv.avi");
 	terRenderDevice->SetFont(pFont);
 
@@ -787,7 +807,9 @@ void GameShell::Show()
 
 		terExternalQuant();
 		
-		BuildingInstaller.UpdateInfo(terCamera->GetCamera());
+        if (BuildingInstaller) {
+            BuildingInstaller->UpdateInfo(terCamera->GetCamera());
+        }
 		terScene->PreDraw(terCamera->GetCamera());
 
 		m_ShellDispatcher.PreDraw(frame_time.delta());
@@ -802,12 +824,12 @@ void GameShell::Show()
 			chaos->Draw();
 
 		if(showWireFrame_)
-			terRenderDevice->SetRenderState(RS_FILLMODE,FILL_WIREFRAME);
+			terRenderDevice->SetRenderState(RS_WIREFRAME,1);
 
 		terScene->Draw(terCamera->GetCamera());
 
 		if(showWireFrame_)
-			terRenderDevice->SetRenderState(RS_FILLMODE,FILL_SOLID);
+			terRenderDevice->SetRenderState(RS_WIREFRAME,0);
 
 		if(interfaceShowFlag_)
 			universe()->ShowInfo();
@@ -1143,7 +1165,7 @@ void GameShell::DebugCteateFilth(terFilthSpotID id)
 
 bool GameShell::DebugKeyPressed(sKey& Key)
 {
-	MTAutoSkipAssert mtAutoSkipAssert;
+	MTAutoSingleThread mtAutoSkipAssert;
 
 	switch(Key.fullkey){
 	case VK_F1:
@@ -1184,7 +1206,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
         }
 		break;
 		}
-	case VK_F9 | KBD_CTRL | KBD_MENU: {
+	case VK_F10 | KBD_CTRL: {
 		savePrm().manualData.cameras.push_back(SaveCameraSplineData());
 		terCamera->savePath(savePrm().manualData.cameras.back());
 		XBuffer name;
@@ -1199,10 +1221,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case KBD_CTRL | VK_F11:
 		startStopRecordMovie();
 		break;
-	case VK_F11 | KBD_CTRL | KBD_MENU: 
+	case VK_F12 | KBD_CTRL: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY);
 		break; 
-	case VK_F12 | KBD_CTRL | KBD_MENU: 
+	case VK_F12 | KBD_SHIFT: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT);
 		break; 
 	case VK_F5:
@@ -1233,12 +1255,14 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		editParameters();
 		break;
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	case VK_RETURN | KBD_CTRL: 
 	case VK_RETURN | KBD_CTRL | KBD_SHIFT: {
-		terRenderDevice->Flush(hWndVisGeneric);
+		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		//setUseAlternativeNames(true);
+#ifndef _FINAL_VERSION_
+        //TODO Port TriggerChain to ingame dev UI instead of using win32 stuff
 		static TriggerEditor triggerEditor(triggerInterface());
 		TriggerChain* triggerChain = universe()->activePlayer()->getStrategyToEdit();
 		if(triggerChain && triggerEditor.run(*triggerChain, hWndVisGeneric)){
@@ -1251,6 +1275,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			data.manualData = manualData();
 			CurrentMission.saveMission(data, false);
 		}
+#endif
 
 		terCamera->setFocus(HardwareCameraFocus);
         SDL_ShowCursor(SDL_FALSE);
@@ -1263,17 +1288,14 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		if(!missionEditor_){
 			setCutSceneMode(false, false);
 			missionEditor_ = new MissionEditor;
-			terCamera->setRestriction(false);
-		}
-		else{
-			terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction"));
+		} else {
 			delete missionEditor_;
-			missionEditor_ = 0;
+			missionEditor_ = nullptr;
 		}
 		break;
 
 	case VK_F6:
-		terRenderDevice->Flush( hWndVisGeneric );
+		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		profiler_start_stop();
         SDL_ShowCursor(SDL_FALSE);
@@ -1405,6 +1427,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'D':
 		universe()->select.explodeUnit();
 		break;
+	case 'D' | KBD_CTRL | KBD_SHIFT:
+		universe()->DeleteSelectedObjects();
+		break;
 
 	// Debug objects
 	case 'Q':
@@ -1479,7 +1504,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 void GameShell::KeyPressed(sKey& Key)
 {
-    if (Key.fullkey == (VK_F12|KBD_SHIFT|KBD_CTRL)) {
+    if (Key.fullkey == (VK_ESCAPE|KBD_SHIFT|KBD_CTRL)) {
         //Restart game now
         request_application_restart();
         terminate();
@@ -1535,7 +1560,7 @@ void GameShell::KeyPressed(sKey& Key)
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
-		if ( Key.fullkey == VK_INSERT || Key.fullkey == (VK_SPACE | KBD_CTRL) ) {
+		if (Key.fullkey == VK_INSERT) {
 			if (chatEdit->isVisible()) {
 				if (!chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = true;
@@ -1552,7 +1577,7 @@ void GameShell::KeyPressed(sKey& Key)
 				chatEdit->alliesOnlyMode = true;
 			}
 			return;
-		} else if ( Key.fullkey == (VK_INSERT | KBD_CTRL) || (!chatEdit->isVisible() && Key.fullkey == VK_SPACE)) {
+		} else if (Key.fullkey == (VK_INSERT | KBD_CTRL) || Key.fullkey == (VK_SPACE | KBD_CTRL)) {
 			if (chatEdit->isVisible()) {
 				if (chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = false;
@@ -1570,7 +1595,7 @@ void GameShell::KeyPressed(sKey& Key)
 			}
 			return;
 		} else if (chatEdit->isVisible()) {
-			if (Key.fullkey == VK_ESCAPE || (Key.fullkey == VK_RETURN && chatEdit->getText().empty())) {
+			if (Key.fullkey == VK_ESCAPE || (Key.fullkey == VK_RETURN && chatEdit->isEmptyText())) {
 				chatEdit->Show(0);
 				_shellIconManager.SetFocus(0);
 				chatInfo->setTime(CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT);
@@ -1791,7 +1816,9 @@ void GameShell::cancelMouseLook() {
 void GameShell::updatePosition() 
 {
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
-	BuildingInstaller.SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
+    if (BuildingInstallerInited()) {
+        BuildingInstaller->SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
+    }
 }
 
 void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
@@ -1813,11 +1840,11 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 		MouseMoveFlag = 1;
 	}
 
-	if(BuildingInstaller.inited()){
+	if (BuildingInstallerInited()){
 		if(isShiftPressed()) {
-            BuildingInstaller.ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
+            BuildingInstaller->ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
         } else {
-            BuildingInstaller.SetBuildPosition(pos, universe()->activePlayer());
+            BuildingInstaller->SetBuildPosition(pos, universe()->activePlayer());
         }
 	}
 
@@ -1852,7 +1879,8 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		return;
 
 	if (universe()) {
-		universe()->checkEvent(Event(Event::MOUSE_CLICK));
+        Event ev(Event::MOUSE_CLICK);
+		universe()->checkEvent(&ev);
 	}
 
 	if (autoSwitchAIEnabled) {
@@ -1878,9 +1906,9 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 			}
 		}
 	}
-	if(BuildingInstaller.inited()){
-		SND2DPlaySound(BuildingInstaller.valid() ? "building_set" : "unable_build");
-		BuildingInstaller.ConstructObject(universe()->activePlayer());
+	if (BuildingInstallerInited()){
+		SND2DPlaySound(BuildingInstaller->valid() ? "building_set" : "unable_build");
+		BuildingInstaller->ConstructObject(universe()->activePlayer());
 	}
 }
 
@@ -1906,8 +1934,9 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
 		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_ = pos;
 
-		if(BuildingInstaller.inited())
-			BuildingInstaller.CancelObject();
+		if (BuildingInstallerInited()) {
+            BuildingInstaller->CancelObject();
+        }
 
 		//if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack)
 		if(!cameraMouseZoom && !cameraMouseShift)
@@ -2178,7 +2207,7 @@ void terGameShellShowRegionMain()
 	{
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[0];
-		terExternalRegionShowLineZeroplast(region.data(),sColor4c(RegionMain.line_color));
+		terExternalRegionShowLineZeroplast(region.data(),gb_RenderDevice->ConvertColor(sColor4c(RegionMain.line_color)));
 	}
 }
 
@@ -2188,9 +2217,9 @@ void terGameShellShowRegionMainAlpha()
 	{
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[0];
-		terExternalRegionShowLineZeroplastVertical(region.data(),sColor4c(RegionMain.vertical_color));
+		terExternalRegionShowLineZeroplastVertical(region.data(),gb_RenderDevice->ConvertColor(sColor4c(RegionMain.vertical_color)));
 		Column& c=region->getRasterizeColumn();
-		terExternalRegionShowColumn(&c,sColor4c(RegionMain.area_color));
+		terExternalRegionShowColumn(&c,gb_RenderDevice->ConvertColor(sColor4c(RegionMain.area_color)));
 	}
 }
 
@@ -2200,7 +2229,7 @@ void terGameShellShowRegionAbyss()
 	{
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[1];
-		terExternalRegionShowUniform(region.data(),sColor4c(255,255,255));
+		terExternalRegionShowUniform(region.data(),gb_RenderDevice->ConvertColor(sColor4c(255,255,255)));
 	}
 }
 
@@ -2212,7 +2241,7 @@ void terGameShellShowEnergy()
 		terPlayer* player=universe()->activePlayer();
 		terUniverse* tu=universe();
 		MTAuto lock(universe()->EnergyRegionLocker());
-		terExternalRegionShowLine(&player->energyRegion(),sColor4c(255,255,255));
+		terExternalRegionShowLine(&player->energyRegion(),gb_RenderDevice->ConvertColor(sColor4c(255,255,255)));
 	}
 }
 
@@ -2292,7 +2321,7 @@ void CShellLogicDispatcher::updateSmallCamera() {
 
 void CShellLogicDispatcher::initFonts() {
 	_RELEASE(m_hFontUnitsLabel);
-	m_hFontUnitsLabel = terVisGeneric->CreateFont(sqshShellMainFont1);
+	m_hFontUnitsLabel = terVisGeneric->CreateGameFont(sqshShellMainFont1);
 }
 
 void CShellLogicDispatcher::close()
@@ -2337,7 +2366,7 @@ bool CShellLogicDispatcher::ShowTerraform() const
 		FOR_EACH(select_list, ui)
 		{
 			terUnitBase* unit=*ui;
-			if(unit->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER)
+			if(unit->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER)
 				return true;
 		}
 	}
@@ -2577,6 +2606,15 @@ void GameShell::showReelModal(const char* videoFileName, const char* soundFileNa
 	} else {
 		path = videoFileName;
 	}
+    if (getExtension(path, false).empty()) {
+        //Attempt to find extension, bik must be last as is the default one
+        for (const auto& ext : { ".mkv", ".bik" }) {
+            if (get_content_entry(path + ext)) {
+                path += ext;
+                break;
+            }
+        }
+    }
 	reelManager.showModal(path.c_str(), soundFileName, stopBGMusic, alpha);
 	if (stopBGMusic) {
 		PlayMusic();
@@ -2674,28 +2712,29 @@ void GameShell::preLoad() {
         historyScene.loadProgram("RESOURCE/scenario.hst");
     }
     bwScene.loadProgram("RESOURCE/menu.hst");
-#ifdef _FINAL_VERSION_
-    const char* comments_path = nullptr;
-#else
-    const char* comments_path = "RESOURCE/Texts_comments.btdb";
-#endif
-    std::string path = getLocDataPath() + "Text" + PATH_SEP + "Texts.btdb";
-    qdTextDB::instance().load(locale, path.c_str(), comments_path, true, true, false);
 
-    //Load texts, don't delete already loaded ones but replace existing ones
-    for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
-        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
-        std::string name = entry_path.filename().u8string();
-        name = string_to_lower(name.c_str());
-        //Ignore the main text file since its already loaded and also any . starting file like .DS_Store
-        if (name == "texts.btdb" || name[0] == '.') continue;
-        bool replace = name.rfind("_noreplace.") == std::string::npos;
-        bool txt = getExtension(name, true) == "txt";
-        qdTextDB::instance().load(locale, entry->path_content.c_str(), nullptr, false, replace, txt);
+    std::string path = getLocDataPath() + "Text";
+    qdTextDB& texts = qdTextDB::instance();
+    texts.clear();
+    texts.load_from_directory(locale, path, true);
+
+    //Iterate each mod Text folder for current locale and parse all files
+    for (const auto& pair : getGameMods()) {
+        if (!pair.second.enabled) continue;
+        texts.load_from_directory(locale, pair.second.path + PATH_SEP + getLocDataPath() + "Text", false);
     }
     
-    //Load the builtin texts that might not be provided by addons
-    qdTextDB::instance().load_supplementary_texts(getLocale());
+    //Export text if desired
+    const char* export_texts = check_command_line("export_texts");
+    if (export_texts) {
+        texts.exportTexts(export_texts);
+        fprintf(stdout, "Texts exported %s\n", export_texts);
+        ErrH.Exit();
+    }
+    
+    //Load the builtin texts that might not be provided by mods
+    texts.load_supplementary_texts(getLocale());
+    texts.load_replacement_texts(getLocale());
     
     //Setup initial menu
     const char* initial_menu_str = check_command_line("initial_menu");
@@ -2733,7 +2772,7 @@ void GameShell::createChaos() {
 
 void GameShell::editParameters()
 {
-	terRenderDevice->Flush(hWndVisGeneric);
+	terRenderDevice->Flush(true);
     SDL_ShowCursor(SDL_TRUE);
 
 	bool reloadParameters = false;

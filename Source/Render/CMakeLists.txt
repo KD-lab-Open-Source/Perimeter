@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(
         "inc"
         "src"
         "client"
+        "tracker"
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
@@ -10,19 +11,17 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Render_SRCS
+        src/Unknown.cpp
         src/umath.cpp
         src/VisError.cpp
         src/Frame.cpp
-        src/TileMap.cpp
         src/UnkLight.cpp
         src/UnkObj.cpp
         src/CChaos.cpp
-        src/cZPlane.cpp
+        src/cPlane.cpp
         src/lighting.cpp
         src/Line3d.cpp
-        src/particle.cpp
         src/SpriteNode.cpp
-        src/Trail.cpp
         src/AnimChannel.cpp
         src/AnimChannelNode.cpp
         src/MeshBank.cpp
@@ -33,10 +32,6 @@ SET(Render_SRCS
         src/ObjNode.cpp
         src/ShadowVolume.cpp
         src/NParticle.cpp
-        3dx/Interpolator3dx.cpp
-        3dx/Lib3dx.cpp
-        3dx/Node3DX.cpp
-        3dx/Static3DX.cpp
         src/FileImage.cpp
         src/TexLibrary.cpp
         src/Texture.cpp
@@ -52,14 +47,24 @@ SET(Render_SRCS
         src/Scene.cpp
         src/VisGeneric.cpp
         src/VisGrid2d.cpp
+        src/RenderDevice.cpp
+        src/DrawBuffer.cpp
+        tracker/RenderTracker.cpp
+        src/RenderDeviceDraw.cpp
+        client/RenderDrawClient.cpp
+        tilemap/TileMap.cpp
+        tilemap/TileMapRender.cpp
+        tilemap/TileMapBumpTile.cpp
+        tilemap/TileMapTexturePool.cpp
+        tilemap/PoolManager.cpp
+        tilemap/ClippingMesh.cpp
 )
 
-IF (NOT OPTION_HEADLESS)
+IF (OPTION_D3D9)
     INCLUDE_DIRECTORIES(
         "D3D"
     )
     SET(Render_SRCS ${Render_SRCS}
-        client/D3DRenderDrawClient.cpp
         shader/shaders.cpp
         D3D/AdapterMode.cpp
         D3D/D3DRender.cpp
@@ -67,16 +72,17 @@ IF (NOT OPTION_HEADLESS)
         D3D/D3DRenderTexture.cpp
         D3D/D3DRenderTilemap.cpp
         D3D/DrawType.cpp
-        D3D/OcclusionQuery.cpp
-        D3D/PoolManager.cpp
-        D3D/RenderDevice.cpp
-        D3D/clip/ClippingMesh.cpp
     )
 ENDIF()
 
 SET(Render_LINK_LIBS PluginMAX)
 
-ADD_LIBRARY(Render STATIC ${Render_SRCS})
-target_compile_options(Render PUBLIC ${PERIMETER_COMPILE_OPTIONS})
+IF (OPTION_SOKOL)
+    INCLUDE("sokol/CMakeLists.txt")
+    SET(Render_LINK_LIBS ${Render_LINK_LIBS} RenderSokol)
+ENDIF()
 
-TARGET_LINK_LIBRARIES(Render ${Render_LINK_LIBS})
+ADD_LIBRARY(Render STATIC ${Render_SRCS})
+target_compile_options(Render PRIVATE ${PERIMETER_COMPILE_OPTIONS})
+
+TARGET_LINK_LIBRARIES(Render PRIVATE ${Render_LINK_LIBS})

@@ -407,7 +407,7 @@ void TriggerEditorLogic::adjustTriggersCellsForAll(
 						TriggerList& triggers) const
 {
 	TEGrid const& grid = getGrid();
-	RECT const visibleCells = getVisibleCells();
+	sRect const visibleCells = getVisibleCells();
 	int horzIndex = visibleCells.left;
 	int vertIndex = visibleCells.top;
 
@@ -448,13 +448,13 @@ void TriggerEditorLogic::adjustLinksLayout(
 }
 
 //! Возвращает номера левой верхней и правой нижней видимых ячеек
-RECT const TriggerEditorLogic::getVisibleCells() const
+sRect const TriggerEditorLogic::getVisibleCells() const
 {
 	CRect rcClient;
 	getTriggerEditorView()->GetClientRect(rcClient);
 	getTriggerEditorView()->scr2Log(rcClient);
 	TEGrid const& grid = getGrid();
-	RECT result;
+	sRect result;
 	result.left		= grid.getHorzCellIndex(rcClient.left);
 	result.top		= grid.getVertCellIndex(rcClient.top);
 	result.right	= grid.getHorzCellIndex(rcClient.right);

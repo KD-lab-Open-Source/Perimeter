@@ -287,7 +287,7 @@ Vect3f Runtime::getDirection(Vect3f& cameraPos, Vect2f& cursor) {
 }
 
 bool Runtime::getViewportPos(Vect2f* pos) {
-	POINT Point;
+	sPoint Point;
 	GetCursorPos(&Point);
 	window->ScreenToClient(&Point);
 	if (Point.x < 0 || Point.y < 0) {
@@ -461,7 +461,7 @@ int Runtime::initRenderDevice(CWnd *wnd) {
 	string dir = "resource\\LocData\\English\\Fonts";
 	gb_IVisGeneric->SetFontDirectory(dir.c_str());
 
-	pFont = gb_IVisGeneric->CreateFont("Arial", 20);
+	pFont = gb_IVisGeneric->CreateGameFont("Arial", 20);
 
 	setup();
 	createTileMap();

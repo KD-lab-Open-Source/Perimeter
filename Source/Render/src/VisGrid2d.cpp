@@ -1,19 +1,7 @@
 #include <climits>
 #include "StdAfxRD.h"
 #include "VisGrid2d.h"
-
-inline bool IsNowDelete(cIUnkClass *UnkObj)
-{
-//	if(MT_IS_GRAPH() && UnkObj->GetAttr(ATTRUNKOBJ_CREATED_IN_LOGIC))
-//	{
-//		int k=0;
-//	}
-
-	if(MT_IS_GRAPH() && MT_IS_LOGIC())
-		return true;//В случае одного потока - удалять спокойно
-
-	return MT_IS_GRAPH() && !UnkObj->GetAttr(ATTRUNKOBJ_CREATED_IN_LOGIC);
-}
+#include "SafeCast.h"
 
 QuatTree::QuatTree()
 {
@@ -247,206 +235,249 @@ MTGVector::~MTGVector()
 	MTDONE(critical);
 }
 
-void MTGVector::Release()
-{
+void MTGVector::Release() {
 	mtUpdate(INT_MAX);
-/*  //Ужасный кусок кода. Теоретически может удалиться объект, на который есть ссылка
-	int cur_size=slot.size();
-	for(int i=0;i<slot.size();i++)
-	{
-		cIUnkClass* p=slot[i];
-		p->Release();
-		if(slot.size()!=cur_size)
-		{
-			cur_size=slot.size();
-			i--;
-		}
-	}
-*/
 }
 
-void MTGVector::Attach(cIUnkClass *UnkObj)
-{
-	if(MT_IS_GRAPH())
-	{
-		slot.push_back(UnkObj);
-	}else
-	{
-		MTEnter mtenter(critical);
-		add_list.push_back(UnkObj);
+#ifdef MTGVECTOR_USE_HANDLES
+void ReleaseSlot(cUnknownHandle* handle) {
+    handle->Release();
+}
+#endif
+
+void MTGVector::DisableChanges(bool disable) {
+    disable_changes = disable;
+}
+
+#ifdef PERIMETER_DEBUG_ASSERT
+void MTGVector::AssertNoObject(cIUnkClass* object) {
+    xxassert(std::count(slot.begin(), slot.end(), object) == 0, "AssertNoObject: slot");
+    for (auto l : add_list) {
+        if (l.processed) continue;
+        xxassert(std::count(l.list.begin(), l.list.end(), object) == 0, "AssertNoObject: add_list");
+    }
+    for (auto l : erase_list) {
+        if (l.processed) continue;
+        xxassert(std::count(l.list.begin(), l.list.end(), object) == 0, "AssertNoObject: erase_list");
+    }
+}
+
+size_t MTGVector::PendingChanges() {
+    return add_list.size() + erase_list.size();
+}
+#endif
+
+bool MTGVector::ChangeNow(cIUnkClass *UnkObj) const {
+    if (disable_changes) {
+        return false;
+    }
+    
+    if (MT_IS_GRAPH() && MT_IS_LOGIC()) {
+        return true;//В случае одного потока - удалять спокойно
+    }
+
+    return MT_IS_GRAPH() && !UnkObj->GetAttr(ATTRUNKOBJ_CREATED_IN_LOGIC);
+}
+
+void MTGVector::AddToList(std::list<sPerQuant>& list, cIUnkClass* UnkObj) {
+    MTEnter mtenter(critical);
+    int quant = gb_VisGeneric->GetLogicQuant();
+#ifdef MTGVECTOR_USE_HANDLES
+    auto obj = UnkObj->AcquireHandle();
+#else
+    auto obj = UnkObj;
+#endif
+
+    //Try to add into existing list
+    for (auto& per_quant : list) {
+        if (per_quant.processed) continue;
+        //Check if we are not in past
+        if (per_quant.quant > quant) {
+            fprintf(stderr, "Whoops we have in AddToList for quant %d but we are in %d!\n", per_quant.quant, quant);
+            xassert(0);
+            per_quant.processed = true;
+        }
+        if (per_quant.quant == quant) {
+            per_quant.list.push_back(obj);
+            return;
+        }
+    }
+
+    //Not found any list, create new one and add it
+    sPerQuant per_quant = {};
+    per_quant.processed = false;
+    per_quant.quant = quant;
+    per_quant.list.push_back(obj);
+    list.push_back(per_quant);
+}
+
+void MTGVector::RemoveFromList(std::list<sPerQuant>& list, cIUnkClass* UnkObj) {
+    MTEnter mtenter(critical);
+#ifdef MTGVECTOR_USE_HANDLES
+    auto obj = UnkObj->AcquireHandle();
+#else
+    auto obj = UnkObj;
+#endif
+
+    //Remove from any per quant
+    for (auto& per_quant : list) {
+        auto& pl = per_quant.list;
+        if (0 < std::count(pl.begin(), pl.end(), obj)) {
+            auto removed = std::remove(pl.begin(), pl.end(), obj);
+            pl.erase(removed, pl.end());
+        }
+    }
+}
+
+void MTGVector::Attach(cIUnkClass *UnkObj) {
+	if (ChangeNow(UnkObj)) {
+#ifdef MTGVECTOR_USE_HANDLES
+		slot.push_back(UnkObj->AcquireHandle());
+#else
+        if (std::count(slot.begin(), slot.end(), UnkObj) == 0) {
+            slot.push_back(UnkObj);
+        }
+#endif
+	} else {
+        AddToList(add_list, UnkObj);
 	}
 }
 
 void MTGVector::Detach(cIUnkClass *UnkObj)
 {
-	if(IsNowDelete(UnkObj))
-	{
-		std::vector<cIUnkClass*>::iterator it;
-		it= std::find(slot.begin(),slot.end(),UnkObj);
-		if(it!=slot.end())
-			slot.erase(it);
-		else
-		{
-			int k=0;
-		}
-	}else
-	{
-		MTEnter mtenter(critical);
-		UnkObj->IncRef();
-
-		int quant=gb_VisGeneric->GetLogicQuant();
-		//MT_IS_GRAPH()?gb_VisGeneric->GetGraphLogicQuant():gb_VisGeneric->GetLogicQuant();
-		if(erase_list.empty() || erase_list.back().quant!=quant)
-		{
-            /* TODO why trips this when loading multi save?, what was assertion for?
-			if(!erase_list.empty())
-			{
-				int back_quant=erase_list.back().quant;
-				VISASSERT(back_quant<quant);
-			}
-            */
-
-			sErase e;
-			e.quant=quant;
-			erase_list.push_back(e);
-		}
-
-		erase_list.back().erase_list.push_back(UnkObj);
+    RemoveFromList(add_list, UnkObj);
+	if (ChangeNow(UnkObj)) {
+        auto deleted = std::remove_if(slot.begin(), slot.end(), [UnkObj] ( auto& slot_el ) {
+#ifdef MTGVECTOR_USE_HANDLES
+            auto ptr = slot_el->Get();
+            if (ptr == nullptr || ptr == UnkObj) {
+                ReleaseSlot(slot_el);
+                return true;
+            }
+            return false;
+#endif
+            return slot_el == UnkObj;
+        });
+        slot.erase(deleted, slot.end());
+	} else {
+#ifdef MTGVECTOR_USE_HANDLES
+        MTEnter mtenter(critical);
+        if (std::count_if(objects_hold.begin(), objects_hold.end(), [UnkObj] (auto& el) {
+            return el->Get() == UnkObj;
+        }) == 0) {
+            UnkObj->IncRef()
+            objects_hold.push_back(UnkObj->AcquireHandle());
+        }
+#else
+        UnkObj->IncRef();
+#endif
+        AddToList(erase_list, UnkObj);
 	}
 }
 
-void MTGVector::mtUpdate(int cur_quant)
-{
+void MTGVector::mtUpdate(int cur_quant) {
+    MTG();
 	MTEnter mtenter(critical);
 
-	std::list<sErase>::iterator it_erase;
+    auto add_list_removed = std::remove_if(
+            add_list.begin(),
+            add_list.end(),
+            [this, cur_quant] (auto& per_quant) {
+        if (per_quant.processed) {
+            xxassert(0, "mtUpdate: Got processed quant in add_list");
+            return true;
+        }
+        if (per_quant.quant > cur_quant) {
+            return false;
+        }
+        per_quant.processed = true;
+        //Transfer to slot list or release
+        for (auto pending : per_quant.list) {
+            if (std::count(slot.begin(), slot.end(), pending) == 0
+#ifdef MTGVECTOR_USE_HANDLES
+            && pending->Get()
+#endif
+            ) {
+                slot.push_back(pending);
+            } else {
+                pending->Release();
+            }
+        }
+        return true;
+    });
+    add_list.erase(add_list_removed, add_list.end());
 
-	FOR_EACH(erase_list,it_erase)
-	{
-		sErase& e=*it_erase;
+    auto erase_list_removed = std::remove_if(
+            erase_list.begin(),
+            erase_list.end(),
+            [this, cur_quant] (auto& per_quant) {
+        if (per_quant.processed) {
+            xxassert(0, "mtUpdate: Got processed quant in erase_list");
+            return true;
+        }
+        if (per_quant.quant > cur_quant) {
+            return false;
+        }
+        per_quant.processed = true;
+        //Remove from slot list and hold list
+        for (auto pending : per_quant.list) {
+#ifdef MTGVECTOR_USE_HANDLES
+            cIUnkClass* obj = safe_cast<cIUnkClass*>(pending->Get());
+            auto slot_removed = std::remove_if(slot.begin(), slot.end(), [pending, obj] ( auto& handle ) {
+                cUnknownClass* ptr = handle->Get();
+                if (handle == pending || ptr == obj || ptr == nullptr) {
+                    ReleaseSlot(handle);
+                    return true;
+                }
+                return false;
+            });
+            slot.erase(slot_removed, slot.end());
+            auto objects_hold_removed = std::remove_if(objects_hold.begin(), objects_hold.end(), [pending, obj] ( auto& handle ) {
+                cUnknownClass* ptr = handle->Get();
+                if (handle == pending || ptr == obj || ptr == nullptr) {
+                    if (ptr) {
+                        ptr->Release();
+                    }
+                    handle->Release();
+                    return true;
+                }
+                return false;
+            });
+            objects_hold.erase(objects_hold_removed, objects_hold.end());
+#else
+            auto slot_removed = std::remove_if(slot.begin(), slot.end(), [pending] ( auto& obj ) {
+                if (obj == pending) {
+                    return true;
+                }
+                return false;
+            });
+            slot.erase(slot_removed, slot.end());
+#endif
+            pending->Release();
+        }
+        return true;
+    });
+    erase_list.erase(erase_list_removed, erase_list.end());
 
-		if(e.quant<=cur_quant)
-		{
-			std::list<cIUnkClass*>::iterator itl;
-			for(itl=e.erase_list.begin();itl!=e.erase_list.end();)
-			{
-				std::vector<cIUnkClass*>::iterator it_delete;
-				it_delete=find(add_list.begin(),add_list.end(),*itl);
-				if(it_delete!=add_list.end())
-				{
-					(*itl)->Release();
-					add_list.erase(it_delete);
-					itl=e.erase_list.erase(itl);
-				}else
-				{
-					itl++;
-				}
-			}
-		}
-	}
-
-	{
-		std::vector<cIUnkClass*>::iterator itl;
-		FOR_EACH(add_list,itl)
-			slot.push_back(*itl);
-	}
-
-	for(it_erase=erase_list.begin();it_erase!=erase_list.end();)
-	{
-		sErase& e=*it_erase;
-		if(e.quant<=cur_quant)
-		{
-			std::list<cIUnkClass*>::iterator itl;
-			FOR_EACH(e.erase_list,itl)
-			{
-				std::vector<cIUnkClass*>::iterator it_delete;
-				cIUnkClass* obj=*itl;
-				it_delete=find(slot.begin(),slot.end(),obj);
-				if(it_delete!=slot.end())
-				{
-					obj->Release();
-					slot.erase(it_delete);
-				}else
-				{
-					VISASSERT(0);
-				}
-			}
-
-			it_erase=erase_list.erase(it_erase);
-		}else
-		{
-			it_erase++;
-		}
-	}
-
-	add_list.clear();
-
-	int erase_lists=0;
-	int erase_object=0;
-	FOR_EACH(erase_list,it_erase)
-	{
-		sErase& e=*it_erase;
-		erase_lists++;
-		erase_object+=e.erase_list.size();
-	}
-
-	if(cur_quant==INT_MAX)
-		VISASSERT(erase_list.empty());
-}
-
-
-void sGrid2d::Detach(cIUnkClass *UnkObj)
-{
-	if(IsNowDelete(UnkObj))
-	{
-		if(detach_now)
-		{
-			MTG();
-			std::vector<cIUnkClass*>::iterator it;
-			it=find(slot.begin(),slot.end(),UnkObj);
-			if(it!=slot.end())
-				slot.erase(it);
-			else
-			{
-				MTEnter mtenter(critical);
-				std::vector<cIUnkClass*>::iterator it_delete;
-				it_delete=find(add_list.begin(),add_list.end(),UnkObj);
-				if(it_delete!=add_list.end())
-				{
-					add_list.erase(it_delete);
-				}else
-				{
-					VISASSERT(0);
-				}
-			}
-		}else
-		{
-			erase_list.push_back(UnkObj);
-		}
-	}else
-	{
-		MTGVector::Detach(UnkObj);
-	}
-}
-
-void sGrid2d::DetachAndIterate(sGrid2d::iterator& it)
-{
-	int i=it-slot.begin();
-
-	std::vector<cIUnkClass*>::iterator itl;
-	FOR_EACH(erase_list,itl)
-	{
-		std::vector<cIUnkClass*>::iterator it_delete;
-		it_delete=find(slot.begin(),slot.end(),*itl);
-		if(it_delete!=slot.end())
-		{
-			if(i>=it_delete-slot.begin())
-				i--;
-			slot.erase(it_delete);
-		}
-	}
-
-	erase_list.clear();
-
-	it=slot.begin()+(i+1);
+#ifdef MTGVECTOR_USE_HANDLES
+    //Remove stale handles
+    auto deleted = std::remove_if(slot.begin(), slot.end(), [] ( cUnknownHandle* handle ) {
+        if (handle->Get() == nullptr) {
+            ReleaseSlot(handle);
+            return true;
+        }
+        return false;
+    });
+    slot.erase(deleted, slot.end());
+#endif
+    
+    if (cur_quant == INT_MAX) {
+        VISASSERT(add_list.empty());
+        VISASSERT(erase_list.empty());
+#ifdef MTGVECTOR_USE_HANDLES
+        for (auto ptr : slot) {
+            ReleaseSlot(ptr);
+        }
+#endif
+    }
 }

@@ -35,11 +35,11 @@ bool applicationIsGo();
 bool isPressed(uint32_t key);
 inline bool isShiftPressed() { return isPressed(VK_SHIFT); }
 inline bool isControlPressed() { return isPressed(VK_CONTROL); }
-inline bool isAltPressed() { return isPressed(VK_MENU); }
+inline bool isAltPressed() { return isPressed(VK_ALT); }
 
 const unsigned int KBD_CTRL = 1 << 8;
 const unsigned int KBD_SHIFT = 1 << 9;
-const unsigned int KBD_MENU = 1 << 10;
+const unsigned int KBD_ALT = 1 << 10;
 
 struct sKey {
     union
@@ -49,7 +49,7 @@ struct sKey {
             unsigned char key;
             unsigned char ctrl : 1;
             unsigned char shift : 1;
-            unsigned char menu	: 1;
+            unsigned char alt	: 1;
         };
         int fullkey;
     };
@@ -59,15 +59,20 @@ struct sKey {
 	sKey(int key_ = 0, bool set_by_async_funcs = false);
 	
 	bool pressed() const {
-		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(menu ^ isAltPressed());
+		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(alt ^ isAltPressed());
 	}
 };
 
 
+#ifdef _WIN32
+//TODO get rid of HWND once we have ingame dev UI
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+extern HWND hWndVisGeneric;
+#endif
 
 // ---   Focus   ------------------------------
 extern SDL_Window* sdlWindow;
-extern HWND hWndVisGeneric;
 inline void RestoreFocus() { SDL_RaiseWindow(sdlWindow); }
 
 // ---   Ini file   ------------------------------
@@ -81,10 +86,10 @@ class IniManager
 {
 private:
 	std::string fname_;
-	bool check_existence_;
     bool is_full_path;
     std::string getFilePath();
 public:
+	bool check_existence = true;
 	explicit IniManager(const char* fname, bool check_existence = true, bool full_path = false);
 	const char* get(const char* section, const char* key);
 	void put(const char* section, const char* key, const char* val);
@@ -98,37 +103,9 @@ public:
 };
 
 // ---  Files ------------------------------
-inline std::string setExtension(const std::string& file_name, const char* extension)
-{
-	std::string str = file_name;
-	size_t pos = str.rfind('.');
-	if(pos != std::string::npos) {
-        str.erase(pos, str.size());
-    }
-    if (extension) {
-        str += ".";
-        str += extension;
-    }
-	return str;
-}
 
-inline std::string getExtension(const std::string& file_name, bool process)
-{
-	std::string str = file_name;
-	size_t pos = str.rfind('.');
-	if (pos != std::string::npos) {
-		str.erase(0, pos + 1);
-        if (process) {
-            str = string_to_lower(str.c_str());
-            while (isspace(str[str.size() - 1])) {
-                str.erase(str.size() - 1);
-            }
-        }
-		return str;
-	} else {
-        return "";
-    }
-}
+std::string setExtension(const std::string& file_name, const char* extension);
+std::string getExtension(const std::string& file_name, bool process);
 
 // --- Settings ------
 IniManager* getSettings();

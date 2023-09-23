@@ -56,7 +56,7 @@ public:
 
 	//SetTransparent,SetDiffuseColor - не правильно изменяет свойства при включенном куполе
 	void SetColor(const sColor4c& c) { Diffuse = c; }
-	int GetColor() const { return CurrentDiffuse.RGBA(); }
+    const sColor4c& GetColor() const { return CurrentDiffuse; }
 
 	void setTransparent(bool b) { is_transparent = b; }
 	bool isTransparent() const { return is_transparent || enable_transparency_; }
@@ -132,8 +132,8 @@ public:
 	~NormalsBox()
 	{
 		atan_table -= atan_max;
-		delete atan_table;
-		delete normals;
+		delete[] atan_table;
+		delete[] normals;
 	}
 	const Vect3f& operator()(int dz_x, int dz_y) const
 	{
@@ -298,7 +298,7 @@ private:
 	void hmapRotate();
 	//Везде, где обращаются из графического потока к hmap_prev,hmap_cur,hmap_logic
 	//хотя, если lock не сделать, ничего фатального не случится.
-	MTDECLARE(hmap_lock)
+	MTDECLARE(hmap_lock);
 
 	inline float interpolateHeight(int x,int y,float t,float t_)
 	{
@@ -309,7 +309,13 @@ private:
 
 	float interpolation_factor;
 
-	friend class cD3DRender;
+	friend class cInterfaceRenderDevice;
+#ifdef PERIMETER_D3D9
+    friend class cD3DRender;
+#endif
+#ifdef PERIMETER_SOKOL
+    friend class cSokolRender;
+#endif
 };
 
 extern FieldDispatcher* field_dispatcher;

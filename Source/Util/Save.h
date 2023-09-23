@@ -1524,6 +1524,9 @@ struct SaveFilthSwarmWorm : SaveFilthSwarm
 
 struct SaveFilthVorm : SaveUnitRealData
 {
+    VIRTUAL_SERIALIZE(ar) {
+        SaveUnitRealData::serialize_template(ar);
+    }
 };
 
 //////////////////////////////////////////////////////////
@@ -1972,6 +1975,10 @@ struct ActionUpgradeOmega : ActionForAI // Апргрейд Омеги
 {
 	bool automaticCondition(AIPlayer& aiPlayer) const;
 	void activate(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+        ActionForAI::serialize_template(ar);
+    }
 };																													  
 
 //-------------------------------------
@@ -2245,11 +2252,19 @@ struct ActionDeactivateObjectByLabel : Action // Деактивировать о
 struct ActionActivateAllSpots : Action // Активировать все споты
 {
 	void activate(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+        Action::serialize_template(ar);
+    }
 };
 
 struct ActionDeactivateAllSpots : Action // Деактивировать все споты
 {
 	void activate(AIPlayer& aiPlayer);
+    
+    VIRTUAL_SERIALIZE(ar) {
+        Action::serialize_template(ar);
+    }
 };
 
 struct ActionSetControlEnabled : Action // Запретить/разрешить управление игрока
@@ -2700,6 +2715,7 @@ struct SaveManualData // Данные, редактируемые руками
 	const SaveCameraSplineData* findCameraSpline(const char* name) const;
 	void saveCamera(int playerID, const char* triggerName);
     void copyCamera(int playerID, const char* triggerName, const char* sourceTriggerName);
+    void clearSoundTracks();
 
 	SERIALIZE(ar) {
 		if(ar.type() & ARCHIVE_EDIT){

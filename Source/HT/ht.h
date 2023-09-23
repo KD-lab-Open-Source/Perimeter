@@ -94,3 +94,15 @@ protected:
 
 	class LagStatistic* lag_stat;
 };
+
+/*
+    Force current thread to be the only one executing as both, this bypasses thread asserts
+*/
+class MTAutoSingleThread
+{
+    MTSection* lock = nullptr;
+    uint32_t real_tls = 0;
+public:
+    MTAutoSingleThread();
+    ~MTAutoSingleThread();
+};

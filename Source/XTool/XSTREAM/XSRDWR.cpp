@@ -47,3 +47,6 @@ int64_t XStream::write(const void* buf, int64_t len)
 	return ret;
 }
 
+int64_t XStream::write_str(const std::string& str) {
+    return write(str.c_str(), static_cast<int64_t>(str.length()));
+}

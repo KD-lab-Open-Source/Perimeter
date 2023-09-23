@@ -201,20 +201,20 @@ void terInterpolationMonk::ColorUpdate()
 
 void terInterpolationMonk::setPos(const Vect3f& pos)
 {
-	pose_ = pos;
+	pose_.set(pos);
 	Vect3f protect=pos;
 	protect.z+=Size;
-	pose_protection=protect;
+	pose_protection.set(protect);
 }
 
 void terInterpolationMonk::interpolate()
 {
 	if(ObjectPoint){
 		ColorUpdate();
-		pose_((cIUnkObj*)ObjectPoint);
+		pose_(ObjectPoint);
 		if(ProtectMode==1)
 		{
-			pose_protection((cIUnkObj*)ProtectionPoint);
+			pose_protection(ProtectionPoint);
 		}
 	}
 }
@@ -304,7 +304,7 @@ void terInterpolationUninstall::updateColor()
 	sColorInterpolate c;
 	c.color=color;
 //	c.add_color=add_color;
-	color_=c;
+	color_.set(c);
 }
 
 //------------------------------------------------------
@@ -319,7 +319,7 @@ NodeController::NodeController(const AnimationData* animationData)
 
 	soundEventID_ = SOUND_EVENT_NONE;
 
-	phase_ = 0;
+	phase_.set(0);
 	requestDone_ = true;
 	requestedPhase_ = -1;
 }
@@ -350,7 +350,7 @@ void NodeController::setChainInternal(ChainID chainID)
 		}
 	//	phaseIterator_.Quant();
 		phase_.initialize();
-		phase_ = phaseIterator_.phase();
+		phase_.set(phaseIterator_.phase());
 	}
 }
 
@@ -486,7 +486,7 @@ void NodeController::quant()
 			}
 		}
 
-		phase_ = phaseIterator_.phase();
+		phase_.set(phaseIterator_.phase());
 	}
 }
 

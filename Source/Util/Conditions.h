@@ -10,6 +10,10 @@ struct ConditionOneTime : Condition // --------------------
 	void setSatisfied(int time = 3000) { satisfiedTimer_.start(time); }
 	void clear() { satisfiedTimer_.stop(); }
 
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
+    }
+
 private:
 	DurationTimer satisfiedTimer_;
 };
@@ -17,6 +21,10 @@ private:
 struct ConditionIsPlayerAI : Condition // АИ ли Игрок
 {
 	bool check(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
+    }
 };
 
 struct ConditionCheckBelligerent : Condition // Порверка воюющей стороны
@@ -58,7 +66,7 @@ struct ConditionCreateObject : Condition // Объект создан
 	}
 
 	bool check(AIPlayer& aiPlayer) { return created_ >= counter; }
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
     VIRTUAL_SERIALIZE(ar) {
 		Condition::serialize_template(ar);
@@ -88,7 +96,7 @@ struct ConditionKillObject : Condition // Объект уничтожен
 	}
 
 	bool check(AIPlayer& aiPlayer) { return killed_ >= counter; }
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
     VIRTUAL_SERIALIZE(ar) {
         Condition::serialize_template(ar);
@@ -139,7 +147,7 @@ struct ConditionCaptureBuilding : ConditionOneTime // Захват здания
 		playerType = AI_PLAYER_TYPE_ME;
 	}
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		ConditionOneTime::serialize_template(ar);
@@ -167,7 +175,7 @@ struct ConditionTeleportation : ConditionOneTime // Произошла теле�
 		playerType = AI_PLAYER_TYPE_ME; 
 	}
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
     VIRTUAL_SERIALIZE(ar) {
         ConditionOneTime::serialize_template(ar);
@@ -290,7 +298,7 @@ struct ConditionUnitClassUnderAttack : ConditionOneTime // Объект атак
 		playerType = AI_PLAYER_TYPE_ME; 
 	}
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		ConditionOneTime::serialize_template(ar);
@@ -306,7 +314,7 @@ struct ConditionUnitClassIsGoingToBeAttacked : ConditionOneTime // Объект 
 	BitVector<terUnitClassType> victimUnitClass; 
 	BitVector<terUnitClassType> agressorUnitClass; 
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		ConditionOneTime::serialize_template(ar);
@@ -370,6 +378,10 @@ DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionFrameState, State);
 struct ConditionCorridorOmegaUpgraded : Condition // Коридор Омега проапгрейжен
 {
 	bool check(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
+    }
 };
 
 //---------------------------------------
@@ -473,7 +485,7 @@ struct ConditionPlayerState : Condition // Проверка состояния �
 	}
 
 	bool check(AIPlayer& aiPlayer) { return active_; }
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		Condition::serialize_template(ar);
@@ -492,6 +504,10 @@ DECLARE_ENUM_DESCRIPTOR(ConditionPlayerState)
 struct ConditionIsFieldOn : Condition // Поле включено
 {
 	bool check(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
+    }
 };
 
 //---------------------------------------
@@ -519,7 +535,7 @@ struct ConditionKillObjectByLabel : ConditionOneTime // Объект по мет
 	label(editLabelDialog)
 	{}
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
     VIRTUAL_SERIALIZE(ar) { 
 		ConditionOneTime::serialize_template(ar);
@@ -580,7 +596,7 @@ struct ConditionTimeMatched : ConditionOneTime // Осталось времен�
 		time = 60; 
 	}
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		ConditionOneTime::serialize_template(ar);
@@ -590,7 +606,11 @@ struct ConditionTimeMatched : ConditionOneTime // Осталось времен�
 
 struct ConditionMouseClick : ConditionOneTime // Клик мыши
 {
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
+
+    VIRTUAL_SERIALIZE(ar) {
+        ConditionOneTime::serialize_template(ar);
+    }
 };
 
 struct ConditionClickOnButton : Condition // Клик по кнопке
@@ -605,7 +625,7 @@ struct ConditionClickOnButton : Condition // Клик по кнопке
 	}
 
 	bool check(AIPlayer& aiPlayer) { return counter_ >= counter; }
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		Condition::serialize_template(ar);
@@ -663,6 +683,10 @@ struct ConditionTerrainLeveledNearObjectByLabel : Condition // Поверхно�
 struct ConditionSetSquadWayPoint : Condition // Флажок скваду установлен
 {
 	bool check(AIPlayer& aiPlayer);
+    
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
+    }
 };	
 
 struct ConditionActivateSpot : ConditionOneTime // Активировался спот
@@ -677,7 +701,7 @@ struct ConditionActivateSpot : ConditionOneTime // Активировался с
 		type = FILTH | GEO; 
 	}
 
-	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void checkEvent(AIPlayer& aiPlayer, const Event* event);
 
 	VIRTUAL_SERIALIZE(ar) {
 		ConditionOneTime::serialize_template(ar);
@@ -690,11 +714,19 @@ DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionActivateSpot, Type);
 struct ConditionOnlyMyClan : ConditionOneTime // Остался только мой клан
 {
 	bool check(AIPlayer& aiPlayer);
+    
+    VIRTUAL_SERIALIZE(ar) {
+        ConditionOneTime::serialize_template(ar);
+    }
 };
 
 struct ConditionSkipCutScene : Condition // Пропустить кат-сцену
 {
 	bool check(AIPlayer& aiPlayer);
+    
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
+    }
 };
 
 struct ConditionCutSceneWasSkipped : ConditionSkipCutScene // Кат-сцена была пропущена
