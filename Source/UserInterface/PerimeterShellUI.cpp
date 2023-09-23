@@ -322,6 +322,7 @@ void CShellWindow::loadAnchor() {
                 anchor_children = anchor = SHELL_ANCHOR_LEFT;
                 break;
             case SQSH_NET_LATENCY_INFO_ID:
+            case SQSH_MM_VERSION_TXT:
                 anchor_children = anchor = SHELL_ANCHOR_RIGHT;
                 break;
             default:
