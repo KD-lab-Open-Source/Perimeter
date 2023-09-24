@@ -923,6 +923,9 @@ int SwitchMenuScreenQuant1( float, float ) {
                 case SQSH_MM_CONTENT_CHOOSER_SCR:
                     fillContentChooserList();
                     break;
+                case SQSH_MM_ADDONS_SCR:
+                    loadAddonsList();
+                    break;
 				case SQSH_MM_PROFILE_SCR:
 					{
 						fillProfileList();

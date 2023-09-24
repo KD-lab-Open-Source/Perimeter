@@ -5392,9 +5392,9 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 //	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
  	controls = new sqshControl[] {
  		sqshControl_ScaleButton { x=341/1024; y=161/768; sx=339/1024; sy=466/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 518; ix = 339; iy = 466;}; state = SQSH_ENABLED; ystart=466/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; },
- 		sqshControl_ScaleButton { x=648/1024; y=171/768; sx=25/1024; sy=316/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 346; _iy = 522; ix = 25; iy = 316;}; state = SQSH_ENABLED; ystart=316/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; },
+ 		sqshControl_ScaleButton { x=648/1024; y=171/768; sx=25/1024; sy=372/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 346; _iy = 522; ix = 25; iy = 316;}; state = SQSH_ENABLED; ystart=316/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; },
  		
- 		{type = SQSH_LIST_BOX_TYPE;	   id = SQSH_MM_ADDONS_LIST;				x=344/1024; y=171/768; sx=327/1024; sy=357/768;
+ 		{type = SQSH_LIST_BOX_TYPE;	   id = SQSH_MM_ADDONS_LIST;				x=344/1024; y=171/768; sx=327/1024; sy=372/768;
  																					image_check={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 24; iy = 24;dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
  											 										image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 992; ix = 226; iy = 26;};
  																					image_h={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328; _iy = 427; ix = 24; iy = 30;}; txt_dx = listBoxTextLeftOffset; txt_dy = 7/768; xstart = 24/1024; ystart = 35/768;},

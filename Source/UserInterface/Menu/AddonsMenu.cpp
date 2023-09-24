@@ -17,6 +17,24 @@ struct ModInfo {
 
 std::vector<ModInfo> gameModInfoList;
 
+void updateAddonsList(CListBoxWindow* list) {
+    int selectIndex = list->GetCurSel();
+    list->Clear();
+    for (const auto& info : gameModInfoList) {
+        std::string name;
+        if (info.mod->available) {
+            name = info.wantedEnabled ? "&FFFFFF" : "&FF0000";
+        } else {
+            name = "&666666";
+        }
+        name += info.mod->mod_name;
+        list->AddString( name.c_str(), 0 );
+    }
+    if (0 <= selectIndex) {
+        list->SetCurSel(selectIndex);
+    }
+}
+
 void loadAddonsList() {
     gameModInfoList.clear();
     for (auto& pair : getGameMods()) {
@@ -37,31 +55,12 @@ void loadAddonsList() {
         list->SetCurSel(0);
     }
     _shellIconManager.GetWnd(SQSH_MM_ADDONS_APPLY_BTN)->Enable(false);
-}
-
-void updateAddonsList(CListBoxWindow* list) {
-    int selectIndex = list->GetCurSel();
-    list->Clear();
-    for (const auto& info : gameModInfoList) {
-        std::string name;
-        if (info.mod->available) {
-            name = info.wantedEnabled ? "&FFFFFF" : "&FF0000";
-        } else {
-            name = "&666666";
-        }
-        name += info.mod->mod_name;
-        list->AddString( name.c_str(), 0 );
-    }
-    if (0 <= selectIndex) {
-        list->SetCurSel(selectIndex);
-    }
+    
+    updateAddonsList(list);
 }
 
 void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-        loadAddonsList();
-        CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_ADDONS_LIST));
-        updateAddonsList(list); 
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_ADDONS_SCR);
     }
 }
