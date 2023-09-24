@@ -347,9 +347,19 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
     
     gb_RenderDevice3D = this;
     
-    //Workaround for Linux setting window bigger than originally requested 
+    //Workaround for some distros (Ubuntu?) setting window bigger than originally requested
+    //Since Steam Linux Runtime is based on ubuntu it affects there too
     if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
-        SDL_SetWindowSize(sdl_window, ScreenSize.x, ScreenSize.y);
+        Vect2i size;
+        SDL_GetWindowSize(sdl_window, &size.x, &size.y);
+        if (size != ScreenSize) {
+            //Set correct size
+            SDL_SetWindowSize(sdl_window, ScreenSize.x, ScreenSize.y);
+            //Put on center again
+            int screen = SDL_GetWindowDisplayIndex(sdl_window);
+            int windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
+            SDL_SetWindowPosition(sdlWindow, windowPos, windowPos);
+        }
     }
 
     RenderSubmitEvent(RenderEvent::INIT, "D3D9 end");
