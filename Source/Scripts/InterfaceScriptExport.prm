@@ -5405,6 +5405,9 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
         sqshControl_ScaleButton { x=340/1024; y=564/768; sx=344/1024; sy=44/768; state = SQSH_ENABLED; ystart=44/768; },
         {type = SQSH_COMBO_TYPE;	   id = SQSH_MM_ADDONS_ENABLE_COMBO;			x=555/1024; y=574/768; sx=117/1024; sy=24/768; target=SQSH_MM_ADDONS_ENABLE_BTN;image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
         {type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_ADDONS_ENABLE_BTN;				x=350/1024; y=564/768; sx=181/1024; sy=44/768; text="MOD ENABLE STATE"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_ADDONS_ENABLE_COMBO;image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+
+        //Modding link
+ 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_ADDONS_GUIDE_BTN;	x=middleSeparateBottomBtn.x;  y=middleSeparateBottomBtn.y; sx=middleSeparateBottomBtn.sx; sy=middleSeparateBottomBtn.sy; text="GUIDE"; font_group=2; txt_dx=134; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button"; bgObject = {name = "group skip"; chainName = "skip";};image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; },
  
         //Apply and Back buttons in corners
  		sqshControl_ScaleButton { x=rightBottomBtn.x;  y=rightBottomBtn.y; sx=rightBottomBtn.sx; sy=rightBottomBtn.sy; ystart=51/768; },
@@ -5417,6 +5420,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
  		{name = "group start"; chainName = "start screen";},
  		{name = "group back"; chainName = "back";},
  		{name = "group next"; chainName = "next";},
+ 		{name = "group skip"; chainName = "skip";},
  		{name = "group background"; chainName = "background on";}
  	};
  	defaultEscBtnID = SQSH_MM_BACK_FROM_ADDONS_BTN;

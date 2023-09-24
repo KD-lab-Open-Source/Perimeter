@@ -146,8 +146,8 @@ public:
 
 	bool mouseLeftPressed() const { return mouseLeftPressed_; }
 	bool mouseRightPressed() const { return mouseRightPressed_; }
-	const Vect2f mousePosition() const { return mousePosition_; }
-    const Vect2f mousePositionDelta() const { return mousePositionDelta_; }
+	const Vect2f& mousePosition() const { return mousePosition_; }
+    const Vect2f& mousePositionDelta() const { return mousePositionDelta_; }
     const Vect2f& mousePositionRelative() const { return mousePositionRelative_; }
 	
 	const Vect2f mousePressControl() const { return mousePressControl_; }

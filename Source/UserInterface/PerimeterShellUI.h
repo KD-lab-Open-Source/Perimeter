@@ -1871,7 +1871,7 @@ void OnMapWindowClicked(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonBrigadiers(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//start
+//start / general
 void showSingleMenu(CShellWindow* pWnd);
 void onMMSingleButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMMultiplayerButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1879,6 +1879,7 @@ void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMOpenLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //addons
 void loadAddonsList();
@@ -1886,11 +1887,11 @@ void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsGuideButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //community
 void onMMCommunityButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMCommunityLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //briefing
 void onMMNomadNameBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param);

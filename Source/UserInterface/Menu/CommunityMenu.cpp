@@ -25,10 +25,11 @@ int openWebConfirmationHandler(float, float) {
     return 0;
 }
 
-void onMMCommunityLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+void onMMOpenLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         openWebURL.clear();
         bool addLocale = false;
+        bool russian = startsWith(getLocale(), "russian");
         std::string params;
         switch (pWnd->ID) {
             default:
@@ -48,11 +49,15 @@ void onMMCommunityLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
             case SQSH_MM_COMMUNITY_4_BTN:
                 openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter";
                 break;
+            case SQSH_MM_ADDONS_GUIDE_BTN:
+                //TODO change when/if is translated
+                openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter/blob/cmake/MODDING.eng.md";
+                break;
         }
         if (openWebURL.empty()) {
             return;
         }
-        if (addLocale && !startsWith(getLocale(), "russian")) {
+        if (addLocale && !russian) {
             //For now there is only russian (without any extra url and /en for english)
             openWebURL += "/en";
         }

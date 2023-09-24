@@ -105,13 +105,14 @@ _handlertbl[] = {
     {SQSH_MM_ADDONS_LIST, onMMAddonsList},
     {SQSH_MM_ADDONS_APPLY_BTN, onMMAddonsApplyButton},
     {SQSH_MM_ADDONS_ENABLE_COMBO, onMMAddonsEnableCombo},
+    {SQSH_MM_ADDONS_GUIDE_BTN, onMMOpenLinkButton},
     {SQSH_MM_BACK_FROM_ADDONS_BTN, onMMAddonsBackButton},
     
     //community menu
-    {SQSH_MM_COMMUNITY_1_BTN, onMMCommunityLinkButton},
-    {SQSH_MM_COMMUNITY_2_BTN, onMMCommunityLinkButton},
-    {SQSH_MM_COMMUNITY_3_BTN, onMMCommunityLinkButton},
-    {SQSH_MM_COMMUNITY_4_BTN, onMMCommunityLinkButton},
+    {SQSH_MM_COMMUNITY_1_BTN, onMMOpenLinkButton},
+    {SQSH_MM_COMMUNITY_2_BTN, onMMOpenLinkButton},
+    {SQSH_MM_COMMUNITY_3_BTN, onMMOpenLinkButton},
+    {SQSH_MM_COMMUNITY_4_BTN, onMMOpenLinkButton},
     {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
     {SQSH_MM_BACK_FROM_COMMUNITY_BTN, onMMBackButton},
 
