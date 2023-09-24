@@ -1028,12 +1028,20 @@ int SDL_main(int argc, char *argv[])
         //launch ourselves again, execution of this process stops here
         printf("Restarting:");
         for (auto const& str : exec_argv) {
-            if (str) printf(" %s", str);
+            if (str) {
+                printf(" '%s'", str);
+            } else {
+                printf(" NULL");
+            }
         }
         printf("\n");
-        int ret = execv(exec_argv[0], exec_argv.data());
+        int ret = 0;
+        for (int i = 0; i < 2; ++i) {
+            ret = execv(exec_argv[0], exec_argv.data());
+            //We shouldn't reach this point
+            printf("Error at launch %d\n", ret);
+        }
         
-        //We shouldn't reach this
         ErrH.Abort("Error restarting the application", XERR_USER, ret);
     }
 
