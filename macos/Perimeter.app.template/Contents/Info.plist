@@ -7,7 +7,7 @@
   <key>CFBundleExecutable</key>
   <string>start</string>
   <key>CFBundleIdentifier</key>
-  <string>com.kdvision.perimeter</string>
+  <string>com.kdlab.perimeter</string>
   <key>CFBundleName</key>
   <string>Perimeter</string>
   <key>CFBundleIconFile</key>

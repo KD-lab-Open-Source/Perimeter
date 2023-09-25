@@ -52,10 +52,10 @@ There is instructions available in:
 - Right click on morph units to request basic units required
 - Automatic game assets searching in these paths order:
   - Path from content= command argument
-  - Linux: $HOME/.local/share/KD Vision/Perimeter/Content
-  - MacOS: $HOME/Library/Application Support/KD Vision/Perimeter/Content
+  - Linux: $HOME/.local/share/K-D LAB/Perimeter/Content
+  - MacOS: $HOME/Library/Application Support/K-D LAB/Perimeter/Content
   - Executable path
-  - Windows: %AppData%\\Roaming\\KD Vision\\Perimeter\\Content
+  - Windows: %AppData%\\Roaming\\K-D LAB\\Perimeter\\Content
   - Previous used content stored in settings
 - Support for 64 bits and other CPUs architectures than x86
 - Frame selection in battle/multiplayer menu and new colors
@@ -81,9 +81,9 @@ There is instructions available in:
 ## Game settings:
 
 Application preferences paths: 
-- Linux: $HOME/.local/share/KD Vision/Perimeter/
-- MacOS: $HOME/Library/Application Support/KD Vision/Perimeter/
-- Windows: %AppData%\\Roaming\\KD Vision\\Perimeter\
+- Linux: $HOME/.local/share/K-D LAB/Perimeter/
+- MacOS: $HOME/Library/Application Support/K-D LAB/Perimeter/
+- Windows: %AppData%\\Roaming\\K-D LAB\\Perimeter\
 
 NOTE: Some settings like current language, active profile, multiplayer settings and game content path can be found now at file Settings.ini inside application preferences directory.
 This file is automatically created/updated by the game.

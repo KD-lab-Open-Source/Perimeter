@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#define GET_PREF_PATH() SDL_GetPrefPath("KD Vision", "Perimeter")
+#define GET_PREF_PATH() SDL_GetPrefPath("K-D LAB", "Perimeter")
 #define PRINTF_FLOATING_FORMAT "%.*f"
 
 struct XBuffer;
