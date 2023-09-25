@@ -17,11 +17,9 @@
 
 std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> utf8cvt;
 
-#ifndef _WIN32
 bool argcv_setup_done = false;
-int __argc = 0;
-std::vector<const char*> __argv;
-#endif
+int app_argc = 0;
+std::vector<std::string> app_argv;
 
 static unsigned int XRndValue = 83838383;
 
@@ -44,14 +42,15 @@ unsigned int XRndGet()
 }
 
 void setup_argcv(int argc, char *argv[]) {
-#ifndef _WIN32
+    //Pick the args
     for(int i = 0; i < argc; i ++){
-        //printf("%d %s\n", i, argv[i]);
-        __argv.push_back(argv[i]);
-        __argc++;
+#ifdef DEBUG_ARGV
+        printf("setup_argcv args %d %s\n", i, argv[i]);
+#endif
+        app_argv.emplace_back(argv[i]);
+        app_argc++;
     }
     argcv_setup_done = true;
-#endif
 }
 
 void decode_version(const char* version_str, uint16_t version[3]) {
@@ -94,15 +93,14 @@ int compare_versions(const uint16_t left[3], const char* right) {
 }
 
 const char* check_command_line(const char* switch_str) {
-#ifndef _WIN32
     if (!argcv_setup_done) {
         fprintf(stderr, "Called check_command_line %s before setup_argcv\n", switch_str);
+        xassert(0);
     }
-#endif
     std::string switch_key(switch_str);
     switch_key += "=";
-    for(int i = 1; i < __argc; i ++){
-        const char* arg = __argv[i];
+    for(int i = 1; i < app_argc; i ++){
+        const char* arg = app_argv[i].c_str();
         if (startsWith(arg, "tmp_")) {
             arg += 4;
         }

@@ -36,11 +36,9 @@ uint64_t clock_us();
 #include <vector>
 #include <filesystem>
 
-#ifndef _WIN32
 //Hacky way to "store" argc/argv so they can be accessed later like in Windows
-extern int __argc;
-extern std::vector<const char*> __argv;
-#endif
+extern int app_argc;
+extern std::vector<std::string> app_argv;
 
 ///Stores argc/argv from main()
 void setup_argcv(int argc, char *argv[]);

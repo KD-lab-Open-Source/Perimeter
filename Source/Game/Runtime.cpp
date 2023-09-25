@@ -880,6 +880,19 @@ int main(int argc, char *argv[]) {
 }
 #endif
 
+char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
+#ifdef _WIN32
+    //Workaround for win32 execv() getting confused when .exe is inside a path containing spaces
+    if (wrap_spaces && arg.find(' ') != std::string::npos) {
+        arg = "\"" + arg + "\"";
+    }
+#endif
+    size_t len = arg.length() + 1;
+    char* str = static_cast<char*>(malloc(len));
+    strcpy(str, arg.c_str());
+    return str;
+}
+
 int SDL_main(int argc, char *argv[])
 {
     //Show help if requested
@@ -1001,32 +1014,36 @@ int SDL_main(int argc, char *argv[])
         applicationRestartFlag = false;
         
         //Copy the args that launched this game
+        const char* exec_path = nullptr;
         std::vector<char*> exec_argv;
-        for (int i = 0; i < __argc; ++i) {
-            if (startsWith(__argv[i], "tmp_")) {
+        for (int i = 0; i < app_argc; ++i) {
+            if (startsWith(app_argv[i], "tmp_")) {
                 //These are passed internally and are not supposed to pass into next instance
                 continue;
             }
-            
-            size_t len = strlen(__argv[i]) + 1;
-            char* str = static_cast<char*>(malloc(len));
-            strcpy(str, __argv[i]);
-            exec_argv.emplace_back(str);
+
+            if (i == 0) {
+                //Doesn't like "s
+                exec_path = alloc_exec_arg_string(app_argv[i], false);
+            }
+            exec_argv.emplace_back(alloc_exec_arg_string(app_argv[i], true));
         }
         
         //Add extra args
         for (auto const& arg : applicationRestartArgs) {
-            size_t len = arg.length() + 1;
-            char* str = static_cast<char*>(malloc(len));
-            strcpy(str, arg.c_str());
-            exec_argv.emplace_back(str);
+            exec_argv.emplace_back(alloc_exec_arg_string(arg, true));
+        }
+        
+        //Shouldn't happen
+        if (!exec_path && !exec_argv.empty()) {
+            exec_path = exec_argv[0];
         }
 
         //execv last arg must be null for termination
         exec_argv.emplace_back(nullptr);
         
         //launch ourselves again, execution of this process stops here
-        printf("Restarting:");
+        printf("Restarting: '%s' args:", exec_path);
         for (auto const& str : exec_argv) {
             if (str) {
                 printf(" '%s'", str);
@@ -1035,14 +1052,14 @@ int SDL_main(int argc, char *argv[])
             }
         }
         printf("\n");
-        int ret = 0;
-        for (int i = 0; i < 2; ++i) {
-            ret = execv(exec_argv[0], exec_argv.data());
-            //We shouldn't reach this point
-            printf("Error at launch %d\n", ret);
-        }
-        
-        ErrH.Abort("Error restarting the application", XERR_USER, ret);
+        int ret;
+#ifdef _WIN32
+        ret = _execv(exec_path, exec_argv.data());
+#else
+        ret = execv(exec_path, exec_argv.data());
+#endif
+        //We shouldn't reach this point        
+        ErrH.Abort("Error restarting the application", XERR_USER, ret, strerror(errno));
     }
 
 	return 0;

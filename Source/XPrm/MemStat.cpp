@@ -125,8 +125,8 @@ void allocation_tracking(char* title, AllocationAccumulator* accumulator)
 		opened = 1;
 
 		disabled = 1;
-		for(int i = 1;i < __argc;i++)
-			if(strstr(__argv[i], "memory"))
+		for(int i = 1;i < app_argc;i++)
+			if(strstr(app_argv[i], "memory"))
 				disabled = 0;
 		if(disabled)
 			return;
