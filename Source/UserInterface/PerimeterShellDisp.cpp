@@ -1782,7 +1782,11 @@ bool CShellIconManager::isInEditMode() const
 
 void CShellIconManager::SetModalWnd(int id)
 {
-	m_pModalWnd = id ? GetWnd(id) : 0;
+	m_pModalWnd = id ? GetWnd(id) : nullptr;
+}
+
+CShellWindow* CShellIconManager::GetModalWnd() {
+    return m_pModalWnd;
 }
 
 int CShellIconManager::OnMouseMove(float x, float y)

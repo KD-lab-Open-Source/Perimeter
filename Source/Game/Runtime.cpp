@@ -1179,20 +1179,7 @@ void app_event_poll() {
         
         if (closing) {
             if (gameShell) {
-                if (gameShell->GameActive && !isShiftPressed() && terRenderDevice->GetRenderSelection() != DEVICE_HEADLESS) {
-#ifdef PERIMETER_DEBUG
-                    //Nobody got time for this
-                    gameShell->terminate();
-#else
-                    //When game is running we want to gracefully shutdown the game by showing main menu
-                    sKey k(VK_ESCAPE, true);
-                    gameShell->KeyPressed(k);
-                    gameShell->KeyUnpressed(k);
-#endif
-                } else {
-                    //Terminate it
-                    gameShell->terminate();
-                }
+                onGameTerminationRequest();
             } else {
                 //No gameshell available, manually close stuff
                 SDL_ShowCursor(SDL_TRUE);

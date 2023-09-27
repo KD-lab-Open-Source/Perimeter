@@ -1727,7 +1727,8 @@ public:
 	bool HasDynamicHandler(DYNCALLBACK _p, int code);
 
 	void SetFocus(int id);
-	void SetModalWnd(int id);
+    void SetModalWnd(int id);
+    CShellWindow* GetModalWnd();
 	int  IsFocusControl();
 	bool isInEditMode() const;
 
@@ -1870,6 +1871,8 @@ void OnButtonOffensiveDefensive(CShellWindow* pWnd, InterfaceEventCode code, int
 void OnMapWindowClicked(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonBrigadiers(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
+void onGameTerminationRequest();
 
 //start / general
 void showSingleMenu(CShellWindow* pWnd);

@@ -1899,6 +1899,41 @@ void onMMInMissQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 	}		
 }
 
+int toTerminateQuant( float, float ) {
+    if (menuChangingDone) {
+        gameShell->terminate();
+        return 0;
+    }
+    return 1;
+}
+
+int terminateAction(float, float) {
+    hideMessageBox();
+    _shellIconManager.AddDynamicHandler( toTerminateQuant, CBCODE_QUANT );
+    return 1;
+}
+
+void onGameTerminationRequest() {
+    if (gameShell->GameActive && !isShiftPressed() && terRenderDevice->GetRenderSelection() != DEVICE_HEADLESS) {
+#if 0 //def PERIMETER_DEBUG
+        //Nobody got time for this
+        gameShell->terminate();
+#else
+        if (_bMenuMode || _shellIconManager.GetModalWnd()) {
+            //Menu or modal open, ignore request
+            return;
+        }
+        //When game is running we want to gracefully shutdown the game by asking for quit
+        std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Quit");
+        setupYesNoMessageBox(terminateAction, 0, text);
+        showMessageBox();
+#endif
+    } else {
+        //Terminate it
+        gameShell->terminate();
+    }
+}
+
 //game content
 
 //TODO call this from load/ingame-load/replay menus to enable auto switching (provide initial_menu to current menu ID)
