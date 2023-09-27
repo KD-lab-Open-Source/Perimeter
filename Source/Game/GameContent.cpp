@@ -589,11 +589,12 @@ void detectGameContent() {
             
             ModMetadata data = {};
             data.available = false;
+            data.enabled = false;
             data.path = entry_path.u8string();
             data.mod_name = entry_path.filename().u8string();
 
-            std::string path_ini = data.path + PATH_SEP + "mod.ini";
             bool is_content_ET = isContentET(data.path + PATH_SEP);
+            std::string path_ini = data.path + PATH_SEP + "mod.ini";
             if (get_content_entry(path_ini)) {
                 //Load mandatory .ini fields
                 IniManager mod_ini = IniManager(path_ini.c_str(), true);
@@ -635,10 +636,23 @@ void detectGameContent() {
                 //Check content requirements
                 data.content_required_content = mod_ini.get("Content", "required_content");
                 data.content_disallowed_content = mod_ini.get("Content", "disallowed_content");
+
+                //Load mod config .ini fields
+                data.enabled = true;
+                std::string path_config_ini = data.path + PATH_SEP + "mod_config.ini";
+                if (get_content_entry(path_config_ini)) {
+                    IniManager mod_config_ini = IniManager(path_config_ini.c_str(), false);
+                    const char* mod_enabled_chr = mod_config_ini.get("Mod", "enabled");
+                    if (*mod_enabled_chr) {
+                        std::string mod_enabled = string_to_lower(mod_enabled_chr);
+                        data.enabled = mod_enabled != "0" && mod_enabled != "false";
+                    }
+                }
             } else if (is_content_ET) {
                 //Provide adhoc mod info for legacy ET folder
                 bool isRussian = startsWith(locale, "russian");
                 data.available = true;
+                data.enabled = true;
                 data.mod_name = "Perimeter: Emperor's Testament";
                 data.mod_version = "2.0.0";
                 data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
@@ -660,7 +674,7 @@ void detectGameContent() {
             }
             
             //Mark as enabled if available and not named with .off at end
-            data.enabled = data.available && !endsWith(entry_path.filename().u8string(), ".off");
+            data.enabled &= data.available && !endsWith(entry_path.filename().u8string(), ".off");
             
             //If is ET then load now so the rest of mods can act on content properly
             if (data.enabled && is_content_ET) {

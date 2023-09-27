@@ -83,26 +83,34 @@ int addonsApplyConfirmationQuant(float, float) {
             if (!info.mod->available) {
                 continue;
             }
-            if (info.mod->enabled != info.wantedEnabled) {
-                std::string path = info.mod->path;
-                std::string newPath = path;
-                if (info.mod->enabled) {
-                    newPath += ".off";
-                } else {
-                    size_t pos = newPath.rfind(".off");
+            if (info.mod->enabled != info.wantedEnabled) {;
+                //Remove any .off that mod might have
+                if (info.wantedEnabled) {
+                    size_t pos = info.mod->path.rfind(".off");
                     if (pos != std::string::npos) {
+                        std::string newPath = info.mod->path;
                         newPath.erase(pos);
+
+                        std::error_code error;
+                        std::filesystem::rename(
+                                std::filesystem::u8path(info.mod->path),
+                                std::filesystem::u8path(newPath),
+                                error
+                        );
+                        if (error) {
+                            ErrH.Abort("Can't rename mod to remove '.off': ", XERR_USER, error.value(), error.message().c_str());
+                        }
+                        
+                        info.mod->path = newPath;
+                        //Rescan so mod config can be updated
+                        scan_resource_paths(newPath);
                     }
                 }
-                std::error_code error;
-                std::filesystem::rename(
-                        std::filesystem::u8path(path),
-                        std::filesystem::u8path(newPath),
-                        error
-                );
-                if (error) {
-                    ErrH.Abort("Can't change mod enable status: ", XERR_USER, error.value(), error.message().c_str());
-                }
+                
+                //Set mod config enabled state
+                std::string path_ini = info.mod->path + PATH_SEP + "mod_config.ini";
+                IniManager mod_ini = IniManager(path_ini.c_str(), false);
+                mod_ini.put("Mod", "enabled", info.wantedEnabled ? "true" : "false");
 
                 info.mod->enabled = info.wantedEnabled;
             }
