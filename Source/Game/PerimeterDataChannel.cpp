@@ -40,6 +40,7 @@ void PerimeterDataChannelLoad()
 
 	//GraphicsSection
 	terFullScreen = ini.getInt("Graphics","FullScreen");
+    check_command_line_parameter("FullScreen", terFullScreen);
     terScreenIndex = -1;
     ini_no_check.getInt("Graphics", "ScreenIndex", terScreenIndex);
     terScreenRefresh = ini_no_check.getInt("Graphics", "ScreenRefresh");
@@ -52,7 +53,7 @@ void PerimeterDataChannelLoad()
 	if (0 < ScreenSizeX) terScreenSizeX = ScreenSizeX;
 	if (0 < ScreenSizeY) terScreenSizeY = ScreenSizeY;
     ini_no_check.getInt("Graphics","ResizableWindow", terResizableWindow);
-    check_command_line_parameter("resizablewindow", terResizableWindow);
+    check_command_line_parameter("ResizableWindow", terResizableWindow);
 	terBitPerPixel = ini.getInt("Graphics","BPP");
 	terMapLevelLOD = ini.getInt("Graphics","MapLevelLOD");
 
