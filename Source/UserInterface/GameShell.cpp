@@ -1218,10 +1218,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		CurrentMission.saveMission(data, false);
 		} break; 
 		
-	case KBD_CTRL | VK_F11:
+	case VK_F11 | KBD_CTRL:
 		startStopRecordMovie();
 		break;
-	case VK_F12 | KBD_CTRL: 
+	case VK_F12 | KBD_CTRL | KBD_SHIFT: 
 		m_ShellDispatcher.OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY);
 		break; 
 	case VK_F12 | KBD_SHIFT: 
@@ -1614,8 +1614,9 @@ void GameShell::KeyPressed(sKey& Key)
 					resumeGame();
 			}
 			return;
-
-		case VK_F11:
+            
+        //Don't use plain F12 as conflicts with steam screenshotting
+		case VK_F12 | KBD_CTRL:
 			MakeShot();
 			break;
 	}
