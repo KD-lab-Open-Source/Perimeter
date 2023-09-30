@@ -611,6 +611,16 @@ void MissionDescription::refresh() {
         std::string name = string_to_lower(savePathKey_.c_str());
         originalSaveName = strstr(name.c_str(), "resource");
     }
+    
+    //Rearrange any out of bounds colors
+    for (int i = 0; i < playerAmountScenarioMax; i++) {
+        PlayerData& pd = playersData[i];
+        if (pd.realPlayerType==REAL_PLAYER_TYPE_AI || pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
+            if (pd.colorIndex < 0 || pd.colorIndex >= playerAllowedColorSize) {
+                changePlayerColor(i, pd.colorIndex, false);
+            }
+        }
+    }
 }
 
 void MissionDescription::loadDescription() {    
