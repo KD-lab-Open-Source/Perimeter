@@ -86,7 +86,7 @@ struct PlayerColor {
 };
 #pragma pack( pop, __XScript_struct_pack__)
 #endif  // __XScript_struct_PlayerColor__
-int playerColorsSize = 19;
+int playerColorsSize = 18;
 PlayerColor playerColors[] = { { { 0.f 
  , 0.f, 0.8f, 1.f }, { 0.f, 0.f, 0.6f, 1.f }, { 0.4f, 0.4f, 0.5f, 0.8f } }, { { 0.f 
  , 0.8f, 0.8f, 1.f }, { 0.f, 0.6f, 0.6f, 1.f }, { 0.4f, 0.6f, 0.5f, 0.8f } }, { { 0.8f 
@@ -103,12 +103,11 @@ PlayerColor playerColors[] = { { { 0.f
  , 0.2f, 0.f, 1.f }, { 0.3f, 0.1f, 0.f, 1.f }, { 0.3f, 0.2f, 0.f, 0.8f } }, { { 0.f 
  , 0.3f, 0.f, 1.f }, { 0.f, 0.3f, 0.f, 1.f }, { 0.2f, 0.3f, 0.f, 0.8f } }, { { 0.3f 
  , 0.3f, 0.f, 1.f }, { 0.3f, 0.3f, 0.f, 1.f }, { 0.3f, 0.3f, 0.f, 0.8f } }, { { 0.2f 
- , 0.f, 0.3f, 1.f }, { 0.2f, 0.f, 0.3f, 1.f }, { 0.1f, 0.f, 0.3f, 0.8f } }, { { 0.4f 
- , 0.4f, 0.4f, 1.f }, { 0.3f, 0.3f, 0.3f, 1.f }, { 0.3f, 0.3f, 0.3f, 0.8f } }, { { 0.1f 
+ , 0.f, 0.3f, 1.f }, { 0.2f, 0.f, 0.3f, 1.f }, { 0.1f, 0.f, 0.3f, 0.8f } }, { { 0.1f 
  , 0.1f, 0.1f, 1.f }, { 0.1f, 0.1f, 0.1f, 1.f }, { 0.1f, 0.1f, 0.1f, 0.8f } }, { { 1.f 
  , 1.f, 0.7f, 1.f }, { 1.f, 1.f, 1.f, 1.f }, { 1.f, 1.f, 1.f, 1.f } } };
-int playerWorldColorIdx = 18;
-int playerAllowedColorSize = 18;
+int playerWorldColorIdx = 17;
+int playerAllowedColorSize = 17;
 char const* sRegionTextureCircle = "Resource\\Effect\\Region.tga";
 char const* sRegionTextureCircleDotted = "Resource\\Effect\\dotted_line.tga";
 float RegionUSpeedDotted = 1.f;
@@ -284,7 +283,7 @@ struct GameConfig_ParameterSection : ParameterSection
 	GameConfig_ParameterSection() : ParameterSection("GameConfig")
 {
 	add_dependency(".\\Scripts\\Config.prm");
-	description = 4284335434;
+	description = 911353322;
 	reserve(156);
 	add(&MainModelPath, "MainModelPath", 3964076972);
 	add(&MainIconPath, "MainIconPath", 607302846);
@@ -359,7 +358,7 @@ struct GameConfig_ParameterSection : ParameterSection
 	add(&terMovieName, "terMovieName", 476000323);
 	add(&terMovieFrameName, "terMovieFrameName", 3229882428);
 	add(&playerColorsSize, "playerColorsSize", 2080069207);
-	add(&playerColors, "playerColors", 1949048818);
+	add(&playerColors, "playerColors", 1390957587);
 	add(&playerWorldColorIdx, "playerWorldColorIdx", 2651803706);
 	add(&playerAllowedColorSize, "playerAllowedColorSize", 1923023911);
 	add(&sRegionTextureCircle, "sRegionTextureCircle", 3710070043);

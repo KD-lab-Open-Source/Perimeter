@@ -151,11 +151,17 @@ PlayerColor playerColors[int playerColorsSize] =
 	{ unitColor = { 0.3, 0.3, 0.0, 1.0 }; fieldColor = { 0.3, 0.3, 0.0, 1.0 }; zeroLayerColor = { 0.3, 0.3, 0.0, 0.8 }; },
     //Purple dark
 	{ unitColor = { 0.2, 0.0, 0.3, 1.0 }; fieldColor = { 0.2, 0.0, 0.3, 1.0 }; zeroLayerColor = { 0.1, 0.0, 0.3, 0.8 }; },
-    //Grey
-	{ unitColor = { 0.4, 0.4, 0.4, 1.0 }; fieldColor = { 0.3, 0.3, 0.3, 1.0 }; zeroLayerColor = { 0.3, 0.3, 0.3, 0.8 }; },
+	//Red light
+	//{ unitColor = { 0.8, 0.4, 0.4, 1.0 }; fieldColor = { 0.8, 0.2, 0.2, 1.0 }; zeroLayerColor = { 0.8, 0.4, 0.3, 0.8 }; },
+	//Orange light
+	//{ unitColor = { 0.8, 0.6, 0.4, 1.0 }; fieldColor = { 0.8, 0.6, 0.2, 1.0 }; zeroLayerColor = { 0.8, 0.6, 0.3, 0.8 }; },
+	//Green light
+	//{ unitColor = { 0.4, 0.8, 0.4, 1.0 }; fieldColor = { 0.2, 0.8, 0.2, 1.0 }; zeroLayerColor = { 0.4, 0.6, 0.3, 0.8 }; },
+    //Grey - hardly visible so is removed
+	//{ unitColor = { 0.4, 0.4, 0.4, 1.0 }; fieldColor = { 0.3, 0.3, 0.3, 1.0 }; zeroLayerColor = { 0.3, 0.3, 0.3, 0.8 }; },
     //Black
 	{ unitColor = { 0.1, 0.1, 0.1, 1.0 }; fieldColor = { 0.1, 0.1, 0.1, 1.0 }; zeroLayerColor = { 0.1, 0.1, 0.1, 0.8 }; },
-	//Neutral
+	//Neutral - used for unpowered buildings, unselectable
 	{ unitColor = { 1.0, 1.0, 0.7, 1 }; }
 };
 
