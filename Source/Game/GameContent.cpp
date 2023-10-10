@@ -11,6 +11,7 @@ namespace scripts_export {
 #include "BelligerentSelect.h"
 #include "qd_textdb.h"
 #include "Localization.h"
+#include "codepages/codepages.h"
 
 #include <map>
 #include <set>
@@ -579,6 +580,8 @@ void detectGameContent() {
     loadLocalizedResources();
         
     //Detect if we have extra contents/mods
+    const size_t DESC_BUF_LEN = 10240;
+    static char desc_buf[DESC_BUF_LEN];
     int loadMods = 1;
     check_command_line_parameter("mods", loadMods);
     std::vector<ModMetadata> foundMods;
@@ -594,30 +597,38 @@ void detectGameContent() {
             data.mod_name = entry_path.filename().u8string();
 
             bool is_content_ET = isContentET(data.path + PATH_SEP);
-            std::string path_ini = data.path + PATH_SEP + "mod.ini";
-            if (get_content_entry(path_ini)) {
+            std::string path_ini = convert_path_content(data.path + PATH_SEP + "mod.ini");
+            if (!path_ini.empty()) {
                 //Load mandatory .ini fields
                 IniManager mod_ini = IniManager(path_ini.c_str(), true);
                 data.available = true;
                 data.mod_name = mod_ini.get("Mod", "name");
                 data.mod_version = mod_ini.get("Mod", "version");
                 if (data.mod_name.empty()) {
+                    data.available = false;
                     fprintf(stderr, "Missing name in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.available = false;
+                    data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorMissingAttribute");
+                    data.errors += " [Mod] name\n";
                 } else if (data.mod_version.empty()) {
-                    fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
                     data.available = false;
+                    fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
+                    data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorMissingAttribute");
+                    data.errors += " [Mod] version\n";
                 }
 
                 //Load optional fields
                 mod_ini.check_existence = false;
                 //Try loading in current locale, then description, then english
-                data.mod_description = mod_ini.get("Mod", ("description_" + locale).c_str());
-                if (data.mod_description.empty()) {
-                    data.mod_description = mod_ini.get("Mod", "description");
-                    if (data.mod_description.empty() && locale != "english") {
-                        data.mod_description = mod_ini.get("Mod", "description_english");
-                    }
+                if (ReadIniString("Mod", ("description_" + locale).c_str(), nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf) {
+                    data.mod_description = convertToCodepage(desc_buf, locale);
+                } else if ((ReadIniString("Mod", "description", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)
+                || (locale != "english" && ReadIniString("Mod", "description_english", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)) {
+                    data.mod_description = convertToCodepage(desc_buf, "english");
+                }
+                if (!data.mod_description.empty()) {
+                    string_replace_all(data.mod_description, "\\r", "");
+                    string_replace_all(data.mod_description, "\\n", "\n");
+                    string_replace_all(data.mod_description, "\\\\", "\\");
                 }
                 data.mod_authors = mod_ini.get("Mod", "authors");
                 data.mod_url = mod_ini.get("Mod", "url");
@@ -629,6 +640,8 @@ void detectGameContent() {
                     if (0 < diff) {
                         fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
                                 data.content_game_minimum_version.c_str(), data.path.c_str());
+                        data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorGameTooOld");
+                        data.errors += " " + data.content_game_minimum_version + "\n";
                         data.available = false;
                     }
                 }
@@ -659,7 +672,8 @@ void detectGameContent() {
                 data.mod_authors = "K-D LAB";
                 data.mod_url = "https://kdlab.com";
             } else {
-                fprintf(stderr, "Mod folder %s has missing info file %s, not loading\n", data.path.c_str(), path_ini.c_str());
+                fprintf(stderr, "Mod folder %s has missing info file mod.ini, not loading\n", data.path.c_str());
+                data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorMissingModInfo");
             }
             
             //Force disable all mods
@@ -670,6 +684,7 @@ void detectGameContent() {
             //Avoid possible duplicates of ET
             if (data.available && is_content_ET && (terGameContentAvailable & PERIMETER_ET)) {
                 fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading", data.path.c_str());
+                data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorDuplicateContent");
                 data.available = false;
             }
             
@@ -707,9 +722,13 @@ void detectGameContent() {
                 if (!getMissingGameContent(terGameContentAvailable, required).empty()) {
                     fprintf(stderr, "Game content '%s' not installed which is a requirement for %s, not loading\n",
                             mod.content_required_content.c_str(), mod.path.c_str());
+                    mod.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorRequiredContentMissing");
+                    mod.errors += " " + mod.content_required_content + "\n";
                 } else {
                     fprintf(stderr, "Game content '%s' installed but not enabled which is a requirement for %s, not loading\n",
                             mod.content_required_content.c_str(), mod.path.c_str());
+                    mod.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorRequiredContentDisabled");
+                    mod.errors += " " + mod.content_required_content + "\n";
                 }
                 mod.available = mod.enabled = false;
             }
@@ -719,6 +738,8 @@ void detectGameContent() {
             if (terGameContentSelect == disallowed) {
                 fprintf(stderr, "Game content '%s' is enabled which is not compatible for %s, not loading\n",
                         mod.content_disallowed_content.c_str(), mod.path.c_str());
+                mod.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorDisallowedContentEnabled");
+                mod.errors += " " + mod.content_disallowed_content + "\n";
                 mod.available = mod.enabled = false;
             }
         }

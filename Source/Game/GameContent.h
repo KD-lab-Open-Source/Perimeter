@@ -12,6 +12,8 @@ class ModMetadata {
 public:
     /// Path for this mod
     std::string path = {};
+    /// Errors when loading mod if any
+    std::string errors = {};
     /// Has campaign missions?
     //TODO use this on "Change Campaign"
     bool campaign = false;
