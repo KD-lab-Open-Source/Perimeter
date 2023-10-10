@@ -811,7 +811,8 @@ protected:
 	std::string textData;
 	Vect2f			uv;
 	Vect2f			dudv;
-
+    
+    virtual std::string getVisibleText() const;
 };
 
 class CTextStringWindow : public CTextWindow
@@ -821,7 +822,7 @@ public:
 	CTextStringWindow(int id, CShellWindow* pParent, EVENTPROC p = 0) : CTextWindow(id, pParent, p) {
 	};
 
-	void draw(int bFocus) override;
+    std::string getVisibleText() const override;
 };
 
 //////////////////////////////////////////////////////////

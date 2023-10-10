@@ -3057,13 +3057,13 @@ void CTextWindow::Load(const sqshControl* attr)
 	}
 }
 
-void formatPlainStr(char* strToScr, float sx) {
+void formatPlainText_PutNewline(char* strToScr, float width) {
 	char* strTestBegin = strToScr;
 	char* strTestEnd1 = strToScr;
-	char* strTestEnd2;
-	while ( (strTestEnd2 = strchr(strTestEnd1, ' ')) != NULL ) {
+	char* strTestEnd2 = nullptr;
+	while ( (strTestEnd2 = strchr(strTestEnd1, ' ')) != nullptr ) {
 		*strTestEnd2 = 0;
-		if (terRenderDevice->GetFontLength(strTestBegin) > sx) {
+		if (terRenderDevice->GetFontLength(strTestBegin) > width) {
 			if (strTestEnd1 != strTestBegin) {
 				*strTestEnd2 = ' ';
 				*(strTestEnd1 - 1) = '\n';
@@ -3078,9 +3078,29 @@ void formatPlainStr(char* strToScr, float sx) {
 			strTestEnd1 = strTestEnd2 + 1;
 		}
 	}
-	if (strTestEnd1 != strTestBegin && terRenderDevice->GetFontLength(strTestBegin) > sx) {
+	if (strTestEnd1 != strTestBegin && terRenderDevice->GetFontLength(strTestBegin) > width) {
 		*(strTestEnd1 - 1) = '\n';
 	}
+}
+
+std::string formatPlainText(const std::string& text, float width) {
+    std::string output = text;
+
+    char* strTestEnterBegin = output.data();
+    char* strTestEnter;
+    while ( (strTestEnter = strchr(strTestEnterBegin, '\n')) != nullptr ) {
+        *strTestEnter = 0;
+        formatPlainText_PutNewline(strTestEnterBegin, width);
+        *strTestEnter = '\n';
+        strTestEnterBegin = strTestEnter + 1;
+    }
+    formatPlainText_PutNewline(strTestEnterBegin, width);
+
+    return output;
+}
+
+std::string CTextWindow::getVisibleText() const {
+    return formatPlainText(textData, sx);
 }
 
 void CTextWindow::draw(int bFocus)
@@ -3136,164 +3156,15 @@ void CTextWindow::draw(int bFocus)
 	{
 		terRenderDevice->SetFont(m_hFont);
 
-		char* strToScr = new char[textData.length() + 1];
-		strcpy(strToScr, textData.c_str());
-
-		char* strTestEnterBegin = strToScr;
-		char* strTestEnter;
-		while ( (strTestEnter = strchr(strTestEnterBegin, '\n')) != NULL ) {
-			*strTestEnter = 0;
-			formatPlainStr(strTestEnterBegin, sx);
-			*strTestEnter = '\n';
-			strTestEnterBegin = strTestEnter + 1;
-		}
-		formatPlainStr(strTestEnterBegin, sx);
-
+        std::string toScr = getVisibleText();
 
 		float txtX = x;
 		float txtY = y;
 		int txtAlign = m_attr->txt_align;
 
 		switch (m_attr->txt_align) {
-			case SHELL_ALIGN_CENTER:
-				txtX += sx/2;
-				break;
-			case SHELL_ALIGN_RIGHT:
-				txtX -= terRenderDevice->GetFontLength(strToScr);
-				txtAlign = SHELL_ALIGN_LEFT;
-				break;
-		}
-/*
-		if( m_attr->txt_align >= 0 ) {
-			txtX += sx/2;
-			txtAlign = 0;
-		}
-*/
-		if( m_attr->txt_vert_align == 0 ) {
-			Vect2f v1, v2;
-			OutTextRect(0, 0 , strToScr, -1, v1, v2);
-			txtY += (sy - (v2.y - v1.y)) / 2.0f;
-		}
-
-		sColor4f color;
-		if (m_attr->font_group == 4) {
-			const PlayerColor& pc = playerColors[colorIndex];
-			color = sColor4f(pc.unitColor);
-			color.a = Alpha;
-		} else {
-			color = sColor4f(1, 1, 1, Alpha);
-		}
-		if (m_hTexture) {
-			color.a = Alpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
-			terRenderDevice->OutText(
-                    txtX,
-                    txtY,
-                    strToScr,
-                    color,
-                    txtAlign,
-                    ALPHA_ADDBLENDALPHA,
-                    m_hTexture,
-                    COLOR_MOD,
-                    uv,
-                    dudv,
-                    xm::fmod(m_ftime, 1000) / 1000,
-                    pushButtonTextureWeight);
-		} else {
-			sColor4f color;
-			if (m_attr->font_group == 2) {
-				color = victory ? sColor4f(1, 1, 0, Alpha) : sColor4f(1, 0, 0, Alpha);
-			} else {
-				color = sColor4f(1, 1, 1, Alpha);
-			}
-			OutText(txtX, txtY, strToScr, &color, txtAlign );
-		}
-		delete[] strToScr;
-/*
-		float txtX = x;
-		float txtY = y;
-		int txtAlign = m_attr->txt_align;
-		if( m_attr->txt_align >= 0 ) {
-			txtX += sx/2;
-			txtAlign = 0;
-		}
-		if( m_attr->txt_vert_align == 0 ) {
-			Vect2f v1, v2;
-			OutTextRect(0, 0 , textData.c_str(), -1, v1, v2);
-			txtY += (sy - (v2.y - v1.y)) / 2.0f;
-		}
-
-		if (m_hTexture) {
-			float alpha = Alpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
-			terRenderDevice->OutText(
-				txtX,
-				txtY,
-				textData.c_str(),
-				sColor4f(1, 1, 1, alpha),
-				txtAlign,
-				ALPHA_ADDBLENDALPHA,
-				m_hTexture,
-				COLOR_MOD,
-				uv,
-				dudv,
-				fmodf(m_ftime,1000)/1000,
-				pushButtonTextureWeight);
-		} else {
-			OutText(txtX, txtY, textData.c_str(), &sColor4f(1, 1, 1, Alpha), txtAlign );
-		}
-*/
-		terRenderDevice->SetFont(0);
-	}
-	if(m_handler)
-		m_handler(this, EVENT_DRAWWND, 0);
-}
-
-//---------------------------
-
-
-//---------------------------
-
-void CTextStringWindow::draw(int bFocus)
-{
-	if( !(state & SQSH_VISIBLE) ) return;
-	m_ftime += frame_time.delta();
-
-	float Alpha;
-
-	if( _shellIconManager.IsEffect() && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut)) // draw button
-	{
-		Alpha=0;
-		float phase;
-		if( m_effect==effectButtonsFadeIn )
-			phase = _fEffectButtonTotalTime-_shellIconManager.m_fEffectTime;
-		else
-			phase = _shellIconManager.m_fEffectTime;
-		if( phase<0 )
-			{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
-		else if( phase<=_fEffectButtonTime1 );
-		else if( (phase-=_fEffectButtonTime1)<=_fEffectButtonTime2 );
-		else if( (phase-=_fEffectButtonTime2)<=_fEffectButtonTime3 )
-			Alpha=phase/_fEffectButtonTime3;
-		else
-			{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
-	}
-	else 
-		{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
-
-	if (debug_show_intf_borders) {
-		draw_rect_empty( Vect2i(x, y), Vect2i(x + sx,y + sy), sColor4f(1, 1, 0, 1) );
-	}
-
-	if(!textData.empty())
-	{
-		terRenderDevice->SetFont(m_hFont);
-
-		std::string toScr = getValidatedText(textData, sx);
-
-		float txtX = x;
-		float txtY = y;
-		int txtAlign = m_attr->txt_align;
-
-		switch (m_attr->txt_align) {
+            case SHELL_ALIGN_LEFT:
+                break;
 			case SHELL_ALIGN_CENTER:
 				txtX += sx/2;
 				break;
@@ -3302,10 +3173,15 @@ void CTextStringWindow::draw(int bFocus)
 				txtAlign = SHELL_ALIGN_LEFT;
 				break;
 		}
-
+/*
+		if( m_attr->txt_align >= 0 ) {
+			txtX += sx/2;
+			txtAlign = 0;
+		}
+*/
 		if( m_attr->txt_vert_align == 0 ) {
 			Vect2f v1, v2;
-			OutTextRect(0, 0, toScr.c_str(), -1, v1, v2);
+			OutTextRect(0, 0 , toScr.c_str(), -1, v1, v2);
 			txtY += (sy - (v2.y - v1.y)) / 2.0f;
 		}
 
@@ -3341,10 +3217,56 @@ void CTextStringWindow::draw(int bFocus)
 			}
 			OutText(txtX, txtY, toScr.c_str(), &color, txtAlign );
 		}
+/*
+		float txtX = x;
+		float txtY = y;
+		int txtAlign = m_attr->txt_align;
+		if( m_attr->txt_align >= 0 ) {
+			txtX += sx/2;
+			txtAlign = 0;
+		}
+		if( m_attr->txt_vert_align == 0 ) {
+			Vect2f v1, v2;
+			OutTextRect(0, 0 , textData.c_str(), -1, v1, v2);
+			txtY += (sy - (v2.y - v1.y)) / 2.0f;
+		}
+
+		if (m_hTexture) {
+			float alpha = Alpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
+			terRenderDevice->OutText(
+				txtX,
+				txtY,
+				textData.c_str(),
+				sColor4f(1, 1, 1, alpha),
+				txtAlign,
+				ALPHA_ADDBLENDALPHA,
+				m_hTexture,
+				COLOR_MOD,
+				uv,
+				dudv,
+				fmodf(m_ftime,1000)/1000,
+				pushButtonTextureWeight);
+		} else {
+			OutText(txtX, txtY, textData.c_str(), &sColor4f(1, 1, 1, Alpha), txtAlign );
+		}
+*/
 		terRenderDevice->SetFont(0);
 	}
-	if(m_handler)
-		m_handler(this, EVENT_DRAWWND, 0);
+    
+	if(m_handler) {
+        m_handler(this, EVENT_DRAWWND, 0);
+    }
+}
+
+//---------------------------
+
+std::string CTextStringWindow::getVisibleText() const {
+    return getValidatedText(textData, sx);
+}
+
+//---------------------------
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -5975,28 +5897,16 @@ void CHintWindow::drawHint(bool cutScene) {
 
 			terRenderDevice->SetFont(m_hFont);
 
-			char* strToScr = new char[textData.length() + 1];
-			strcpy(strToScr, textData.c_str());
-
-			char* strTestEnterBegin = strToScr;
-			char* strTestEnter;
-			while ( (strTestEnter = strchr(strTestEnterBegin, '\n')) != NULL ) {
-				*strTestEnter = 0;
-				formatPlainStr(strTestEnterBegin, curSX);
-				*strTestEnter = '\n';
-				strTestEnterBegin = strTestEnter + 1;
-			}
-			formatPlainStr(strTestEnterBegin, curSX);
+            std::string toScr = formatPlainText(textData, curSX);
 
 			if (!cutScene) {
 				Vect2f v1, v2;
-				OutTextRect(0, 0 , strToScr, -1, v1, v2);
+				OutTextRect(0, 0 , toScr.c_str(), -1, v1, v2);
 				curY -= (v2.y - v1.y);
 			}
 
-			terRenderDevice->OutText(curX, curY, strToScr, sColor4f(1, 1, 1, 1), -1);
+			terRenderDevice->OutText(curX, curY, toScr.c_str(), sColor4f(1, 1, 1, 1), -1);
 			terRenderDevice->SetFont(0);
-			delete[] strToScr;
 		}
 	}
 }
