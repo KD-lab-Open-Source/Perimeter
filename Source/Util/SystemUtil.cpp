@@ -413,7 +413,7 @@ const char* IniManager::get(const char* section, const char* key)
 	static char buf[256];
     std::string path = getFilePath();
     
-	if(!ReadIniString(section, key, NULL, buf, 256, path)){
+	if(!ReadIniString(section, key, nullptr, buf, 256, path)){
 		*buf = 0;
 		if (check_existence) {
             fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);

@@ -749,8 +749,9 @@ void CShellCursorManager::draw()
             cursor = m_pCursorDefault;
         }
 
-#if 0 //Shows current hovering control 
-        if (_shellIconManager.m_pCtrlHover) {
+#ifdef PERIMETER_DEBUG
+        //Shows current hovering control 
+        if (_shellIconManager.m_pCtrlHover && debug_show_intf_borders) {
             std::string text;
             EnumWrapper<ShellControlID> eid = static_cast<ShellControlID>(_shellIconManager.m_pCtrlHover->ID); 
             text += std::string("C:") + getEnumName(eid);

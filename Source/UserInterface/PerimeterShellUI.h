@@ -151,7 +151,12 @@ public:
 
 	static bool checkDefaultBtn(CShellWindow* btn) {
 		if (btn && btn->isEnabled() && btn->isVisible()) {
-			btn->m_handler( btn, EVENT_UNPRESSED, 0 );
+            if (btn->m_handler) {
+                btn->m_handler(btn, EVENT_UNPRESSED, 0);
+            } else {
+                //Fallback for buttons without handler
+                btn->OnLButtonUp(0.5f, 0.5f);
+            }
 			return true;
 		} else {
 			return false;
