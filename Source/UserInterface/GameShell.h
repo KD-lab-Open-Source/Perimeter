@@ -51,6 +51,7 @@ public:
 	
 	void GraphQuant();
 	void Show();
+    void renderEndScene();
 
 	void showWays();
 

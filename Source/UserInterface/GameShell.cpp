@@ -776,10 +776,41 @@ void GameShell::showWays() {
 	}
 }
 
-void renderEndScene() {
+void GameShell::renderEndScene() {
     //We need to flush, otherwise the primitive vertex will be after the cursor in the buffer
     terRenderDevice->FlushPrimitive2D();
     terRenderDevice->FlushPrimitive3D();
+    
+    //Draw FPS
+    static FPS fps;
+    fps.quant();
+    if(terShowFPS){
+        float fpsmin,fpsmax;
+        fps.GetFPSminmax(fpsmin,fpsmax);
+        char s[512];
+        char* p=s;
+        p+=sprintf(s,"  %s\n", currentVersion);
+        p+=sprintf(p,"  FPS=% 3.1f min=% 3.1f max=% 3.1f\n",fps.GetFPS(),fpsmin,fpsmax);
+
+        if (GameActive) {
+            float lpsmin, lpsmax;
+            HTManager::instance()->GetLogicFPSminmax(lpsmin, lpsmax);
+            p += sprintf(p, "  logic=% 2.1f min=% 2.1f\n", HTManager::instance()->GetLogicFps(), lpsmin);
+//		    p+=sprintf(p,"  scale time=%i\n",scale_time.delta());
+        }
+
+        if(debug_show_mouse_position){
+            Vect3f v;
+            if(terCamera->cursorTrace(gameShell->mousePosition(),v))
+                p+=sprintf(p, "  mouse=(%i,%i,%i)\n", xm::round(v.x), xm::round(v.y), xm::round(v.z));
+        }
+
+        xassert(p-s<sizeof(s));
+        terRenderDevice->SetFont(_pShellDispatcher->getFont());
+        terRenderDevice->OutText(0,16,s,sColor4f(1, 1, 1, 1));
+        terRenderDevice->SetFont(nullptr);
+    }
+
     //Draw cursor
     _shellCursorManager.draw();
     //End scene

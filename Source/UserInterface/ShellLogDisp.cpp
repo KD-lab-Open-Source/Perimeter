@@ -287,33 +287,6 @@ void CShellLogicDispatcher::draw()
 		}
 	}
 
-	static FPS fps;
-	fps.quant();
-	if(terShowFPS){
-		float fpsmin,fpsmax;
-		fps.GetFPSminmax(fpsmin,fpsmax);
-		char s[512];
-		char* p=s;
-		p+=sprintf(s,"%s\n", currentVersion);
-		p+=sprintf(p,"FPS=% 3.1f min=% 3.1f max=% 3.1f\n",fps.GetFPS(),fpsmin,fpsmax);
-
-		float lpsmin,lpsmax;
-		HTManager::instance()->GetLogicFPSminmax(lpsmin,lpsmax);
-		p+=sprintf(p,"logic=% 2.1f min=% 2.1f\n",HTManager::instance()->GetLogicFps(),lpsmin);
-//		p+=sprintf(p,"scale time=%i\n",scale_time.delta());
-
-		if(debug_show_mouse_position){
-			Vect3f v;
-			if(terCamera->cursorTrace(gameShell->mousePosition(),v))
-				p+=sprintf(p, "mouse=(%i,%i,%i)\n", xm::round(v.x), xm::round(v.y), xm::round(v.z));
-		}
-
-		xassert(p-s<sizeof(s));
-		terRenderDevice->SetFont(m_hFontUnitsLabel);
-		terRenderDevice->OutText(0,16,s,sColor4f(1, 1, 1, 1));
-		terRenderDevice->SetFont(0);
-	}
-
 #ifdef PERIMETER_DEBUG
 	if (universe() && universe()->activePlayer() && universe()->activePlayer()->isAI()) {
 		terRenderDevice->SetFont( m_hFontUnitsLabel );
