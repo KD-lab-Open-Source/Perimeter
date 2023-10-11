@@ -208,6 +208,9 @@ public:
 	virtual int  EffectSupported(){return 0;}
 	virtual void OnEffectStart(int effect){ m_effect = effect;}
 	bool OnEffectStop(int effect) {
+        if (m_effect == 0) {
+            return true;
+        }
 		m_effect = 0;
 /*
 		if (effect == effectButtonsFadeOut || effect == effectCtrlRollOut) {
@@ -806,6 +809,8 @@ public:
 
 	bool victory;
 	int colorIndex;
+    Vect2f offset;
+    bool clipRender = false;
 
 protected:
 	std::string textData;
@@ -826,11 +831,8 @@ public:
 };
 
 //////////////////////////////////////////////////////////
-class CCreditsWindow : public CShellWindow
+class CCreditsWindow : public CTextWindow
 {
-	std::string textData;
-	Vect2f			uv;
-	Vect2f			dudv;
 	float	timer;
 	float	maxTime;
 
@@ -841,10 +843,6 @@ public:
 	virtual void Load(const sqshControl* attr);
 	virtual void draw(int bFocus);
 	virtual void Show(int bShow);
-
-	virtual int EffectSupported() {
-		return effectButtonsFadeIn|effectButtonsFadeOut;
-	}
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////

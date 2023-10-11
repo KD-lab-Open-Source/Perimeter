@@ -3013,9 +3013,10 @@ void CMapWindow::drawBitmap(sColor4c* bitmap) {
 CTextWindow::CTextWindow(int id, CShellWindow* pParent, EVENTPROC p):
 	CShellWindow(id, pParent, p)
 {
-	m_hFont = 0;
+	m_hFont = nullptr;
 	victory = false;
 	colorIndex = 0;
+    offset.x = offset.y = 0;
 }
 CTextWindow::~CTextWindow()
 {
@@ -3043,6 +3044,7 @@ void CTextWindow::Load(const sqshControl* attr)
 	_RELEASE(m_hFont);
 	switch(m_attr->font_group)
 	{
+        case 5:
 		case 4:
 			m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1_5);
 			break;
@@ -3105,24 +3107,6 @@ std::string CTextWindow::getVisibleText() const {
 
 void CTextWindow::draw(int bFocus)
 {
-/*
-	CShellWindow::draw(bFocus);
-
-	if( !(state & SQSH_VISIBLE) || _shellIconManager.IsEffect() )
-		return;
-	if(!m_hTexture)
-		draw_rect(Vect2i(x,y), Vect2i(x+sx,y+sy), sColor4f(0, 0, 0, 0.3f));
-
-	if(!textData.empty())
-	{
-		terRenderDevice->SetFont(m_hFont);
-		if( m_attr->txt_align<0 )
-			OutText(x+tutTextWindowDx, y+tutTextWindowDx, textData.c_str(), &sColor4f(1, 1, 1, 1), m_attr->txt_align);
-		else
-			OutText(x+sx/2 + tutTextWindowDx, y + tutTextWindowDy, textData.c_str(), &sColor4f(1, 1, 1, 1), 0 );
-		terRenderDevice->SetFont(0);
-	}
-*/
 	if( !(state & SQSH_VISIBLE) ) return;
 	m_ftime += frame_time.delta();
 
@@ -3144,9 +3128,10 @@ void CTextWindow::draw(int bFocus)
 			Alpha=phase/_fEffectButtonTime3;
 		else
 			{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
-	}
-	else 
-		{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
+	} else {
+        Alpha = 1.0f;
+        if (!OnEffectStop(m_effect)) return;
+    }
 
 	if (debug_show_intf_borders) {
 		draw_rect_empty( Vect2i(x, y), Vect2i(x + sx,y + sy), sColor4f(1, 1, 0, 1) );
@@ -3154,12 +3139,18 @@ void CTextWindow::draw(int bFocus)
 
 	if(!textData.empty())
 	{
+        int x1, y1, x2, y2;
+        if (clipRender) {
+            terRenderDevice->GetClipRect(&x1, &y1, &x2, &y2);
+            terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
+        }
+        
 		terRenderDevice->SetFont(m_hFont);
 
         std::string toScr = getVisibleText();
 
-		float txtX = x;
-		float txtY = y;
+		float txtX = x + offset.x;
+		float txtY = y + offset.y;
 		int txtAlign = m_attr->txt_align;
 
 		switch (m_attr->txt_align) {
@@ -3173,12 +3164,7 @@ void CTextWindow::draw(int bFocus)
 				txtAlign = SHELL_ALIGN_LEFT;
 				break;
 		}
-/*
-		if( m_attr->txt_align >= 0 ) {
-			txtX += sx/2;
-			txtAlign = 0;
-		}
-*/
+        
 		if( m_attr->txt_vert_align == 0 ) {
 			Vect2f v1, v2;
 			OutTextRect(0, 0 , toScr.c_str(), -1, v1, v2);
@@ -3217,40 +3203,10 @@ void CTextWindow::draw(int bFocus)
 			}
 			OutText(txtX, txtY, toScr.c_str(), &color, txtAlign );
 		}
-/*
-		float txtX = x;
-		float txtY = y;
-		int txtAlign = m_attr->txt_align;
-		if( m_attr->txt_align >= 0 ) {
-			txtX += sx/2;
-			txtAlign = 0;
-		}
-		if( m_attr->txt_vert_align == 0 ) {
-			Vect2f v1, v2;
-			OutTextRect(0, 0 , textData.c_str(), -1, v1, v2);
-			txtY += (sy - (v2.y - v1.y)) / 2.0f;
-		}
-
-		if (m_hTexture) {
-			float alpha = Alpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
-			terRenderDevice->OutText(
-				txtX,
-				txtY,
-				textData.c_str(),
-				sColor4f(1, 1, 1, alpha),
-				txtAlign,
-				ALPHA_ADDBLENDALPHA,
-				m_hTexture,
-				COLOR_MOD,
-				uv,
-				dudv,
-				fmodf(m_ftime,1000)/1000,
-				pushButtonTextureWeight);
-		} else {
-			OutText(txtX, txtY, textData.c_str(), &sColor4f(1, 1, 1, Alpha), txtAlign );
-		}
-*/
-		terRenderDevice->SetFont(0);
+		terRenderDevice->SetFont(nullptr);
+        if (clipRender) {
+            terRenderDevice->SetClipRect(x1, y1, x2, y2);
+        }
 	}
     
 	if(m_handler) {
@@ -6294,10 +6250,11 @@ void CScaleResultButton::draw(int bFocus) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
-CCreditsWindow::CCreditsWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
+CCreditsWindow::CCreditsWindow(int id, CShellWindow* pParent, EVENTPROC p) : CTextWindow(id, pParent, p) {
 	m_hFont = 0;
 	timer = -1;
 	maxTime = 0;
+    clipRender = true;
 }
 
 CCreditsWindow::~CCreditsWindow() {
@@ -6305,30 +6262,13 @@ CCreditsWindow::~CCreditsWindow() {
 }
 
 void CCreditsWindow::Load(const sqshControl* attr) {
-	CShellWindow::Load(attr);
+    CTextWindow::Load(attr);
 
-    textData = qdTextDB::instance().getText(attr->text);    
-
-	if (m_hTexture) {
-		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
-		float ty = absoluteY(m_attr->image.dy);
-		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
-		float tsy = absoluteY(m_attr->image.dsy);
-
-		uv.x = (x - tx) / tsx;
-		uv.y = (y - ty) / tsy;
-//		dudv.x =  (float)m_hTexture->GetWidth() / tsx;
-//		dudv.y = (float)m_hTexture->GetHeight() / tsy;
-		dudv.x = 1.0f / tsx;
-		dudv.y = 1.0f / tsy;
-	}
-
-	_RELEASE(m_hFont);
-	m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1_5);
+    textData = qdTextDB::instance().getText(attr->text);
 }
 
 void CCreditsWindow::Show(int bShow) {
-	CShellWindow::Show(bShow);
+    CTextWindow::Show(bShow);
 	if (bShow) {
 		timer = 0;
 		terRenderDevice->SetFont(m_hFont);
@@ -6344,90 +6284,16 @@ void CCreditsWindow::Show(int bShow) {
 void CCreditsWindow::draw(int bFocus)
 {
 	if( !(state & SQSH_VISIBLE) ) return;
-
-	m_ftime += frame_time.delta();
-
+    
 	timer += frame_time.delta();
 
 	if (timer > maxTime) {
 		timer = 0;
 	}
 
-
-//	draw_rect_empty(Vect2i(x,y), Vect2i(x+sx,y+sy), sColor4f(1, 1, 1, 1));
-
-
-	if(!textData.empty())
-	{
-		float Alpha;
-
-		if( _shellIconManager.IsEffect() && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut)) // draw button
-		{
-			Alpha=0;
-			float phase;
-			if( m_effect==effectButtonsFadeIn )
-				phase = _fEffectButtonTotalTime-_shellIconManager.m_fEffectTime;
-			else
-				phase = _shellIconManager.m_fEffectTime;
-			if( phase<0 )
-				{ Alpha=1.0f; m_effect = 0; }
-			else if( phase<=_fEffectButtonTime1 );
-			else if( (phase-=_fEffectButtonTime1)<=_fEffectButtonTime2 );
-			else if( (phase-=_fEffectButtonTime2)<=_fEffectButtonTime3 )
-				Alpha=phase/_fEffectButtonTime3;
-			else
-				{ Alpha=1.0f; m_effect = 0; }
-		}
-		else 
-			{ Alpha=1.0f; m_effect = 0; }
-
-//		Alpha = 0.8f;
-
-		int x1, y1, x2, y2; 
-		terRenderDevice->GetClipRect(&x1, &y1, &x2, &y2);
-		terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
-
-		terRenderDevice->SetFont(m_hFont);
-
-
-		float txtX = x;
-		float txtY = y + sy - float(absoluteY(CREDITS_SCROLL_SPEED)) * timer / 1000.0f;
-		int txtAlign = m_attr->txt_align;
-		if( m_attr->txt_align >= 0 ) {
-			txtX += sx/2;
-			txtAlign = 0;
-		}
-		if( m_attr->txt_vert_align == 0 ) {
-			Vect2f v1, v2;
-			OutTextRect(0, 0 ,textData.c_str(), -1, v1, v2);
-			txtY += (sy - (v2.y - v1.y)) / 2.0f;
-		}
-
-		if (m_hTexture) {
-			float alpha = Alpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
-			terRenderDevice->OutText(
-                    txtX,
-                    txtY,
-                    textData.c_str(),
-                    sColor4f(1, 1, 1, alpha),
-                    txtAlign,
-                    ALPHA_ADDBLENDALPHA,
-                    m_hTexture,
-                    COLOR_MOD,
-                    uv,
-                    dudv,
-                    xm::fmod(m_ftime, 1000) / 1000,
-                    pushButtonTextureWeight);
-		} else {
-            sColor4f c(1, 1, 1, Alpha);
-			OutText(txtX, txtY, textData.c_str(), &c, txtAlign );
-		}
-		terRenderDevice->SetFont(0);
-
-		terRenderDevice->SetClipRect(x1, y1, x2, y2);
-	}
-	if(m_handler)
-		m_handler(this, EVENT_DRAWWND, 0);
+    offset.y = sy - float(absoluteY(CREDITS_SCROLL_SPEED)) * timer / 1000.0f;
+    
+    CTextWindow::draw(bFocus);
 }
 
 CReplayPlayerPushButton::CReplayPlayerPushButton(int id, CShellWindow* pParent, EVENTPROC p):CShellPushButton(id, pParent, p)
