@@ -789,16 +789,14 @@ class CTextWindow : public CShellWindow
 
 public:
 	CTextWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
-	~CTextWindow();
+	~CTextWindow() override;
 
 	virtual void Load(const sqshControl* attr);
 	virtual void draw(int bFocus);
 
-	void SetText(const char* text) {
-		textData = text;
-	}
+	virtual void SetText(const char* text);
 	void setText(const std::string& text) {
-		textData = text;
+        SetText(text.c_str());
 	}
 	const std::string& getText() const {
 		return textData;
@@ -813,11 +811,10 @@ public:
     bool clipRender = false;
 
 protected:
+    float drawAlpha = 0;
 	std::string textData;
 	Vect2f			uv;
 	Vect2f			dudv;
-    
-    virtual std::string getVisibleText() const;
 };
 
 class CTextStringWindow : public CTextWindow
@@ -827,9 +824,52 @@ public:
 	CTextStringWindow(int id, CShellWindow* pParent, EVENTPROC p = 0) : CTextWindow(id, pParent, p) {
 	};
 
-    std::string getVisibleText() const override;
+    void SetText(const char* text) override;
 };
 
+
+class CTextScrollableWindow : public CTextWindow
+{
+    std::vector<LocalizedText>	m_data;
+    int				m_bScroller;
+    float			m_fScrollerThumbPos;
+    cTexture*		thumbTexture;
+    Vect2f			thumbUV;
+    Vect2f			thumbDUDV;
+    float			vScrollSX;
+    float			vScrollSY;
+    float			vScrollThmbSX;
+    float			vScrollThmbSY;
+    float			vScrollMarginX;
+    float           textHeight = 0;
+
+    cTexture*		m_hTextureBG;
+    Vect2f			m_vTexBGPos;
+    Vect2f			m_vTexBGSize;
+    Vect2f			uv;
+    Vect2f			dudv;
+
+    int currentScrollDirection;
+
+    enum
+    {
+        thumb_none,
+        thumb_up,
+        thumb_dn
+    };
+    
+    int CheckClick(float fx,float  fy);
+ 
+public:
+    CTextScrollableWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
+    ~CTextScrollableWindow() override;
+
+    void SetText(const char* text) override;
+    void OnLButtonDown(float x, float y) override;
+    void OnMouseWheel(int delta) override;
+    void Load(const sqshControl* attr) override;
+    void draw(int bFocus) override;
+};
 //////////////////////////////////////////////////////////
 class CCreditsWindow : public CTextWindow
 {
@@ -838,7 +878,7 @@ class CCreditsWindow : public CTextWindow
 
 public:
 	CCreditsWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
-	~CCreditsWindow();
+	~CCreditsWindow() override;
 
 	virtual void Load(const sqshControl* attr);
 	virtual void draw(int bFocus);

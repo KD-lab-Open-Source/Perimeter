@@ -1563,6 +1563,10 @@ CShellWindow* CShellIconManager::CreateWnd(int id, ShellControlType type, CShell
 	case SQSH_TEXT_STRING_WINDOW_TYPE:
 		pWnd = new CTextStringWindow(id, pParent, proc);
 		break;
+        
+    case SQSH_TEXT_SCROLLABLE_WINDOW_TYPE:
+        pWnd = new CTextScrollableWindow(id, pParent, proc);
+        break; 
 
 	case SQSH_COMPLEX_PUSH_BUTTON_TYPE:
 		pWnd = new CShellComplexPushButton(id, pParent, proc);

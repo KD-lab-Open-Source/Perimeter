@@ -3101,8 +3101,8 @@ std::string formatPlainText(const std::string& text, float width) {
     return output;
 }
 
-std::string CTextWindow::getVisibleText() const {
-    return formatPlainText(textData, sx);
+void CTextWindow::SetText(const char* text) {
+    textData = formatPlainText(text, sx);
 }
 
 void CTextWindow::draw(int bFocus)
@@ -3110,26 +3110,24 @@ void CTextWindow::draw(int bFocus)
 	if( !(state & SQSH_VISIBLE) ) return;
 	m_ftime += frame_time.delta();
 
-	float Alpha;
-
 	if( _shellIconManager.IsEffect() && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut)) // draw button
 	{
-		Alpha=0;
+        drawAlpha=0;
 		float phase;
 		if( m_effect==effectButtonsFadeIn )
 			phase = _fEffectButtonTotalTime-_shellIconManager.m_fEffectTime;
 		else
 			phase = _shellIconManager.m_fEffectTime;
 		if( phase<0 )
-			{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
+			{ drawAlpha=1.0f; if (!OnEffectStop(m_effect)) return; }
 		else if( phase<=_fEffectButtonTime1 );
 		else if( (phase-=_fEffectButtonTime1)<=_fEffectButtonTime2 );
 		else if( (phase-=_fEffectButtonTime2)<=_fEffectButtonTime3 )
-			Alpha=phase/_fEffectButtonTime3;
+            drawAlpha=phase/_fEffectButtonTime3;
 		else
-			{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
+			{ drawAlpha=1.0f; if (!OnEffectStop(m_effect)) return; }
 	} else {
-        Alpha = 1.0f;
+        drawAlpha = 1.0f;
         if (!OnEffectStop(m_effect)) return;
     }
 
@@ -3147,8 +3145,6 @@ void CTextWindow::draw(int bFocus)
         
 		terRenderDevice->SetFont(m_hFont);
 
-        std::string toScr = getVisibleText();
-
 		float txtX = x + offset.x;
 		float txtY = y + offset.y;
 		int txtAlign = m_attr->txt_align;
@@ -3160,14 +3156,14 @@ void CTextWindow::draw(int bFocus)
 				txtX += sx/2;
 				break;
 			case SHELL_ALIGN_RIGHT:
-				txtX -= terRenderDevice->GetFontLength(toScr.c_str());
+				txtX -= terRenderDevice->GetFontLength(textData.c_str());
 				txtAlign = SHELL_ALIGN_LEFT;
 				break;
 		}
         
 		if( m_attr->txt_vert_align == 0 ) {
 			Vect2f v1, v2;
-			OutTextRect(0, 0 , toScr.c_str(), -1, v1, v2);
+			OutTextRect(0, 0 , textData.c_str(), -1, v1, v2);
 			txtY += (sy - (v2.y - v1.y)) / 2.0f;
 		}
 
@@ -3175,16 +3171,16 @@ void CTextWindow::draw(int bFocus)
 		if (m_attr->font_group == 4) {
 			const PlayerColor& pc = playerColors[colorIndex];
 			color = sColor4f(pc.unitColor);
-			color.a = Alpha;
+			color.a = drawAlpha;
 		} else {
-			color = sColor4f(1, 1, 1, Alpha);
+			color = sColor4f(1, 1, 1, drawAlpha);
 		}
 		if (m_hTexture) {
-			color.a = Alpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
+			color.a = drawAlpha * (m_attr->txt_dx ? m_attr->txt_dx : scaleButtonAlpha);
 			terRenderDevice->OutText(
                     txtX,
                     txtY,
-                    toScr.c_str(),
+                    textData.c_str(),
                     color,
                     txtAlign,
                     ALPHA_ADDBLENDALPHA,
@@ -3197,11 +3193,11 @@ void CTextWindow::draw(int bFocus)
 		} else {
 			sColor4f color;
 			if (m_attr->font_group == 2) {
-				color = victory ? sColor4f(1, 1, 0, Alpha) : sColor4f(1, 0, 0, Alpha);
+				color = victory ? sColor4f(1, 1, 0, drawAlpha) : sColor4f(1, 0, 0, drawAlpha);
 			} else {
-				color = sColor4f(1, 1, 1, Alpha);
+				color = sColor4f(1, 1, 1, drawAlpha);
 			}
-			OutText(txtX, txtY, toScr.c_str(), &color, txtAlign );
+			OutText(txtX, txtY, textData.c_str(), &color, txtAlign );
 		}
 		terRenderDevice->SetFont(nullptr);
         if (clipRender) {
@@ -3216,14 +3212,144 @@ void CTextWindow::draw(int bFocus)
 
 //---------------------------
 
-std::string CTextStringWindow::getVisibleText() const {
-    return getValidatedText(textData, sx);
+void CTextStringWindow::SetText(const char* text) {
+    textData = getValidatedText(text, sx);
 }
 
 //---------------------------
 
-
+CTextScrollableWindow::CTextScrollableWindow(int id, CShellWindow* pParent, EVENTPROC p): CTextWindow(id, pParent, p) {
+    clipRender = true;
+    m_hFont = nullptr;
+    m_bScroller = 0;
+    currentScrollDirection = thumb_none;
+    thumbTexture = 0;
+    m_hTextureBG = 0;
 }
+
+CTextScrollableWindow::~CTextScrollableWindow()
+{
+    _RELEASE(m_hFont);
+    _RELEASE(thumbTexture);
+    RELEASE(m_hTextureBG);
+}
+
+int CTextScrollableWindow::CheckClick(float fx,float  fy)
+{
+    if(!m_bScroller || vScrollSY <= 0)
+        return thumb_none;
+
+    float _x = fx * terRenderDevice->GetSizeX();
+    float _y = fy * terRenderDevice->GetSizeY();
+
+    if(_x > x+sx-vScrollSX && _x < x+sx)
+    {
+        if(_y > y && _y <y+vScrollSY)
+            return thumb_up;
+        if(_y < y+sy && _y > y+sy-vScrollSY)
+            return thumb_dn;
+    }
+
+    return thumb_none;
+}
+
+void CTextScrollableWindow::OnLButtonDown(float _x, float _y) {
+    currentScrollDirection = CheckClick(_x, _y);
+}
+
+void CTextScrollableWindow::OnMouseWheel(int delta)
+{
+    if( !(state & SQSH_VISIBLE) ) return;
+    if (textHeight < sy) {
+        offset.y = 0;
+    } else {
+        float h = m_hFont->GetHeight() * float(delta);
+        if (h > 0) {
+            offset.y = max(-(textHeight - sy), offset.y - h);
+        } else {
+            offset.y = min(0.0f, offset.y - h);
+        }
+    }
+
+    CTextWindow::OnMouseWheel(delta);
+}
+
+void CTextScrollableWindow::SetText(const char* text) {
+    terRenderDevice->SetFont(m_hFont);
+    float x = sx - vScrollSX - vScrollMarginX;
+    textData = formatPlainText(text, x);
+    offset.y = 0;
+    
+    if (textData.empty()) {
+        textHeight = 0;
+    } else {
+        Vect2f v1, v2;
+        OutTextRect(0, 0, textData.c_str(), -1, v1, v2);
+        textHeight = (v2.y - v1.y);
+    }
+    m_bScroller = textHeight > sy;
+    terRenderDevice->SetFont(nullptr);
+}
+
+void CTextScrollableWindow::draw(int bFocus) {
+    if( !(state & SQSH_VISIBLE) ) return;
+
+    if (currentScrollDirection != thumb_none) {
+        if (isPressed(VK_LBUTTON)) {
+            if (m_ftime >= scrollSpeed) {
+                m_ftime = 0;
+                OnMouseWheel(currentScrollDirection == thumb_up ? -3 : 3);
+            }
+        } else {
+            currentScrollDirection = thumb_none;
+        }
+    }
+    if (m_bScroller) {
+        m_fScrollerThumbPos = y + vScrollSY + 1 + (-offset.y)/(textHeight - sy)*(sy - 2*vScrollSY - vScrollThmbSY);
+    }
+
+    CTextWindow::draw(bFocus);
+
+    if (m_bScroller) {
+        if (m_hTextureBG) {
+            terRenderDevice->DrawSprite2(
+                    x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
+                    m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
+                    thumbTexture, m_hTextureBG,
+                    mapTextureWeight, drawAlpha * scaleButtonAlpha, xm::fmod(m_ftime, 1000) / 1000,
+                    COLOR_MOD, ALPHA_ADDBLENDALPHA);
+        } else {
+            DrawSprite(x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY,
+                       thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
+                       thumbTexture, sColor4c(255,255,255,drawAlpha*255) );
+        }
+    }
+}
+
+void CTextScrollableWindow::Load(const sqshControl* attr)
+{
+    CTextWindow::Load(attr);
+
+    _RELEASE(thumbTexture);
+    _RELEASE(m_hTextureBG);
+
+    if (m_hTexture) {
+        m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
+    }
+    vScrollSX = absoluteUISizeX(attr->xstart, anchor);
+    vScrollSY = absoluteY(attr->ystart);
+    vScrollMarginX = absoluteUISizeX(attr->txt_dy, anchor);
+    vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
+    vScrollThmbSY = relativeY(attr->image_h.iy);
+    if (strlen(attr->image_h.texture)) {
+        thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
+        if (thumbTexture) {
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture, anchor);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture, anchor);
+        }
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 CListBoxWindow::CListBoxWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(id, pParent, p)
@@ -3340,12 +3466,7 @@ void CListBoxWindow::Load(const sqshControl* attr)
 	m_fStringHeight = absoluteY(listBoxRowHeight);
 
 	_RELEASE(m_hFont);
-	if (m_attr->font_group == 1) {
-		m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsHeadTableFontSize);
-	} else {
-		//?
-		m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsHeadTableFontSize);
-	}
+    m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsHeadTableFontSize);
 //	m_vTexPos[0] = Vect2f(attr->image._ix, attr->image._iy);
 //	m_vTexPos[1] = Vect2f(attr->image.ix, attr->image.iy);
 	if (m_hTexture) {
