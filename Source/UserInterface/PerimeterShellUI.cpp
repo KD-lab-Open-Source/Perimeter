@@ -3321,20 +3321,24 @@ int CListBoxWindow::CheckClick(float fx,float  fy)
 	return thumb_none;
 }
 
-int CListBoxWindow::ItemFromPoint(float  _y)
+int CListBoxWindow::ItemFromPoint(float  _y, bool nearest_when_outside)
 {
-	if(m_pItem[0].m_data.empty())
-		return -1;
+	if (m_pItem[0].m_data.empty()) {
+        return -1;
+    }
+    if (y > _y) {
+        return nearest_when_outside ? 0 : -1;
+    }
 
 	int i = int((_y - y)/m_fStringHeight) + m_nTopItem;
 
-	if(i >= m_pItem[0].m_data.size())
-		i = m_pItem[0].m_data.size()-1;
-
-	//TEMP
-//	if (i > lastAccessibleMissionNumber) {
-//		i = lastAccessibleMissionNumber;
-//	}
+	if (i >= m_pItem[0].m_data.size()) {
+        if (nearest_when_outside) {
+            i = m_pItem[0].m_data.size() - 1;
+        } else {
+            i = -1;
+        }
+    }
 	return i;
 }
 

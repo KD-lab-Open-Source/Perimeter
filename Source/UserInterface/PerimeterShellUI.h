@@ -892,7 +892,6 @@ class CListBoxWindow : public CShellWindow
 	};
 
 	int CheckClick(float _x,float  _y);
-	int ItemFromPoint(float  _y);
 public:
 	CListBoxWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
 	~CListBoxWindow();
@@ -910,6 +909,8 @@ public:
 
 	void SetCurSel(int n);
 	void SetCurSelPassive(int n);
+    
+    int ItemFromPoint(float _y, bool nearest_when_outside = true);
 
 	const char* GetCurSelString();
 
