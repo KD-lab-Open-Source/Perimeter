@@ -651,10 +651,8 @@ int cD3DRender::Done()
 int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
 {
 	if (lpD3DDevice == nullptr) return -1;
-	D3DVIEWPORT9 vp;
-	RDCALL(lpD3DDevice->GetViewport(&vp));
-	*xmin=xScrMin=vp.X; *xmax=xScrMax=vp.X+vp.Width;
-	*ymin=yScrMin=vp.Y; *ymax=yScrMax=vp.Y+vp.Height;
+	*xmin=xScrMin; *xmax=xScrMax;
+	*ymin=yScrMin; *ymax=yScrMax;
 	return 0;
 }
 int cD3DRender::SetClipRect(int xmin,int ymin,int xmax,int ymax)

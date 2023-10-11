@@ -202,6 +202,8 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
         VISASSERT(0 && "Font not set");
         return;
     }
+    int x_min, y_min, x_max, y_max;
+    GetClipRect(&x_min, &y_min, &x_max, &y_max);
 
     duv.x *= 1024.0f / static_cast<float>(GetSizeX());
     duv.y *= 768.0f / static_cast<float>(GetSizeY());
@@ -219,7 +221,22 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
     indices_t* i = nullptr;
     sVertexXYZDT2* v = nullptr;
     auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
-    for (const char* str=string; 0 != *str; str++, yOfs += ySize) {
+    for (const char* str=string; 0 != *str; str++) {
+        if ((yOfs + ySize) < y_min) {
+            yOfs += ySize;
+            //This line won't be visible, skip to next
+            for (; *str!=10; str++) {
+                ChangeTextColor(str, diffuse);
+                uint8_t c = *str;
+                if (!c || c == 10) break;
+                if (c < 32) continue;
+            }
+            continue;
+        }
+        if (yOfs > y_max) {
+            //Reached out of bounds, terminate
+            break;
+        }
         xOfs = static_cast<float>(x);
         size_t chars;
         float StringWidth = GetFontLength(str, &chars);
@@ -234,13 +251,20 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
 
             Vect3f& size = cf->Font[c];
 
-            db->AutoLockQuad<sVertexXYZDT2>(std::min(chars, static_cast<size_t>(10)), 1, v, i);
-
             float x0, x1, y0, y1;
             x0 = xOfs;
             x1 = xOfs + xSize * size.z - 1;
             y0 = yOfs;
             y1 = yOfs + ySize;
+            xOfs = x1;
+
+            if (x1 < x_min || x0 > x_max) {
+                //Char is not visible as is before left edge or after right edge
+                continue;
+            }
+
+            db->AutoLockQuad<sVertexXYZDT2>(std::min(chars, static_cast<size_t>(10)), 1, v, i);
+
             v[1].x = v[3].x = x0;
             v[1].y = v[0].y = y0;
             v[2].x = v[0].x = x1;
@@ -258,12 +282,12 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
             v[1].v1() = v[0].v1() = (y0 - y) * duv.y + uv.y;
             v[2].u1() = v[0].u1() = (x1 - x) * duv.x + uv.x;
             v[2].v1() = v[3].v1() = (y1 - y) * duv.y + uv.y;
-
-            xOfs = x1;
         }
         db->AutoUnlock();
         if (*str == 0) break;
+        yOfs += ySize;
     }
+    db->AutoUnlock();
 }
 
 // 2D primitives
