@@ -2638,9 +2638,18 @@ void GameShell::showReelModal(const char* videoFileName, const char* soundFileNa
 	} else {
 		path = videoFileName;
 	}
-    if (getExtension(path, false).empty()) {
+    std::string original_extension = string_to_lower(getExtension(path, false).c_str());
+    bool not_found = get_content_entry(path) == nullptr;
+    if (original_extension.empty() || not_found) {
+        if (!original_extension.empty() && not_found) {
+            //No file found, remove extension for auto finding other extension files
+            path = setExtension(path, nullptr);
+        }
         //Attempt to find extension, bik must be last as is the default one
         for (const auto& ext : { ".mkv", ".bik" }) {
+            if (!original_extension.empty() && original_extension == ext) {
+                continue;
+            }
             if (get_content_entry(path + ext)) {
                 path += ext;
                 break;
