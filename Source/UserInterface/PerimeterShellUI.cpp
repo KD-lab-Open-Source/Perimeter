@@ -3102,7 +3102,9 @@ std::string formatPlainText(const std::string& text, float width) {
 }
 
 void CTextWindow::SetText(const char* text) {
+    terRenderDevice->SetFont(m_hFont);
     textData = formatPlainText(text, sx);
+    terRenderDevice->SetFont(nullptr);
 }
 
 void CTextWindow::draw(int bFocus)
@@ -3213,7 +3215,9 @@ void CTextWindow::draw(int bFocus)
 //---------------------------
 
 void CTextStringWindow::SetText(const char* text) {
+    terRenderDevice->SetFont(m_hFont);
     textData = getValidatedText(text, sx);
+    terRenderDevice->SetFont(nullptr);
 }
 
 //---------------------------
