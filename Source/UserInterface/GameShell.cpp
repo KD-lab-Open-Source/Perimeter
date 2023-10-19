@@ -1101,7 +1101,9 @@ void GameShell::EventHandler(SDL_Event& event) {
         case SDL_MOUSEWHEEL: {
             bool normal = event.wheel.direction == SDL_MOUSEWHEEL_NORMAL;
             int delta = event.wheel.y * (normal ? 1 : -1);
-            MouseWheel(delta);
+            if (delta != 0) {
+                MouseWheel(delta);
+            }
             break;
         }
         case SDL_MOUSEMOTION: {
