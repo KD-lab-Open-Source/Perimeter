@@ -310,7 +310,6 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
     if (fo.ioError()) {
         return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
     } else {
-        scan_resource_paths(convert_path_content(autoSavePlayReelDir));
         return SAVE_REPLAY_OK;
     }
 }
@@ -333,6 +332,7 @@ void terHyperSpace::autoSavePlayReel()
     }
     path += "_" + std::to_string(result);
 	savePlayReel(path.c_str());
+    scan_resource_paths(convert_path_content(autoSavePlayReelDir));
 }
 
 void terHyperSpace::allSavePlayReel()

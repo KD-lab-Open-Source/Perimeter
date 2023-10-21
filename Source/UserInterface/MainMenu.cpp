@@ -2304,6 +2304,7 @@ void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int para
 int delSaveReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
     std::remove( replays[list->GetCurSel()].playReelPath().c_str() );
+    scan_resource_paths(convert_path_content(REPLAY_PATH));
     replays.clear();
 	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
@@ -2319,6 +2320,7 @@ int toSaveReplayQuant( float, float ) {
 int saveReplay(float i, float) {
 	switch ( universe()->savePlayReel(replays[i].playReelPath().c_str()) ) {
 		case terHyperSpace::SAVE_REPLAY_OK:
+            scan_resource_paths(convert_path_content(REPLAY_PATH));
 			hideMessageBox();
 			_shellIconManager.AddDynamicHandler( toSaveReplayQuant, CBCODE_QUANT );
 			break;
@@ -2398,6 +2400,7 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 
 			switch ( universe()->savePlayReel(path.c_str()) ) {
 				case terHyperSpace::SAVE_REPLAY_OK:
+                    scan_resource_paths(convert_path_content(REPLAY_PATH));
 					_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_STATS_SCR );
 					break;
 				case terHyperSpace::SAVE_REPLAY_RW_ERROR_OR_DISK_FULL:
