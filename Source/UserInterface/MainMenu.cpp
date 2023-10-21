@@ -1919,10 +1919,21 @@ void onGameTerminationRequest() {
         //Nobody got time for this
         gameShell->terminate();
 #else
-        if (_bMenuMode || _shellIconManager.GetModalWnd()) {
-            //Menu or modal open, ignore request
+        //Skip on active menu transition
+        if (_bMenuMode && !menuChangingDone) {
             return;
         }
+        //Close cutscene if active, also cutscene causes active ID to be SQSH_MM_SUBMIT_DIALOG_SCR
+        if (gameShell->isCutSceneMode()) {
+            gameShell->setSkipCutScene(true);
+            return;
+        }
+        if (_id_on == SQSH_MM_SUBMIT_DIALOG_SCR) {
+            //Dialog open, ignore request
+            return;
+        }
+        gameShell->cancelMouseLook();
+        gameShell->prepareForInGameMenu();
         //When game is running we want to gracefully shutdown the game by asking for quit
         std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Quit");
         setupYesNoMessageBox(terminateAction, 0, text);
