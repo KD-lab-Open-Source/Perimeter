@@ -189,7 +189,7 @@ struct sqshTabSheet {
 #endif  // __XScript_struct_sqshTabSheet__
 static BGObj _bgObjects_59[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group skip", "skip" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_58[] = { { SQSH_CREDITS_TEXT_TYPE 
  , SQSH_MM_CREDITS_TXT, 2, 3, 0.17480469f, 0.11067708f, 0.63671875f, 0.70833333f, 0.f 
  , 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f, 1024.f, 1024.f, 0.33105469f 
@@ -1508,7 +1508,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_51[] = { { "group start" 
  , "start screen" }, { "group back", "back" }, { "group next", "next" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_50[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.33300781f, 0.20963542f, 0.33105469f, 0.60677083f, 0.f, 0.60677083f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 518.f, 339.f, 466.f, 0.f, 0.f 
@@ -1610,7 +1610,7 @@ static sqshControl _controls_50[] = { { SQSH_SCALE_BUTTON_TYPE
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_49[] = { { "group start" 
- , "start screen" }, { "group back", "back" }, { "group background", "background on" 
+ , "start screen" }, { "group back", "back" }, { "group background", "background off" 
   } };
 static sqshControl _controls_48[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA 
  , 2, 3, 0.39941406f, 0.45703125f, 0.1953125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
@@ -1831,7 +1831,7 @@ static sqshControl _controls_48[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA
  , 0 } };
 static BGObj _bgObjects_47[] = { { "group battle", "battle" }, { "group back2" 
  , "back2" }, { "group next2", "next2" }, { "group skip", "skip" }, { "group map", "map" 
-  }, { "group background", "background on" } };
+  }, { "group background", "background off" } };
 static sqshControl _controls_46[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.18164062f, 0.12239583f, 0.37109375f, 0.67057292f, 0.f, 0.67057292f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 0.f, 300.f, 515.f, 0.f, 0.f, 0.f 
@@ -2018,7 +2018,7 @@ static sqshControl _controls_46[] = { { SQSH_SCALE_BUTTON_TYPE
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_45[] = { { "group battle" 
- , "battle" }, { "group back2", "back2" }, { "group background", "background on" } 
+ , "battle" }, { "group back2", "back2" }, { "group background", "background off" } 
   };
 static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2 
  , 3, 0.24414062f, 0.34375f, 0.48828125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
@@ -2227,7 +2227,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
  , 0 } };
 static BGObj _bgObjects_43[] = { { "group battle", "battle" }, { "group back2" 
- , "back2" }, { "group background", "background on" } };
+ , "back2" }, { "group background", "background off" } };
 static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.24414062f, 0.17317708f, 0.48828125f, 0.00390625f, 0.f, 0.f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 2.f, 987.f, 500.f, 3.f, 0.f, 0.f, 0.f 
@@ -2776,7 +2776,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_41[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group skip", "skip" }, { "group next2" 
- , "next2" }, { "group background", "background on" } };
+ , "next2" }, { "group background", "background off" } };
 static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.24414062f, 0.25260417f, 0.48828125f, 0.00390625f, 0.f, 0.f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 2.f, 987.f, 500.f, 3.f, 0.f, 0.f, 0.f 
@@ -3178,7 +3178,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_39[] = { { "group battle" 
- , "battle" }, { "group back2", "back2" }, { "group background", "background on" } 
+ , "battle" }, { "group back2", "back2" }, { "group background", "background off" } 
   };
 static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2 
  , 3, 0.24414062f, 0.24739583f, 0.48828125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
@@ -3484,7 +3484,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
  , 0 } };
 static BGObj _bgObjects_37[] = { { "group start", "start screen" }, { "group back" 
- , "back" }, { "group background", "background on" } };
+ , "back" }, { "group background", "background off" } };
 static sqshControl _controls_36[] = { { SQSH_GENERAL_WND_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.44824219f, 0.51432292f, 0.09765625f, 0.00390625f, 0.f, 0.f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 2.f, 987.f, 100.f, 3.f, 0.f, 0.f, 0.f 
@@ -3632,7 +3632,7 @@ static sqshControl _controls_36[] = { { SQSH_GENERAL_WND_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_35[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group next2", "next2" }, { "group map" 
- , "map" }, { "group background", "background on" } };
+ , "map" }, { "group background", "background off" } };
 static sqshControl _controls_34[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.55078125f, 0.58203125f, 0.02441406f, 0.09635417f, 0.f, 0.09635417f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 346.f, 522.f, 25.f, 74.f, 0.f, 0.f 
@@ -4371,7 +4371,7 @@ static sqshControl _controls_34[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_33[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group next2", "next2" }, { "group map" 
- , "map" }, { "group background", "background on" } };
+ , "map" }, { "group background", "background off" } };
 static sqshControl _controls_32[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.18164062f, 0.12239583f, 0.38085938f, 0.67057292f, 0.f, 0.67057292f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 0.f, 300.f, 515.f, 0.f, 0.f, 0.f 
@@ -4692,7 +4692,7 @@ static sqshControl _controls_32[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_31[] = { { "group back2" 
  , "back2" }, { "group skip", "skip" }, { "group next2", "next2" }, { "group text" 
- , "text" }, { "group background", "background on" } };
+ , "text" }, { "group background", "background off" } };
 static sqshControl _controls_30[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.19238281f, 0.73567708f, 0.07324219f, 0.0546875f, 0.f, 0.08333333f 
  , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
@@ -4804,7 +4804,7 @@ static sqshControl _controls_30[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_29[] = { { "group text" 
  , "text" }, { "group back2", "back2" }, { "group next2", "next2" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_28[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.16503906f, 0.6875f, 0.13476562f, 0.0546875f, 0.f, 0.08333333f 
  , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
@@ -6173,7 +6173,7 @@ static sqshControl _controls_21[] = { { SQSH_MOVE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_20[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group next2", "next2" }, { "group map" 
- , "map" }, { "group background", "background on" } };
+ , "map" }, { "group background", "background off" } };
 static sqshControl _controls_19[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.18164062f, 0.12239583f, 0.29296875f, 0.67057292f, 0.f, 0.67057292f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 0.f, 300.f, 515.f, 0.f, 0.f, 0.f 
@@ -6347,7 +6347,7 @@ static sqshControl _controls_19[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_18[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group next2", "next2" }, { "group map" 
- , "map" }, { "group background", "background on" } };
+ , "map" }, { "group background", "background off" } };
 static sqshControl _controls_17[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.18164062f, 0.12239583f, 0.29296875f, 0.67057292f, 0.f, 0.67057292f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 0.f, 300.f, 515.f, 0.f, 0.f, 0.f 
@@ -6521,7 +6521,7 @@ static sqshControl _controls_17[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_16[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group next2", "next2" }, { "group map" 
- , "map" }, { "group background", "background on" } };
+ , "map" }, { "group background", "background off" } };
 static sqshControl _controls_15[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.18164062f, 0.12239583f, 0.29296875f, 0.31901042f, 0.f, 0.31901042f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 0.f, 300.f, 245.f, 0.f, 0.f, 0.f 
@@ -6992,7 +6992,7 @@ static sqshControl _controls_15[] = { { SQSH_SCALE_BUTTON_TYPE
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_14[] = { { "group miniscr" 
- , "miniscr" }, { "group map", "map" }, { "group background", "background on" } };
+ , "miniscr" }, { "group map", "map" }, { "group background", "background off" } };
 static sqshControl _controls_13[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 3, 3, 0.12304688f, 0.0546875f, 0.16601562f, 0.10807292f, 0.f, 0.15104167f 
  , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
@@ -7323,7 +7323,7 @@ static sqshControl _controls_11[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_10[] = { { "group start" 
  , "start screen" }, { "group back", "back" }, { "group next", "next" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_9[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.33300781f, 0.20963542f, 0.33105469f, 0.60677083f, 0.f, 0.60677083f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 518.f, 339.f, 466.f, 0.f, 0.f 
@@ -7462,7 +7462,7 @@ static sqshControl _controls_9[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_8[] = { { "group start" 
  , "start screen" }, { "group back", "back" }, { "group next", "next" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_7[] = { { SQSH_SCALE_BUTTON_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.33300781f, 0.20963542f, 0.33105469f, 0.60677083f, 0.f, 0.60677083f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 518.f, 339.f, 466.f, 0.f, 0.f 
@@ -7661,7 +7661,7 @@ static sqshControl _controls_7[] = { { SQSH_SCALE_BUTTON_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_6[] = { { "group start" 
  , "start screen" }, { "group back", "back" }, { "group next", "next" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_5[] = { { SQSH_GENERAL_WND_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.39941406f, 0.45703125f, 0.1953125f, 0.00390625f, 0.f, 0.f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 2.f, 987.f, 200.f, 3.f, 0.f, 0.f, 0.f 
@@ -7905,7 +7905,7 @@ static sqshControl _controls_5[] = { { SQSH_GENERAL_WND_TYPE
   }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 } };
 static BGObj _bgObjects_4[] = { { "group start" 
  , "start screen" }, { "group next", "next" }, { "group back", "back" }, { "group background" 
- , "background on" } };
+ , "background off" } };
 static sqshControl _controls_3[] = { { SQSH_GENERAL_WND_TYPE 
  , SQSH_MM_RAMKA, 2, 3, 0.40234375f, 0.45703125f, 0.1953125f, 0.00390625f, 0.f, 0.f 
  , { "resource\\icons\\MainMenu\\Main_menu.tga", 2.f, 987.f, 200.f, 3.f, 0.f, 0.f, 0.f 

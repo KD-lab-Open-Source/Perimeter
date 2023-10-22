@@ -4079,7 +4079,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group start"; chainName = "start screen";},
 		{name = "group next"; chainName = "next";},
 		{name = "group back"; chainName = "back";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 //	defaultEscBtnID = SQSH_MM_QUIT_BTN;
 },
@@ -4125,7 +4125,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group start"; chainName = "start screen";},
 		{name = "group back"; chainName = "back";},
 		{name = "group next"; chainName = "next";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_SINGLE_BTN;
 },
@@ -4170,7 +4170,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group start"; chainName = "start screen";},
 		{name = "group back"; chainName = "back";},
 		{name = "group next"; chainName = "next";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_SELECT_PROFILE_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_PROFILE_BTN;
@@ -4207,7 +4207,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group start"; chainName = "start screen";},
 		{name = "group back"; chainName = "back";},
 		{name = "group next"; chainName = "next";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_GO_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_SCENARIO_BTN;
@@ -4282,7 +4282,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group miniscr"; chainName = "miniscr";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 },
 {
@@ -4356,7 +4356,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group back2"; chainName = "back2";},
 		{name = "group next2"; chainName = "next2";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_BATTLE_GO_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_BATTLE_BTN;
@@ -4399,7 +4399,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group back2"; chainName = "back2";},
 		{name = "group next2"; chainName = "next2";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_LOAD_GO_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_LOAD_BTN;
@@ -4442,7 +4442,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group back2"; chainName = "back2";},
 		{name = "group next2"; chainName = "next2";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_LOAD_REPLAY_GO_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_LOAD_REPLAY_BTN;
@@ -4775,7 +4775,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group text"; chainName = "text";},
 		{name = "group back2"; chainName = "back2";},
 		{name = "group next2"; chainName = "next2";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_MULTIPLAYER_JOIN_NEXT_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_MULTIPLAYER_JOIN_BTN;
@@ -4838,7 +4838,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group next2"; chainName = "next2";},
 		//TODO {name = "group map"; chainName = "map";},
 		{name = "group text"; chainName = "text";}, //TODO remove this when game list works
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN;
 	defaultEnterBtnIDAux = SQSH_MM_MULTIPLAYER_LIST_CREATE_BTN;
@@ -4937,7 +4937,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group back2"; chainName = "back2";},
 		{name = "group next2"; chainName = "next2";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_MULTIPLAYER_HOST_NEXT_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_MULTIPLAYER_HOST_BTN;
@@ -5047,7 +5047,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group back2"; chainName = "back2";},
 		{name = "group next2"; chainName = "next2";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	//defaultEnterBtnID = SQSH_MM_LOBBY_START_BTN;
 	defaultEscBtnID = SQSH_MM_BACK_FROM_LOBBY_BTN;
@@ -5082,7 +5082,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group start"; chainName = "start screen";},
 		{name = "group back"; chainName = "back";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_OPTIONS_BTN;
 },
@@ -5155,7 +5155,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group battle"; chainName = "battle";},
 		{name = "group back2"; chainName = "back2";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_GAME_BTN;
 },
@@ -5232,7 +5232,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group back2"; chainName = "back2";},
 		{name = "group skip"; chainName = "skip";},
 		{name = "group next2"; chainName = "next2";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_APPLY_BTN;
 	defaultEnterBtnIDAux = SQSH_MM_CUSTOM_GRAPHICS_BTN;
@@ -5321,7 +5321,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group battle"; chainName = "battle";},
 		{name = "group back2"; chainName = "back2";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_CUSTOM_BTN;
 },
@@ -5376,7 +5376,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group battle"; chainName = "battle";},
 		{name = "group back2"; chainName = "back2";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_SOUND_BTN;
 },
@@ -5446,7 +5446,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group next2"; chainName = "next2";},
 		{name = "group skip"; chainName = "skip";},
 		{name = "group map"; chainName = "map";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEnterBtnID = SQSH_MM_ADDONS_ENABLE_BTN;
  	defaultEscBtnID = SQSH_MM_BACK_FROM_ADDONS_BTN;
@@ -5489,7 +5489,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	bgObjects = new BGObj[] {
 		{name = "group start"; chainName = "start screen";},
 		{name = "group back"; chainName = "back";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_FROM_COMMUNITY_BTN;
 },
@@ -5525,7 +5525,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
  		{name = "group start"; chainName = "start screen";},
  		{name = "group back"; chainName = "back";},
  		{name = "group next"; chainName = "next";},
- 		{name = "group background"; chainName = "background on";}
+ 		{name = "group background"; chainName = "background off";}
  	};
  	defaultEnterBtnID = SQSH_MM_CONTENT_CHOOSER_SELECT_BTN;
  	defaultEscBtnID = SQSH_MM_BACK_FROM_CONTENT_CHOOSER_BTN;
@@ -5853,7 +5853,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{name = "group battle"; chainName = "battle";},
 		{name = "group back2"; chainName = "back2";},
 		{name = "group skip"; chainName = "skip";},
-		{name = "group background"; chainName = "background on";}
+		{name = "group background"; chainName = "background off";}
 	};
 	defaultEscBtnID = SQSH_MM_BACK_CREDITS_BTN;
 },
