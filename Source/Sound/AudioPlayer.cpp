@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "StdAfxSound.h"
 #include "xmath.h"
 #include "SoundInternal.h"
 #include "files/files.h"

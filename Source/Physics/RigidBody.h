@@ -169,7 +169,7 @@ public:
 #endif
 
 	// Control
-	Vect3fList way_points;
+    std::vector<Vect3f> way_points;
 
 private:
 	int ID;

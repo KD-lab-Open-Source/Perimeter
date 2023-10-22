@@ -26,7 +26,7 @@ mkdir $APP_DIR/Contents/Libs
 
 if [[ -n $VULKAN_LIB_VERSION ]]; then
   VULKAN_LIB_DIR="/usr/local/lib"
-  DXVK_NATIVE_PATH="$BUILD_DIR/Source/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.dylib"
+  DXVK_NATIVE_PATH="$BUILD_DIR/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.dylib"
   
   rm -f $BUILD_DIR/libdxvk_d3d9.dylib
   cp $DXVK_NATIVE_PATH $BUILD_DIR/libdxvk_d3d9.dylib

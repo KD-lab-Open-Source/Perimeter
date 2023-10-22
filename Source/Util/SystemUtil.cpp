@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include <SDL.h>
 #include "Config.h"
+#include "UnitAttribute.h"
 #include "GameContent.h"
 #include "files/files.h"
 

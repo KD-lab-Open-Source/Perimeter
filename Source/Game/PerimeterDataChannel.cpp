@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "NetPlayer.h"
 #include "Runtime.h"
 #include "GameShell.h"
 #include "CameraManager.h"

@@ -1,11 +1,11 @@
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
 #include "files/files.h"
 #include "GameContent.h"
 #include <filesystem>
+#include "MainMenu.h"
 
 extern bool menuChangingDone;
 bool pendingChanges = false;

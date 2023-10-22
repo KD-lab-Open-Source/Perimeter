@@ -1,5 +1,5 @@
 
-#include "StdAfx.h"
+#include "StdAfxXPrm.h"
 #include "PrmEdit.h"
 
 int main()

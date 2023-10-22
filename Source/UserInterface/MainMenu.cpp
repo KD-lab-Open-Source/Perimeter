@@ -1,6 +1,5 @@
 
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "Config.h"
 #include "Runtime.h"
 #include "terra.h"
@@ -25,6 +24,7 @@
 #include "BelligerentSelect.h"
 #include "GameContent.h"
 #include "codepages/codepages.h"
+#include "MainMenu.h"
 
 extern char _bCursorVisible;
 extern char _bMenuMode;

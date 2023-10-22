@@ -1,6 +1,6 @@
 #include "StdAfx.h"
+#include "Universe.h"
 #include "EnergyConsumer.h"
-#include "Player.h"
 
 EnergyConsumer::EnergyConsumer() : 
 player_(0), 

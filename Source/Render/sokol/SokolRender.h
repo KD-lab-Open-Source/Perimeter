@@ -5,7 +5,7 @@
 #define SOKOL_GL (1)
 #endif
 
-#include "sokol_gfx.h"
+#include <sokol_gfx.h>
 #include <SDL_video.h>
 #ifdef SOKOL_METAL
 #include <SDL_metal.h>

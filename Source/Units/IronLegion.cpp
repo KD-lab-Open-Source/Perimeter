@@ -1,11 +1,8 @@
 #include "StdAfx.h"
-#include "Player.h"
-#include "RealInterpolation.h"
 #include "Universe.h"
 
 #include "Squad.h"
 #include "SecondLegion.h"
-#include "PerimeterSound.h"
 #include "Triggers.h"
 #include "AIPrm.h"
 #include "EditArchive.h"

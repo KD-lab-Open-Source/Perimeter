@@ -1,6 +1,5 @@
 
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "Config.h"
 #include "Runtime.h"
 #include "terra.h"
@@ -9,6 +8,7 @@
 #include "UniverseInterface.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
+#include "MainMenu.h"
 #include "MessageBox.h"
 
 DYNCALLBACK submitAction = 0;

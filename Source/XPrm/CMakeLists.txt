@@ -1,29 +1,37 @@
-INCLUDE_DIRECTORIES(
-    BEFORE .
-    "${PROJECT_SOURCE_DIR}/Source/XTool"
-    "${PROJECT_SOURCE_DIR}/Source/Util"
+# XPrmLib executable
+
+add_library(XPrmLib STATIC
+        StdAfx.cpp
+        Token.cpp
+        RunTimeCompiler.cpp
 )
 
-SET(XPrm_SRCS
-    StdAfx.cpp
-    Token.cpp
+target_include_directories(XPrmLib PRIVATE
+        BEFORE .
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
 )
 
-SET(XPrm_LINK_LIBS ${EXE_LINK_LIBS_PRE} XTool ${SDL2_LIBRARY} ${EXE_LINK_LIBS_POST})
+target_compile_options(XPrmLib PRIVATE ${PERIMETER_COMPILE_OPTIONS})
 
-IF(PERIMETER_DEBUG)
-    SET(XPrm_SRCS ${XPrm_SRCS} RunTimeCompiler.cpp)
-ENDIF()
+set(XPrm_LINK_LIBS ${EXE_LINK_LIBS_PRE} XTool ${SDL2_LIBRARY} ${EXE_LINK_LIBS_POST})
+
 IF(PERIMETER_EXODUS)
     SET(XPrm_LINK_LIBS ${XPrm_LINK_LIBS} Exodus)
 ENDIF()
+target_link_libraries(XPrmLib PRIVATE ${XPrm_LINK_LIBS})
 
-ADD_EXECUTABLE(XPrm ${XPrm_SRCS} XPrm.cpp)
+# XPrm executable
+
+add_executable(XPrm ${XPrm_SRCS} XPrm.cpp)
+
+target_include_directories(XPrm PRIVATE
+        BEFORE .
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+)
+
+
 target_compile_options(XPrm PRIVATE ${PERIMETER_COMPILE_OPTIONS})
-TARGET_LINK_LIBRARIES(XPrm PRIVATE ${XPrm_LINK_LIBS})
+target_link_libraries(XPrm PRIVATE XPrmLib)
 
-IF(PERIMETER_DEBUG)
-    ADD_LIBRARY(XPrmLib STATIC ${XPrm_SRCS})
-    target_compile_options(XPrmLib PRIVATE ${PERIMETER_COMPILE_OPTIONS})
-    TARGET_LINK_LIBRARIES(XPrmLib PRIVATE ${XPrm_LINK_LIBS})
-ENDIF()

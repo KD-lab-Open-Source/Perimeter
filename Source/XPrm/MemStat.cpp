@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "StdAfxXPrm.h"
 
 #include <process.h>
 #include <crtdbg.h>

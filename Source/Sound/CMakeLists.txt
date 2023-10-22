@@ -1,10 +1,4 @@
-INCLUDE_DIRECTORIES(
-        BEFORE .
-        "${PROJECT_SOURCE_DIR}/Source/Util"
-        "${PROJECT_SOURCE_DIR}/Source/XTool"
-)
-
-SET(Sound_SRCS
+add_library(Sound STATIC
         SoundScript.cpp
         C3D.cpp
         PerimeterSound.cpp
@@ -14,5 +8,10 @@ SET(Sound_SRCS
         AudioPlayer.cpp
 )
 
-ADD_LIBRARY(Sound STATIC ${Sound_SRCS})
+target_include_directories(Sound PRIVATE
+        BEFORE .
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+)
+
 target_compile_options(Sound PRIVATE ${PERIMETER_COMPILE_OPTIONS})

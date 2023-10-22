@@ -1,10 +1,4 @@
-INCLUDE_DIRECTORIES(
-        BEFORE .
-        "${PROJECT_SOURCE_DIR}/Source/tx3d"
-        "${PROJECT_SOURCE_DIR}/Source/XTool"
-)
-
-SET(Terra_SRCS
+add_library(Terra STATIC
         crc.cpp
         f3d.cpp
         fastmath.cpp
@@ -25,7 +19,10 @@ SET(Terra_SRCS
         LAND.cpp
 )
 
-ADD_DEFINITIONS(-D_TX3D_LIBRARY_)
+target_include_directories(Terra PRIVATE
+        BEFORE .
+        "${PROJECT_SOURCE_DIR}/Source/tx3d"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+)
 
-ADD_LIBRARY(Terra STATIC ${Terra_SRCS})
 target_compile_options(Terra PRIVATE ${PERIMETER_COMPILE_OPTIONS})

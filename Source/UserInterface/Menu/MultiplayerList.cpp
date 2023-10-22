@@ -1,9 +1,9 @@
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
 #include "MultiplayerCommon.h"
+#include "MainMenu.h"
 
 ///Command line stuff
 

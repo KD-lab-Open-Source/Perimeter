@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "terra.h"
-#include "RigidBody.h"
 #include "ForceField.h"
+#include "RigidBody.h"
 
 RigidBody* GetMissileTest(RigidBody* object,RigidBody* source,RigidBody* target);
 

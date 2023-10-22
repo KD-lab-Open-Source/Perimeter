@@ -1,11 +1,13 @@
 #include <set>
 #include "StdAfx.h"
+#include "NetConnection.h"
 #include "NetPlayer.h"
 #include "EditFunctions.h"
 #include "Scripts/Config.hi"
 #include "GameContent.h"
 #include "Runtime.h"
 #include "files/files.h"
+#include "CommonEvents.h"
 
 PlayerData::PlayerData()
 {

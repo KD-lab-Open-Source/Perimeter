@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
@@ -8,6 +7,7 @@
 #include "MultiplayerCommon.h"
 #include "BelligerentSelect.h"
 #include "codepages/codepages.h"
+#include "MainMenu.h"
 
 //This file handles mostly ingame multiplayer stuff but some parts are shared with main menu
 

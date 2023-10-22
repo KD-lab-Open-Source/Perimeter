@@ -1,11 +1,11 @@
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
 #include "GameContent.h"
+#include "MainMenu.h"
 
 extern MusicPlayer gb_Music;
 

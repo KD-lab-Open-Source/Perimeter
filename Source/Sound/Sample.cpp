@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "StdAfxSound.h"
 #include "SoundInternal.h"
 #include "Sample.h"
 #include <unordered_map>

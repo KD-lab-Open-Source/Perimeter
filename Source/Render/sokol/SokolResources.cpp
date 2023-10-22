@@ -1,6 +1,6 @@
 #include "xerrhand.h"
 #include "xmath.h"
-#include "sokol_gfx.h"
+#include <sokol_gfx.h>
 #include "SokolResources.h"
 
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {

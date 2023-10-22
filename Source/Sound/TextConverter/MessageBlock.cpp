@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "StdAfxSound.h"
 #include "Parse/ParamParse.h"
 #include "MessageBlock.h"
 

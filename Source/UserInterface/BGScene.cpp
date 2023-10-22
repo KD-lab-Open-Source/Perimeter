@@ -1,4 +1,7 @@
 #include "StdAfx.h"
+#include "Umath.h"
+#include "IRenderDevice.h"
+#include "IVisGeneric.h"
 #include "BGScene.h"
 #include "GameShellSq.h"
 #include "SourceUIResolution.h"

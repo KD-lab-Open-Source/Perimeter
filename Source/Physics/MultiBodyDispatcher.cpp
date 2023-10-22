@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Runtime.h"
+#include "TypeLibrary.h"
 #include "RigidBody.h"
 
 MultiBodyDispatcher::MultiBodyDispatcher()

@@ -1,7 +1,7 @@
 // TriggerEditor.cpp : Defines the initialization routines for the DLL.
 //
 
-#include "StdAfx.h"
+#include "StdAfxTriggerEditor.h"
 #include "TriggerEditorApp.h"
 
 #ifdef _DEBUG

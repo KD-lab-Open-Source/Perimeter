@@ -1,6 +1,7 @@
+#ifdef PERIMETER_DEBUG
 #include <SDL.h>
 #include <set>
-#include "stdafx.h"
+#include "StdAfxXPrm.h"
 #include "RunTimeCompiler.h"
 
 class BaseParameterList : public std::vector<BaseParameter> {};
@@ -283,3 +284,4 @@ void show_profile(const char* text) {
 		p(text);
 #endif
 }
+#endif

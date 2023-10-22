@@ -1,5 +1,5 @@
 
-#include "StdAfx.h"
+#include "StdAfxXPrm.h"
 #include "Statistics.h"
 
 class TimerDataList: public list<TimerData*> {};

@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "UnitAttribute.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"

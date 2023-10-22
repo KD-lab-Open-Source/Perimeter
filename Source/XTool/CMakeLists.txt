@@ -9,35 +9,6 @@ FetchContent_Declare(gamemath
 )
 FetchContent_MakeAvailable(gamemath)
 
-#Workaround for some compilers that not recognize __always_inline
-#target_compile_definitions(gamemath PUBLIC -D__always_inline=)
-
-INCLUDE_DIRECTORIES(
-    BEFORE .
-    "${gamemath_SOURCE_DIR}/include"
-)
-
-SET(XTool_SRCS
-    xmath/xmath.cpp
-    xmath/gamemath.cpp
-    xmath/std.cpp
-    XBUFFER/XBCNVIN.cpp
-    XBUFFER/XBCNVOUT.cpp
-    XBUFFER/XBCORE.cpp
-    XBUFFER/XBSEARCH.cpp
-    XSTREAM/XSCNVOUT.cpp
-    XSTREAM/XSSERV.cpp
-    XSTREAM/XSRDWR.cpp
-    XSTREAM/XSCNVIN.cpp
-    XSTREAM/XSENLV.cpp
-    XSTREAM/XSCORE.cpp
-    xerrhand.cpp
-    XUTIL/XUTIL.cpp
-    XUTIL/XClock.cpp
-    files/files.cpp
-    codepages/codepages.cpp
-)
-
 SET(XTool_LINK_LIBS gamemath ZLIB::ZLIB)
 
 IF(NOT OPTION_DISABLE_STACKTRACE)
@@ -78,6 +49,32 @@ IF(NOT OPTION_DISABLE_STACKTRACE)
     ENDIF()
 ENDIF()
 
-ADD_LIBRARY(XTool STATIC ${XTool_SRCS})
+add_library(XTool STATIC
+        xmath/xmath.cpp
+        xmath/gamemath.cpp
+        xmath/std.cpp
+        XBUFFER/XBCNVIN.cpp
+        XBUFFER/XBCNVOUT.cpp
+        XBUFFER/XBCORE.cpp
+        XBUFFER/XBSEARCH.cpp
+        XSTREAM/XSCNVOUT.cpp
+        XSTREAM/XSSERV.cpp
+        XSTREAM/XSRDWR.cpp
+        XSTREAM/XSCNVIN.cpp
+        XSTREAM/XSENLV.cpp
+        XSTREAM/XSCORE.cpp
+        xerrhand.cpp
+        XUTIL/XUTIL.cpp
+        XUTIL/XClock.cpp
+        files/files.cpp
+        codepages/codepages.cpp
+)
+
 target_compile_options(XTool PRIVATE ${PERIMETER_COMPILE_OPTIONS})
-TARGET_LINK_LIBRARIES(XTool PRIVATE ${XTool_LINK_LIBS})
+
+target_link_libraries(XTool PRIVATE ${XTool_LINK_LIBS})
+
+target_include_directories(XTool PRIVATE
+        BEFORE .
+        "${gamemath_SOURCE_DIR}/include"
+)

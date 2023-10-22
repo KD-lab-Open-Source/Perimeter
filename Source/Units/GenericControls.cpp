@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 
-#include "GenericControls.h"
+#include "NetConnection.h"
+#include "NetComEventBuffer.h"
 #include "Universe.h"
 #include "Interpolation.h"
 
@@ -8,6 +9,8 @@
 #include "GameShell.h"
 #include "Triggers.h"
 #include "Config.h"
+
+#include "GenericControls.h"
 
 terUnitBase::terUnitBase(const UnitTemplate& data) 
 {

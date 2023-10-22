@@ -1,7 +1,5 @@
 #include "StdAfx.h"
 
-#include "MissionEdit.h"
-
 #include "Config.h"
 #include "Runtime.h"
 #include "terra.h"
@@ -18,6 +16,8 @@
 #include "qd_textdb.h"
 #include "codepages/codepages.h"
 #include "../HT/ht.h"
+
+#include "MissionEdit.h"
 
 //------------------------------------------------
 MissionEditor::MissionEditor()

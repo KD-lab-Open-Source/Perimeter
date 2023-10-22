@@ -1,9 +1,9 @@
 #include "StdAfx.h"
+#include "Universe.h"
 #include "ht.h"
 #include "GameShell.h"
 #include "GenericControls.h"
 #include "Config.h"
-#include "Universe.h"
 #include "LagStatistic.h"
 #include <cstdlib>
 #include <thread>

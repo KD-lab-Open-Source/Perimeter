@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+#include "UnitAttribute.h"
 #include "InterfaceScript.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"

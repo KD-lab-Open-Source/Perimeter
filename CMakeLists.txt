@@ -72,7 +72,7 @@ IF(CMAKE_HOST_WIN32 OR MINGW)
     SET(PERIMETER_WINDOWS ON)
     #Compile exe as Win32 App instead of Console App
     #Also add icon via .rc
-    SET(PERIMETER_EXE_FLAGS WIN32 perimeter.rc)
+    SET(PERIMETER_EXE_FLAGS WIN32 "${PROJECT_SOURCE_DIR}/Source/perimeter.rc")
 ELSE()
     MESSAGE("Not Windows or MinGW build - WARNING: EXPERIMENTAL!")
     SET(PERIMETER_WINDOWS OFF)
@@ -368,6 +368,7 @@ ADD_DEFINITIONS(-DPERIMETER_VERSION=${PERIMETER_VERSION_STR})
 UNSET(PERIMETER_VERSION_STR)
 
 ADD_DEFINITIONS(-D_PERIMETER_)
+add_definitions(-D_TX3D_LIBRARY_)
 IF(OPTION_FINAL_VERSION)
     ADD_DEFINITIONS(-D_FINAL_VERSION_)
 ELSE()
@@ -392,5 +393,107 @@ ENDIF()
 IF(PERIMETER_EXODUS_SOUND)
     ADD_DEFINITIONS(-DPERIMETER_EXODUS_SOUND)
 ENDIF()
+
+#simpleini
+FetchContent_Declare(simpleini
+        GIT_REPOSITORY    https://github.com/brofield/simpleini
+        GIT_TAG           "7350fcc9228f410309734c3fb6dae2bf513cdd98"
+        GIT_SHALLOW       OFF
+)
+FetchContent_MakeAvailable(simpleini)
+INCLUDE_DIRECTORIES(${simpleini_SOURCE_DIR})
+
+IF(NOT PERIMETER_WINDOWS)
+    #Non Windows target specifics
+
+    #pevents retrieval
+    FetchContent_Declare(pevents
+            GIT_REPOSITORY    https://github.com/neosmart/pevents
+            GIT_TAG           "d6afcbc629cf806f6465238849278e530e1d56fb"
+            GIT_SHALLOW       OFF
+    )
+    FetchContent_MakeAvailable(pevents)
+    ADD_DEFINITIONS(-DWFMO)
+
+    #Includes
+    INCLUDE_DIRECTORIES(
+            "${PROJECT_SOURCE_DIR}/Source/Exodus"
+            "${pevents_SOURCE_DIR}/src"
+    )
+ENDIF()
+
+IF(OPTION_D3D9)
+    #D3D9 Renderer enabled
+    IF(PERIMETER_WINDOWS)
+        #DirectX SDK libs
+        INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
+    ELSE()
+        #For non windows we use DXVK to provide headers and impl
+        MESSAGE("Using DXVK for D3D9 API")
+
+        SET(DXVK_BUILD_OPTIONS --buildtype=release -Denable_d3d9=true -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false)
+        #DXVK wrapper lib retrieval and building
+        IF (MACOS)
+            IF (CMAKE_OSX_ARCHITECTURES)
+                #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
+                SET(DXVK_BUILD_COMMAND
+                        ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
+                        ${CMAKE_OSX_ARCHITECTURES}
+                        ${PROJECT_SOURCE_DIR}/macos/
+                )
+            ENDIF()
+            #TODO change this to upstream once DXVK2 works with MoltenVK and MacOS
+            SET(OPTION_DXVK_1 ON)
+        ENDIF()
+        IF(OPTION_DXVK_1)
+            set(DXVK_GIT_URL https://github.com/IonAgorria/dxvk-native)
+            set(DXVK_GIT_TAG "43aedc756cbd620b9ee8b1cf2c17b17cc49b3781")
+        ELSE()
+            set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
+            set(DXVK_GIT_TAG "80e075406b1b7d9d2508c9dc05e9745b3d3cf7e2") # v2.3
+            set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
+        ENDIF()
+        IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
+            SET(DXVK_BUILD_COMMAND meson setup)
+        ENDIF()
+        IF(OPTION_DXVK_SOURCE_DIR)
+            MESSAGE("DXVK Source path provided: ${OPTION_DXVK_SOURCE_DIR}")
+            ExternalProject_Add(dxvk
+                    SOURCE_DIR        ${OPTION_DXVK_SOURCE_DIR}
+                    BUILD_ALWAYS      OFF
+                    CONFIGURE_HANDLED_BY_BUILD ON
+                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ${OPTION_DXVK_SOURCE_DIR} ${DXVK_BUILD_OPTIONS}
+                    BUILD_COMMAND     ninja
+                    INSTALL_COMMAND   ""
+            )
+        ELSE()
+            ExternalProject_Add(dxvk
+                    GIT_REPOSITORY    ${DXVK_GIT_URL}
+                    GIT_TAG           ${DXVK_GIT_TAG}
+                    GIT_SHALLOW       OFF
+                    BUILD_ALWAYS      OFF
+                    CONFIGURE_HANDLED_BY_BUILD ON
+                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk ${DXVK_BUILD_OPTIONS}
+                    BUILD_COMMAND     ninja
+                    INSTALL_COMMAND   ""
+            )
+        ENDIF()
+        ExternalProject_Get_property(dxvk SOURCE_DIR BINARY_DIR)
+        set(DXVK_INCLUDE_DIRS
+                "${SOURCE_DIR}/include/native/directx"
+                "${SOURCE_DIR}/include/native/windows"
+        )
+        IF (MACOS)
+            set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
+        ELSE()
+            set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+        ENDIF()
+
+        INCLUDE_DIRECTORIES("${DXVK_INCLUDE_DIRS}")
+    ENDIF()
+ENDIF()
+
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL)
 
 ADD_SUBDIRECTORY("Source")

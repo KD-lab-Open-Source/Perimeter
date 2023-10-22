@@ -1,6 +1,7 @@
 #include <vector>
 #include "StdAfx.h"
 #include "xutl.h"
+#include "UnitAttribute.h"
 #include "GameContent.h"
 #include "qd_textdb.h"
 

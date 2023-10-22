@@ -1,7 +1,7 @@
 // TEFrame.cpp : implementation file
 //
 
-#include "StdAfx.h"
+#include "StdAfxTriggerEditor.h"
 #include "TEFrame.h"
 #include "resource.h"
 

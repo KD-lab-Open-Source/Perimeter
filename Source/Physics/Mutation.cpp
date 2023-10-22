@@ -1,11 +1,12 @@
+#include <SDL_mixer.h>
 #include "StdAfx.h"
 #include "Mutation.h"
 #include "Runtime.h"
-#include "RigidBody.h"
 #include "terra.h"
 #include "PerimeterSound.h"
 #include "Universe.h"
 #include "Scripts/Mutation.hi"
+#include "RigidBody.h"
 
 static float volume_power = 3;
 static float Volume(float radius) { return 4./3*XM_PI*xm::pow(radius/debuScales.spheres, 3); }

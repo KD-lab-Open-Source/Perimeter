@@ -640,8 +640,8 @@ SingletonPrm<Type>
 /////////////////////////////////////////////////
 //		Регистрация enums
 /////////////////////////////////////////////////
-template<class Enum>
-const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
+//template<class Enum>
+//const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
 
 #define BEGIN_ENUM_DESCRIPTOR(enumType, enumName)	\
 	struct Enum##enumType : EnumDescriptor<enumType> { Enum##enumType(); }; \
@@ -672,16 +672,11 @@ const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
 		return descriptor;	\
 	}
 
-#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
 #define DECLARE_ENUM_DESCRIPTOR(enumType)	\
 	const EnumDescriptor<enumType>& getEnumDescriptor(const enumType& key);
-#endif
-
-
-#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+    
 #define DECLARE_ENUM_DESCRIPTOR_ENCLOSED(nameSpace, enumType)	\
 	const EnumDescriptor<nameSpace::enumType>& getEnumDescriptor(const nameSpace::enumType& key);
-#endif
 
 /////////////////////////////////////////////////
 //	Вспомогательные функции для отображения

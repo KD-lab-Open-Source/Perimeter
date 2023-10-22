@@ -5,7 +5,6 @@ FetchContent_Declare(sokol
         GIT_SHALLOW       OFF
         )
 FetchContent_MakeAvailable(sokol)
-include_directories("${sokol_SOURCE_DIR}/")
 
 IF (OPTION_PROCESS_SHADERS)
     #Download precompiled sokol-shdc
@@ -116,6 +115,20 @@ add_library(RenderSokol STATIC
 IF (OPTION_PROCESS_SHADERS)
     add_dependencies(RenderSokol sokol_shaders)
 ENDIF()
-ADD_DEPENDENCIES(RenderSokol dependencies)
+add_dependencies(RenderSokol dependencies)
+
+target_include_directories(RenderSokol PRIVATE
+        BEFORE .
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+        "${PROJECT_SOURCE_DIR}/Source/Render/src"
+        "${PROJECT_SOURCE_DIR}/Source/Render/client"
+        "${PROJECT_SOURCE_DIR}/Source/Render/tracker"
+        "${sokol_SOURCE_DIR}/"
+)
+
+#Render also needs headers
+target_include_directories(Render PRIVATE "${sokol_SOURCE_DIR}/")
 
 target_link_libraries(RenderSokol PRIVATE ${RenderSokol_LINK_LIBS})

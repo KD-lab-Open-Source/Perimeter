@@ -1,9 +1,4 @@
-INCLUDE_DIRECTORIES(
-        BEFORE .
-        "${PROJECT_SOURCE_DIR}/Source/XTool"
-)
-
-SET(tx3d_SRCS
+add_library(tx3d STATIC
         Clouds.cpp
         Colorizer3DFactory.cpp
         Empty.cpp
@@ -47,5 +42,9 @@ SET(tx3d_SRCS
         WorldLocation3D.cpp
 )
 
-ADD_LIBRARY(tx3d STATIC ${tx3d_SRCS})
+target_include_directories(tx3d PRIVATE
+        BEFORE .
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+)
+
 target_compile_options(tx3d PRIVATE ${PERIMETER_COMPILE_OPTIONS})

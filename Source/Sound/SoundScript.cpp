@@ -1,5 +1,5 @@
 
-#include "StdAfx.h"
+#include "StdAfxSound.h"
 #include <algorithm>
 
 #ifdef _WIN32

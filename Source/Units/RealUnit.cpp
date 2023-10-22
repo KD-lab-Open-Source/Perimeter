@@ -847,7 +847,7 @@ void terUnitReal::ShowInfo()
 	if(selected()){
 		if(attr()->showPath && !BodyPoint->way_points.empty()){
 			Vect3f posPrev = interpolatedPosition();
-			Vect3fList::const_iterator i;
+			std::vector<Vect3f>::const_iterator i;
 			FOR_EACH(BodyPoint->way_points, i){
 				terRenderDevice->DrawLine(posPrev, *i, pathColor);
 				posPrev = *i;

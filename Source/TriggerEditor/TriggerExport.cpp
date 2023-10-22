@@ -7,7 +7,7 @@
 #include <windows.h>
 #endif
 
-#include "StdAfx.h"
+#include "StdAfxTriggerEditor.h"
 #include "XPrmArchive.h"
 #include "codepages/codepages.h"
 #include "TriggerExport.h"

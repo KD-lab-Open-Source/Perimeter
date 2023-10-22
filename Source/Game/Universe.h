@@ -1,6 +1,8 @@
 #ifndef __UNIVERSE_H__
 #define __UNIVERSE_H__
 
+#include "NetConnection.h"
+#include "NetComEventBuffer.h"
 #include "GenericControls.h"
 #include "SafeMath.h"
 #include "HyperSpace.h"

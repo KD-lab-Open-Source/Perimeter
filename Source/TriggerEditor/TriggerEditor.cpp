@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+#include "StdAfxTriggerEditor.h"
 #include "resource.h"
 #include "TriggerExport.h"
 #include "TriggerEditor.h"

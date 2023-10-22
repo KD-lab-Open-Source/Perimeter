@@ -1,6 +1,5 @@
 
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "Config.h"
 #include "Runtime.h"
 #include "terra.h"
@@ -21,6 +20,7 @@
 #include "qd_textdb.h"
 #include "BelligerentSelect.h"
 #include "files/files.h"
+#include "MainMenu.h"
 
 extern MusicPlayer gb_Music;
 extern MissionDescription missionToExec;

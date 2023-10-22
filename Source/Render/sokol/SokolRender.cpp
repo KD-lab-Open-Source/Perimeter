@@ -1,7 +1,7 @@
 #include "StdAfxRD.h"
 #include "xmath.h"
 #include "Umath.h"
-#include "sokol_gfx.h"
+#include <sokol_gfx.h>
 #include "SokolResources.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"

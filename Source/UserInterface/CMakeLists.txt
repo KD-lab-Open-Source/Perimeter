@@ -1,0 +1,65 @@
+add_library(UserInterface STATIC
+        BGScene.cpp
+        chaos.cpp
+        controls.cpp
+        ExternalShow.cpp
+        SourceUIResolution.cpp
+        GameShell.cpp
+        HotKey.cpp
+        Installer.cpp
+        InterfaceScript.cpp
+        LogicUpdater.cpp
+        MissionEdit.cpp
+        PerimeterShellDisp.cpp
+        PerimeterShellUI.cpp
+        ReelManager.cpp
+        SelectManager.cpp
+        ShellCmd.cpp
+        ShellLogDisp.cpp
+        ShellUtils.cpp
+        UserSingleProfile.cpp
+        SCodeInterpreter/Commands.cpp
+        SCodeInterpreter/Containers.cpp
+        SCodeInterpreter/Frame.cpp
+        SCodeInterpreter/Interpreter.cpp
+        SCodeInterpreter/Knowledge.cpp
+        SCodeInterpreter/World.cpp
+        History3D.cpp
+        HistoryScene.cpp
+        HistorySceneCamera.cpp
+        BelligerentSelect.cpp
+        BattleMenu.cpp
+        GraphicsOptions.cpp
+        MainMenu.cpp
+        Menu/SingleMenu.cpp
+        Menu/AddonsMenu.cpp
+        Menu/CommunityMenu.cpp
+        Menu/MultiplayerList.cpp
+        Menu/MultiplayerHost.cpp
+        Menu/MultiplayerJoin.cpp
+        Menu/MultiplayerLobby.cpp
+        MessageBox.cpp
+        MonoSelect.cpp
+        OptionsMenu.cpp
+        Menu/MultiplayerCommon.cpp
+)
+
+target_include_directories(UserInterface PRIVATE
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+        "${PROJECT_SOURCE_DIR}/Source/Render/client"
+        "${PROJECT_SOURCE_DIR}/Source/Scripts"
+        "${PROJECT_SOURCE_DIR}/Source/Terra"
+        "${PROJECT_SOURCE_DIR}/Source/tx3d"
+        "${PROJECT_SOURCE_DIR}/Source/Units"
+        "${PROJECT_SOURCE_DIR}/Source/Network"
+        "${PROJECT_SOURCE_DIR}/Source/Physics"
+        "${PROJECT_SOURCE_DIR}/Source/AI"
+        "${PROJECT_SOURCE_DIR}/Source/XPrm"
+        "${PROJECT_SOURCE_DIR}/Source/Sound"
+        "${PROJECT_SOURCE_DIR}/Source/Game"
+        .
+)
+
+target_compile_options(UserInterface PRIVATE ${PERIMETER_COMPILE_OPTIONS})

@@ -125,7 +125,7 @@ in pkgs.stdenv.mkDerivation {
   
   installPhase = (lib.optionalString flag_dxvk ''
     mkdir -p $out/lib
-    cp Source/dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.so $out/lib;
+    cp dxvk-prefix/src/dxvk-build/src/d3d9/libdxvk_d3d9.so $out/lib;
   '') + ''
     strip -g -x Source/perimeter
     mkdir -p $out/bin

@@ -1,15 +1,3 @@
-INCLUDE_DIRECTORIES(
-        BEFORE .
-        "inc"
-        "src"
-        "client"
-        "tracker"
-        "${PROJECT_SOURCE_DIR}/Source/Util"
-        "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
-        "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
-        "${PROJECT_SOURCE_DIR}/Source/XTool"
-)
-
 SET(Render_SRCS
         src/Unknown.cpp
         src/umath.cpp
@@ -61,9 +49,6 @@ SET(Render_SRCS
 )
 
 IF (OPTION_D3D9)
-    INCLUDE_DIRECTORIES(
-        "D3D"
-    )
     SET(Render_SRCS ${Render_SRCS}
         shader/shaders.cpp
         D3D/AdapterMode.cpp
@@ -75,6 +60,24 @@ IF (OPTION_D3D9)
     )
 ENDIF()
 
+add_library(Render STATIC ${Render_SRCS})
+
+IF (OPTION_D3D9)
+    target_include_directories(Render PRIVATE "D3D")
+ENDIF()
+
+target_include_directories(Render PRIVATE
+        BEFORE .
+        "inc"
+        "src"
+        "client"
+        "tracker"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
+        "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+)
+
 SET(Render_LINK_LIBS PluginMAX)
 
 IF (OPTION_SOKOL)
@@ -82,7 +85,6 @@ IF (OPTION_SOKOL)
     SET(Render_LINK_LIBS ${Render_LINK_LIBS} RenderSokol)
 ENDIF()
 
-ADD_LIBRARY(Render STATIC ${Render_SRCS})
-target_compile_options(Render PRIVATE ${PERIMETER_COMPILE_OPTIONS})
+target_link_libraries(Render PRIVATE ${Render_LINK_LIBS})
 
-TARGET_LINK_LIBRARIES(Render PRIVATE ${Render_LINK_LIBS})
+target_compile_options(Render PRIVATE ${PERIMETER_COMPILE_OPTIONS})

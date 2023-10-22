@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+#include "UnitAttribute.h"
 #include "RealInterpolation.h"
 #include "RealUnit.h"
 #include "Universe.h"

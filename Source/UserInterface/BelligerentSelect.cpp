@@ -1,11 +1,11 @@
 #include "StdAfx.h"
 #include "GameShellSq.h"
 #include "qd_textdb.h"
-#include "BelligerentSelect.h"
 #include "GameShell.h"
 #include "MainMenu.h"
 #include "PerimeterShellUI.h"
 #include "GameContent.h"
+#include "BelligerentSelect.h"
 
 extern std::string getItemTextFromBase(const char *keyStr);
 

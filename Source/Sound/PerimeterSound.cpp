@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "StdAfxSound.h"
 #include "PerimeterSound.h"
 #include "SoundInternal.h"
 #include "../Render/inc/RenderMT.h"

@@ -10,7 +10,7 @@
 // See these sources for detailed information regarding the
 // Microsoft Foundation Classes product.
 
-#include "stdafx.h"
+#include "StdAfxXPrm.h"
 #include "multipad.h"
 
 CMultiPadApp NEAR theApp;

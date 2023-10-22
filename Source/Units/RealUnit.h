@@ -197,8 +197,8 @@ public:
 	
 	void moveToPoint(const Vect3f& v);
 
-	Vect3fList& wayPoints() { return wayPoints_; }
-	const Vect3fList& wayPoints() const { return wayPoints_; }
+    std::vector<Vect3f>& wayPoints() { return wayPoints_; }
+	const std::vector<Vect3f>& wayPoints() const { return wayPoints_; }
 
 	bool isMoving() const { return !BodyPoint->way_points.empty();	}
 	
@@ -262,7 +262,7 @@ protected:
 
 	bool basementInstalled_;
 
-	Vect3fList wayPoints_;
+    std::vector<Vect3f> wayPoints_;
 	terUnitBase* targetUnit_;
 
 	terUnitReal* ownerUnit_;

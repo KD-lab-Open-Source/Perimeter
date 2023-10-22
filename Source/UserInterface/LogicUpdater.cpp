@@ -1,4 +1,6 @@
 #include "StdAfx.h"
+#include "NetConnection.h"
+#include "NetComEventBuffer.h"
 #include "Universe.h"
 #include "MusicManager.h"
 #include "LogicUpdater.h"

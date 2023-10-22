@@ -1,9 +1,9 @@
 #include "StdAfx.h"
-#include "MainMenu.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
 #include <SDL.h>
+#include "MainMenu.h"
 
 std::string openWebURL;
 

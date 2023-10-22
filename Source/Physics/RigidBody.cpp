@@ -1,11 +1,10 @@
 #include "StdAfx.h"
 #include "terra.h"
-#include "RigidBody.h"
-#include "ForceField.h"
 #include "Universe.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
+#include "RigidBody.h"
 
 int RigidBody::IDs;
 
@@ -705,7 +704,7 @@ void RigidBody::show()
 
 	if(showDebugRigidBody.wayPoints && controlled()){
 		Vect3f pos = To3D(position());
-		Vect3fList::iterator i;
+        std::vector<Vect3f>::iterator i;
 		FOR_EACH(way_points, i){
 			Vect3f p=To3D(*i);
 			show_line(pos, p, YELLOW);
