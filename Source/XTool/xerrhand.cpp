@@ -34,7 +34,7 @@ char convBuf[CONV_BUFFER_LEN + 1];
 
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
-#include "boost/stacktrace.hpp"
+#include <boost/stacktrace.hpp>
 
 #endif
 

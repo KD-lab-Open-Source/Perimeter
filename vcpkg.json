@@ -4,8 +4,6 @@
 	"dependencies": [
 		"zlib",
 		"boost-stacktrace",
-		"boost-iterator",
-		"boost-type-index",
 		"libvorbis",
 		"libvpx",
 		"sdl2",

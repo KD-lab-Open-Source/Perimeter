@@ -1,18 +1,8 @@
 #ifndef __SERIALIZATION_IMPL_H__
 #define __SERIALIZATION_IMPL_H__
 
-#include <boost/type_traits/is_pointer.hpp>
-#include <boost/type_traits/is_array.hpp>
-#include <boost/type_traits/is_fundamental.hpp>
-#include <boost/mpl/equal_to.hpp>
-/*
-#include <boost/mpl/apply_if.hpp>
-#include <boost/mpl/identity.hpp>
-*/
 #include "SerializationMacro.h"
 #include "SerializationHelpers.h"
-#include <boost/mpl/int.hpp>
-#include <boost/type_traits/remove_const.hpp>
 #include <list>
 
 #include "RangedWrapper.h"

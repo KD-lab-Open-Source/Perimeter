@@ -10,12 +10,12 @@ RUN add-apt-repository "deb [arch=amd64] http://pkg.mxe.cc/repos/apt buster main
 RUN apt-get update
  
 # Download boost, untar, setup install with bootstrap and install
-RUN cd /work && wget http://downloads.sourceforge.net/project/boost/boost/1.78.0/boost_1_78_0.tar.gz
-RUN cd /work && tar xfvz /work/boost_1_78_0.tar.gz
-RUN rm /work/boost_1_78_0.tar.gz
-RUN cd /work/boost_1_78_0 && ./bootstrap.sh --prefix=/usr/local || true
-RUN cd /work/boost_1_78_0 && ./b2 install || true
-RUN rm -rf /work/boost_1_78_0
+RUN cd /work && wget http://downloads.sourceforge.net/project/boost/boost/1.84.0/boost_1_84_0.tar.gz
+RUN cd /work && tar xfvz /work/boost_1_84_0.tar.gz
+RUN rm /work/boost_1_84_0.tar.gz
+RUN cd /work/boost_1_84_0 && ./bootstrap.sh --prefix=/usr/local || true
+RUN cd /work/boost_1_84_0 && ./b2 install --with-system --with-stacktrace || true
+RUN rm -rf /work/boost_1_84_0
 
 RUN cd /work && git clone https://github.com/ianlancetaylor/libbacktrace.git
 RUN cd /work/libbacktrace && ./configure --host=$CROSS_TRIPLE --prefix=/usr/local --enable-static --disable-shared

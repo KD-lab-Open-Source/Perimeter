@@ -24,8 +24,8 @@ We have several CI in github which can serve as hint and examples.
 - SDL2_net
 - SDL2_mixer
 - FFmpeg (avcodec / avformat / avfilter / avutils / swscale)
-- Boost
 - ZLIB
+- Boost stacktrace (optional)
 
 ### Automatic dependencies
 
