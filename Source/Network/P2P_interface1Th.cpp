@@ -745,12 +745,3 @@ void PNetCenter::StartFindHost()
 	ExecuteInternalCommand(PNC_COMMAND__START_FIND_HOST, true);
 }
 
-void PNetCenter::DisconnectAndStartFindHost()
-{
-	ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, true);
-}
-
-void PNetCenter::StopServerAndStartFindHost()
-{
-	ExecuteInternalCommand(PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_START_FIND_HOST, true);
-}

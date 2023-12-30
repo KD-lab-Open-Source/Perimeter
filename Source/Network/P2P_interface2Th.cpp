@@ -130,17 +130,6 @@ bool PNetCenter::SecondThread()
 					else xassert(0&&"Connecting: command order error(not find host state)");
 				}
 				break;
-			case PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END:
-				{
-					m_bStarted = false;
-
-					///if(m_state==PNC_STATE__CLIENT_TUNING_GAME || m_state==PNC_STATE__CLIENT_LOADING_GAME || m_state==PNC_STATE__CLIENT_GAME){
-					flag_end= true;
-					///}
-					///else xassert(0&&"Disconnect: command order error(not game)");
-				}
-				SetEvent(hCommandExecuted);
-				break;
 			case PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST:
 				{
 					flag_LockIputPacket=0;
@@ -194,27 +183,6 @@ bool PNetCenter::SecondThread()
                 }
                 SetEvent(hCommandExecuted);
                 break;
-			case PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST:
-				{
-					///if(m_state==PNC_STATE__CONNECTION || m_state==PNC_STATE__CLIENT_TUNING_GAME || m_state==PNC_STATE__CLIENT_LOADING_GAME || m_state==PNC_STATE__CLIENT_GAME){
-					///}
-					///else xassert(0&&"Disconnect: command order error(not game)");
-				}
-				//break; !!!Специально!!!
-			case PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_START_FIND_HOST:
-				{
-					m_bStarted = false;
-					if(isConnected()) {
-						Close();
-					}
-                    if (m_state == PNC_STATE__CONNECTION) {
-                        //Avoid calling connect twice until PNC_COMMAND__START_FIND_HOST is processed
-                        m_state = PNC_STATE__CLIENT_FIND_HOST;
-                    }
-                    ExecuteInternalCommand(PNC_COMMAND__START_FIND_HOST, false);
-				}
-				SetEvent(hCommandExecuted);
-				break;
 			case PNC_COMMAND__END_GAME:
 				{
 					m_state=PNC_STATE__ENDING_GAME;
@@ -256,10 +224,6 @@ bool PNetCenter::SecondThread()
 			case PNC_COMMAND__CLIENT_STARTING_LOAD_GAME:
 				{
 					m_state=PNC_STATE__CLIENT_LOADING_GAME;
-				}
-			case PNC_COMMAND__CLIENT_STARTING_GAME:
-				{
-					m_state=PNC_STATE__CLIENT_GAME;
 				}
 			default:
 				SetEvent(hCommandExecuted);
