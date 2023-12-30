@@ -1,5 +1,5 @@
 #include "NetIncludes.h"
-
+#include "NetConnectionAux.h"
 #include "P2P_interface.h"
 
 extern SDL_threadID net_thread_id;
@@ -39,41 +39,6 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 }
 
 
-
-//Запускается из 2 3-го потока
-int PNetCenter::AddClient(PlayerData& pd)
-{
-	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
-    
-    MissionDescription& mission = *hostMissionDescription;
-	int idxPlayerData=-1;
-	if (mission.gameType_ == GT_MULTI_PLAYER_CREATE) {
-		idxPlayerData=mission.connectNewPlayer2PlayersData(pd);
-	} else if(mission.gameType_ == GT_MULTI_PLAYER_LOAD) {
-		idxPlayerData=mission.connectLoadPlayer2PlayersData(pd);
-	}
-	
-    mission.setChanged();
-    
-	if (0 <= idxPlayerData) {
-		//missionDescription.playersData[idxPlayerData].netid=netid;
-		//missionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
-
-		PClientData* pCD=new PClientData(pd.name(), pd.netid);
-		pCD->backGameInf2List.reserve(20000);//резерв под 20000 квантов
-		m_clients.push_back(pCD);
-
-		LogMsg("New client %d %s for game %s\n", idxPlayerData, pd.name(), m_GameName.c_str());
-
-//		netCommand4C_JoinResponse ncjr(netid, NETID_ALL_PLAYERS_GROUP/*m_netidGroupGame*/, NCJRR_OK);
-//		SendEvent(ncjr, netid);
-		return idxPlayerData;
-	} else {
-		LogMsg("Client %s for game %s id denied\n", pd.name(), m_GameName.c_str());
-		return -1;
-	}
-
-}
 //Запускается из 1-го(деструктор) и 2-го потока
 void PNetCenter::ClearClients()
 {
@@ -121,4 +86,10 @@ bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_
 	return 1;
 }
 
+void PNetCenter::ClearInputPacketList() {
+    for (InputPacket* packet : m_InputPacketList) {
+        delete packet;
+    }
+    m_InputPacketList.clear();
+}
 

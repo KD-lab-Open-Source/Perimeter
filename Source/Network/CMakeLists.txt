@@ -5,7 +5,8 @@ add_library(Network STATIC
         ServerList.cpp
         P2P_interface1Th.cpp
         P2P_interface2Th.cpp
-        P2P_interface2ThSDL.cpp
+        P2P_interface2Th_NetConn.cpp
+        P2P_interface2Th_Host.cpp
         P2P_interfaceAnyTh.cpp
         NetConnection.cpp
 )
