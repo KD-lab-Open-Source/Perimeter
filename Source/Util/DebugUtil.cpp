@@ -107,18 +107,18 @@ void ShowDispatcher::Shape::show()
 {
 	switch(type){
 		case Point: {
-			Vect3f vs = G2S(point);
+			Vect3f vs = G2S(point1);
 			if(vs.z > 10)
 				clip_pixel(vs.xi(), vs.yi(), color, 1);
 			} break;
 
 		case Text: {
-			Vect3f vs = G2S(point);
+			Vect3f vs = G2S(point1);
 			terRenderDevice->OutText(vs.xi(), vs.yi(), text, sColor4f(color));
 			} break;
 
 		case Circle: 
-			clip_circle_3D(point, radius, color);
+			clip_circle_3D(point1, radius, color);
 			break;
 
 		case Delta: 

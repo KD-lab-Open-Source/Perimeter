@@ -29,28 +29,17 @@ class ShowDispatcher
 		enum Type { Point, Text, Circle, Delta, Line, Triangle, Quadrangle, ConvexArray };
 		Type type;
 		sColor4c color;
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-		union {
-			struct { Vect3f point; float radius; };
-			struct { Vect3f pointX; const char* text; };
-			struct { Vect3f point1, point2; };
-			struct { int n_points; Vect3f* points; };
-			};
-#else
-		//TODO there is another way to reproduce above code in GCC?
-		Vect3f point;
 		float radius;
 		const char* text;
         Vect3f point1;
         Vect3f point2;
 		int n_points;
 		Vect3f* points;
-#endif
 		static bool isArray(Type type) { return type == Triangle || type == Quadrangle || type == ConvexArray; }
 	public:	
-		Shape(const Vect3f& v, sColor4c color_) { type = Point; point = v; color = color_; }
-		Shape(const Vect3f& v, const char* text_, sColor4c color_) { type = Text; point = v; text = strdup(text_); color = color_; }
-		Shape(const Vect3f& v, float radius_, sColor4c color_) { type = Circle; point = v; radius = radius_; color = color_; }
+		Shape(const Vect3f& v, sColor4c color_) { type = Point; point1 = v; color = color_; }
+		Shape(const Vect3f& v, const char* text_, sColor4c color_) { type = Text; point1 = v; text = strdup(text_); color = color_; }
+		Shape(const Vect3f& v, float radius_, sColor4c color_) { type = Circle; point1 = v; radius = radius_; color = color_; }
 		Shape(const Vect3f& v0, const Vect3f& v1, sColor4c color_, int line) { type = line ? Line : Delta; point1 = v0; point2 = v1; color = color_; }
 		Shape(const Vect3f& v0, const Vect3f& v1, const Vect3f& v2, sColor4c color_) { type = Triangle; points = new Vect3f[n_points = 3]; points[0] = v0; points[1] = v1; points[2] = v2; color = color_; }
 		Shape(const Vect3f& v0, const Vect3f& v1, const Vect3f& v2, const Vect3f& v3, sColor4c color_) { type = Quadrangle; points = new Vect3f[n_points = 4]; points[0] = v0; points[1] = v1; points[2] = v2; points[3] = v3; color = color_; }
