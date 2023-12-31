@@ -138,25 +138,25 @@ int NetConnection::send(const void* buffer, uint32_t len) {
     XBuffer sending_buffer(const_cast<void*>(buffer), len);
     sending_buffer.set(len);
     
-    //Compression
+    //Compression, first thing to do to calculate actual length
     if (len > PERIMETER_MESSAGE_COMPRESSION_SIZE) {
         XBuffer compress_buffer(len, true);
         if (sending_buffer.compress(compress_buffer) == 0)  {
-            sending_buffer = std::move(compress_buffer);
+            sending_buffer = compress_buffer;
             len = sending_buffer.tell();
             flags |= PERIMETER_MESSAGE_FLAG_COMPRESSED;
         }
     }
 
-    //Check len
-    if (len > PERIMETER_MESSAGE_MAX_SIZE) {
+    //Calculate message size
+    int msg_size = static_cast<int>(len + sizeof(NC_HEADER_MAGIC));
+    if (msg_size > PERIMETER_MESSAGE_MAX_SIZE) {
         xassert(0);
-        fprintf(stderr, "TCP send data too big len %d\n", len);
+        fprintf(stderr, "TCP send data too big len %d\n", msg_size);
         return -2;
     }
     
     //Assemble header and data
-    int msg_size = static_cast<int>(len + sizeof(NC_HEADER_MAGIC));
     XBuffer xbuf(msg_size);
     xbuf < NC_HEADER_MAGIC;
     xbuf.set(1);
@@ -167,11 +167,19 @@ int NetConnection::send(const void* buffer, uint32_t len) {
     xbuf.write(sending_buffer, len);
     
     //Send buffer
-    int amount = SDLNet_TCP_Send(socket, xbuf.buf, msg_size);
-    if (amount != msg_size) {
-        fprintf(stderr, "TCP send data failed amount %d msg %d len %d %s\n", amount, msg_size, len, SDLNet_GetError());
+    int sent = 0;
+    while (sent < msg_size) {
+        int amount = SDLNet_TCP_Send(socket, xbuf.buf + sent, msg_size - sent);
+        if (amount < 0) {
+            fprintf(stderr, "TCP send data failed result %d sent %d msg %d len %d %s\n", amount, sent, msg_size, len, SDLNet_GetError());
+            return -3;
+        }
+        sent += amount;
+    }
+    if (sent != msg_size) {
+        fprintf(stderr, "TCP send length mismatch sent %d msg %d len %d %s\n", sent, msg_size, len, SDLNet_GetError());
         close_error();
-        return -3;
+        return -4;
     }
 
     return static_cast<int>(len);
@@ -201,13 +209,23 @@ int NetConnection::receive_raw(void* buffer, uint32_t maxlen, int timeout) {
         */
     }
 
-    int amount = SDLNet_TCP_Recv(socket, buffer, static_cast<int>(maxlen));
-    if (amount <= 0) {
-        fprintf(stderr, "TCP recv failed amount %d maxlen %d %s\n", amount, maxlen, SDLNet_GetError());
-        close_error();
-        return -2;
+    int received = 0;
+    while (received < maxlen) {
+        int amount = SDLNet_TCP_Recv(socket, buffer, static_cast<int>(maxlen));
+        if (amount <= 0) {
+            fprintf(stderr, "TCP recv failed amount %d maxlen %d %s\n", amount, maxlen, SDLNet_GetError());
+            close_error();
+            return -2;
+        }
+        received += amount;
     }
-    return amount;
+    if (received != maxlen) {
+        fprintf(stderr, "TCP recv length mismatch received %d maxlen %d %s\n", received, maxlen, SDLNet_GetError());
+        close_error();
+        return -4;
+    }
+    
+    return received;
 }
 
 int NetConnection::receive(XBuffer& buffer, int timeout) {
@@ -237,8 +255,11 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
     uint32_t data_size = (header >> 24) & 0xFFFFFFFF;
 
     //Ensure is not too big
-    xassert(data_size < PERIMETER_MESSAGE_MAX_SIZE);
-    data_size = std::min(data_size, PERIMETER_MESSAGE_MAX_SIZE);
+    if ((data_size + sizeof(NC_HEADER_MAGIC)) >= PERIMETER_MESSAGE_MAX_SIZE) {
+        xassert(0);
+        fprintf(stderr, "TCP recv header failed too long %lx len %d\n", header, data_size);
+        return -2;
+    }
     
     //(re)allocate it to fit our data
     buffer.alloc(data_size);
