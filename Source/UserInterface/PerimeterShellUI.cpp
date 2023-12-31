@@ -6114,9 +6114,9 @@ void CNetLatencyInfoWindow::draw(int bFocus) {
         //Draw full info
         if (bFocus || on_window) {
             std::string text = fullData;
-#if 1 && defined(PERIMETER_DEBUG)
-            text += "\n\n&FFFFFF" + universe()->GetNetInfo();
-#endif
+            if (gameShell->isDebugKeyHandlerEnabled()) {
+                text += "\n\n&FFFFFF" + universe()->GetNetInfo();
+            }
             pos.y += size.y + margin * 3;
             OutTextRect(0, 0 , text.c_str(), -1, v1, v2);;
             //Round width so it doesn't flicker when text changes fast

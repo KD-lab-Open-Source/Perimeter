@@ -624,7 +624,7 @@ bool terHyperSpace::SingleQuant()
 //}
 
 std::string terHyperSpace::GetNetInfo() {
-    static int rb = 0, sb = 0;
+    static size_t rb = 0, sb = 0;
     static int lastInfoQuant = 0;
     static int lastInfoQuantTime = 0;
     static int quantPerSec = 0;
@@ -632,8 +632,8 @@ std::string terHyperSpace::GetNetInfo() {
     int secondQuant = currentQuant/10;
     if (lastInfoQuant < secondQuant) {
         lastInfoQuant=secondQuant;
-        rb=pNetCenter->in_ClientBuf.getByteReceive();
-        sb=pNetCenter->out_ClientBuf.getByteSending();
+        rb=pNetCenter->in_ClientBuf.byte_receive;
+        sb=pNetCenter->out_ClientBuf.byte_sending;
         quantPerSec=10*1000/(clocki()-lastInfoQuantTime);
         lastInfoQuantTime=clocki();
     }

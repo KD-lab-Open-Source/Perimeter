@@ -230,6 +230,8 @@ public:
 	void toggleScriptReelEnabled() {
 		setScriptReelEnabled(!scriptReelEnabled);
 	}
+    
+    bool isDebugKeyHandlerEnabled() { return EnableDebugKeyHandlers; }
 
 	//-----Network function-----
 	void NetQuant();

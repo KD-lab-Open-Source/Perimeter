@@ -26,9 +26,13 @@ void PNetCenter::clearInOutClientHostBuffers()
 {
 	in_ClientBuf.reset();
 	out_ClientBuf.reset();
+    in_ClientBuf.reset_stats();
+    out_ClientBuf.reset_stats();
 
 	in_HostBuf.reset();
 	out_HostBuf.reset();
+    in_HostBuf.reset_stats();
+    out_HostBuf.reset_stats();
 }
 
 //TestThread
@@ -326,6 +330,8 @@ void PNetCenter::LLogicQuant()
 	//CAutoLock* _pLock=new CAutoLock(&m_GeneralLock);
 	//delete _pLock;
 
+    in_ClientBuf.reset_stats();
+    out_ClientBuf.reset_stats();
 
 	switch(m_state) {
 
