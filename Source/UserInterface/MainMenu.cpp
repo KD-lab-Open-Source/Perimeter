@@ -960,13 +960,17 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						//fill mission list
 						PlayMusic( mainMenuMusic );
-						CComboWindow* diffCombo = (CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_DIFFICULTY_COMBO);
-						diffCombo->pos = gameShell->currentSingleProfile.getDifficulty();
+                        int lastWinnedMissionNumber = 0;
+                        if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
+                            CComboWindow* diffCombo = (CComboWindow*) _shellIconManager.GetWnd(
+                                    SQSH_MM_DIFFICULTY_COMBO);
+                            diffCombo->pos = profile->difficulty;
+                            lastWinnedMissionNumber = profile->lastMissionNumber;
+                        }
 						CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MISSION_LIST);
 						list->NewItem(1);
 						list->Clear();
 
-                        int lastWinnedMissionNumber = gameShell->currentSingleProfile.getLastMissionNumber();
                         if (lastWinnedMissionNumber >= historyScene.missionCount()) {
                             lastWinnedMissionNumber = historyScene.missionCount() - 1;
                         }
@@ -1105,8 +1109,8 @@ int SwitchMenuScreenQuant1( float, float ) {
                 case SQSH_MM_MULTIPLAYER_LIST_SCR:
                     {                        
                         std::string name = getStringSettings(regLanName);
-                        if (name.empty() && gameShell->currentSingleProfile.getCurrentProfileIndex() != -1) {
-                            name = gameShell->currentSingleProfile.getCurrentProfile().name;
+                        if (name.empty() && gameShell->currentSingleProfile.isValidProfile()) {
+                            name = gameShell->currentSingleProfile.getCurrentProfile()->name;
                         }
                         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
                         if (!name.empty()) {

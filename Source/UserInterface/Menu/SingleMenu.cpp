@@ -19,10 +19,10 @@ void onMMSingleButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 void showSingleMenu(CShellWindow* pWnd) {
 //	CShellPushButton* txtWnd = dynamic_cast<CShellPushButton*>(_shellIconManager.GetWnd(SQSH_MM_PROFILE_BTN));
 //	txtWnd->setText(gameShell->currentSingleProfile.getName());
-    if (gameShell->currentSingleProfile.getCurrentProfileIndex() == -1) {
-        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_PROFILE_SCR);
-    } else {
+    if (gameShell->currentSingleProfile.isValidProfile()) {
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_SINGLE_SCR);
+    } else {
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_PROFILE_SCR);
     }
 }
 
@@ -65,7 +65,7 @@ void fillProfileList() {
     for (int i = 0, s = profiles.size(); i < s; i++) {
         list->AddString( profiles[i].name.c_str(), 0 );
     }
-    if (gameShell->currentSingleProfile.getCurrentProfileIndex() != -1) {
+    if (gameShell->currentSingleProfile.isValidProfile()) {
         list->SetCurSel(gameShell->currentSingleProfile.getCurrentProfileIndex());
     } else {
         list->SetCurSel(list->GetItemCount() - 1);
@@ -78,8 +78,10 @@ void onMMProfileList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
         int pos = list->GetCurSel();
         if (pos != -1) {
             gameShell->currentSingleProfile.setCurrentProfileIndex( pos );
-            putStringSettings("ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
-            showSingleMenu(pWnd);
+            if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
+                putStringSettings("ProfileName", profile->name);
+                showSingleMenu(pWnd);
+            }
         }
     }
 }
@@ -132,8 +134,10 @@ void onMMSelectProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
     if ( code == EVENT_UNPRESSED && intfCanHandleInput() && pWnd->isEnabled() ) {
         CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
         gameShell->currentSingleProfile.setCurrentProfileIndex( list->GetCurSel() );
-        putStringSettings("ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
-        showSingleMenu(pWnd);
+        if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
+            putStringSettings("ProfileName", profile->name);
+            showSingleMenu(pWnd);
+        }
     } else if (code == EVENT_DRAWWND) {
         CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
         pWnd->Enable( list->GetCurSel() >= 0 );
@@ -141,7 +145,7 @@ void onMMSelectProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 }
 void onMMBackFromProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-        if (gameShell->currentSingleProfile.getCurrentProfileIndex() != -1) {
+        if (gameShell->currentSingleProfile.isValidProfile()) {
             showSingleMenu(pWnd);
         } else {
             _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_START_SCR);
@@ -287,15 +291,13 @@ void onMMStartMissionButton(CShellWindow* pWnd, InterfaceEventCode code, int par
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         historyScene.stopAudio();
         historyScene.stop();
-//		missionToExec = MissionDescription(
-//				gameShell->currentSingleProfile.getFileNameWithDifficulty( historyScene.getMissionToExecute().fileName ).c_str()
-//			);
         missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMissionToExecute().fileName).c_str() );
 
         //NOTE: should be removed when difficulty will be implemented for each separate player
-//		missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
-        missionToExec.setSinglePlayerDifficulty( gameShell->currentSingleProfile.getDifficulty() );
-        missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
+        if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
+            missionToExec.setSinglePlayerDifficulty(profile->difficulty);
+            missionToExec.getActivePlayerData().setName(profile->name);
+        }
         //NOTE: Setup all names
 
         gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
@@ -358,8 +360,10 @@ void launchCurrentMission(CShellWindow* pWnd) {
         missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(missionNumber).fileName).c_str() );
 
         //NOTE: should be removed when difficulty will be implemented for each separate player
-        missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
-        missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
+        if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
+            missionToExec.setSinglePlayerDifficulty(profile->difficulty);
+            missionToExec.getActivePlayerData().setName(profile->name);
+        }
         //NOTE: Setup all names
 
         gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);

@@ -158,9 +158,9 @@ windowClientSize_(1024, 768)
 
 	currentSingleProfile.scanProfiles();
 	currentSingleProfile.setCurrentProfile(getStringSettings("ProfileName"));
-	if (!MainMenuEnable && currentSingleProfile.getCurrentProfileIndex() == -1) {
-		if (!currentSingleProfile.getProfilesVector().size()) {
-			currentSingleProfile.addProfile("Test");
+	if (!MainMenuEnable && !currentSingleProfile.isValidProfile()) {
+		if (currentSingleProfile.getProfilesVector().empty()) {
+			currentSingleProfile.addProfile("Legate");
 		}
 		currentSingleProfile.setCurrentProfileIndex(0);
 	}
@@ -438,8 +438,10 @@ void GameShell::GameStart(const MissionDescription& mission)
 		PlayerData* data = &CurrentMission.playersData[i];
         std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
-            if (currentSingleProfile.getCurrentProfileIndex() == -1 && currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
-                playerName = currentSingleProfile.getCurrentProfile().name;
+            if (currentSingleProfile.isValidProfile() && currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+                playerName = currentSingleProfile.getCurrentProfile()->name;
+            } else {
+                playerName = getBelligerentName(data->belligerent);
             }
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
             playerName = getBelligerentName(data->belligerent);

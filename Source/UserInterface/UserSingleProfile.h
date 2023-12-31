@@ -28,6 +28,9 @@ class UserSingleProfile {
 		};
 		UserSingleProfile();
 
+        bool isValidProfile() const {
+            return currentProfileIndex >= 0 && currentProfileIndex < profiles.size();
+        }
 		void setDifficulty(Difficulty newDifficulty);
 		void setCurrentMissionNumber(int newMissionNumber);
 		void setLastMissionNumber(int newMissionNumber);
@@ -38,15 +41,13 @@ class UserSingleProfile {
 		void setLastGameType(GameType type) {
 			lastType = type;
 		}
-		Difficulty getDifficulty() const {
-			xassert(currentProfileIndex >= 0 && currentProfileIndex < profiles.size());
-			return profiles[currentProfileIndex].difficulty;
-		}
 		int getCurrentMissionNumber() const {
 			return currentMissionNumber;
 		}
 		int getLastMissionNumber() const {
-			xassert(currentProfileIndex >= 0 && currentProfileIndex < profiles.size());
+            if (!isValidProfile()) {
+                return 0;
+            }
 			return profiles[currentProfileIndex].lastMissionNumber;
 		}
 		bool isLastWin() const {
@@ -58,8 +59,11 @@ class UserSingleProfile {
 
 		void scanProfiles();
 
-		const Profile& getCurrentProfile() const {
-			return profiles[currentProfileIndex];
+		const Profile* getCurrentProfile() const {
+            if (!isValidProfile()) {
+                return nullptr;
+            }
+            return &profiles[currentProfileIndex];
 		}
 		const std::vector<Profile>& getProfilesVector() const {
 			return profiles;
@@ -71,8 +75,6 @@ class UserSingleProfile {
 			return currentProfileIndex;
 		}
 		void setCurrentProfileIndex(int index);
-
-		std::string getFileNameWithDifficulty(const std::string& fileName);
 
 		void deleteSave(const std::string& name);
         static std::string getAllSavesDirectory();
@@ -89,7 +91,7 @@ class UserSingleProfile {
 		int getRecord(const std::string& name);
 
 	protected:
-		bool removeDir(const std::string& dir);
+		static bool removeDir(const std::string& dir);
 		void loadProfile(int index);
 
 		int currentProfileIndex;
@@ -102,6 +104,9 @@ class UserSingleProfile {
 		std::vector<Profile> profiles;
 
 		std::string getProfileIniPath(int index) const {
+            if (index < 0 || index >= profiles.size()) {
+                return "";
+            }
 			return getAllSavesDirectory() + profiles[index].dirName + PATH_SEP + "data";
 		}
 
