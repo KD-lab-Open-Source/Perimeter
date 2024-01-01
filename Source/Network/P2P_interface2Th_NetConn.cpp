@@ -177,43 +177,19 @@ bool PNetCenter::isConnected() const {
 	return flag_connected;
 }
 
-void sendToConnection(const char* buffer, size_t size, NetConnection* connection) {
-    int retries = 5;
-    if (!connection || !connection->is_active()) {
-        return;
-    }
-    while (0 < retries) {
-        int sent = connection->send(buffer, size);
-        if (0 < sent) {
-            return;
-        } else if (!connection->is_active()) {
-            fprintf(stderr, "sendToConnection error sending %lu sent %d to %lu closed\n", size, sent, connection->netid);
-            break;
-        } else {
-            fprintf(stderr, "sendToConnection error sending %lu sent %d to %lu retry %d\n", size, sent, connection->netid, retries);
-            retries--;
-        }
-    }
-}
-
-size_t PNetCenter::Send(const char* buffer, size_t size, NETID destination) {
-    if (destination == NETID_ALL) {
-        for (auto& conn : connectionHandler.getConnections()) {
-            sendToConnection(buffer, size, conn.second);
-        }
+//Out
+size_t PNetCenter::SendNetBuffer(InOutNetComBuffer* netbuffer, NETID destination) {
+    size_t sent = 0;
+    if (destination == m_localNETID || (destination != m_hostNETID && !isHost())) {
+        fprintf(stderr, "Discarding sending %lu -> %lu\n", m_localNETID, destination);
+        //xassert(0);
     } else {
-        if (destination == m_localNETID
-         || (destination != m_hostNETID && !isHost())
-         || destination == NETID_NONE
-        ) {
-            fprintf(stderr, "Discarding sending %lu bytes to %lu from %lu\n", size, destination, m_localNETID);
-            //xassert(0);
-            return size;
-        }
-        sendToConnection(buffer, size, connectionHandler.getConnection(destination));
+        sent = connectionHandler.sendToNETID(reinterpret_cast<uint8_t*>(netbuffer->buf), netbuffer->filled_size, destination);
     }
-
-    return size;
+    netbuffer->init();
+    netbuffer->reset();
+    netbuffer->byte_sending += sent;
+    return sent;
 }
 
 void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {

@@ -519,8 +519,8 @@ public:
     NETID	m_localNETID;
     bool flag_connected;
 
-	void FinishGame(void);
-	void StartFindHost(void);
+	void FinishGame();
+	void StartFindHost();
 
 	bool Init();
     bool ServerStart();
@@ -531,11 +531,11 @@ public:
 	bool Connect();
 
 	bool isConnected() const;
-    size_t Send(const char* buffer, size_t size, NETID destination);
+    size_t SendNetBuffer(InOutNetComBuffer* netbuffer, NETID destination);
 
 	unsigned int flag_LockIputPacket;
-	void LockInputPacket(void);
-	void UnLockInputPacket(void);
+	void LockInputPacket();
+	void UnLockInputPacket();
     void ClearInputPacketList();
 
 	std::list<InputPacket*> m_InputPacketList;

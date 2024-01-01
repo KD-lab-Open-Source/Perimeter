@@ -9,6 +9,7 @@ add_library(Network STATIC
         P2P_interface2Th_Host.cpp
         P2P_interfaceAnyTh.cpp
         NetConnection.cpp
+        NetConnectionHandler.cpp
 )
 
 target_include_directories(Network PRIVATE

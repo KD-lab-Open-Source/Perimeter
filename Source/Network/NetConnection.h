@@ -5,6 +5,7 @@
 #define PERIMETER_IP_HOST_DEFAULT "127.0.0.1"
 const uint32_t PERIMETER_MESSAGE_MAX_SIZE = 32 * 1024 * 1024;
 const uint32_t PERIMETER_MESSAGE_COMPRESSION_SIZE = 128*1024;
+///Specifies this message contains compressed payload
 const uint16_t PERIMETER_MESSAGE_FLAG_COMPRESSED = 1 << 0;
 ///How many milliseconds extra to wait for the data part once getting header
 const int RECV_DATA_AFTER_HEADER_TIMEOUT = 10000;
@@ -14,9 +15,9 @@ const int CONNECTION_HANDSHAKE_TIMEOUT = 10000;
 #include <SDL_net.h>
 
 //Special IDs
-#define NETID_NONE 0
-#define NETID_HOST 1
-#define NETID_ALL 0xFF
+const uint64_t NETID_NONE = 0;
+const uint64_t NETID_HOST = 1;
+const uint64_t NETID_ALL = -1;
 
 //Used to identify player connection
 typedef uint64_t NETID;
@@ -69,11 +70,21 @@ private:
     TCPsocket socket = nullptr;
 
     /**
+     * Sends TCP data into connection
+     * Closes connection upon error
+     * 
+     * @param buffer pointer of data to send over wire
+     * @param len amount of data to read from pointer
+     * @return amount of bytes sent, 0 if none, <0 if error or closed
+     */
+    int send_raw(const void* buffer, uint32_t len);
+
+    /**
      * Receives TCP data from connection if any
      * Closes connection upon error
      * 
      * @param buffer pointer of data to write the received data
-     * @param maxlen max amount of data expected to read 
+     * @param maxlen max amount of data expected to read into buffer
      * @param timeout 0 for no wait, amount of ms to wait until data is available
      * @return amount of bytes received, 0 if none, <0 if error or closed
      */
@@ -140,7 +151,7 @@ public:
      * @param len amount of data to send 
      * @return amount of bytes sent, <0 if error or closed
      */
-    int send(const void* buffer, uint32_t len);
+    int send(const uint8_t* buffer, uint32_t len);
 
     /**
      * Receives data from connection if any
@@ -165,11 +176,12 @@ private:
     size_t max_connections = 0;
     PNetCenter* net_center = nullptr;
     TCPsocket accept_socket = nullptr;
-    typedef std::unordered_map<NETID, NetConnection*> NetConnectionMap;
-    NetConnectionMap connections;
+    std::unordered_map<NETID, NetConnection*> connections;
 
+    void stopListening();
+    void stopConnections();
     NetConnection* newConnectionFromSocket(TCPsocket socket, bool host);
-        
+
 public:    
     explicit NetConnectionHandler(PNetCenter* center);
     ~NetConnectionHandler();
@@ -186,14 +198,17 @@ public:
     /** Polls the connections */
     void pollConnections();
     
+    /** 
+     * Sends buffer data to connection by NETID
+     * @return amount of data sent in total, this can be several times if is NETID_ALL
+     */
+    size_t sendToNETID(const uint8_t* buffer, size_t size, NETID destination);
+    
     //Connection stuff
-    void stopConnections();
-    const NetConnectionMap& getConnections() const;
     NetConnection* getConnection(NETID netid) const;
 
-    //Listening functions
+    //Host related functions
     bool startListening(uint16_t port);
-    void stopListening();
     
     //Single client connection
     NetConnection* startConnection(NetAddress* address);

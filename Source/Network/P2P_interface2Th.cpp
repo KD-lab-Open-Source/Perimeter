@@ -306,7 +306,7 @@ void PNetCenter::SendEvent(netCommandGeneral& event, NETID destination)
 {
     if (destination != m_localNETID ) {
         out_HostBuf.putNetCommand(&event);
-        out_HostBuf.send(*this, destination);
+        SendNetBuffer(&out_HostBuf, destination);
     }
 
     if( (destination == m_localNETID) || (destination == NETID_ALL) ){
@@ -1125,7 +1125,7 @@ void PNetCenter::UnLockInputPacket() {
 
 void PNetCenter::ClientPredReceiveQuant()
 {
-    if(!out_ClientBuf.isEmpty()) out_ClientBuf.send(*this, m_hostNETID);
+    if(!out_ClientBuf.isEmpty()) SendNetBuffer(&out_ClientBuf, m_hostNETID);
 
     if(flag_LockIputPacket) return; //return 0;
     int cnt=0;

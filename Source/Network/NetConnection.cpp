@@ -126,16 +126,37 @@ void NetConnection::close(bool error) {
     }
 }
 
-int NetConnection::send(const XBuffer& data) {
-    return send(data.buf, data.length());
-}
-
-int NetConnection::send(const void* buffer, uint32_t len) {
+int NetConnection::send_raw(const void* buffer, uint32_t len) {
     if (!has_socket()) {
         return -1;
     }
+    if (buffer == nullptr) {
+        ErrH.Abort("Got null buffer in send_raw");
+    }
+
+    int sent = 0;
+    while (sent < len) {
+        int amount = SDLNet_TCP_Send(socket, static_cast<const uint8_t*>(buffer) + sent, static_cast<int>(len) - sent);
+        if (amount < 0) {
+            fprintf(stderr, "TCP send data failed result %d sent %d len %d %s\n", amount, sent, len, SDLNet_GetError());
+            return -3;
+        }
+        sent += amount;
+    }
+
+    return sent;
+}
+
+int NetConnection::send(const XBuffer& data) {
+    return send(reinterpret_cast<const uint8_t*>(data.buf), data.length());
+}
+
+int NetConnection::send(const uint8_t* buffer, uint32_t len) {
+    if (buffer == nullptr) {
+        ErrH.Abort("Got null buffer in send");
+    }
     uint16_t flags = 0;
-    XBuffer sending_buffer(const_cast<void*>(buffer), len);
+    XBuffer sending_buffer(const_cast<uint8_t*>(buffer), len);
     sending_buffer.set(len);
     
     //Compression, first thing to do to calculate actual length
@@ -155,7 +176,7 @@ int NetConnection::send(const void* buffer, uint32_t len) {
         fprintf(stderr, "TCP send data too big len %d\n", msg_size);
         return -2;
     }
-    
+
     //Assemble header and data
     XBuffer xbuf(msg_size);
     xbuf < NC_HEADER_MAGIC;
@@ -166,23 +187,15 @@ int NetConnection::send(const void* buffer, uint32_t len) {
     xbuf.set(8);
     xbuf.write(sending_buffer, len);
     
-    //Send buffer
-    int sent = 0;
-    while (sent < msg_size) {
-        int amount = SDLNet_TCP_Send(socket, xbuf.buf + sent, msg_size - sent);
-        if (amount < 0) {
-            fprintf(stderr, "TCP send data failed result %d sent %d msg %d len %d %s\n", amount, sent, msg_size, len, SDLNet_GetError());
-            return -3;
-        }
-        sent += amount;
-    }
+    int sent = send_raw(xbuf.buf, msg_size);
+
     if (sent != msg_size) {
         fprintf(stderr, "TCP send length mismatch sent %d msg %d len %d %s\n", sent, msg_size, len, SDLNet_GetError());
         close_error();
         return -4;
     }
-
-    return static_cast<int>(len);
+    
+    return sent;
 }
 
 int NetConnection::receive_raw(void* buffer, uint32_t maxlen, int timeout) {
@@ -190,7 +203,9 @@ int NetConnection::receive_raw(void* buffer, uint32_t maxlen, int timeout) {
     if (!has_socket()) {
         return -1;
     }
-    xassert(buffer != nullptr);
+    if (buffer == nullptr) {
+        ErrH.Abort("Got null buffer in receive_raw");
+    }
     
     if (0 <= timeout) {
         int n = SDLNet_CheckSockets(socket_set, timeout);
@@ -211,7 +226,7 @@ int NetConnection::receive_raw(void* buffer, uint32_t maxlen, int timeout) {
 
     int received = 0;
     while (received < maxlen) {
-        int amount = SDLNet_TCP_Recv(socket, buffer, static_cast<int>(maxlen));
+        int amount = SDLNet_TCP_Recv(socket, static_cast<uint8_t*>(buffer) + received, static_cast<int>(maxlen) - received);
         if (amount <= 0) {
             fprintf(stderr, "TCP recv failed amount %d maxlen %d %s\n", amount, maxlen, SDLNet_GetError());
             close_error();
@@ -299,182 +314,4 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
 
     buffer.set(amount);
     return amount;
-}
-
-///////// NetConnectionHandler //////////////
-
-NetConnectionHandler::NetConnectionHandler(PNetCenter* center): net_center(center) {
-    stopConnections();
-}
-
-NetConnectionHandler::~NetConnectionHandler() {
-    reset();
-    net_center = nullptr;
-}
-
-void NetConnectionHandler::reset() {
-    stopListening();
-    stopConnections();
-}
-
-NETID NetConnectionHandler::acceptConnection() {
-    NETID netid = NETID_NONE;
-    if (accept_socket) {
-        TCPsocket incoming_socket = SDLNet_TCP_Accept(accept_socket);
-        if(!incoming_socket) {
-            SDLNet_SetError(nullptr);
-        } else {
-            NetConnection* incoming = nullptr;
-            
-            //Find any closed connection in array
-            bool reused = false;
-            for (auto& entry : connections) {
-                if (entry.second->is_closed()) {
-                    incoming = entry.second; 
-                    incoming->set_socket(incoming_socket);
-                    reused = true;
-                    break;
-                }
-            }
-
-            //Check if we can add it
-            if (!reused) {
-                incoming = newConnectionFromSocket(incoming_socket, false);
-            }
-
-            //incoming may be deallocated if index is not available, so get it before
-            netid = incoming->netid;
-            
-            net_center->handleIncomingClientConnection(incoming);
-        }
-    }
-
-    return netid;
-}
-
-void NetConnectionHandler::pollConnections() {
-    for (auto& entry : connections) {
-        NetConnection* connection = entry.second;
-        switch (connection->state) {
-            case NC_STATE_ACTIVE: {
-                size_t total_recv = 0;
-                while (total_recv < PERIMETER_MESSAGE_MAX_SIZE * 10) {
-                    InputPacket* packet = new InputPacket(connection->netid);
-                    int len = connection->receive(*packet);
-                    if (0 < len) {
-                        net_center->m_InputPacketList.push_back(packet);
-                        total_recv += len;
-                    } else {
-                        delete packet;
-                        break;
-                    }
-                }
-                break;
-            }
-            case NC_STATE_ERROR_PENDING:
-            case NC_STATE_CLOSE_PENDING: {
-                net_center->DeleteClient(connection->netid, false);
-                //Mark it as closed, since we processed the client
-                connection->state = NC_STATE_CLOSED;
-                break;
-            }
-            default:
-                break;
-        }
-    }
-}
-
-void NetConnectionHandler::stopConnections() {
-    for (auto& entry : connections) {
-        NetConnection* conn = entry.second;
-        conn->close();
-        delete conn;
-    }
-    connections.clear();
-}
-
-const NetConnectionHandler::NetConnectionMap& NetConnectionHandler::getConnections() const {
-    return connections;
-}
-
-NetConnection* NetConnectionHandler::getConnection(NETID netid) const {
-    NetConnection* conn = nullptr;
-    if (connections.count(netid)) {
-        NetConnection* candidate = connections.at(netid);
-        if (!candidate->is_closed()) {
-            conn = candidate;
-        }
-    }
-    return conn;
-}
-
-bool NetConnectionHandler::startListening(uint16_t port) {
-    stopListening();
-    stopConnections();
-    
-    if (gb_RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
-        max_connections = NETWORK_PLAYERS_MAX;
-    } else {
-        //Remove one since host is player too
-        max_connections = NETWORK_PLAYERS_MAX - 1;
-    }
-
-    IPaddress addr;
-    addr.host = INADDR_ANY;
-    SDLNet_Write16(port, &addr.port);
-
-    accept_socket = SDLNet_TCP_Open(&addr);
-    if (accept_socket == nullptr) {
-        fprintf(stderr, "TCP listen failed on port %d error %s\n", port, SDLNet_GetError());
-        return false;
-    } else {
-        LogMsg("TCP listening on port %d\n", port);
-    }
-    return true;
-}
-
-void NetConnectionHandler::stopListening() {
-    if (accept_socket) {
-        LogMsg("TCP listen socket closed\n");
-        SDLNet_TCP_Close(accept_socket);
-        accept_socket = nullptr;
-    }
-}
-
-NetConnection* NetConnectionHandler::startConnection(NetAddress* address) {
-    stopListening();
-    stopConnections();
-    
-    max_connections = 1;
-
-    TCPsocket socket = SDLNet_TCP_Open(&address->addr);
-	if (!socket) {
-        fprintf(stderr, "TCP socket open failed address %s error %s\n", address->getString().c_str(), SDLNet_GetError());
-        return nullptr;
-	}
-    
-    NetConnection* connection = newConnectionFromSocket(socket, true);
-    if (connection->netid != NETID_NONE) {
-        return connection;
-    } else {
-        fprintf(stderr, "Error allocating new connection\n");
-        connection->close();
-        delete connection;
-        return nullptr;
-    }
-}
-
-NetConnection* NetConnectionHandler::newConnectionFromSocket(TCPsocket socket, bool host) {
-    NetConnection* connection = new NetConnection(socket);
-    if (connections.size() < max_connections) {
-        NETID netid;
-        if (host) {
-            netid = NETID_HOST;
-        } else {
-            netid = NETID_HOST + connections.size() + 1;
-        }
-        connection->netid = netid;
-        connections.insert_or_assign(netid, connection);
-    }
-    return connection;
 }

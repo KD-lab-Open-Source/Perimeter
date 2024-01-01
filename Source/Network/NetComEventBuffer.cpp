@@ -47,32 +47,6 @@ void InOutNetComBuffer::reset()
 	event_ID = NETCOM_ID_NONE;
 }
 
-
-//Out
-int InOutNetComBuffer::send(PNetCenter& conn, NETID destination)
-{
-///	Тест 
-///	unsigned int size=filled_size;
-///	unsigned int msize=size;
-///	while(msize>0){
-///		int sizeEvent=*((event_size_t*)(&buf[size-msize])) + sizeof(size_of_event);
-///		xassert(sizeEvent<=msize);
-///		msize-=sizeEvent;
-///	}
-///	xassert(msize==0);
-
-
-	unsigned int sent=0; 
-	while(sent < filled_size){ // implicit == // подразумевается ==
-		sent+=conn.Send(buf+sent, filled_size-sent, destination);
-	};
-	xassert(filled_size==sent);
-	init();
-	reset();
-	byte_sending+=sent;
-	return sent;
-}
-
 //Out
 void InOutNetComBuffer::putNetCommand(const netCommandGeneral* event)
 {
@@ -113,16 +87,6 @@ void InOutNetComBuffer::clearBufferOfTheProcessedCommands(void)
 
 bool InOutNetComBuffer::putBufferPacket(char* buf, unsigned int size)
 {
-///	Test
-///	unsigned int msize=size;
-///	unsigned char* mbuf=buf;
-///	while(msize>0){
-///		int sizeEvent=*((event_size_t*)(&buf[size-msize])) + sizeof(size_of_event);
-///		xassert(sizeEvent<=msize);
-///		msize-=sizeEvent;
-///	}
-///	xassert(msize==0);
-
 	clearBufferOfTheProcessedCommands();
 	if(length()-filled_size < size) {
 		xassert(0 && "Net input buffer is small.");
