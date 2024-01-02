@@ -29,9 +29,6 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 }
 #endif
 
-#define CONV_BUFFER_LEN	63
-char convBuf[CONV_BUFFER_LEN + 1];
-
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
 #include <boost/stacktrace.hpp>
@@ -59,6 +56,9 @@ XErrorHandler ErrH;
 
 //All the Win32 on x86/64 specific error handling
 #ifdef USE_ORIGINAL_HANDLER
+#define CONV_BUFFER_LEN	63
+char convBuf[CONV_BUFFER_LEN + 1];
+
 void win32_break(const char* error,char* msg) {
     std::cerr << "--------------------------------\n";
     std::cerr << error << "\n";

@@ -127,7 +127,7 @@ public:
 
 	int playersAmountScenarioMax() const { return playerAmountScenarioMax; }
 	int playersAmount() const;
-	int playersMaxEasily() const;
+	int playerSlotsAvailable() const;
 
 	void packPlayerIDs();
 

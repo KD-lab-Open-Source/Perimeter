@@ -23,11 +23,8 @@ int firstMissionNumber = 0;
 
 static std::map<std::string, ModMetadata> gameMods;
 
-///The identified content at the root of game content, this only can be one thing 
 GAME_CONTENT terGameContentBase = CONTENT_NONE;
-///All available contents in this installation (base + addons)
 GAME_CONTENT terGameContentAvailable = CONTENT_NONE;
-///Current selected content, can be several or only one in available content (when user chooses one)
 GAME_CONTENT terGameContentSelect = CONTENT_NONE;
 
 std::map<std::string, ModMetadata>& getGameMods() {

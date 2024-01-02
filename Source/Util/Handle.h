@@ -113,7 +113,7 @@ public:
 #endif
 
 	SERIALIZE(ar) {
-		ar & makeObjectWrapper(ptr, 0, 0);
+		ar & WRAP_VALUE(ptr);
 	}
 
 private:

@@ -124,7 +124,7 @@ size_t XBuffer::write(const void* s, size_t len, bool bin_flag)
 XBuffer& XBuffer::operator< (const char* v) 
 { 
 	if(v) 
-		write(v, strlen(v), 0); 
+		write(v, strlen(v), false); 
 	return *this; 
 }
 

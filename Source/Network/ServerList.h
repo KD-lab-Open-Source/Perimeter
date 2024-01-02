@@ -1,63 +1,49 @@
 #ifndef PERIMETER_SERVERLIST_H
 #define PERIMETER_SERVERLIST_H
 
-//Contains game related parameters
-struct GameStatusInfo {
+//Contains info about host/room and game itself
+struct GameInfo {
+    ///Address of game server or relay server to connect
+    std::string gameHost = {};
+    ///Room ID for relay, if 0 then gameHost is considered a normal game server
+    NetRoomID gameRoomID = 0;
+    
+    //Game info
+    std::string gameName = {};
+    std::string gameVersion = {};
     uint8_t maximumPlayers = 0;
-    uint8_t currrentPlayers = 0;
-    bool flag_gameRun = false;
-    int ping = 0;
-    std::string world;
-
-    GameStatusInfo() = default;
-
-    GameStatusInfo(uint8_t _maxPlayers, uint8_t _curPlayers, bool _flag_gameRun, int _ping, const std::string& world): GameStatusInfo() {
-        set(_maxPlayers, _curPlayers, _flag_gameRun, _ping, world);
-    }
-
-    void set(uint8_t _maxPlayers, uint8_t _curPlayers, bool _flag_gameRun, int _ping, const std::string& _world) {
-        maximumPlayers=_maxPlayers;
-        currrentPlayers=_curPlayers;
-        flag_gameRun=_flag_gameRun;
-        ping=_ping;
-        world=_world;
-    }
-};
-
-//Contains info about host and game inside host
-struct GameHostInfo {
-    NetAddress gameHost;
-    std::string hostName;
-    std::string gameName;
-    GameStatusInfo gameStatusInfo;
-
-    GameHostInfo() = default;
-
-    GameHostInfo(const NetAddress* _gameHost, const char * _hostName, const char * _gameName, const GameStatusInfo* gsi): GameHostInfo() {
-        set(_gameHost, _hostName, _gameName, gsi);
-    }
-
-    void set(const NetAddress* _gameHost, const char * _hostName, const char * _gameName, const GameStatusInfo* gsi){
-        if (_gameHost) gameHost = *_gameHost;
-        if (_hostName) hostName = _hostName;
-        if (_gameName) gameName = _gameName;
-        if (gsi) gameStatusInfo = *gsi;
-    }
+    uint8_t currentPlayers = 0;
+    bool hasPassword = false;
+    bool gameStarted = false;
+    bool gameClosed = false;
+    uint32_t ping = 0;
+    std::string scenario = {};
+    GAME_CONTENT gameContent = CONTENT_NONE;
 };
 
 class ServerList {
 private:
     bool findingHosts = false;
+    NetConnection* relayConnection = nullptr;
+    ///List updated from 2nd thread with data from relay
+    std::vector<GameInfo> lastRelayGameInfoList = {};
+    uint32_t lastRelayFetch = 0;
+    ///List updated from other lists in 1st thread
+    std::vector<GameInfo> gameInfoList = {};
+    ///Flag to know if gameHostInfoList needs updating
+    bool listNeedUpdate = false;
+
+    bool checkRelayConnection();
 
 public:
-    std::vector<GameHostInfo> gameHostInfoList{};
-    
     ServerList();
     ~ServerList();
-    void startHostFind();
-    void stopHostFind();
-    void clearHostInfoList();
+    void startFind();
+    void stopFind();
+    void fetchRelayHostInfoList();
     void refreshHostInfoList();
+    
+    const std::vector<GameInfo>& getList() const { return gameInfoList; };
 };
 
 #endif //PERIMETER_SERVERLIST_H

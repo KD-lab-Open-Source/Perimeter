@@ -4,6 +4,8 @@
 #include "MessageBox.h"
 #include "MultiplayerCommon.h"
 #include "MainMenu.h"
+#include "ServerList.h"
+#include "GameContent.h"
 
 ///Command line stuff
 
@@ -16,50 +18,56 @@ int exitCmdLine( float, float ) {
 
 int startCmdlineQuant(float, float ) {
     if (menuChangingDone) {
-        gameShell->createNetClient();
+        gameShell->prepareNetClient();
         
-        auto client = gameShell->getNetClient();
-        client->publicServerHost = cmdLineData.publicHost;
-
         NetAddress conn;
-        if (!NetAddress::resolve(conn, cmdLineData.address)) {
+        bool resolved;
+        if (cmdLineData.address.empty() && cmdLineData.roomID != 0) {
+            resolved = !getNetRelayAddress(conn);
+        } else {
+            resolved = NetAddress::resolve(conn, cmdLineData.address, cmdLineData.addressDefaultPort);
+        }
+        if (!resolved) {
             setMessageBoxTextID("Interface.Menu.Messages.IPEmpty");
             showMessageBoxButtons();
-        } else {
-            //This forces initializing stuff required by game
-            _shellIconManager.initialMenu = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
-            if (cmdLineData.server) {
-                loadMultiplayerList();
-                if (multiplayerMaps.empty()) {
-                    setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
-                    showMessageBoxButtons();
-                } else {
-                    setMessageBoxTextID("Interface.Menu.Messages.Creating");
-                    std::string gameName;
-                    if (cmdLineData.roomName.empty()) {
-                        gameName = cmdLineData.playerName;
-                    } else {
-                        gameName = cmdLineData.roomName;
-                    }
-                    MissionDescription* mission;
-                    if (cmdLineData.save.empty()) {
-                        std::string missionName = std::string("RESOURCE/MULTIPLAYER/") + multiplayerMaps[0].missionName();
-                        mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_CREATE);
-                    } else {
-                        std::string missionName = std::string("RESOURCE/SAVES/MULTIPLAYER/") + cmdLineData.save;
-                        mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_LOAD);
-                        mission->loadIntoMemory();
-                    }
-                    _shellIconManager.initialMenu = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
-                    gameShell->getNetClient()->CreateGame(conn, gameName, mission, cmdLineData.playerName, cmdLineData.password);
-                    showMessageBoxButtons();
-                }
-            } else {
-                gameShell->getNetClient()->JoinGame(conn, cmdLineData.playerName, cmdLineData.password);
-                showMessageBoxButtons();
-            }
+            return 0;
         }
         
+        //This forces initializing stuff required by game
+        _shellIconManager.initialMenu = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
+        if (cmdLineData.server) {
+            loadMultiplayerList();
+            if (multiplayerMaps.empty()) {
+                setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
+                showMessageBoxButtons();
+            } else {
+                setMessageBoxTextID("Interface.Menu.Messages.Creating");
+                std::string gameName;
+                if (cmdLineData.roomName.empty()) {
+                    gameName = cmdLineData.playerName;
+                } else {
+                    gameName = cmdLineData.roomName;
+                }
+                MissionDescription* mission;
+                if (cmdLineData.save.empty()) {
+                    std::string missionName = std::string("RESOURCE/MULTIPLAYER/") + multiplayerMaps[0].missionName();
+                    mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_CREATE);
+                } else {
+                    std::string missionName = std::string("RESOURCE/SAVES/MULTIPLAYER/") + cmdLineData.save;
+                    mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_LOAD);
+                    mission->loadIntoMemory();
+                }
+                _shellIconManager.initialMenu = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
+                gameShell->getNetClient()->CreateGame(cmdLineData.publicHost, conn, gameName, mission, cmdLineData.playerName, cmdLineData.password);
+                showMessageBoxButtons();
+            }
+        } else if (cmdLineData.roomID != 0) {
+            gameShell->getNetClient()->JoinPublicRoomGame(conn, cmdLineData.roomID, cmdLineData.playerName, cmdLineData.password);
+            showMessageBoxButtons();
+        } else {
+            gameShell->getNetClient()->JoinDirectGame(conn, cmdLineData.playerName, cmdLineData.password);
+            showMessageBoxButtons();
+        }
         return 0;
     }
     return 1;
@@ -84,125 +92,251 @@ void GameShell::startCmdline(const CommandLineData& data) {
 
 /// Game hosts listing
 
-NetAddress selectedHost;
+GameInfo selectedGame = {};
 
-std::string formatGameInfo(const GameHostInfo& info, bool oneLine) {
-    if (info.gameName.empty()) {
-        if (oneLine) {
-            return "&FF0000" + info.hostName;
-        } else {
-            return qdTextDB::instance().getText("Interface.Tips.MultiplayerInfoServerEmpty");
-        }
+bool hasGameListSelection() {
+    return !selectedGame.gameHost.empty();
+}
+
+void selectGameInfo(const GameInfo* game) {
+    if (game) {
+        selectedGame = *game;
     } else {
-        static char cbTemp[1024];
-        if (oneLine) {
-            std::string name = info.gameName + "&FFFFFF";
-            if (!info.hostName.empty()) {
-                name += ":" + info.hostName + ":";
-            }
-            _shellIconManager.FormatMessageText(
-                    "<MultiplayerInfoOneLine>",
-                    cbTemp,
-                    name.c_str(),
-                    info.gameStatusInfo.currrentPlayers,
-                    info.gameStatusInfo.maximumPlayers,
-                    info.gameStatusInfo.ping,
-                    info.gameStatusInfo.flag_gameRun ? qdTextDB::instance().getText("Interface.Tips.MultiplayerInfoStarted") : "");
-        } else {
-            _shellIconManager.FormatMessageText(
-                    "<MultiplayerInfo>",
-                    cbTemp,
-                    (info.gameName + "&FFFFFF").c_str(),
-                    info.gameStatusInfo.currrentPlayers,
-                    info.gameStatusInfo.maximumPlayers,
-                    info.gameStatusInfo.ping,
-                    info.hostName.c_str(),
-                    info.gameStatusInfo.flag_gameRun ? qdTextDB::instance().getText("Interface.Tips.MultiplayerInfoStarted") : "");
-        }
-        return cbTemp;
+        selectedGame = GameInfo();
     }
 }
 
-void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-    if (code == EVENT_CREATEWND) {
-//		CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_GAME_LIST));
-        CListBoxWindow* list = (CListBoxWindow*)pWnd;
-        list->NewItem(1);
-        list->Clear();
-    } else if (code == EVENT_DRAWWND) {
-//		CListBoxWindow* listBox = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_GAME_LIST));
-        CListBoxWindow* listBox = (CListBoxWindow*)pWnd;
-        listBox->Clear();
-
-        auto hostList = gameShell->getNetClient()->getGameHostList();
-        if (!hostList.empty()) {
-
-            GameHostInfo& selectedGame = hostList.front();
-            int selectIndex = 0;
-            int i = 0;
-            for (auto it = hostList.begin(); it != hostList.end(); it++, i++) {
-                std::string name = formatGameInfo(*it, true);
-                listBox->AddString( name.c_str(), 0 );
-                if ((*it).gameHost.crc() == selectedHost.crc()) {
-                    selectedGame = *it;
-                    selectIndex = i;
-                }
-            }
-            listBox->SetCurSel(selectIndex);
-            if (selectIndex == 0) {
-                selectedHost = selectedGame.gameHost;
-            }
-            int id = getMultiplayerMapNumber(selectedGame.gameStatusInfo.world);
-            ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP))->setWorldID(id);
-            ((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP_DESCR_TXT))->setText(formatGameInfo(selectedGame, false) );
-            ((CShellPushButton*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN))->Enable(!selectedGame.gameName.empty());
+std::string formatGameInfo(const GameInfo& info, bool oneLine) {
+    std::string text;
+    if (oneLine) {
+        if (info.gameClosed || info.gameStarted || info.gameVersion != currentShortVersion) {
+            text += "&FF2222";
+        } else if (info.hasPassword) {
+            text += "&66DDFF";
         } else {
-            ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP))->setWorldID(-1 );
-            ((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP_DESCR_TXT))->setText("" );
-            ((CShellPushButton*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN))->Enable(0);
+            text += "&FFFFFF";
         }
-    } else if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
-        CListBoxWindow* listBox = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_GAME_LIST);
-        int pos = listBox->GetCurSel();
-        if (pos >= 0 && pos < gameShell->getNetClient()->getGameHostList().size()) {
-            std::vector<GameHostInfo>::iterator it = gameShell->getNetClient()->getGameHostList().begin();
-            advance(it, pos);
-            selectedHost = (*it).gameHost;
-            
-            int id = getMultiplayerMapNumber((*it).gameStatusInfo.world);
-            ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP))->setWorldID(id);
-            ((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP_DESCR_TXT))->setText(formatGameInfo(*it, false) );
+        text += info.gameName;
+        text += " (" + std::to_string(info.currentPlayers);
+        text += "/" + std::to_string(info.maximumPlayers);
+        text += " - " + std::to_string(info.ping) + " ms)";
+    } else {
+        text += "&FFFFFF";
+        text += info.gameName;
+        text += "\n";
+        if (info.hasPassword) {
+            text += "&66DDFF";
+            text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.HasPassword");
+            text += "\n";
         }
+        if (info.gameStarted) {
+            text += "&FF2222";
+            text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.GameStarted");
+            text += "\n";
+        }
+
+        //Show content name, only the first of array
+        std::vector<GAME_CONTENT> gameContent = getGameContentEnums(selectedGame.gameContent);
+        if (!gameContent.empty()) {
+            GAME_CONTENT content = gameContent.front();
+            if (terGameContentSelect & content) {
+                text += "&FFFFFF";
+            } else {
+                text += "&FF2222";
+            }
+            text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.Game");
+            text += ":\n";
+            text += getGameContentName(content);
+        }
+        
+        //Show version
+        if (info.gameVersion == currentShortVersion) {
+            text += "&FFFFFF";
+        } else {
+            text += "&FF2222";
+        }
+        text += " - " + info.gameVersion + "\n";
+        
+        //Show map
+        text += "&FFFFFF";
+        text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.Map");
+        text += ": " + info.scenario + "\n";
+        
+        //Show players
+        if (info.currentPlayers < info.maximumPlayers) {
+            text += "&FFFFFF";
+        } else {
+            text += "&FF2222";
+        }
+        text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.CurrentPlayers");
+        text += ": " + std::to_string(info.currentPlayers);
+        text += " / " + std::to_string(info.maximumPlayers);
+        
+        //Show ping
+        text += "\n&FFFFFF";
+        text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.Ping");
+        text += ": " + std::to_string(info.ping) + "\n";
     }
+    return text;
 }
 
-///Join handler
+bool canJoinSelectedGame() {
+    return hasGameListSelection()
+    && !selectedGame.gameClosed && !selectedGame.gameStarted
+    && (selectedGame.currentPlayers < selectedGame.maximumPlayers)
+    && selectedGame.gameVersion == currentShortVersion
+    ;
+}
 
-extern int multiplayerJoinBackHandler(float, float);
+void updateMultiplayerListUI() {
+    bool hasSelection = hasGameListSelection();
+    
+    //Set map window
+    int mapPos = hasSelection ? getMultiplayerMapNumber(selectedGame.scenario) : -1;
+    if (0 <= mapPos && mapPos < multiplayerMaps.size()) {
+        setupMapDescWnd(mapPos, multiplayerMaps, SQSH_MM_MULTIPLAYER_LIST_MAP, -1, -1, GT_MULTI_PLAYER_CREATE);
+    } else {
+        ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP))->setWorldID( hasSelection ? -2 : -1 );
+    }
+    
+    //Set server description
+    dynamic_cast<CTextWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP_DESCR_TXT))->setText(
+            hasSelection ? formatGameInfo(selectedGame, false) : ""
+    );
+    
+    //Set join enable button state
+    ((CShellPushButton*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN))->Enable(canJoinSelectedGame());
+}
 
-int joinQuant( float, float ) {
+int multiplayerListJoinQuant( float, float ) {
     if (menuChangingDone) {
-        CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-        gameShell->getNetClient()->JoinGame(selectedHost, input->GetText());
+        if (!hasGameListSelection() || selectedGame.gameClosed) {
+            int id = _shellIconManager.getVisibleMenuScr();
+            if (id == SQSH_MM_MULTIPLAYER_LIST_SCR) {
+                gameShell->prepareNetClient();
+            } else {
+                _shellIconManager.SwitchMenuScreens(LAST_VISIBLE, SQSH_MM_MULTIPLAYER_LIST_SCR);
+            }
+            return 0;
+        }
+        std::string name = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT))->getText();
+        std::string password;
+        if (selectedGame.hasPassword) {
+            //Player had to go through SQSH_MM_MULTIPLAYER_PASSWORD_SCR so pickup the password from it's input
+            CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_PASSWORD_PASSWORD_INPUT));
+            password = passwordInput->getText();
+        }
+        NetAddress conn;
+        if (!NetAddress::resolve(conn, selectedGame.gameHost, NET_RELAY_DEFAULT_PORT)) {
+            setMessageBoxTextID("Interface.Menu.Messages.IPEmpty");
+            showMessageBoxButtons();
+        } else if (selectedGame.gameRoomID != 0) {
+            gameShell->getNetClient()->JoinPublicRoomGame(conn, selectedGame.gameRoomID, name, password);
+        } else {
+            gameShell->getNetClient()->JoinDirectGame(conn, name, password);
+        }
         return 0;
     }
     return 1;
 }
 
+///Code to run when game is doble clicked in list or join button is pressed
+void joinSelectedGame(CShellWindow* pWnd) {
+    if (!hasGameListSelection()) {
+        return;
+    }
+    CEditWindow* input = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT));
+    if (input->isEmptyText()) {
+        setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
+        showMessageBox();
+    } else {
+        putStringSettings(regLanName, input->getText());
+
+        if (selectedGame.hasPassword) {
+            dynamic_cast<CTextWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_PASSWORD_NAME_TXT))->setText(selectedGame.gameName);
+            _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_MULTIPLAYER_PASSWORD_SCR);
+        } else {
+            setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_OK, false);
+            showMessageBox();
+            _shellIconManager.AddDynamicHandler( multiplayerListJoinQuant, CBCODE_QUANT );
+        }
+    }
+}
+
+void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if (code == EVENT_CREATEWND) {
+        CListBoxWindow* listBox = dynamic_cast<CListBoxWindow*>(pWnd);
+        listBox->NewItem(1);
+        listBox->Clear();
+    } else if (code == EVENT_DRAWWND) {
+        CListBoxWindow* listBox = dynamic_cast<CListBoxWindow*>(pWnd);
+        listBox->Clear();
+
+        auto gameList = gameShell->getNetClient()->getGameList();
+        bool hasSelection = hasGameListSelection();
+        if (!gameList.empty()) {
+            int selectIndex = -1;
+            int i = 0;
+            for (auto& game : gameList) {
+                std::string name = formatGameInfo(game, true);
+                listBox->AddString(name.c_str(), 0);
+                if (hasSelection && selectIndex == -1) {
+                    if (game.gameHost == selectedGame.gameHost
+                    && game.gameRoomID == selectedGame.gameRoomID) {
+                        selectIndex = i;
+                        selectGameInfo(&game);
+                    }
+                }
+                i++;
+            }
+            listBox->SetCurSel(selectIndex);
+            if (hasSelection) {
+                if (selectIndex == -1) {
+                    //No longer in list
+                    selectGameInfo(nullptr);
+                }
+                updateMultiplayerListUI();
+            }
+        } else {
+            selectGameInfo(nullptr);
+            updateMultiplayerListUI();
+        }
+    } else if ( code == EVENT_DOUBLECLICK && param == VK_LBUTTON) {
+        if (canJoinSelectedGame()) {
+            joinSelectedGame(pWnd);
+        }
+    } else if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
+        CListBoxWindow* listBox = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_GAME_LIST);
+        int pos = listBox->GetCurSel();
+        auto gameList = gameShell->getNetClient()->getGameList();
+        if (0 <= pos && pos < gameList.size()) {
+            std::vector<GameInfo>::iterator it = gameList.begin();
+            advance(it, pos);
+            selectGameInfo(&(*it));
+        } else {
+            selectGameInfo(nullptr);
+        }
+        updateMultiplayerListUI();
+    }
+}
+
 void onMMMultiplayerListJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-        CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-        if (input->isEmptyText()) {
-            setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
-            showMessageBox();
-        } else {
-            putStringSettings(regLanName, input->getText());
+        joinSelectedGame(pWnd);
+    }
+}
 
-            setupOkMessageBox(multiplayerJoinBackHandler, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT, false);
-            showMessageBox();
 
-            _shellIconManager.AddDynamicHandler( joinQuant, CBCODE_QUANT );
+///Password screen handlers
+
+void onMMMultiplayerPasswordNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
+        if (!hasGameListSelection()) {
+            return;
         }
+        setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_OK, false);
+        showMessageBox();
+        _shellIconManager.AddDynamicHandler(multiplayerListJoinQuant, CBCODE_QUANT);
     }
 }
 
@@ -224,7 +358,7 @@ void onMMMultiplayerListCreateButton(CShellWindow* pWnd, InterfaceEventCode code
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
         if (input->isEmptyText()) {
-            setupOkMessageBox(0, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
+            setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
             showMessageBox();
         } else {
             if (!input->isEmptyText()) {

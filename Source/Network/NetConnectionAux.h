@@ -10,12 +10,13 @@ extern const char* currentShortVersion;
 #define ATTRIBUTES_CRC_ARCHIVE BinaryOArchive
 
 ///First packet sent upon connection
-typedef uint64_t arch_flags;
 const uint32_t NC_INFO_ID = 0xF8C20001;
 class NetConnectionInfo {
 private:
     //Header
+    ///Must be NC_INFO_ID to identify this
     uint32_t id = 0;
+    ///CRC of version string
     uint32_t versionCRC = 0;
     //Content
     arch_flags arch = 0;
@@ -88,7 +89,7 @@ public:
         //Arch - 60-61 bits (0 = under 32, 1 = 32, 2 = 64, 3 = above 64)
         cpu |= (sizeof(void*) / 4) & 3;
         //CPU endianness - 63 bit
-#ifdef SDL_BIG_ENDIAN
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
         cpu |= 1<<3;
 #endif
         xassert(cpu <= 0xF);
@@ -182,19 +183,6 @@ public:
 ///Reply from sConnectInfo
 const uint32_t NC_INFO_REPLY_ID = 0x47C3FE65;
 struct NetConnectionInfoResponse {
-    enum e_ConnectResult{
-        CR_NONE,
-        CR_OK,
-        CR_ERR_INCORRECT_SIGNATURE,
-        CR_ERR_INCORRECT_ARCH,
-        CR_ERR_INCORRECT_VERSION,
-        CR_ERR_INCORRECT_CONTENT,
-        CR_ERR_INCORRECT_CONTENT_FILES,
-        CR_ERR_INCORRECT_PASWORD,
-        CR_ERR_GAME_STARTED,
-        CR_ERR_GAME_FULL
-    };
-
     uint32_t id = 0;
     e_ConnectResult connectResult = CR_NONE;
     NETID clientID = 0;
@@ -217,6 +205,9 @@ struct NetConnectionInfoResponse {
 
     void read(XBuffer& in) {
         in.read(id);
+        if (id != NC_INFO_REPLY_ID) {
+            return;
+        }
         in.read(connectResult);
         in.read(clientID);
         in.read(hostID);
@@ -268,26 +259,15 @@ struct NetConnectionInfoResponse {
         crc=calcOwnCRC();
     }
 
+    int32_t send_to_connection(NetConnectionHandler& connection, NETID source, NETID destination) const {
+        XBuffer responseBuffer(sizeof(NetConnectionInfoResponse) + gameName.length() + 1024, true);
+        write(responseBuffer);
+        return connection.sendToNETID(&responseBuffer, source, destination);
+    }
+
     bool checkOwnCorrect(){
         return ( (crc==calcOwnCRC()) && (id==NC_INFO_REPLY_ID) );
     }
 };
 
-
-
-////////////////////////////////////////////////////////////////////////
-
-/**
- * InputPacket, holds buffer and connection sending it
- */
-struct InputPacket : public XBuffer {
-public:
-    NETID netid;
-
-    explicit InputPacket(NETID _netid) : XBuffer(0), netid(_netid) {
-    }
-};
-
 #endif //__P2P_INTERFACEAUX_H__
-
-

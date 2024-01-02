@@ -1,3 +1,7 @@
+
+OPTION(OPTION_DXVK_1 "Use old DXVK-native (DXVK 1.x) instead of DXVK 2.x" OFF)
+OPTION(OPTION_DXVK_SOURCE_DIR "Path for predownloaded DXVK source code")
+
 SET(Render_SRCS
         src/Unknown.cpp
         src/umath.cpp

@@ -2036,8 +2036,11 @@ void onMMDelSaveReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 
 void onMMTaskButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//join game
+//multiplayer join
 void onMMMultiplayerJoinNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
+//multiplayer password
+void onMMMultiplayerPasswordNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //multiplayer list
 void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);

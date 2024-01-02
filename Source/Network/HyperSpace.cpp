@@ -219,39 +219,62 @@ size_t terHyperSpace::serializeGameCommands(XBuffer& out) const {
 }
 
 void terHyperSpace::deserializeGameCommands(XBuffer& in, size_t len) {
-    xassert(len >= sizeof(endQuant_inReplayListGameCommands));
+    if (len < sizeof(endQuant_inReplayListGameCommands)) {
+        xassert(0);
+        return;
+    }
     len -= in.read(&endQuant_inReplayListGameCommands, sizeof(endQuant_inReplayListGameCommands));
     
-    InOutNetComBuffer in_buffer(len, true); //проверить необходимость автоувелечения!
-    in_buffer.putBufferPacket(in.address()+in.tell(), len);
+    if (len < SIZE_NETCOM_PACKET_HEAD) {
+        return;
+    }
+    InOutNetComBuffer in_buffer(len, false);
+    char* data_ptr = in.address() + in.tell();
+    uint32_t packet_id = *(reinterpret_cast<uint32_t*>(data_ptr));
+    if (packet_id != NETCOM_BUFFER_PACKET_ID) {
+        in_buffer.automatic_realloc = true;
+        event_size_t event_len = 0;
+        size_t event_start = 0;
+        while (in.tell() + sizeof(event_len) < in.length()) {
+            event_start = in.tell();
+            in.read(&event_len, sizeof(event_len));
+            if (event_len == 0 || (in.tell() + event_len) > in.length()) {
+                break;
+            }
+            in_buffer.write(&NETCOM_BUFFER_PACKET_ID, sizeof(NETCOM_BUFFER_PACKET_ID));
+            in_buffer.write(&event_len, sizeof(event_len));
+            in_buffer.write(data_ptr + event_start, event_len);
+            in.set(event_start + event_len);
+        }
+        in_buffer.filled_size = in_buffer.tell();
+        in_buffer.set(0);
+    } else {
+        in_buffer.putBufferPacket(data_ptr, len);
+    }    
 
-    while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
+    while (in_buffer.nextNetCommand() != NETCOM_ID_NONE) {
         terEventID event = (terEventID)in_buffer.currentNetCommandID();
         switch(event){
-            case NETCOM_4G_ID_UNIT_COMMAND:
-            {
+            case NETCOM_4G_ID_UNIT_COMMAND: {
                 netCommand4G_UnitCommand*  pnc= new netCommand4G_UnitCommand(in_buffer);
                 replayListGameCommands.push_back(pnc);
-            }
                 break;
-            case NETCOM_4G_ID_REGION:
-            {
+            }
+            case NETCOM_4G_ID_REGION: {
                 netCommand4G_Region*  pnc= new netCommand4G_Region(in_buffer);
                 replayListGameCommands.push_back(pnc);
-            }
                 break;
-            case NETCOM_4G_ID_FORCED_DEFEAT:
-            {
+            }
+            case NETCOM_4G_ID_FORCED_DEFEAT: {
                 netCommand4G_ForcedDefeat* pnc=new netCommand4G_ForcedDefeat(in_buffer);
                 replayListGameCommands.push_back(pnc);
                 break;
             }
 
             default:
-                xassert(0&&"Incorrect commanf in playReel file!");
+                xassert(0&&"Incorrect command in playReel file!");
                 break;
         }
-        in_buffer.nextNetCommand();
     }
 }
 
@@ -261,7 +284,7 @@ bool terHyperSpace::loadPlayReel(const char* fname)
 
 	if(!checkPlayReelMagic(fi)) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
 
-	int sizeOtherData=fi.size()-fi.tell();
+	size_t sizeOtherData=fi.size()-fi.tell();
 	XBuffer buf(sizeOtherData, true);
 	fi.read(buf.address(), sizeOtherData);
 	//curMission.read(mdBuf);

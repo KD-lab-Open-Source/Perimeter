@@ -877,17 +877,6 @@ int SwitchMenuScreenQuant1( float, float ) {
 					}
 				}
 				return 0;
-			} else {
-				if (_id_off == SQSH_MM_MULTIPLAYER_LOBBY_SCR && _id_on != SQSH_MM_LOADING_MISSION_SCR) {
-					gameShell->getNetClient()->FinishGame();
-/*
-					if (gameShell->getNetClient()->isHost()) {
-						gameShell->getNetClient()->StopServerAndStartFindHost();
-					} else {
-						gameShell->getNetClient()->DisconnectAndStartFindHost();
-					}
-*/
-				}
 			}
 		}
 		_shellIconManager.AddDynamicHandler(SwitchMenuBGQuant2, CBCODE_QUANT); //ждать пока не слетится BG
@@ -1116,7 +1105,8 @@ int SwitchMenuScreenQuant1( float, float ) {
 					}
 					break;
                 case SQSH_MM_MULTIPLAYER_LIST_SCR:
-                    {                        
+                    {
+                        _shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN)->Enable(0);
                         std::string name = getStringSettings(regLanName);
                         if (name.empty() && gameShell->currentSingleProfile.isValidProfile()) {
                             name = gameShell->currentSingleProfile.getCurrentProfile()->name;
@@ -1127,9 +1117,8 @@ int SwitchMenuScreenQuant1( float, float ) {
                         } else {
                             input->SetText(qdTextDB::instance().getText("Interface.Menu.EmptyName.NewPlayer"));
                         }
-                        
-                        gameShell->createNetClient();
-                        gameShell->getNetClient()->StartFindHost();
+
+                        gameShell->prepareNetClient();
                         
                         historyScene.stop();
                         StartSpace();
@@ -1179,13 +1168,20 @@ int SwitchMenuScreenQuant1( float, float ) {
                     break;
 				case SQSH_MM_MULTIPLAYER_JOIN_SCR:
 					{
-						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT);
+                        dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_INPUT))->SetText("");
+                        
+                        //Fill out saved IP if any
+                        CEditWindow* input = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT));
 						if (input->isEmptyText()) {
                             std::string text = getStringSettings("JoinIP");
 							input->SetText(text.c_str());
 						}
 					}
 					break;
+                case SQSH_MM_MULTIPLAYER_PASSWORD_SCR: {
+                    dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_PASSWORD_PASSWORD_INPUT))->SetText("");
+                    break;
+                }
 			}
 			//show and start effect
 			if (_id_on != SQSH_MM_SUBMIT_DIALOG_SCR) {
@@ -1641,6 +1637,7 @@ void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 				break;
             case SQSH_MM_MULTIPLAYER_JOIN_SCR:
             case SQSH_MM_MULTIPLAYER_LOBBY_SCR:
+            case SQSH_MM_MULTIPLAYER_PASSWORD_SCR:
 				nShow = SQSH_MM_MULTIPLAYER_LIST_SCR;
 				break;
             case SQSH_MM_MULTIPLAYER_HOST_SCR:
@@ -1781,7 +1778,7 @@ void onMMQuitFromStatsButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_BATTLE_SCR);
 				break;
 			case UserSingleProfile::MULTIPLAYER:
-				gameShell->getNetClient()->FinishGame();
+                gameShell->getNetClient()->Reset();
 				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_MULTIPLAYER_LIST_SCR);
 				break;
 			case UserSingleProfile::REPLAY:

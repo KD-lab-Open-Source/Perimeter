@@ -15,13 +15,13 @@ public:
 
 	ActionPtr createAction(int typeIndex) {
 		ActionPtr action;
-		EditIArchive(EditClassDescriptor<Action>::treeNodeFunc(typeIndex)) >> WRAP_NAME(action, 0);
+		EditIArchive(EditClassDescriptor<Action>::treeNodeFunc(typeIndex)) >> WRAP_ELEMENT(action);
 		return action;
 	}
 
 	ConditionPtr createCondition(int typeIndex) {
 		ConditionPtr condition;
-		EditIArchive(EditClassDescriptor<Condition>::treeNodeFunc(typeIndex)) >> WRAP_NAME(condition, 0);
+		EditIArchive(EditClassDescriptor<Condition>::treeNodeFunc(typeIndex)) >> WRAP_ELEMENT(condition);
 		return condition;
 	}
 

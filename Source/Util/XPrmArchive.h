@@ -104,7 +104,7 @@ private:
     template<class T>
     void saveElement(const T& t) {
         buffer_ < offset_.c_str();
-        (*this) & WRAP_NAME(t, 0);
+        (*this) & WRAP_ELEMENT(t);
         buffer_ < (binary_friendly ? "," : ",\r\n");
     }
 
@@ -218,7 +218,7 @@ private:
 	template<class T>
 	XPrmOArchive& operator&(const ShareHandle<T>& t)
 	{
-		return *this & WRAP_NAME(t.get(), 0);
+		return *this & WRAP_ELEMENT(t.get());
 	}
 
     template<class Enum>
@@ -433,7 +433,7 @@ private:
 	}
 	template<class T>
 	void loadElement(T& t) {
-		(*this) & WRAP_NAME(t, 0);
+        (*this) & WRAP_ELEMENT(t);
 		std::string name;
 		loadString(name);
 		if(name != ",")
@@ -576,7 +576,7 @@ private:
 			t = 0;
 			ptr->decrRef();
 		}
-		(*this) & WRAP_NAME(ptr, 0);
+        (*this) & WRAP_ELEMENT(ptr);
 		t = ptr;
 		return *this;
 	}

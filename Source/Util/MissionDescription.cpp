@@ -406,19 +406,22 @@ bool MissionDescription::isAllRealPlayerStartReady()
 int MissionDescription::playersAmount() const 
 {
 	int cntPlayers=0;
-	for(unsigned int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].realPlayerType != REAL_PLAYER_TYPE_CLOSE && playersData[i].realPlayerType != REAL_PLAYER_TYPE_OPEN)
-			cntPlayers++;
+	for(unsigned int i=0; i<playerAmountScenarioMax; i++) {
+		if(playersData[i].realPlayerType != REAL_PLAYER_TYPE_CLOSE 
+        && playersData[i].realPlayerType != REAL_PLAYER_TYPE_OPEN) {
+            cntPlayers++;
+        }
 	}
 	return cntPlayers;
 }
 
-int MissionDescription::playersMaxEasily() const
+int MissionDescription::playerSlotsAvailable() const
 {
 	int cntPlayers=0;
-	for(unsigned int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].realPlayerType != REAL_PLAYER_TYPE_CLOSE)
-			cntPlayers++;
+	for (unsigned int i=0; i < playerAmountScenarioMax; i++) {
+		if (playersData[i].realPlayerType != REAL_PLAYER_TYPE_CLOSE) {
+            cntPlayers++;
+        }
 	}
 	return cntPlayers;
 }

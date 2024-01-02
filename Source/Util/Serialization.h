@@ -19,7 +19,7 @@ static uint32_t getSerializationCRC(T& t, uint32_t crc, int floatDigits = 0) {
     if (floatDigits) {
         buf.SetDigits(floatDigits);
     }
-    ar << makeObjectWrapper(t, 0, 0);
+    ar << WRAP_ELEMENT(t);
     crc = crc32(reinterpret_cast<const unsigned char*>(buf.address()), buf.tell(), crc);
     return crc;
 }
@@ -621,6 +621,10 @@ SingletonPrm<Type>
 /////////////////////////////////////////////////
 //    Заворачивание объектов для архивации
 /////////////////////////////////////////////////
+// Wraps only value without any name wrapping
+#define WRAP_ELEMENT(object) \
+	makeObjectWrapper(object, 0, 0)
+
 // Завернуть без перевода с указанием имени
 #define WRAP_NAME(object, name) \
 	makeObjectWrapper(object, name, 0)

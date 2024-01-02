@@ -148,7 +148,8 @@ int XBuffer::uncompress(XBuffer& output, uint32_t* len) {
 
     //Check if this buffer has enough data
     if (tell() + compressed_len > size) {
-        fprintf(stderr, "XBuffer decompression incomplete data len %d %d %zu\n", original_len, compressed_len, size);
+        xassert(0);
+        fprintf(stderr, "XBuffer decompression incomplete data len %" PRIi32 " compressed %" PRIi32 " size %" PRIsize "\n", original_len, compressed_len, size);
         return -1;
     }
     

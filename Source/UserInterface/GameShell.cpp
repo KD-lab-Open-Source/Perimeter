@@ -241,9 +241,10 @@ windowClientSize_(1024, 768)
 		ErrH.Abort("Pause!!!");
 	}
 
-    const char* server = check_command_line("server"); 
-    const char* connect = check_command_line("connect");
-    if (server || connect) {
+    const char* server = check_command_line("server");
+    const char* connect_addr = check_command_line("connect");
+    const char* connect_room = check_command_line("connect_room");
+    if (server || connect_addr || connect_room) {
         CommandLineData data;
         data.server = server != nullptr;
         
@@ -261,13 +262,28 @@ windowClientSize_(1024, 768)
             const char* roomName = check_command_line("room");
             if (roomName) data.roomName = roomName;
             data.address = server;
-		} else {
-            checkCmdLineArg(connect, "connect");
-            data.address = connect;
+            const char* publicCmdline = check_command_line("public");
+            data.publicHost = publicCmdline != nullptr && std::string(publicCmdline) != "0";
+		} else if (connect_room) {
+            checkCmdLineArg(connect_room, "connect_room");
+            NetRoomID room = strtoull(connect_room, nullptr, 10);
+            if (room == 0) {
+                ErrH.Abort("Couldn't parse connect_room to number");
+            }
+            data.roomID = room;
+            data.publicHost = true;
+            data.addressDefaultPort = NET_RELAY_DEFAULT_PORT;
+            if (connect_addr) {
+                data.address = connect_addr;
+            }
+        } else if (connect_addr) {
+            checkCmdLineArg(connect_addr, "connect");
+            data.address = connect_addr;
+            data.publicHost = false;
         }
-        data.publicHost = check_command_line("public") != nullptr;
 
         startCmdline(data);
+        return;
 	} else if (MainMenuEnable) {
 		startedWithMainmenu = true;
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
@@ -415,9 +431,13 @@ void GameShell::switchToInitialMenu() {
 	_shellIconManager.SetModalWnd(0);
 }
 
-void GameShell::createNetClient() {
-    destroyNetClient();
-    NetClient = new PNetCenter();
+void GameShell::prepareNetClient() {
+    if (NetClient && NetClient->m_state != PNC_STATE__CLIENT_FIND_HOST) {
+        destroyNetClient();
+    }
+    if (!NetClient) {
+        NetClient = new PNetCenter();
+    }
 }
 
 void GameShell::destroyNetClient() {

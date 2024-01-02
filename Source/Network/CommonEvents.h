@@ -66,8 +66,6 @@ enum terEventID
 	NETCOM_ID_NEXT_QUANT,
 
 	////---
-	NETCOMC_ID_JOIN_REQUEST,
-	NETCOM_4C_ID_JOIN_RESPONSE,
 
 	NETCOM_4H_ID_REJOIN_REQUEST,
 	NETCOM_4C_ID_REJOIN_RESPONCE,
@@ -739,7 +737,7 @@ struct netCommand4C_ReJoinResponse : netCommandGeneral
 {
 	NETID playerNETID_;
 	NETID groupNETID_;
-	netCommand4C_JoinResponse(NETID playerNETID, NETID groupNETID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) {
+	netCommand4C_ReJoinResponse(NETID playerNETID, NETID groupNETID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) {
 		playerNETID_=playerNETID;
 		groupNETID_=groupNETID;
 	}

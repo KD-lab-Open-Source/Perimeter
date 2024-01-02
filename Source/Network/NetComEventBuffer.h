@@ -4,6 +4,8 @@
 #include "CommonEvents.h"
 
 typedef uint32_t event_size_t;
+const uint32_t NETCOM_BUFFER_PACKET_ID = 0xB1FFE90D;
+const unsigned int SIZE_NETCOM_PACKET_HEAD = sizeof(NETCOM_BUFFER_PACKET_ID) + sizeof(event_size_t) + sizeof(terEventID);
 
 class PNetCenter;
 class InOutNetComBuffer : public XBuffer 
@@ -14,7 +16,6 @@ public:
 	size_t byte_sending;//out
 
 	terEventID event_ID;//in
-	event_size_t size_of_event;//in
 	size_t next_event_pointer;//in
 	size_t filled_size;//in
 	InOutNetComBuffer(unsigned int size, bool autoRealloc);

@@ -1,5 +1,9 @@
 
-OPTION(OPTION_USE_BACKTRACE "Use libbacktrace if present" OFF)
+IF (MACOS) #TODO Fix this for mac
+    OPTION(OPTION_USE_BACKTRACE "Use libbacktrace if present" OFF)
+ELSE()
+    OPTION(OPTION_USE_BACKTRACE "Use libbacktrace if present" ON)
+ENDIF ()
 
 #GameMath retrieval
 FetchContent_Declare(gamemath
@@ -45,7 +49,7 @@ ELSE()
             FIND_PACKAGE(Backtrace)
             IF(Backtrace_FOUND AND OPTION_USE_BACKTRACE)
                 MESSAGE("Stacktrace: Using Backtrace")
-                INCLUDE_DIRECTORIES(${Backtrace_INCLUDE_DIR})
+                INCLUDE_DIRECTORIES(${Backtrace_INCLUDE_DIR} ${Backtrace_INCLUDE_DIRS})
                 ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_BACKTRACE)
                 SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ${Backtrace_LIBRARIES})
             ELSE()

@@ -28,6 +28,7 @@
       #Systems that don't need overlay
       stableSystems = [
           "x86_64-linux"
+          "aarch64-linux"
       ];
 
       # Systems targetted for this package

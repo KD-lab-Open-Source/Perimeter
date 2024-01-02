@@ -10,6 +10,7 @@ add_library(Network STATIC
         P2P_interfaceAnyTh.cpp
         NetConnection.cpp
         NetConnectionHandler.cpp
+        NetRelay.cpp
 )
 
 target_include_directories(Network PRIVATE

@@ -15,13 +15,15 @@ struct LocalizedText;
 class MissionEditor;
 
 struct CommandLineData {
-    bool server;
-    std::string save;
-    std::string address;
-    std::string playerName;
-    std::string roomName;
-    std::string password;
-    bool publicHost;
+    bool server = false;
+    std::string save {};
+    std::string address {};
+    std::string playerName {};
+    std::string roomName {};
+    std::string password {};
+    NetRoomID roomID = 0;
+    uint16_t addressDefaultPort = 0;
+    bool publicHost = true;
 };
 
 //------------------------------------------
@@ -170,7 +172,7 @@ public:
 	cFont* debugFont() const { return debugFont_; }
 	void setSideArrowsVisible(bool visible);
 
-	void createNetClient();
+	void prepareNetClient();
 	PNetCenter* getNetClient();
 	void destroyNetClient();
 
@@ -242,6 +244,7 @@ public:
 	void callBack_CreateGameReturnCode(e_CreateGameReturnCode retCode);
 	enum e_JoinGameReturnCode {
 		JG_RC_OK,
+        JG_RC_UNKNOWN_ERR,
         JG_RC_SIGNATURE_ERR,
 		JG_RC_PASSWORD_ERR,
 		JG_RC_CONNECTION_ERR,

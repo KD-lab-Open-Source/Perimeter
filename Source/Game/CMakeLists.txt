@@ -1,3 +1,6 @@
+
+OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
+
 target_sources(perimeter PRIVATE
         CameraManager.cpp
         MonkManager.cpp
@@ -143,7 +146,7 @@ SET(perimeter_LINK_LIBS
 IF(PERIMETER_WINDOWS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
 ENDIF()
-
+message(${perimeter_LINK_LIBS})
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 #Install rules

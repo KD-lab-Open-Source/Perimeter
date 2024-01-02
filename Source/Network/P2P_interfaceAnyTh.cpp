@@ -1,12 +1,12 @@
 #include "NetIncludes.h"
-#include "NetConnectionAux.h"
 #include "P2P_interface.h"
+#include "NetConnectionAux.h"
 
 extern SDL_threadID net_thread_id;
 
-//Запускается из 1 2 3-го потока
+//Запускается из 1 2-го потока
 //Может вызываться с фдагом waitExecution только из одного потока (сейчас 1-го)
-//Runs from 1 2 3rd thread
+//Runs from 1st and 2nd thread
 //Can be called with the waitExecution flag from only one thread (now the 1st one) 
 bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution)
 {
@@ -87,7 +87,7 @@ bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_
 }
 
 void PNetCenter::ClearInputPacketList() {
-    for (InputPacket* packet : m_InputPacketList) {
+    for (NetConnectionMessage* packet : m_InputPacketList) {
         delete packet;
     }
     m_InputPacketList.clear();

@@ -1,3 +1,6 @@
+
+OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
+
 #Include Sokol
 FetchContent_Declare(sokol
         GIT_REPOSITORY    https://github.com/floooh/sokol

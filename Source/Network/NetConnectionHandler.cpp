@@ -3,6 +3,8 @@
 #include "crc.h"
 #include "P2P_interface.h"
 #include "NetConnectionAux.h"
+#include "NetRelay.h"
+#include "codepages/codepages.h"
 
 NetConnectionHandler::NetConnectionHandler(PNetCenter* center): net_center(center) {
     stopConnections();
@@ -15,11 +17,35 @@ NetConnectionHandler::~NetConnectionHandler() {
 
 void NetConnectionHandler::reset() {
     stopListening();
+    stopRelay();
     stopConnections();
 }
 
-NETID NetConnectionHandler::acceptConnection() {
-    NETID netid = NETID_NONE;
+void NetConnectionHandler::readConnectionMessages(NetConnection* connection, size_t max_packets) {
+    size_t total_recv = 0;
+    size_t i = 0;
+    while (total_recv < PERIMETER_MESSAGE_MAX_SIZE * max_packets && i < max_packets) {
+        i += 1;
+        //Packet ptr will be set if received one successfully
+        NetConnectionMessage* packet = nullptr;
+        int len = connection->receive(&packet, 0);
+        if (!packet) {
+            break;
+        }
+        total_recv += len;
+        if (0 < len) {
+            if (connection->is_relay && connection->netid == packet->source) {
+                this->receivedRelayMessage(connection, packet);
+            } else {
+                net_center->ReceivedNetConnectionMessage(connection, packet);
+            }
+        } else {
+            delete packet;
+        }
+    }
+}
+
+void NetConnectionHandler::acceptConnection() {
     if (accept_socket) {
         TCPsocket incoming_socket = SDLNet_TCP_Accept(accept_socket);
         if(!incoming_socket) {
@@ -28,59 +54,211 @@ NETID NetConnectionHandler::acceptConnection() {
             NetConnection* incoming = nullptr;
             
             //Find any closed connection in array
-            bool reused = false;
             for (auto& entry : connections) {
-                if (entry.second->is_closed()) {
+                if (entry.second->isClosed()) {
                     incoming = entry.second; 
-                    incoming->set_socket(incoming_socket);
-                    reused = true;
+                    NetTransportTCP* transport = new NetTransportTCP(incoming_socket);
+                    incoming->set_transport(transport, entry.first);
+                    //Set initial time of contact
+                    incoming->time_contact = clock_us();
                     break;
                 }
             }
 
-            //Check if we can add it
-            if (!reused) {
-                incoming = newConnectionFromSocket(incoming_socket, false);
+            //Couldn't find any connection to reuse, create new
+            if (incoming == nullptr) {
+                incoming = newConnectionFromSocket(
+                    incoming_socket,
+                    NETID_CLIENTS_START + connections.size()
+                );
             }
 
-            //incoming may be deallocated if index is not available, so get it before
-            netid = incoming->netid;
-            
-            net_center->handleIncomingClientConnection(incoming);
+            if (incoming) {
+                if (incoming->getNETID() == NETID_NONE) {
+                    //If netid is NONE then it wasnt allocated into pool
+                    fprintf(stderr, "Incoming connection couldn't be allocated\n");
+                    //Send the reply that game is full and close it without reading connection info
+                    net_center->SendClientHandshakeResponse(incoming, incoming->getNETID(),
+                                                            e_ConnectResult::CR_ERR_GAME_FULL);
+                    //Delete connection since is not stored anywhere
+                    delete incoming;
+                }
+            }
         }
     }
+}
 
-    return netid;
+void NetConnectionHandler::setHasClient(NETID netid, bool state) {
+    if (netid == NETID_NONE || netid == NETID_ALL) {
+        xassert(0);
+        return;
+    }
+    
+    //Check relay
+    if (relayPeers.count(netid)) {
+        NetRelayPeerInfo& info = relayPeers.at(netid);
+        xassert(!(state && info.has_client));
+        info.has_client = state;
+        return;
+    }
+    
+    //Check local
+    NetConnection* connection = getConnection(netid);
+    if (connection) {
+        if (connection->is_relay) {
+            xassert(0);
+            return;
+        }
+        if (state) {
+            switch (connection->state) {
+                case NC_STATE_HAS_TRANSPORT:
+                    connection->state = NC_STATE_HAS_CLIENT;
+                    break;
+                case NC_STATE_HAS_CLIENT:
+                case NC_STATE_ERROR_PENDING:
+                case NC_STATE_CLOSE_PENDING:
+                case NC_STATE_ERROR:
+                case NC_STATE_CLOSED:
+                    xassert(0);
+                    break;
+            }
+        } else {
+            switch (connection->state) {
+                case NC_STATE_HAS_CLIENT:
+                    connection->state = NC_STATE_HAS_TRANSPORT;
+                    break;
+                case NC_STATE_ERROR_PENDING:
+                case NC_STATE_CLOSE_PENDING:
+                case NC_STATE_HAS_TRANSPORT:
+                case NC_STATE_ERROR:
+                case NC_STATE_CLOSED:
+                    break;
+            }
+        }
+    }
+}
+
+void NetConnectionHandler::terminateNETID(NETID netid) {
+    if (netid == NETID_NONE || netid == NETID_ALL) {
+        xassert(0);
+        return;
+    }
+
+    //Check relay
+    if (relayPeers.count(netid)) {
+        LogMsg("terminateNETID 0x%" PRIX64 " relay peer\n", netid);
+        NetRelayPeerInfo& info = relayPeers.at(netid);
+        if (info.rejected) {
+            return;
+        }
+        info.rejected = true;
+        if (net_center->isHost()) {
+            //Notify relay to remove this peer connection,
+            //relay will tell back when happens so the game can remove from relayPeers
+            static NetRelayMessage_PeerClosePeer msg;
+            msg.netid = netid;
+            NetConnection* relay = getConnection(info.relay_netid);
+            xassert(relay);
+            if (relay) {
+                sendNetRelayMessage(relay, &msg, net_center->m_localNETID);
+            }
+        }
+        return;
+    }
+
+    //Check local
+    NetConnection* conn = getConnection(netid);
+    if (conn && !conn->isClosed()) {
+        LogMsg("terminateNETID 0x%" PRIX64 " connection\n", netid);
+        conn->close();
+    }
 }
 
 void NetConnectionHandler::pollConnections() {
+    uint64_t now = clock_us();
     for (auto& entry : connections) {
         NetConnection* connection = entry.second;
-        switch (connection->state) {
-            case NC_STATE_ACTIVE: {
-                size_t total_recv = 0;
-                while (total_recv < PERIMETER_MESSAGE_MAX_SIZE * 10) {
-                    InputPacket* packet = new InputPacket(connection->netid);
-                    int len = connection->receive(*packet);
-                    if (0 < len) {
-                        net_center->m_InputPacketList.push_back(packet);
-                        total_recv += len;
-                    } else {
-                        delete packet;
+        if (connection->is_relay) {
+            switch (connection->state) {
+                case NC_STATE_HAS_TRANSPORT: {
+                    readConnectionMessages(connection, 10);
+                    break;
+                }
+                default:
+                    LogMsg("Relay connection unknown state %d\n", connection->state);
+                    [[fallthrough]];
+                case NC_STATE_CLOSED:
+                case NC_STATE_ERROR: {
+                    //Mark it as closed, relay is in non-functional state
+                    if (has_relay_connection) {
+                        handleRelayDisconnected();
+                    }
+                    stopRelay();
+                    break;
+                }
+            }
+        } else {
+            switch (connection->state) {
+                case NC_STATE_HAS_TRANSPORT:
+                    //Check if stayed too long without having a client assigned
+                    if ((now - connection->time_contact) > (CONNECTION_HANDSHAKE_TIMEOUT * 1000)) {
+                        fprintf(stderr, "Connection without client for too long! 0x%" PRIX64 "\n", connection->netid);
+                        connection->close();
                         break;
                     }
+                    [[fallthrough]];
+                case NC_STATE_HAS_CLIENT: {
+                    readConnectionMessages(connection, 10);
+                    break;
                 }
-                break;
+                case NC_STATE_ERROR_PENDING:
+                case NC_STATE_CLOSE_PENDING: {
+                    net_center->DeleteClient(connection->netid, false);
+                    //Mark it as closed, since we processed the client
+                    [[fallthrough]];
+                }
+                case NC_STATE_ERROR: {
+                    connection->state = NC_STATE_CLOSED;
+                    connection->close();
+                    break;
+                }
+                case NC_STATE_CLOSED:
+                    //We ignore closed ones as they will be reused
+                    break;
             }
-            case NC_STATE_ERROR_PENDING:
-            case NC_STATE_CLOSE_PENDING: {
-                net_center->DeleteClient(connection->netid, false);
-                //Mark it as closed, since we processed the client
-                connection->state = NC_STATE_CLOSED;
-                break;
+        }
+    }
+
+    std::map<NETID, bool> relayPeerTerminate;
+    for (auto& pair : this->relayPeers) {
+        NETID netid = pair.first;
+        auto& info = pair.second;
+        if (info.terminated) {
+            continue;
+        }
+        if (!info.rejected && !info.has_client) {
+            //Terminate peers that spent too much time to get a client
+            if ((clock_us() - info.time_contact) > (CONNECTION_HANDSHAKE_TIMEOUT * 1000)) {
+                terminateNETID(netid);
             }
-            default:
-                break;
+        }
+        if (info.rejected) {
+            info.terminated = true;
+            relayPeerTerminate.emplace(netid, info.has_client);
+        }
+    }
+    for (auto& pair : relayPeerTerminate) {
+        NETID netid = pair.first;
+        if (pair.second) {
+            net_center->DeleteClient(netid, false);
+        } else {
+            //If is the host and is not yet client (we are still in handshake) just stop relay
+            if (netid == net_center->m_hostNETID) {
+                if (has_relay_connection) {
+                    handleRelayDisconnected();
+                }
+                stopRelay();
+            }
         }
     }
 }
@@ -95,38 +273,48 @@ void NetConnectionHandler::stopConnections() {
 }
 
 NetConnection* NetConnectionHandler::getConnection(NETID netid) const {
+    if (netid == NETID_NONE || netid == NETID_ALL) {
+        xassert(0);
+        return nullptr;
+    }
     NetConnection* conn = nullptr;
     if (connections.count(netid)) {
         NetConnection* candidate = connections.at(netid);
-        if (!candidate->is_closed()) {
+        if (!candidate->isClosed()) {
             conn = candidate;
         }
     }
     return conn;
 }
 
-bool NetConnectionHandler::startListening(uint16_t port) {
+bool NetConnectionHandler::startHost(uint16_t listen_port, bool start_public_room) {
     reset();
     
-    if (gb_RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
-        max_connections = NETWORK_PLAYERS_MAX;
-    } else {
-        //Remove one since host is player too
-        max_connections = NETWORK_PLAYERS_MAX - 1;
+    //Remove one since host is player too
+    max_connections = NETWORK_PLAYERS_MAX - 1;
+    
+    bool ok = true;
+    if (start_public_room) {
+        if (!startRelayRoom()) {
+            ok = false;
+        }
     }
 
-    IPaddress addr;
-    addr.host = INADDR_ANY;
-    SDLNet_Write16(port, &addr.port);
-
-    accept_socket = SDLNet_TCP_Open(&addr);
-    if (accept_socket == nullptr) {
-        fprintf(stderr, "TCP listen failed on port %d error %s\n", port, SDLNet_GetError());
-        return false;
-    } else {
-        LogMsg("TCP listening on port %d\n", port);
+    if (ok && 0 < listen_port) {
+        NetAddress addr(INADDR_ANY, listen_port);
+        accept_socket = addr.openTCP();
+        if (accept_socket == nullptr) {
+            ok = false;
+        } else {
+            LogMsg("TCP listening on port %d\n", listen_port);
+        }
     }
-    return true;
+
+    if (!ok && start_public_room) {
+        stopRelay();
+    }
+    
+    return ok;
 }
 
 void NetConnectionHandler::stopListening() {
@@ -137,75 +325,452 @@ void NetConnectionHandler::stopListening() {
     }
 }
 
-NetConnection* NetConnectionHandler::startConnection(NetAddress* address) {
-    reset();
+bool NetConnectionHandler::startRelayRoom() {
+    //Create relay connection
+    NetAddress conn;
+    if (!getNetRelayAddress(conn)) {
+        return false;
+    }
+    TCPsocket socket = conn.openTCP();
+    if (!socket) {
+        return false;
+    }
+    NetConnection* connection = newConnectionFromSocket(socket, NETID_RELAY);
+    if (!connection || connection->netid == NETID_NONE) {
+        delete connection;
+        return false;
+    }
+
+    connection->is_relay = true;
+    has_relay_connection = true;
+
+    //Send our room info to create it
+    const NetRelayMessage_PeerSetupRoom& msg = net_center->GenerateRelaySetupRoom();
     
+    bool ok = sendNetRelayMessage(connection, &msg, NETID_HOST);
+
+    //Receive list of peers and our own netid
+    if (ok) {
+        NetConnectionMessage* msg_response = nullptr;
+        connection->receive(&msg_response, CONNECTION_RELAY_TIMEOUT);
+        if (!msg_response) {
+            ok = false;
+        } else {
+            receivedRelayMessage(connection, msg_response);
+            ok = net_center->m_localNETID != NETID_NONE
+              && net_center->m_hostNETID != NETID_NONE;
+        }
+    }
+    
+    return ok;
+}
+
+NetConnection* NetConnectionHandler::startRelayRoomConnection(const NetAddress& address, NetRoomID room_id) {
+    reset();
+
     max_connections = 1;
 
-    TCPsocket socket = SDLNet_TCP_Open(&address->addr);
+    //Start relay connection and assign as host since it will act as one after sending join room
+    TCPsocket socket = address.openTCP();
+    if (!socket) {
+        return nullptr;
+    }
+    NetConnection* connection = newConnectionFromSocket(socket, NETID_RELAY);
+    if (!connection || connection->netid == NETID_NONE) {
+        delete connection;
+        stopRelay();
+        return nullptr;
+    }
+
+    connection->is_relay = true;
+    has_relay_connection = true;
+
+    //Send the request to join room
+    static XBuffer buf(1024, true);
+    buf.init();
+    static NetRelayMessage_PeerJoinRoom msg;
+    msg.room = room_id;
+    msg.write(buf);
+
+    bool ok = sendNetRelayMessage(connection, &msg, NETID_NONE);
+
+    //Receive list of peers and our own netid
+    if (ok) {
+        NetConnectionMessage* msg_response = nullptr;
+        connection->receive(&msg_response, CONNECTION_RELAY_TIMEOUT);
+        if (!msg_response) {
+            ok = false;
+        } else {
+            receivedRelayMessage(connection, msg_response);
+            ok = net_center->m_localNETID != NETID_NONE
+              && net_center->m_hostNETID != NETID_NONE;
+        }
+    }
+
+    if (!ok) {
+        stopRelay();
+    }
+
+    //Now that we are in room we can start talking to game host
+    return connection;
+}
+
+void NetConnectionHandler::stopRelay() {
+    has_relay_connection = false;
+    relayPeers.clear();
+    for (auto& pair : connections) {
+        NetConnection* connection = pair.second;
+        if (connection && connection->is_relay && !connection->isClosed()) {
+            LogMsg("Relay connection 0x%" PRIX64 " closed\n", connection->netid);
+            connection->close();
+        }
+    }
+}
+
+void NetConnectionHandler::handleRelayDisconnected() {
+    if (net_center && net_center->isConnected()) {
+        net_center->ExecuteInternalCommand(PNC_COMMAND__RESET, false);
+        if (net_center->isHost()) {
+            net_center->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CONNECTION_FAILED);
+        } else {
+            net_center->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
+        }
+    }
+}
+
+NetConnection* NetConnectionHandler::startDirectConnection(const NetAddress& address) {
+    max_connections = 1;
+
+    TCPsocket socket = address.openTCP();
 	if (!socket) {
-        fprintf(stderr, "TCP socket open failed address %s error %s\n", address->getString().c_str(), SDLNet_GetError());
         return nullptr;
 	}
     
-    NetConnection* connection = newConnectionFromSocket(socket, true);
-    if (connection->netid != NETID_NONE) {
+    NetConnection* connection = newConnectionFromSocket(socket, NETID_HOST);
+    if (connection && connection->netid != NETID_NONE) {
         return connection;
     } else {
         fprintf(stderr, "Error allocating new connection\n");
-        connection->close();
         delete connection;
         return nullptr;
     }
 }
 
-NetConnection* NetConnectionHandler::newConnectionFromSocket(TCPsocket socket, bool host) {
-    NetConnection* connection = new NetConnection(socket);
+NetConnection* NetConnectionHandler::newConnectionFromSocket(TCPsocket socket, NETID netid) {
+    xassert(socket);
+    NetConnection* connection = nullptr;
     if (connections.size() < max_connections) {
-        NETID netid;
-        if (host) {
-            netid = NETID_HOST;
+        if (connections.count(netid)) {
+            //Already exists, reuse
+            connection = connections.at(netid);
+            if (!connection->isClosed()) {
+                fprintf(stderr, "Connection to " PRIX64 " already allocated!\n");
+                xassert(0);
+            }
         } else {
-            netid = NETID_HOST + connections.size() + 1;
+            connection = new NetConnection(nullptr, netid);
+            auto result = connections.try_emplace(netid, connection);
+            if (!result.second) {
+                xassert(0);
+                delete connection;
+                connection = nullptr;
+            }
         }
-        connection->netid = netid;
-        connections.insert_or_assign(netid, connection);
+        if (connection && connection->getNETID() != netid) {
+            xassert(0);
+            connection->netid = netid;
+        }
     }
+    if (!connection) {
+        //Connection couldn't be assigned, return empty one so we can put socket on it
+        connection = new NetConnection(nullptr, NETID_NONE);
+    }
+    NetTransportTCP* transport = new NetTransportTCP(socket);
+    connection->set_transport(transport, netid);
+    //Set initial time of contact
+    connection->time_contact = clock_us();
     return connection;
 }
 
-
-size_t SendBufferToConnection(const uint8_t* buffer, size_t size, NetConnection* connection) {
+size_t SendBufferToConnection(
+        const XBuffer* buffer,
+        NetConnection* connection,
+        NETID source, NETID destination,
+        int32_t timeout
+) {
     int retries = 5;
-    if (!connection || !connection->is_active()) {
+    if (!connection || !connection->hasTransport() || connection->isClosed()) {
         return 0;
     }
     while (0 < retries) {
-        int sent = connection->send(buffer, size);
+        int sent = connection->send(buffer, source, destination, timeout);
         if (0 < sent) {
-            return size;
-        } else if (!connection->is_active()) {
-            fprintf(stderr, "SendBufferToConnection error sending %" PRIsize " sent %d to 0x%" PRIX64 " closed\n", size, sent, connection->netid);
-            break;
+            return buffer->tell();
         } else {
-            fprintf(stderr, "SendBufferToConnection error sending %" PRIsize " sent %d to 0x%" PRIX64 " retry %d\n", size, sent, connection->netid, retries);
+            fprintf(stderr, "SendBufferToConnection error sending %" PRIsize " sent %d to 0x%" PRIX64 " retry %d\n", buffer->tell(), sent, connection->getNETID(), retries);
             retries--;
         }
     }
     return 0;
 }
 
-size_t NetConnectionHandler::sendToNETID(const uint8_t* buffer, size_t size, NETID destination) {
-    size_t sent = 0;
+size_t NetConnectionHandler::sendToNETID(const XBuffer* buffer, NETID source, NETID destination) {
     if (destination == NETID_NONE) {
-        fprintf(stderr, "Discarding sending to NETID_NONE\n");
-    } else if (destination == NETID_ALL) {
+        xassert(0);
+        fprintf(stderr, "Discarding sending from 0x%" PRIX64 " to NETID_NONE\n", source);
+        return 0;
+    }
+    size_t sent = 0;
+    if (destination == NETID_ALL) {
+        //Send both to relay if any and to each peer
         for (auto& conn : connections) {
-            sent += SendBufferToConnection(buffer, size, conn.second);
+            sent += SendBufferToConnection(
+                    buffer, conn.second,
+                    source, conn.second->is_relay ? destination : NETID_NONE,
+                    CONNECTION_ACTIVE_TIMEOUT
+            );
+        }
+    } else if (has_relay_connection && 0 != relayPeers.count(destination)) {
+        //Message is for relay or a peer behind relay
+        NetRelayPeerInfo& info = relayPeers.at(destination);
+        if (!info.rejected) {
+            sent = SendBufferToConnection(
+                    buffer, getConnection(info.relay_netid),
+                    source, destination,
+                    CONNECTION_RELAY_TIMEOUT
+            );
         }
     } else {
-        sent = SendBufferToConnection(buffer, size, getConnection(destination));
+        //Message is for connection
+        sent = SendBufferToConnection(
+                buffer, getConnection(destination),
+                source, NETID_NONE,
+                CONNECTION_ACTIVE_TIMEOUT
+        );
     }
 
     return sent;
+}
+
+bool NetConnectionHandler::reassignConnectionNETID(NetConnection* connection, NETID netid) {
+    if (connection->netid != netid) {
+        auto result = connections.try_emplace(netid, connection);
+        if (result.second) {
+            //Inserted, remove from current position and set new netid to connection
+            auto it = connections.begin();
+            auto end = connections.end();
+            for (; it != end; ++it) {
+                if ((*it).first == netid) {
+                    connections.erase(it);
+                    break;
+                }
+            }
+            connection->netid = netid;
+        }
+    }
+    
+    if (connection->netid == netid) {
+        return true;
+    }
+    
+    //Couldn't be reassigned
+    xassert(0);
+    fprintf(stderr, "Couldn't reassign connection %" PRIX64 " to %" PRIX64 "\n", connection->netid, netid);
+    return false;
+}
+
+void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetConnectionMessage* msg) {
+    NETID localNETID = net_center->m_localNETID;
+    bool is_host = net_center->isHost();
+    //Parse header to know what message was sent
+    msg->set(0);
+    static NetRelayMessage msg_header(RELAY_MSG_UNKNOWN);
+    msg_header.read_relay_header(*msg);
+    bool terminate = false;
+    if (msg_header.protocol_version != NET_RELAY_PROTOCOL_VERSION) {
+        xassert(0);
+        fprintf(stderr, "[Relay] Unexpected protocol %" PRIX32 "\n", msg_header.protocol_version);
+        terminate = true;
+    } else {
+        bool wrong_destination;
+        switch (msg_header.msg_type) {
+            case RELAY_MSG_CLOSE:
+                wrong_destination = msg->destination != NETID_NONE;
+                break;
+            default:
+                wrong_destination = msg->destination != localNETID;
+                break;
+            case RELAY_MSG_RELAY_LIST_PEERS:
+                wrong_destination = msg->destination == NETID_NONE;
+                break;
+        }
+        if (wrong_destination) {
+            fprintf(stderr, "[Relay] Received msg for someone else! for 0x%" PRIX64 "\n",
+                    msg->destination);
+            delete msg;
+            return;
+        }
+        XBuffer buffer(128, true);
+        switch (msg_header.msg_type) {
+            default: {
+#ifdef PERIMETER_DEBUG
+                xassert(0);
+                fprintf(stderr, "[Relay] connection sent unknown msg type: %" PRIX32 "\n", msg_header.msg_type);
+#endif
+                break;
+            }
+            case RELAY_MSG_CLOSE: {
+                terminate = true;
+                static NetRelayMessage_Close message;
+                message.read(*msg);
+                printf("[Relay] connection sent close msg: 0x%" PRIX32 "\n", message.code);
+                break;
+            }
+            case RELAY_MSG_RELAY_LIST_LOBBIES: {
+#ifdef PERIMETER_DEBUG
+                printf("[Relay] connection sent result msg, discarding\n");
+#endif
+                break;
+            }
+            case RELAY_MSG_RELAY_PING: {
+                static NetRelayMessage_RelayPing message;
+                message.read(*msg);
+                static NetRelayMessage_PeerPingResponse response;
+                response.secs = message.secs;
+                response.subsecs = message.subsecs;
+                sendNetRelayMessage(connection, &response, localNETID);
+                break;
+            }
+            case RELAY_MSG_RELAY_LIST_PEERS: {
+                static NetRelayMessage_RelayListPeers message;
+                message.read(*msg);
+                if (is_host) {
+                    net_center->m_hostNETID = localNETID = msg->destination;
+                } else {
+                    localNETID = msg->destination;
+                    if (message.peers.empty()) {
+                        net_center->m_hostNETID = NETID_NONE;
+                    } else {
+                        net_center->m_hostNETID = message.peers[0];
+                    }
+                }
+                net_center->m_localNETID = localNETID;
+                
+                //Register any peer that isn't already present
+                for (auto& netid : message.peers) {
+                    if (0 == relayPeers.count(netid)) {
+                        NetRelayPeerInfo info;
+                        info.relay_netid = msg->source;
+                        info.time_contact = clock_us();
+                        relayPeers.try_emplace(netid, info);
+                    }
+                }
+
+#ifdef PERIMETER_DEBUG
+                printf("[Relay] room list destination %" PRIX64 " peers: %" PRIsize " [",
+                       msg->destination, message.peers.size());
+                for (NETID netid : message.peers) {
+                    printf(" %" PRIX64, netid);
+                }
+                printf(" ]\nNETIDs local: %" PRIX64 " host: %" PRIX64 "\n", net_center->m_localNETID, net_center->m_hostNETID);
+#endif
+                break;
+            }
+            case RELAY_MSG_RELAY_ADD_PEER: {
+                static NetRelayMessage_RelayAddPeer message;
+                message.read(*msg);
+#ifdef PERIMETER_DEBUG
+                printf("[Relay] room add peer %" PRIX64 "\n", message.netid);
+#endif
+                NetRelayPeerInfo info;
+                info.relay_netid = msg->source;
+                info.time_contact = clock_us();
+                relayPeers.try_emplace(message.netid, info);
+                break;
+            }
+            case RELAY_MSG_RELAY_REMOVE_PEER: {
+                static NetRelayMessage_RelayRemovePeer message;
+                message.read(*msg);
+#ifdef PERIMETER_DEBUG
+                printf("[Relay] room remove peer %" PRIX64 "\n", message.netid);
+#endif
+                auto it = relayPeers.begin();
+                auto end = relayPeers.end();
+                for (; it != end; ++it) {
+                    if ((*it).first == message.netid) {
+                        NetRelayPeerInfo& info = (*it).second;
+                        if (info.has_client) {
+                            net_center->DeleteClient(message.netid, false);
+                        }
+                        relayPeers.erase(it);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    //Cleanup
+    delete msg;
+    if (terminate) {
+        if (has_relay_connection) {
+            handleRelayDisconnected();
+        }
+        stopRelay();
+    }
+}
+
+bool NetConnectionHandler::isConnectionClosed(NETID netid) {
+    //Behind relay?
+    if (0 < relayPeers.count(netid)) {
+        const NetRelayPeerInfo& info = relayPeers.at(netid);
+        return info.rejected || info.terminated;
+    }
+    
+    //Is a normal connection?
+    NetConnection* connection = getConnection(netid);
+    if (connection) {
+        return connection->state != NC_STATE_HAS_TRANSPORT
+            && connection->state != NC_STATE_HAS_CLIENT;
+    }
+    
+    return true;
+}
+
+bool NetConnectionHandler::hasClient(NETID netid, bool not_closed) {
+    //Behind relay?
+    if (0 < relayPeers.count(netid)) {
+        const NetRelayPeerInfo& info = relayPeers.at(netid);
+        if (not_closed && (info.rejected || info.terminated)) {
+            return false;
+        }
+        return info.has_client;
+    }
+
+    //Is a normal connection?
+    NetConnection* connection = getConnection(netid);
+    if (connection) {
+        switch (connection->state) {
+            case NC_STATE_ERROR:
+            case NC_STATE_HAS_TRANSPORT:
+            case NC_STATE_CLOSED:
+                break;
+            case NC_STATE_HAS_CLIENT:
+                if (not_closed) {
+                    return connection->hasTransport();
+                } else {
+                    return true;
+                }
+            case NC_STATE_ERROR_PENDING:
+            case NC_STATE_CLOSE_PENDING:
+                if (!not_closed) {
+                    return true;
+                } else {
+                    return false;
+                }
+        }
+    }
+
+    return false;
 }

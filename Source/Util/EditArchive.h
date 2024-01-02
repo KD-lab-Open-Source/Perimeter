@@ -142,7 +142,7 @@ private:
 			inited = true;
 			T t = T();
 			EditOArchive archive;
-			archive << WRAP_NAME(t, 0);
+			archive << WRAP_ELEMENT(t);
 			treeNode_ = const_cast<TreeNode*>(archive.rootNode());
 		}
 		if(treeNode_){
@@ -269,7 +269,7 @@ private:
 	template<class T>
 	EditOArchive& operator&(const ShareHandle<T>& t)
 	{
-		return *this & WRAP_NAME(t.get(), 0);
+		return *this & WRAP_ELEMENT(t.get());
 	}
 
     template<class Enum>
@@ -550,7 +550,7 @@ private:
 			t = 0;
 			ptr->decrRef();
 		}
-		(*this) & WRAP_NAME(ptr, 0);
+        (*this) & WRAP_ELEMENT(ptr);
 		t = ptr;
 		return *this;
 	}
@@ -628,11 +628,11 @@ public:
 
 	template<class T>
 	bool edit(T& t, const char* name = 0) { 
-    	static_cast<EditOArchive&>(*this) << WRAP_NAME(t, 0);
+    	static_cast<EditOArchive&>(*this) << WRAP_ELEMENT(t);
 		if(name) // если редактируется указатель, то имя конфликтует с его типом
 			const_cast<TreeNode*>(rootNode())->setValue(name);
 		if(edit()){
-			static_cast<EditIArchive&>(*this) >> WRAP_NAME(t, 0);
+			static_cast<EditIArchive&>(*this) >> WRAP_ELEMENT(t);
 			clear();
 			return true;
 		}
@@ -662,7 +662,7 @@ public:
 			if(!treeNode_){ 
 				Derived* t = static_cast<Derived*>(ObjectCreator<Base, Derived>::create());
 				EditOArchive archive;
-				archive << WRAP_NAME(*t, 0);
+				archive << WRAP_ELEMENT(*t);
 				treeNode_ = const_cast<TreeNode*>(archive.rootNode());
 				treeNode_->setValue(nameAlt_);
 				delete t;

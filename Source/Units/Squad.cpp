@@ -1014,9 +1014,10 @@ int terUnitSquad::dischargeTechnics(int count)
 
 void terUnitSquad::initMutation(SquadUnitList& sources, SquadUnitList& destinations)
 {
-	xassert(!sources.empty() && !destinations.empty());
-	if(sources.empty() || destinations.empty())
-		return;
+	if(sources.empty() || destinations.empty()) {
+        //xassert(0);
+        return;
+    }
 
 	setStablePosition(average_position + average_position_offset);
 	check_readiness_to_move = true;

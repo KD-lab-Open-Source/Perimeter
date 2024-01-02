@@ -235,9 +235,13 @@ _handlertbl[] = {
 
 	{SQSH_TASK_BUTTON_ID,                    onMMTaskButton},
 
-	//join game
+    //multiplayer join
     {SQSH_MM_MULTIPLAYER_JOIN_NEXT_BTN,      onMMMultiplayerJoinNextBtn},
     {SQSH_MM_BACK_FROM_MULTIPLAYER_JOIN_BTN, onMMBackButton},
+    
+    //multiplayer passwoprd
+    {SQSH_MM_MULTIPLAYER_PASSWORD_NEXT_BTN,      onMMMultiplayerPasswordNextBtn},
+    {SQSH_MM_BACK_FROM_MULTIPLAYER_PASSWORD_BTN, onMMBackButton},
 
     //multiplayer list
 	{SQSH_MM_MULTIPLAYER_LIST_GAME_LIST,     onMMMultiplayerListGameList},

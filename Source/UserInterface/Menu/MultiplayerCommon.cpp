@@ -91,7 +91,12 @@ int exitMultiplayerGameQuant(float, float ) {
 
 int returnToMultiplayerScreenQuant(float, float ) {
     if (menuChangingDone) {
-        _shellIconManager.SwitchMenuScreens( LAST_VISIBLE, SQSH_MM_MULTIPLAYER_LIST_SCR );
+        int id = _shellIconManager.getVisibleMenuScr();
+        if (id == SQSH_MM_MULTIPLAYER_LIST_SCR) {
+            gameShell->prepareNetClient();
+        } else {
+            _shellIconManager.SwitchMenuScreens(LAST_VISIBLE, SQSH_MM_MULTIPLAYER_LIST_SCR);
+        }
         return 0;
     }
     return 1;
@@ -99,7 +104,7 @@ int returnToMultiplayerScreenQuant(float, float ) {
 
 int exitToMultiplayerScreenAction(float, float ) {
     if (!gameShell->isStartedWithMainmenu()) {
-        gameShell->GameContinue = 0;
+        gameShell->GameContinue = false;
     } else if (universe()) {
         hideMessageBox();
         _shellIconManager.AddDynamicHandler(exitMultiplayerGameQuant, CBCODE_QUANT);
@@ -112,8 +117,7 @@ int exitToMultiplayerScreenAction(float, float ) {
 
 int multiplayerMapNotFoundQuant(float, float ) {
     if (menuChangingDone) {
-        gameShell->getNetClient()->FinishGame();
-        gameShell->getNetClient()->StartFindHost();
+        gameShell->getNetClient()->Reset();
         showMessageBox();
         return 0;
     }
@@ -269,9 +273,13 @@ int showGeneralErrorMessageQuant(float, float ) {
                 break;
         }
         
-        setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText(textID.c_str()), MBOX_OK);
-        gameShell->prepareForInGameMenu();
-//		fout < "showGeneralErrorMessageQuant showMessageBox()\n";
+        if (universe()) {
+            setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText(textID.c_str()), MBOX_OK);
+            gameShell->prepareForInGameMenu();
+        } else {
+            //setupOkMessageBox(exitToMultiplayerScreenAction, 0, qdTextDB::instance().getText(textID.c_str()), MBOX_BACK);
+            setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText(textID.c_str()), MBOX_OK);
+        }
         showMessageBox();
         return 0;
     }
@@ -360,7 +368,7 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
 int updateLatencyInfoWindowQuant( float, float ) {
     CNetLatencyInfoWindow* wnd = safe_cast<CNetLatencyInfoWindow*>(_shellIconManager.GetWnd(SQSH_NET_LATENCY_INFO_ID));
     terUniverse* uni = universe();
-    if (!wnd || !uni) {
+    if (!wnd || !uni || !wnd->isVisible()) {
         return 0;
     }
 
@@ -368,7 +376,7 @@ int updateLatencyInfoWindowQuant( float, float ) {
     
     std::string mslabel = startsWith(getLocale(), "russian") ? convertToCodepage("мс", "russian") : "ms";
 
-    for (int i : toNetInfo.player_ids) {
+    for (int i = 0; i < toNetInfo.player_ids.size(); ++i) {
         int playerID = toNetInfo.player_ids[i];
         terPlayer* player = uni->findPlayer(playerID);
         if (!player) {

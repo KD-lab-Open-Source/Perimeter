@@ -69,13 +69,15 @@ public:
 
         SERIALIZE(ar) {
 			if (ar.type() & ARCHIVE_EDIT) {
-				ComboListString comboStr(instance().comboList(), key2String(key_).c_str());
-				ar & TRANSLATE_NAME(comboStr, 0, 0);
-				if(ar.isInput()) {
+                ComboListString comboStr(instance().comboList(), key2String(key_).c_str());
+                ar & TRANSLATE_NAME(comboStr, 0, 0);
+                if (ar.isInput()) {
                     setKeyC(key_, comboStr);
                 }
+            } else if (!SuppressBracket<Reference>::value) {
+                ar & WRAP_NAME(key_, "key");
 			} else {
-                ar & WRAP_NAME(key_, !SuppressBracket<Reference>::value ? "key" : 0);
+                ar & WRAP_ELEMENT(key_);
             }
 
 			if(ar.isInput()) {

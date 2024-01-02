@@ -206,7 +206,7 @@ private:
 			);
 			ar.openCollection(count);
 			for(int i = 0; i < count; ++i)
-				ar & WRAP_NAME(t[i], 0);
+				ar & WRAP_ELEMENT(t[i]);
 		}
     };
 
@@ -233,7 +233,7 @@ private:
 		typename std::vector<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
-			(*this) & WRAP_NAME(*i, 0);
+            (*this) & WRAP_ELEMENT(*i);
 		return *this;
 	}
 
@@ -242,7 +242,7 @@ private:
         typename std::list<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
-			(*this) & WRAP_NAME(*i, 0);
+            (*this) & WRAP_ELEMENT(*i);
 		return *this;
 	}
 
@@ -257,7 +257,7 @@ private:
 	template<class T>
 	BinaryOArchive& operator&(const ShareHandle<T>& t)
 	{
-		return *this & WRAP_NAME(t.get(), 0);
+		return *this & WRAP_ELEMENT(t.get());
 	}
 
     template<class Enum>
@@ -415,7 +415,7 @@ private:
 				ErrH.Abort("Array size too short");
 			}
 			for(int i = 0; i < count; ++i)
-				ar & WRAP_NAME(t[i], 0);
+                ar & WRAP_ELEMENT(t[i]);
 		}
     };
 
@@ -460,13 +460,13 @@ private:
 			cont.reserve(count);
 			while(count--){
 				cont.push_back(SerializationDefaultValue<T>::get());
-				(*this) & WRAP_NAME(cont.back(), 0);
+                (*this) & WRAP_ELEMENT(cont.back());
 			}
 		}
 		else{
 			typename std::vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
-				(*this) & WRAP_NAME(*i, 0);
+                (*this) & WRAP_ELEMENT(*i);
 		}
 		return *this;
 	}
@@ -479,13 +479,13 @@ private:
 			cont.clear();
 			while(count--){
 				cont.push_back(SerializationDefaultValue<T>::get());
-				(*this) & WRAP_NAME(cont.back(), 0);
+                (*this) & WRAP_ELEMENT(cont.back());
 			}
 		}
 		else{
             typename std::list<T, A>::iterator i;
 			FOR_EACH(cont, i)
-				(*this) & WRAP_NAME(*i, 0);
+                (*this) & WRAP_ELEMENT(*i);
 		}
 		return *this;
 	}
@@ -507,7 +507,7 @@ private:
 			t = 0;
 			ptr->decrRef();
 		}
-		(*this) & WRAP_NAME(ptr, 0);
+        (*this) & WRAP_ELEMENT(ptr);
 		t = ptr;
 		return *this;
 	}

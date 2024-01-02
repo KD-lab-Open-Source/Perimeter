@@ -55,12 +55,12 @@ int creatingHostDialogQuant(float, float ) {
         if (!portInput->isEmptyText()) {
             address += ":" + portInput->getText();
         }
-        bool resolveFailed = !NetAddress::resolve(conn, address);
+        bool resolveOK = NetAddress::resolve(conn, address);
 
         if (multiplayerMaps.empty()) {
             setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
             showMessageBoxButtons();
-        } else if (resolveFailed) {
+        } else if (!resolveOK) {
             setMessageBoxTextID("Interface.Menu.Messages.WrongIPPort");
             showMessageBoxButtons();
         } else {
@@ -70,6 +70,8 @@ int creatingHostDialogQuant(float, float ) {
             std::string gameName = gameNameInput->getText();
             CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PASSWORD_INPUT));
             std::string password = passwordInput->getText();
+            CComboWindow* hostTypeCombo = dynamic_cast<CComboWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO));
+            bool isPublic = hostTypeCombo->pos == 0;
 
             putStringSettings("HostName", gameName);
             putStringSettings("HostPort", std::to_string(conn.port()));
@@ -87,7 +89,7 @@ int creatingHostDialogQuant(float, float ) {
                 mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_CREATE);
             }
 
-            gameShell->getNetClient()->CreateGame(conn, gameName, mission, playerName, password);
+            gameShell->getNetClient()->CreateGame(isPublic, conn, gameName, mission, playerName, password);
         }
         return 0;
     }
@@ -99,9 +101,8 @@ int creatingHostDialogQuant(float, float ) {
 void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     CComboWindow *pCombo = (CComboWindow*) pWnd;
     if (code == EVENT_CREATEWND) {
+        pCombo->Array.emplace_back(getItemTextFromBase("Public Server").c_str() );
         pCombo->Array.emplace_back(getItemTextFromBase("Private Server").c_str() );
-        //TODO enable this once implemented the public listing
-        //pCombo->Array.emplace_back(getItemTextFromBase("Public Server").c_str() );
         pCombo->size = pCombo->Array.size();
         pCombo->pos = 0;
     }
