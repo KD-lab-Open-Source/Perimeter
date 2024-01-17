@@ -179,6 +179,11 @@ void findGameContent() {
     std::set<std::string> scannedPaths;
     for (std::string rootPathStr : paths) {
         if (rootPathStr.empty()) continue;
+#ifdef GPX
+        if (rootPathStr == "/") {
+            continue;
+        }
+#endif
         terminate_with_char(rootPathStr, PATH_SEP);
         scannedPaths.insert(rootPathStr);
         std::filesystem::path rootPath = std::filesystem::u8path(rootPathStr);

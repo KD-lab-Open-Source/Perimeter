@@ -35,6 +35,10 @@
 #include <SDL_image.h>
 #include <SDL_vulkan.h>
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 #ifdef _WIN32
 #include <commdlg.h>
 #endif
@@ -895,6 +899,12 @@ char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
 
 int SDL_main(int argc, char *argv[])
 {
+#if defined(GPX) && defined(EMSCRIPTEN)
+    std::filesystem::current_path("/game");
+    SDL_SetHint("SDL_EMSCRIPTEN_ASYNCIFY", "0");
+    SDL_SetHint("SDL_HINT_TOUCH_MOUSE_EVENTS", "1");
+    SDL_SetHint("SDL_HINT_MOUSE_TOUCH_EVENTS", "0");
+#endif
     //Show help if requested
     for(int i = 0; i < argc; i ++) {
         std::string arg = string_to_lower(argv[i]);
@@ -1001,6 +1011,14 @@ int SDL_main(int argc, char *argv[])
             WaitMessage();
 #endif
         }
+
+#ifdef GPX
+        gpx()->sys()->mainReady(true);
+        gpx()->async()->runNextTask();
+#ifdef EMSCRIPTEN
+        emscripten_sleep(0);
+#endif
+#endif
     }
 
     delete runtime_object;

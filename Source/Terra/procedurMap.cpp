@@ -38,7 +38,7 @@ ContainerPMO::~ContainerPMO(){
 void vrtMap::playPMOperation(void)
 {
 	flag_record_operation=false;
-	vector<ElementPMO>::iterator p;
+	std::vector<ElementPMO>::iterator p;
 	for(p=containerPMO.begin(); p!=containerPMO.end(); p++){
 		ElementPMO o=*p;
 		switch(o.basePMO.pmoID){

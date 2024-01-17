@@ -15,6 +15,10 @@
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -246,6 +250,10 @@ int cSokolRender::Flush(bool wnd) {
     ClearCommands();
 
     xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
+
+#ifdef GPX
+    gpx()->sys()->frameReady();
+#endif
 
     return 0;
 }

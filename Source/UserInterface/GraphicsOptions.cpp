@@ -165,7 +165,7 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
         resSet.emplace(false, -1, res.x, res.y, 0);
     }
     
-    //Dump set into vector and order it, dont add window modes that are smaller
+    //Dump set into vector and order it, don't add window modes that are smaller
     for (DisplayMode res : resSet) {
         if (!res.fullscreen) {
             if (smallest.x != 0 && smallest.x < res.x) continue;
