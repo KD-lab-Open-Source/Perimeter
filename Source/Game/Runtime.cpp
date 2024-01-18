@@ -568,6 +568,12 @@ cInterfaceRenderDevice* SetGraph()
     
 	cInterfaceRenderDevice *IRenderDevice = CreateIRenderDevice(deviceSelection);
 
+#ifdef GPX
+    terBitPerPixel = 32;
+    terScreenSizeX = gpx()->sys()->getWidth();
+    terScreenSizeY = gpx()->sys()->getHeight();
+    int ModeRender = RENDERDEVICE_MODE_RGB32 | RENDERDEVICE_MODE_WINDOW;
+#else
 	int ModeRender=0;
 	if (!isTrueFullscreen()) {
         ModeRender |= RENDERDEVICE_MODE_WINDOW;
@@ -577,6 +583,7 @@ cInterfaceRenderDevice* SetGraph()
     } else {
         ModeRender |= RENDERDEVICE_MODE_RGB16;
     }
+#endif
 
 //	if(HTManager::instance()->IsUseHT()) 		
         ModeRender |= RENDERDEVICE_MODE_MULTITHREAD;
@@ -875,7 +882,7 @@ void show_help() {
 }
 
 //------------------------------
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(GPX)
 int main(int argc, char *argv[]) {
     //Call SDL main init
     SDL_SetMainReady();
@@ -899,12 +906,6 @@ char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
 
 int SDL_main(int argc, char *argv[])
 {
-#if defined(GPX) && defined(EMSCRIPTEN)
-    std::filesystem::current_path("/game");
-    SDL_SetHint("SDL_EMSCRIPTEN_ASYNCIFY", "0");
-    SDL_SetHint("SDL_HINT_TOUCH_MOUSE_EVENTS", "1");
-    SDL_SetHint("SDL_HINT_MOUSE_TOUCH_EVENTS", "0");
-#endif
     //Show help if requested
     for(int i = 0; i < argc; i ++) {
         std::string arg = string_to_lower(argv[i]);
