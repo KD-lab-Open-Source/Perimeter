@@ -27,7 +27,11 @@ extern class cScene* terScene;
 extern class cUnkLight* terLight;
 extern class cTileMap* terMapPoint;
 
+#ifdef GPX
+extern const int terFullScreen;
+#else
 extern int terFullScreen;
+#endif
 extern int terScreenSizeX;
 extern int terScreenSizeY;
 extern int terBitPerPixel;

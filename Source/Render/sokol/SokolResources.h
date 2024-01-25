@@ -27,7 +27,12 @@ struct SokolTexture2D : MemoryResource {
     sg_image_desc* desc = nullptr;
     sg_image image = {};
 
+#ifdef GPX
+    bool generateMipMaps;
+    SokolTexture2D(sg_image_desc* desc, bool generateMipMaps);
+#else
     explicit SokolTexture2D(sg_image_desc* desc);
+#endif
     NO_COPY_CONSTRUCTOR(SokolTexture2D)
     ~SokolTexture2D();
 

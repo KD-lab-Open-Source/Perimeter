@@ -77,8 +77,13 @@ cTileMap* terMapPoint = NULL;
 int terBitPerPixel = 16;
 int terScreenRefresh = 0;
 int terScreenIndex = 0;
+#ifdef GPX
+constexpr int terFullScreen = 0;
+constexpr int terResizableWindow = 0;
+#else
 int terFullScreen = 0;
 int terResizableWindow = 1;
+#endif
 int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;

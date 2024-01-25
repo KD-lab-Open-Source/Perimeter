@@ -3,6 +3,11 @@
 #include <sokol_gfx.h>
 #include "SokolResources.h"
 
+#if defined(GPX) && defined(EMSCRIPTEN)
+#include <emscripten.h>
+#include <SDL_opengl.h>
+#endif
+
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     switch (fmt) {
         case SG_PIXELFORMAT_R8:
@@ -86,9 +91,16 @@ void SokolBuffer::update(MemoryResource* resource, size_t len) {
     sg_update_buffer(buffer, &range);
 }
 
+#ifdef GPX
+SokolTexture2D::SokolTexture2D(sg_image_desc* _desc, bool generateMipMaps)
+    : MemoryResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
+    , desc(_desc), generateMipMaps(generateMipMaps)
+#else
 SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
-: MemoryResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
-, desc(_desc) {
+    : MemoryResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
+    , desc(_desc)
+#endif
+{
     pixel_format = desc->pixel_format;
 }
 
@@ -127,5 +139,16 @@ void SokolTexture2D::update() {
         sg_image_data imageData;
         imageData.subimage[0][0] = {data, data_len};
         sg_update_image(image, &imageData);
+#if defined(GPX) && defined(EMSCRIPTEN)
+        if (generateMipMaps) {
+            GLint previousTextureId;
+            glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTextureId);
+            glBindTexture(GL_TEXTURE_2D, image.id);
+            EM_ASM(({
+                Module["ctx"].generateMipmap(gl.TEXTURE_2D);
+            }));
+            glBindTexture(GL_TEXTURE_2D, previousTextureId);
+        }
+#endif
     }
 }
