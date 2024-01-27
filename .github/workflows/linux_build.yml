@@ -3,6 +3,11 @@ name: Linux Build
 on:
   push:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 env:
   GH_CACHE_KEY: 3
@@ -17,6 +22,7 @@ jobs:
           {build_type: Debug,   arch: x86_64, name: "D3D9 + Sokol + Asserts", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON -DOPTION_DEBUG_ASSERT=ON"},
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.arch}}
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     container:
       image: "debian:buster"
@@ -68,6 +74,7 @@ jobs:
           {build_type: Release, arch: x86_64, name: "Scripts Check", cmake: "-DOPTION_CHECK_SCRIPTS=ON "},
         ]
     name: Check build ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.name}}
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

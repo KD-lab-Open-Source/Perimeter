@@ -3,6 +3,11 @@ name: Windows MSYS Build
 on:
   push:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 env:
   GH_CACHE_KEY: 8
@@ -18,6 +23,7 @@ jobs:
           {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64},
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.sys}}
+    if: github.event.pull_request.draft != true
     defaults:
       run:
         shell: msys2 {0}

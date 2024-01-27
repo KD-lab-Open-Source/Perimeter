@@ -3,6 +3,11 @@ name: Windows MSVC Build
 on:
   push:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 env:
   VCPKG_COMMIT_ID: '21bbb14c4113b89cd06402e852e075341722304f'
@@ -22,6 +27,7 @@ jobs:
           #{bits: 64, arch_installed: x64, build_type: Release, arch_name: ARM, arch: amd64_arm64}
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
+    if: github.event.pull_request.draft != true
     env:
       VCPKG_DEFAULT_TRIPLET: ${{matrix.env.arch}}-windows
     runs-on: windows-latest
