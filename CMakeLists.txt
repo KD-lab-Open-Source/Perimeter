@@ -194,8 +194,10 @@ IF(NOT MSVC_CL_BUILD)
         "C:/MinGW"
         "/usr/include/x86_64-linux-gnu"
         "/usr/include/aarch64-linux-gnu"
+        "/usr/include/e2k-linux-gnu"
         "/usr/lib/x86_64-linux-gnu"
         "/usr/lib/aarch64-linux-gnu"
+        "/usr/lib/e2k-linux-gnu"
     )
 ENDIF()
 # Dependencies
@@ -299,12 +301,17 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -Wall -Wextra")
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}")
-    IF (OPTION_O0)
+    IF(OPTION_O0)
         SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
         SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O0")
     ELSE()
-        SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -ftree-vectorize")
-    ENDIF ()
+        IF(CMAKE_SYSTEM_PROCESSOR MATCHES "e2k" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+            # O3 on mcst-lcc approximately equal to O2 at gcc X86/ARM
+            SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+        ELSE()
+            SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -ftree-vectorize")
+        ENDIF()
+    ENDIF()
     IF(MACOS)
         SET(CMAKE_BUILD_RPATH "./dxvk-native-prefix/src/dxvk-native-build/src/d3d9/")
     ELSE()
