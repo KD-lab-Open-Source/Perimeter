@@ -12,8 +12,9 @@
 //Wrapper for chunk that will be freed once unused
 class MixChunkWrapper {
 public:
+    const std::string fileName;
     Mix_Chunk* chunk = nullptr;
-    explicit MixChunkWrapper(Mix_Chunk* chunk_) : chunk(chunk_) {}
+    explicit MixChunkWrapper(Mix_Chunk* chunk_, const std::string& fileName) : chunk(chunk_), fileName(fileName) {}
     ~MixChunkWrapper();
 };
 
@@ -51,7 +52,7 @@ public:
     ~SND_Sample();
 
     ///Loads raw data into sample and creates new chunk to hold it, assumes data is in device format
-    bool loadRawData(uint8_t* src_data, size_t src_len, bool copy);
+    bool loadRawData(uint8_t* src_data, size_t src_len, bool copy, const std::string& file_name);
 
     ///Plays provided sample as effect and returns used channel if any
     int play();

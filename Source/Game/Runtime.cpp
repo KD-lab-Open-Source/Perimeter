@@ -577,6 +577,10 @@ cInterfaceRenderDevice* SetGraph()
     terBitPerPixel = 32;
     terScreenSizeX = gpx()->sys()->getWidth();
     terScreenSizeY = gpx()->sys()->getHeight();
+    if (terScreenSizeY < 720) {
+        terScreenSizeY = 720;
+        terScreenSizeX = 720.0f * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
+    }
     int ModeRender = RENDERDEVICE_MODE_RGB32 | RENDERDEVICE_MODE_WINDOW;
 #else
 	int ModeRender=0;

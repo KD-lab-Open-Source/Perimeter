@@ -48,7 +48,7 @@ SND_Sample::~SND_Sample() {
     chunk = nullptr;
 }
 
-bool SND_Sample::loadRawData(uint8_t* src_data, size_t src_len, bool copy) {
+bool SND_Sample::loadRawData(uint8_t* src_data, size_t src_len, bool copy, const std::string& file_name) {
     Mix_Chunk* new_chunk = (Mix_Chunk*) SDL_malloc(sizeof(Mix_Chunk));
     new_chunk->allocated = 1;
     if (copy) {
@@ -63,7 +63,7 @@ bool SND_Sample::loadRawData(uint8_t* src_data, size_t src_len, bool copy) {
     } else {
         new_chunk->volume = 128;
     }
-    chunk_source = chunk = std::make_shared<MixChunkWrapper>(new_chunk);
+    chunk_source = chunk = std::make_shared<MixChunkWrapper>(new_chunk, file_name);
     this->chunk_millis = SNDcomputeAudioLengthMS(src_len);
     this->chunk_frequency = this->frequency;
     return true;
@@ -120,7 +120,7 @@ int SND_Sample::play() {
         bool loop = this->external_looped_restart ? false : this->looped; //Set loop flag if not externally controlled 
         channel = Mix_PlayChannel(channel, chunk_play, loop ? -1 : 0);
         if(channel == -1) { //Return's -1 if fails to play
-            fprintf(stderr, "Mix_PlayChannel error: %s\n", Mix_GetError());
+            fprintf(stderr, "Mix_PlayChannel error (%s): %s\n",  chunk->fileName.c_str(), Mix_GetError());
             channel = SND_NO_CHANNEL;
         } else {
             //Store channel for callback
@@ -265,7 +265,7 @@ bool SND_Sample::convertChunkFrequency() {
             new_chunk->volume = source->volume;
             new_chunk->abuf = cvt.buf;
             new_chunk->alen = cvt.len_cvt;
-            chunk = std::make_shared<MixChunkWrapper>(new_chunk);
+            chunk = std::make_shared<MixChunkWrapper>(new_chunk, chunk_source ? chunk_source->fileName : "");
             this->chunk_millis = SNDcomputeAudioLengthMS(cvt.len_cvt);
             this->chunk_frequency = this->frequency;
             return true;

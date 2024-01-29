@@ -123,6 +123,14 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
         fprintf(stderr, "Mix_Init: Failed to init required ogg support %s\n", Mix_GetError());
     }
 
+    bool open_audio_ok = false;
+#ifdef GPX
+    if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 1, 1024) == 0) {
+        open_audio_ok = true;
+    } else {
+        fprintf(stderr, "Mix_OpenAudio error open audio: %s\n", Mix_GetError());
+    }
+#else
     //Choose audio device
 	struct FORMATS
 	{
@@ -139,7 +147,6 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
 		{2,44100,AUDIO_FORMAT_16},
 	};
 
-    bool open_audio_ok = false;
 	for(int i=SIZE(formats)-1;i>=0;i--) {
         int chunksize = chunkSizeFactor * (formats[i].hertz / 1000) * formats[i].channels;
         chunksize *= AUDIO_FORMAT_8 == formats[i].bits ? 1 : 2;
@@ -150,6 +157,7 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
             fprintf(stderr, "Mix_OpenAudio error with format %i: %s\n", i, Mix_GetError());
         }
 	}
+#endif
     
     if (!open_audio_ok) {
         logs("All Mix_OpenAudio failed!\n");
@@ -282,7 +290,7 @@ SND_Sample* SNDLoadSound(const std::string& fxname)
         return nullptr;
     }
 
-    auto wrapper = std::make_shared<MixChunkWrapper>(chunk);
+    auto wrapper = std::make_shared<MixChunkWrapper>(chunk, fxname);
     auto* sample = new SND_Sample(wrapper);
     return sample;
 }

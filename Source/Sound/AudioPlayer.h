@@ -29,6 +29,10 @@ class SpeechPlayer: public AudioPlayer {
 private:
     float volume = 1.0f;
     class SND_Sample* sample = nullptr;
+
+#ifdef GPX
+    std::string fileName;
+#endif
     
     void destroySample();
     
