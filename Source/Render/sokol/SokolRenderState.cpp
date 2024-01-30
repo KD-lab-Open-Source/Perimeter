@@ -177,6 +177,7 @@ int cSokolRender::EndScene() {
                 break;
             case SOKOL_SHADER_ID_normal:
                 vs_params_name = "normal_texture_vs_params";
+                fs_params_name = "normal_texture_fs_params";
                 break;
             case SOKOL_SHADER_ID_terrain:
                 vs_params_name = "terrain_vs_params";
@@ -405,6 +406,12 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto vs_params = reinterpret_cast<normal_texture_vs_params_t*>(cmd->vs_params);
             auto fs_params = reinterpret_cast<normal_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
+            fs_params->material = activeMaterial;
+            memcpy(fs_params->diffuse, &activeDiffuse, sizeof(float) * 4);
+            memcpy(fs_params->ambient, &activeAmbient, sizeof(float) * 4);
+            memcpy(fs_params->specular, &activeSpecular, sizeof(float) * 4);
+            memcpy(fs_params->emissive, &activeEmissive, sizeof(float) * 4);
+            fs_params->power = activePower;
             break;
         }
         case SOKOL_SHADER_ID_terrain: {
@@ -550,6 +557,24 @@ void cSokolRender::SetColorMode(eColorMode color_mode) {
     if (activeCommandColorMode != color_mode) {
         FinishActiveDrawBuffer();
         activeCommandColorMode = color_mode;
+    }
+}
+
+void cSokolRender::SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
+                               const sColor4f& specular, const sColor4f& emissive, float power) {
+    if (activeMaterial != material ||
+        activeDiffuse != diffuse ||
+        activeAmbient != ambient ||
+        activeSpecular != specular ||
+        activeEmissive != emissive ||
+        activePower != power) {
+        FinishActiveDrawBuffer();
+        activeMaterial = material;
+        activeDiffuse = diffuse;
+        activeAmbient = ambient;
+        activeSpecular = specular;
+        activeEmissive = emissive;
+        activePower = power;
     }
 }
 

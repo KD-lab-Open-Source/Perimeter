@@ -25,7 +25,13 @@ void main() {
 @fs fs
 //Uniforms
 uniform normal_texture_fs_params {
+    vec4 diffuse;
+    vec4 ambient;
+    vec4 specular;
+    vec4 emissive;
+    float power; // specularPower
     float un_alpha_test;
+    int material; // 0 - NONE; 1 - MAT_LIGHT
 };
 uniform sampler2D un_tex0;
 
@@ -38,7 +44,10 @@ out vec4 frag_color;
 
 void main() {
     frag_color = texture(un_tex0, fs_uv0);
-    if (un_alpha_test >= frag_color.a) discard;
+    frag_color.a *= diffuse.a;
+    if (un_alpha_test >= frag_color.a) {
+        discard;
+    }
 }
 @end
 

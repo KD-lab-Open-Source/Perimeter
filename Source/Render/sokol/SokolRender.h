@@ -83,7 +83,13 @@ private:
     eColorMode activeCommandColorMode = COLOR_MOD;
     float activeCommandTex2Lerp = -1;
     eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
+    SOKOL_MATERIAL_TYPE activeMaterial;
     sColor4f activeCommandTileColor;
+    sColor4f activeDiffuse;
+    sColor4f activeAmbient;
+    sColor4f activeSpecular;
+    sColor4f activeEmissive;
+    float activePower;
 
     //Commands handling
     void ClearCommands();
@@ -92,6 +98,8 @@ private:
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
     void SetColorMode(eColorMode color_mode);
+    void SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
+                     const sColor4f& specular, const sColor4f& emissive, float power);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();

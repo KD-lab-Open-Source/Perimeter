@@ -93,6 +93,26 @@ void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* da
         }
     }
 
+    if (data->mat&MAT_LIGHT) {
+        SetMaterial(
+                SOKOL_MAT_LIGHT,
+                data->Diffuse,
+                {data->Ambient.r, data->Ambient.g, data->Ambient.b, 0},
+                {data->Specular.r, data->Specular.g, data->Specular.b, 0},
+                {data->Emissive.r, data->Emissive.g, data->Emissive.b, 0},
+                data->Power
+        );
+    } else {
+        SetMaterial(
+                SOKOL_MAT_NONE,
+                {0, 0, 0, data->Diffuse.a},
+                {data->Diffuse.r, data->Diffuse.g, data->Diffuse.b, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+                0
+        );
+    }
+
     if (data->mat&MAT_ALPHA_SUBBLEND) {
         blend = ALPHA_SUBBLEND;
     } else if(data->mat&MAT_ALPHA_ADDBLENDALPHA) {
