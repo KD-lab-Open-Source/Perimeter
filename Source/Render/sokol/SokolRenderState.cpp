@@ -406,12 +406,15 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto vs_params = reinterpret_cast<normal_texture_vs_params_t*>(cmd->vs_params);
             auto fs_params = reinterpret_cast<normal_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
-            fs_params->material = activeMaterial;
+            vs_params->model = isOrthographicProjSet ? Mat4f::ID : activeCommandW;
+            fs_params->material = activeGlobalLight ? activeMaterial : SOKOL_MAT_NONE;
             memcpy(fs_params->diffuse, &activeDiffuse, sizeof(float) * 4);
             memcpy(fs_params->ambient, &activeAmbient, sizeof(float) * 4);
             memcpy(fs_params->specular, &activeSpecular, sizeof(float) * 4);
             memcpy(fs_params->emissive, &activeEmissive, sizeof(float) * 4);
-            fs_params->power = activePower;
+            fs_params->spec_power = activePower;
+            memcpy(fs_params->light_color, &activeLightDiffuse, sizeof(float) * 3);
+            memcpy(fs_params->light_dir, &activeLightDir, sizeof(float) * 3);
             break;
         }
         case SOKOL_SHADER_ID_terrain: {
@@ -753,7 +756,25 @@ void cSokolRender::SetGlobalFog(const sColor4f &color,const Vect2f &v) {
 }
 
 void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *Diffuse, sColor4f *Specular) {
-    //TODO implement this
+    bool globalLight =  vLight != nullptr && Ambient != nullptr && Diffuse != nullptr && Specular != nullptr;
+    bool finishActiveDrawBuffer = true;
+    if (activeGlobalLight != globalLight) {
+        FinishActiveDrawBuffer();
+        activeGlobalLight = globalLight;
+        if (!globalLight) {
+            return;
+        }
+        finishActiveDrawBuffer = false;
+    }
+
+    if (activeLightDir != *vLight ||
+        activeLightDiffuse != *Diffuse) {
+        if (finishActiveDrawBuffer) {
+            FinishActiveDrawBuffer();
+        }
+        activeLightDir = *vLight;
+        activeLightDiffuse = *Diffuse;
+    }
 }
 
 void cSokolRender::ClearZBuffer() {

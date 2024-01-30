@@ -90,6 +90,9 @@ private:
     sColor4f activeSpecular;
     sColor4f activeEmissive;
     float activePower;
+    bool activeGlobalLight = false;
+    Vect3f activeLightDir;
+    sColor4f activeLightDiffuse;
 
     //Commands handling
     void ClearCommands();
