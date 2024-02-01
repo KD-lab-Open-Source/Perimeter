@@ -413,7 +413,9 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             memcpy(fs_params->specular, &activeSpecular, sizeof(float) * 4);
             memcpy(fs_params->emissive, &activeEmissive, sizeof(float) * 4);
             fs_params->spec_power = activePower;
-            memcpy(fs_params->light_color, &activeLightDiffuse, sizeof(float) * 3);
+            memcpy(fs_params->light_ambient, &activeLightAmbient, sizeof(float) * 3);
+            memcpy(fs_params->light_diffuse, &activeLightDiffuse, sizeof(float) * 3);
+            memcpy(fs_params->light_specular, &activeLightSpecular, sizeof(float) * 3);
             memcpy(fs_params->light_dir, &activeLightDir, sizeof(float) * 3);
             break;
         }
@@ -774,6 +776,8 @@ void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *D
         }
         activeLightDir = *vLight;
         activeLightDiffuse = *Diffuse;
+        activeLightAmbient = *Ambient;
+        activeLightSpecular = *Specular;
     }
 }
 

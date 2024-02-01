@@ -33,7 +33,9 @@ uniform normal_texture_fs_params {
     vec4 specular;
     vec4 emissive;
     vec3 light_dir;
-    vec3 light_color;
+    vec3 light_diffuse;
+    vec3 light_ambient;
+    vec3 light_specular;
     float spec_power; // specularPower
     float un_alpha_test;
     int material; // 0 - NONE; 1 - MAT_LIGHT
@@ -50,13 +52,16 @@ out vec4 frag_color;
 
 
 const vec3 eye_pos = vec3(0, 0, 0);
-const vec3 gamma_power = vec3(1.0/2.2, 1.0/2.2, 1.0/2.2);
+const vec3 gamma_power = vec3(1.0/2.2);
+const vec3 ambient_k = vec3(1);
 
 vec4 gamma(vec4 c) {
     return vec4(pow(c.xyz, gamma_power), c.w);
 }
 
-vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye, vec3 lcolor, vec3 diffuse, vec3 specular, float spec_power) {
+vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye,
+            vec3 l_ambient, vec3 l_diffuse, vec3 l_specular,
+            vec3 ambient, vec3 diffuse, vec3 specular, float spec_power) {
     vec3 n = normalize(nrm);
     vec3 v = normalize(eye - pos);
     float n_dot_l = max(dot(n, l), 0.0);
@@ -64,14 +69,19 @@ vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye, vec3 lcolor, vec3 diffuse, vec3
     float r_dot_v = max(dot(r, v), 0.0);
     float diff = n_dot_l;
     float spec = pow(r_dot_v, spec_power) * n_dot_l;
-    vec4 color = vec4(lcolor * (specular * spec + diffuse * diff), 1.0);
-    return color;
+    return vec4(l_ambient * ambient * ambient_k + l_diffuse * diffuse * diff + l_specular * specular * spec, 1.0);
 }
 
 void main() {
     frag_color = texture(un_tex0, fs_uv0);
     if (material > 0) {
-        frag_color = frag_color * gamma(phong(fs_position, fs_normal, -light_dir, eye_pos, light_color, diffuse.xyz, specular.xyz, spec_power));
+        frag_color = frag_color * gamma(
+            phong(fs_position, fs_normal, -light_dir, eye_pos,
+                    light_ambient, light_diffuse, light_specular,
+                    ambient.xyz, diffuse.xyz, specular.xyz, spec_power
+        ));
+    } else {
+        frag_color = frag_color * ambient;
     }
     frag_color.a *= diffuse.a;
     if (un_alpha_test >= frag_color.a) {

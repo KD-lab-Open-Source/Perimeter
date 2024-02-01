@@ -93,6 +93,8 @@ private:
     bool activeGlobalLight = false;
     Vect3f activeLightDir;
     sColor4f activeLightDiffuse;
+    sColor4f activeLightAmbient;
+    sColor4f activeLightSpecular;
 
     //Commands handling
     void ClearCommands();
