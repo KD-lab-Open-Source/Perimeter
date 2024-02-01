@@ -4756,13 +4756,16 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	controls = new sqshControl[] {
 	    //IP edit box
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 				x=169/1024; y=528/768; sx=138/1024; sy=42/768; state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_JOIN_IP_BTN;	x=169/1024; y=528/768; sx=138/1024; sy=42/768; text="IP"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};txt_align=SHELL_ALIGN_LEFT;},
-		{type = SQSH_EDIT_BOX_TYPE;    id = SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT;	x=(167 + 140)/1024; y=528/768; sx=600/1024; sy=32/768; txt_dy = 9/768;state = SQSH_ENABLED; txt_align=SHELL_ALIGN_LEFT;sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; alnum = 0;},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_JOIN_IP_BTN;	x=169/1024; y=528/768; sx=138/1024; sy=42/768; text="IP"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};txt_align=SHELL_ALIGN_LEFT;target=SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT;},
+		{type = SQSH_EDIT_BOX_TYPE;    id = SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT;	x=(169 + 120)/1024; y=528/768; sx=600/1024; sy=32/768; txt_dy = 9/768;state = SQSH_ENABLED; txt_align=SHELL_ALIGN_LEFT;sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; alnum = 0;},
+
+		//Separator
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 				x=279/1024; y=573/768; sx=560/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 272; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
 
 	    //Password edit box
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;                             x=169/1024; y=578/768; sx=138/1024; sy=42/768; state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_BTN;      x=169/1024; y=578/768; sx=138/1024; sy=42/768; text="Password"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};txt_align=SHELL_ALIGN_LEFT;},
-		{type = SQSH_EDIT_BOX_TYPE;    id = SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_INPUT;    x=(167 + 140)/1024; y=578/768; sx=600/1024; sy=32/768; txt_dy = 9/768;state = SQSH_ENABLED; txt_align=SHELL_ALIGN_LEFT;sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; alnum = 0;},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_BTN;      x=169/1024; y=578/768; sx=138/1024; sy=42/768; text="Password"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};txt_align=SHELL_ALIGN_LEFT;target=SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_INPUT;},
+		{type = SQSH_EDIT_BOX_TYPE;    id = SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_INPUT;    x=(169 + 120)/1024; y=578/768; sx=600/1024; sy=32/768; txt_dy = 9/768;state = SQSH_ENABLED; txt_align=SHELL_ALIGN_LEFT;sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; alnum = 0;},
 
         //Back/Next buttons
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;							x=rightSeparateBottomBtn.x;  y=rightSeparateBottomBtn.y; sx=rightSeparateBottomBtn.sx; sy=rightSeparateBottomBtn.sy; hitTestMode = HITTEST_NONE; },
@@ -4820,7 +4823,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
         //Player name box
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 				x=197/1024; y=565/768; sx=75/1024; sy=42/768; state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=197/1024; y=565/768; sx=75/1024; sy=42/768; text="Name"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=197/1024; y=565/768; sx=75/1024; sy=42/768; text="Name"; font_group=2; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};target=SQSH_MM_MULTIPLAYER_NAME_INPUT;},
 		{type = SQSH_EDIT_BOX_TYPE;    id = SQSH_MM_MULTIPLAYER_NAME_INPUT;		x=(197 + 80)/1024; y=565/768; sx=200/1024; sy=32/768; txt_dy = 9/768;state = SQSH_ENABLED; txt_align=SHELL_ALIGN_LEFT;sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; alnum = 0;},
 
         //Back / Direct / Create
