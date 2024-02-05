@@ -110,6 +110,42 @@ SokolTexture2D::~SokolTexture2D() {
 }
 
 void SokolTexture2D::update() {
+#if defined(GPX) && defined(EMSCRIPTEN)
+    static bool mipMapCode = ([]() {
+        EM_ASM(({
+            const gl = Module["ctx"];
+            const generateMipMaps = (target) => {
+                if (Module.generateMipMaps) {
+                    console.log("Target is", target, gl.TEXTURE_2D);
+                    gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+                    gl.generateMipmap(target);
+                }
+            };
+
+            gl.texImage2D = ((originalFn) => {
+                return function(target) {
+                    originalFn.apply(gl, arguments);
+                    generateMipMaps(target);
+                }
+            })(gl.texImage2D.bind(gl));
+            
+            gl.texSubImage2D = ((originalFn) => {
+                return function(target) {
+                    originalFn.apply(gl, arguments);
+                    generateMipMaps(target);
+                }
+            })(gl.texSubImage2D.bind(gl));
+        }));
+        return true;
+    })();
+
+    if (generateMipMaps) {
+        EM_ASM((
+            Module.generateMipMaps = true;
+        ));
+    }
+#endif
+
     xassert(!locked);
     if (!dirty) return;
     dirty = false;
@@ -139,16 +175,13 @@ void SokolTexture2D::update() {
         sg_image_data imageData;
         imageData.subimage[0][0] = {data, data_len};
         sg_update_image(image, &imageData);
-#if defined(GPX) && defined(EMSCRIPTEN)
-        if (generateMipMaps) {
-            GLint previousTextureId;
-            glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTextureId);
-            glBindTexture(GL_TEXTURE_2D, image.id);
-            EM_ASM(({
-                Module["ctx"].generateMipmap(gl.TEXTURE_2D);
-            }));
-            glBindTexture(GL_TEXTURE_2D, previousTextureId);
-        }
-#endif
     }
+
+#if defined(GPX) && defined(EMSCRIPTEN)
+    if (generateMipMaps) {
+        EM_ASM((
+           Module.generateMipMaps = false;
+        ));
+    }
+#endif
 }
