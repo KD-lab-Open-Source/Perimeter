@@ -5,14 +5,67 @@
 #include "GameContent.h"
 #include "qd_textdb.h"
 
-const char* CREDITS_PERIMETER_RUSSIAN = R"(ПЕРИМЕТР
+#ifdef GPX
+#define HEADER_RUS R"(
+
+&FFFFBBПосвящено памяти
+Андрея "КранК" Кузьмина
+1971 - 2022
+
+
+&66CCFFGamePix
+gamepix.com&FFFFFF
+
+&CCCCFFВеб версия&FFFFFF
+Александр "caiiiycuk" Гурьянов
+
+
+&66CCFFК-Д ЛАБ
+kdlab.com&FFFFFF
+
+Андрей "КранК" Кузьмин)"
+
+#define HEADER_ENG R"(
+
+&FFFFBBDedicated to the memory of
+Andrey "KranK" Kuzmin
+1971 - 2022
+
+
+&66CCFFGamePix
+gamepix.com&FFFFFF
+
+&CCCCFFWeb Version&FFFFFF
+Alexander "caiiiycuk" Guryanov
+
+
+&66CCFFK-D LAB
+kdlab.com&FFFFFF
+
+Andrey "KranK" Kuzmin)"
+#else
+#define HEADER_RUS R"(
 &66CCFFК-Д ЛАБ
 kdlab.com&FFFFFF
 
 
 &FFFFBBПосвящено памяти
 Андрея "КранК" Кузьмина
-1971 - 2022
+1971 - 2022)"
+
+#define HEADER_ENG R"(
+&66CCFFK-D LAB
+kdlab.com&FFFFFF
+
+
+&FFFFBBDedicated to the memory of
+Andrey "KranK" Kuzmin
+1971 - 2022)"
+#endif
+
+const char* CREDITS_PERIMETER_RUSSIAN = "ПЕРИМЕТР"
+HEADER_RUS
+R"(
 &CCCCFFПродюсер&FFFFFF
 Игровая концепция и вселенная,
 сценарий
@@ -121,14 +174,9 @@ Copyright (C) 1994-2023 Xiph.Org
 
 )"; //END CREDITS_PERIMETER_RUSSIAN
 
-const char* CREDITS_PERIMETER_ET_RUSSIAN = R"(ПЕРИМЕТР: Завет Императора
-&66CCFFК-Д ЛАБ
-kdlab.com&FFFFFF
-
-
-&FFFFBBПосвящено памяти
-Андрея "КранК" Кузьмина
-1971 - 2022
+const char* CREDITS_PERIMETER_ET_RUSSIAN = "ПЕРИМЕТР: Завет Императора"
+HEADER_RUS
+R"(
 &CCCCFFКонцепт-дизайнер&FFFFFF
 Игровая концепция и вселенная
 
@@ -349,14 +397,9 @@ github.com/KD-lab-Open-Source
 
 )"; //END CREDITS_COMMON_RUSSIAN
 
-const char* CREDITS_PERIMETER_ENGLISH = R"(PERIMETER
-&66CCFFK-D LAB
-kdlab.com&FFFFFF
-
-
-&FFFFBBDedicated to the memory of
-Andrey "KranK" Kuzmin
-1971 - 2022
+const char* CREDITS_PERIMETER_ENGLISH = "PERIMETER"
+HEADER_ENG
+R"(
 &CCCCFFProducer&FFFFFF
 Game Concept, Game Universe,
 Scenarios
@@ -459,14 +502,9 @@ Copyright (C) 1994-2023 Xiph.Org.
 
 )"; //END CREDITS_PERIMETER_ENGLISH
 
-const char* CREDITS_PERIMETER_ET_ENGLISH = R"(PERIMETER: Emperor's Testament
-&66CCFFK-D LAB
-kdlab.com&FFFFFF
-
-
-&FFFFBBDedicated to the memory of
-Andrey "KranK" Kuzmin
-1971 - 2022
+const char* CREDITS_PERIMETER_ET_ENGLISH = "PERIMETER: Emperor's Testament"
+HEADER_ENG
+R"(
 &CCCCFFConcept-designer&FFFFFF
 Game concept, Game universe
 
