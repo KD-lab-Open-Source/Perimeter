@@ -358,22 +358,23 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 	}
 */
 	//Get path for file and open it
-#ifdef GPX
     std::string path = Texture->GetName();
-    if (endsWith(path, ".avi")) {
-        path += "x";
-    }
-    path = convert_path_content(path);
-#else
-    std::string path = convert_path_content(Texture->GetName());
-	if (path.empty()) {
-        path = Texture->GetName();
-        if (endsWith(path, ".avi") && !convert_path_content(path + "x").empty()) {
-            //Use AVIX if available when AVI is absent
-            path += "x";
+    if (get_content_entry(path)) {
+        path = convert_path_content(path);
+    } else {
+        if (endsWith(path, ".avi")) {
+            if (get_content_entry(path + "x")) {
+                //Use AVIX if available when AVI is absent
+                path = convert_path_content(path + "x");
+            }
+        } else if (endsWith(path, ".avix")) {
+            std::string path_avi = path.substr(0, path.length() - 1);
+            if (get_content_entry(path_avi)) {
+                //Use AVI if available when AVIX is absent
+                path = convert_path_content(path_avi);
+            }
         }
 	}
-#endif
 	
 	cFileImage* FileImage = path.length() > 0 ? cFileImage::Create(path.c_str()) : nullptr;
 	if(!FileImage) {

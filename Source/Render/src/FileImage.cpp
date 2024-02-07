@@ -667,7 +667,7 @@ public:
 	virtual ~cAVIXImage()												{ close(); }
 	virtual int close()
 	{
-		if(data) delete data; data=NULL;
+		if(data) delete[] data; data=NULL;
 		return 0;
 	}
 	virtual int load(const char *fname)
