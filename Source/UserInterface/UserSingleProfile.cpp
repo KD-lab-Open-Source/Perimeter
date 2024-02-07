@@ -94,7 +94,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	newProfile.name = name;
 	std::string root = getAllSavesDirectory();
 	std::string path = root + newProfile.dirName;
-	std::string origin = root + PATH_SEP + "DefaultPlayerData";
+	std::string origin = root + "DefaultPlayerData";
     std::error_code error;
     create_directories(path, &error);
 	if( error ) {

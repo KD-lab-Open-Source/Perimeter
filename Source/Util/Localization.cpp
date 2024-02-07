@@ -2,6 +2,10 @@
 #include "files/files.h"
 #include "Localization.h"
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 bool isLocaleInit = false;
 std::string localeCurrent;
 std::string localePath;
@@ -46,6 +50,11 @@ void initLocale() {
         localeCurrent = "";
         saveLocale(localeCurrent);
     }
+
+#ifdef GPX
+    localeCurrent = gpx()->sys()->getLanguage() == "ru" ? "russian" : "english";
+#endif
+
     //Check if locale is actually available
     if (!localeCurrent.empty()) {
         localeCurrent = string_to_lower(localeCurrent.c_str());

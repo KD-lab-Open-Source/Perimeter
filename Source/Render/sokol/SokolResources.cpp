@@ -116,7 +116,6 @@ void SokolTexture2D::update() {
             const gl = Module["ctx"];
             const generateMipMaps = (target) => {
                 if (Module.generateMipMaps) {
-                    console.log("Target is", target, gl.TEXTURE_2D);
                     gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
                     gl.generateMipmap(target);
                 }
