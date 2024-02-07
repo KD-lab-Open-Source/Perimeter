@@ -1023,7 +1023,20 @@ int SDL_main(int argc, char *argv[])
         }
 
 #ifdef GPX
-        gpx()->sys()->mainReady(true);
+        static bool gpx_ready = false;
+        if (!gpx_ready) {
+            gpx_ready = false;
+#ifdef EMSCRIPTEN
+            EM_ASM(({
+                if (!document.pointerLockElement) {
+                    Module["canvas"].addEventListener("pointerdown", () => {
+                        Module["canvas"].requestPointerLock().catch((e) => console.error("Can't lock mouse", e));
+                    });
+                }
+            }));
+#endif
+            gpx()->sys()->mainReady(true);
+        }
         gpx()->async()->runNextTask();
 #ifdef EMSCRIPTEN
         emscripten_sleep(0);
