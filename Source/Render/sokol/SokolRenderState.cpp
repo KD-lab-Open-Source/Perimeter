@@ -398,6 +398,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto vs_params = reinterpret_cast<color_texture_vs_params_t*>(cmd->vs_params);
             auto fs_params = reinterpret_cast<color_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
+            vs_params->tex0_mat = activeTex0Transform;
+            vs_params->tex1_mat = activeTex1Transform;
             fs_params->un_color_mode = activeCommandColorMode;
             fs_params->un_tex2_lerp = activeCommandTex2Lerp;
             break;
@@ -407,6 +409,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto fs_params = reinterpret_cast<normal_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
             vs_params->model = isOrthographicProjSet ? Mat4f::ID : activeCommandW;
+            vs_params->tex0_mat = activeTex0Transform;
             fs_params->material = activeGlobalLight ? activeMaterial : SOKOL_MAT_NONE;
             memcpy(fs_params->diffuse, &activeDiffuse, sizeof(float) * 4);
             memcpy(fs_params->ambient, &activeAmbient, sizeof(float) * 4);
@@ -444,6 +447,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
+    activeTex0Transform = Mat4f::ID;
+    activeTex1Transform = Mat4f::ID;
     
     //Submit command
     commands.emplace_back(cmd);
@@ -581,6 +586,14 @@ void cSokolRender::SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& dif
         activeEmissive = emissive;
         activePower = power;
     }
+}
+
+void cSokolRender::setTexture0Transform(const Mat4f& tex0Transform) {
+   activeTex0Transform = tex0Transform;
+}
+
+void cSokolRender::setTexture1Transform(const Mat4f& tex1Transform) {
+   activeTex1Transform = tex1Transform;
 }
 
 void cSokolRender::SetBlendState(eBlendMode blend) {

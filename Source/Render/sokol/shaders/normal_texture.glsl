@@ -5,6 +5,7 @@
 uniform normal_texture_vs_params {
     mat4 un_mvp;
     mat4 model;
+    mat4 tex0_mat;
 };
 
 //Vertex Buffer inputs
@@ -20,7 +21,7 @@ layout(location=2) out vec3 fs_position;
 void main() {
     gl_Position = un_mvp * vec4(vs_position, 1.0f);
     fs_normal = (model * vec4(vs_normal, 0)).xyz;
-    fs_uv0 = vs_texcoord0;
+    fs_uv0 = (tex0_mat * vec4(vs_texcoord0, 1, 1)).xy;
     fs_position = (model * vec4(vs_position, 0)).xyz;
 }
 @end
@@ -80,10 +81,10 @@ void main() {
                     light_ambient, light_diffuse, light_specular,
                     ambient.xyz, diffuse.xyz, specular.xyz, spec_power
         ));
+        frag_color.a *= diffuse.a;
     } else {
-        frag_color = frag_color * ambient;
+        frag_color.xyz = frag_color.xyz * ambient.xyz * ambient_k;
     }
-    frag_color.a *= diffuse.a;
     if (un_alpha_test >= frag_color.a) {
         discard;
     }

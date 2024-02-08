@@ -131,23 +131,19 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
     //TODO SetPointLight(mesh->GetRootNode()->GetLight());
 
     SetWorldMatXf(mesh->GetGlobalMatrix());
-    if(data->mat&MAT_TEXMATRIX_STAGE1)
-    {
-        Mat4f mat;
+    activeTex0Transform = Mat4f::ID;
+    if(data->mat&MAT_TEXMATRIX_STAGE1) {
         MatXf &m=data->TexMatrix;
-        memset(&mat,0,sizeof(mat));
-        mat.xx = m.rot()[0][0],	mat.xy = m.rot()[0][1];
-        mat.yx = m.rot()[1][0],	mat.yy = m.rot()[1][1];
-        mat.zx = m.trans().x,	mat.zy = m.trans().y;
-        //TODO gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat));
+        activeTex0Transform.xx = m.rot()[0][0],	activeTex0Transform.xy = m.rot()[0][1];
+        activeTex0Transform.yx = m.rot()[1][0],	activeTex0Transform.yy = m.rot()[1][1];
+        activeTex0Transform.zx = m.trans().x,	activeTex0Transform.zy = m.trans().y;
     }
 
-    if(data->mat&MAT_RENDER_SPHEREMAP)
-    { // сферический мапинг
+    activeTex1Transform = Mat4f::ID;
+    if(data->mat&MAT_RENDER_SPHEREMAP) { // сферический мапинг
         Mat4f mat;
         memset(&mat,0,sizeof(mat));
-        mat.xx=mat.yy=mat.wx=mat.wy=0.5f;
-        //TODO gb_RenderDevice3D->lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat));
+        activeTex1Transform.xx=activeTex1Transform.yy=activeTex1Transform.wx=activeTex1Transform.wy=0.5f;
     }
 
     cMeshTri* Tri = mesh->GetTri();

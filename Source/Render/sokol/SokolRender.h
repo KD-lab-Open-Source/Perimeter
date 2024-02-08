@@ -96,6 +96,9 @@ private:
     sColor4f activeLightAmbient;
     sColor4f activeLightSpecular;
 
+    Mat4f activeTex0Transform;
+    Mat4f activeTex1Transform;
+
     //Commands handling
     void ClearCommands();
     void FinishActiveDrawBuffer();
@@ -209,6 +212,9 @@ public:
     void SetMaterialTilemap(cTileMap *TileMap) override;
     void SetMaterialTilemapShadow() override;
     void SetTileColor(sColor4f color) override;
+
+    void setTexture0Transform(const Mat4f& tex0Transform);
+    void setTexture1Transform(const Mat4f& tex1Transform);
 
     // //// cInterfaceRenderDevice impls end ////
 };
