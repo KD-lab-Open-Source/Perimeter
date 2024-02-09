@@ -74,13 +74,6 @@ IF(PERIMETER_WINDOWS)
         )
     ENDIF()
 
-    #Use these libs as AVI fallback
-    IF(NOT FFMPEG_FOUND)
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-                vfw32
-        )
-    ENDIF()
-
     IF(MSVC_CL_BUILD)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
                 legacy_stdio_definitions

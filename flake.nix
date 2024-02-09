@@ -174,9 +174,9 @@
             
             configureFlags = attrs.configureFlags ++ [
               "--disable-everything"
-              "--enable-demuxer=rawvideo,bink,avi,matroska"
-              "--enable-decoder=rawvideo,bink,binkaudio_dct,vorbis,opus,png,vp9"
-              "--enable-parser=png,vp9"
+              "--enable-demuxer=rawvideo,bink,matroska"
+              "--enable-decoder=rawvideo,bink,binkaudio_dct,vorbis,opus,vp9"
+              "--enable-parser=vp9"
               "--enable-filter=aresample,aformat"
               "--enable-protocol=file"
               "--disable-ffplay"

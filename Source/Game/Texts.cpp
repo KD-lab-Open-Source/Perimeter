@@ -376,14 +376,16 @@ shikoist
 
 Сторонних библиотек
 SDL2
-SDL2_mixer
 SDL2_image
 SDL2_net
-sokol_gfx
-DXVK Native
+SDL2_mixer
+zlib
 FFmpeg
 Boost
-zlib
+DXVK Native
+sokol_gfx
+pevents
+simpleini
 
 
 &99EE66И ОГРОМНОЕ СПАСИБО
@@ -698,14 +700,16 @@ Alexander "@!!ex" Basov
 
 Third-party libraries
 SDL2
-SDL2_mixer
 SDL2_image
 SDL2_net
-sokol_gfx
-DXVK Native
+SDL2_mixer
+zlib
 FFmpeg
 Boost
-zlib
+DXVK Native
+sokol_gfx
+pevents
+simpleini
 
 &99EE66AND THANK YOU SO MUCH
 FOR YOUR SUPPORT!

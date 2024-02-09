@@ -13,7 +13,7 @@ public:
 	virtual ~cFileImage()														{}
 	virtual int load(void *pointer,int size)									{ return -1; }
 	virtual int load(const char *fname)												{ return -1; }
-	virtual int save(const char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0){ return -1; }
+	virtual int save(const char *fname,void *pointer,int bpp,int x,int y,int length,int time){ return -1; }
 	virtual int close()															{ return -1; }
 	virtual int GetTextureAlpha(void *pointer,int time,int bpp,int bpl,
 		int aBitCount=8,int aBitShift=24,int xSize=-1,int ySize=-1)				{ return -1; }

@@ -2,31 +2,16 @@
 #include <stdio.h>
 #include <cstdint>
 #include <memory>
-#include "xmath.h"
-
-#ifdef PERIMETER_FFMPEG
-#include "AVWrapper.h"
-#else // PERIMETER_FFMPEG
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-#include <vfw.h>		// AVI include
-#endif //_WIN32
-#include <math.h>
-#include <sys/types.h>
-#include "xutil.h"
-#endif //PERIMETER_FFMPEG
-
-#include "xutil.h"
-#include "FileImage.h"
-
+#include <SDL_image.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#include <SDL_image.h>
-
+#include "xmath.h"
+#include "xutil.h"
+#include "FileImage.h"
 #include "files/files.h"
 #include "ANIFile.h"
+#include "AVIFile.h"
 
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
@@ -285,26 +270,30 @@ class cTGAImage : public cFileImage
 public:
 	cTGAImage()	
 	{
-		ImageData=NULL;
-		tga=NULL;
+		ImageData=nullptr;
+		tga=nullptr;
 		length=1;
 	}
-	virtual ~cTGAImage()										{ close(); }
-	virtual int close()
-	{
-		if(tga) { delete[] tga; tga=0; }
-		else if(ImageData) { delete[] ImageData; } ImageData=0;
+	~cTGAImage() override {
+        close();
+    }
+	int close() override {
+        if (tga) {
+            delete[] tga;
+            tga = nullptr;
+        } else {
+            delete[] ImageData;
+            ImageData = nullptr;
+        }
 		return 0;
 	}
-	virtual int load(const char *fname)
-	{
+	int load(const char *fname) override {
 		int size=0;
-		char *buf=0;
-		if(ResourceFileRead(fname,buf,size)) return 1;
+		char *buf= nullptr;
+		if (ResourceFileRead(fname,buf,size)) return 1;
 		return load(buf,size);
 	}
-	virtual int load(void *pointer,int size)
-	{
+	int load(void *pointer,int size) override {
 		close();
 		tga=static_cast<TGAHeader*>(pointer);
 		x=tga->width;
@@ -314,8 +303,8 @@ public:
 		ImageData=(18+colormapsize+static_cast<uint8_t*>(pointer));
 		return 0;
 	}
-	virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
-	{
+    
+	int save(const char *fname,void *pointer,int bpp,int x,int y,int length,int time) override {
 		if(!SaveTGA(fname,x,y,(unsigned char*)pointer,bpp/8))
 			return -1;
 		return 0;
@@ -323,34 +312,34 @@ public:
 	
 	int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
-		int dy=(tga->flags&0x20)?GetY():-GetY();
+		int dy=(tga->flags&0x20)?y:-y;
 		if(GetBitPerPixel()==24)
 			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									ImageData,3,GetX()*3,8,0,GetX(),dy);
+									ImageData,3,x*3,8,0,x,dy);
 		else if(GetBitPerPixel()==32)
 			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									ImageData,4,GetX()*4,8,24,GetX(),dy);
+									ImageData,4,x*4,8,24,x,dy);
 		else if(GetBitPerPixel()==16)
 			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									ImageData,2,GetX()*2,31,0,GetX(),dy);
+									ImageData,2,x*2,31,0,x,dy);
 		return 0;
 	}
 	
 	int GetTextureRGB(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
 	{ 
-		int dy=(tga->flags&0x20)?GetY():-GetY();
+		int dy=(tga->flags&0x20)?y:-y;
 		if(GetBitPerPixel()==24)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,3,GetX()*3,8,16,8,8,8,0,GetX(),dy);
+								ImageData,3,x*3,8,16,8,8,8,0,x,dy);
 		else if(GetBitPerPixel()==32)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,4,GetX()*4,8,16,8,8,8,0,GetX(),dy);
+								ImageData,4,x*4,8,16,8,8,8,0,x,dy);
 		else if(GetBitPerPixel()==16)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,2,GetX()*2,5,10,5,5,5,0,GetX(),dy);
+								ImageData,2,x*2,5,10,5,5,5,0,x,dy);
 		else if(GetBitPerPixel()==8)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,1,GetX()  ,8,0,8,0,8,0,GetX(),dy);
+								ImageData,1,x  ,8,0,8,0,8,0,x,dy);
 /*		{
 //			SaveTga("save.tga",GetX(),GetY(),(uint8_t*)ImageData,1);
 
@@ -378,24 +367,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cAVIImage
 //////////////////////////////////////////////////////////////////////////////////////////
-#ifdef PERIMETER_FFMPEG
-
-// compatability with newer libavcodec
-#if LIBAVCODEC_VERSION_MAJOR < 57
-#define AV_FRAME_ALLOC avcodec_alloc_frame
-#define AV_PACKET_UNREF av_free_packet
-#else
-#define AV_FRAME_ALLOC av_frame_alloc
-#define AV_PACKET_UNREF av_packet_unref
-#endif
-
-#define AV_CODEC_PAR (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 33, 100))
 
 class cAVIImage : public cFileImage
 {
-    AVWrapper wrapper;
-    int tpf = 1; //Cached time per frame
-    std::vector<uint8_t*> frames;
+    int tpf = 0; //Time per frame in ms
+    AVIFile avi;
     
 public:
     cAVIImage() = default;
@@ -404,248 +380,80 @@ public:
         close();
     }
     
-    virtual int close() {
-        for (uint8_t* frame : frames) {
-            delete[] frame;
-        }
-        frames.clear();
-        return wrapper.close();
+    int close() override {
+        avi.close();
+        return 0;
     }
     
-    virtual int load(const char *fname) {
+    int load(const char *fname) override {
+        tpf = x = y = 0;
+        
         std::string aviname = convert_path_content(fname);
         if (aviname.empty()) {
             //VisError <<"cAVIImage File not found:"<<aviname<<VERR_END;
-            return 1; // Couldn't open file
+            return 1; // Couldn't open file, could be .avix only
         }
 
-        // Open video file
-        int ret = wrapper.open(aviname, AVWrapperType::Video);
-        if (ret) {
-            return ret;
+        int err = avi.load(fname);
+        if (err) {
+            close();
+            return 1;
         }
 
-        x = wrapper.getVideoWidth();
-        y = wrapper.getVideoHeight();
-        
-        //Set time (milliseconds of total duration)
-        time = static_cast<int>(xm::round(
-            wrapper.getDuration() * 1000.0f
-        ));
-        
-        //Set bpp
-        bpp = wrapper.getVideoBPP();
-
-        //Read all wrapper packets
-        while (!wrapper.end) {
-            wrapper.readPacket();
-        }
-        //Discard any audio frames
-        wrapper.audioFrames.clear();
-        //Order video frames
-        wrapper.videoFrames.sort(AVWrapperFrame_compare);
-        for (auto frame : wrapper.videoFrames) {
-            //Read video frame and make buffer
-            uint8_t* buffer = nullptr;
-            frame->copyBuffer(&buffer);
-            frames.emplace_back(buffer);
-        }
-        wrapper.close();
-        length = static_cast<int>(frames.size());
-
-        if (length <= 1) {
-            tpf = 1;
-        } else {
-            tpf = (time - 1) / (length - 1);
-        }
+        x = static_cast<int>(avi.width);
+        y = static_cast<int>(avi.height);
+        time = static_cast<int>(avi.time);
+        length = static_cast<int>(avi.length);
+        tpf = static_cast<int>(avi.tpf);
+        bpp = static_cast<int>(avi.bpp);
         
         return 0;
     }
 
-    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
+    int save(const char *fname,void *pointer,int bpp,int x,int y,int length,int time) override {
         return 0;
     }
 
     uint8_t* getFrameDataFromTime(int t) {
         int i = t / tpf;
-        if (i >= frames.size()) {
-            ErrH.Abort("Attempted to read frame " + std::to_string(i) + " which is out of bounds " + std::to_string(frames.size()));
+        if (i >= avi.frames.size()) {
+            ErrH.Abort("Attempted to read frame " + std::to_string(i) + " which is out of bounds " + std::to_string(avi.frames.size()));
         }
-        return frames[i];
+        return avi.frames[i];
     }
 
     int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override {
         uint8_t* data = getFrameDataFromTime(t);
-        if(GetBitPerPixel()==24)
-            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     data,3,GetX()*3,8,0,GetX(),GetY());
-        else if(GetBitPerPixel()==32)
-            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     data,4,GetX()*4,8,24,GetX(),GetY());
-        else if(GetBitPerPixel()==16)
-            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     data,2,GetX()*2,31,0,GetX(),GetY());
+        if (bpp == 24) {
+            cFileImage_GetFrameAlpha(pointer, bppDst, bplDst, acDst, asDst, xDst, yDst,
+                                     data, 3, x * 3, 8, 0, x, -y);
+        }
+        else if (bpp == 32) {
+            cFileImage_GetFrameAlpha(pointer, bppDst, bplDst, acDst, asDst, xDst, yDst,
+                                     data, 4, x * 4, 8, 24, x, -y);
+        }
+        else if (bpp == 16) {
+            cFileImage_GetFrameAlpha(pointer, bppDst, bplDst, acDst, asDst, xDst, yDst,
+                                     data, 2, x * 2, 31, 0, x, -y);
+        }
         return 0;
     }
 
     int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override {
         uint8_t* data = getFrameDataFromTime(t);
-        if(GetBitPerPixel()==24)
-            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                data,3,GetX()*3,8,16,8,8,8,0,GetX(),GetY());
-        else if(GetBitPerPixel()==32)
-            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                data,4,GetX()*4,8,16,8,8,8,0,GetX(),GetY());
-        else if(GetBitPerPixel()==16)
-            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                data,2,GetX()*2,5,10,5,5,5,0,GetX(),GetY());
+        if( bpp==24) {
+            cFileImage_GetFrame(pointer, bppDst, bplDst, rc, rs, gc, gs, bc, bs, xDst, yDst,
+                                data, 3, x * 3, 8, 16, 8, 8, 8, 0, x, -y);
+        } else if (bpp==32) {
+            cFileImage_GetFrame(pointer, bppDst, bplDst, rc, rs, gc, gs, bc, bs, xDst, yDst,
+                                data, 4, x * 4, 8, 16, 8, 8, 8, 0, x, -y);
+        } else if (bpp==16) {
+            cFileImage_GetFrame(pointer, bppDst, bplDst, rc, rs, gc, gs, bc, bs, xDst, yDst,
+                                data, 2, x * 2, 5, 10, 5, 5, 5, 0, x, -y);
+        }
         return 0;
     }
-
-    static void Init() {
-        AVWrapper::init();
-    }
-
-    static void Done() {
-    }
 };
-#else
-class cAVIImage : public cFileImage
-{
-	IGetFrame	*Frame = nullptr;
-	IAVIStream	*pavi = nullptr;
-public:
-	cAVIImage()															{ Frame=0; pavi=0; }
-	virtual ~cAVIImage()												{ close(); }
-	virtual int close()
-	{
-		if(Frame) AVIStreamGetFrameClose(Frame); Frame=0;
-		if(pavi) AVIStreamRelease(pavi); pavi=0;
-		return 0;
-	}
-	virtual int load(const char *fname)
-	{
-		AVISTREAMINFO FAR psi;
-        
-        std::string aviname = convert_path_content(fname);
-        if (aviname.empty()) {
-            return 1; // Couldn't find file
-        }
-
-		HRESULT hr=AVIStreamOpenFromFileA(&pavi,aviname.c_str(),streamtypeVIDEO,0,OF_READ,NULL);
-		if (hr) {
-            fprintf(stderr, "cAVIImage couldn't open: %s %s\n", fname, aviname.c_str());
-            return 1;
-        }
-		time=AVIStreamLengthTime(pavi);
-		AVIStreamInfo(pavi,&psi,sizeof(AVISTREAMINFO FAR));
-		x=psi.rcFrame.right-psi.rcFrame.left;
-		y=psi.rcFrame.bottom-psi.rcFrame.top;
-		length=psi.dwLength;
-		Frame=AVIStreamGetFrameOpen(pavi,NULL);
-		BITMAPINFO *pbmi=(BITMAPINFO*)AVIStreamGetFrame(Frame,AVIStreamTimeToSample(pavi,0));
-		bpp=pbmi->bmiHeader.biBitCount;
-		return 0;
-	}
-	virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
-	{ 
-		int err;
-		BITMAPINFOHEADER bmh;
-		memset(&bmh,0,sizeof(BITMAPINFOHEADER));
-		bmh.biSize        = sizeof(BITMAPINFOHEADER);
-		bmh.biWidth       = x;
-		bmh.biHeight      = y;
-		bmh.biPlanes      = 1;
-		bmh.biBitCount    = bpp;
-		bmh.biCompression = BI_RGB;
-		bmh.biSizeImage   = x*y*bpp/8;
-		if(bpp!=32) return -2;
-		PAVISTREAM pcomp=0;
-		PAVIFILE fAVI=0;
-		std::remove(fname);
-		err = AVIFileOpenA(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
-		if(err)
-			return 1;
-		AVISTREAMINFO avi;
-		memset(&avi,0,sizeof(AVISTREAMINFO));
-		avi.fccType    = streamtypeVIDEO;
-		avi.fccHandler = mmioFOURCC('D', 'I', 'B', ' ');
-		avi.dwScale    = 1;
-		avi.dwRate     = length*1000/time;
-		avi.dwQuality  = 0;
-		avi.dwLength   = length;
-		err = AVIFileCreateStream(fAVI,&pavi,&avi);
-		if(err)
-			return 2;
-		AVICOMPRESSOPTIONS compOptions;
-		memset(&compOptions, 0, sizeof(AVICOMPRESSOPTIONS));
-		compOptions.dwFlags         = AVICOMPRESSF_VALID | AVICOMPRESSF_KEYFRAMES;
-		compOptions.fccType         = streamtypeVIDEO;
-		compOptions.fccHandler      = avi.fccHandler;
-		compOptions.dwQuality       = avi.dwQuality;
-		compOptions.dwKeyFrameEvery = 15;
-		err=AVIMakeCompressedStream(&pcomp, pavi, &compOptions, NULL);
-		if(err)
-			return 3;
-		err=AVIStreamSetFormat(pcomp,0,&bmh,bmh.biSize);
-		if(err)
-			return 4;
-		unsigned char *buf=new unsigned char[bmh.biSizeImage];
-		for(int i=0;i<length;i++)
-		{
-			for(int j=0;j<y;j++)
-				memcpy(&buf[(y-j-1)*bmh.biSizeImage/y],&((LPBYTE)pointer)[i*bmh.biSizeImage+j*bmh.biSizeImage/y],bmh.biSizeImage/y);
-			err=AVIStreamWrite(pcomp,i,1,buf,bmh.biSizeImage,AVIIF_KEYFRAME,NULL,NULL);
-			if(err)
-				return 5;
-		}
-		delete buf;
-		if(pcomp) AVIStreamRelease(pcomp); pcomp=0;
-		if(pavi) AVIStreamRelease(pavi); pavi=0;
-		if(fAVI) AVIFileRelease(fAVI); fAVI=0;
-		return 0; 
-	}
-	
-	int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
-	{
-		BITMAPINFO *pbmi=(BITMAPINFO*)AVIStreamGetFrame(Frame,AVIStreamTimeToSample(pavi,t%time));
-		if(GetBitPerPixel()==24)
-			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									((unsigned char*)pbmi->bmiColors),3,GetX()*3,8,0,GetX(),-y);
-		else if(GetBitPerPixel()==32)
-			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									((unsigned char*)pbmi->bmiColors),4,GetX()*4,8,24,GetX(),-y);
-		else if(GetBitPerPixel()==16)
-			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									((unsigned char*)pbmi->bmiColors),2,GetX()*2,31,0,GetX(),-y);
-		return 0;
-	}
-	
-	int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
-	{
-		BITMAPINFO *pbmi=(BITMAPINFO*)AVIStreamGetFrame(Frame,AVIStreamTimeToSample(pavi,t%time));
-		if(pbmi->bmiHeader.biCompression) return 1;
-		if(GetBitPerPixel()==24)
-			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								((unsigned char*)pbmi->bmiColors),3,GetX()*3,8,16,8,8,8,0,GetX(),-y);
-		else if(GetBitPerPixel()==32)
-			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								((unsigned char*)pbmi->bmiColors),4,GetX()*4,8,16,8,8,8,0,GetX(),-y);
-		else if(GetBitPerPixel()==16)
-			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								((unsigned char*)pbmi->bmiColors),2,GetX()*2,5,10,5,5,5,0,GetX(),-y);
-		return 0;
-	}
-	static void Init()
-	{ 
-		AVIFileInit(); /*opens AVIFile library*/ 
-	}
-	static void Done()
-	{ 
-		AVIFileExit(); /*closes AVIFile library*/ 
-	}
-};
-#endif
 
 ///////////////////////////////////////////////
 ///AVIX
@@ -663,15 +471,21 @@ class cAVIXImage : public cFileImage
 		char p[1];
 	}* data;
 public:
-	cAVIXImage()														{ data=0; }
-	virtual ~cAVIXImage()												{ close(); }
-	virtual int close()
-	{
-		if(data) delete[] data; data=NULL;
+	cAVIXImage() {
+        data = nullptr;
+    }
+	
+    ~cAVIXImage() override {
+        close();
+    }
+	
+    int close() override {
+		delete[] data;
+        data = nullptr;
 		return 0;
 	}
-	virtual int load(const char *fname)
-	{
+    
+	int load(const char *fname) override {
 		char* buf;
 		int size;
 		std::string name = fname;
@@ -690,24 +504,23 @@ public:
 		bpp=data->bpp;
 		return 0;
 	}
-	virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
-	{ 
+    
+	int save(const char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) override { 
 		return 0; 
 	}
-	
 	
 	int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
 		void *pbmi=GetFrameByte((t/GetTimePerFrame())%length);
 		if(GetBitPerPixel()==24)
 			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									pbmi,3,GetX()*3,8,0,GetX(),y);
+									pbmi,3,x*3,8,0,x,y);
 		else if(GetBitPerPixel()==32)
 			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									pbmi,4,GetX()*4,8,24,GetX(),y);
+									pbmi,4,x*4,8,24,x,y);
 		else if(GetBitPerPixel()==16)
 			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									pbmi,2,GetX()*2,31,0,GetX(),y);
+									pbmi,2,x*2,31,0,x,y);
 		return 0;
 	}
 	
@@ -717,17 +530,15 @@ public:
 		void *pbmi=GetFrameByte((t/GetTimePerFrame())%length);
 		if(GetBitPerPixel()==24)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								pbmi,3,GetX()*3,8,16,8,8,8,0,GetX(),y);
+								pbmi,3,x*3,8,16,8,8,8,0,x,y);
 		else if(GetBitPerPixel()==32)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								pbmi,4,GetX()*4,8,16,8,8,8,0,GetX(),y);
+								pbmi,4,x*4,8,16,8,8,8,0,x,y);
 		else if(GetBitPerPixel()==16)
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								pbmi,2,GetX()*2,5,10,5,5,5,0,GetX(),y);
+								pbmi,2,x*2,5,10,5,5,5,0,x,y);
 		return 0;
 	}
-	static void Init()													{ }
-	static void Done()													{ }
 
 	void* GetFrameByte(int n)
 	{
@@ -1052,11 +863,11 @@ public:
     cSDLImage() {
     }
 
-    virtual ~cSDLImage() {
+    ~cSDLImage() override {
         close();
     }
 
-    virtual int close() {
+    int close() override {
         if (image) {
             SDL_FreeSurface(image);
             image = nullptr;
@@ -1065,8 +876,7 @@ public:
     }
 
     ///Loads from file
-    virtual int load(const char *fname)
-    {
+    int load(const char *fname) override {
         std::string file_path = convert_path_content(fname);
         if (file_path.empty()) {
             return 1;
@@ -1106,7 +916,7 @@ public:
         return 0;
     }
 
-    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
+    int save(const char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) override {
         return 0;
     }
 
@@ -1114,13 +924,13 @@ public:
         uint8_t* pbmi = static_cast<uint8_t*>(image->pixels);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     pbmi,3,GetX()*3,8,0,GetX(),y);
+                                     pbmi,3,x*3,8,0,x,y);
         else if(GetBitPerPixel()==32)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     pbmi,4,GetX()*4,8,24,GetX(),y);
+                                     pbmi,4,x*4,8,24,x,y);
         else if(GetBitPerPixel()==16)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     pbmi,2,GetX()*2,31,0,GetX(),y);
+                                     pbmi,2,x*2,31,0,x,y);
         return 0;
     }
 
@@ -1128,22 +938,14 @@ public:
         uint8_t* pbmi = static_cast<uint8_t*>(image->pixels);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                pbmi,3,GetX()*3,8,16,8,8,8,0,GetX(),y);
+                                pbmi,3,x*3,8,16,8,8,8,0,x,y);
         else if(GetBitPerPixel()==32)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                pbmi,4,GetX()*4,8,16,8,8,8,0,GetX(),y);
+                                pbmi,4,x*4,8,16,8,8,8,0,x,y);
         else if(GetBitPerPixel()==16)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                pbmi,2,GetX()*2,5,10,5,5,5,0,GetX(),y);
+                                pbmi,2,x*2,5,10,5,5,5,0,x,y);
         return 0;
-    }
-
-    static void Init() {
-        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
-    }
-
-    static void Done() {
-        IMG_Quit();
     }
 };
 
@@ -1154,7 +956,7 @@ public:
 
 class cANIImage : public cFileImage
 {
-    int tpf; //Time per frame in ms
+    int tpf = 0; //Time per frame in ms
 
     //Frames used by this animation, we store individually to free them later
     std::vector<cSDLImage*> frames;
@@ -1162,14 +964,13 @@ class cANIImage : public cFileImage
     std::vector<cSDLImage*> slices;
 
 public:
-    cANIImage() {
-    }
+    cANIImage() = default;
     
-    virtual ~cANIImage() {
+    ~cANIImage() override {
         close();
     }
     
-    virtual int close() {
+    int close() override {
         for (auto frame : frames) {
             int ret = frame->close();
             if (ret) {
@@ -1182,9 +983,8 @@ public:
         return 0;
     }
     
-    virtual int load(const char *fname)
-    {
-        x = y = 0;
+    int load(const char *fname) override {
+        tpf = x = y = 0;
         ANIFile ani;
         int err = ani.load(fname, true);
         if (err) {
@@ -1225,7 +1025,7 @@ public:
         return 0;
     }
     
-    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
+    int save(const char *fname,void *pointer,int bpp,int x,int y,int length,int time) override {
         return 0;
     }
 
@@ -1239,11 +1039,11 @@ public:
         return slices[i];
     }
 
-    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) {
+    int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override {
         return getFrameFromTime(t)->GetTextureAlpha(pointer, t, bppDst, bplDst, acDst, asDst, xDst, yDst);
     }
 
-    virtual int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) {
+    int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override {
         return getFrameFromTime(t)->GetTextureRGB(pointer, t, bppDst, bplDst, rc, gc, bc, rs, gs, bs, xDst, yDst);
     }
 };
@@ -1277,16 +1077,15 @@ cFileImage* cFileImage::Create(const std::string& fname)
     }
 	return nullptr;
 }
-void cFileImage::InitFileImage()
-{
-	cAVIImage::Init();
-    cSDLImage::Init();
+
+void cFileImage::InitFileImage() {
+    IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 }
-void cFileImage::DoneFileImage()
-{
-	cAVIImage::Done();
-    cSDLImage::Done();
+
+void cFileImage::DoneFileImage() {
+    IMG_Quit();
 }
+
 void GetFileName(const char *FullName,char *fname)
 {
 	fname[0]=0;
@@ -1398,7 +1197,7 @@ int cAviScaleFileImage::GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,
 {
 	xassert(dat!=0);
 //	cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-//				dat,4,GetX()*4,8,16,8,8,8,0,GetX(),-y);
+//				dat,4,x*4,8,16,8,8,8,0,x,-y);
 	xassert(sizeof(*dat)==4);
 	memcpy(pointer,dat,x*y*sizeof(*dat));
 	return 0; 

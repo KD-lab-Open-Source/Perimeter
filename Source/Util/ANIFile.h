@@ -17,11 +17,10 @@ struct ANIFrame {
  */
 class ANIFile {
 public:
-    Vect2i size;
-    int lowest_delay = 0; //Lowest delay of frame
-    int time = 0; //Total time in ms if animated or 0
-    int length = 0; //Amount of frames if is animated or 1
-    int tpf = 0; //Time per frame in ms
+    int32_t lowest_delay = 0; //Lowest delay of frame
+    int32_t time = 0; //Total time in ms if animated or 0
+    int32_t length = 0; //Amount of frames if is animated or 1
+    int32_t tpf = 0; //Time per frame in ms
 
     std::vector<ANIFrame> frames;
     //Frame index for each slice

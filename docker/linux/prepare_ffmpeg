@@ -15,9 +15,9 @@ cd /opt/src/ffmpeg
           --enable-zlib \
           --enable-libvpx \
           --enable-libvorbis \
-          --enable-demuxer=avi,rawvideo,bink,matroska \
-          --enable-decoder=png,rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9 \
-          --enable-parser=png,vp9 \
+          --enable-demuxer=rawvideo,bink,matroska \
+          --enable-decoder=rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9 \
+          --enable-parser=vp9 \
           --enable-filter=aresample,aformat \
           --enable-protocol=file \
           --disable-d3d11va \

@@ -15,22 +15,28 @@ Pass `-DCMAKE_BUILD_TYPE=Debug` to cmake command for debug builds with some stuf
 
 We have several CI in github which can serve as hint and examples.
 
-### Main dependencies
+### Required and optional dependencies to build
 
+Required:
 - C++17 compiler
 - CMake
 - SDL2
 - SDL2_image
 - SDL2_net
 - SDL2_mixer
+- zlib
+
+Optional:
 - FFmpeg (avcodec / avformat / avfilter / avutils / swscale)
-- ZLIB
-- Boost stacktrace (optional)
+  - Adds movie playback support
+- Boost stacktrace
+  - Adds stacktrace support during crash reporting 
 
 ### Automatic dependencies
 
 These dependencies are downloaded and compiled automatically if needed by CMake and no intervention is need:
 - https://github.com/doitsujin/dxvk - Vulkan translation layer for D3D9 render code.
+- https://github.com/floooh/sokol - Sokol libraries for OpenGL, Metal, D3D and other APIs
 - https://github.com/neosmart/pevents - Provides Windows compatible events.
 - https://github.com/brofield/simpleini - Provides .ini file loading/writing.
 

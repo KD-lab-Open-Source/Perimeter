@@ -15,6 +15,7 @@ add_library(Util STATIC
         XPrmArchive.cpp
         Localization.cpp
         ANIFile.cpp
+        AVIFile.cpp
 )
 
 target_include_directories(Util PRIVATE

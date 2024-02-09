@@ -25,27 +25,29 @@ bool isANIFile(const char* fname) {
     return memcmp(aconanih, "ACONanih", 8) == 0;
 }
 
-struct RIFF_chunk
-{
+struct RIFF_chunk {
     char id[4];
     uint32_t size;
 };
 
-struct ANIHeader
-{
-    RIFF_chunk riff;
-    char header_acon[4];
+struct ANIHeader {
+    //RIFF header
+    char riff[4];
+    uint32_t size;
+    char type[4];
+    
+    //ANI header
     RIFF_chunk chunk_anih;
     uint32_t header_size;
     uint32_t frames; //Unique frames count
     uint32_t steps; //Amount of frames to display, including duplicates
-    uint32_t widt_unused; //These are usually 0
+    uint32_t width_unused; //These are usually 0
     uint32_t height_unused; //These are usually 0
     uint32_t bpp;
     uint32_t planes;
     uint32_t fps;
     uint32_t flags;
-} data;
+};
 
 ANIFile::ANIFile() = default;
 
@@ -68,13 +70,14 @@ int ANIFile::load(const char *fname, bool read_frame_data) {
     std::string file_path = convert_path_content(fname);
     XStream s;
     s.open(file_path);
+    ANIHeader data = {};
     s.read(&data, sizeof(ANIHeader));
 
     //Basic checks
-    if (memcmp(data.riff.id, "RIFF", 4) != 0) {
+    if (memcmp(data.riff, "RIFF", 4) != 0) {
         ErrH.Abort("File doesn't contain RIFF header ID " + file_path);
     }
-    if (memcmp(data.header_acon, "ACON", 4) != 0) {
+    if (memcmp(data.type, "ACON", 4) != 0) {
         ErrH.Abort("File doesn't contain ACON header ID " + file_path);
     }
     if (memcmp(data.chunk_anih.id, "anih", 4) != 0) {
@@ -101,10 +104,10 @@ int ANIFile::load(const char *fname, bool read_frame_data) {
 
     //Parse the chunks
     char* chunk_name = new char[5];
+    chunk_name[4] = '\0';
     uint32_t chunk_size = 0;
     while (!s.eof()) {
         s.read(chunk_name, 4);
-        chunk_name[4] = '\0';
         s.read(chunk_size);
         size_t chunk_end = s.tell() + chunk_size;
         std::string name = chunk_name;
