@@ -35,6 +35,10 @@
 #include <SDL_image.h>
 #include <SDL_vulkan.h>
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 #ifdef _WIN32
 #include <commdlg.h>
 #endif
@@ -73,8 +77,13 @@ cTileMap* terMapPoint = NULL;
 int terBitPerPixel = 16;
 int terScreenRefresh = 0;
 int terScreenIndex = 0;
+#ifdef GPX
+constexpr int terFullScreen = 0;
+constexpr int terResizableWindow = 0;
+#else
 int terFullScreen = 0;
 int terResizableWindow = 1;
+#endif
 int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
@@ -564,6 +573,16 @@ cInterfaceRenderDevice* SetGraph()
     
 	cInterfaceRenderDevice *IRenderDevice = CreateIRenderDevice(deviceSelection);
 
+#ifdef GPX
+    terBitPerPixel = 32;
+    terScreenSizeX = gpx()->sys()->getWidth();
+    terScreenSizeY = gpx()->sys()->getHeight();
+    if (terScreenSizeY < 720) {
+        terScreenSizeY = 720;
+        terScreenSizeX = 720.0f * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
+    }
+    int ModeRender = RENDERDEVICE_MODE_RGB32 | RENDERDEVICE_MODE_WINDOW;
+#else
 	int ModeRender=0;
 	if (!isTrueFullscreen()) {
         ModeRender |= RENDERDEVICE_MODE_WINDOW;
@@ -573,6 +592,7 @@ cInterfaceRenderDevice* SetGraph()
     } else {
         ModeRender |= RENDERDEVICE_MODE_RGB16;
     }
+#endif
 
 //	if(HTManager::instance()->IsUseHT()) 		
         ModeRender |= RENDERDEVICE_MODE_MULTITHREAD;
@@ -871,7 +891,7 @@ void show_help() {
 }
 
 //------------------------------
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(GPX)
 int main(int argc, char *argv[]) {
     //Call SDL main init
     SDL_SetMainReady();
@@ -1001,6 +1021,27 @@ int SDL_main(int argc, char *argv[])
             WaitMessage();
 #endif
         }
+
+#ifdef GPX
+        static bool gpx_ready = false;
+        if (!gpx_ready) {
+            gpx_ready = false;
+#ifdef EMSCRIPTEN
+            EM_ASM(({
+                if (!document.pointerLockElement) {
+                    Module["canvas"].addEventListener("pointerdown", () => {
+                        Module["canvas"].requestPointerLock().catch((e) => console.error("Can't lock mouse", e));
+                    });
+                }
+            }));
+#endif
+            gpx()->sys()->mainReady(true);
+        }
+        gpx()->async()->runNextTask();
+#ifdef EMSCRIPTEN
+        emscripten_sleep(0);
+#endif
+#endif
     }
 
     delete runtime_object;

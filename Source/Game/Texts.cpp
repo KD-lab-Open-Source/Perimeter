@@ -5,19 +5,72 @@
 #include "GameContent.h"
 #include "qd_textdb.h"
 
-const char* CREDITS_PERIMETER_RUSSIAN = R"(ПЕРИМЕТР
+#ifdef GPX
+constexpr char* HEADER_RUS = R"(
+
+&FFFFBBПосвящено памяти
+Андрея "КранК" Кузьмина
+1971 - 2022
+
+
+&66CCFFGamePix
+gamepix.com&FFFFFF
+
+&CCCCFFВеб версия&FFFFFF
+Александр "caiiiycuk" Гурьянов
+
+
+&66CCFFК-Д ЛАБ
+kdlab.com&FFFFFF
+
+Андрей "КранК" Кузьмин)";
+
+constexpr char* HEADER_ENG = R"(
+
+&FFFFBBDedicated to the memory of
+Andrey "KranK" Kuzmin
+1971 - 2022
+
+
+&66CCFFGamePix
+gamepix.com&FFFFFF
+
+&CCCCFFWeb Version&FFFFFF
+Alexander "caiiiycuk" Guryanov
+
+
+&66CCFFK-D LAB
+kdlab.com&FFFFFF
+
+Andrey "KranK" Kuzmin)";
+#else
+constexpr char* HEADER_RUS = R"(
 &66CCFFК-Д ЛАБ
 kdlab.com&FFFFFF
 
 
 &FFFFBBПосвящено памяти
 Андрея "КранК" Кузьмина
-1971 - 2022
+1971 - 2022)";
+
+constexpr char* HEADER_ENG = R"(
+&66CCFFK-D LAB
+kdlab.com&FFFFFF
+
+
+&FFFFBBDedicated to the memory of
+Andrey "KranK" Kuzmin
+1971 - 2022)";
+#endif
+
+constexpr char* CREDITS_PERIMETER_TITLE_RUSSIAN = "ПЕРИМЕТР";
+constexpr char* CREDITS_PERIMETER_RUSSIAN =
+R"(
 &CCCCFFПродюсер&FFFFFF
 Игровая концепция и вселенная,
 сценарий
 
-Юлия "Ylitka" Шапошникова
+Юлия "Ylitka" Новикова (Шапошникова)
 &CCCCFFГлавный гейм-дизайнер&FFFFFF
 Дизайн миссий, AI
 
@@ -121,18 +174,13 @@ Copyright (C) 1994-2023 Xiph.Org
 
 )"; //END CREDITS_PERIMETER_RUSSIAN
 
-const char* CREDITS_PERIMETER_ET_RUSSIAN = R"(ПЕРИМЕТР: Завет Императора
-&66CCFFК-Д ЛАБ
-kdlab.com&FFFFFF
-
-
-&FFFFBBПосвящено памяти
-Андрея "КранК" Кузьмина
-1971 - 2022
+constexpr char* CREDITS_PERIMETER_ET_TITLE_RUSSIAN = "ПЕРИМЕТР: Завет Императора";
+constexpr char* CREDITS_PERIMETER_ET_RUSSIAN =
+R"(
 &CCCCFFКонцепт-дизайнер&FFFFFF
 Игровая концепция и вселенная
 
-Юлия "Ylitka" Шапошникова
+Юлия "Ylitka" Новикова (Шапошникова)
 &CCCCFFИсполнительный продюсер &FFFFFF
 Гейм-дизайн, дизайн миссий, AI
 
@@ -349,19 +397,14 @@ github.com/KD-lab-Open-Source
 
 )"; //END CREDITS_COMMON_RUSSIAN
 
-const char* CREDITS_PERIMETER_ENGLISH = R"(PERIMETER
-&66CCFFK-D LAB
-kdlab.com&FFFFFF
-
-
-&FFFFBBDedicated to the memory of
-Andrey "KranK" Kuzmin
-1971 - 2022
+constexpr char* CREDITS_PERIMETER_TITLE_ENGLISH = "PERIMETER";
+constexpr char* CREDITS_PERIMETER_ENGLISH = "PERIMETER"
+R"(
 &CCCCFFProducer&FFFFFF
 Game Concept, Game Universe,
 Scenarios
 
-Yulia "Ylitka" Shaposhnikova
+Yulia "Ylitka" Novikova (Shaposhnikova)
 &CCCCFFLead Game Designer&FFFFFF
 Missions, AI
 
@@ -459,18 +502,13 @@ Copyright (C) 1994-2023 Xiph.Org.
 
 )"; //END CREDITS_PERIMETER_ENGLISH
 
-const char* CREDITS_PERIMETER_ET_ENGLISH = R"(PERIMETER: Emperor's Testament
-&66CCFFK-D LAB
-kdlab.com&FFFFFF
-
-
-&FFFFBBDedicated to the memory of
-Andrey "KranK" Kuzmin
-1971 - 2022
+constexpr char* CREDITS_PERIMETER_ET_TITLE_ENGLISH = "PERIMETER: Emperor's Testament";
+constexpr char* CREDITS_PERIMETER_ET_ENGLISH = "PERIMETER: Emperor's Testament"
+R"(
 &CCCCFFConcept-designer&FFFFFF
 Game concept, Game universe
 
-Yulia "Ylitka" Shaposhnikova
+Yulia "Ylitka" Novikova (Shaposhnikova)
 &CCCCFFExecutive Producer&FFFFFF
 Game Design, Missions, AI
 
@@ -691,10 +729,27 @@ void qdTextDB::load_replacement_texts(const std::string& locale) {
     //Credits
     std::string credits = "Interface.Credits=";
     bool russian = startsWith(locale, "russian");
-    if (terGameContentSelect == PERIMETER_ET) {
-        credits += russian ? CREDITS_PERIMETER_ET_RUSSIAN : CREDITS_PERIMETER_ET_ENGLISH;
+    if (russian) {
+        if (terGameContentSelect == PERIMETER_ET) {
+            credits += CREDITS_PERIMETER_ET_TITLE_RUSSIAN;
+            credits += HEADER_RUS;
+            credits += CREDITS_PERIMETER_ET_RUSSIAN;
+        } else {
+            credits += CREDITS_PERIMETER_TITLE_RUSSIAN;
+            credits += HEADER_RUS;
+            credits += CREDITS_PERIMETER_RUSSIAN;
+        }
     } else {
-        credits += russian ? CREDITS_PERIMETER_RUSSIAN : CREDITS_PERIMETER_ENGLISH;
+        if (terGameContentSelect == PERIMETER_ET) {
+            credits += CREDITS_PERIMETER_ET_TITLE_ENGLISH;
+            credits += HEADER_ENG;
+            credits += CREDITS_PERIMETER_ET_ENGLISH;
+        } else {
+            credits += CREDITS_PERIMETER_TITLE_ENGLISH;
+            credits += HEADER_ENG;
+            credits += CREDITS_PERIMETER_ENGLISH;
+        }
+
     }
     credits += russian ? CREDITS_COMMON_RUSSIAN : CREDITS_COMMON_ENGLISH;
     load_lines({credits}, true, locale);

@@ -151,6 +151,11 @@ windowClientSize_(1024, 768)
     terShowFPS = IniManager("Perimeter.ini").getInt("Game","ShowFPS");
     check_command_line_parameter("show_fps", terShowFPS);
 
+#ifdef GPX
+    // TODO: remove
+    terShowFPS = 1;
+#endif
+
     MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 	check_command_line_parameter("mainmenu", MainMenuEnable);
 	if(mission_edit)

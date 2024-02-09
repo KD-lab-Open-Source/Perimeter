@@ -227,7 +227,7 @@ bool VideoPlayer::Init(const char* path) {
         const int samples = SNDDeviceFrequency() / 10;
         size_t buf_len = SNDformatSampleSize(SNDDeviceFormat()) * SNDDeviceChannels() * samples;
         void* buf = SDL_calloc(buf_len, 1);
-        sample->loadRawData(static_cast<uint8_t*>(buf), buf_len, false);
+        sample->loadRawData(static_cast<uint8_t*>(buf), buf_len, false, path_str);
     }
     
 #if 0 && defined(PERIMETER_DEBUG)

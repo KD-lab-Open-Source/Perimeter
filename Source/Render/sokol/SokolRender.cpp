@@ -12,6 +12,10 @@
 #include "RenderTracker.h"
 #include <SDL_hints.h>
 
+#ifdef SOKOL_GL
+#include <SDL_opengl.h>
+#endif
+
 cSokolRender::cSokolRender() = default;
 
 cSokolRender::~cSokolRender() {
@@ -120,6 +124,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     if (sdlGlContext == nullptr) {
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
+    printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
 #endif
     
     //Call sokol gfx setup
@@ -142,7 +147,11 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     uint8_t* buf = new uint8_t[buf_len];
     memset(buf, 0xFF, buf_len);
     imgdesc->data.subimage[0][0] = { buf, buf_len };
+#ifdef GPX
+    emptyTexture = new SokolTexture2D(imgdesc, false);
+#else
     emptyTexture = new SokolTexture2D(imgdesc);
+#endif
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();

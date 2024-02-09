@@ -358,7 +358,14 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 	}
 */
 	//Get path for file and open it
-	std::string path = convert_path_content(Texture->GetName());
+#ifdef GPX
+    std::string path = Texture->GetName();
+    if (endsWith(path, ".avi")) {
+        path += "x";
+    }
+    path = convert_path_content(path);
+#else
+    std::string path = convert_path_content(Texture->GetName());
 	if (path.empty()) {
         path = Texture->GetName();
         if (endsWith(path, ".avi") && !convert_path_content(path + "x").empty()) {
@@ -366,8 +373,9 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
             path += "x";
         }
 	}
+#endif
 	
-	cFileImage* FileImage = cFileImage::Create(path.c_str());
+	cFileImage* FileImage = path.length() > 0 ? cFileImage::Create(path.c_str()) : nullptr;
 	if(!FileImage) {
 #ifdef PERIMETER_D3D9
 	    //If the file extension is not recognized, try open it using DirectX 

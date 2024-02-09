@@ -25,7 +25,11 @@ char* vrtMap::worldNetDataFile    = "output.vpr";
 char* vrtMap::worldBuildScenarioFile = "output.vsc";
 char* vrtMap::worldGeoPalFile     = "inGeo.act";
 char* vrtMap::worldDamPalFile     = "inDam.act";
+#ifdef GPX
+char* vrtMap::worldLeveledTextureFile= "leveledSurfaceTexture.surf";
+#else
 char* vrtMap::worldLeveledTextureFile= "leveledSurfaceTexture.tga";
+#endif
 char* vrtMap::worldHardnessFile= "hardness.bin";
 
 char* vrtMap::worldDataFile= "world.cls";

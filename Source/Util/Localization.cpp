@@ -2,6 +2,10 @@
 #include "files/files.h"
 #include "Localization.h"
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 bool isLocaleInit = false;
 std::string localeCurrent;
 std::string localePath;
@@ -22,12 +26,16 @@ void initLocale() {
             localesAvailable.emplace_back(path.filename().u8string());
         }
     }
-    
+
+#ifndef GPX
     const char* cmdlineLocale = check_command_line("locale");
-    
     if (cmdlineLocale) {
         localeCurrent = cmdlineLocale;
     }
+#else
+    localeCurrent = gpx()->sys()->getLanguage() == "ru" ? "russian" : "english";
+#endif
+
     if (localeCurrent.empty()) {
         localeCurrent = IniManager("Perimeter.ini", false).get("Game", "Language");
         if (!localeCurrent.empty()) {
@@ -46,6 +54,7 @@ void initLocale() {
         localeCurrent = "";
         saveLocale(localeCurrent);
     }
+
     //Check if locale is actually available
     if (!localeCurrent.empty()) {
         localeCurrent = string_to_lower(localeCurrent.c_str());

@@ -4,6 +4,8 @@
 //Uniforms
 uniform color_texture_vs_params {
     mat4 un_mvp;
+    mat4 tex0_mat;
+    mat4 tex1_mat;
 };
 
 //Vertex Buffer inputs
@@ -24,9 +26,9 @@ layout(location=2) out vec2 fs_uv1;
 void main() {
     gl_Position = un_mvp * vec4(vs_position, 1.0f);
     fs_color = vs_color;
-    fs_uv0 = vs_texcoord0;
+    fs_uv0 = (tex0_mat * vec4(vs_texcoord0, 1, 1)).xy;
     #if defined(SHADER_TEX_2)
-    fs_uv1 = vs_texcoord1;
+    fs_uv1 = (tex1_mat * vec4(vs_texcoord1, 1, 1)).xy;
     #endif
 }
 @end

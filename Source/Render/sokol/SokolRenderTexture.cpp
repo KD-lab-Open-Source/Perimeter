@@ -48,7 +48,11 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
 
         if (!FileImage) {
             desc->usage = SG_USAGE_DYNAMIC;
+#ifdef GPX
+            img = new SokolTexture2D(desc, Texture->GetNumberMipMap() > 1);
+#else
             img = new SokolTexture2D(desc);
+#endif
         } else {
             desc->usage = SG_USAGE_IMMUTABLE;
             std::vector<uint8_t*> buffers;
@@ -115,7 +119,11 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
                 }
             }
 
+#ifdef GPX
+            img = new SokolTexture2D(desc, Texture->GetNumberMipMap() > 1);
+#else
             img = new SokolTexture2D(desc);
+#endif
         }
 
         Texture->GetFrameImage(i)->sg = img;

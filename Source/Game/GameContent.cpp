@@ -175,6 +175,15 @@ void findGameContent() {
     //Path stored in settings from last run
     if (settingsPath) paths.emplace_back(settingsPath);
 
+#ifdef GPX
+    paths.clear();
+#ifdef EMSCRIPTEN
+    paths.emplace_back("/");
+#else
+    paths.emplace_back("./");
+#endif
+#endif
+
     //Check paths for Resource dir
     std::set<std::string> scannedPaths;
     for (std::string rootPathStr : paths) {

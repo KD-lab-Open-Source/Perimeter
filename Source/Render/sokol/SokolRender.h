@@ -83,7 +83,21 @@ private:
     eColorMode activeCommandColorMode = COLOR_MOD;
     float activeCommandTex2Lerp = -1;
     eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
+    SOKOL_MATERIAL_TYPE activeMaterial;
     sColor4f activeCommandTileColor;
+    sColor4f activeDiffuse;
+    sColor4f activeAmbient;
+    sColor4f activeSpecular;
+    sColor4f activeEmissive;
+    float activePower;
+    bool activeGlobalLight = false;
+    Vect3f activeLightDir;
+    sColor4f activeLightDiffuse;
+    sColor4f activeLightAmbient;
+    sColor4f activeLightSpecular;
+
+    Mat4f activeTex0Transform;
+    Mat4f activeTex1Transform;
 
     //Commands handling
     void ClearCommands();
@@ -92,6 +106,8 @@ private:
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
     void SetColorMode(eColorMode color_mode);
+    void SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
+                     const sColor4f& specular, const sColor4f& emissive, float power);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
@@ -196,6 +212,9 @@ public:
     void SetMaterialTilemap(cTileMap *TileMap) override;
     void SetMaterialTilemapShadow() override;
     void SetTileColor(sColor4f color) override;
+
+    void setTexture0Transform(const Mat4f& tex0Transform);
+    void setTexture1Transform(const Mat4f& tex1Transform);
 
     // //// cInterfaceRenderDevice impls end ////
 };

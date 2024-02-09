@@ -22,6 +22,12 @@ enum PIPELINE_TYPE {
 };
 const PIPELINE_TYPE PIPELINE_TYPE_DEFAULT = PIPELINE_TYPE_TRIANGLE;
 
+
+enum SOKOL_MATERIAL_TYPE {
+    SOKOL_MAT_NONE = 0,
+    SOKOL_MAT_LIGHT = 1,
+};
+
 using pipeline_id_t = uint32_t;
 using pipeline_mode_value_t = uint16_t;
 struct PIPELINE_MODE {

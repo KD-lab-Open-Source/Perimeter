@@ -430,7 +430,7 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     }
 
     //Do recursive search on source path
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(source_dir)) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(source_dir, std::filesystem::directory_options::skip_permission_denied)) {
         if (entry.is_regular_file() || entry.is_directory()) {
             add_filesystem_entry_internal(paths, entry.path().u8string(), destination_path, source_path, scanOptions);
         }

@@ -15,6 +15,10 @@
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -173,6 +177,7 @@ int cSokolRender::EndScene() {
                 break;
             case SOKOL_SHADER_ID_normal:
                 vs_params_name = "normal_texture_vs_params";
+                fs_params_name = "normal_texture_fs_params";
                 break;
             case SOKOL_SHADER_ID_terrain:
                 vs_params_name = "terrain_vs_params";
@@ -246,6 +251,10 @@ int cSokolRender::Flush(bool wnd) {
     ClearCommands();
 
     xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
+
+#ifdef GPX
+    gpx()->sys()->frameReady();
+#endif
 
     return 0;
 }
@@ -389,6 +398,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto vs_params = reinterpret_cast<color_texture_vs_params_t*>(cmd->vs_params);
             auto fs_params = reinterpret_cast<color_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
+            vs_params->tex0_mat = activeTex0Transform;
+            vs_params->tex1_mat = activeTex1Transform;
             fs_params->un_color_mode = activeCommandColorMode;
             fs_params->un_tex2_lerp = activeCommandTex2Lerp;
             break;
@@ -397,6 +408,18 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             auto vs_params = reinterpret_cast<normal_texture_vs_params_t*>(cmd->vs_params);
             auto fs_params = reinterpret_cast<normal_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
+            vs_params->model = isOrthographicProjSet ? Mat4f::ID : activeCommandW;
+            vs_params->tex0_mat = activeTex0Transform;
+            fs_params->material = activeGlobalLight ? activeMaterial : SOKOL_MAT_NONE;
+            memcpy(fs_params->diffuse, &activeDiffuse, sizeof(float) * 4);
+            memcpy(fs_params->ambient, &activeAmbient, sizeof(float) * 4);
+            memcpy(fs_params->specular, &activeSpecular, sizeof(float) * 4);
+            memcpy(fs_params->emissive, &activeEmissive, sizeof(float) * 4);
+            fs_params->spec_power = activePower;
+            memcpy(fs_params->light_ambient, &activeLightAmbient, sizeof(float) * 3);
+            memcpy(fs_params->light_diffuse, &activeLightDiffuse, sizeof(float) * 3);
+            memcpy(fs_params->light_specular, &activeLightSpecular, sizeof(float) * 3);
+            memcpy(fs_params->light_dir, &activeLightDir, sizeof(float) * 3);
             break;
         }
         case SOKOL_SHADER_ID_terrain: {
@@ -424,6 +447,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
+    activeTex0Transform = Mat4f::ID;
+    activeTex1Transform = Mat4f::ID;
     
     //Submit command
     commands.emplace_back(cmd);
@@ -542,6 +567,38 @@ void cSokolRender::SetColorMode(eColorMode color_mode) {
     if (activeCommandColorMode != color_mode) {
         FinishActiveDrawBuffer();
         activeCommandColorMode = color_mode;
+    }
+}
+
+void cSokolRender::SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
+                               const sColor4f& specular, const sColor4f& emissive, float power) {
+    if (activeMaterial != material ||
+        activeDiffuse != diffuse ||
+        activeAmbient != ambient ||
+        activeSpecular != specular ||
+        activeEmissive != emissive ||
+        activePower != power) {
+        FinishActiveDrawBuffer();
+        activeMaterial = material;
+        activeDiffuse = diffuse;
+        activeAmbient = ambient;
+        activeSpecular = specular;
+        activeEmissive = emissive;
+        activePower = power;
+    }
+}
+
+void cSokolRender::setTexture0Transform(const Mat4f& tex0Transform) {
+    if (!activeTex0Transform.eq(tex0Transform, 0)) {
+        FinishActiveDrawBuffer();
+        activeTex0Transform = tex0Transform;
+    }
+}
+
+void cSokolRender::setTexture1Transform(const Mat4f& tex1Transform) {
+    if (!activeTex1Transform.eq(tex1Transform, 0)) {
+        FinishActiveDrawBuffer();
+        activeTex1Transform = tex1Transform;
     }
 }
 
@@ -720,7 +777,24 @@ void cSokolRender::SetGlobalFog(const sColor4f &color,const Vect2f &v) {
 }
 
 void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *Diffuse, sColor4f *Specular) {
-    //TODO implement this
+    bool globalLight =  vLight != nullptr && Ambient != nullptr && Diffuse != nullptr && Specular != nullptr;
+    if (activeGlobalLight != globalLight) {
+        FinishActiveDrawBuffer();
+        activeGlobalLight = globalLight;
+    }
+
+    if (!activeGlobalLight) {
+        return;
+    }
+
+    if (activeLightDir != *vLight ||
+        activeLightDiffuse != *Diffuse) {
+        FinishActiveDrawBuffer();
+        activeLightDir = *vLight;
+        activeLightDiffuse = *Diffuse;
+        activeLightAmbient = *Ambient;
+        activeLightSpecular = *Specular;
+    }
 }
 
 void cSokolRender::ClearZBuffer() {

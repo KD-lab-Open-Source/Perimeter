@@ -2,6 +2,9 @@
 #ifdef PERIMETER_D3D9
 #include "D3DRender.h"
 #endif
+#ifdef PERIMETER_SOKOL
+#include "./sokol/SokolRender.h"
+#endif
 #include "DrawBuffer.h"
 #include "CChaos.h"
 #include "VertexFormat.h"
@@ -126,6 +129,26 @@ void cChaos::Draw(cCamera *DrawNode) {
 
     //TODO we need to add bump texture too
     //TODO also implement shader equivalent for shader/Chaos/chaos.vsl to modify UVs at runtime
+#ifdef PERIMETER_SOKOL
+    float umin,vmin;
+    Mat4f mat;
+
+    umin=sfmod(time*stime_tex0.x*uvmul,1.0f);
+    vmin=sfmod(time*stime_tex0.y*uvmul,1.0f);
+    memset(&mat,0,sizeof(mat));
+    mat.xx=mat.yy=mat.zz=mat.ww=1;
+    mat.zx = umin;
+    mat.zy = vmin;
+    reinterpret_cast<cSokolRender*>(gb_RenderDevice)->setTexture0Transform(mat);
+
+    umin=sfmod(time*stime_tex1.x*uvmul,1.0f);
+    vmin=sfmod(time*stime_tex1.y*uvmul,1.0f);
+    memset(&mat,0,sizeof(mat));
+    mat.xx=mat.yy=mat.zz=mat.ww=1;
+    mat.zx = umin;
+    mat.zy = vmin;
+    reinterpret_cast<cSokolRender*>(gb_RenderDevice)->setTexture1Transform(mat);
+#endif
     gb_RenderDevice->SetNoMaterial(ALPHA_NONE,0,pTex0_0,pTex0_1,COLOR_ADD);
     gb_RenderDevice->SetWorldMatXf(GetGlobalMatrix());
     db->Draw();

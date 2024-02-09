@@ -546,18 +546,25 @@ void CShellCursorManager::Load()
 	for (int i=0; i<_sqsh_cursor_count; i++) {
 		sqshCursor& cc = _sqsh_cursors[i];
 
+        std::string image = cc.image;
+#ifdef GPX
+        if (endsWith(image, ".avi")) {
+            image += "x";
+        }
+#endif
+
         _c.anifile = nullptr;
 		_c.sx = cc.sx; 
 		_c.sy = cc.sy;
 		_c.bHotspotCentered = cc.hotspot_center;
-        _c.texture = terVisGeneric->CreateTexture(cc.image);
+        _c.texture = terVisGeneric->CreateTexture(image.c_str());
 
         //Load ANI file metadata
-        if (isANIFile(cc.image)) {
+        if (isANIFile(image.c_str())) {
             _c.anifile = new ANIFile();
-            int err = _c.anifile->load(cc.image, false);
+            int err = _c.anifile->load(image.c_str(), false);
             if (err) {
-                fprintf(stderr, "Error %d loading ANI metadata for cursor %s\n", err, cc.image);
+                fprintf(stderr, "Error %d loading ANI metadata for cursor %s\n", err, image.c_str());
                 delete _c.anifile;
                 _c.anifile = nullptr;
             }

@@ -13,7 +13,11 @@ extern int terDrawMeshShadow;
 extern int terShadowType;
 extern int terMipMapLevel;
 extern int terShowTips;
+#ifdef GPX
+extern const int terResizableWindow;
+#else
 extern int terResizableWindow;
+#endif
 extern int applicationRunBackground;
 
 extern float terNearDistanceLOD;
@@ -38,8 +42,10 @@ void PerimeterDataChannelLoad()
 	IniManager ini_no_check("Perimeter.ini", false);
 
 	//GraphicsSection
+#ifndef GPX
 	terFullScreen = ini.getInt("Graphics","FullScreen");
     check_command_line_parameter("FullScreen", terFullScreen);
+#endif
     terScreenIndex = -1;
     ini_no_check.getInt("Graphics", "ScreenIndex", terScreenIndex);
     terScreenRefresh = ini_no_check.getInt("Graphics", "ScreenRefresh");
@@ -51,8 +57,10 @@ void PerimeterDataChannelLoad()
     }
 	if (0 < ScreenSizeX) terScreenSizeX = ScreenSizeX;
 	if (0 < ScreenSizeY) terScreenSizeY = ScreenSizeY;
+#ifndef GPX
     ini_no_check.getInt("Graphics","ResizableWindow", terResizableWindow);
     check_command_line_parameter("ResizableWindow", terResizableWindow);
+#endif
 	terBitPerPixel = ini.getInt("Graphics","BPP");
 	terMapLevelLOD = ini.getInt("Graphics","MapLevelLOD");
 
