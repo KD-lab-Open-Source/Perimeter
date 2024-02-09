@@ -26,12 +26,16 @@ void initLocale() {
             localesAvailable.emplace_back(path.filename().u8string());
         }
     }
-    
+
+#ifndef GPX
     const char* cmdlineLocale = check_command_line("locale");
-    
     if (cmdlineLocale) {
         localeCurrent = cmdlineLocale;
     }
+#else
+    localeCurrent = gpx()->sys()->getLanguage() == "ru" ? "russian" : "english";
+#endif
+
     if (localeCurrent.empty()) {
         localeCurrent = IniManager("Perimeter.ini", false).get("Game", "Language");
         if (!localeCurrent.empty()) {
@@ -50,10 +54,6 @@ void initLocale() {
         localeCurrent = "";
         saveLocale(localeCurrent);
     }
-
-#ifdef GPX
-    localeCurrent = gpx()->sys()->getLanguage() == "ru" ? "russian" : "english";
-#endif
 
     //Check if locale is actually available
     if (!localeCurrent.empty()) {

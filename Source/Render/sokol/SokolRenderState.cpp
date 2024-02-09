@@ -589,11 +589,17 @@ void cSokolRender::SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& dif
 }
 
 void cSokolRender::setTexture0Transform(const Mat4f& tex0Transform) {
-   activeTex0Transform = tex0Transform;
+    if (!activeTex0Transform.eq(tex0Transform, 0)) {
+        FinishActiveDrawBuffer();
+        activeTex0Transform = tex0Transform;
+    }
 }
 
 void cSokolRender::setTexture1Transform(const Mat4f& tex1Transform) {
-   activeTex1Transform = tex1Transform;
+    if (!activeTex1Transform.eq(tex1Transform, 0)) {
+        FinishActiveDrawBuffer();
+        activeTex1Transform = tex1Transform;
+    }
 }
 
 void cSokolRender::SetBlendState(eBlendMode blend) {
@@ -772,21 +778,18 @@ void cSokolRender::SetGlobalFog(const sColor4f &color,const Vect2f &v) {
 
 void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *Diffuse, sColor4f *Specular) {
     bool globalLight =  vLight != nullptr && Ambient != nullptr && Diffuse != nullptr && Specular != nullptr;
-    bool finishActiveDrawBuffer = true;
     if (activeGlobalLight != globalLight) {
         FinishActiveDrawBuffer();
         activeGlobalLight = globalLight;
-        if (!globalLight) {
-            return;
-        }
-        finishActiveDrawBuffer = false;
+    }
+
+    if (!activeGlobalLight) {
+        return;
     }
 
     if (activeLightDir != *vLight ||
         activeLightDiffuse != *Diffuse) {
-        if (finishActiveDrawBuffer) {
-            FinishActiveDrawBuffer();
-        }
+        FinishActiveDrawBuffer();
         activeLightDir = *vLight;
         activeLightDiffuse = *Diffuse;
         activeLightAmbient = *Ambient;
