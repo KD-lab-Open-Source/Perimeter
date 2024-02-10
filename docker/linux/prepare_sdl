@@ -3,7 +3,7 @@ set -e
 
 #Replace old system SDL2 with compiled version
 
-git clone https://github.com/libsdl-org/SDL.git -b release-2.28.2 /opt/src/sdl
+git clone https://github.com/libsdl-org/SDL.git -b release-2.30.0 /opt/src/sdl
                                                                  
 cd /opt/src/sdl
 
