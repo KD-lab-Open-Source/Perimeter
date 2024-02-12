@@ -152,7 +152,10 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 #else
     emptyTexture = new SokolTexture2D(imgdesc);
 #endif
+
+#ifdef PERIMETER_DEBUG
     emptyTexture->label = "EmptySlotTexture";
+#endif
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();
