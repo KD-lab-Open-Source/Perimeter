@@ -28,9 +28,8 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             delete img;
             img = nullptr;
         }
-        std::string label = Texture->GetName() + std::to_string(i); 
         sg_image_desc* desc = new sg_image_desc();
-        desc->label = label.c_str();
+        desc->label = nullptr; //Added later
         desc->width = dx;
         desc->height = dy;
         desc->wrap_u = desc->wrap_v = SG_WRAP_REPEAT;
@@ -124,6 +123,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
 #else
             img = new SokolTexture2D(desc);
 #endif
+            img->label = Texture->GetName() + std::to_string(i);
         }
 
         Texture->GetFrameImage(i)->sg = img;

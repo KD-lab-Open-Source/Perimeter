@@ -151,8 +151,8 @@ void SokolTexture2D::update() {
 
     if (desc) {
 #ifdef PERIMETER_DEBUG
-        if (desc->label) {
-            label = desc->label;
+        if (!label.empty()) {
+            desc->label = label.c_str();
         }
 #endif
         xassert(desc->usage == SG_USAGE_IMMUTABLE || data);

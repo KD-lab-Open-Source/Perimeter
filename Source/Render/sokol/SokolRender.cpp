@@ -135,7 +135,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     
     //Create empty texture
     sg_image_desc* imgdesc = new sg_image_desc();
-    imgdesc->label = "EmptySlotTexture";
+    imgdesc->label = nullptr;
     imgdesc->width = imgdesc->height = 64;
     imgdesc->wrap_u = imgdesc->wrap_v = SG_WRAP_REPEAT;
     imgdesc->pixel_format = SG_PIXELFORMAT_RGBA8;
@@ -152,6 +152,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 #else
     emptyTexture = new SokolTexture2D(imgdesc);
 #endif
+    emptyTexture->label = "EmptySlotTexture";
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();
