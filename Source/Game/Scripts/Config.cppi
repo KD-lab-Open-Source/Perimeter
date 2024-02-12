@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript definition
 //	Section: GameConfig
-//	Number of variables: 156
+//	Number of variables: 147
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 char const* MainModelPath = "RESOURCE\\MODELS\\MAIN";
@@ -37,16 +37,7 @@ float CAMERA_ZOOM_MOUSE_MULT = 300.f;
 float CAMERA_ZOOM_SPEED_DAMP = 0.7f;
 float CAMERA_ZOOM_SPEED_MASS = 2.f;
 float CAMERA_FOLLOW_AVERAGE_TAU = 0.1f;
-float CAMERA_MAX_HEIGHT = 5000.f;
-float CAMERA_MIN_HEIGHT = 200.f;
-float CAMERA_DEFAULT_HEIGHT = 500.f;
 float CAMERA_MOVE_ZOOM_SCALE = 500.f;
-float CAMERA_ZOOM_MIN = 300.f;
-float CAMERA_ZOOM_MAX = 2500.f;
-float CAMERA_THETA_MIN = 0.62831853f;
-float CAMERA_THETA_MAX = 1.10231321f;
-float CAMERA_ZOOM_TERRAIN_THRESOLD1 = 300.f;
-float CAMERA_ZOOM_TERRAIN_THRESOLD2 = 5000.f;
 float CAMERA_WORLD_SCROLL_BORDER = 200.f;
 int CAMERA_REPLAY_DURATION = 4000;
 float fSoundWidthPower = 0.5f;
@@ -283,8 +274,8 @@ struct GameConfig_ParameterSection : ParameterSection
 	GameConfig_ParameterSection() : ParameterSection("GameConfig")
 {
 	add_dependency(".\\Scripts\\Config.prm");
-	description = 911353322;
-	reserve(156);
+	description = 300575160;
+	reserve(147);
 	add(&MainModelPath, "MainModelPath", 3964076972);
 	add(&MainIconPath, "MainIconPath", 607302846);
 	add(&MainFontPath, "MainFontPath", 2303156941);
@@ -318,16 +309,7 @@ struct GameConfig_ParameterSection : ParameterSection
 	add(&CAMERA_ZOOM_SPEED_DAMP, "CAMERA_ZOOM_SPEED_DAMP", 2872307499);
 	add(&CAMERA_ZOOM_SPEED_MASS, "CAMERA_ZOOM_SPEED_MASS", 3904040745);
 	add(&CAMERA_FOLLOW_AVERAGE_TAU, "CAMERA_FOLLOW_AVERAGE_TAU", 474877919);
-	add(&CAMERA_MAX_HEIGHT, "CAMERA_MAX_HEIGHT", 1464480313);
-	add(&CAMERA_MIN_HEIGHT, "CAMERA_MIN_HEIGHT", 3075093338);
-	add(&CAMERA_DEFAULT_HEIGHT, "CAMERA_DEFAULT_HEIGHT", 1616833279);
 	add(&CAMERA_MOVE_ZOOM_SCALE, "CAMERA_MOVE_ZOOM_SCALE", 641674670);
-	add(&CAMERA_ZOOM_MIN, "CAMERA_ZOOM_MIN", 4004499475);
-	add(&CAMERA_ZOOM_MAX, "CAMERA_ZOOM_MAX", 581947408);
-	add(&CAMERA_THETA_MIN, "CAMERA_THETA_MIN", 660596487);
-	add(&CAMERA_THETA_MAX, "CAMERA_THETA_MAX", 3948930820);
-	add(&CAMERA_ZOOM_TERRAIN_THRESOLD1, "CAMERA_ZOOM_TERRAIN_THRESOLD1", 2692298187);
-	add(&CAMERA_ZOOM_TERRAIN_THRESOLD2, "CAMERA_ZOOM_TERRAIN_THRESOLD2", 2524526027);
 	add(&CAMERA_WORLD_SCROLL_BORDER, "CAMERA_WORLD_SCROLL_BORDER", 293303500);
 	add(&CAMERA_REPLAY_DURATION, "CAMERA_REPLAY_DURATION", 2253522128);
 	add(&fSoundWidthPower, "fSoundWidthPower", 1475050467);

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: GameConfig
-//	Number of variables: 156
+//	Number of variables: 147
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 extern char const* MainModelPath;
@@ -37,16 +37,7 @@ extern float CAMERA_ZOOM_MOUSE_MULT;
 extern float CAMERA_ZOOM_SPEED_DAMP;
 extern float CAMERA_ZOOM_SPEED_MASS;
 extern float CAMERA_FOLLOW_AVERAGE_TAU;
-extern float CAMERA_MAX_HEIGHT;
-extern float CAMERA_MIN_HEIGHT;
-extern float CAMERA_DEFAULT_HEIGHT;
 extern float CAMERA_MOVE_ZOOM_SCALE;
-extern float CAMERA_ZOOM_MIN;
-extern float CAMERA_ZOOM_MAX;
-extern float CAMERA_THETA_MIN;
-extern float CAMERA_THETA_MAX;
-extern float CAMERA_ZOOM_TERRAIN_THRESOLD1;
-extern float CAMERA_ZOOM_TERRAIN_THRESOLD2;
 extern float CAMERA_WORLD_SCROLL_BORDER;
 extern int CAMERA_REPLAY_DURATION;
 extern float fSoundWidthPower;

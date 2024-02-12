@@ -18,6 +18,23 @@ const float CAMERA_MOUSE_DEAD_THRESHOLD = 0.5f;
 //Multiplier of delta speed from center to edge of area
 const float CAMERA_MOUSE_DELTA_FACTOR = 1.5f;
 
+const float CAMERA_ZOOM_GROUND_MAX = 100.0f;
+const float CAMERA_MIN_HEIGHT = 200.0f;
+#if defined(GPX) || 0
+//Original game values
+const float CAMERA_MAX_HEIGHT = 2000.0f;
+const float CAMERA_THETA_MIN = static_cast<float>(XM_PI/10.0);
+const float CAMERA_THETA_MAX = static_cast<float>(XM_PI/3.0);
+#else
+const float CAMERA_MAX_HEIGHT = 5000.0f;
+const float CAMERA_THETA_MIN = static_cast<float>(XM_PI/5.0);
+const float CAMERA_THETA_MAX = static_cast<float>(XM_PI/2.85);
+#endif
+const float CAMERA_ZOOM_MAX = CAMERA_MAX_HEIGHT / 2.0f;
+const float CAMERA_ZOOM_MIN = CAMERA_MIN_HEIGHT + 100.0f;
+const float CAMERA_ZOOM_TERRAIN_THRESOLD1 = CAMERA_ZOOM_MIN + CAMERA_ZOOM_GROUND_MAX;
+const float CAMERA_ZOOM_TERRAIN_THRESOLD2 = CAMERA_ZOOM_MAX;
+
 void SetCameraPosition(cCamera *UCamera,const MatXf& Matrix)
 {
 	MatXf ml=MatXf::ID;
@@ -76,18 +93,17 @@ void CameraCoordinate::interpolateHermite(const CameraCoordinate coords[4], floa
 
 void CameraCoordinate::check(bool restricted)
 {
-	float z = FieldCluster::ZeroGround;//(float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
-	float zm = 100;
+	static float z = FieldCluster::ZeroGround;//(float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
 	
 	position_.z = z;
 	
 	if(distance() < CAMERA_ZOOM_TERRAIN_THRESOLD1)
 		position_.z = z;
 	else if(distance() > CAMERA_ZOOM_TERRAIN_THRESOLD2)
-		position_.z = zm;
+		position_.z = CAMERA_ZOOM_GROUND_MAX;
 	else{
 		float t = (distance() - CAMERA_ZOOM_TERRAIN_THRESOLD1)/(CAMERA_ZOOM_TERRAIN_THRESOLD2 - CAMERA_ZOOM_TERRAIN_THRESOLD1);
-		position_.z = z + t*(zm - z);
+		position_.z = z + t*(CAMERA_ZOOM_GROUND_MAX - z);
 	}
 	
 	float scroll_border = (distance() - CAMERA_ZOOM_MIN)/(CAMERA_ZOOM_MAX - CAMERA_ZOOM_MIN)*CAMERA_WORLD_SCROLL_BORDER;
