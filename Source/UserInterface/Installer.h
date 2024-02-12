@@ -33,35 +33,35 @@ public:
 	bool buildingInArea() const { return buildingInArea_; }
 
 private:
-	const AttributeBase* Attribute;
+	const AttributeBase* Attribute = nullptr;
 	Vect3f Position;
-	float Angle;
-	float FireRadius,UmbrellaRadius;
-	float Scale;
-	bool visible_;
-	bool valid_;
-	bool buildingInArea_;
-	cObjectNodeRoot* ObjectPoint;
+	float Angle = 0.0f;
+	float Scale = 0.0f;
+	bool visible_ = false;
+	bool valid_ = false;
+	bool buildingInArea_ = false;
+	cObjectNodeRoot* ObjectPoint = nullptr;
 	
 	Vect2f pos_set;
-	float angle_set;
-	
-	char* BaseBuff;
-	int BaseBuffSX,BaseBuffSY;
-	int OffsetX,OffsetY;
+	float angle_set = 0.0f;
 
-	bool light_show;
-	class cTexture* pTexture;
-	class cPlane* plane;
+    uint8_t* BaseBuff = nullptr;
+	int BaseBuffSX = 0;
+    int BaseBuffSY = 0;
+	int OffsetX = 0;
+    int OffsetY = 0;
 
-	class terIconBuilding* connection_icon_;
+	bool light_show = false;
+	class cTexture* pTexture = nullptr;
+	class cPlane* plane = nullptr;
+
+	class terIconBuilding* connection_icon_ = nullptr;
 
 	Vect3f old_build_position;
-	float old_build_angle;
+	float old_build_angle = 0.0f;
 	terPlayer* old_build_player;
 
 	void InitTexture();
-	void checkBuildingConnection();
 
 	bool checkScriptInstructions();
 };

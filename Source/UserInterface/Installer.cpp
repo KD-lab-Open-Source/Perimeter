@@ -21,12 +21,7 @@
 
 terBuildingInstaller::terBuildingInstaller(bool a_light_show)
 {
-	Attribute = 0;
-	ObjectPoint = 0;
-	BaseBuff = 0;
 	BaseBuffSX = BaseBuffSY = 0;
-	pTexture = 0;
-	plane = 0;
 
 	light_show = a_light_show;
 	connection_icon_ = new terIconBuilding(terModelBuildingNoConnection);
@@ -42,15 +37,11 @@ void terBuildingInstaller::Clear()
 {
 	CancelObject();
 
-	if(BaseBuff)
-		delete[] BaseBuff;
-	BaseBuff = 0;
+    delete[] BaseBuff;
+	BaseBuff = nullptr;
 	BaseBuffSX = BaseBuffSY = 0;
 
-	if(plane)
-		plane->Release();
-	plane=0;
-
+    RELEASE(plane);
 	RELEASE(pTexture);
 }
 
@@ -78,11 +69,6 @@ void terBuildingInstaller::InitObject(const AttributeBase* attr)
 	OffsetX = OffsetY = 0;
 	visible_ = 0;
 	ObjectPoint->SetChannel(attr->UpgradeChainName,0);
-
-	if(attr->MilitaryUnit && attr->isBuilding() && attr->ShowCircles){
-		FireRadius = attr->fireRadius();
-		UmbrellaRadius = attr->fireRadiusMin();
-	}
 }
 
 void terBuildingInstaller::ConstructObject(terPlayer* player)
@@ -113,11 +99,11 @@ class terScanGroundLineBuffOp
 {
 	int cnt, max;
 	int x0_, y0_, sx_, sy_;
-	char* buffer_;
+	uint8_t* buffer_;
 	bool building_;
 
 public:
-	terScanGroundLineBuffOp(int x0,int y0,int sx,int sy, char* buffer)
+	terScanGroundLineBuffOp(int x0,int y0,int sx,int sy, uint8_t* buffer)
 	{
 		x0_ = x0;
 		y0_ = y0;
@@ -133,7 +119,7 @@ public:
 
 		max += x2 - x1 + 1;
 		unsigned short* buf = vMap.GABuf + vMap.offsetGBufWorldC(0, y);
-		char* pd = buffer_ + (y - y0_)*sx_ + x1 - x0_;
+        uint8_t* pd = buffer_ + (y - y0_)*sx_ + x1 - x0_;
 		while(x1 <= x2){
 			unsigned short p = *(buf + vMap.XCYCLG(x1 >> kmGrid));
 			if((p & GRIDAT_LEVELED) && !(p & (GRIDAT_MASK_CLUSTERID | GRIDAT_BUILDING | GRIDAT_BASE_OF_BUILDING_CORRUPT))){
@@ -194,11 +180,10 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 		y1 = y1 + 1;
 
 		if(!BaseBuff || BaseBuffSX < (x1 - x0) || BaseBuffSY < (y1 - y0)){
-			if(BaseBuff)
-				delete[] BaseBuff;
+			delete[] BaseBuff;
 			BaseBuffSX = x1 - x0;
 			BaseBuffSY = y1 - y0;
-			BaseBuff = new char[BaseBuffSX * BaseBuffSY];
+			BaseBuff = new uint8_t[BaseBuffSX * BaseBuffSY];
 			InitTexture();
 		}
 		memset(BaseBuff,0,BaseBuffSX * BaseBuffSY);
@@ -349,19 +334,17 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 	sColor4c cempty(0,0,0,0);
 	sColor4c cgood = valid() ? sColor4c(0,255,0,128) : sColor4c(200,128,128,128);
 	sColor4c cbad(255,0,0,128);
-	char* p = BaseBuff;
+	uint8_t* p = BaseBuff;
 	for(int i = 0;i < BaseBuffSY;i++)
 	{
-        uint32_t * c = (uint32_t*)(buf + i * Pitch);
+        uint32_t* c = reinterpret_cast<uint32_t*>(buf + i * Pitch);
 		for(int j = 0;j < BaseBuffSX;j++)
 		{
-			if((*p) & 1){
-				if((*p) & 2)
-					*c = cgood.ARGB();
-				else
-					*c = cbad.ARGB();
-			}else
-				*c = cempty.ARGB();
+            if ((*p) & 1) {
+                *c = terRenderDevice->ConvertColor((*p) & 2 ? cgood : cbad);
+            } else {
+                *c = terRenderDevice->ConvertColor(cempty);
+            }
 			p++;
 			c++;
 		}

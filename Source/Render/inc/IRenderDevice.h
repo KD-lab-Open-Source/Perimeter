@@ -159,6 +159,10 @@ public:
     cInterfaceRenderDevice();
     ~cInterfaceRenderDevice() override;
     
+    // Runtime set methods 
+    
+    ColorConversionFunc ConvertColor = nullptr;
+    
     // Common methods
 
     virtual uint32_t GetWindowCreationFlags() const { return 0; }
@@ -260,8 +264,6 @@ public:
     virtual void FlushPrimitive3D();
 
     // Decl only methods
-
-    ColorConversionFunc ConvertColor = nullptr;
 
     virtual eRenderDeviceSelection GetRenderSelection() const = 0;
 
