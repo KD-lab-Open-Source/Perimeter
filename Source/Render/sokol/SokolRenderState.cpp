@@ -702,6 +702,7 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     );
     SetVPMatrix(&pDrawNode->matViewProj);
     activePipelineMode.cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
+    CameraCullMode = activePipelineMode.cull;
 }
 
 uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
