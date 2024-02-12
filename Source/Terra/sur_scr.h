@@ -44,7 +44,7 @@ struct s_row { //: s_el
 	char flag_last_value;
 
 	s_row(){ type=0;line_width=0; d_char=new char [MAX_LINE_WIDTH+1]; flag_last_value=0;};
-	~s_row() {delete d_char;}
+	~s_row() {delete[] d_char;}
 	void add_el(int v){ el.push_back(v);};
 	void add_el(double v){ el.push_back(v);};
 	void add_el(char* v){ 
