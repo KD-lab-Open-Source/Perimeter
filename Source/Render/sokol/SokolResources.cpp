@@ -150,6 +150,11 @@ void SokolTexture2D::update() {
     dirty = false;
 
     if (desc) {
+#ifdef PERIMETER_DEBUG
+        if (desc->label) {
+            label = desc->label;
+        }
+#endif
         xassert(desc->usage == SG_USAGE_IMMUTABLE || data);
         image = sg_make_image(desc);
         if (desc->usage == SG_USAGE_IMMUTABLE) {
