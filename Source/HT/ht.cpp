@@ -335,10 +335,10 @@ void HTManager::GetLogicFPSminmax(float& fpsmin,float& fpsmax)
 
 void HTManager::Show()
 {
-#ifndef _FINAL
-	if(universe() && universe()->multiPlayer())
-	if(debug_show_lag_stat)
-		lag_stat->Show();
+#ifdef PERIMETER_DEBUG
+	if (universe() && universe()->multiPlayer() && debug_show_lag_stat) {
+        lag_stat->Show();
+    }
 #endif //_FINAL
 }
 

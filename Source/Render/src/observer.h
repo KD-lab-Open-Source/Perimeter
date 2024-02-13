@@ -48,7 +48,7 @@ public:
 
 	void AddLink(ObserverLink* link)
 	{
-#ifndef _FINAL
+#ifdef PERIMETER_DEBUG_ASSERT
 		std::vector<ObserverLink*>::iterator it = std::find(links.begin(),links.end(),link);
 		if(it!=links.end())
 			VISASSERT(0);
