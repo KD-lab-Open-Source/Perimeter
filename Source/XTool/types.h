@@ -3,11 +3,6 @@
 
 #include <cstdint>
 
-#ifndef PERIMETER_D3D9
-constexpr const int TRUE  = 1;
-constexpr const int FALSE = 0;
-#endif
-
 //These structs should match Win32 structs
 struct sPoint {
     int32_t x;

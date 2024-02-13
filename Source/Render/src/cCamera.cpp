@@ -106,7 +106,7 @@ void cCamera::DrawScene()
 	{
 		RenderDevice->FlushPrimitive3D();
 		RenderDevice->SetRenderState(RS_ZFUNC,CMP_LESSEQUAL);
-  		RenderDevice->SetRenderState(RS_BILINEAR,TRUE);
+  		RenderDevice->SetRenderState(RS_BILINEAR,true);
 	}
 
 	std::vector<cCamera*>::iterator it_c;
@@ -147,7 +147,7 @@ void cCamera::DrawScene()
 	}else // объекты не освещаются
 		RenderDevice->SetGlobalLight(NULL);
 
-	RenderDevice->SetRenderState( RS_ZWRITEENABLE, TRUE );
+	RenderDevice->SetRenderState(RS_ZWRITEENABLE, true);
 
     uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
 	if(GetAttribute(ATTRCAMERA_SHADOW|ATTRCAMERA_SHADOWMAP|ATTRCAMERA_SHADOW_STRENCIL))
@@ -1431,6 +1431,6 @@ void TempDrawShadow(cCamera* camera)
     db->AutoUnlock();
     db->Draw();
 
-    gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, TRUE);
+    gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, true);
     gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_LESSEQUAL);
 }
