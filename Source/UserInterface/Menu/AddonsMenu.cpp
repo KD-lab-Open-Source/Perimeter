@@ -53,7 +53,12 @@ std::string GenerateInfoText(ModMetadata* mod, bool add_description) {
     if (!mod->errors.empty()) {
         popupTxt += "\n\n&FF0000";
         popupTxt += qdTextDB::instance().getText("Interface.Menu.Mods.Errors");
-        popupTxt += "\n" + mod->errors;
+        for (std::string error : mod->errors) {
+            if (startsWith(error, "TEXT=")) {
+                error = qdTextDB::instance().getText(error.substr(5).c_str());
+            }
+            popupTxt += "\n" + error;
+        }
     }
     if (add_description && !mod->mod_description.empty()) {
         popupTxt += "\n\n&AAAAAA";

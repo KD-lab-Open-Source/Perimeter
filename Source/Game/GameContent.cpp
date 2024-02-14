@@ -617,13 +617,13 @@ void detectGameContent() {
                 if (data.mod_name.empty()) {
                     data.available = false;
                     fprintf(stderr, "Missing name in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorMissingAttribute");
-                    data.errors += " [Mod] name\n";
+                    data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingAttribute");
+                    data.errors.emplace_back("[Mod] name");
                 } else if (data.mod_version.empty()) {
                     data.available = false;
                     fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorMissingAttribute");
-                    data.errors += " [Mod] version\n";
+                    data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingAttribute");
+                    data.errors.emplace_back("[Mod] version");
                 }
 
                 //Load optional fields
@@ -650,8 +650,8 @@ void detectGameContent() {
                     if (0 < diff) {
                         fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
                                 data.content_game_minimum_version.c_str(), data.path.c_str());
-                        data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorGameTooOld");
-                        data.errors += " " + data.content_game_minimum_version + "\n";
+                        data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorGameTooOld");
+                        data.errors.emplace_back(data.content_game_minimum_version);
                         data.available = false;
                     }
                 }
@@ -683,7 +683,7 @@ void detectGameContent() {
                 data.mod_url = "https://kdlab.com";
             } else {
                 fprintf(stderr, "Mod folder %s has missing info file mod.ini, not loading\n", data.path.c_str());
-                data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorMissingModInfo");
+                data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingModInfo");
             }
             
             //Force disable all mods
@@ -694,7 +694,7 @@ void detectGameContent() {
             //Avoid possible duplicates of ET
             if (data.available && is_content_ET && (terGameContentAvailable & PERIMETER_ET)) {
                 fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading", data.path.c_str());
-                data.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorDuplicateContent");
+                data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorDuplicateContent");
                 data.available = false;
             }
             
@@ -732,13 +732,13 @@ void detectGameContent() {
                 if (!getMissingGameContent(terGameContentAvailable, required).empty()) {
                     fprintf(stderr, "Game content '%s' not installed which is a requirement for %s, not loading\n",
                             mod.content_required_content.c_str(), mod.path.c_str());
-                    mod.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorRequiredContentMissing");
-                    mod.errors += " " + mod.content_required_content + "\n";
+                    mod.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorRequiredContentMissing");
+                    mod.errors.emplace_back(mod.content_required_content);
                 } else {
                     fprintf(stderr, "Game content '%s' installed but not enabled which is a requirement for %s, not loading\n",
                             mod.content_required_content.c_str(), mod.path.c_str());
-                    mod.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorRequiredContentDisabled");
-                    mod.errors += " " + mod.content_required_content + "\n";
+                    mod.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorRequiredContentDisabled");
+                    mod.errors.emplace_back(mod.content_required_content);
                 }
                 mod.available = mod.enabled = false;
             }
@@ -748,8 +748,8 @@ void detectGameContent() {
             if (terGameContentSelect == disallowed) {
                 fprintf(stderr, "Game content '%s' is enabled which is not compatible for %s, not loading\n",
                         mod.content_disallowed_content.c_str(), mod.path.c_str());
-                mod.errors += qdTextDB::instance().getText("Interface.Menu.Mods.ErrorDisallowedContentEnabled");
-                mod.errors += " " + mod.content_disallowed_content + "\n";
+                mod.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorDisallowedContentEnabled");
+                mod.errors.emplace_back(mod.content_disallowed_content);
                 mod.available = mod.enabled = false;
             }
         }
