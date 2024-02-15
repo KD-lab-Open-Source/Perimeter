@@ -30,7 +30,7 @@ public:
 	virtual bool CreateShadowTexture(int xysize)=0;
 	virtual void DeleteShadowTexture();
 	virtual cTexture* GetShadowMap()							{return pShadowMap;}
-	virtual LPDIRECT3DSURFACE9 GetZBuffer()						{return pZBuffer;}
+	virtual IDirect3DSurface9* GetZBuffer()						{return pZBuffer;}
 	virtual cTexture* GetLightMap()								{return pLightMap;}
 	
 
@@ -49,7 +49,7 @@ public:
 	virtual Vect4f GetFogParam(){return Vect4f(0,1,0,0);}
 protected:
 	cTexture*		pShadowMap;
-	LPDIRECT3DSURFACE9	pZBuffer;
+	IDirect3DSurface9*	pZBuffer;
 	cTexture*		pLightMap;
 
 	void SetStream(cObjMesh *Mesh);
@@ -197,7 +197,9 @@ public:
 	virtual bool CreateShadowTexture(int xysize);
 	virtual void SetMaterialTilemap(cTileMap *TileMap);
 	virtual void SetMaterialTilemapShadow();
-	virtual IDirect3DTexture9* GetTilemapShadow0(){return pLookupMap->GetFrameImage(0)->d3d;}
+	virtual IDirect3DTexture9* GetTilemapShadow0() { 
+        return pLookupMap->GetFrameImage(0)->d3d;
+    }
 	virtual void SetTileColor(sColor4f color);
 protected:
 	void SetMaterial(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data);
@@ -284,7 +286,7 @@ public:
 	virtual void SetTileColor(sColor4f color);
 
 	virtual cTexture* GetShadowMap();
-	virtual LPDIRECT3DSURFACE9 GetZBuffer();
+	virtual IDirect3DSurface9* GetZBuffer();
 	virtual cTexture* GetLightMap();
 };
 

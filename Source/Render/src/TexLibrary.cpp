@@ -339,7 +339,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 				return false;
 			}
 
-			LPDIRECT3DTEXTURE9 pTexture=gb_RenderDevice->CreateTextureFromMemory(buf,size-1);
+			IDirect3DTexture9* pTexture=gb_RenderDevice->CreateTextureFromMemory(buf,size-1);
 			if(!pTexture)
 			{
 				Error(Texture);
@@ -464,7 +464,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
         Texture->Release();
         return false;
 	} else {
-		LPDIRECT3DTEXTURE9 pTexture=gb_RenderDevice3D->CreateTextureFromMemory(buf,size);
+        IDirect3DTexture9* pTexture=gb_RenderDevice3D->CreateTextureFromMemory(buf,size);
 		if(!pTexture)
 		{
 			Error(Texture);

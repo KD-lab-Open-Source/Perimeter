@@ -67,10 +67,10 @@ cCamera::cCamera(cScene *UClass) : cUnknownClass(KIND_DRAWNODE)
 
 	Clip.set(0.01f,0.01f,0.99f,0.99f);
 
-	RenderTarget=0;
+	RenderTarget = nullptr;
 	pZBuffer = SurfaceImage::NONE;
 
-	RenderDevice=0;
+	RenderDevice = nullptr;
 
 	Focus.set(1,1);
 	FocusViewPort.set(0,0);

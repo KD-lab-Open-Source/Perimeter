@@ -80,7 +80,7 @@ cTexture* DrawTypeMixed::GetShadowMap()
 	return gb_RenderDevice3D->dtFixed->GetShadowMap();
 }
 
-LPDIRECT3DSURFACE9 DrawTypeMixed::GetZBuffer()
+IDirect3DSurface9* DrawTypeMixed::GetZBuffer()
 {
 	return gb_RenderDevice3D->dtFixed->GetZBuffer();
 }

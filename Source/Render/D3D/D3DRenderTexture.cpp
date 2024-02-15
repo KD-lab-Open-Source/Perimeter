@@ -4,9 +4,9 @@
 #include "files/files.h"
 #include "SystemUtil.h"
 
-LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute)
+IDirect3DTexture9* cD3DRender::CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute)
 {
-	LPDIRECT3DTEXTURE9 lpTexture=0;
+	IDirect3DTexture9* lpTexture = nullptr;
 
 #ifndef PERIMETER_EXODUS //We don't support DXT textures in our D3DXLoadSurfaceFromMemory
 	if((TextureFormat==SURFMT_COLOR || TextureFormat==SURFMT_COLORALPHA || TextureFormat==SURFMT_GRAYALPHA) && Option_FavoriteLoadDDS)
@@ -130,8 +130,8 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 		RECT rect={0,0,dx,dy};
 
-		LPDIRECT3DTEXTURE9& lpD3DTexture=Texture->GetFrameImage(i)->d3d;
-		LPDIRECT3DSURFACE9 lpSurface = NULL;
+        IDirect3DTexture9*& lpD3DTexture=Texture->GetFrameImage(i)->d3d;
+        IDirect3DSurface9* lpSurface = NULL;
 		RDCALL( lpD3DTexture->GetSurfaceLevel( 0, &lpSurface ) );
 
 		RECT rect_out={0,0,dx,dy};
@@ -143,7 +143,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		if(Texture->GetNumberMipMap()>1) // построение мип мапов
 			for(int nMipMap=1;nMipMap<Texture->GetNumberMipMap();nMipMap++)
 			{
-				LPDIRECT3DSURFACE9 lpSurfaceNext = NULL;
+                IDirect3DSurface9* lpSurfaceNext = NULL;
 				RDCALL( lpD3DTexture->GetSurfaceLevel( nMipMap, &lpSurfaceNext ) );
 				RECT rect={0,0,dx>>nMipMap,dy>>nMipMap};
 				uint8_t *lpBufNext = new uint8_t[rect.right * rect.bottom * 4];
@@ -192,7 +192,7 @@ int cD3DRender::DeleteTexture(cTexture *Texture)
 bool cD3DRender::SetScreenShot(const char *fname)
 {
 #ifdef _WIN32
-	LPDIRECT3DSURFACE9 lpRenderSurface=0;
+    IDirect3DSurface9* lpRenderSurface = nullptr;
 	RDCALL(lpD3DDevice->GetRenderTarget(0,&lpRenderSurface));
 	HRESULT hr=D3DXSaveSurfaceToFileA(fname,D3DXIFF_BMP,lpRenderSurface,NULL,NULL);
 	

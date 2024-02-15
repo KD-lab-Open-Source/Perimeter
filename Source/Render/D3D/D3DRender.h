@@ -58,7 +58,9 @@ public:
     uint32_t Adapter = 0;
     LPDIRECT3D9					lpD3D;
     LPDIRECT3DDEVICE9			lpD3DDevice;
-    LPDIRECT3DSURFACE9			lpBackBuffer,lpZBuffer;
+    IDirect3DSurface9*			lpBackBuffer;
+    //This is device's ZBuffer which is not same as DrawType ZBuffer!
+    IDirect3DSurface9*          lpZBuffer;
     D3DPRESENT_PARAMETERS		d3dpp;
     IDirect3DBaseTexture9*		CurrentTexture[TEXTURE_MAX];
     bool						bSupportVertexShader;
@@ -177,7 +179,7 @@ public:
 
 	bool SetFocus(bool wait,bool focus_error=true);
 	int KillFocus();
-	LPDIRECT3DTEXTURE9 CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute);
+	IDirect3DTexture9* CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute);
 
 	inline IDirect3DBaseTexture9* GetTextureD3D(int dwStage) {
 		VISASSERT( dwStage<nSupportTexture );
@@ -277,9 +279,9 @@ public:
                                          reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
-	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
+    IDirect3DTexture9* CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 	{
-		LPDIRECT3DTEXTURE9 pTexture=NULL;
+        IDirect3DTexture9* pTexture=NULL;
 		HRESULT hr=D3DXCreateTextureFromFileInMemory(lpD3DDevice,
 			pSrcData,SrcData,&pTexture);
 
