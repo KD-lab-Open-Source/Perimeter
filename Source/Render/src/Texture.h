@@ -19,6 +19,20 @@ struct TextureImage {
     ~TextureImage() = default;
 };
 
+//Universal handle for diff backends surface pointers, mainly used for stuff like zbuffer and framebuffers
+union SurfaceImage {
+    void* ptr;
+#ifdef PERIMETER_D3D9
+    struct IDirect3DSurface9* d3d;
+#endif
+#ifdef PERIMETER_SOKOL
+    struct SokolTexture2D* sg;
+#endif
+    
+    //Don't make me type all that each time I want a null
+    const static SurfaceImage NONE;
+};
+
 class cTexture : public cUnknownClass, public sAttribute
 {	// класс с анимацией, является динамическим указателем, то есть может удалzться через Release()
 	std::string		name;				// имя файла из которого загружена текстура

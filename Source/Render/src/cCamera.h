@@ -126,8 +126,9 @@ public:
 	inline const Vect3f& GetWorldK()							{ return WorldK; }
 
 	inline cTexture* GetRenderTarget()							{ return RenderTarget; }
-	inline struct IDirect3DSurface9* GetZBuffer()				{ return pZBuffer;}
-	void SetRenderTarget(cTexture *pTexture,IDirect3DSurface9* pZBuf);
+    
+    void SetRenderTarget(cTexture* texture, SurfaceImage zbuffer);
+    inline SurfaceImage GetZBuffer() const { return pZBuffer; }
 
 	void EnableGridTest(int grid_dx,int grid_dy,int grid_size);
 
@@ -190,7 +191,7 @@ protected:
 	//cCamera
     cInterfaceRenderDevice		*RenderDevice;				// устройство растеризации
 	cTexture					*RenderTarget;				// поверхность на которую выводится
-	IDirect3DSurface9*			pZBuffer;
+    SurfaceImage			    pZBuffer;
 	Vect2f						RenderSize;					// размеры устройства вывода
 
 	enum

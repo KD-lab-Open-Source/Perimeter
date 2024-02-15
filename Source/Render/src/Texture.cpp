@@ -2,6 +2,8 @@
 #include "files/files.h"
 #include "../../Terra/crc.h"
 
+const SurfaceImage SurfaceImage::NONE = { nullptr };
+
 cTexture::cTexture(const char *TexName) : cUnknownClass(KIND_TEXTURE)
 { 
 	SetName(TexName);

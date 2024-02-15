@@ -68,7 +68,7 @@ cCamera::cCamera(cScene *UClass) : cUnknownClass(KIND_DRAWNODE)
 	Clip.set(0.01f,0.01f,0.99f,0.99f);
 
 	RenderTarget=0;
-	pZBuffer=NULL;
+	pZBuffer = SurfaceImage::NONE;
 
 	RenderDevice=0;
 
@@ -575,10 +575,10 @@ void cCamera::UpdateVieport()
 	ScaleViewPort.set(1,RenderSize.x/RenderSize.y);
 }
 
-void cCamera::SetRenderTarget(cTexture *pTexture, IDirect3DSurface9* pZBuf)
+void cCamera::SetRenderTarget(cTexture* texture, SurfaceImage zbuffer)
 {
-	RenderTarget=pTexture;
-	pZBuffer=pZBuf;
+	RenderTarget = texture;
+	pZBuffer = zbuffer;
 	UpdateVieport();
 }
 

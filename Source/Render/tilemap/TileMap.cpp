@@ -235,20 +235,6 @@ cTexture* cTileMap::GetLightMap()
     return nullptr;
 }
 
-#ifdef PERIMETER_D3D9
-IDirect3DSurface9* cTileMap::GetZBuffer()
-{
-    if (gb_RenderDevice3D) {
-        if (CheckLightMapType()) {
-            return gb_RenderDevice3D->dtAdvance->GetZBuffer();
-        } else {
-            return gb_RenderDevice3D->dtFixed->GetZBuffer();
-        }
-    }
-    return nullptr;
-}
-#endif
-
 void cTileMap::CreateLightmap()
 {
 #ifdef PERIMETER_D3D9
@@ -476,9 +462,7 @@ void cTileMap::AddLightCamera(cCamera *DrawNode)
 	DrawNode->AttachChild(ShadowDrawNode);
 	ShadowDrawNode->SetAttribute(ATTRCAMERA_SHADOWMAP|ATTRUNKOBJ_NOLIGHT);
 	ShadowDrawNode->ClearAttribute(ATTRCAMERA_PERSPECTIVE|ATTRCAMERA_ZMINMAX|ATTRCAMERA_SHOWCLIP);
-#ifdef PERIMETER_D3D9
-	ShadowDrawNode->SetRenderTarget(GetShadowMap(),GetZBuffer());
-#endif
+	ShadowDrawNode->SetRenderTarget(GetShadowMap(), gb_RenderDevice->GetShadowZBuffer());
 
 
 //	Vect2f z=CalcZ(DrawNode);
@@ -769,7 +753,7 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
 	PlanarNode->SetAttribute(ATTRCAMERA_SHADOW|ATTRUNKOBJ_NOLIGHT);
 	PlanarNode->ClearAttribute(ATTRCAMERA_PERSPECTIVE);
 	PlanarNode->ClearAttribute(ATTRCAMERA_SHOWCLIP);
-	PlanarNode->SetRenderTarget(light?GetLightMap():GetShadowMap(),NULL);
+	PlanarNode->SetRenderTarget(light?GetLightMap():GetShadowMap(),SurfaceImage::NONE);
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f zplane(10,1e6f);
@@ -806,7 +790,7 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 	PlanarNode->ClearAttribute(ATTRCAMERA_PERSPECTIVE);
 	PlanarNode->ClearAttribute(ATTRCAMERA_SHOWCLIP);
 	PlanarNode->SetAttribute(ATTRCAMERA_NOCLEARTARGET);
-	PlanarNode->SetRenderTarget(GetShadowMap(),NULL);
+	PlanarNode->SetRenderTarget(GetShadowMap(),SurfaceImage::NONE);
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f zplane(10,1e6f);

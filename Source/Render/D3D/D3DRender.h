@@ -153,6 +153,10 @@ public:
     void EndDrawShadow() override;
     void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override;
     void DrawNoMaterialShadow(cObjMesh* mesh) override;
+    SurfaceImage GetShadowZBuffer() override;
+
+    void SetRenderTarget(cTexture* target, SurfaceImage zbuffer) override;
+    void RestoreRenderTarget() override;
     
     void SetMaterialTilemap(cTileMap *TileMap) override;
     void SetMaterialTilemapShadow() override;
@@ -272,9 +276,6 @@ public:
 		RDCALL(lpD3DDevice->SetTransform(D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+Stage),
                                          reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
-
-	void SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer);
-	void RestoreRenderTarget();
 
 	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 	{

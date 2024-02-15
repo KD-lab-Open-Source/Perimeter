@@ -217,3 +217,7 @@ void cSokolRender::UnlockTexture(cTexture* Texture) {
     }
     tex->locked = false;
 }
+
+SurfaceImage cSokolRender::GetShadowZBuffer() {
+    return SurfaceImage::NONE;
+}

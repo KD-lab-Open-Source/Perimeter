@@ -312,6 +312,10 @@ public:
     virtual void EndDrawShadow() = 0;
     virtual void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) = 0;
     virtual void DrawNoMaterialShadow(cObjMesh* mesh) = 0;
+    virtual union SurfaceImage GetShadowZBuffer() = 0;
+
+    virtual void SetRenderTarget(cTexture* target, union SurfaceImage zbuffer) = 0;
+    virtual void RestoreRenderTarget() = 0;
 
     virtual void SetMaterialTilemap(cTileMap *TileMap) = 0;
     virtual void SetMaterialTilemapShadow() = 0;
@@ -322,7 +326,6 @@ public:
     virtual void DeleteShadowTexture();
 
     virtual cTexture* GetShadowMap();
-    virtual ???* GetZBuffer();
     virtual cTexture* GetLightMap();
     */
 };

@@ -12,7 +12,7 @@
 
 #include "Silicon.h"
 
-void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
+void cD3DRender::SetRenderTarget(cTexture* target, SurfaceImage zbuffer)
 {
     FlushActiveDrawBuffer();
 	for( int nPasses=0; nPasses<nSupportTexture; nPasses++ ) 
@@ -20,9 +20,10 @@ void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
 		lpD3DDevice->SetTexture( nPasses, CurrentTexture[nPasses]=0 );
 	}
 
-	LPDIRECT3DSURFACE9 lpDDSurface= nullptr;
-    TextureImage* frm = target->GetFrameImage(0);
-	RDCALL(frm->d3d->GetSurfaceLevel(0,&lpDDSurface));
+    IDirect3DSurface9* lpDDSurface= nullptr;
+    IDirect3DSurface9* pZBuffer = zbuffer.d3d;
+    IDirect3DTexture9* tex = target->GetFrameImage(0)->d3d;
+	RDCALL(tex->GetSurfaceLevel(0,&lpDDSurface));
 	RDCALL(lpD3DDevice->SetRenderTarget(0,lpDDSurface));
 	RDCALL(lpD3DDevice->SetDepthStencilSurface(pZBuffer));
 
@@ -51,8 +52,8 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
     cInterfaceRenderDevice::SetDrawNode(pDrawNode);
 	if(DrawNode->GetRenderTarget())
 	{
-		LPDIRECT3DSURFACE9 pZBuffer=DrawNode->GetZBuffer();
-		SetRenderTarget(DrawNode->GetRenderTarget(),pZBuffer);
+		SurfaceImage zbuffer = DrawNode->GetZBuffer();
+		SetRenderTarget(DrawNode->GetRenderTarget(), zbuffer);
 		uint32_t color=0;
 		if(pDrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 		{
@@ -86,20 +87,15 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 			kShadow=1.3f;
 		}
 
-		if(!pDrawNode->GetAttribute(ATTRCAMERA_NOCLEARTARGET))
-		{
-			if(!pZBuffer)
-			{
+		if (!pDrawNode->GetAttribute(ATTRCAMERA_NOCLEARTARGET)) {
+			if(!zbuffer.d3d) {
 				RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET,color,1,0));
-			}else
-			{
+			} else {
 				RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 
 					pDrawNode->GetAttribute(ATTRCAMERA_ZINVERT)?0:1, 0));
 			}
 		}
-	}
-	else
-	{
+	} else {
 		RestoreRenderTarget();
 	}
 
@@ -187,6 +183,18 @@ void cD3DRender::DrawNoMaterialShadow(cObjMesh* mesh) {
     VISASSERT(dtDrawShadowActive);
     if (!dtDrawShadowActive) return;
     dtDrawShadowActive->DrawNoMaterialShadow(mesh);
+}
+
+SurfaceImage cD3DRender::GetShadowZBuffer()
+{
+    if (gb_RenderDevice3D) {
+        if (cTileMap::CheckLightMapType()) {
+            return SurfaceImage { dtAdvance->GetZBuffer() };
+        } else {
+            return SurfaceImage { dtFixed->GetZBuffer() };
+        }
+    }
+    return SurfaceImage::NONE;
 }
 
 void cD3DRender::SetMaterialTilemap(cTileMap *TileMap) {

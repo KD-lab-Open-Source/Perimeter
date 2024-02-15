@@ -384,7 +384,7 @@ void cChaos::RenderTexture()
 	cD3DRender* rd=gb_RenderDevice3D;
     if (!rd) return;
 	
-	rd->SetRenderTarget(pTexRender,NULL);
+	rd->SetRenderTarget(pTexRender, SurfaceImage::NONE);
 
 	float umin,vmin,umin1,vmin1;
 	umin=sfmod(time*stime_tex0.x,1.0f);
@@ -407,7 +407,7 @@ void cChaos::RenderTex0()
 	cD3DRender* rd=gb_RenderDevice3D;
     if (!rd) return;
 
-	rd->SetRenderTarget(pTex0,NULL);
+	rd->SetRenderTarget(pTex0, SurfaceImage::NONE);
 
 	float umin,vmin,umin1,vmin1;
 	umin=1- xm::fmod(time * 0.1f, 1.0f);

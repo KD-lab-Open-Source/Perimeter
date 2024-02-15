@@ -131,10 +131,8 @@ public:
 	void DrawLightmapShadow(cCamera *DrawNode);
 	cTexture* GetShadowMap();
 	cTexture* GetLightMap();
-
-#ifdef PERIMETER_D3D9
-    IDirect3DSurface9* GetZBuffer();
-#endif
+    static int CheckLightMapType();
+    
 	void FixShadowMapCamera(cCamera *DrawNode);
 
     //Величина visMap должна быть TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
@@ -165,7 +163,6 @@ protected:
 	void CalcShadowMapCameraProective(cCamera *DrawNode);
 
 	int LightMapType;
-	int CheckLightMapType();
 
 	void BuildRegionPoint();
 

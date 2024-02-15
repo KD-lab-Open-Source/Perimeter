@@ -93,6 +93,10 @@ public:
     void EndDrawShadow() override {}
     void SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) override {}
     void DrawNoMaterialShadow(cObjMesh* mesh) override {}
+    SurfaceImage GetShadowZBuffer() override { return SurfaceImage::NONE; };
+
+    void SetRenderTarget(cTexture* target, SurfaceImage zbuffer) override {};
+    void RestoreRenderTarget() override {};
 
     void SetMaterialTilemap(cTileMap *TileMap) override {};
     void SetMaterialTilemapShadow() override {};

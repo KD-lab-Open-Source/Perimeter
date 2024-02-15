@@ -234,6 +234,7 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
 }
 
 int cSokolRender::Flush(bool wnd) {
+    MT_IS_GRAPH();
     RenderSubmitEvent(RenderEvent::FLUSH_SCENE);
     if (!sdl_window) {
         xassert(0);
@@ -260,6 +261,7 @@ int cSokolRender::Flush(bool wnd) {
 }
 
 SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynamic, sg_buffer_type type) {
+    MT_IS_GRAPH();
     xassert(!resource->locked);
     xassert(len <= resource->data_len);
     sg_buffer_desc desc = {};
@@ -289,6 +291,7 @@ SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynami
 }
 
 void cSokolRender::FinishActiveDrawBuffer() {
+    MT_IS_GRAPH();
     if (!activeDrawBuffer || !activeDrawBuffer->written_vertices) {
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
         RenderSubmitEvent(RenderEvent::FINISH_ACTIVE_DRAW_BUFFER, "No/Empty", activeDrawBuffer);
@@ -313,6 +316,7 @@ void cSokolRender::FinishActiveDrawBuffer() {
 }
 
 void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices) {
+    MT_IS_GRAPH();
     if (0 == vertices) vertices = activeCommand.vertices;
     if (0 == indices) indices = activeCommand.indices;
     PIPELINE_TYPE pipelineType = activePipelineType;
@@ -467,6 +471,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
 }
 
 void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
+    MT_IS_GRAPH();
     if (activeDrawBuffer && activeDrawBuffer != db) {
         //Submit previous buffer first
         if (activeDrawBuffer->IsLocked()) {
@@ -626,25 +631,25 @@ uint32_t cSokolRender::GetMaxTextureSlots() {
     return PERIMETER_SOKOL_TEXTURES;
 }
 
+void cSokolRender::SetRenderTarget(cTexture* target, SurfaceImage zbuffer) {
+    //TODO
+}
+
+void cSokolRender::RestoreRenderTarget() {
+    //TODO
+}
+
 void cSokolRender::SetDrawNode(cCamera *pDrawNode)
 {
     if (DrawNode==pDrawNode) return;
     cInterfaceRenderDevice::SetDrawNode(pDrawNode);
-    /* TODO
     if (DrawNode->GetRenderTarget()) {
-        LPDIRECT3DSURFACE9 pZBuffer=DrawNode->GetZBuffer();
-        SetRenderTarget(DrawNode->GetRenderTarget(),pZBuffer);
+        SurfaceImage zbuffer = DrawNode->GetZBuffer();
+        SetRenderTarget(DrawNode->GetRenderTarget(), zbuffer);
         uint32_t color=0;
+        /* TODO
         if(pDrawNode->GetAttribute(ATTRCAMERA_SHADOW))
         {
-            if(Option_ShadowType==SHADOW_MAP_SELF &&
-               (dtAdvance->GetID()==DT_RADEON8500 ||
-                dtAdvance->GetID()==DT_RADEON9700
-               ))
-            {
-                color=D3DCOLOR_RGBA(0,0,0,255);
-                kShadow=0.25f;
-            }else
             if(CurrentMod4==D3DTOP_MODULATE4X)
             {
                 color=D3DCOLOR_RGBA(63,63,63,255);
@@ -669,7 +674,7 @@ void cSokolRender::SetDrawNode(cCamera *pDrawNode)
 
         if(!pDrawNode->GetAttribute(ATTRCAMERA_NOCLEARTARGET))
         {
-            if(!pZBuffer)
+            if(!zbuffer->sg)
             {
                 RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET,color,1,0));
             }else
@@ -678,12 +683,12 @@ void cSokolRender::SetDrawNode(cCamera *pDrawNode)
                                           pDrawNode->GetAttribute(ATTRCAMERA_ZINVERT)?0:1, 0));
             }
         }
+        */
     }
     else
     {
         RestoreRenderTarget();
     }
-    */
 
     SetDrawTransform(pDrawNode);
 }
