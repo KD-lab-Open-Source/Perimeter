@@ -18,6 +18,7 @@ gamepix.com&FFFFFF
 
 &CCCCFFВеб версия&FFFFFF
 Александр "caiiiycuk" Гурьянов
+Станислав "sta3ik" Павлов
 
 
 &66CCFFК-Д ЛАБ
@@ -37,7 +38,7 @@ gamepix.com&FFFFFF
 
 &CCCCFFWeb Version&FFFFFF
 Alexander "caiiiycuk" Guryanov
-
+Stanislav "sta3ik" Pavlov
 
 &66CCFFK-D LAB
 kdlab.com&FFFFFF
