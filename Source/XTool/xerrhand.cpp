@@ -455,18 +455,23 @@ void XErrorHandler::RedirectStdio() const {
     //Check if we should redirect stdio
     printf("Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
 
-    //Reopen streams, Win32 needs wide char version to handle cyrilic
+    //Reopen streams, Win32 needs wide char version to handle cyrillic
+    
+    bool out_fail, err_fail;
 #ifdef _WIN32
     UTF8_TO_WCHAR(log_path, log_path.c_str())
-    _wfreopen(wchar_log_path, L"a", stdout);
-    _wfreopen(wchar_log_path, L"a", stderr);
+    out_fail = _wfreopen(wchar_log_path, L"a", stdout) == nullptr;
+    err_fail = _wfreopen(wchar_log_path, L"a", stderr) == nullptr;
 #else
-    freopen(log_path.c_str(), "a", stdout);
-    freopen(log_path.c_str(), "a", stderr);
+    out_fail = freopen(log_path.c_str(), "a", stdout) == nullptr;
+    err_fail = freopen(log_path.c_str(), "a", stderr) == nullptr;
 #endif
+    if (out_fail && err_fail) fprintf(stderr, "Error redirecting stdout and stderr\n");
+    else if (out_fail) fprintf(stderr, "Error redirecting stdout\n");
+    else if (err_fail) fprintf(stderr, "Error redirecting stderr\n");
     //Disable buffering because we don't flush, specially if crash happens
-    setvbuf(stdout, NULL, _IONBF, 0);
-    setvbuf(stderr, NULL, _IONBF, 0);
+    setvbuf(stdout, nullptr, _IONBF, 0);
+    setvbuf(stderr, nullptr, _IONBF, 0);
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
