@@ -256,7 +256,9 @@
           package = self.packages.${system}.default;
           pkgs = import nixpkgs { inherit system; };
         in pkgs.mkShell {
-          buildInputs = package.buildInputs ++ package.nativeBuildInputs;
+          buildInputs = package.buildInputs ++ package.nativeBuildInputs ++ [
+            pkgs.clang
+          ];
         };
       });
     };

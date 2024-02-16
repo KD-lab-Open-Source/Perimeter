@@ -342,6 +342,7 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
     add_compile_options(-Wno-unused-value)
     add_compile_options(-Wno-deprecated)
+    add_compile_options(-Wno-strict-aliasing)
     
     #TODO remove these once code is more reasonable
     add_compile_options(-Wno-sign-compare)
@@ -359,12 +360,17 @@ IF(NOT MSVC_CL_BUILD)
     # add_compile_options(-Werror=write-strings) #TODO enable this again
 
     if (CLANG)
-        add_compile_options(-Werror=mismatched-new-delete )
+        add_compile_options(-Werror=mismatched-new-delete)
     endif()
     
     #These options may cause issues with external code compilation, so we apply only to our own targets
-    SET(PERIMETER_COMPILE_OPTIONS -Werror=shift-negative-value)
-    SET(PERIMETER_COMPILE_OPTIONS -Werror=parentheses)
+    SET(PERIMETER_COMPILE_OPTIONS
+            -Werror=shift-negative-value
+            -Werror=parentheses
+            -Wno-deprecated-copy
+            #TODO remove these once code is more reasonable
+            -Wno-class-memaccess
+    )
 ENDIF()
 
 #Pass project version as a definition

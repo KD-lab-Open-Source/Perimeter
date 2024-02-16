@@ -132,3 +132,5 @@ target_include_directories(RenderSokol PRIVATE
 target_include_directories(Render PRIVATE "${sokol_SOURCE_DIR}/")
 
 target_link_libraries(RenderSokol PRIVATE ${RenderSokol_LINK_LIBS})
+
+target_compile_options(RenderSokol PRIVATE ${PERIMETER_COMPILE_OPTIONS})
