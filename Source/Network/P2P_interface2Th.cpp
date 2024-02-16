@@ -468,6 +468,12 @@ void PNetCenter::LLogicQuant()
                 if (ev.info.quant == 0) {
                     ev.info.quant = max_quant;
                 }
+                //Sometimes some clients might not have backGameInf2List too, fix them
+                for (auto& quant : ev.info.player_quants) {
+                    if (quant == 0) {
+                        quant = max_quant;
+                    }
+                }
                 SendEvent(ev, NETID_ALL);
             }
 
