@@ -209,7 +209,7 @@ public:
 
 	Vect2f forwardDirection() const { return stablePose().rot.ycol(); }
 
-	int includingCluster() const { return including_cluster; }
+	void updateIncludingCluster() override {}
 
 	void holdProduction();
 	void unholdProduction();
@@ -241,7 +241,6 @@ private:
 	Vect2f average_position_offset;
 	Vect2f prev_forward_direction;
 	Vect2f average_velocity;
-	int including_cluster;
 	
 	MatX2f stablePose_; // Центр сквада, куда он стремится.
 	Vect2f homePosition_; 

@@ -35,8 +35,6 @@ position_generator(false)
 
 	unitsWayPoinsSize_ = 0;
 	
-	including_cluster = 0;
-	
 	check_readiness_to_move = false;
 	
 	currentMutation_ = UNIT_ATTRIBUTE_NONE;
@@ -1313,17 +1311,16 @@ void terUnitSquad::calcCenter()
 	described_radius = min(xm::sqrt(described_radius), squad_described_radius_max);
 	setRadius(described_radius);
 
-	// Calc including_cluster
-	FOR_EACH(Units, ui){
-		including_cluster = (*ui)->includingCluster();
-		int cnt = 0;
-		SquadUnitList::iterator uj;
-		FOR_EACH(Units, uj)
-			if((*uj)->includingCluster() == including_cluster)
-				cnt += (*uj)->damageMolecula().elementCount();
-		if(cnt >= counter/2)
-			break;
-	}
+    for (auto& unit : Units) {
+        includingCluster_ = unit->includingCluster();
+        int cnt = 0;
+        for (auto& uj: Units) {
+            if (uj->includingCluster() == includingCluster_)
+                cnt += uj->damageMolecula().elementCount();
+            if (cnt >= counter / 2)
+                break;
+        }
+    }
 
 	average(average_velocity, average_position - prev_average_position, squad_velocity_avr_tau);
 }
@@ -1665,7 +1662,7 @@ public:
 		radius_max2 = sqr(radius_max);
 		optimal_radius2 = sqr((attr->fireRadiusMin() + attr->fireRadius())/2);
 
-		including_cluster = squad.including_cluster;
+		including_cluster = squad.includingCluster();
 		AttackClass = attr->AttackClass;
 
 		best_target = 0;

@@ -44,7 +44,8 @@ class ShowDispatcher
 		Shape(const Vect3f& v0, const Vect3f& v1, const Vect3f& v2, sColor4c color_) { type = Triangle; points = new Vect3f[n_points = 3]; points[0] = v0; points[1] = v1; points[2] = v2; color = color_; }
 		Shape(const Vect3f& v0, const Vect3f& v1, const Vect3f& v2, const Vect3f& v3, sColor4c color_) { type = Quadrangle; points = new Vect3f[n_points = 4]; points[0] = v0; points[1] = v1; points[2] = v2; points[3] = v3; color = color_; }
 		Shape(int n_points_, const Vect3f* points_, sColor4c color_) { type = ConvexArray; points = new Vect3f[n_points = n_points_]; memcpy(points, points_, sizeof(Vect3f)*n_points); color = color_; }
-		Shape(const Shape& shape) 
+		/*
+        Shape(const Shape& shape) 
 		{ 
 			*this = shape; 
 			if(isArray(type)){ 
@@ -54,6 +55,7 @@ class ShowDispatcher
 			else if(type == Text)
 				text = strdup(shape.text);
 		}
+        */
 		~Shape() { 
 			if(isArray(type)) 
 				delete points; 

@@ -508,7 +508,8 @@ int CGeoInfluence::quant(int deltaTime)
 
 /*			if(tmpltSur[cnt]&0x1){ //если порода прорезалась
 				vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				vMap.SurBuf[offset]=vMap.GetGeoType(offset,V);
 			}
 			else { //если порода не прорезалась
@@ -516,7 +517,8 @@ int CGeoInfluence::quant(int deltaTime)
 				//Vold+=vMap.AtrBuf[offset]&VX_FRACTION_MASK; ///
 				if(V>Vold){//=
 					vMap.VxGBuf[offset]=V >>VX_FRACTION;
-					vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+	                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                    vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 					tmpltSur[cnt]|=0x1;
 				}
 			}*/
@@ -553,13 +555,15 @@ int CGeoInfluence::quant(int deltaTime)
 
 			//для нормальной границы при  разрушении зеропласта
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
 				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
+                vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK | At_NOTPURESURFACE);
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
 
@@ -718,13 +722,15 @@ bool CWormOut::quant()
 
 			//для нормальной границы при  разрушении зеропласта
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
 				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
+                vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK | At_NOTPURESURFACE);
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
 
@@ -908,7 +914,8 @@ void worms(int x, int y)
 				if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 				if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-					vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+	                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                    vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				}
 				else {
 					//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1014,7 +1021,8 @@ void worms(int x, int y)
 			if(V<0)V=0;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1043,7 +1051,8 @@ void worms(int x, int y)
 			if(V<0)V=0;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1070,7 +1079,8 @@ void worms(int x, int y)
 			if(V<0)V=0;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1098,7 +1108,8 @@ void worms(int x, int y)
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1124,7 +1135,8 @@ void worms(int x, int y)
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+				vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1256,7 +1268,8 @@ void CGeoWorm::step(int x, int y, float angle)
 				if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 				if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-					vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+					vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                    vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				}
 				else {
 					//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1362,7 +1375,8 @@ void CGeoWorm::step(int x, int y, float angle)
 			if(V<0)V=0;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+				vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1391,7 +1405,8 @@ void CGeoWorm::step(int x, int y, float angle)
 			if(V<0)V=0;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+				vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1418,7 +1433,8 @@ void CGeoWorm::step(int x, int y, float angle)
 			if(V<0)V=0;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+				vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1446,7 +1462,8 @@ void CGeoWorm::step(int x, int y, float angle)
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+				vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -1472,7 +1489,8 @@ void CGeoWorm::step(int x, int y, float angle)
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -2649,7 +2667,8 @@ int sTVolcano::quant()
 
 			//для нормальной границы при  разрушении зеропласта
 			if((vMap.VxDBuf[offset] == 0 && vMap.VxGBuf[offset] == (V >> VX_FRACTION)) || (vMap.VxDBuf[offset] == (V >> VX_FRACTION))){ 
-				vMap.AtrBuf[offset] = (V & VX_FRACTION_MASK) | (vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) 
@@ -2657,7 +2676,8 @@ int sTVolcano::quant()
 				else 
 					vMap.VxDBuf[offset] = V >> VX_FRACTION;
 				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
-				vMap.AtrBuf[offset] = (V & VX_FRACTION_MASK) | (vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK|At_NOTPURESURFACE));
+                vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK | At_NOTPURESURFACE);
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
 			cnt++;
@@ -2953,14 +2973,16 @@ int sTBubble::quant(void)
 			//if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			//для нормальной границы при  разрушении зеропласта
-			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
 				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
+                vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK | At_NOTPURESURFACE);
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
 			tmpVx[cnt]=V;
@@ -3079,7 +3101,8 @@ void bubble(int x, int y)
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -3294,7 +3317,8 @@ bool sTorpedo::quant(void)
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
 			if( (Vold >>VX_FRACTION)==(V >>VX_FRACTION) ){
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
@@ -4904,12 +4928,12 @@ bool sUPoligonN::quant(float angle_grad)
 			for(i=0; i<nElAET; i++){
 				AET[i].x+=AET[i].dx;
 				if(yWrk >= xm::round(allPntArr[AET[i].idxTo].y)){
-					char idx=AET[i].idxTo+AET[i].dir;
+                    int8_t idx=AET[i].idxTo+AET[i].dir;
 					if(idx<0)idx=nElAllPntArr-1;
 					if(idx>=nElAllPntArr)idx=0;
 					if(xm::round(allPntArr[idx].y) > yWrk) { //удаляем и добавляем ребро
-						char idxFrom=AET[i].idxTo;
-						char dir=AET[i].dir;
+                        int8_t idxFrom=AET[i].idxTo;
+                        int8_t dir=AET[i].dir;
 						//Соптимизировать
 						delAETRecord(i);
 						addAETRecord(idxFrom, idx, dir);
@@ -6202,13 +6226,15 @@ bool s_EarthUnit::quant()
 
 			//для нормальной границы при  разрушении зеропласта
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
+                vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
 				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
-				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
+                vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK | At_NOTPURESURFACE);
+                vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
 			tmpVx[cnt]=V;
