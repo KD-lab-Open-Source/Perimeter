@@ -306,7 +306,7 @@ terFilthSpotID SelectFilth()
         if (russian) {
             filth.push_back(name[i].name);
         } else {
-            filth.push_back(getEnumDescriptor(FILTH_SPOT_ID_NONE).name(name[i].id));
+            filth.push_back(getEnumDescriptor(FILTH_SPOT_ID_NONE)->name(name[i].id));
         }
     }
 
@@ -340,7 +340,7 @@ terUnitAttributeID SelectGeo()
         if (russian) {
             filth.push_back(name[i].name);
         } else {
-            filth.push_back(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(name[i].id));
+            filth.push_back(getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->name(name[i].id));
         }
     }
 
@@ -384,9 +384,9 @@ void MissionEditor::createUnit()
 		const char* itemSel = popupMenu(items);
 		if(itemSel) {
             if (russian) {
-                attributeID = static_cast<terUnitAttributeID>(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByNameAlt(itemSel));
+                attributeID = static_cast<terUnitAttributeID>(getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->keyByNameAlt(itemSel));
             } else {
-                attributeID = static_cast<terUnitAttributeID>(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByName(itemSel));
+                attributeID = static_cast<terUnitAttributeID>(getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->keyByName(itemSel));
             }
         }
 	}
@@ -539,7 +539,7 @@ const char* MissionEditor::info()
         } else {
             info_ += "Copied: ";
         }
-        info_ += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID), locale);
+        info_ += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->nameAlt(copiedData_->attributeID), locale);
         info_ += "\n";
     }
 

@@ -837,7 +837,7 @@ bool unavailableContentBelligerent(terBelligerent belligerent, GAME_CONTENT cont
 std::vector<GAME_CONTENT> getGameContentEnums(const uint32_t& content) {
     std::vector<GAME_CONTENT> contentList;
     if (content) {
-        contentList = getEnumDescriptor(GAME_CONTENT()).keyCombination(content);
+        contentList = getEnumDescriptor(GAME_CONTENT())->keyCombination(content);
     }
     return contentList;
 }
@@ -851,7 +851,7 @@ GAME_CONTENT mergeGameContentEnums(const std::vector<GAME_CONTENT>& list) {
 }
 
 std::vector<GAME_CONTENT> getGameContentFromEnumName(const std::string& content) {
-    return getEnumDescriptor(GAME_CONTENT()).keysFromNameCombination(content);
+    return getEnumDescriptor(GAME_CONTENT())->keysFromNameCombination(content);
 }
 
 std::vector<GAME_CONTENT> getMissingGameContent(const GAME_CONTENT& content, const GAME_CONTENT& required) {

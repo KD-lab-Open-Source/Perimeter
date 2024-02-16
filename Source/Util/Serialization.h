@@ -640,9 +640,6 @@ SingletonPrm<Type>
 /////////////////////////////////////////////////
 //		Регистрация enums
 /////////////////////////////////////////////////
-//template<class Enum>
-//const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
-
 #define BEGIN_ENUM_DESCRIPTOR(enumType, enumName)	\
 	struct Enum##enumType : EnumDescriptor<enumType> { Enum##enumType(); }; \
 	Enum##enumType::Enum##enumType() : EnumDescriptor<enumType>(enumName) {
@@ -652,9 +649,9 @@ SingletonPrm<Type>
 
 #define END_ENUM_DESCRIPTOR(enumType)	\
 	}  \
-	const EnumDescriptor<enumType>& getEnumDescriptor(const enumType& key){	\
+	const EnumDescriptor<enumType>* getEnumDescriptor(const enumType& key){	\
 		static Enum##enumType descriptor;	\
-		return descriptor;	\
+		return &descriptor;	\
 	}
 
 // Для enums, закрытых классами
@@ -667,59 +664,59 @@ SingletonPrm<Type>
 
 #define END_ENUM_DESCRIPTOR_ENCLOSED(nameSpace, enumType)	\
 	}  \
-	const EnumDescriptor<nameSpace::enumType>& getEnumDescriptor(const nameSpace::enumType& key){	\
+	const EnumDescriptor<nameSpace::enumType>* getEnumDescriptor(const nameSpace::enumType& key){	\
 		static Enum##nameSpace##enumType descriptor;	\
-		return descriptor;	\
+		return &descriptor;	\
 	}
 
 #define DECLARE_ENUM_DESCRIPTOR(enumType)	\
-	const EnumDescriptor<enumType>& getEnumDescriptor(const enumType& key);
+	const EnumDescriptor<enumType>* getEnumDescriptor(const enumType& key);
     
 #define DECLARE_ENUM_DESCRIPTOR_ENCLOSED(nameSpace, enumType)	\
-	const EnumDescriptor<nameSpace::enumType>& getEnumDescriptor(const nameSpace::enumType& key);
+	const EnumDescriptor<nameSpace::enumType>* getEnumDescriptor(const nameSpace::enumType& key);
 
 /////////////////////////////////////////////////
 //	Вспомогательные функции для отображения
 /////////////////////////////////////////////////
 template<class Enum>
 const char* getEnumName(const Enum& key) {
-	return getEnumDescriptor(Enum()).name(key);
+	return getEnumDescriptor(Enum())->name(key);
 }
 
 template<class Enum>
 const char* getEnumNameAlt(const Enum& key) {
-	return getEnumDescriptor(Enum()).nameAlt(key);
+	return getEnumDescriptor(Enum())->nameAlt(key);
 }
 
 template<class Enum>
 const char* getEnumName(const EnumWrapper<Enum>& key) {
-	return getEnumDescriptor(Enum()).name(key);
+	return getEnumDescriptor(Enum())->name(key);
 }
 
 template<class Enum>
 const char* getEnumNameAlt(const EnumWrapper<Enum>& key) {
-	return getEnumDescriptor(Enum()).nameAlt(key);
+	return getEnumDescriptor(Enum())->nameAlt(key);
 }
 
 template<class Enum>
-const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
+const EnumDescriptor<Enum>* getEnumDescriptor(const Enum& key);
 
 template<class T>
-const ComboListDescriptor<T>& getComboListDescriptor(const T& p);
+const ComboListDescriptor<T>* getComboListDescriptor(const T& p);
 
 template<class T>
 const char* getComboListDefaultValue(const T& p) {
-	return getComboListDescriptor(p).defaultValue();
+	return getComboListDescriptor(p)->defaultValue();
 }
 
 template<class T>
 const char* getComboListString(const T& p) {
-	return getComboListDescriptor(p).comboList();
+	return getComboListDescriptor(p)->comboList();
 }
 
 template<class T>
 const char* getComboListValue(const T& p) {
-	return getComboListDescriptor(p).name(p);
+	return getComboListDescriptor(p)->name(p);
 }
 
 #define BEGIN_COMBO_LIST_DESCRIPTOR(objectType, typeName)	\
@@ -731,9 +728,9 @@ const char* getComboListValue(const T& p) {
 
 #define END_COMBO_LIST_DESCRIPTOR(objectType)	\
 	}  \
-	const ComboListDescriptor<objectType>& getComboListDescriptor(const objectType& p){	\
+	const ComboListDescriptor<objectType>* getComboListDescriptor(const objectType& p) {	\
 		static ComboListDescriptor##objectType descriptor;	\
-		return descriptor;	\
+		return &descriptor;	\
 	}
 
 #endif //__ENUM_WRAPPER_H__

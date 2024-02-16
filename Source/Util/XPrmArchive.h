@@ -224,16 +224,16 @@ private:
     template<class Enum>
 	XPrmOArchive& operator&(const EnumWrapper<Enum>& t)
     {
-		const EnumDescriptor<Enum>& descriptor = getEnumDescriptor(Enum(0));
-		saveString(descriptor.name(t.value()));
+		const EnumDescriptor<Enum>* descriptor = getEnumDescriptor(Enum(0));
+		saveString(descriptor->name(t.value()));
 		return *this;
 	}
 
     template<class Enum, class Value>
 	XPrmOArchive& operator&(const BitVector<Enum, Value>& t)
     {
-		const EnumDescriptor<Enum>& descriptor = getEnumDescriptor(Enum(0));
-		saveString(descriptor.nameCombination(t.value()).c_str());
+		const EnumDescriptor<Enum>* descriptor = getEnumDescriptor(Enum(0));
+		saveString(descriptor->nameCombination(t.value()).c_str());
 		return *this;
 	}
 
@@ -584,17 +584,17 @@ private:
 	template<class Enum>
 	XPrmIArchive& operator&(EnumWrapper<Enum>& t)
 	{
-		const EnumDescriptor<Enum>& descriptor = getEnumDescriptor(Enum(0));
+		const EnumDescriptor<Enum>* descriptor = getEnumDescriptor(Enum(0));
 		std::string str;
 		loadString(str);
-		t.value() = descriptor.keyByName(str.c_str());
+		t.value() = descriptor->keyByName(str.c_str());
 		return *this;
 	}
 
 	template<class Enum, class Value>			 
 	XPrmIArchive& operator&(BitVector<Enum, Value>& t)
 	{
-		const EnumDescriptor<Enum>& descriptor = getEnumDescriptor(Enum(0));
+		const EnumDescriptor<Enum>* descriptor = getEnumDescriptor(Enum(0));
 		t.value() = (Value)0;
 		for(;;){
 			std::string name;
@@ -605,7 +605,7 @@ private:
 			}
 			else if(name == "|")
 				continue;
-			t.value() |= descriptor.keyByName(name.c_str());
+			t.value() |= descriptor->keyByName(name.c_str());
 		}
 		return *this;
 	}

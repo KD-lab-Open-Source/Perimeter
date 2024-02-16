@@ -1711,8 +1711,9 @@ inline void setKeyC(AttributeIDBelligerent& data, const char* str) {
 	std::string bName(&aName[pos], aName.size() - pos - 2);
 	aName.erase(pos, aName.size());
 	data = AttributeIDBelligerent(
-		getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByNameAlt(aName.c_str()),
-		getEnumDescriptor(BELLIGERENT_NONE).keyByNameAlt(bName.c_str()));
+		getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->keyByNameAlt(aName.c_str()),
+		getEnumDescriptor(BELLIGERENT_NONE)->keyByNameAlt(bName.c_str())
+    );
 }
 
 typedef TypeLibrary<AttributeIDBelligerent, AttributeBase> AttributeLibrary;

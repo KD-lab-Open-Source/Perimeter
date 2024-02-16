@@ -769,12 +769,12 @@ void terFilthSpot::ShowInfo()
         const std::string& locale = getLocale();
         if (startsWith(locale, "russian")) {
             text = convertToCodepage("Скверна: ", locale);
-            text += convertToCodepage(getEnumDescriptor(FILTH_SPOT_ID_NONE).nameAlt(FilthParamID), locale);
+            text += convertToCodepage(getEnumDescriptor(FILTH_SPOT_ID_NONE)->nameAlt(FilthParamID), locale);
             text += "\n";
         } else {
             text = "Scourge:\n";
         }
-        text += getEnumDescriptor(FILTH_SPOT_ID_NONE).name(FilthParamID);
+        text += getEnumDescriptor(FILTH_SPOT_ID_NONE)->name(FilthParamID);
         Vect3f e,w;
 		terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
 		terRenderDevice->SetFont(gameShell->debugFont());

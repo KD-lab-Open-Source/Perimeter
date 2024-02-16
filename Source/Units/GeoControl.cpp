@@ -161,12 +161,12 @@ void terGeoControl::ShowInfo()
         const std::string& locale = getLocale();
         if (startsWith(locale, "russian")) {
             text = convertToCodepage("Гео: ", locale);
-            text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr()->ID), locale);
+            text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->nameAlt(attr()->ID), locale);
             text += "\n";
         } else {
             text = "Geo:\n";
         }
-        text += getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(attr()->ID);
+        text += getEnumDescriptor(UNIT_ATTRIBUTE_NONE)->name(attr()->ID);
 		if(selected())
 		{
 			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 1.0f));

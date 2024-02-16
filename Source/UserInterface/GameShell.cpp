@@ -2790,7 +2790,7 @@ void GameShell::preLoad() {
     const char* initial_menu_str = check_command_line("initial_menu");
     if (initial_menu_str) {
         std::string initial_menu = std::string("SQSH_MM_") + initial_menu_str + "_SCR";
-        int id = getEnumDescriptor(SQSH_MM_START_SCR).keyByName(initial_menu.c_str());
+        int id = getEnumDescriptor(SQSH_MM_START_SCR)->keyByName(initial_menu.c_str());
         if (id < SQSH_MM_START_SCR || id >= SQSH_MM_SCREENS_MAX) {
             fprintf(stderr, "Initial menu %s not found\n", initial_menu.c_str());
         } else {
