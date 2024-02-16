@@ -71,7 +71,7 @@ void MultiBodyDispatcher::resolve()
 
 	for(int i = 0; i < contacts.size()*collision_resolve_iterations_per_contact; i++){
 		float u_n, u_n_min = FLT_INF;
-		Contact* c_min;
+		Contact* c_min = nullptr;
 		ContactList::iterator ci;
 		FOR_EACH(contacts, ci)
 			if(u_n_min > (u_n = ci->normal_velocity())){
@@ -81,8 +81,8 @@ void MultiBodyDispatcher::resolve()
 		if(u_n_min > collision_resolve_velocity_tolerance)
 			break;
 
-		c_min->resolve();
-		}
+		if (c_min) c_min->resolve();
+    }
 
 	//xassert("Unable to resolve collision" && i < contacts.size()*collision_resolve_iterations_per_contact);
 	prepare();

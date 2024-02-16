@@ -424,7 +424,7 @@ bool Compiler::compile(const char* input, const char* sources, bool rebuild, boo
 //		TokenList
 ///////////////////////////////////////////////////////////////////////////
 TokenList::TokenList(const TokenList& tokens, const char* name) 
-: Token(name ? name : tokens.name())
+: Token(name ? name : tokens.name()), std::list<ShareHandle<Token>>()
 {
 	parent = 0;
 	lock_addition = 0;

@@ -7,6 +7,7 @@ static PIPELINE_TYPE getPipelineType(const ePrimitiveType type) {
     switch (type) {
         default:
             xassert(0);
+            [[fallthrough]];
         case PT_TRIANGLESTRIP:
             return PIPELINE_TYPE_TRIANGLESTRIP;
         case PT_TRIANGLES:

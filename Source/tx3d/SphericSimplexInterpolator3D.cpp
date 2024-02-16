@@ -81,8 +81,8 @@ float SphericSimplexInterpolator3D::interpolate(const Vector3D &v) {
 	simplex[1] = 0;
 	simplex[2] = 0;
 
-	char highIndex;
-	char lowIndex;
+	int8_t highIndex;
+	int8_t lowIndex;
 	if (reminderX >= reminderZ) {
 		highIndex = reminderX >= reminderY ? 0 : 1;
 		lowIndex = reminderY < reminderZ ? 1 : 2;

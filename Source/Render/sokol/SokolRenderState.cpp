@@ -722,8 +722,9 @@ uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
             return activeCommandAlphaTest;
         case RS_BILINEAR:
             return 1;
+        default:
+            return 0;
     }
-    return 0;
 }
 
 int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
@@ -772,6 +773,9 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
             break;
         case RS_BILINEAR:
             //Useless as we can't change globally
+            break;
+        default:
+            //Unknown
             break;
     }
     return 0;

@@ -254,7 +254,7 @@ Component::Component(const Component& component) {
 }
 
 Component::Component(Texture3D *texture, bool shouldDegradate,	Location3D *location)
-		: texture(texture),	primitive(primitive), shouldDegradate(shouldDegradate),	location(location) {
+		: shouldDegradate(shouldDegradate), texture(texture), location(location), primitive(nullptr) {
 
 	if (texture) {
 		texture->referenced();

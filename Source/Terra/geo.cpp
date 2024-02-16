@@ -318,7 +318,8 @@ extern float turbulence(float point[3], float lofreq, float hifreq);
 			//V+=vMap.VxGBuf[offset]<<VX_FRACTION;
 			//V+=vMap.AtrBuf[offset]&VX_FRACTION_MASK;
 			vMap.VxGBuf[offset]=V >>VX_FRACTION;
-			vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK));
+            vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK;
+			vMap.AtrBuf[offset] |= V & VX_FRACTION_MASK;
 			//vMap.SurBuf[offset]=tmp;
 
 		}
@@ -5061,7 +5062,7 @@ loc_begDraw2Part:
 			for(i=0; i<nElAET; i++){
 				AET[i].x+=AET[i].dx;
 				if(yWrk >= xm::round(allPntArr[AET[i].idxTo].y)){
-					char idx=AET[i].idxTo+AET[i].dir;
+					int8_t idx=AET[i].idxTo+AET[i].dir;
 					if(idx<0)idx=nElAllPntArr-1;
 					if(idx>=nElAllPntArr)idx=0;
 					if(xm::round(allPntArr[idx].y) > yWrk) { //удаляем и добавляем ребро
@@ -6025,7 +6026,7 @@ void s_EarthUnit::init(int xMap, int yMap)
 	Vect3f position(xL+(meshDate->sizeX>>1), yL+(meshDate->sizeY>>1), (float)h_begin/(float)(1<<VX_FRACTION));
 	Vect3f outOrientation;
 	int radiusAnalization;
-	if(meshDate->sizeX > meshDate->sizeX) radiusAnalization=meshDate->sizeX/2;
+	if(meshDate->sizeX > meshDate->sizeY) radiusAnalization=meshDate->sizeX/2;
 	else radiusAnalization=meshDate->sizeY/2;
 	radiusAnalization= xm::round((float) radiusAnalization * (2.f / 3.f));
 	

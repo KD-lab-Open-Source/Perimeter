@@ -811,6 +811,8 @@ end_while_01:;
                         case PNC_DESYNC_ACKNOLEDGED:
                             to_restore.emplace(client);
                             break;
+                        default:
+                            break;
                     }
                 }
             }

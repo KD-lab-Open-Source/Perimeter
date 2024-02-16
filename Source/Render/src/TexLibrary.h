@@ -12,8 +12,8 @@ public:
 	void Compact(FILE* f=NULL);
 
 	bool EnableError(bool enable);
-	cTexture* GetElementAviScale(const char* TextureName,char *pMode =0);
-	cTexture* GetElement(const char *pTextureName,char *pMode=0);
+	cTexture* GetElementAviScale(const char* TextureName,const char *pMode =0);
+	cTexture* GetElement(const char *pTextureName,const char *pMode=0);
 
 	inline int GetNumberTexture()							{ return textures.size(); }
 	inline cTexture* GetTexture(int number)					{ return textures[number]; }
@@ -34,7 +34,7 @@ private:
     std::unordered_map<std::string, float> texture_bump_scale;
 	void FreeOne(FILE* f);
 
-	bool LoadTexture(cTexture* Texture,char *pMode);
+	bool LoadTexture(cTexture* Texture,const char *pMode);
 	bool ReLoadTexture(cTexture* Texture);
 
 	void Error(cTexture* Texture);

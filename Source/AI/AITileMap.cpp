@@ -295,7 +295,7 @@ void AITileMap::rebuildWalkMap(uint8_t* walk_map)
 	//Добавить кластер
 	if(0 && field_dispatcher)
 	{
-		xassert(FieldDispatcher::scale == tileSizeShl);
+		xassert(static_cast<size_t>(FieldDispatcher::scale) == tileSizeShl);
 
 		int map_dx = sizeX(),
 			map_dy = sizeY();

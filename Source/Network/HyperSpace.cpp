@@ -219,8 +219,8 @@ size_t terHyperSpace::serializeGameCommands(XBuffer& out) const {
 }
 
 void terHyperSpace::deserializeGameCommands(XBuffer& in, size_t len) {
+    xassert(len >= sizeof(endQuant_inReplayListGameCommands));
     len -= in.read(&endQuant_inReplayListGameCommands, sizeof(endQuant_inReplayListGameCommands));
-    xassert(len >= 0);
     
     InOutNetComBuffer in_buffer(len, true); //проверить необходимость автоувелечения!
     in_buffer.putBufferPacket(in.address()+in.tell(), len);

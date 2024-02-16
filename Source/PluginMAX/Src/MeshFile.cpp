@@ -127,13 +127,13 @@ void cMeshFile::ReadField(void *buf,int size)
 	int TypeField=GlobalCurrentFieldType;
 	if(type==MESHFILE_TYPE_BINARY) 
 	{
-		if(GlobalFieldType[TypeField].var!=MF_TYPE_STRING)
-			for(int i=0;i<size;i++)
-			{
-				f->read(&((char*)buf)[i*GlobalTypeVariable[GlobalFieldType[TypeField].var].size],GlobalTypeVariable[GlobalFieldType[TypeField].var].size);
-			}
-		else
-		{
+        int8_t var = GlobalFieldType[TypeField].var;
+		if(var!=MF_TYPE_STRING) {
+            short varsize = GlobalTypeVariable[var].size;
+            for (int i = 0; i < size; i++) {
+                f->read(&((uint8_t*) buf)[i * varsize], varsize);
+            }
+        } else {
 			assert(0);
 			for(int i=0;i<size;i++)
 			{

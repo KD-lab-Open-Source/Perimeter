@@ -57,6 +57,11 @@ void AIPlayer::BuildingQuant()
 	//watch_i(totalWork(), ID());
 
 	switch(builder_state){
+        case FailedToFoundWhereToDig:
+        case FailedToDig:
+            //Unused states
+            break;
+        
 	case BuildingIdle:	
 		if(BuildingsUnderConstruction() < 3){
 			PlaceScanOp* scanOp = WhatToBuild();

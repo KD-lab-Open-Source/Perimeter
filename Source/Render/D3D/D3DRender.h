@@ -4,8 +4,8 @@
 #include "DrawType.h"
 #include "VertexFormat.h"
 
-int RDWriteLog(HRESULT err,char *exp,char *file,int line);
-void RDWriteLog(char *exp,int size=-1);
+int RDWriteLog(HRESULT err,const char *exp,const char *file,int line);
+void RDWriteLog(const char *exp,int size=-1);
 
 #define RDCALL(exp)									{ HRESULT hr=exp; if(hr!=D3D_OK) RDWriteLog(hr,#exp,__FILE__,__LINE__); VISASSERT(SUCCEEDED(hr)); }
 #define RDERR(exp)									{ HRESULT hr=exp; if(hr!=D3D_OK) return RDWriteLog(hr,#exp,__FILE__,__LINE__); }

@@ -26,11 +26,11 @@ void PlayerData::set(const std::string& name, NETID netid_, int playerIDIn, terB
 }
 
 void PlayerData::setName(const std::string& name) {
-    strncpy(playerName, name.c_str(), PLAYER_MAX_NAME_LEN);
+    strncpy(playerName, name.c_str(), PLAYER_MAX_NAME_LEN - 1);
 }
 
 void PlayerData::setNameInitial(const std::string& name) {
-    strncpy(playerNameInitial, name.c_str(), PLAYER_MAX_NAME_LEN);
+    strncpy(playerNameInitial, name.c_str(), PLAYER_MAX_NAME_LEN - 1);
 }
 
 void PlayerData::read(XBuffer& in) 
@@ -391,6 +391,7 @@ bool MissionDescription::isAllRealPlayerStartReady()
                 if (!playersData[i].flag_playerStartReady) {
                     return false;
                 }
+                [[fallthrough]];
             case REAL_PLAYER_TYPE_AI:
             case REAL_PLAYER_TYPE_PLAYER_AI:
                 players++;

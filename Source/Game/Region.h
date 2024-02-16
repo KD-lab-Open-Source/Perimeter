@@ -53,8 +53,8 @@ class CellLine : public std::list<Cell>
 	typedef std::list<Cell> List;
 
 public:
-	CellLine() { y = 0; column_ = 0; changeCounter_ = 0; }
-	CellLine(const CellLine& line) { y = 0; column_ = 0; changeCounter_ = 0; *this = line; }
+	CellLine() : List() { y = 0; column_ = 0; changeCounter_ = 0; }
+	CellLine(const CellLine& line) : List() { y = 0; column_ = 0; changeCounter_ = 0; *this = line; }
 	CellLine& operator=(const CellLine& line);
 
 	void add(const Interval& in, Region* region = 0);

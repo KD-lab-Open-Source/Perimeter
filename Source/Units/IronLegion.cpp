@@ -297,6 +297,8 @@ void terUnitLegionary::Quant()
 
 	//bool isMoving = getSquad() && !getSquad()->noWayPoints();
 	switch(attr()->LegionType){
+        case LEGION_GROUND:
+            break;
 	case LEGION_FLYING:
 		if(!isMoving())
 			BodyPoint->setFlyingMode(1); // 0

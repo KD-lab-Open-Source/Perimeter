@@ -233,7 +233,7 @@ void DefenceMap::analizeChaos()
 	for(int y = 0; y < sizeY(); y++)
 		(*this)(0, y) = (*this)(sizeX() - 1, y) = value;
 
-	xassert(tileSize == AITileMap::tileSize);
+	xassert(tileSize == static_cast<size_t>(AITileMap::tileSize));
 	for(int y = 1; y < sizeY() - 1; y++)
 		for(int x = 1; x < sizeX() - 1; x++)
 			if(!(*ai_tile_map)(x, y).height_min)
@@ -251,7 +251,7 @@ void DefenceMap::analizeField(int playerID)
 	const uint8_t value = 64;
 
 	if(field_dispatcher){
-		xassert(FieldDispatcher::scale == tileSizeShl);
+		xassert(static_cast<size_t>(FieldDispatcher::scale) == tileSizeShl);
 
 		int delta = w2m(defenceMapPathFind.fieldExtraRadius);
 

@@ -631,6 +631,7 @@ public:
 			break;
 		case T2TE_CHANGING_TERRAIN_HEIGHT_IFNOTZP:
 			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break нет специально
+            [[fallthrough]];
 		case T2TE_CHANGING_TERRAIN_HEIGHT:
 			if( dV >0 ){ //инструмент добавляет
 				v+=dV;

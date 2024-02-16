@@ -12,8 +12,8 @@ typedef std::list<std::string> StringList;
 class Token : public ShareHandleBase
 {
 public:
-	Token(const char* name = 0) : name_(name) { assert(name); }
-	Token(const Token& token) : name_(token.name()) {}
+	explicit Token(const char* name = 0) : name_(name) { assert(name); }
+	Token(const Token& token) : ShareHandleBase(), name_(token.name()) {}
 	~Token() override = default;
 	const char* name() const { return name_.c_str(); }
 	virtual Token* clone() const { return const_cast<Token*>(this); } // реально клонируются только изменяемые токены
@@ -39,7 +39,7 @@ protected:
 	int lock_addition;
 
 public:
-	TokenList(const char* name) : Token(name) { lock_addition = 0; parent = 0; }
+	explicit TokenList(const char* name) : Token(name) { lock_addition = 0; parent = 0; }
 	TokenList(const TokenList& tokens, const char* name = 0);
     ~TokenList() override;
 	const Token* find(const char* name) const;
@@ -227,8 +227,8 @@ protected:
 	friend class ArrayVariable;
 	friend class PointerVariable;
 public:
-	Variable(const DataType& type_) : type(type_) { assigment_flag = 0; static_flag = 0; new_emulation_flag = 0; }
-	Variable(const Variable& var) : type(var.type) { (DescriptedToken&)*this = var; assigment_flag = 0; static_flag = var.static_flag; new_emulation_flag = var.new_emulation_flag; }
+	explicit Variable(const DataType& type_) : type(type_) { assigment_flag = 0; static_flag = 0; new_emulation_flag = 0; }
+	Variable(const Variable& var) : Token(), type(var.type) { (DescriptedToken&)*this = var; assigment_flag = 0; static_flag = var.static_flag; new_emulation_flag = var.new_emulation_flag; }
 	virtual void init(Compiler& comp){ if(assigment_flag) throw parsing_error((std::string("Redefenition of variable: ") + name()).c_str()); assigment_flag = 1; }
 	virtual void write_name(XBuffer& buf) const { if(new_emulation_flag) buf < "static "; buf < refine_name_prefix.c_str() < type.type_name() < " " < name(); }
 	virtual void write_value(WriteStream& buf) const = 0;

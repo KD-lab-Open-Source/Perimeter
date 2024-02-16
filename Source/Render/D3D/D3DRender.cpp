@@ -28,7 +28,7 @@ void IsDeleteAllDefaultTextures();
 
 FILE* fRD= nullptr;
 
-char* GetErrorText(HRESULT hr)
+const char* GetErrorText(HRESULT hr)
 {
     switch(hr)
     {
@@ -93,14 +93,14 @@ char* GetErrorText(HRESULT hr)
     }
 };
 
-void RDOpenLog(char *fname="RenderDevice.!!!")
+void RDOpenLog(const char *fname="RenderDevice.!!!")
 {
 #ifndef _FINAL_VERSION_
     fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
 	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
 #endif
 }
-int RDWriteLog(HRESULT err,char *exp,char *file,int line)
+int RDWriteLog(HRESULT err,const char *exp,const char *file,int line)
 {
 #ifndef _FINAL_VERSION_
     if (fRD==nullptr) RDOpenLog();
@@ -109,7 +109,7 @@ int RDWriteLog(HRESULT err,char *exp,char *file,int line)
 #endif
     return err;
 }
-void RDWriteLog(char *exp,int size)
+void RDWriteLog(const char *exp,int size)
 {
 #ifndef _FINAL_VERSION_
     if (fRD==nullptr) RDOpenLog();

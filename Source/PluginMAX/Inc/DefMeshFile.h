@@ -116,7 +116,7 @@ struct sTypeField
 {
 	short type;
     const char *str;
-	char var;
+	int8_t var;
 };
 struct sTypeVariable
 {

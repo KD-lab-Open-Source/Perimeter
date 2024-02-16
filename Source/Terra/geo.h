@@ -668,8 +668,8 @@ struct sUPoligon {
 struct AETRecord {
 	int x;
 	int dx;
-	char idxFrom;
-	char idxTo;
+    int8_t idxFrom;
+    int8_t idxTo;
 	char dir;
 };
 
@@ -710,7 +710,7 @@ struct sUPoligonN {
 	void clearAET() {
 		nElAET=0;
 	};
-	void addAETRecord(char idxFrom, char idxTo, char dir) {
+	void addAETRecord(int8_t idxFrom, int8_t idxTo, char dir) {
 		int dx=xm::round((1<<16)*(allPntArr[idxTo].x-allPntArr[idxFrom].x)/(allPntArr[idxTo].y-allPntArr[idxFrom].y));
 		int checkX=xm::round(allPntArr[idxFrom].x*(1<<16)) + dx;
 		int i;

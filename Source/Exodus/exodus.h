@@ -24,6 +24,7 @@ int __iscsym(int c);
 //Event/Thread stuff
 
 #include <pevents.h>
+#undef WAIT_TIMEOUT
 
 #define INFINITE neosmart::WAIT_INFINITE
 

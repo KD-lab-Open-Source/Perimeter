@@ -217,7 +217,7 @@ struct LogicData {
 		clearMiniMap();
 	}
 	void clearMiniMap() {
-		memset(miniMap, 0, sizeof(int) * sx * sy);
+		memset(miniMap, 0, sizeof(sColor4c) * sx * sy);
 	}
 	sColor4c* getMiniMap() {
 		return miniMap;

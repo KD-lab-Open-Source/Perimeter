@@ -153,7 +153,7 @@ cTexture* cTexLibrary::CreateTexture(int sizex,int sizey,bool alpha)
 	return CreateTexture(sizex,sizey,alpha,false);
 }
 
-cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
+cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,const char *pMode)
 {
 	MTAuto mtenter(&lock);
 	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
@@ -191,7 +191,7 @@ cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
 	return Texture;
 }
 
-cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
+cTexture* cTexLibrary::GetElement(const char* TextureName,const char *pMode)
 {
 	MTAuto mtenter(&lock);
 	if(TextureName==nullptr||TextureName[0]==0) return nullptr; // имя текстуры пустое
@@ -220,7 +220,7 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 	return Texture;
 }
 
-bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode)
+bool cTexLibrary::LoadTexture(cTexture* Texture,const char *pMode)
 {
 	// тест наличия текстуры
 	if(pMode&&strstr((char*)pMode,"NoMipMap"))
