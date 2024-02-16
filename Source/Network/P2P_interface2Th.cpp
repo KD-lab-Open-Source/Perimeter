@@ -207,6 +207,19 @@ bool PNetCenter::SecondThread()
 				}
 				SetEvent(hCommandExecuted);
 				break;
+            case PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST: {
+                m_bStarted = false;
+                if(isConnected()) {
+                    Close();
+                }
+                if (m_state == PNC_STATE__CONNECTION) {
+                    //Avoid calling connect twice until PNC_COMMAND__START_FIND_HOST is processed
+                    m_state = PNC_STATE__CLIENT_FIND_HOST;
+                }
+                ExecuteInternalCommand(PNC_COMMAND__START_FIND_HOST, false);
+                SetEvent(hCommandExecuted);
+                break;
+            }
 			case PNC_COMMAND__END:
 				{
 					flag_end=true;
