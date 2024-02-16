@@ -1,15 +1,15 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-inline char* TestFirstName(const char *name,char *string)
+inline const char* TestFirstName(const char *name, const char *string)
 {
-	if(name==0||string==0) return 0;
+	if (name==nullptr||string==nullptr) return 0;
 	int LengthName=strlen(name),LengthString=strlen(string);
 	std::string name_lwr = string_to_lower(name);
 	if(LengthName<LengthString) return 0;
 	for(int i=0;i<LengthString;i++)
 		if(name_lwr[i]!=string[i]) return 0;
-	return (char*)name+LengthString;
+	return name+LengthString;
 }
 inline const char* GetFileName(const char *str)
 {
@@ -31,6 +31,6 @@ inline char* GetKey(const void *buf,int size,char *key)
 				return &str[i];
 	return 0;
 }
-inline char* isGroupName(const char *name)				{ return TestFirstName((char*)name,"group "); }
+inline const char* isGroupName(const char *name)				{ return TestFirstName(name,"group "); }
 
 #endif //__UTIL_H__

@@ -18,24 +18,24 @@ extern int DEFAULT_TERRAIN;
 
 vrtMap vMap;
 
-char* vrtMap::worldDataFileLinear = "output.vmp";
-char* vrtMap::worldIniFile        = "world.ini";
+const char* vrtMap::worldDataFileLinear = "output.vmp";
+const char* vrtMap::worldIniFile        = "world.ini";
 //char* vrtMap::worldParamZPIniFile = "paramzp.ini";
-char* vrtMap::worldNetDataFile    = "output.vpr";
-char* vrtMap::worldBuildScenarioFile = "output.vsc";
-char* vrtMap::worldGeoPalFile     = "inGeo.act";
-char* vrtMap::worldDamPalFile     = "inDam.act";
+const char* vrtMap::worldNetDataFile    = "output.vpr";
+const char* vrtMap::worldBuildScenarioFile = "output.vsc";
+const char* vrtMap::worldGeoPalFile     = "inGeo.act";
+const char* vrtMap::worldDamPalFile     = "inDam.act";
 #ifdef GPX
-char* vrtMap::worldLeveledTextureFile= "leveledSurfaceTexture.surf";
+const char* vrtMap::worldLeveledTextureFile= "leveledSurfaceTexture.surf";
 #else
-char* vrtMap::worldLeveledTextureFile= "leveledSurfaceTexture.tga";
+const char* vrtMap::worldLeveledTextureFile= "leveledSurfaceTexture.tga";
 #endif
-char* vrtMap::worldHardnessFile= "hardness.bin";
+const char* vrtMap::worldHardnessFile= "hardness.bin";
 
-char* vrtMap::worldDataFile= "world.cls";
-char* vrtMap::worldDataFileSection= "WorldData";
+const char* vrtMap::worldDataFile= "world.cls";
+const char* vrtMap::worldDataFileSection= "WorldData";
 
-char* vrtMap::worldRGBCache  = "cache.tga";
+const char* vrtMap::worldRGBCache  = "cache.tga";
 
 
 unsigned char vrtMap::GetGeoType(int offset, int h) 

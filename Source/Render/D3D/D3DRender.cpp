@@ -1173,7 +1173,7 @@ void cD3DRender::FlushPrimitive3D() {
     FlushActiveDrawBuffer();
 }
 
-void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *FontName,int size,int bold,int italic,int underline)
+void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,const char *FontName,int size,int bold,int italic,int underline)
 {
     if(hWnd==0) return;
 #ifdef _WIN32

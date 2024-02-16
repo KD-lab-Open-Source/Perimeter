@@ -37,7 +37,7 @@ private:
     void UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len);
     void UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len);
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255);
-    void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
+    void OutText(int x,int y,const char *string,int r,int g,int b,const char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0);
 
 public:
     bool				bActiveScene;

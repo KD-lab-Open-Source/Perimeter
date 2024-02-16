@@ -51,9 +51,9 @@ typedef void (*sighandler) (int);
 std::string lastException;
 std::terminate_handler originalTerminateHandler = nullptr;
 
-char *defprefix 	= "XHANDLER  INFORM";
-char *exceptMSG 	= "EXCEPTION OCCURED";
-char *rterrorMSG	= "RUN-TIME ERROR";
+static const char *defprefix 	= "XHANDLER INFORM";
+static const char *exceptMSG 	= "EXCEPTION OCCURED";
+static const char *rterrorMSG	= "RUN-TIME ERROR";
 
 XErrorHandler ErrH;
 

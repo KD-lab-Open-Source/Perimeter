@@ -3,9 +3,9 @@
 #include "xstream.h"
 #include "xerrhand.h"
 
-static char *seekMSG	= "BAD SEEK";
-static char *flushMSG	= "FLUSH FILE BUFFERS ERROR";
-static char *sizeMSG	= "FILE SIZE CALCULATION ERROR";
+static const char *seekMSG	= "BAD SEEK";
+static const char *flushMSG	= "FLUSH FILE BUFFERS ERROR";
+static const char *sizeMSG	= "FILE SIZE CALCULATION ERROR";
 
 int64_t XStream::seek(int64_t offset, int dir)
 {

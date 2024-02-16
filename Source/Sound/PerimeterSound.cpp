@@ -170,8 +170,9 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
         fprintf(stderr, "Mix_QuerySpec error: %s\n",Mix_GetError());
         return false;
     } else {
-        char *format_str="Unknown";
+        const char* format_str;
         switch(deviceFormat) {
+            default: format_str="Unknown"; break;
             case AUDIO_U8: format_str="U8"; break;
             case AUDIO_S8: format_str="S8"; break;
             case AUDIO_U16LSB: format_str="U16LSB"; break;

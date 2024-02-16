@@ -10,7 +10,7 @@
 
 struct s_f3d {
 	s_f3d(void);
-	char* getNameFuction(int num);
+    const char* getNameFuction(int num);
 	void setFunction(int num);
 	
 	typedef int (s_f3d::*PF)(int x, int y, int z);
@@ -49,7 +49,7 @@ struct s_f3d {
 
 	//Таблица соделжащая названия и адреса функций 3D текстуры
 	struct s_table {
-		char * nameFunction;
+        const char * nameFunction;
 		PF function;
 	};
 	s_table tableF[MAX_3D_FUNCTION];

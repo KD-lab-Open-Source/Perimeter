@@ -589,7 +589,7 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 		"//	XScript end: " + std::string(name()) + "\n"
 		"//////////////////////////////////////////////////////////////////////////////////////////////\n";
 
-	char* description_str = "\tdescription = ";
+	const char* description_str = "\tdescription = ";
 	std::string file;
 	std::string definition_file_path;
     if (sources) definition_file_path = std::string(sources) + PATH_SEP;

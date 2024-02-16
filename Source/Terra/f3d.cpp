@@ -7,9 +7,9 @@
 #endif
 s_f3d f3d;
 
-char * txt_empty ="not Texture";
-char * txt_MarbleTexture = "Marble Texture";
-char * txt_TreeTexture   = "Tree Texture";
+const char* txt_empty = "not Texture";
+const char* txt_MarbleTexture = "Marble Texture";
+const char* txt_TreeTexture = "Tree Texture";
 s_f3d::s_f3d(void)
 {
 	int i;
@@ -39,7 +39,7 @@ s_f3d::~s_f3d() {
 }
 #endif
 
-char* s_f3d::getNameFuction(int num)
+const char* s_f3d::getNameFuction(int num)
 {
 	if(num < MAX_3D_FUNCTION) return tableF[num].nameFunction;
 	else return txt_empty;
@@ -225,7 +225,7 @@ void s_f3d::loadVariable(void)
 
 
 struct sKeyGeoPal keyGeoPal;
-char * strGeoPalparams="GeoPal Parameters";
+const char * strGeoPalparams="GeoPal Parameters";
 int sKeyGeoPal::loadKeyGeoPal(void)
 {
 	XBuffer tbuf;

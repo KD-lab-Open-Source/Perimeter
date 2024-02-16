@@ -490,7 +490,7 @@ cMeshBank* cMeshBank::BuildStaticCopy()
 	return pnew;
 }
 
-cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,char* attr=NULL);
+cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,const char* attr=NULL);
 
 cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,const char* def_texture_path)
 {

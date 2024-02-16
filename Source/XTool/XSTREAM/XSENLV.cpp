@@ -8,7 +8,7 @@
 #include "xstream.h"
 #include "xerrhand.h"
 
-static char* openMSG	 = "CREATE/OPEN FAILURE";
+static const char* openMSG	 = "CREATE/OPEN FAILURE";
 
 std::fstream *open_file(const char* name, unsigned f)
 {

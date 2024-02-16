@@ -63,11 +63,11 @@ inline std::string expand_spec_chars(const std::string& str)
 inline std::string& collapse_spec_chars(std::string& s)
 {
     size_t pos = 0;
-	while(1){
-		pos = s.find("\\", pos);
+	while (true) {
+		pos = s.find('\\', pos);
 		if(pos >= s.size() - 1)
 			break;
-		char* dest;
+		const char* dest;
 		switch(s[pos + 1]){
 			case '\\':
 				dest = "\\";
@@ -90,11 +90,11 @@ inline std::string& collapse_spec_chars(std::string& s)
 
 			default:
 				throw parsing_error("Unknown special character");
-			}
+        }
 
 		s.replace(pos, 2, dest);
 		pos += strlen(dest);
-		}
+    }
 
 	return s;
 }

@@ -609,7 +609,7 @@ void vrtMap::worldPreWrite(XStream& ff) //attribute
 
 void vrtMap::LoadPP(void)
 {
-	static char* errMsg = "Wrong VSC data";
+	static const char* errMsg = "Wrong VSC data";
 
 	for(unsigned int i = 0;i < PART_MAX;i++){
 		PartPrm[i].minAlt = MIN_VX_HEIGHT;

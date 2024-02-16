@@ -195,7 +195,7 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 	}
 }
 
-cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,char* attr=nullptr)
+cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,const char* attr=nullptr)
 {
 	std::string path_name(path);
     path_name += name;

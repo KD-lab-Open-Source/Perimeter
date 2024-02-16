@@ -183,19 +183,19 @@ struct vrtMap {
 		void finit(void){ delete buf; }
 	};
 
-	static char* worldDataFileLinear;
-	static char* worldDataFile;
-	static char* worldDataFileSection;
-	static char* worldIniFile;
-	//static char* worldParamZPIniFile;
-	static char* worldNetDataFile;
-	static char* worldBuildScenarioFile;
-	static char* worldGeoPalFile;
-	static char* worldDamPalFile;
-	static char* worldLeveledTextureFile;
-	static char* worldHardnessFile;
+	static const char* worldDataFileLinear;
+	static const char* worldDataFile;
+	static const char* worldDataFileSection;
+	static const char* worldIniFile;
+	//static const char* worldParamZPIniFile;
+	static const char* worldNetDataFile;
+	static const char* worldBuildScenarioFile;
+	static const char* worldGeoPalFile;
+	static const char* worldDamPalFile;
+	static const char* worldLeveledTextureFile;
+	static const char* worldHardnessFile;
 
-	static char* worldRGBCache;
+	static const char* worldRGBCache;
 
 
 	unsigned char* changedT;
