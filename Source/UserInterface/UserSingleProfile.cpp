@@ -126,7 +126,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
 bool UserSingleProfile::removeDir(const std::string& dir) {
     std::error_code error;
     std::string allSaves = getAllSavesDirectory();
-    std::filesystem::path target_path = std::filesystem::u8path(allSaves + PATH_SEP + dir);
+    std::filesystem::path target_path = std::filesystem::u8path(allSaves + dir);
     std::filesystem::remove_all(target_path, error);
     if( error ) {
         ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());

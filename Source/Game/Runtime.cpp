@@ -80,6 +80,7 @@ int terScreenIndex = 0;
 #ifdef GPX
 constexpr int terFullScreen = 0;
 constexpr int terResizableWindow = 0;
+bool isRuntimePaused = false;
 #else
 int terFullScreen = 0;
 int terResizableWindow = 1;
@@ -916,6 +917,15 @@ char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
     strcpy(str, arg.c_str());
     return str;
 }
+#ifdef GPX
+void pauseRuntime() {
+    isRuntimePaused = true;
+}
+
+void resumeRuntime() {
+    isRuntimePaused = false;
+}
+#endif
 
 int SDL_main(int argc, char *argv[])
 {
@@ -999,6 +1009,15 @@ int SDL_main(int argc, char *argv[])
 
     bool run = true;
     while (run) {
+#ifdef GPX
+        if (isRuntimePaused) {
+#ifdef EMSCRIPTEN
+            emscripten_sleep(0);
+            continue;
+#endif
+        }
+#endif
+
         app_event_poll();
 
         //NetworkPause handler
