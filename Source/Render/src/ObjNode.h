@@ -141,7 +141,7 @@ protected:
 	void SetRootNode(cObjectNodeRoot* p)						{ RootNode=p; }
 	bool IntersectSphere(const Vect3f& p0,const Vect3f& p1);
 
-	virtual void CalcBorder();
+	void CalcBorder();
 	virtual void CalcBorder(Vect3f& Min,Vect3f& Max);
 	
 	virtual void GetBoundingBox(Vect3f &min,Vect3f &max);

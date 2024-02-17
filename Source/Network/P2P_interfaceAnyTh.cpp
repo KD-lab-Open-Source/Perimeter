@@ -57,7 +57,7 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame*
         unsigned int i = pCommand->PlayerID_;
         if (i < 0 || i >= hostMissionDescription->playerAmountScenarioMax
             || hostMissionDescription->playersData[i].netid != netid) {
-            LogMsg("Discarding game command from incorrect netid %llu to player %d\n", netid, i);
+            LogMsg("Discarding game command from incorrect netid %" PRIX64 " to player %d\n", netid, i);
             delete pCommand;
             return;
         }

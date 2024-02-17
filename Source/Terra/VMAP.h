@@ -789,7 +789,7 @@ struct vrtMap {
 	//Высокоуровневая функция работы с поверхностью GetAlt
 	/////////// FUNCTION GetAlt ///////////
 	unsigned short GetAlt(int offset) {
-		unsigned short V;
+		unsigned short V = 0;
 		switch(VxBufWorkMode){
 		case GEOONLY:
 			V=GetAltGeo(offset);
@@ -1001,9 +1001,6 @@ extern vrtMap vMap;
 //Работа с INI Файлом
 extern char* GetINIstringV(const std::string& iniFile,const char* section,const char* key);
 extern void SaveINIstringV(const std::string& iniFile,const char* section,const char* key,const char* var);
-
-extern unsigned char* convert_vox2vid(int vox, char* buf);
-extern int convert_vid2vox(char* buf);
 
 #ifdef _SURMAP_
 const unsigned int SLT_SIZE=512;

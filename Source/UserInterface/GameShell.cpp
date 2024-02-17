@@ -792,7 +792,8 @@ void GameShell::renderEndScene() {
     static FPS fps;
     fps.quant();
     if(terShowFPS){
-        float fpsmin,fpsmax;
+        float fpsmin = 0.0f;
+        float fpsmax = 0.0f;
         fps.GetFPSminmax(fpsmin,fpsmax);
         char s[512];
         char* p=s;
@@ -1475,8 +1476,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'Q':
 		if(!terRenderDevice->IsFullScreen())
 		{
-			terFilthSpotID SelectFilth();
-			terFilthSpotID id=SelectFilth();
+			terFilthSpotID id=MissionEditor::SelectFilth();
 
 			if(id!=FILTH_SPOT_ID_NONE)
 			{
@@ -1489,8 +1489,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			Vect3f v;
 			if(universe()->worldPlayer() && terCamera->cursorTrace(mousePosition(),v))
 			{
-				terUnitAttributeID SelectGeo();
-				terUnitAttributeID id=SelectGeo();
+				terUnitAttributeID id=MissionEditor::SelectGeo();
 				if(id!=UNIT_ATTRIBUTE_NONE)
 				{
 					terGeoControl* p = safe_cast<terGeoControl*>(universe()->worldPlayer()->buildUnit(id));

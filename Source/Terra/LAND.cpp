@@ -1238,7 +1238,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			int icosA;//=(A*iA_light + B*iB_light + C*iC_light)/L;
 //			float cosA;
 //			cosA=(A*A_light + B*B_light + C*C_light)/256.;
-			int lght;
+			int lght = 0;
 			if((material&FLAG_SPECULAR_MATERIAL)==0){//только диффузный цвет
 				material>>=SHIFT_4TYPE_MATERIALS;
 				if( h_s > ((int)V<<16)) {

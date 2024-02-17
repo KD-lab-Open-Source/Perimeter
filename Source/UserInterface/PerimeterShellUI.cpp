@@ -2334,7 +2334,7 @@ void CUITabSheet::reload() {
 	}
 }
 
-void CUITabSheet::Load(const sqshTabSheet* attr)
+void CUITabSheet::LoadSheet(const sqshTabSheet* attr)
 {
 	std::vector<cTexture*>::iterator it;
 
@@ -5005,8 +5005,10 @@ void CScaleButton::draw(int bFocus)
                             scaleButtonWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                             COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				} else {
-					terRenderDevice->DrawSprite2(_x, _y, _sx, _sy,
-						0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3, sColor4c(255,255,255,255-iColor), xm::fmod(m_ftime,1000.f)/1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
+                    terRenderDevice->DrawSprite3(_x, _y, _sx, _sy,
+                                                 0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3,
+                                                 sColor4c(255, 255, 255, 255 - iColor),
+                                                 xm::fmod(m_ftime, 1000.f) / 1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				}
 			} else {
 					terRenderDevice->DrawSprite(_x, _y, _sx, _sy, 
@@ -6358,8 +6360,10 @@ void CScaleResultButton::draw(int bFocus) {
                             scaleButtonWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                             COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				} else {
-					terRenderDevice->DrawSprite2(_x, _y, _sx, _sy,
-						0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3, sColor4c(255,255,255,255-iColor), xm::fmod(m_ftime,1000.f)/1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
+                    terRenderDevice->DrawSprite3(_x, _y, _sx, _sy,
+                                                 0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3,
+                                                 sColor4c(255, 255, 255, 255 - iColor),
+                                                 xm::fmod(m_ftime, 1000.f) / 1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				}
 			} else {
 					terRenderDevice->DrawSprite(_x, _y, _sx, _sy, 

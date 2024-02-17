@@ -265,7 +265,7 @@ bool MissionEditor::mouseRightPressed(const Vect2f& pos)
 	return false;
 }
 
-terFilthSpotID SelectFilth()
+terFilthSpotID MissionEditor::SelectFilth()
 {
 	struct 
 	{
@@ -319,7 +319,7 @@ terFilthSpotID SelectFilth()
 	return FILTH_SPOT_ID_NONE;
 }
 
-terUnitAttributeID SelectGeo()
+terUnitAttributeID MissionEditor::SelectGeo()
 {
 	struct 
 	{

@@ -286,7 +286,7 @@ void CTerraCleftSystem::init(int type, const Vect2i& pos1, const Vect2i& pos2)
 int CTerraCleftSystem::quant()
 {
 	sRect rUpdate = {INT_MAX, INT_MAX, -INT_MAX, -INT_MAX};
-	int nstops;
+	int nstops = 0;
 
 	CleftList::iterator it;
 	FOR_EACH(m_clefts, it)

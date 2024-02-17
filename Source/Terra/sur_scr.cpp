@@ -87,7 +87,12 @@ int s_sur_scr::load_scr(char* fname)
 	char b;
 	//ОПОЗНАНИЕ скрипта и версии
 	f.read(buf,7); buf[7]=0;
-	if(strcmp(buf,"SUR_SCR")!=0) { delete world; delete buft; f.close(); return 0;}
+	if(strcmp(buf,"SUR_SCR")!=0) {
+        delete[] world;
+        delete[] buft;
+        f.close();
+        return 0;
+    }
 	f >=version;
 	//Определение типа ячейки (обычная или направленная)
 	get_line(f,buf=buft,255);
@@ -128,7 +133,12 @@ int s_sur_scr::load_scr(char* fname)
 			break;
 		}
 	}
-	if(script.end <= script.begin) {delete world; delete buft; f.close(); return 0;} //Выход если нет скрипта
+	if(script.end <= script.begin) { //Выход если нет скрипта
+        delete[] world;
+        delete[] buft;
+        f.close();
+        return 0;
+    }
 	f.seek(script.begin+1, XS_BEG);
 	while(f.tell() < script.end){
 		//f.getline(buf,255);
@@ -148,7 +158,7 @@ int s_sur_scr::load_scr(char* fname)
 
 	}
 	strcpy(name_scr,fname);
-	delete world; delete buft;
+	delete[] world; delete[] buft;
 	f.close();
 	return 1;
 }
@@ -189,7 +199,7 @@ void s_sur_scr::load_data()
 			}
 		}
 	}
-	delete world;
+	delete[] world;
 	f.close();
 }
 
@@ -371,7 +381,12 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 	char b;
 	//ОПОЗНАНИЕ скрипта и версии
 	f.read(buf,10); buf[10]=0;
-	if(strcmp(buf,"SUR_SCR_UP")!=0) { delete world; delete buft; f.close(); return 0;}
+	if(strcmp(buf,"SUR_SCR_UP")!=0) {
+        delete[] world;
+        delete[] buft;
+        f.close();
+        return 0;
+    }
 	int ver_up;
 	f >=ver_up;
 	if(ver_up <= version ) ErrH.Abort("Старая версия Updata скрипта");
@@ -422,7 +437,12 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 			break;
 		}
 	}
-	if(script.end <= script.begin) {delete world; delete buft; f.close(); return 0;} //Выход если нет скрипта
+	if(script.end <= script.begin) { //Выход если нет скрипта
+        delete[] world;
+        delete[] buft;
+        f.close();
+        return 0;
+    }
 	f.seek(script.begin+1, XS_BEG);
 	beg_num_rows=numbers_rows;
 	fout < "{\n";
@@ -472,7 +492,7 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 	fout.close();
 // Конец записи в файл
 //	strcpy(name_scr,fname);
-	delete world; delete buft;
+	delete[] world; delete[] buft;
 	f.close();
 	return 1;
 

@@ -133,7 +133,7 @@ public:
         passwordCRC=getStringCRC(_password);
         gameContent = _gameContent;
         gameContentCRC = get_content_crc();
-        strncpy(playerName, _playerName, PLAYER_MAX_NAME_LEN);
+        strncpy(playerName, _playerName, PLAYER_MAX_NAME_LEN - 1);
         crc=calcOwnCRC();
     }
 

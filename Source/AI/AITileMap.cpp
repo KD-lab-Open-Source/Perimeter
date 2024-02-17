@@ -230,7 +230,7 @@ bool AITileMap::findPath(const Vect2i& from_w, const Vect2i& to_w, std::vector<V
 	if(!inside(from) || !inside(to))
 		return false;
 
-	bool b;
+	bool b = false;
 	//Since both clusterheuristic types are not same type, is better to use if's than switch
 	if (type == PATH_NORMAL) {
         ClusterHeuristic ch = ClusterHeuristicDitch();

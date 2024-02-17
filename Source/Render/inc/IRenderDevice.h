@@ -247,10 +247,10 @@ public:
 
     virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE);
-    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0);
-    virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
-                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE);
+    virtual void DrawSprite3(int x, int y, int dx, int dy, float u, float v, float du, float dv,
+                     cTexture *Tex1, cTexture *Tex2, const sColor4c& ColorMul=sColor4c(255,255,255,255), float phase=0);
+    virtual void DrawSprite3(int x1, int y1, int dx, int dy, float u0, float v0, float du0, float dv0, float u1, float v1, float du1, float dv1,
+                             cTexture *Tex1, cTexture *Tex2, const sColor4c& ColorMul=sColor4c(255,255,255,255), float phase=0, eColorMode mode=COLOR_MOD, eBlendMode blend_mode=ALPHA_NONE);
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                              cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE);
     

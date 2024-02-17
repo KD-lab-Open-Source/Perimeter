@@ -397,6 +397,7 @@ void sTerrainMetod::put(int xx, int yy, int v)
 		if((int)XRnd(100) < noiseLevel) v += noiseAmp - XRnd((noiseAmp << 1) + 1);
 	}
 	switch(mode){
+    default:
 	case 0:
 		vv = v;
 		break;

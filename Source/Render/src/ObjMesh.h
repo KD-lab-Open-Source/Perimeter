@@ -22,7 +22,7 @@ public:
 	virtual void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
 	virtual void CalcObj();
 	// общие интерфейсные функции унаследованы от cUnkTile
-	virtual void GetBoundingBox(Vect3f &min,Vect3f &max);
+	void GetBoundingBox(Vect3f &min,Vect3f &max) override;
 	// инлайновые функции доступа к переменным
 	inline void SetTri(cMeshTri	*MeshTri)							{ Tri=MeshTri; }
 	inline cMeshTri* GetTri()										{ return Tri; }
@@ -30,7 +30,7 @@ public:
 	void SetBank(cMeshBank*	pBank,bool is_original);
 	inline void RestoreOriginalBank()								{pBank=pOriginalBank;};
 
-	virtual void CalcBorder(Vect3f& Min,Vect3f& Max);
+	void CalcBorder(Vect3f& Min,Vect3f& Max) override;
 
 	virtual void RestoreOriginalMaterial();
 	virtual void SetAnotherMaterial(cTexture *Tex1,cTexture *Tex2,AllAnotherMaterial* aroot);

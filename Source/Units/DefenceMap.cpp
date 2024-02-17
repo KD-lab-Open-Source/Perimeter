@@ -262,7 +262,8 @@ void DefenceMap::analizeField(int playerID)
 				continue;
 
 			int yc = cluster.front().y - 1;
-			int xl, xr;
+			int xl = 0;
+            int xr = 0;
 			bool beginUp = true;
 			std::vector<FieldInterval>::iterator ii;
 			FOR_EACH(cluster, ii){

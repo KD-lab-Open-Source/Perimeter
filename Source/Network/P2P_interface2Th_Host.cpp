@@ -15,7 +15,7 @@
 
 PClientData::PClientData(const char* name, NETID netid)
 {
-    strncpy(playerName, name, PLAYER_MAX_NAME_LEN);
+    strncpy(playerName, name, PLAYER_MAX_NAME_LEN - 1);
     netidPlayer = netid;
 	m_flag_Ready=false;
 	lagQuant=0;

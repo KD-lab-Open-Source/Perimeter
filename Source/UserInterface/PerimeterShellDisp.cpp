@@ -1258,7 +1258,7 @@ void CShellIconManager::LoadTabSheets()
 		CUITabSheet* pSheet = new CUITabSheet(sheet.id, m_pDesktop, _GetEventHandler(sheet.id));
 		xassert(sheet.id <= SQSH_MAX);
 		controls[sheet.id] = pSheet;
-		pSheet->Load(&sheet);
+		pSheet->LoadSheet(&sheet);
 //		pSheet->scale(Vect2f(terScreenSizeX / 1024.0f, terScreenSizeY / 768.0f));
 		pSheet->Show(1);
 	}

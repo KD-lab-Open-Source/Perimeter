@@ -1161,10 +1161,11 @@ void vrtMap::compareChAreasInformation(unsigned char* pFirstCAI, unsigned char* 
 	pSecondCAI+=sizeof(sizeSecond);
 
 	typeCoordinatChAreas curFtX, curFtY, curSdX, curSdY;
-	unsigned int fcrc, scrc;
+	unsigned int fcrc = 0;
+    unsigned int scrc = 0;
 
-	bool flag_get_first=1;
-	bool flag_get_second=1;
+	bool flag_get_first = true;
+	bool flag_get_second = true;
 	while(sizeFirst || sizeSecond){
 		if(flag_get_first){
 			if(sizeFirst){
@@ -2416,7 +2417,8 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 опреде
 
 		h=tstMinMaxVox(h+delta);
 		VxGBuf[offset]=h >>VX_FRACTION;
-		AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
+        AtrBuf[offset] &= ~VX_FRACTION_MASK;
+		AtrBuf[offset] |= h &VX_FRACTION_MASK;
 		SetTer(offset,f3d.calc(x, y, h));//>>VX_FRACTION
 	}
 	else{ //если выступает Dam слой
@@ -2427,7 +2429,8 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 опреде
 		h2=tstMinMaxVox(h+delta);
 		dg=(h2>>VX_FRACTION)-(h>>VX_FRACTION);
 		VxDBuf[offset]=h2 >>VX_FRACTION;
-		AtrBuf[offset]=(h2 &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
+        AtrBuf[offset] &= ~VX_FRACTION_MASK;
+        AtrBuf[offset] |= h2 &VX_FRACTION_MASK;
 		h=VxGBuf[offset];
 		h+=dg; if(h<0)h=0; if(h>255)h=255;
 		VxGBuf[offset]=h;
@@ -2621,59 +2624,6 @@ char* vrtMap::PrmFile::getAtom(void)
 	char* ret = p;
 	while(index < len && *p) p++, index++;
 	return ret;
-}
-
-unsigned char* convert_vox2vid(int vox, char* buf)
-{
-	int fraction,cel;
-	if(vox>=0){
-		fraction=vox & VX_FRACTION_MASK;
-		cel=vox>>VX_FRACTION;
-		sprintf(buf,"%4hi.%02hu\0",cel,fraction);
-	}
-	else {
-		fraction= (-vox) & VX_FRACTION_MASK; //Дробную часть надо показывать без знака
-		cel=(-vox)>>VX_FRACTION;				
-		sprintf(buf,"-%04hi.%02hu\0",cel,fraction);
-	}
-	return (unsigned char*)buf;
-}
-int convert_vid2vox(char* buf)
-{
-	char cc[10]={'0','0','\0'};
-	int fraction=0;
-	short cels=0;
-	sscanf(buf,"%hd%*c%s",&cels,cc);
-	float Znak=0;
-	sscanf(buf,"%f",&Znak);
-	if(cc[1]==0) cc[1]='0';
-	cc[2]=0;
-	fraction=atoi(cc);
-	if(fraction>VX_FRACTION_MASK)fraction=VX_FRACTION_MASK;
-	int cel=(int)cels; //Необходимо т.к. 
-	int vox;
-	if (Znak>=0) vox= (cel<<VX_FRACTION) | (fraction);
-	else {
-		vox= ((-cel)<<VX_FRACTION) | (fraction); //Дробная часть знака не имеет
-		vox=-vox;
-	}
-	return vox;
-}
-
-void save2Stl(void)
-{
-
-	int x,y;
-	int * masS;
-	masS=new int[vMap.V_SIZE*vMap.H_SIZE];
-	for(y=0; y<vMap.V_SIZE; y++){
-		for(x=0; x<vMap.H_SIZE; x++){
-			masS[x+y*vMap.H_SIZE]=vMap.GetAlt(x,y);
-		}
-	}
-	XStream f("Stl.vmp",XS_OUT);
-	f.write(&masS[0],sizeof(int)*vMap.V_SIZE*vMap.H_SIZE);
-	delete [] masS;
 }
 
 #ifdef _SURMAP_

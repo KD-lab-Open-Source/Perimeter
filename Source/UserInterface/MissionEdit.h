@@ -21,6 +21,9 @@ public:
 	bool hardnessChanged() const { return hardnessChanged_; }
 	void clearHardnessChanged() { hardnessChanged_ = false; }
 
+    static terFilthSpotID SelectFilth();
+    static terUnitAttributeID SelectGeo();
+
 private:
 	std::string info_;
 

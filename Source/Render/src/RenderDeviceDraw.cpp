@@ -41,21 +41,21 @@ void cInterfaceRenderDevice::DrawSprite(int x1, int y1, int dx, int dy, float u1
     db->Unlock();
 }
 
-void cInterfaceRenderDevice::DrawSprite2(int x, int y, int dx, int dy, float u, float v, float du, float dv,
+void cInterfaceRenderDevice::DrawSprite3(int x, int y, int dx, int dy, float u, float v, float du, float dv,
                                          cTexture *Tex1, cTexture *Tex2, const sColor4c &ColorMul, float phase)
 {
-    DrawSprite2(x, y, dx, dy,
+    DrawSprite3(x, y, dx, dy,
                 u, v, du, dv,
                 u, v, du, dv,
                 Tex1, Tex2, ColorMul, phase,
                 COLOR_MOD, ALPHA_NONE);
 }
 
-void cInterfaceRenderDevice::DrawSprite2(int x1,int y1,int dx,int dy,
-                                         float u0,float v0,float du0,float dv0,
-                                         float u1,float v1,float du1,float dv1,
-                                         cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase,
-                                         eColorMode mode,eBlendMode blend_mode) {
+void cInterfaceRenderDevice::DrawSprite3(int x1, int y1, int dx, int dy,
+                                         float u0, float v0, float du0, float dv0,
+                                         float u1, float v1, float du1, float dv1,
+                                         cTexture *Tex1, cTexture *Tex2, const sColor4c &ColorMul, float phase,
+                                         eColorMode mode, eBlendMode blend_mode) {
     if (!Tex1||!Tex2) return;
 
     int x2=x1+dx,y2=y1+dy;
