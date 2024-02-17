@@ -15,7 +15,7 @@
 #include "../gemsiii/filter.h"
 #include "files/files.h"
 
-static char* cache_dir="cache/font";
+static const char* cache_dir="cache/font";
 
 class cFontImage:public cFileImage
 {

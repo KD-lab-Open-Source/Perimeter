@@ -2330,7 +2330,7 @@ void CUITabSheet::createHotKeyString() {
 
 void CUITabSheet::reload() {
 	if (m_tabattr) {
-		Load(m_tabattr);
+		LoadSheet(m_tabattr);
 	}
 }
 
@@ -2357,7 +2357,7 @@ void CUITabSheet::LoadSheet(const sqshTabSheet* attr)
 
     m_tabattr = attr;
 	createHotKeyString();
-	loadFlashingParams(attr);
+	loadFlashingParamsSheet(attr);
 	markColor.set(flashR, flashG, flashB, flashA);
 
 	for (int i = 0; i < attr->pages.size(); i++) {
@@ -5873,7 +5873,7 @@ void CInfoWindow::SetText(const char* cb, InfoWndFormatProcType proc, void* para
 	SetTime(INT_MAX);
 
 	if(cb)
-		strncpy(m_cbText, cb, 255);
+		strncpy(m_cbText, cb, 254);
 	else
 		*m_cbText = 0;
 
@@ -6174,6 +6174,8 @@ int CBackgroundWindow::HitTest(float xT, float yT) {
 bool CShellIconManager::handleEvent(const iEvent* ev)
 {
 	switch(ev->ID){
+        default:
+            break;
 		case iEVENT_ID_EFFECT:
 			Effect(ev->data,ev->controlID);
 			return true;

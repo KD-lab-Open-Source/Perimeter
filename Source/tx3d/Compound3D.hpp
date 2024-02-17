@@ -34,7 +34,7 @@ namespace tx3d {
 
 			Component(Texture3D *texture, bool shouldDegradate,	Location3D *location);
 
-			~Component();
+			~Component() override;
 
 			Texture3D* getTexture() const {
 				return texture;

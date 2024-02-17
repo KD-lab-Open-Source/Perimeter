@@ -135,9 +135,10 @@ inline int ClipOutCode(float x, float y, float xmin, float xmax, float ymin, flo
 
 bool LineClip2d(Vect2i& v1, Vect2i& v2,  const Vect2i& _w1, const Vect2i& _w2)
 {
-	int x, y;
+	int x = 0;
+    int y = 0;
 	bool accept = false,  done = false;
-	int outcodeOut;
+	int outcodeOut = 0;
 	int outcode0 = ClipOutCode(v1.x, v1.y, _w1.x, _w2.x, _w1.y, _w2.y);
 	int outcode1 = ClipOutCode(v2.x, v2.y, _w1.x, _w2.x, _w1.y, _w2.y);
 

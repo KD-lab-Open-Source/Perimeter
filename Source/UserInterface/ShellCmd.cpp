@@ -92,7 +92,7 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 		_pShellDispatcher->m_bCanFlip = pWnd->ID != SQSH_WORKAREA4_ID;
 
-		int rg_wanted;
+		int rg_wanted = 0;
 		switch(pWnd->ID)
 		{
 		case SQSH_WORKAREA2_ID:

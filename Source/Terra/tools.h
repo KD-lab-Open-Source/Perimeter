@@ -781,6 +781,7 @@ public:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(10 * trucksIntrumentParameter.kRadius4DigZL),
 													  xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
 																	(1 << VX_FRACTION)), 3 );
+                [[fallthrough]];
 			case 1:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(20 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 5 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
@@ -791,6 +792,7 @@ public:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(10 * trucksIntrumentParameter.kRadius4DigZL),
 													  xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
 																	(1 << VX_FRACTION)), 3 );
+                [[fallthrough]];
 			case 3:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(20 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 6 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
@@ -801,11 +803,11 @@ public:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(10 * trucksIntrumentParameter.kRadius4DigZL),
 													  xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
 																	(1 << VX_FRACTION)), 3 );
+                [[fallthrough]];
 			case 5:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(20 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 7 );
 				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				return 0;
-				break;
 			default:
 				return 0;
 			};
@@ -841,7 +843,6 @@ public:
 //				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				damagingBuildingsTolzer(x,y,16);
 				return 0;
-				break;
 			default:
 				return 0;
 			};
@@ -877,7 +878,6 @@ public:
 				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(16 * trucksIntrumentParameter.kRadius4PutZL), 0 << VX_FRACTION, 3 );
 				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				return 0;
-				break;
 			default:
 				return 0;
 			};
@@ -903,7 +903,6 @@ public:
 															xm::round(16 * trucksIntrumentParameter.kRadius4PutZL), 0 << VX_FRACTION, 3 );
 				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				return 0;
-				break;
 			default:
 				return 0;
 			};
@@ -968,7 +967,6 @@ public:
 			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
 														xm::round(16 * trucksIntrumentParameter.kRadius4DigGarbage), 0 << VX_FRACTION, 2 ); //16
 			return 0;
-			break;
 		default:
 			return 0;
 		};

@@ -45,12 +45,9 @@ void terFilthSwarmWasp::SetPrm(terUnitAttributeID id_)
 {
 	unit_id=id_;
 
-	if(unit_id==FILTH_SPOT_ID_EYE)
-		prm=&terFilthWaspEyePrm;
-	else
-		prm=&terFilthWaspPrm;
+    prm = unit_id == UNIT_ATTRIBUTE_FILTH_WASP ? &terFilthWaspPrm : &terFilthWaspEyePrm;
 
-	sound.Init(unit_id==UNIT_ATTRIBUTE_FILTH_WASP?"Filth_Move_Wasp":"Filth_Move_Eye");
+	sound.Init(unit_id==UNIT_ATTRIBUTE_FILTH_WASP ? "Filth_Move_Wasp" : "Filth_Move_Eye");
 	sound.SetPos(To3D(position));
 	sound.Play();
 }

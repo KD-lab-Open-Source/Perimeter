@@ -583,6 +583,8 @@ void HistoryScene::addCameraPosition(
 
 void HistoryScene::waitFor(Controller::WaitEventType event) {
 	switch (event) {
+        default:
+            break;
 		case Controller::BEGIN_OF_CAMERA_EVENT:
 		case Controller::END_OF_CAMERA_EVENT:
 			lastEvent = event;
@@ -599,6 +601,8 @@ void HistoryScene::clearCameraPath() {
 	} else {
 		if (!interpreter->isNormalSpeedMode()) {
 			switch (lastEvent) {
+                default:
+                    break;
 				case Controller::BEGIN_OF_CAMERA_EVENT:
 					historyCamera->setPositionToBegin();
 					break;

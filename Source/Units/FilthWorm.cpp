@@ -42,14 +42,14 @@ terUnitAttributeID terFilthSwarmWorm::GetUnitID()
 {
 	switch(SpotPoint->GetFilthParamID())
 	{
+    default:
+        xassert(0);
+        [[fallthrough]];
 	case FILTH_SPOT_ID_WORM:
 		return UNIT_ATTRIBUTE_FILTH_WORM;
 	case FILTH_SPOT_ID_A_WORM:
 		return UNIT_ATTRIBUTE_FILTH_A_WORM;
 	}
-
-	xassert(0);
-	return UNIT_ATTRIBUTE_FILTH_WORM;
 }
 
 void terFilthSwarmWorm::SetFreeDestroy()

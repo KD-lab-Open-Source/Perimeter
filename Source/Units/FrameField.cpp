@@ -117,6 +117,8 @@ void terProtector::MoveQuant()
 	}
 
 	switch(fieldState()){
+    case FIELD_TO_START:
+        break;
 	case FIELD_STARTING: 
 		if(find_if(monks_.begin(), monks_.end(), 
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
@@ -126,7 +128,6 @@ void terProtector::MoveQuant()
 #endif
 				fieldState_ = FIELD_STARTED;
 		break;
-
 	case FIELD_STARTED: 
 		if(!isBuildingEnable())
 			fieldState_ = FIELD_TO_STOP;

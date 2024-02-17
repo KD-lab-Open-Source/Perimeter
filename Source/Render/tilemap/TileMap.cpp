@@ -302,7 +302,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 
 	if(DrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 	{
-        gb_RenderDevice->Draw(GetScene()); // рисовать источники света
+        gb_RenderDevice->DrawScene(GetScene()); // рисовать источники света
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_SHADOWMAP))
 	{

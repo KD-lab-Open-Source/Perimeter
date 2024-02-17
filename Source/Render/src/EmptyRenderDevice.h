@@ -4,6 +4,9 @@
 
 class cEmptyRender : public cInterfaceRenderDevice
 {
+protected:
+    void DrawFieldDispatcher(class FieldDispatcher *ffd, uint8_t transparent) override { }
+    
 public:
     cEmptyRender() = default;
     ~cEmptyRender() = default;
@@ -56,13 +59,12 @@ public:
     void DrawSprite3(int x, int y, int dx, int dy, float u, float v, float du, float dv, float u1, float v1, float du1, float dv1,
                      cTexture *Tex1, cTexture *Tex2, const sColor4c& ColorMul=sColor4c(255,255,255,255), float phase=0, eColorMode mode=COLOR_MOD, eBlendMode blend_mode=ALPHA_NONE)	override { }
     
-    void Draw(class cScene *Scene) override { }
+    void DrawScene(class cScene *Scene) override { }
     
-    void Draw(class FieldDispatcher *ffd, uint8_t transparent) override { }
     void CreateFFDData(class FieldDispatcher *rd) override { }
     void DeleteFFDData(class FieldDispatcher *rd) override { }
     
-    void Draw(class ElasticSphere *es) override { }
+    void DrawElasticSphere(class ElasticSphere *es) override { }
 
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override { return 0; }
     int DeleteTexture(class cTexture *Texture) override { return 0; }

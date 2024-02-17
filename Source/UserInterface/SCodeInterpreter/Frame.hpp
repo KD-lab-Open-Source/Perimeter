@@ -10,7 +10,7 @@
 class Frame : public tx3d::SharedPointer {
 	public:
 		Frame(const std::string& name, World* parentWorld, int race, int colorIndex);
-		virtual ~Frame();
+		~Frame() override;
 		void addKnowledge(const Knowledge& newKnowledge);
 		void goToWorld(World* destWorld);
 

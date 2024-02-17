@@ -1744,6 +1744,8 @@ may_clip:
 			case Segment::Clipped:
 				segments.insert(si, rest);
 				break;
+            default:
+                break;
 			}
 		}
 		si = segments.erase(si);
@@ -1772,6 +1774,8 @@ void RegionDispatcher::clip_by_circle(const Point& p, float clip_radius, int sav
 			si = segments.erase(si);
 			--si;
 			break;
+        default:
+            break;
 		}
 }
 

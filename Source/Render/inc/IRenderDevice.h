@@ -153,7 +153,7 @@ protected:
     eCullMode CameraCullMode = CULL_NONE;
     bool WireframeMode = false;
 
-    virtual void Draw(class FieldDispatcher *ffd, uint8_t transparent);
+    virtual void DrawFieldDispatcher(class FieldDispatcher* ffd, uint8_t transparent);
 
 public:
     cInterfaceRenderDevice();
@@ -163,6 +163,21 @@ public:
     
     ColorConversionFunc ConvertColor = nullptr;
     
+    // Helper methods
+    
+    inline cCamera* GetDrawNode() { return DrawNode; }
+
+    inline cTexLibrary* GetTexLibrary() { return TexLibrary; }
+
+    inline eModeRenderDevice GetRenderMode() { return static_cast<eModeRenderDevice>(RenderMode); }
+
+    cTexture* GetTexture(int n);
+    
+    void DrawFieldDispatcher(class FieldDispatcher *ffd);
+
+    void DrawSprite3(int x, int y, int dx, int dy, float u, float v, float du, float dv,
+                     cTexture *Tex1, cTexture *Tex2, const sColor4c& ColorMul=sColor4c(255,255,255,255), float phase=0);
+    
     // Common methods
 
     virtual uint32_t GetWindowCreationFlags() const { return 0; }
@@ -170,11 +185,6 @@ public:
     virtual int Done();
     virtual int BeginScene();
     virtual int EndScene();
-
-    cTexLibrary* GetTexLibrary() { return TexLibrary; }
-    cTexture* GetTexture(int n);
-
-    eModeRenderDevice GetRenderMode() { return static_cast<eModeRenderDevice>(RenderMode); }
 
     virtual bool IsFullScreen() { return (RenderMode&RENDERDEVICE_MODE_WINDOW) == 0; }
     
@@ -185,7 +195,6 @@ public:
 
     virtual void SetTexture(uint32_t slot, class cTexture* texture, float Phase);
 
-    inline cCamera* GetDrawNode() { return DrawNode; }
     virtual void SetDrawNode(cCamera* node) { DrawNode = node; };
     virtual void SetWorldMatXf(const MatXf& matrix);
 
@@ -240,15 +249,12 @@ public:
     virtual int CreateTilemap(class cTileMap *TileMap);
     virtual int DeleteTilemap(class cTileMap *TileMap);
 
-    virtual void Draw(class ElasticSphere *es);
-    virtual void Draw(class cScene *Scene);
+    virtual void DrawElasticSphere(class ElasticSphere *es);
+    virtual void DrawScene(class cScene *Scene);
     virtual void DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe=0, const sColor4c& Color=sColor4c(255,255,255,255));
-    virtual void Draw(class FieldDispatcher *ffd);
-
+    
     virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE);
-    virtual void DrawSprite3(int x, int y, int dx, int dy, float u, float v, float du, float dv,
-                     cTexture *Tex1, cTexture *Tex2, const sColor4c& ColorMul=sColor4c(255,255,255,255), float phase=0);
     virtual void DrawSprite3(int x1, int y1, int dx, int dy, float u0, float v0, float du0, float dv0, float u1, float v1, float du1, float dv1,
                              cTexture *Tex1, cTexture *Tex2, const sColor4c& ColorMul=sColor4c(255,255,255,255), float phase=0, eColorMode mode=COLOR_MOD, eBlendMode blend_mode=ALPHA_NONE);
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,

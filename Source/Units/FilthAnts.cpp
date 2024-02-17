@@ -49,6 +49,7 @@ terFilthSwarmAnt::terFilthSwarmAnt(terFilthSpot* spot,const Vect3f& pos,int atta
 	{
 	default:
 		xassert(0);
+        [[fallthrough]];
 	case FILTH_SPOT_ID_ANTS:
 	case FILTH_SPOT_ID_A_ANTS:
 		prm=&terFilthAntsPrm;

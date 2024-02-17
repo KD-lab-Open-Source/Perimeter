@@ -1028,7 +1028,7 @@ bool terWeapon::fireRequest(const Vect3f* to,terUnitBase* target,int& status)
 		return false;
 	}
 
-	Vect3f pos = (target) ? pos = target->position() : pos = *to;
+	Vect3f pos = target ? target->position() : *to;
 
 	if(fireDistanceCheck(pos)){
 		if(!isLoaded())
@@ -1245,7 +1245,7 @@ bool terWeaponLauncher::fire(const Vect3f& to,terUnitBase* target)
 			p->setTarget(target,to);
 
 			p->setDockMode(DOCK_MODE_LEAVE);
-			missileIndex_ = ++missileIndex_ % owner()->docksCount();
+			missileIndex_ = (missileIndex_ + 1) % owner()->docksCount();
 
 			if(turnSuggestPrm()){ // Баллистическая ракета
 				Vect3f trg0,trg1;

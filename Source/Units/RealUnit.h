@@ -122,47 +122,47 @@ public:
 		return safe_cast<const AttributeReal*>(terUnitGeneric::attr());
 	}
 
-	void Start();
-	void Kill();
+	void Start() override;
+	void Kill() override;
 
-	void MoveQuant();
-	void Quant();
+	void MoveQuant() override;
+	void Quant() override;
 
-	void DestroyLink();
+	void DestroyLink() override;
 
-	void executeCommand(const UnitCommand& command);
+	void executeCommand(const UnitCommand& command) override;
 
-	float GetScale(){ return Scale; };
+	float GetScale() const { return Scale; };
 
-	void setPose(const Se3f& pose, bool initPose);
+	void setPose(const Se3f& pose, bool initPose) override;
 
-	float freezeFactor() const { return FreezeFactor; }
+	float freezeFactor() const override { return FreezeFactor; }
 
-	virtual void WayPointStart(){}
-	virtual void WayPointController(){}
+	virtual void WayPointStart() {}
+	virtual void WayPointController() {}
 
 //Logic Object
 	cLogicObject* LogicObjectPoint;
 
 	virtual void UpdateLogicPoint();
 
-	RigidBody* GetRigidBodyPoint() const { return BodyPoint; };
+	RigidBody* GetRigidBodyPoint() const override { return BodyPoint; };
 
-	class terInterpolationReal* realAvatar() {return (terInterpolationReal*)avatar();}
-	const class terInterpolationReal* realAvatar() const {return (terInterpolationReal*)avatar();};
+	class terInterpolationReal* realAvatar();
+	const class terInterpolationReal* realAvatar() const;
 
-	void AvatarInterpolation();
-	void AvatarQuant();
+	void AvatarInterpolation() override;
+	void AvatarQuant() override;
 
-	void setDamage(const DamageData& damage,terUnitBase* p = 0);
+	void setDamage(const DamageData& damage,terUnitBase* p = nullptr) override;
 
 //--------------------
-	void RefreshAttribute();
+	void RefreshAttribute() override;
 
-	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(SaveUnitData* data);
+	SaveUnitData* universalSave(SaveUnitData* data) override;
+	void universalLoad(SaveUnitData* data) override;
 
-	void showDebugInfo();
+	void showDebugInfo() override;
 
 	void showPath(const std::vector<Vect3f>& wayPoints);
 	const std::vector<Vect3f>& getWayPoints() {
@@ -189,11 +189,11 @@ public:
 	terDockMode dockMode() const { return dockMode_; }
 	void setDockMode(terDockMode mode) { dockMode_ = mode; }
 
-	void SetFreezeCount(int count){ freezeTimer_.start(count); }
-	void SetHotCount(int count){ HotCount = count; handleLaserHit(); }
-	void setHealTimer(int time){ healTimer_.start(time); }
+	void SetFreezeCount(int count) override { freezeTimer_.start(count); }
+	void SetHotCount(int count) override { HotCount = count; handleLaserHit(); }
+	void setHealTimer(int time) { healTimer_.start(time); }
 
-	void setRealModel(int modelIndex, float scale);
+	void setRealModel(int modelIndex, float scale) override;
 	
 	void moveToPoint(const Vect3f& v);
 
@@ -207,20 +207,20 @@ public:
 
 	const Vect3f& interpolatedPosition();
 
-	void ShowInfo();
+	void ShowInfo() override;
 	
 	bool fireRequest(const Vect3f* position,terUnitBase* target,int& fire_status);
 	bool fireCheck(const Vect3f& position,terUnitBase* target) const;
 	bool fireDistanceCheck(const Vect3f& position) const;
 	void fireStop();
-	virtual void clearAttackTarget(){ wayPoints().clear(); }
+	virtual void clearAttackTarget() { wayPoints().clear(); }
 
 	bool isWeaponLoaded() const;
 	bool isWeaponReady() const;
 	bool weaponReload();
 	void removeMissileReference(terUnitBase* p);
 
-	void explode();
+	void explode() override;
 	void splashDamage();
 
 	float accumulatedEnergy() const { return accumulatedEnergy_; }
@@ -233,11 +233,11 @@ public:
 
 	int estimatedDamage() const;
 
-	float chargeLevel() const;
+	float chargeLevel() const override;
 	bool isFiring() const;
-	void ChangeUnitOwner(terPlayer* player);
+	void ChangeUnitOwner(terPlayer* player) override;
 
-	bool isDocked() const { return DockPoint; }//dockMode_ != DOCK_MODE_NONE; }
+	bool isDocked() const override { return DockPoint; }//dockMode_ != DOCK_MODE_NONE; }
 
 	/// Юнит, по которому стреляет в данный момент.
 	terUnitBase* weaponTarget();

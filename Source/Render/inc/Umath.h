@@ -56,7 +56,7 @@ struct sColor4c
         uint32_t v;
     };
 	
-	sColor4c()										{ }
+	sColor4c() = default;
 	sColor4c(const sColor4f& color)					{ set(color.GetR(),color.GetG(),color.GetB(),color.GetA()); }
 	sColor4c(int rc,int gc,int bc)					{ r=rc; g=gc; b=bc; a=255; }
 	sColor4c(int rc,int gc,int bc,int ac)			{ r=rc; g=gc; b=bc; a=ac; }

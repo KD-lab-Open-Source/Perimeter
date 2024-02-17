@@ -74,11 +74,11 @@ void cTexLibrary::FreeOne(FILE* f)
 		}else
 		{
 //			VISASSERT(p->GetRef()==1);
-			if(f)fprintf(f,"%s - %i\n",p->GetName(),p->GetRef());
+			if (f) fprintf(f,"%s - %" PRIi64 "\n",p->GetName(),p->GetRef());
 		}
 	}
 
-	if(f)fprintf(f,"Texture free %i, not free %i\n",compacted,textures.size()-compacted);
+	if(f)fprintf(f,"Texture free %i, not free %" PRIiMAX "\n",compacted,textures.size()-compacted);
 
 	if(f)
 	{

@@ -2,7 +2,7 @@
 
 struct ConstShaderInfo
 {
-	char* name;
+	const char* name;
 	int begin_register;
 	int num_register;
 	void go()

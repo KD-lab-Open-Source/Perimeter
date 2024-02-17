@@ -1118,6 +1118,7 @@ int cD3DRender::SetRenderState(eRenderStateOption option,uint32_t value)
             switch (value) {
                 default:
                     xassert(0);
+                    [[fallthrough]];
                 case CULL_CAMERA:
                     return SetRenderState(RS_CULLMODE, CameraCullMode);
                 case CULL_NONE:
@@ -1555,6 +1556,9 @@ void cD3DRender::SetBlendState(eBlendMode blend)
 
 	switch(blend)
 	{
+    case ALPHA_NONE:
+    case ALPHA_TEST:
+        break;
 	case ALPHA_SUBBLEND:
 		SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
 		SetRenderState(D3DRS_DESTBLEND,D3DBLEND_ONE);

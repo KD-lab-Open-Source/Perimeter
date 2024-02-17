@@ -1294,11 +1294,14 @@ void ActionTask::activate(AIPlayer& aiPlayer)
 
 	float soundDuration = _shellIconManager.playSpeech(taskID);
 	int time = syncroBySound && 0 < soundDuration ? static_cast<int>(xm::round(soundDuration * 1000.0f)) + speechDurationAddition : duration * 1000;
-	if(showTips)
+	if(showTips) {
 		_shellIconManager.showHint(taskID, time, type);
+    }
 	_shellIconManager.setTask(taskID, type);
 	durationTimer.start(time);
 	switch(type){
+    default:
+        break;
 	case ASSIGNED:
 		aiPlayer.soundEvent(SOUND_VOICE_OBJECTIVES_UPDATED);
 		break;
@@ -1501,15 +1504,15 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 		if(state_ != CHECKING)
 			break;
 		}
-
+        [[fallthrough]];
 	case CHECKING:
 		if((!condition || condition->checkDebug(aiPlayer)) && (!action || action->automaticCondition(aiPlayer))){
 			activate(aiPlayer, triggerChain);
 			triggerChain.addLogRecord(*this, (std::string("Start: ") + name()).c_str());
-		}
-		else
-			break;
-
+		} else {
+            break;
+        }
+        [[fallthrough]];
 	case WORKING:
 		if(!action || action->workedOut(aiPlayer)){
 			FOR_EACH_AUTO(outcomingLinks_, li) {
@@ -1527,8 +1530,9 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 
 void Trigger::checkEvent(AIPlayer& aiPlayer, const Event* event)
 {
-	if(state_ == CHECKING && condition)
-		condition->checkEvent(aiPlayer, event);
+	if(state_ == CHECKING && condition) {
+        condition->checkEvent(aiPlayer, event);
+    }
 }
 
 void Trigger::activate(AIPlayer& aiPlayer, TriggerChain& triggerChain)

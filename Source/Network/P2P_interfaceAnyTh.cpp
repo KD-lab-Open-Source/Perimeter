@@ -31,7 +31,7 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 		ha[0]=hSecondThread;
 		ha[1]=hCommandExecuted;
 		uint32_t result=WaitForMultipleObjects(ha_size, ha, false, INFINITE);
-		if(result<WAIT_OBJECT_0 || result>= (WAIT_OBJECT_0+ha_size)) {
+		if (result>= (WAIT_OBJECT_0+ha_size)) {
 			xassert(0&&"Error execute command");
 		}
 	}
@@ -55,7 +55,7 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame*
     //Ensure command is from correct sender
     if (pCommand->EventID != NETCOM_4G_ID_FORCED_DEFEAT) {
         unsigned int i = pCommand->PlayerID_;
-        if (i < 0 || i >= hostMissionDescription->playerAmountScenarioMax
+        if (i >= hostMissionDescription->playerAmountScenarioMax
             || hostMissionDescription->playersData[i].netid != netid) {
             LogMsg("Discarding game command from incorrect netid %" PRIX64 " to player %d\n", netid, i);
             delete pCommand;

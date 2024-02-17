@@ -119,7 +119,7 @@ public:
     void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,
                         sColor4f *Diffuse = nullptr, sColor4f *Specular = nullptr) override;
 
-    void Draw(class ElasticSphere *es) override;
+    void DrawElasticSphere(class ElasticSphere *es) override;
     
     uint32_t GetRenderState(eRenderStateOption option) override;
 	int SetRenderState(eRenderStateOption option,uint32_t value) override;
@@ -208,7 +208,7 @@ public:
 
 	FORCEINLINE void SetRenderState(D3DRENDERSTATETYPE State, unsigned int Value)
 	{
-		VISASSERT(0<=State&&State<RENDERSTATE_MAX);
+		VISASSERT(0<=State&&State<static_cast<size_t>(RENDERSTATE_MAX));
 //		DWORD value;
 //		RDCALL(lpD3DDevice->GetRenderState((D3DRENDERSTATETYPE)State,&value));
 //		VISASSERT(ArrayRenderState[State]==value || ArrayRenderState[State]==0xefefefef);
@@ -221,13 +221,13 @@ public:
 	}
 	inline uint32_t GetRenderState(D3DRENDERSTATETYPE State)
 	{
-		VISASSERT(0<=State && State<RENDERSTATE_MAX);
+        VISASSERT(0<=State&&State<static_cast<size_t>(RENDERSTATE_MAX));
 		return ArrayRenderState[State];
 	}
 	FORCEINLINE void SetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type, unsigned int Value)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
-		VISASSERT(0<=Type && Type<TEXTURESTATE_MAX);
+		VISASSERT(0<=Type && Type<static_cast<size_t>(TEXTURESTATE_MAX));
 
 //		DWORD value;
 ///		RDCALL(lpD3DDevice->GetTextureStageState(Stage,(D3DTEXTURESTAGESTATETYPE)Type,&value));
@@ -248,7 +248,7 @@ public:
 	inline void SetSamplerState(uint32_t Stage, D3DSAMPLERSTATETYPE Type, uint32_t Value)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
-		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
+		VISASSERT(0<=Type && Type<static_cast<size_t>(SAMPLERSTATE_MAX));
 		if(ArraytSamplerState[Stage][Type]!=Value)
 		{
             FlushActiveDrawBuffer();
@@ -260,7 +260,7 @@ public:
 	inline uint32_t GetSamplerState(uint32_t Stage, D3DSAMPLERSTATETYPE Type)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
-		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
+		VISASSERT(0<=Type && Type<static_cast<size_t>(SAMPLERSTATE_MAX));
 		return ArraytSamplerState[Stage][Type];
 	}
 

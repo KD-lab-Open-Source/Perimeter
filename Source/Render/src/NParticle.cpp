@@ -332,6 +332,8 @@ inline Vect3f* cEmitterBase::GetNormal(const int& ix)
 		if ((uint32_t)ix < begin_position.size())
 			return &normal_position[ix];
 		break;
+    default:
+		break;
 	}
 	return nullptr;
 }
@@ -342,6 +344,8 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 	float size_pos=100;
 	switch(particle_position.type)
 	{
+        default:
+            break;
 		case EMP_BOX:
 		{
 			i %= num.x*num.y*num.z;
@@ -1551,7 +1555,7 @@ void cEmitterSpl::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 	}
 
 	Vect3f pos;
-	bool need_transform;
+	bool need_transform = false;
 	switch(direction)
 	{
 	case ETDS_ID:
@@ -1857,7 +1861,10 @@ void cEffect::Init(EffectKey& effect_key_,cEmitter3dObject* models,float scale)
 				EmitterKeySpl* pi=(EmitterKeySpl*)p;
 				switch(((EmitterKeySpl*)p)->direction)
 				{
-				case ETDS_BURST1: case ETDS_BURST2:
+                default:
+                    break;
+                case ETDS_BURST1:
+                case ETDS_BURST2:
 					need_normal = true;
 					break;
 				}
@@ -2096,7 +2103,7 @@ void CVectVect3f::Save(CSaver& s,int id)
 }
 void CVectVect3f::Load(CLoadIterator rd)
 {
-	int sz;
+	int sz = 0;
 	rd>>sz;
 	resize(sz);
 	iterator it;
@@ -2119,7 +2126,7 @@ void CKey::Save(CSaver& s,int id)
 
 void CKey::Load(CLoadIterator rd)
 {
-	int sz;
+	int sz = 0;
 	rd>>sz;
 	resize(sz);
 	for(int i=0;i<sz;i++)
@@ -2149,8 +2156,9 @@ void EmitterType::Save(CSaver& s,int id)
 
 void EmitterType::Load(CLoadIterator rd)
 {
-	int itmp;
-	rd>>itmp;type=(EMITTER_TYPE_POSITION)itmp;
+	int itmp = 0;
+	rd>>itmp;
+    type=static_cast<EMITTER_TYPE_POSITION>(itmp);
 	rd>>size;
 	rd>>alpha_min;
 	rd>>alpha_max;
@@ -2182,9 +2190,9 @@ void EffectBeginSpeed::Save(CSaver& s)
 
 void EffectBeginSpeed::Load(CLoadIterator rd)
 {
-	uint32_t itemp;
+	uint32_t itemp = 0 ;
 	rd>>name;
-	rd>>itemp;velocity=(EMITTER_TYPE_VELOCITY)itemp;
+	rd>>itemp;velocity=static_cast<EMITTER_TYPE_VELOCITY>(itemp);
 	rd>>mul;
 	rd>>rotation.s();
 	rd>>rotation.x();
@@ -2213,7 +2221,7 @@ void CKeyRotate::Save(CSaver& s,int id)
 
 void CKeyRotate::Load(CLoadIterator rd)
 {
-	int sz;
+	int sz = 0;
 	rd>>sz;
 	resize(sz);
 	for(int i=0;i<sz;i++)
@@ -2249,7 +2257,7 @@ void CKeyPos::Save(CSaver& s,int id)
 
 void CKeyPos::Load(CLoadIterator rd)
 {
-	int sz;
+	int sz = 0;
 	rd>>sz;
 	resize(sz);
 	for(int i=0;i<sz;i++)
@@ -2301,7 +2309,7 @@ void CKeyColor::Save(CSaver& s,int id)
 
 void CKeyColor::Load(CLoadIterator rd)
 {
-	int sz;
+	int sz = 0;
 	rd>>sz;
 	resize(sz);
 	for(int i=0;i<sz;i++)
@@ -2611,6 +2619,8 @@ void EmitterKeyBase::SaveInternal(CSaver& s)
 		bool need_normals = s.GetData()!=EXPORT_TO_GAME;
 		switch(GetType())
 		{
+        default:
+            break;
 		case EMC_INTEGRAL:
 			{
 				need_normals |=  ((EmitterKeyInt*)this)->use_light;
@@ -2625,6 +2635,8 @@ void EmitterKeyBase::SaveInternal(CSaver& s)
 			case ETDS_BURST1: case ETDS_BURST2:
 				need_normals = true; 
 				break;
+            default:
+                break;
 			}
 			break;
 		}
@@ -2648,9 +2660,9 @@ void EmitterKeyBase::LoadInternal(CLoadData* ld)
 		{
 			CLoadIterator rd(ld);
 			rd>>name;
-			char blend;
+			int8_t blend = 0;
 			rd>>blend;
-			sprite_blend=(EMITTER_BLEND)blend;
+			sprite_blend=static_cast<EMITTER_BLEND>(blend);
 			rd>>generate_prolonged;
 			rd>>texture_name;
 			rd>>emitter_create_time;
@@ -2932,16 +2944,16 @@ void EmitterKeySpl::Load(CLoadDirectory rd)
 		{
 		case IDS_BUILDKEY_SPL_HEADER:
 			{
-				CLoadIterator rd(ld);
-				rd>>p_position_auto_time;
+				CLoadIterator rdi(ld);
+				rdi>>p_position_auto_time;
 			}
 			break;
 		case IDS_BUILDKEY_SPL_DIRECTION:
 			{
-				CLoadIterator rd(ld);
-				uint32_t d;
-				rd>>d;
-				direction=(EMITTER_TYPE_DIRECTION_SPL)d;
+				CLoadIterator rdi(ld);
+				uint32_t d = 0;
+				rdi>>d;
+				direction=static_cast<EMITTER_TYPE_DIRECTION_SPL>(d);
 			}
 			break;
 		case IDS_BUILDKEY_SPL_POSITION:
@@ -3406,10 +3418,10 @@ void cEmitterZ::Draw(cCamera *pCamera)
     sVertexXYZDT1 *v = nullptr;
     DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     
-    MatXf GM;
-    MatXf iGM;
-    Vect3f CameraPos;
-    uint8_t mode;
+    MatXf GM = {};
+    MatXf iGM = {};
+    Vect3f CameraPos = {};
+    uint8_t mode = 0;
     if (chPlume)
     {
         CameraPos = relative ? iGM*pCamera->GetPos() : pCamera->GetPos();

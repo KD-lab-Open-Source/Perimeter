@@ -37,6 +37,8 @@ void LogicUpdater::exchange() {
 
 void LogicUpdater::checkEvent(const Event* event) {
 	switch (event->type()) {
+        default:
+            break;
 		case Event::COMPLETE_BUILDING:
 			{
 				const EventUnitPlayer* eventUnit = safe_cast<const EventUnitPlayer*>(event);

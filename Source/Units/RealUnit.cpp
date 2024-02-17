@@ -889,6 +889,14 @@ void terUnitReal::ShowInfo()
 	}
 }
 
+class terInterpolationReal* terUnitReal::realAvatar() {
+    return safe_cast<terInterpolationReal*>(avatar());
+}
+
+const class terInterpolationReal* terUnitReal::realAvatar() const {
+    return safe_cast<terInterpolationReal*>(avatar());
+}
+
 void terUnitReal::AvatarInterpolation()
 {
 	terUnitGeneric::AvatarInterpolation();

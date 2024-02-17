@@ -80,7 +80,7 @@ void terCorridor::Quant()
 		}
 		break;
 		
-	case FRAME_DISAPPEARING: {											  
+	case FRAME_DISAPPEARING:										  
 		frame_->BodyPoint->setPose(Se3f(frame_->BodyPoint->orientation(),
 			to3D(position2D(), PositionZ_ + attr()->disappearingHeight*disappearingTimer_())));
 		frame_->realAvatar()->setSight(1 - disappearingTimer_());
@@ -97,8 +97,10 @@ void terCorridor::Quant()
             }
 			realAvatar()->requestChain(CHAIN_CLOSED);
 		}
-		break; }
-	}
+		break;
+    case IDLE:
+        break;
+    }
 }
 
 //---------------------------------------------------

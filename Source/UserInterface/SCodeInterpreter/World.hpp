@@ -9,7 +9,7 @@
 class World : public tx3d::SharedPointer {
 	public:
 		World(const std::string& sysName, const Vect3f& coords, int size, int filthLevel, float timeFactor);
-		virtual ~World();
+		~World() override;
 		void createAlphaPortal(World* worldWherefromPerforation);
 		void createOmegaPortal();
 		void destroyAlphaPortal();
@@ -75,7 +75,7 @@ class World : public tx3d::SharedPointer {
 		class Portal : public tx3d::SharedPointer {
 			public:
 				Portal(bool omegaPortal, World* ownerWorld);
-				virtual ~Portal();
+				~Portal() override;
 				void destroy();
 				static void linkPortals(Portal* portal1, Portal* portal2);
 				static void unlinkPortals(Portal* portal1, Portal* portal2);

@@ -256,7 +256,7 @@ xm_inline T clamp(const T& x, const T1& xmin, const T2& xmax) { if(x < xmin) ret
 class Vect2f
 {
 public:	
-	float x,y;
+	float x = 0, y = 0;
 
 	xm_inline Vect2f()								{ }
 	xm_inline Vect2f(float x_,float y_)					{ x = x_; y = y_; }
@@ -342,9 +342,9 @@ public:
 class Vect2i
 {
 public:
-	int x,y;
+	int x = 0, y = 0;
 
-	xm_inline Vect2i()								{ }
+    xm_inline Vect2i()								{ }
 	xm_inline Vect2i(int x_, int y_)						{ x = x_; y = y_; }
 	xm_inline Vect2i(float x_, float y_)					{ x = xm::round(x_); y = xm::round(y_); }
 	
@@ -424,7 +424,7 @@ public:
 class Vect2s
 {
 public:
-	short x,y;
+	short x = 0,y = 0;
 
 	xm_inline Vect2s()										{ }
 	xm_inline Vect2s(int x_,int y_)							{ x = x_; y = y_; }
@@ -488,8 +488,8 @@ public:
 
 class Mat2f
 {
-  float xx, xy,
-       yx, yy;
+  float xx = 0.0f, xy = 0.0f,
+        yx = 0.0f, yy = 0.0f;
 public:
 	Mat2f(){}
 	explicit Mat2f(float angle) { set(angle); }
@@ -740,7 +740,7 @@ class Vect3d
 
 public:
 
-  double x, y, z;
+  double x = 0.0, y = 0.0, z = 0.0;
 
   // constructors //////////////////////////////////////////////////////////////
 
@@ -908,9 +908,9 @@ class Mat3f
 public:
 
   // (stored in row-major order)
-  float xx, xy, xz,
-       yx, yy, yz,
-       zx, zy, zz;
+  float xx = 0.0f, xy = 0.0f, xz = 0.0f,
+        yx = 0.0f, yy = 0.0f, yz = 0.0f,
+        zx = 0.0f, zy = 0.0f, zz = 0.0f;
 
 public:
 
@@ -1132,9 +1132,9 @@ class Mat3d
 private:
 
   // (stored in row-major order)
-  double xx, xy, xz,
-       yx, yy, yz,
-       zx, zy, zz;
+  double xx = 0.0, xy = 0.0, xz = 0.0f,
+         yx = 0.0, yy = 0.0, yz = 0.0f,
+         zx = 0.0, zy = 0.0, zz = 0.0f;
 
 public:
 
@@ -1355,7 +1355,7 @@ public:
 
   // constructors //////////////////////////////////////////////////////////////
 
-  xm_inline MatXf()				{}
+  xm_inline MatXf() = default;
   xm_inline MatXf(const Mat3f& R_, const Vect3f& d_) {set(R_, d_);}
   xm_inline MatXf(const Se3f& T)			{set(T);}
 
@@ -1419,7 +1419,7 @@ public:
   xm_inline Vect3f& xformPoint(const Vect3f& p, Vect3f& xp) const;// this*(p 1)=>xp  [!]
   xm_inline Vect3f& xformPoint(Vect3f& p) const;		  // this*(p 1)=>p
 
-  xm_inline Vect3f operator*(const Vect3f& p) const { Vect3f xp; xformPoint(p, xp); return xp; }
+  xm_inline Vect3f operator*(const Vect3f& p) const { Vect3f xp = {}; xformPoint(p, xp); return xp; }
 
   // These are exactly like the above methods, except the inverse
   // transform this^-1 is used.

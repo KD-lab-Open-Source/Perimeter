@@ -121,6 +121,8 @@ void terBuildingMilitary::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_STOP: 
 		setAttackTarget(NULL,true);
 		break;
+    default:
+        break;
 	}
 }
 

@@ -149,7 +149,7 @@ void FieldDispatcher::PreDraw(cCamera *DrawNode)
 
 void FieldDispatcher::Draw(cCamera *DrawNode)
 {
-	DrawNode->GetRenderDevice()->Draw(this);
+	DrawNode->GetRenderDevice()->DrawFieldDispatcher(this);
 	MTEnter lock(hmap_lock);
 	static double prev_time=0;
 	double time=clockf();
@@ -633,24 +633,26 @@ int FieldDispatcher::calcPenalty(const Vect3f& center, float radius, float feedb
 	int yc = w2m(center.yi());
 	int D = ((int) xm::round(radius) >> scale) + 1;
 	float d_best = FLT_INF;
-	int x_best, y_best;
-	const Vect3f* n_best;
-	for(int y = yc - D; y <= yc + D; y++)
-		for(int x = xc - D; x <= xc + D; x++){
-			const Vect3f& n = normal(x, y);
-			float d = n.x*(center.x - m2w(x)) + n.y*(center.y - m2w(y)) + n.z*(center.z - height(x, y));
-			if(xm::abs(d_best) > xm::abs(d)){
-				d_best = d;
-				x_best = x;
-				y_best = y;
-				n_best = &n;
-				}
-			}
-	if(xm::abs(d_best) < radius){
+    int x_best = 0;
+    int y_best = 0;
+	const Vect3f* n_best = nullptr;
+    for (int y = yc - D; y <= yc + D; y++) {
+        for (int x = xc - D; x <= xc + D; x++) {
+            const Vect3f& n = normal(x, y);
+            float d = n.x * (center.x - m2w(x)) + n.y * (center.y - m2w(y)) + n.z * (center.z - height(x, y));
+            if (xm::abs(d_best) > xm::abs(d)) {
+                d_best = d;
+                x_best = x;
+                y_best = y;
+                n_best = &n;
+            }
+        }
+    }
+	if (xm::abs(d_best) < radius) {
 		f = *n_best*(d_best*force_field_penalty_stiffness);
 		r.set(m2w(x_best), m2w(y_best), height(x_best, y_best));
 		return 1;
-		}
+    }
 	return 0;
 }
 
@@ -735,6 +737,8 @@ void FieldCluster::Animate(float dt)
 
 
 	switch(animate_type){
+    default:
+        break;
 	case FIELD_STARTING:
 		CurrentDiffuse.a = xm::round(Diffuse.a * phase);
 		if(phase >= 1)

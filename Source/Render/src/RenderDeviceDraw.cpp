@@ -603,7 +603,7 @@ void cInterfaceRenderDevice::FlushPrimitive3D() {
 
 // Other render functions
 
-void cInterfaceRenderDevice::Draw(class cScene *Scene) {
+void cInterfaceRenderDevice::DrawScene(class cScene *Scene) {
     std::map<cTexture*, std::vector<cUnkLight*>> lightsByTex;
     for(int i=0;i<Scene->GetNumberLight();i++) {
         cUnkLight* ULight=Scene->GetLight(i);
@@ -643,7 +643,7 @@ void cInterfaceRenderDevice::Draw(class cScene *Scene) {
     db->AutoUnlock();
 }
 
-void cInterfaceRenderDevice::Draw(ElasticSphere *es) {
+void cInterfaceRenderDevice::DrawElasticSphere(ElasticSphere *es) {
     SetWorldMatXf(es->GetGlobalMatrix());
     
     int is = es->theta_size;

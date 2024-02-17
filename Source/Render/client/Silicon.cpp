@@ -69,7 +69,7 @@ void ElasticSphere::PreDraw(cCamera *DrawNode)
 void ElasticSphere::Draw(cCamera *DrawNode)
 {
 	prepare();
-	DrawNode->GetRenderDevice()->Draw(this);
+	DrawNode->GetRenderDevice()->DrawElasticSphere(this);
 }
 void ElasticSphere::Animate(float dt)
 {

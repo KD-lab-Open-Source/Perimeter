@@ -157,6 +157,8 @@ void setSlot(CComboWindow* combo, int number) {
 						case DIFFICULTY_HARD:
 							combo->pos = 5;
 							break;
+                        default:
+                            break;
 					}
 				}
 				break;

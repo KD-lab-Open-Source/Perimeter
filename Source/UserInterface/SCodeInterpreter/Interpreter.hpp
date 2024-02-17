@@ -40,7 +40,7 @@ class ContinuousCommand : public tx3d::SharedPointer {
 
 			command->referenced();
 		}
-		~ContinuousCommand() {
+		~ContinuousCommand() override {
 			command->released();
 			if (object3D) {
 				object3D->released();

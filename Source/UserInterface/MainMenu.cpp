@@ -815,6 +815,7 @@ int SwitchMenuBGQuant2( float, float ) {
 						wnd->Show(1);
 						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
 					}
+                    [[fallthrough]];
 				case SHOW_START_HIDE_SKIP_MISSION:
 				case SHOW_START_MISSION:
 					{
@@ -837,6 +838,7 @@ int SwitchMenuBGQuant2( float, float ) {
 						wnd->Show(1);
 						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
 					}
+                    [[fallthrough]];
 				case SHOW_CONTINUE:
 					{
 						//show continue button
@@ -1265,6 +1267,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_MISSION_BTN);
 //						bgScene.markToPlay(wnd->m_attr->bgObject.name, wnd->m_attr->bgObject.chainName, true);
 					}
+                    [[fallthrough]];
 				case SHOW_START_HIDE_SKIP_MISSION:
 				case SHOW_START_MISSION:
 					{
@@ -1279,6 +1282,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN);
 //						bgScene.markToPlay(wnd->m_attr->bgObject.name, wnd->m_attr->bgObject.chainName, true);
 					}
+                    [[fallthrough]];
 				case SHOW_CONTINUE:
 					{
 						//show continue button
@@ -1286,6 +1290,8 @@ int SwitchMenuScreenQuant1( float, float ) {
 //						bgScene.markToPlay(wnd->m_attr->bgObject.name, wnd->m_attr->bgObject.chainName, true);
 					}
 					break;
+                default:
+                    break;
 			}
 		}
 		if (_id_on != SQSH_MM_SUBMIT_DIALOG_SCR) {
@@ -1368,6 +1374,7 @@ int SwitchMenuBGQuant1( float, float ) {
 						wnd->Show(0);
 //						bgScene.markToPlay(wnd->m_attr->bgObject.name, wnd->m_attr->bgObject.chainName, false);
 					}
+                    [[fallthrough]];
 				case SKIP_BRIEFING:
 				case SHOW_START_HIDE_SKIP_MISSION:
 					{
@@ -1465,6 +1472,7 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
 			case SKIP_BRIEFING_AFTER_PAUSE:
 				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN)); //запустить разлет
 				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BORDER)); //запустить разлет
+                [[fallthrough]];
 			case SKIP_BRIEFING:
 				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BORDER)); //запустить разлет
 				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN)); //запустить разлет

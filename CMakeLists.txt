@@ -347,26 +347,32 @@ IF(NOT MSVC_CL_BUILD)
     #TODO remove these once code is more reasonable
     add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-narrowing)
-    add_compile_options(-Wno-write-strings)
-    add_compile_options(-Wno-return-type)
     IF(CLANG)
         add_compile_options(-Wno-reorder-ctor)
     ENDIF()
 
     add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
-    add_compile_options(-Werror=dangling-else)
-    add_compile_options(-Werror=return-type)
-    # add_compile_options(-Werror=switch) #TODO enable for strict check of switch block
-    # add_compile_options(-Werror=write-strings) #TODO enable this again
-
-    if (CLANG)
-        add_compile_options(-Werror=mismatched-new-delete)
-    endif()
     
     #These options may cause issues with external code compilation, so we apply only to our own targets
     SET(PERIMETER_COMPILE_OPTIONS
+            #-Werror
+            -Werror=implicit-fallthrough
             -Werror=shift-negative-value
             -Werror=parentheses
+            -Werror=dangling-else
+            -Werror=return-type
+            -Werror=switch
+            -Werror=write-strings
+            -Werror=mismatched-new-delete
+            -Werror=stringop-truncation
+            -Werror=maybe-uninitialized
+            -Werror=overloaded-virtual
+            -Werror=mismatched-new-delete
+            -Werror=sequence-point
+            -Werror=vexing-parse
+            -Werror=enum-compare
+            -Werror=format
+            -Werror=format-overflow
             -Wno-deprecated-copy
             #TODO remove these once code is more reasonable
             -Wno-class-memaccess

@@ -43,7 +43,7 @@ namespace tx3d {
 		private:
 			int useCount;
 
-			SharedPointer* operator &();
+			//SharedPointer* operator &();
 	};
 
 }

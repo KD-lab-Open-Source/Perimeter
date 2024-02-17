@@ -125,6 +125,8 @@ terUnitAttributeID terFilthSwarmDaemon::GetUnitID()
 {
 	switch(SpotPoint->GetFilthParamID())
 	{
+    default:
+        break;
 	case FILTH_SPOT_ID_DAEMON:
 		return UNIT_ATTRIBUTE_FILTH_DAEMON;
 	case FILTH_SPOT_ID_A_DAEMON:

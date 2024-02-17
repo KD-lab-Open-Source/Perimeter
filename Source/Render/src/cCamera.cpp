@@ -1389,7 +1389,7 @@ void cCameraPlanarLight::DrawScene()
     uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
 	RenderDevice->SetRenderState(RS_FOGENABLE,false);
 	
-	RenderDevice->Draw(GetScene());
+	RenderDevice->DrawScene(GetScene());
 
     RenderDevice->SetRenderState( RS_ZFUNC, zfunc );
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);

@@ -62,6 +62,6 @@ case D3DFMT_DXT2:
 case D3DFMT_DXT3:
 case D3DFMT_DXT4:
 case D3DFMT_DXT5: return 8;
+default: return 32;
 	}
-	return 32;
 }

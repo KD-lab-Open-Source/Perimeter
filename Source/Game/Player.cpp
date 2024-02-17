@@ -1468,6 +1468,8 @@ void PlayerStats::checkEvent(const Event* event, int playerID) {
 				}
 			}
 			break;
+        default:
+            break;
 	}
 }
 

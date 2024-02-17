@@ -484,7 +484,7 @@ struct vrtMap {
 	void prepare();
 	void selectUsedWorld(char* _patch2WorldIniFile);
 #elif _PERIMETER_
-	void prepare(char* name);
+	void prepare(const char* name);
     void compressWorlds(int mode);
 	void selectUsedWorld(int nWorld);
 #endif

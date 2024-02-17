@@ -289,18 +289,15 @@ public:
 	}
 	int load(const char *fname) override {
 		int size=0;
-		char *buf= nullptr;
+		char* buf= nullptr;
 		if (ResourceFileRead(fname,buf,size)) return 1;
-		return load(buf,size);
-	}
-	int load(void *pointer,int size) override {
 		close();
-		tga=static_cast<TGAHeader*>(pointer);
+		tga=reinterpret_cast<TGAHeader*>(buf);
 		x=tga->width;
 		y=tga->height;
 		bpp=tga->bitsPerPixel;
 		int colormapsize=(tga->countColorMapEntries*tga->numberOfBitsPerColorMapEntry)/8;
-		ImageData=(18+colormapsize+static_cast<uint8_t*>(pointer));
+		ImageData=(18+colormapsize+reinterpret_cast<uint8_t*>(buf));
 		return 0;
 	}
     

@@ -396,6 +396,8 @@ void terFilthSpot::SoundActivate()
 	float z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
     Vect3f v;
 	switch(FilthParamID){
+        default:
+            break;
 		case FILTH_SPOT_ID_ANTS:
 		case FILTH_SPOT_ID_A_ANTS:
             v = Vect3f(position().x,position().y,z);
@@ -1021,7 +1023,10 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 
 	for(int iteration=0;iteration<2;iteration++)
 	{
-		uint32_t ignore_unit_class= (iteration == 0) ? UNIT_CLASS_FRAME : ~(uint32_t)UNIT_CLASS_FRAME;
+		uint32_t ignore_unit_class = UNIT_CLASS_FRAME;
+        if (0 < iteration) {
+            ignore_unit_class = ~ignore_unit_class;
+        }
 		FOR_EACH(universe()->Players, pi)
 		{
 			terPlayer* player=*pi;

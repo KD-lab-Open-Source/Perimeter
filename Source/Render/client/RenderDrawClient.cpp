@@ -62,28 +62,28 @@ void FFDData::SetIB() {
     VISASSERT(db.written_indices == GetNumIndices());
 }
 
-void cInterfaceRenderDevice::Draw(FieldDispatcher *ffd)
+void cInterfaceRenderDevice::DrawFieldDispatcher(FieldDispatcher *ffd)
 {
 	int cull=GetRenderState(RS_CULLMODE);
 	SetRenderState(RS_CULLMODE, CULL_NONE);
 
     if (DrawNode->GetCameraPass()==SCENENODE_OBJECT) {
         if (ffd->tile_global & FieldCluster::TT_OPAQUE) {
-            Draw(ffd, FieldCluster::TT_OPAQUE);
+            DrawFieldDispatcher(ffd, FieldCluster::TT_OPAQUE);
         }
 	} else {
         if (ffd->tile_global & FieldCluster::TT_TRANSPARENT_ADD) {
-            Draw(ffd, FieldCluster::TT_TRANSPARENT_ADD);
+            DrawFieldDispatcher(ffd, FieldCluster::TT_TRANSPARENT_ADD);
         }
         if (ffd->tile_global & FieldCluster::TT_TRANSPARENT_MOD) {
-            Draw(ffd, FieldCluster::TT_TRANSPARENT_MOD);
+            DrawFieldDispatcher(ffd, FieldCluster::TT_TRANSPARENT_MOD);
         }
 	}
 	
 	SetRenderState(RS_CULLMODE, cull);
 }
 
-void cInterfaceRenderDevice::Draw(FieldDispatcher *ffd, uint8_t transparent) {
+void cInterfaceRenderDevice::DrawFieldDispatcher(FieldDispatcher *ffd, uint8_t transparent) {
 //	start_timer_auto(Draw_ForceField,1);
 
 	VISASSERT(DrawNode && DrawNode->GetScene());

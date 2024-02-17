@@ -709,6 +709,7 @@ terTerraformGeneral* terTerraformDispatcher::AddElement(terTerraformType type, i
 
 	default:
 		xassert(0);
+        return nullptr;
 	}
 
 	element->Quant(this,true);
@@ -821,6 +822,8 @@ void terTerraformDispatcher::ScanTrustMap(int& request_digger,int& request_fille
 			continue;
 		switch(terraform.Type)
 		{
+        default:
+            break;
 		case TERRAFORM_TYPE_FULL:
 		case TERRAFORM_TYPE_BORDER:
 			if(terraform.Status & TERRAFORM_STATUS_DIG)
@@ -850,6 +853,8 @@ void terTerraformDispatcher::ScanTrustMap(int& request_digger,int& request_fille
 			continue;
 		switch(terraform.Type)
 		{
+        default:
+            break;
 		case TERRAFORM_TYPE_FULL:
 		case TERRAFORM_TYPE_BORDER:
 			if(terraform.Status & TERRAFORM_STATUS_DIG)

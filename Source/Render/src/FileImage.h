@@ -10,9 +10,8 @@ protected:
     int time; //Total time in ms if animated or 0
 public:
 	cFileImage()																{ x=y=length=bpp=time=0; }
-	virtual ~cFileImage()														{}
-	virtual int load(void *pointer,int size)									{ return -1; }
-	virtual int load(const char *fname)												{ return -1; }
+	virtual ~cFileImage()														= default;
+	virtual int load(const char *fname)											{ return -1; }
 	virtual int save(const char *fname,void *pointer,int bpp,int x,int y,int length,int time){ return -1; }
 	virtual int close()															{ return -1; }
 	virtual int GetTextureAlpha(void *pointer,int time,int bpp,int bpl,

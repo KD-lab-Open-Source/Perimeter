@@ -48,6 +48,8 @@ void terCorpseDynamic::setParent(terUnitBase* p)
 	for(int i = 0; i < OriginalAttribute->effectsData.effects.size(); i++){
 		terEffectID id=OriginalAttribute->effectsData.effects[i].effectID;
 		switch(id){
+        default:
+            break;
 		case EFFECT_ID_UNIT_SMOKE:
 			if(EffectKey* key = OriginalAttribute->getEffect(OriginalAttribute->effectsData.effects[i].effectID)){
 				cEffect* effect = terScene->CreateScaledEffect(*key,avatar()->GetModelPoint());

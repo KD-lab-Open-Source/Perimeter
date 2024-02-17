@@ -111,8 +111,8 @@ struct MiniMapEvent {
 	}
 	MiniMapEventCode code;
 	Vect2f pos;
-	int btnID;
-	int tabNumber;
+	int btnID = 0;
+	int tabNumber = 0;
 };
 
 struct LogicData {

@@ -11,7 +11,7 @@ class Knowledge : public tx3d::SharedPointer {
 	public:
 		Knowledge();
 		Knowledge(const Knowledge& origin);
-		virtual ~Knowledge();
+		~Knowledge() override;
 
 		void addKnowledge(const Knowledge& anotherKnowledge);
 		void worldVisited(World* world);

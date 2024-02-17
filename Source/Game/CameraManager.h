@@ -9,7 +9,7 @@ struct SaveCameraSplineData;
 class CameraCoordinate
 {
 public:
-	CameraCoordinate(){}
+	CameraCoordinate() = default;
 	CameraCoordinate(const Vect2f& position, float psi, float theta, float distance); 
 
 	CameraCoordinate operator+(const CameraCoordinate& coord) const;

@@ -481,7 +481,7 @@ void vrtMap::selectUsedWorld(char* _patch2World)
 
 #else //если Периметр
 //Для Периметра
-void vrtMap::prepare(char* name)
+void vrtMap::prepare(const char* name)
 {
 	//Подготовка круглых инструментов
 	landPrepare();

@@ -17,7 +17,7 @@ public:
 	void Start();
 	void Quant();
 
-	virtual void setTarget(terUnitBase* p,Vect3f* target){}
+	//virtual void setTarget(terUnitBase* p,Vect3f* target){}
 
 	virtual void explode();
 	/// идентификатор эффекта взрыва
@@ -43,8 +43,8 @@ class terUnitCorpse : public terUnitBase
 public:
 	terUnitCorpse(const UnitTemplate& data);
 
-	void Quant();
-	void Start();
+	void Quant() override;
+	void Start() override;
 
 	virtual void setParent(terUnitBase* p);
 

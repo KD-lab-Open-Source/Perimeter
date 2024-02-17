@@ -115,7 +115,9 @@ public:
 	static Vect2i w2mCeil(const Vect2i& v) { return Vect2i(w2mCeil(v.x),w2mCeil(v.y)); }
 
 	// Map to world conversion
-	static int m2w(int x) { return x << tileSizeShl; }
+	static int m2w(int x) {
+        return x << tileSizeShl;
+    }
 	static Vect2i m2w(const Vect2i& v) { return Vect2i(m2w(v.x),m2w(v.y)); }
 
 private:

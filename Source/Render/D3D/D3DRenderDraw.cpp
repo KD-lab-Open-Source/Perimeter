@@ -360,8 +360,8 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
 }
 
-void cD3DRender::Draw(class ElasticSphere *es) {
-    cInterfaceRenderDevice::Draw(es);
+void cD3DRender::DrawElasticSphere(class ElasticSphere *es) {
+    cInterfaceRenderDevice::DrawElasticSphere(es);
 
     int is = es->theta_size;
     int js = es->psi_size;

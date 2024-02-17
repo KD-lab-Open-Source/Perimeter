@@ -6,7 +6,7 @@
 #include "qd_textdb.h"
 
 #ifdef GPX
-constexpr char* CREDITS_HEADER_RUS = R"(
+constexpr const char* CREDITS_HEADER_RUS = R"(
 
 &FFFFBBПосвящено памяти
 Андрея "КранК" Кузьмина
@@ -28,7 +28,7 @@ kdlab.com&FFFFFF
 )";
 //END CREDITS_HEADER_RUS
 
-constexpr char* CREDITS_HEADER_ENG = R"(
+constexpr const char* CREDITS_HEADER_ENG = R"(
 
 &FFFFBBDedicated to the memory of
 Andrey "KranK" Kuzmin
@@ -51,7 +51,7 @@ Andrey "KranK" Kuzmin
 
 #else
 
-constexpr char* CREDITS_HEADER_RUS = R"(
+constexpr const char* CREDITS_HEADER_RUS = R"(
 &66CCFFК-Д ЛАБ
 kdlab.com&FFFFFF
 
@@ -61,7 +61,7 @@ kdlab.com&FFFFFF
 1971 - 2022
 )"; //END CREDITS_HEADER_RUS
 
-constexpr char* CREDITS_HEADER_ENG = R"(
+constexpr const char* CREDITS_HEADER_ENG = R"(
 &66CCFFK-D LAB
 kdlab.com&FFFFFF
 
@@ -72,8 +72,8 @@ Andrey "KranK" Kuzmin
 )"; //END CREDITS_HEADER_ENG
 #endif
 
-constexpr char* CREDITS_PERIMETER_TITLE_RUSSIAN = "ПЕРИМЕТР";
-constexpr char* CREDITS_PERIMETER_RUSSIAN = R"(
+constexpr const char* CREDITS_PERIMETER_TITLE_RUSSIAN = "ПЕРИМЕТР";
+constexpr const char* CREDITS_PERIMETER_RUSSIAN = R"(
 &CCCCFFПродюсер&FFFFFF
 Игровая концепция и вселенная,
 сценарий
@@ -182,8 +182,8 @@ Copyright (C) 1994-2023 Xiph.Org
 
 )"; //END CREDITS_PERIMETER_RUSSIAN
 
-constexpr char* CREDITS_PERIMETER_ET_TITLE_RUSSIAN = "ПЕРИМЕТР: Завет Императора";
-constexpr char* CREDITS_PERIMETER_ET_RUSSIAN = R"(
+constexpr const char* CREDITS_PERIMETER_ET_TITLE_RUSSIAN = "ПЕРИМЕТР: Завет Императора";
+constexpr const char* CREDITS_PERIMETER_ET_RUSSIAN = R"(
 &CCCCFFКонцепт-дизайнер&FFFFFF
 Игровая концепция и вселенная
 
@@ -406,8 +406,8 @@ github.com/KD-lab-Open-Source
 
 )"; //END CREDITS_COMMON_RUSSIAN
 
-constexpr char* CREDITS_PERIMETER_TITLE_ENGLISH = "PERIMETER";
-constexpr char* CREDITS_PERIMETER_ENGLISH = R"(
+constexpr const char* CREDITS_PERIMETER_TITLE_ENGLISH = "PERIMETER";
+constexpr const char* CREDITS_PERIMETER_ENGLISH = R"(
 &CCCCFFProducer&FFFFFF
 Game Concept, Game Universe,
 Scenarios
@@ -510,8 +510,8 @@ Copyright (C) 1994-2023 Xiph.Org.
 
 )"; //END CREDITS_PERIMETER_ENGLISH
 
-constexpr char* CREDITS_PERIMETER_ET_TITLE_ENGLISH = "PERIMETER: Emperor's Testament";
-constexpr char* CREDITS_PERIMETER_ET_ENGLISH = R"(
+constexpr const char* CREDITS_PERIMETER_ET_TITLE_ENGLISH = "PERIMETER: Emperor's Testament";
+constexpr const char* CREDITS_PERIMETER_ET_ENGLISH = R"(
 &CCCCFFConcept-designer&FFFFFF
 Game concept, Game universe
 

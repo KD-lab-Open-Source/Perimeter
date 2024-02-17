@@ -1002,6 +1002,8 @@ void CShellIconManager::showHint(const char* text, int showTime, ActionTask::Typ
 
 		std::string res = qdTextDB::instance().getText(text);
 		switch (actionType) {
+            default:
+                break;
 			case ActionTask::COMPLETED:
 				res = qdTextDB::instance().getText("Interface.Tips.Completed") + res;
 				break;
@@ -1269,7 +1271,7 @@ void CShellIconManager::PostLoadTabSheets()
 	CShellWindow* pBkg = GetWnd(SQSH_BACKGRND_ID);
 	if(pBkg)
 	{
-		CShellWindow* pTab;
+		CShellWindow* pTab = nullptr;
 		std::list<CShellWindow*>::iterator i_tab;
 				
 		//buildings tab
@@ -2336,6 +2338,8 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 
 	switch(attr->interfacePrm.format_group)
 	{
+    default:
+        break;
 	case POPUP_FORMAT_GUN:
 		PopupFormatBuilding(attr, cbBuffer, onControl, unit, false, true);
 		break;
