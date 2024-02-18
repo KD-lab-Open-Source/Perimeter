@@ -42,12 +42,12 @@ public:
 	virtual bool readyToTeleportate() const = 0;
 	virtual void input(terFrame* frame);
 
-	void DestroyLink();
-	void Quant();
+	void DestroyLink() override;
+	void Quant() override;
 
-	void setDamage(const DamageData& damage,terUnitBase* p) {}
+	void setDamage(const DamageData& damage,terUnitBase* p) override {}
 
-	ChainID chainRequest() const { return CHAIN_NONE; }
+	ChainID chainRequest() const override { return CHAIN_NONE; }
 
 protected:
 	terFrame* frame_;

@@ -24,10 +24,6 @@ public:
 
 	cMeshTri();
 	~cMeshTri();
-
-	inline const Vect3f& GetPos(size_t n) const { return VertexBuffer[n].pos; }
-	inline const Vect3f& GetNormal(size_t n) const { return VertexBuffer[n].n; }
-	inline const sVertexXYZNT1& GetVertex(size_t n) const { return VertexBuffer[n]; }
     
 	void GetBoundingBox(Vect3f &min,Vect3f &max);	// возвращает бокс-баунд
 	void CalcBumpST();

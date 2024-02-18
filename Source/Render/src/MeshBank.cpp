@@ -116,8 +116,8 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 				for(int j=0;j<p.texel.size();j++,cur_vertex++)
 				{
 					sVertexXYZNT1& v=new_vertex[cur_vertex];
-					v.pos=Vertex[i];
-					*((Vect3f*)&v.n)=p.normal;
+					v.setPos(Vertex[i]);
+					p.normal.write(v.n);
 					
 					Vect2f& t=Texel[p.texel[j]];
 					v.uv[0]=t.x;
@@ -126,8 +126,8 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 			}else
 			{
 				sVertexXYZNT1& v=new_vertex[cur_vertex++];
-				v.pos=Vertex[i];
-				*((Vect3f*)&v.n)=p.normal;
+				v.setPos(Vertex[i]);
+				p.normal.write(v.n);
 				
 				v.uv[0]=v.uv[1]=0;
 			}
@@ -633,8 +633,8 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 		for(i=0;i<n_vertex;i++)
 		{
 			sVertexXYZNT1& v=new_vertex[i];
-			v.pos=Vertex[i];
-			v.n=Normal[i];
+			Vertex[i].write(v.pos);
+			Normal[i].write(v.n);
 			Vect2f& t=Texel[i];
 			v.uv[0]=t.x;
 			v.uv[1]=t.y;
@@ -644,8 +644,8 @@ cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon
 		for(i=0;i<n_vertex;i++)
 		{
 			sVertexXYZNT1& v=new_vertex[i];
-			v.pos=Vertex[i];
-			v.n=Normal[i];
+			Vertex[i].write(v.pos);
+			Normal[i].write(v.n);
 			v.uv[0]=0;
 			v.uv[1]=0;
 		}

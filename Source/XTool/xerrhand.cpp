@@ -13,7 +13,7 @@
 #include <process.h>
 #include <crtdbg.h>
 #include <cfloat>
-#include <sstream>
+#include <cinttypes>
 #endif
 #include "tweaks.h"
 #include "xstream.h"
@@ -59,7 +59,7 @@ XErrorHandler ErrH;
 
 //All the Win32 on x86/64 specific error handling
 #ifdef USE_ORIGINAL_HANDLER
-void win32_break(char* error,char* msg) {
+void win32_break(const char* error,char* msg) {
     std::cerr << "--------------------------------\n";
     std::cerr << error << "\n";
     std::cerr << msg << "\n";
@@ -71,11 +71,11 @@ void win32_break(char* error,char* msg) {
 
 char* qwtoa(uint64_t a)
 {
-    sprintf(convBuf, "%llX", a);
+    sprintf(convBuf, "%" PRIX64, a);
     size_t len = 16 - strlen(convBuf);
     for(int i = 0; i < len;i++)
         convBuf[i] = '0';
-    sprintf(convBuf + len, "%llX", a);
+    sprintf(convBuf + len, "%" PRIX64, a);
     return convBuf;
 }
 char* dwtoa(uint32_t a)

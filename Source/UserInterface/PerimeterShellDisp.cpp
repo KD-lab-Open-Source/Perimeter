@@ -3754,7 +3754,7 @@ void CShellIconManager::UpdateSquadIcons()
 		if (	(_pShellDispatcher->GetSelectedUnitsCount() > 1) && 
 				(_pShellDispatcher->GetSelectedUnit()->attr()->ID == UNIT_ATTRIBUTE_SQUAD)
 			) {
-			terUnitBase* b = _pShellDispatcher->GetSelectedUnit();
+			//terUnitBase* b = _pShellDispatcher->GetSelectedUnit();
 
 			CUITabSheet* pSquadSheet = (CUITabSheet*)GetWnd(SQSH_TAB_SQUAD_ID);
 			int nActivePage = pSquadSheet->GetActivePage();
@@ -3765,7 +3765,7 @@ void CShellIconManager::UpdateSquadIcons()
 				const UnitList& selList=universe()->select.GetSelectList();
 				UnitList::const_iterator selIt;
 				for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
-					b = *selIt;
+					//b = *selIt;
 					terUnitSquad* sq = (terUnitSquad*)(*selIt);
 					if (!sq->Empty()) {
                         if (!sq->mutationFinished()) {

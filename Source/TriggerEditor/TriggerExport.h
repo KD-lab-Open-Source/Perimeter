@@ -36,14 +36,6 @@ enum CompareOperator
 DECLARE_ENUM_DESCRIPTOR(CompareOperator)
 
 //-----------------------------
-// Для отделения контента
-#ifndef _SURMAP_
-#define virtual_ virtual
-#else
-#define virtual_ 
-#endif
-
-//-----------------------------
 class AIPlayer;
 class terUnitBase;
 class TreeNode;
@@ -129,9 +121,9 @@ struct Condition : ShareHandleBaseSerializeVirtual // Не выполняетс�
 	bool checkDebug(AIPlayer& aiPlayer) { 
 		return state_ = check(aiPlayer); 
 	}
-	virtual_ void checkEvent(AIPlayer& aiPlayer, const class Event* event) {}
-	virtual_ void clear() {}
-	virtual_ void writeInfo(XBuffer& buffer, std::string offset) const {}
+	virtual void checkEvent(AIPlayer& aiPlayer, const class Event* event) {}
+	virtual void clear() {}
+	virtual void writeInfo(XBuffer& buffer, std::string offset) const {}
 
 	bool state() const {
 		return state_;
@@ -158,7 +150,7 @@ protected:
 	bool state_; 
 	int internalColor_;
 
-	virtual_ bool check(AIPlayer& aiPlayer) { return false; }
+	virtual bool check(AIPlayer& aiPlayer) { return false; }
 };
 
 struct ConditionNode //
@@ -198,10 +190,10 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 		type = AND; 
 	}
 
-	bool check(AIPlayer& aiPlayer);
-	void checkEvent(AIPlayer& aiPlayer, const Event* event);
-	void clear();
-	void writeInfo(XBuffer& buffer, std::string offset) const;
+	bool check(AIPlayer& aiPlayer) override;
+	void checkEvent(AIPlayer& aiPlayer, const Event* event) override;
+	void clear() override;
+	void writeInfo(XBuffer& buffer, std::string offset) const override;
 
     VIRTUAL_SERIALIZE(ar) {
 		Condition::serialize_template(ar);
@@ -221,10 +213,10 @@ struct Action : ShareHandleBaseSerializeVirtual // Пустое действие
 		internalColor_ = 0;
 	}
 
-	virtual_ bool automaticCondition(AIPlayer& aiPlayer) const { return true; }
-	virtual_ void activate(AIPlayer& aiPlayer) {}
-	virtual_ bool workedOut(AIPlayer& aiPlayer) { return true; }
-	virtual_ bool onlyIfAI() const { return false; }
+	virtual bool automaticCondition(AIPlayer& aiPlayer) const { return true; }
+	virtual void activate(AIPlayer& aiPlayer) {}
+	virtual bool workedOut(AIPlayer& aiPlayer) { return true; }
+	virtual bool onlyIfAI() const { return false; }
 
 	const char* name() const;
 

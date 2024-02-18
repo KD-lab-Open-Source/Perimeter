@@ -9,7 +9,7 @@ class CGeoInfluence {
 	//unsigned char* inVxG;
 	//unsigned char* inAtr;
 	unsigned short* inVx;
-	unsigned char* inSur;
+	//unsigned char* inSur;
 	int* tmpltGeo;
 	unsigned char* tmpltSur;
 	int x,y,sx,sy;
@@ -597,12 +597,13 @@ struct sTorpedo {
 		return -1;
 	};
 	bool insert2Arr(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo=0){
-
+        /*
 		int bxg, byg, exg, eyg;
 		bxg=_x>>kmGrid;
 		byg=_y>>kmGrid;
 		exg=(_x+_sx)>>kmGrid;
 		eyg=(_y+_sy)>>kmGrid;
+        */
 		///int i,j;
 		///for(i=byg; i<=eyg; i++){
 		///	for(j=bxg; j<=exg; j++){

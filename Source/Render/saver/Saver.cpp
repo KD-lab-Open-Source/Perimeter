@@ -114,11 +114,11 @@ bool CLoadDirectoryFile::Load(const char* filename)
 	if(size<0)return false;
 	_lseek(file,0,SEEK_SET);
 	begin=new uint8_t[size];
-	_read(file,begin,size);
+	bool ok = _read(file,begin,size) == size;
 	_close(file);
 
 	cur=0;
-	return true;
+	return ok;
 }
 
 

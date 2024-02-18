@@ -46,7 +46,7 @@ public:
 
 
     bool SetScreenShot(const char *fname) override { return false; }
-    uint32_t GetRenderState(eRenderStateOption option) { return 0; }
+    uint32_t GetRenderState(eRenderStateOption option) override { return 0; }
     int SetRenderState(eRenderStateOption option,uint32_t value) override { return 0; }
 
     int CreateTilemap(class cTileMap *TileMap) override { return -1; }
@@ -72,7 +72,7 @@ public:
     void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override { return nullptr; };
     void UnlockTexture(class cTexture *Texture) override {}
     void SetTextureImage(uint32_t slot, TextureImage* texture_image) override {}
-    uint32_t GetMaxTextureSlots() { return 0; }
+    uint32_t GetMaxTextureSlots() override { return 0; }
 
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override {};
     void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,

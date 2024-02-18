@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cinttypes>
 #include "xstream.h"
 
 int64_t XStream::read(void* buf, int64_t len)
@@ -14,7 +15,7 @@ int64_t XStream::read(void* buf, int64_t len)
 	if(extSize != -1 && pos >= extSize) eofFlag = 1;
      */
 #ifdef XSTREAM_DEBUG
-    fprintf(stderr, "DBG: XStream::read %s %lu\n", fname.c_str(), len);
+    fprintf(stderr, "DBG: XStream::read %s %" PRIi64 "\n", fname.c_str(), len);
 #endif
 
     handler->read((char*) buf, len);
@@ -37,7 +38,7 @@ int64_t XStream::write(const void* buf, int64_t len)
     }
 	*/
 #ifdef XSTREAM_DEBUG
-    fprintf(stderr, "DBG: XStream::write %s %lu\n", fname.c_str(), len);
+    fprintf(stderr, "DBG: XStream::write %s %" PRIi64 "\n", fname.c_str(), len);
 #endif
 
     handler->write((char*) buf, len);

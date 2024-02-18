@@ -99,35 +99,35 @@ public:
 		return safe_cast<const AttributeFrame*>(terUnitReal::attr());
 	}
 
-	void DestroyLink();
+	void DestroyLink() override;
 	
-	void setPose(const Se3f& pose, bool initPose);
-	void setRealModel(int modelIndex, float scale);
+	void setPose(const Se3f& pose, bool initPose) override;
+	void setRealModel(int modelIndex, float scale) override;
 
-	void AvatarQuant();
-	void Quant();
-	void MoveQuant();
+	void AvatarQuant() override;
+	void Quant() override;
+	void MoveQuant() override;
 
-	void WayPointStart();
-	void WayPointController();
+	void WayPointStart() override;
+	void WayPointController() override;
 
-    void explode();
-    void Kill();
-	void ChangeUnitOwner(terPlayer* player);
+    void explode() override;
+    void Kill() override;
+	void ChangeUnitOwner(terPlayer* player) override;
 
-	void executeCommand(const UnitCommand& command);
+	void executeCommand(const UnitCommand& command) override;
 
-	void MapUpdateHit(float x0,float y0,float x1,float y1);
+	void MapUpdateHit(float x0,float y0,float x1,float y1) override;
 
 	terUnitBase* GetProductionPoint(){ return activeSlot_ ? activeSlot_->UnitPoint : 0; };
-	terUnitSquad* GetSquadPoint(){ return SquadPoint; };
+	terUnitSquad* GetSquadPoint() override { return SquadPoint; };
 
 	void attach();
 	void detach();
 	void finishIO();
 
-	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(SaveUnitData* data);
+	SaveUnitData* universalSave(SaveUnitData* data) override;
+	void universalLoad(SaveUnitData* data) override;
 
 	void GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[FRAME_SLOTS_MAX]);
 
@@ -137,24 +137,24 @@ public:
 	bool attached() const { return ValidStatus == ATTACHED; }
 	bool attaching() const { return RequestStatus == ATTACHED; }
 	bool powered() const { return powered_; }
-	bool isBuildingEnable() const { return powered() || attached(); } //{ return powered_ && pillar_->chainID() == CHAIN_SWITCHED_ON; }
-	bool readyToConnect() const;
+	bool isBuildingEnable() const override { return powered() || attached(); } //{ return powered_ && pillar_->chainID() == CHAIN_SWITCHED_ON; }
+	bool readyToConnect() const override;
 //	int isSingleSelection(){ return ValidStatus == ATTACHED && RequestStatus == ATTACHED; }
-	int isSingleSelection(){ return 0; }
-	bool isBuilding() const { return ValidStatus == ATTACHED; }
+	int isSingleSelection() override { return 0; }
+	bool isBuilding() const override { return ValidStatus == ATTACHED; }
 
-	void setDamage(const DamageData& damage, terUnitBase* p);
+	void setDamage(const DamageData& damage, terUnitBase* p) override;
 
 	void setPowered(bool powered);
 	void restorePosition();
 
-	int GetInterfaceLegionMode();
+	int GetInterfaceLegionMode() override;
 
 	bool canTeleportate() const;
 	bool underTeleportation() const { return underTeleportation_; }
 
-	void ShowInfo();
-	void showDebugInfo();
+	void ShowInfo() override;
+	void showDebugInfo() override;
 
 	bool analyzeTerrain();
 

@@ -1547,9 +1547,10 @@ void OnButtonAttack(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		_pShellDispatcher->m_nPickAction = SHELL_PICK_UNIT_ATTACK;
 		_pShellDispatcher->m_nPickData = 0;
 
+        /*
 		terUnitBase* pUnit = _pShellDispatcher->GetSelectedUnit();
 		if (pUnit) {
-			const AttributeBase* attr = 0;
+			const AttributeBase* attr = nullptr;
 			if (pUnit->attr()->ID == UNIT_ATTRIBUTE_SQUAD) {
 				terUnitAttributeID id = safe_cast<terUnitSquad*>(pUnit)->currentMutation();
 				if (id != UNIT_ATTRIBUTE_NONE) {
@@ -1563,6 +1564,7 @@ void OnButtonAttack(CShellWindow* pWnd, InterfaceEventCode code, int param)
 //				_pShellDispatcher->m_nPickData = 1;
 //			}
 		}
+        */
 
 		_shellCursorManager.SetActiveCursor(CShellCursorManager::attack, 1);
 	}

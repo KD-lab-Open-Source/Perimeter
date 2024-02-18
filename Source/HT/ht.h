@@ -63,10 +63,6 @@ protected:
 	time_type dtime;
 
 	SDL_threadID logic_thread_id;
-	struct LogicThreadArg
-	{
-		MissionDescription mission;
-	};
 	void logic_thread();
 
     friend int logic_thread_init(void*);

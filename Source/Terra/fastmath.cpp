@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 }
 */
 
-
+/*
 //#define eps 0.0001f
 #define eps 1.f
 float  fastsqrtN (float x)
@@ -97,18 +97,18 @@ float  fastsqrtN (float x)
     if (x < 0.0f)
         return -1.0f;
     if (x == 0.0f)
-        return 0.0f;  /* может привести к делению на 0 */
+        return 0.0f;  // может привести к делению на 0
     EPS = x * eps;
     sq = x;
-    sqold = x + 30.0f;         /* != sq */
+    sqold = x + 30.0f;         // != sq
     while (xm::abs(sq * sq - x) >= EPS) {
-    /*     xm::abs( sq - sqold )>= EPS    */
+    //     xm::abs( sq - sqold )>= EPS
         sqold = sq;
         sq = 0.5f * (sq + x / sq);
     }
     return sq;
 }
-
+*/
 
 unsigned short sqrtTable4IntegerCalculate[1024];
 void init_sqrtTable4IntegerCalculate(void)

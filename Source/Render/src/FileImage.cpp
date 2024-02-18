@@ -206,12 +206,12 @@ bool SaveTGA(const char* filename,int width,int height,unsigned char* buf,int by
 
 	uint32_t Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
 
-	_write(file,&Hdr,18);
-	_write(file,buf,Numbytes);
+    bool ok = _write(file,&Hdr,18) == 18;
+    if (ok) ok = _write(file,buf,Numbytes) == Numbytes;
 	_close(file);
     scan_resource_paths(filename);
 
-	return true;
+	return ok;
 }
 
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
@@ -225,7 +225,11 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 
 	TGAHeader Hdr;
 
-	_read(file,&Hdr,18);
+    bool err = _read(file,&Hdr,18) != 18;
+    if (err) {
+        _close(file);
+        return false;
+    }
 
 	byte_per_pixel=Hdr.bitsPerPixel/8;
 
@@ -236,9 +240,11 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
     uint32_t Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
 
 	buf=new unsigned char[Hdr.width*Hdr.height*byte_per_pixel];
-	_read(file,buf,Numbytes);
+	err = _read(file,buf,Numbytes) != Numbytes;
 
 	_close(file);
+    
+    if (err) { return false; }
 
 	bool updown=(Hdr.flags&0x20)?false:true;
 

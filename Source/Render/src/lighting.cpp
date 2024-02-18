@@ -124,8 +124,8 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
         sVertexXYZDT1& v1 = vb[i*2];
         sVertexXYZDT1& v2 = vb[i*2+1];
         v1.diffuse = v2.diffuse = diffuse;
-        v1.pos=p.pos-(size*p.n);
-        v2.pos=p.pos+(size*p.n);
+        v1.setPos(p.pos-(size*p.n));
+        v2.setPos(p.pos+(size*p.n));
         v1.u1()=v2.u1()=p.u;
         v1.v1()=0;v2.v1()=1;
 	}

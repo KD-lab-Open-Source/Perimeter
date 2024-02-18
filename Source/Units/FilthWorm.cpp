@@ -222,10 +222,10 @@ void terFilthWorm::Start()
 {
 	terFilthGeneric::Start();
 
-	bool b=sound.Init("Filth_Move_Worm");
+	sound.Init("Filth_Move_Worm");
 	sound.SetPos(To3D(position()));
 
-	b=attack_sound.Init("Filth_Attack_Worm");
+	attack_sound.Init("Filth_Attack_Worm");
 	attack_sound.SetPos(To3D(position()));
 
 	setAttack(false);

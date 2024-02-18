@@ -164,7 +164,7 @@ IF(MINGW)
     SET(EXE_LINK_LIBS_POST ${EXE_LINK_LIBS_POST} "winmm;imm32;setupapi;version;ws2_32;iphlpapi")
 ENDIF()
 IF(OPTION_STATIC_LIB_STD)
-    IF (NOT MSVC_CL_BUILD)
+    IF (NOT MSVC_CL_BUILD AND NOT APPLE)
         MESSAGE("Linking libstd statically")
         set(LINK_FLAGS "-static-libstdc++")
         IF (NOT CLANG)
@@ -316,7 +316,6 @@ IF(NOT MSVC_CL_BUILD)
         SET(CMAKE_BUILD_RPATH "./dxvk-native-prefix/src/dxvk-native-build/src/d3d9/")
     ELSE()
         SET(CMAKE_BUILD_RPATH "$ORIGIN") #let binary find libs on own dir
-        SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -no-pie -fno-pie")
     ENDIF()
 
     IF (OPTION_ASAN)
@@ -333,16 +332,17 @@ IF(NOT MSVC_CL_BUILD)
     add_compile_options(-Wno-unused-parameter)
     add_compile_options(-Wno-unused-function)
     add_compile_options(-Wno-unused-variable)
+    add_compile_options(-Wno-unused-value)
     add_compile_options(-Wno-comment)
+    add_compile_options(-Wno-deprecated)
+    add_compile_options(-Wno-strict-aliasing)
     IF(CLANG)
         add_compile_options(-Wno-missing-braces)
         add_compile_options(-Wno-invalid-source-encoding)
     ELSE()
         add_compile_options(-Wno-unused-but-set-variable)
+        SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -no-pie -fno-pie")
     ENDIF()
-    add_compile_options(-Wno-unused-value)
-    add_compile_options(-Wno-deprecated)
-    add_compile_options(-Wno-strict-aliasing)
     
     #TODO remove these once code is more reasonable
     add_compile_options(-Wno-sign-compare)
@@ -351,11 +351,11 @@ IF(NOT MSVC_CL_BUILD)
         add_compile_options(-Wno-reorder-ctor)
     ENDIF()
 
-    add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
+    add_compile_options(-Wno-pragmas)
+    add_compile_options(-Wno-unknown-pragmas)
     
     #These options may cause issues with external code compilation, so we apply only to our own targets
     SET(PERIMETER_COMPILE_OPTIONS
-            #-Werror
             -Werror=implicit-fallthrough
             -Werror=shift-negative-value
             -Werror=parentheses
@@ -363,20 +363,27 @@ IF(NOT MSVC_CL_BUILD)
             -Werror=return-type
             -Werror=switch
             -Werror=write-strings
-            -Werror=mismatched-new-delete
-            -Werror=stringop-truncation
-            -Werror=maybe-uninitialized
             -Werror=overloaded-virtual
-            -Werror=mismatched-new-delete
             -Werror=sequence-point
-            -Werror=vexing-parse
             -Werror=enum-compare
             -Werror=format
-            -Werror=format-overflow
-            -Wno-deprecated-copy
             #TODO remove these once code is more reasonable
-            -Wno-class-memaccess
+            -Wno-deprecated-copy
+            #TODO hide FFMPEG deprecated API usage warning for now
+            -Wno-deprecated-declarations
     )
+    IF(CLANG)
+        set(PERIMETER_COMPILE_OPTIONS
+                ${PERIMETER_COMPILE_OPTIONS}
+                -Werror=inconsistent-missing-override
+        )
+    ELSE ()
+        set(PERIMETER_COMPILE_OPTIONS
+                ${PERIMETER_COMPILE_OPTIONS}
+                #TODO remove these once code is more reasonable
+                -Wno-class-memaccess
+        )
+    ENDIF()
 ENDIF()
 
 #Pass project version as a definition

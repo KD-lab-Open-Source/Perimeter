@@ -158,16 +158,24 @@ bool cObjMesh::Intersect(const Vect3f& p0,const Vect3f& p1)
 void cObjMesh::GetAllPoints(std::vector<Vect3f>& point)
 {
 	if (!Tri) return;
+    Vect3f v;
+    MatXf mat = GetGlobalMatrix();
 	for (int i=0;i<Tri->NumVertex;i++) {
-		point.push_back(GetGlobalMatrix()*Tri->GetPos(i));
+        v.set(Tri->VertexBuffer[i].pos);
+        mat.xformPoint(v);
+		point.push_back(v);
 	}
 }
 
 void cObjMesh::GetAllNormals(std::vector<Vect3f>& point)
 {
 	if (!Tri) return;
+    Vect3f n;
+    Mat3f mat = GetGlobalMatrix().rot();
 	for (int i=0;i<Tri->NumVertex;i++) {
-		point.push_back(GetGlobalMatrix().rot()*Tri->GetNormal(i));
+        n.set(Tri->VertexBuffer[i].n);
+        mat.xform(n);
+		point.push_back(n);
 	}
 }
 
@@ -178,8 +186,11 @@ int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>&
 		return 0;
 	}
 
-	for (int i=0;i<Tri->NumVertex;i++) {
-		point[i]=GetGlobalMatrix()*Tri->GetPos(i);
+    MatXf mat = GetGlobalMatrix();
+    for (int i=0;i<Tri->NumVertex;i++) {
+        Vect3f& v = point[i];
+        v.set(Tri->VertexBuffer[i].pos);
+        mat.xformPoint(v);
 	}
 	return Tri->NumVertex;
 }
@@ -201,10 +212,14 @@ void cObjMesh::ChangeBank(cAllMeshBank* new_root)
 void cObjMesh::DrawBadUV(cCamera *DrawNode)
 {
 	if (!Tri) return;
+    Vect3f vpos;
+    MatXf mat = GetGlobalMatrix();
 	for(int i=0;i<Tri->NumVertex;i++) {
-		const sVertexXYZNT1& v = Tri->GetVertex(i);
+		const sVertexXYZNT1& v = Tri->VertexBuffer[i];
 		if(!(v.uv[0]>-100 && v.uv[0]<100 && v.uv[1]>-100 && v.uv[1]<100)) {
-			gb_RenderDevice->DrawPoint(GetGlobalMatrix()*v.pos,sColor4c(255,0,0,255));
+            vpos.set(v.pos);
+            mat.xformPoint(vpos);
+			gb_RenderDevice->DrawPoint(v.pos,sColor4c(255,0,0,255));
 		}
 	}
 }

@@ -244,11 +244,12 @@ void MutationProcess::show_quant()
 			case MovingIn: 
 				{
 					MTAuto lock(getLock());
-					FOR_EACH(spheres, si){
+					FOR_EACH(spheres, si) {
 						si->setTarget(center);
-						if(source.size() != 1)
-							si->setTarget(center, si->displacement.norm() - si->radius);
-						}
+						if(source.size() != 1) {
+                            si->setTarget(center, si->displacement.norm() - si->radius);
+                        }
+                    }
 					break; 
 				}
 
@@ -256,11 +257,13 @@ void MutationProcess::show_quant()
 				SND3DPlaySound("transforming_large_appear", &center);
 				FOR_EACH(spheres, si){
 					si->setTarget(center);
-					}
-				if(spheres.size() == 1)
-					phase++;
-				else
-					break;
+                }
+				if(spheres.size() == 1) {
+                    phase++;
+                } else {
+                    break;
+                }
+                [[fallthrough]];
 
 			case Separation: 
 				{
@@ -279,11 +282,12 @@ void MutationProcess::show_quant()
 					if(target.size() == 1){
 						phase++;
 						main_sphere.set(0, 0);
-						}
-					else
-						break;
+                    } else {
+                        break;
+                    }
 				}
-
+                [[fallthrough]];
+            
 			case MovingOut: {
 					MTAuto lock(getLock());
 					//SND3DPlaySound(forward ? "transforming_mid_move" : "transforming_small_move", &center);

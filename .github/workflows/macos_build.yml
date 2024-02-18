@@ -28,13 +28,13 @@ jobs:
     if: github.event.pull_request.draft != true
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install libs
         run: |
           brew install ninja yasm dylibbundler \
           libogg libvorbis libvpx boost meson cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: cache
         with:
           path: |
@@ -117,7 +117,7 @@ jobs:
       - name: perimeter -- release tar
         run: tar -cvf Perimeter.app.tar Perimeter.app
       #TODO Expose artifacts once we build universal binaries
-      #- uses: actions/upload-artifact@v3
+      #- uses: actions/upload-artifact@v4
       #  with:
       #    name: Perimeter MacOS ${{matrix.env.build_type}}
       #    path: Perimeter.app.tar

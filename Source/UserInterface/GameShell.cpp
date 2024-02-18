@@ -1123,8 +1123,8 @@ void GameShell::EventHandler(SDL_Event& event) {
             ));
             break;
         }
-        case SDL_KEYDOWN: {
-        case SDL_KEYUP:
+        case SDL_KEYDOWN:
+        case SDL_KEYUP: {
             bool editMode = _shellIconManager.isInEditMode();
             SDL_KeyboardEvent key = event.key;
             s = sKey(key.keysym, true);

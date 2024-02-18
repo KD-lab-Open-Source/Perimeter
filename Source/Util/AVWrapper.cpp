@@ -171,7 +171,7 @@ void AVWrapper::pullFilterAudio() {
         converted->time_base = av_buffersink_get_time_base(buffersinkCtx);
         converted->wrapper = this;
         audioFrames.emplace_back(converted);
-        //printf("Converted %f %ld\n", converted->getPresentationTime(), converted->frame->pts);
+        //printf("Converted %f %" PRIi64 "\n", converted->getPresentationTime(), converted->frame->pts);
         converted = nullptr;
     }
     //Leftover
@@ -664,7 +664,7 @@ void AVWrapper::handleFrame(AVWrapperFrame* frame) {
             //Do audio conversion
 #ifdef PERIMETER_FFMPEG_MOVIE
             if (filterGraph) {
-                //printf("Audio %f %ld %ld\n", frame->getPresentationTime(), frame->frame->pts, packet->pts);
+                //printf("Audio %f %" PRIi64 " %" PRIi64 "\n", frame->getPresentationTime(), frame->frame->pts, packet->pts);
                 // push the audio data from decoded frame into the filtergraph
                 int ret = av_buffersrc_write_frame(buffersrcCtx, frame->frame);
                 if (ret < 0) {

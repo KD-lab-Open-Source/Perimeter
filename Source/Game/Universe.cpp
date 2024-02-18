@@ -688,6 +688,7 @@ void MissionDescription::loadDescription() {
                         switch (pd.realPlayerType) {
                             case REAL_PLAYER_TYPE_OPEN:
                                 pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
+                                [[fallthrough]];
                             case REAL_PLAYER_TYPE_CLOSE:
                             case REAL_PLAYER_TYPE_WORLD:
                             case REAL_PLAYER_TYPE_AI:

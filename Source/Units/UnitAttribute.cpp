@@ -170,6 +170,7 @@ void AttributeBase::init()
                 default:
                     break;
             }
+            break;
         default:
             break;
     }
@@ -621,7 +622,7 @@ bool DamageMolecula::isStable() const
 	return true;
 }
 
-const SaveDamageMolecula& SaveDamageMolecula::operator=(const DamageMolecula& data)
+SaveDamageMolecula& SaveDamageMolecula::operator=(const DamageMolecula& data)
 {
 	isAlive = data.isAlive();
 	elementsDead.clear();

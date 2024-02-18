@@ -27,8 +27,8 @@ jobs:
     container:
       image: "debian:buster"
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         id: cache
         with:
           path: |
@@ -58,7 +58,7 @@ jobs:
           ./docker/linux/builder \
             -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
             ${{matrix.env.cmake}}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Perimeter ${{matrix.env.build_type}} ${{matrix.env.arch}}
           path: ./build/docker-linux/output/Perimeter.tar
@@ -77,7 +77,7 @@ jobs:
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: update repos
         run: sudo apt-get update
       - name: install libs

@@ -7,6 +7,8 @@
 #define GET_PREF_PATH() SDL_GetPrefPath("K-D LAB", "Perimeter")
 #define PRINTF_FLOATING_FORMAT "%.*f"
 
+#define PRIsize "zu"
+
 struct XBuffer;
 
 unsigned int XRnd(unsigned int m);

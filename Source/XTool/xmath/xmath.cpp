@@ -457,11 +457,14 @@ Mat4f& Mat4f::postmult(const Mat4f& M)
 }
 
 bool Mat4f::eq(const Mat4f& v, float delta) const {
-    if (delta == 0) {
-        return memcmp(array, v.array, sizeof(float) * 16) == 0;
+    const float* va = &v.xx;
+    const float* a = &xx;
+    if (memcmp(a, va, sizeof(float) * 16) == 0) {
+        //Memory representation is same
+        return true;
     }
     for (int i = 0; i < 16; ++i) {
-        if (!(xm::abs(array[i] - v.array[i]) < delta)) {
+        if (!(xm::abs(a[i] - va[i]) < delta)) {
             return false;
         } 
     }

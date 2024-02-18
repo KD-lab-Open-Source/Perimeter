@@ -67,11 +67,11 @@ void cUnkLight::Draw(cCamera *DrawNode)
         sVertexXYZDT1& v0 = vb[i*2];
         sVertexXYZDT1& v1 = vb[i*2+1];
 		if (i&1) {
-            v0.pos = GetPos() - sx + sy - sz;
-            v1.pos = GetPos() - sx - sy - sz;
+            (GetPos() - sx + sy - sz).write(v0.pos);
+            (GetPos() - sx - sy - sz).write(v1.pos);
         } else {
-            v0.pos = GetPos() + sx + sy - sz;
-            v1.pos = GetPos() + sx - sy - sz;
+            (GetPos() + sx + sy - sz).write(v0.pos);
+            (GetPos() + sx - sy - sz).write(v1.pos);
         }
 		v0.GetTexel().set(tex,0); v1.GetTexel().set(tex,1);
 		v0.diffuse=v1.diffuse=Diffuse;

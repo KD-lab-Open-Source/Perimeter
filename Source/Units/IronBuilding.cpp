@@ -463,7 +463,6 @@ void terIconBuilding::quant()
 
 void terIconBuilding::show(const Vect3f& pos)
 {
-	xassert(pos);
 	Mat3f mat;
 	mat.xpose(terCamera->GetCamera()->GetMatrix().rot());
 

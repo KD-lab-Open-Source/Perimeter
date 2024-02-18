@@ -466,9 +466,12 @@ bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm)
 		}else
 			pos.set(0,0,0);
 		if (norm) {
-			if (parent->GetNorm().empty())
-				norm->set(0,0,0);
-			else norm->set(parent->GetNorm()[cur_one_pos]);
+			if (parent->GetNorm().empty()) {
+                norm->set(0, 0, 0);
+            } else {
+                Vect3f& v = parent->GetNorm()[cur_one_pos];
+                norm->set(v);
+            }
         }
 		break;
 	case EMP_3DMODEL_INSIDE:
@@ -479,9 +482,12 @@ bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm)
 		}else
 			pos.set(0,0,0);
 		if (norm) {
-			if (parent->GetNorm().empty())
-				norm->set(0,0,0);
-			else norm->set(normal_position[cur_one_pos]);
+			if (parent->GetNorm().empty()) {
+                norm->set(0, 0, 0);
+            } else {
+                Vect3f& v = normal_position[cur_one_pos];
+                norm->set(v);
+            }
         }
 		break;
 	}
@@ -564,8 +570,8 @@ template<class nParticle> FORCEINLINE int ParticlePutToBuf(cEmitterBase* emitter
 	while(bt>=0&&i<emitter->GetTraceCount())
 	{
         db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
-		v[0].pos=prev_lt; v[0].diffuse=color; v[0].GetTexel().set(v1, rt.top);		//	(0,0);
-		v[1].pos=prev_lb; v[1].diffuse=color; v[1].GetTexel().set(v1, rt.bottom);	//	(0,1);
+		prev_lt.write(v[0].pos); v[0].diffuse=color; v[0].GetTexel().set(v1, rt.top);		//	(0,0);
+		prev_lb.write(v[1].pos); v[1].diffuse=color; v[1].GetTexel().set(v1, rt.bottom);	//	(0,1);
 
 		Vect3f pos = p.plume_pos[i];
 		pos+= (prev_pos - pos)*(dt/(real_interval+dt));
@@ -611,8 +617,8 @@ template<class nParticle> FORCEINLINE int ParticlePutToBuf(cEmitterBase* emitter
 			p.plume_pos[i] = pos;
 		}
 		if (p.time_summary<=1)v1+=dv1*(real_interval/interval);
-		v[2].pos=prev_lt; v[2].diffuse=color; v[2].GetTexel().set(v1,rt.top);		//  (1,0);
-		v[3].pos=prev_lb; v[3].diffuse=color; v[3].GetTexel().set(v1,rt.bottom);	//  (1,1);
+		prev_lt.write(v[2].pos); v[2].diffuse=color; v[2].GetTexel().set(v1,rt.top);		//  (1,0);
+		prev_lb.write(v[3].pos); v[3].diffuse=color; v[3].GetTexel().set(v1,rt.bottom);	//  (1,1);
 		i++;
 	}
 
@@ -747,10 +753,10 @@ void cEmitterInt::Draw(cCamera *pCamera)
         } else {
             db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
 
-            v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//	(0,0);
-            v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//	(0,1);
-            v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//  (1,0);
-            v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//  (1,1);
+            v[0].setPos(pos-sx-sy); v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//	(0,0);
+            v[1].setPos(pos-sx+sy); v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//	(0,1);
+            v[2].setPos(pos+sx-sy); v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//  (1,0);
+            v[3].setPos(pos+sx+sy); v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//  (1,1);
             #ifdef  NEED_TREANGLE_COUNT
                 parent->AddCountTriangle(2);
                 parent->AddSquareTriangle(psize*psize);
@@ -1329,10 +1335,10 @@ void cEmitterSpl::Draw(cCamera *pCamera)
         else 
         {
             db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
-            v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-            v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-            v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-            v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
+            v[0].setPos(pos-sx-sy); v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
+            v[1].setPos(pos-sx+sy); v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
+            v[2].setPos(pos+sx-sy); v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
+            v[3].setPos(pos+sx+sy); v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
             #ifdef  NEED_TREANGLE_COUNT
                 parent->AddCountTriangle(2);
                 parent->AddSquareTriangle(psize*psize);
@@ -3505,10 +3511,10 @@ void cEmitterZ::Draw(cCamera *pCamera)
         {
             db->AutoLockQuad<sVertexXYZDT1>(PARTICLE_BUF_LOCK_LEN, 1, v, ib);
 
-            v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
-            v[1].pos=pos-sx+sy; v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
-            v[2].pos=pos+sx-sy; v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
-            v[3].pos=pos+sx+sy; v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
+            v[0].setPos(pos-sx-sy); v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
+            v[1].setPos(pos-sx+sy); v[1].diffuse=color; v[1].GetTexel().set(rt.left, rt.bottom);//set(0,1);
+            v[2].setPos(pos+sx-sy); v[2].diffuse=color; v[2].GetTexel().set(rt.right,rt.top);	//set(1,0);
+            v[3].setPos(pos+sx+sy); v[3].diffuse=color; v[3].GetTexel().set(rt.right,rt.bottom);//set(1,1);
             #ifdef  NEED_TREANGLE_COUNT
                 parent->AddCountTriangle(2);
                 parent->AddSquareTriangle(psize*psize);

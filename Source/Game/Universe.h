@@ -30,7 +30,7 @@ public:
 	~terUniverse();
 
     void clear();
-	void Quant();
+	void Quant() override;
 	void AvatarQuant();
 	void PrepareQuant();
 	void triggerQuant();
@@ -74,9 +74,9 @@ public:
 		}
 	}
 
-	void receiveCommand(const netCommand4G_UnitCommand& command);
-	void receiveCommand(const netCommand4G_Region& reg);
-	bool forcedDefeat(int playerID);
+	void receiveCommand(const netCommand4G_UnitCommand& command) override;
+	void receiveCommand(const netCommand4G_Region& reg) override;
+	bool forcedDefeat(int playerID) override;
 
     terUnitBase* TraceUnit(const Vect2f& pos, terUnitID* unit_filter = nullptr);
 	int SelectUnit(terUnitBase* p);
@@ -137,7 +137,6 @@ private:
 	bool enableEventChecking_;
 
 	int quant_counter_;
-	float interpolation_factor_;
 
 	bool fieldTransparent_;
 

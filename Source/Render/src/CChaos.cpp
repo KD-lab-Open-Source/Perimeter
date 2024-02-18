@@ -332,9 +332,9 @@ void cChaos::SetupDB() {
 
 			for(int ix=0;ix<=size;ix++,vout++)
 			{
-				vout->pos.x=ix*deltax+xmin;
-				vout->pos.y=iy*deltay+ymin;
-				vout->pos.z=0;
+				vout->x=ix*deltax+xmin;
+				vout->y=iy*deltay+ymin;
+				vout->z=0;
                 vout->diffuse=0xFFFFFFFF;
 				vout->u1()=ix*du;
 				vout->v1()=iy*dv;
@@ -351,9 +351,9 @@ void cChaos::SetupDB() {
 
 			for(int ix=0;ix<=size;ix++,vout++)
 			{
-				vout->pos.x=ix*deltax+xmin;
-				vout->pos.y=iy*deltay+ymin;
-				vout->pos.z=0;
+				vout->x=ix*deltax+xmin;
+				vout->y=iy*deltay+ymin;
+				vout->z=0;
                 vout->diffuse=0xFFFFFFFF;
 				vout->u1()=ix*du*uvmul;
 				vout->v1()=iy*dv*uvmul;

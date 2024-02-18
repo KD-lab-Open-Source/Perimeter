@@ -40,7 +40,7 @@ public:
     SpeechPlayer() = default;
     ~SpeechPlayer() override;
 
-    bool OpenToPlay(const char* fname, bool cycled);
+    bool OpenToPlay(const char* fname, bool cycled) override;
     void Stop() override;
     void Pause() override;
     void Resume() override;
@@ -69,7 +69,7 @@ public:
 
     ~MusicPlayer() override;
 
-    bool OpenToPlay(const char* fname, bool cycled);
+    bool OpenToPlay(const char* fname, bool cycled) override;
     void Stop() override;
     void Pause() override;
     void Resume() override;

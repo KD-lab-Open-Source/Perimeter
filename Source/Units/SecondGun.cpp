@@ -520,18 +520,18 @@ public:
 	terWeaponScumTwister(terUnitReal* owner);
 	~terWeaponScumTwister() override;
 
-	void quant();
+	void quant() override;
 
-	bool fire(const Vect3f& to,terUnitBase* target);
-	int estimatedDamage() const { return 0; }
+	bool fire(const Vect3f& to,terUnitBase* target) override;
+	int estimatedDamage() const override { return 0; }
 
-	void unload();
-	void kill();
+	void unload() override;
+	void kill() override;
 	
-	void destroyLink();
+	void destroyLink() override;
 
-	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(SaveWeaponData* data);
+	SaveWeaponData* universalSave(SaveWeaponData* data) override;
+	void universalLoad(SaveWeaponData* data) override;
 
 private:
 
@@ -545,13 +545,13 @@ public:
 	terWeaponScumSplitter(terUnitReal* owner) : WeaponOmnidirectionalBase(owner), missile_(NULL), targetPos_(0,0,0) { }
     ~terWeaponScumSplitter() override;
 
-	void quant();
+	void quant() override;
 
-	bool fire(const Vect3f& to,terUnitBase* target);
-	int estimatedDamage() const { return 0; }
+	bool fire(const Vect3f& to,terUnitBase* target) override;
+	int estimatedDamage() const override { return 0; }
 	
-	void destroyLink();
-    void kill();
+	void destroyLink() override;
+    void kill() override;
 
 private:
 

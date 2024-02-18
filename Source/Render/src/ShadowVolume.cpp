@@ -23,8 +23,11 @@ bool ShadowVolume::Add(MatXf& mat,cMeshTri* pTri)
 		return false;
 	int offset_vertex=vertex.size();
 	vertex.resize(offset_vertex+pTri->NumVertex);
-	for(int i=0;i<pTri->NumVertex;i++) {
-		vertex[i+offset_vertex]=mat*pTri->GetPos(i);
+    Vect3f v;
+	for (int i=0;i<pTri->NumVertex;i++) {
+        v.set(pTri->VertexBuffer[i].pos);
+        mat.xformPoint(v);
+		vertex[i+offset_vertex] = v;
 	}
 	
 	int offset_poly=triangle.size();
@@ -284,13 +287,13 @@ void ShadowVolume::DrawVolume(cCamera *camera,const MatXf& mat,Vect3f light_dir,
             db->Lock(6, 6, v, ib, true);
             Vect3f v2=pn0+olight*1000;
             Vect3f v3=pn1+olight*1000;
-            v[0].pos=pn0; v[0].diffuse=color;
-            v[1].pos=pn1; v[1].diffuse=color;
-            v[2].pos=v2; v[2].diffuse=color;
+            v[0].setPos(pn0); v[0].diffuse=color;
+            v[1].setPos(pn1); v[1].diffuse=color;
+            v[2].setPos(v2); v[2].diffuse=color;
 
-            v[3].pos=pn1; v[3].diffuse=color;
-            v[4].pos=v3; v[4].diffuse=color;
-            v[5].pos=v2; v[5].diffuse=color;
+            v[3].setPos(pn1); v[3].diffuse=color;
+            v[4].setPos(v3); v[4].diffuse=color;
+            v[5].setPos(v2); v[5].diffuse=color;
 
             for (int i = 0; i < 6; ++i) {
                 ib[i] = i;

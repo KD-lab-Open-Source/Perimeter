@@ -185,10 +185,10 @@ size_t SendBufferToConnection(const uint8_t* buffer, size_t size, NetConnection*
         if (0 < sent) {
             return size;
         } else if (!connection->is_active()) {
-            fprintf(stderr, "SendBufferToConnection error sending %lu sent %d to %lu closed\n", size, sent, connection->netid);
+            fprintf(stderr, "SendBufferToConnection error sending %" PRIsize " sent %d to 0x%" PRIX64 " closed\n", size, sent, connection->netid);
             break;
         } else {
-            fprintf(stderr, "SendBufferToConnection error sending %lu sent %d to %lu retry %d\n", size, sent, connection->netid, retries);
+            fprintf(stderr, "SendBufferToConnection error sending %" PRIsize " sent %d to 0x%" PRIX64 " retry %d\n", size, sent, connection->netid, retries);
             retries--;
         }
     }

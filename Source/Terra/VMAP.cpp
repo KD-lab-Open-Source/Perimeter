@@ -1669,8 +1669,8 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 
 	unsigned char* dataRnr;
 	unsigned char* dataSur;
-	unsigned char* dataVxD;
-	unsigned char* dataVxG;
+	//unsigned char* dataVxD;
+	//unsigned char* dataVxG;
 	unsigned char* dataAtr;
 	unsigned char* dataTex;
 
@@ -1686,8 +1686,8 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 				fy = tfy;
 				dataRnr = lc + YCYCL(fy >> 16)*XS_Buf;
 				dataSur= ls + YCYCL(fy >> 16)*XS_Buf;
-				dataVxD= lvd + YCYCL(fy >> 16)*XS_Buf;
-				dataVxG= lvg + YCYCL(fy >> 16)*XS_Buf;
+				//dataVxD= lvd + YCYCL(fy >> 16)*XS_Buf;
+				//dataVxG= lvg + YCYCL(fy >> 16)*XS_Buf;
 				dataAtr= la + YCYCL(fy >> 16)*XS_Buf;
 				dataTex=&(LvdTex[0]) + (((fy >> 16)&LvdTex_clip_mask_y)<<LvdTex_X_SIZE_POWER);
 #ifdef _SURMAP_
@@ -1807,8 +1807,8 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 
 	unsigned char* dataRnr;
 	unsigned char* dataSur;
-	unsigned char* dataVxD;
-	unsigned char* dataVxG;
+	//unsigned char* dataVxD;
+	//unsigned char* dataVxG;
 	unsigned char* dataAtr;
 	unsigned char* dataTex;
 
@@ -1823,8 +1823,8 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 				fy = tfy;
 				dataRnr = lc + YCYCL(fy >> 16)*XS_Buf;
 				dataSur= ls + YCYCL(fy >> 16)*XS_Buf;
-				dataVxD= lvd + YCYCL(fy >> 16)*XS_Buf;
-				dataVxG= lvg + YCYCL(fy >> 16)*XS_Buf;
+				//dataVxD= lvd + YCYCL(fy >> 16)*XS_Buf;
+				//dataVxG= lvg + YCYCL(fy >> 16)*XS_Buf;
 				dataAtr= la + YCYCL(fy >> 16)*XS_Buf;
 				dataTex=&(LvdTex[0]) + (((fy >> 16)&LvdTex_clip_mask_y)<<LvdTex_X_SIZE_POWER);
 #ifdef _SURMAP_

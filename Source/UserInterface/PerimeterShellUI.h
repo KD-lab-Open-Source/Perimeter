@@ -758,10 +758,6 @@ class CMapWindow : public CShellWindow
 //	cFont*         m_hFont;
 	sColor4c*      m_bitmap;
 
-	char           m_cb1[15];
-	char           m_cb2[15];
-	char           m_cb3[15];
-
 	cTexture*		activeObjectTx;
 	float			activeObjectSx;
 	float			activeObjectSy;

@@ -69,27 +69,27 @@ public:
 		return safe_cast<const AttributeBuilding*>(terUnitReal::attr());
 	}
 
-	void Start();
-	void Kill();
+	void Start() override;
+	void Kill() override;
 
-	void AvatarQuant();
-	void AvatarInterpolation();
-	void MoveQuant(){ weaponQuant(); updateIncludingCluster(); }
-	void Quant();
+	void AvatarQuant() override;
+	void AvatarInterpolation() override;
+	void MoveQuant() override { weaponQuant(); updateIncludingCluster(); }
+	void Quant() override;
 
-	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(SaveUnitData* parser);
+	SaveUnitData* universalSave(SaveUnitData* data) override;
+	void universalLoad(SaveUnitData* parser) override;
 
 	virtual void checkConnection() {}
 
-	void setPose(const Se3f& pose, bool initPose);
-	void WayPointStart();
+	void setPose(const Se3f& pose, bool initPose) override;
+	void WayPointStart() override;
 
-	void explode();
+	void explode() override;
 
-	void executeCommand(const UnitCommand& command);
+	void executeCommand(const UnitCommand& command) override;
 
-	int repairRequest() const;
+	int repairRequest() const override;
 
 	void constructionStart();
 
@@ -97,23 +97,23 @@ public:
 	terBuilding* downgrade();
 	void uninstall();
 
-	void ChangeUnitOwner(terPlayer* player);
+	void ChangeUnitOwner(terPlayer* player) override;
 
 	float upgradePhase() const;
 
-	void MapUpdateHit(float x0,float y0,float x1,float y1);
+	void MapUpdateHit(float x0,float y0,float x1,float y1) override;
 
 	int buildingStatus() const { return buildingStatus_; }
 	void setBuildingStatus(int st){ buildingStatus_ = st; }
 	
-	int isBuildingPowerOn(){ return buildingStatus() & BUILDING_STATUS_POWERED; }
-	int isSingleSelection(){ return 0; }
-	int CanBuildingEnable();
-	bool isBuildingEnable() const;
-	bool readyToConnect() const { return isBuildingEnable(); }
+	int isBuildingPowerOn() override { return buildingStatus() & BUILDING_STATUS_POWERED; }
+	int isSingleSelection() override { return 0; }
+	int CanBuildingEnable() override;
+	bool isBuildingEnable() const override;
+	bool readyToConnect() const override { return isBuildingEnable(); }
 
-	bool isUpgrading() const { return buildingStatus() & BUILDING_STATUS_UPGRADING; }
-	bool isConstructed() const { return buildingStatus() & BUILDING_STATUS_CONSTRUCTED; }
+	bool isUpgrading() const override { return buildingStatus() & BUILDING_STATUS_UPGRADING; }
+	bool isConstructed() const override { return buildingStatus() & BUILDING_STATUS_CONSTRUCTED; }
 	bool isConnected() const { return buildingStatus() & BUILDING_STATUS_CONNECTED; }
 
 	int isPluggedIn();
@@ -122,7 +122,7 @@ public:
 
 	virtual bool BuildingEnableRequest(){ return true; }
 
-	void setRealModel(int modelIndex, float scale);
+	void setRealModel(int modelIndex, float scale) override;
 	virtual void UpdateAvatar();
 
 	void CreateHologram();
@@ -130,26 +130,26 @@ public:
 	virtual bool canUpgrade() const;
 	virtual bool canStartField() const { return 0; }
 
-	void showDebugInfo();
+	void showDebugInfo() override;
 
-	virtual int damageMoleculaRepair(int element_count = 1);
+	virtual int damageMoleculaRepair(int element_count = 1) override;
 
-	void ShowInfo();
+	void ShowInfo() override;
 
-	bool needBuildingRepair() const { return true; }
+	bool needBuildingRepair() const override { return true; }
 
 	void setCanselConstructionTime(int time);
 
-	bool effectsEnabled() const { return isConstructed(); }
+	bool effectsEnabled() const override { return isConstructed(); }
 
-	void setActivity(bool activate) { visible_ = activate;	}
-	bool activity() const { return visible_; } 
-	bool isUnseen() const { return !visible_; }
+	void setActivity(bool activate) override { visible_ = activate;	}
+	bool activity() const override { return visible_; } 
+	bool isUnseen() const override { return !visible_; }
 
 protected:
 	/// Возвращает ID желаемой цепочки анимации.
-	ChainID chainRequest() const;
-	bool needWeaponDisable() const { return (!isConnected() || !(buildingStatus() & BUILDING_STATUS_POWERED) || terUnitReal::needWeaponDisable()); }
+	ChainID chainRequest() const override;
+	bool needWeaponDisable() const override { return (!isConnected() || !(buildingStatus() & BUILDING_STATUS_POWERED) || terUnitReal::needWeaponDisable()); }
 
 private:
 	int buildingStatus_;
@@ -169,8 +169,8 @@ class terBuildingPowered : public terBuilding
 {
 public: 
 	terBuildingPowered(const UnitTemplate& data) : terBuilding(data) {}
-	void checkConnection();
-	int repairRequest() const;
+	void checkConnection() override;
+	int repairRequest() const override;
 };
 
 /// "труп" здания

@@ -8,27 +8,22 @@ public:
 		inv_vx_fraction=1.0f/float(1<<VX_FRACTION);
 	}
 
-	int SizeX(){return vMap.H_SIZE;}
-	int SizeY(){return vMap.V_SIZE;}
-	int GetZ(int x,int y)
-	{
+	int SizeX() override { return vMap.H_SIZE; }
+	int SizeY() override { return vMap.V_SIZE; }
+	int GetZ(int x,int y) override {
 		int ofs=x+vMap.H_SIZE*y;
 		return ((vMap.VxDBuf[ofs] != 0) ? vMap.VxDBuf[ofs] : vMap.VxGBuf[ofs]);
 	}
 
-	float GetZf(int x,int y)
-	{
+	float GetZf(int x,int y) override {
 		int ofs=x+vMap.H_SIZE*y;
 		return  vMap.SGetAlt(ofs)*inv_vx_fraction;
 	}
 
-	int GetHZeroPlast() {return vMap.hZeroPlast;}
+	int GetHZeroPlast() override { return vMap.hZeroPlast; }
 
-	int GetReductionZ(int x,int y)
-	{
-		return vMap.getVoxel(x,y);
-	}
-	int GetReductionShift() {return kmGrid;}
+	int GetReductionZ(int x,int y) override { return vMap.getVoxel(x,y); }
+	int GetReductionShift() override { return kmGrid; }
 
 	class Column* GetColumn(int player) override {return NULL;}
 	void GetBorder(int player,borderCall call,void* data) override {}

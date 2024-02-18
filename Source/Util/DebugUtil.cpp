@@ -192,11 +192,11 @@ void add_watch(const char* var, const char* value)
 
 void show_watch()
 {
-	std::ostrstream text;
+	XBuffer text = XBuffer(128, true);
 	WatchMap::iterator i;
 	FOR_EACH(watch_map, i)
-		text << i -> first.c_str() << ": " << i -> second.c_str() << std::endl;
-	text << '\0';
+		text < i -> first.c_str() < ": " < i -> second.c_str() < '\n';
+	text < '\0';
     SDL_ShowCursor(SDL_TRUE);
 //	show_debug_window(text.str(), debug_window_sx, debug_window_sy);
 	RestoreFocus();

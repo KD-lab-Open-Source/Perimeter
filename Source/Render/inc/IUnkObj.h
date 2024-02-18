@@ -6,12 +6,12 @@ public:
 	cIUnkObj(int kind);
 	~cIUnkObj() override;
 
-	virtual void Animate(float dt)													{ }
-	virtual void PreDraw(cCamera *UClass)											{ }
-	virtual void Draw(cCamera *UClass)												{ }
-	virtual void SetPosition(const MatXf& Matrix);
-	virtual const MatXf& GetPosition() const						{ return LocalMatrix; }
-	virtual const MatXf& GetGlobalPosition() const					{ return GlobalMatrix; }
+	void Animate(float dt) override { }
+	void PreDraw(cCamera *UClass) override { }
+	void Draw(cCamera *UClass) override { }
+	void SetPosition(const MatXf& Matrix) override;
+	const MatXf& GetPosition() const override { return LocalMatrix; }
+	const MatXf& GetGlobalPosition() const override { return GlobalMatrix; }
 
 	virtual cIUnkObj* BuildCopy()													{return NULL; }
 	
@@ -20,7 +20,7 @@ public:
 	inline const MatXf& GetGlobalMatrix() const										{ return GlobalMatrix; }
 	inline float& GetRadius()														{ return Radius; }
 
-	virtual Vect3f GetCenterObject()												{return GetGlobalMatrix().trans();}
+	virtual Vect3f GetCenterObject() override {return GetGlobalMatrix().trans();}
 
 protected:
 	MatXf			LocalMatrix;	// локальная матрица объекта относительно родителя
@@ -42,6 +42,6 @@ public:
 protected:
 	Vect3f			Scale;	// масштаб
 protected:
-	virtual void SetCopy(cIUnkObj* UObj);
+	void SetCopy(cIUnkObj* UObj) override;
 };
 

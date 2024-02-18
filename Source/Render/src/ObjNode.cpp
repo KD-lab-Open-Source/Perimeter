@@ -1051,12 +1051,14 @@ void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<ind
     memcpy(indices.data(), indxbuf, bank->db.ib.NumberIndices * sizeof(indices_t));
 	gb_RenderDevice->UnlockIndexBuffer(bank->db.ib);
 
+#ifdef PERIMETER_DEBUG_ASSERT
 	int filled_point=0;
 	for (cObjMesh* ch : mesh_child) {
 		filled_point+=ch->GetAllTriangle(point, indices);
 	}
 
 	VISASSERT(filled_point==point.size());
+#endif
 	SetPosition(save);
 	Update();
 }

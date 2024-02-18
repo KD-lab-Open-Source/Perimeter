@@ -78,7 +78,7 @@ void cTexLibrary::FreeOne(FILE* f)
 		}
 	}
 
-	if(f)fprintf(f,"Texture free %i, not free %" PRIiMAX "\n",compacted,textures.size()-compacted);
+	if(f)fprintf(f,"Texture free %i, not free %" PRIsize "\n",compacted,textures.size()-compacted);
 
 	if(f)
 	{

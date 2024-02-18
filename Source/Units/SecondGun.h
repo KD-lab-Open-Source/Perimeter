@@ -135,7 +135,7 @@ private:
 	int missileCount_;
 
 	/// true если оружие наводится на цель, false если надо развернуть по-умолчанию
-	bool aimFlag_;
+	//bool aimFlag_;
 	DurationTimer aimTimer_;
 
 	DurationTimer fireDisableTimer_;

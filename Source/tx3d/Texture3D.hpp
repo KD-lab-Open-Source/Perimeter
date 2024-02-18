@@ -20,9 +20,9 @@
 #include "SharedPointer.hpp"
 
 namespace tx3d {
-
-	class Texture3D : public Serializable, public SharedPointer {
+	class Texture3D : public SharedPointer, public Serializable {
 		public:
+            ~Texture3D() override = default;
 			virtual void getColor(Vector3D* destClr, const Vector3D &v) = 0;
 			virtual void zoom(float degree) {
 			};

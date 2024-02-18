@@ -307,6 +307,7 @@ void loadAddonET(ModMetadata& mod) {
                     default:
                         continue;
                 }
+                break;
             //ET stations
             case UNIT_ATTRIBUTE_ELECTRO_STATION1:
             case UNIT_ATTRIBUTE_ELECTRO_STATION2:

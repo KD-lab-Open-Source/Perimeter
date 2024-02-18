@@ -169,7 +169,7 @@ void sBumpTile::CalcPoint()
 
     int fix_out = FixLine(points,ddv);
 
-    int preceeded_point=0;
+    //int preceeded_point=0;
     for (int player=0;player<tilenumber;player++) {
         char dd2=dd/2;
         for (int y = -1; y <= 1; y++) {
@@ -179,8 +179,9 @@ void sBumpTile::CalcPoint()
                     if (cur_tile_pos.y >= 0 && cur_tile_pos.y < tilemap->GetTileNumber().y) {
                         std::vector<Vect2s>* region = tilemap->GetCurRegion(cur_tile_pos, player);
                         std::vector<Vect2s>::iterator it;
-                        preceeded_point += region->size();
+                        //preceeded_point += region->size();
 
+                        /*
                         bool fix_border_x = false;
                         bool fix_border_y = false;
                         if (x == -1 && (fix_out & (1 << U_LEFT)))
@@ -191,6 +192,7 @@ void sBumpTile::CalcPoint()
                             fix_border_x = true;
                         if (y == +1 && (fix_out & (1 << U_BOTTOM)))
                             fix_border_y = true;
+                        */
 
                         FOR_EACH(*region, it) {
                             Vect2i p(it->x, it->y);
@@ -418,8 +420,7 @@ void sBumpTile::CalcPoint()
     float vy_base=vStart-yStart*vy_step;
 
 
-    BUMP_VTXTYPE *vb,*vbbegin;
-    vbbegin=vb= (BUMP_VTXTYPE*)LockVB();
+    BUMP_VTXTYPE* vb = reinterpret_cast<BUMP_VTXTYPE*>(LockVB());
 
     TerraInterface* terra = tilemap->GetTerra();
 
@@ -430,9 +431,9 @@ void sBumpTile::CalcPoint()
             int xx = p.x + p.delta.x;
             int yy = p.y + p.delta.y;
 
-            vb->pos.x = xx;
-            vb->pos.y = yy;
-            vb->pos.z = SetVertexZ(terra, IUCLAMP(xx, xMap), IUCLAMP(yy, yMap)); //terra->GetHZeroPlast();
+            vb->x = xx;
+            vb->y = yy;
+            vb->z = SetVertexZ(terra, IUCLAMP(xx, xMap), IUCLAMP(yy, yMap)); //terra->GetHZeroPlast();
 
             vb->u1() = xx * ux_step + ux_base;
             vb->v1() = yy * vy_step + vy_base;
@@ -461,13 +462,17 @@ void sBumpTile::CalcPoint()
         sBumpTile::index[0].player=one_player;
         sBumpTile::index[0].nindex=-1;
     } else {
+#ifdef PERIMETER_DEBUG
         int sum_index=0;
+#endif
         sBumpTile::index.resize(num_non_empty);
         int cur=0;
         for (int i = 0; i < index.size(); i++) {
             if (index[i].size() > 0) {
                 int num = index[i].size() * 3;
+#ifdef PERIMETER_DEBUG
                 sum_index += num;
+#endif
                 int num2 = Power2up(num);
 
                 IndexPoolManager* pool = render->GetIndexPool();
@@ -482,14 +487,16 @@ void sBumpTile::CalcPoint()
             }
         }
 
+#ifdef PERIMETER_DEBUG
         VISASSERT(render->bumpNumIndex(LOD)==sum_index);
+#endif
     }
 }
 
 int sBumpTile::FixLine(VectDelta* points, int ddv)
 {
     int fix_out=0;
-    int dmax=ddv*ddv;
+    //int dmax=ddv*ddv;
     int dv=ddv-1;
     for(int side=0;side<U_ALL;side++)
     {

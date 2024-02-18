@@ -115,7 +115,7 @@ void NetConnection::close(bool error) {
             break;
     }
     if (socket) {
-        //printf("TCP close %lu\n", id);
+        //printf("TCP close 0x%" PRIX64 "\n", id);
         SDLNet_TCP_DelSocket(socket_set, socket);
         SDLNet_TCP_Close(socket);
         socket = nullptr;
@@ -261,7 +261,7 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
     
     //Check magic
     if ((header & NC_HEADER_MASK) != NC_HEADER_MAGIC) {
-        fprintf(stderr, "TCP recv header failed magic mismatch %lx %s\n", header, SDLNet_GetError());
+        fprintf(stderr, "TCP recv header failed magic mismatch 0x%" PRIX64 " %s\n", header, SDLNet_GetError());
         return -2;
     }
 
@@ -272,7 +272,7 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
     //Ensure is not too big
     if ((data_size + sizeof(NC_HEADER_MAGIC)) >= PERIMETER_MESSAGE_MAX_SIZE) {
         xassert(0);
-        fprintf(stderr, "TCP recv header failed too long %lx len %d\n", header, data_size);
+        fprintf(stderr, "TCP recv header failed too long 0x%" PRIX64 " len %" PRIu32 "\n", header, data_size);
         return -2;
     }
     

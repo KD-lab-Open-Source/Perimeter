@@ -602,7 +602,7 @@ void cObjLibrary::FreeOne(FILE* f)
 
 	if(f)
 	{
-		fprintf(f,"Objects free %i, not free %" PRIiMAX "\n",compacted,objects.size()-compacted);
+		fprintf(f,"Objects free %i, not free %" PRIsize "\n",compacted,objects.size()-compacted);
 		fflush(f);
 	}
 }

@@ -76,7 +76,7 @@ int PNetCenter::AddClient(PlayerData& pd)
 
 
 void PNetCenter::ExitClient(NETID netid) {
-    LogMsg("ExitClient NID %lu\n", netid);
+    LogMsg("ExitClient NID %" PRIX64 "\n", netid);
 
     NetConnection* conn = connectionHandler.getConnection(netid);
     if (conn && !conn->is_closed()) {
@@ -90,7 +90,7 @@ void PNetCenter::ExitClient(NETID netid) {
 }
 
 void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
-    LogMsg("DeleteClient NID %lu normal %d\n", netid, normalExit);
+    LogMsg("DeleteClient NID %" PRIX64 " normal %d\n", netid, normalExit);
     if(isHost()){
         hostMissionDescription->setChanged();
 
@@ -109,7 +109,7 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
         ClientMapType::iterator p;
         for(p=m_clients.begin(); p!= m_clients.end(); p++) {
             if((*p)->netidPlayer==netid) {
-                LogMsg("Client NID %lu disconnecting\n", (*p)->netidPlayer);
+                LogMsg("Client NID %" PRIX64 " disconnecting\n", (*p)->netidPlayer);
                 delete *p;
                 m_clients.erase(p);
                 break;
@@ -200,7 +200,7 @@ void PNetCenter::SendBattleData() {
         if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
             mission->activePlayerID = pd.playerID;
             netCommand4C_StartLoadGame nccsl(mission);
-            printf("Sending mission to idx %d id %d netid %lu\n", i, pd.playerID, pd.netid);
+            printf("Sending mission to idx %d id %d netid %" PRIX64 "\n", i, pd.playerID, pd.netid);
             SendEvent(nccsl, pd.netid);
         }
     }
@@ -227,7 +227,7 @@ void PNetCenter::CheckClients()
     {
         if(!((*i)->m_flag_Ready))
         {
-            LogMsg("Client NID %lu is not ready. removing.\n", (*i)->netidPlayer);
+            LogMsg("Client NID %" PRIX64 " is not ready. removing.\n", (*i)->netidPlayer);
 
             RemovePlayer((*i)->netidPlayer);
 
@@ -259,7 +259,7 @@ void PNetCenter::DumpClients()
     ClientMapType::iterator i;
     FOR_EACH(m_clients, i)
     {
-        LogMsg("Client NID %lu\n", (*i)->netidPlayer);
+        LogMsg("Client NID %" PRIX64 "\n", (*i)->netidPlayer);
     }
     LogMsg("-----------------------------------------\n");
 }
@@ -284,12 +284,12 @@ bool PNetCenter::AddClientToMigratedHost(const NETID _netid, unsigned int _curLa
 
         hostMissionDescription->setChanged();
 
-        LogMsg("ReJoin client NID %lu PID %d for game %s\n", _netid, idxPlayerData, m_GameName.c_str());
+        LogMsg("ReJoin client NID %" PRIX64 " PID %d for game %s\n", _netid, idxPlayerData, m_GameName.c_str());
 
         return 1;
     }
     else {
-        LogMsg("Client NID %lu for game %s id denied\n", _netid, m_GameName.c_str());
+        LogMsg("Client NID %" PRIX64 " for game %s id denied\n", _netid, m_GameName.c_str());
         return 0;
     }
 }
@@ -512,7 +512,7 @@ void PNetCenter::HostReceiveQuant()
                                     default:
                                         break;
                                 }
-                                if (!origin.flag_playerStartReady && !destination.flag_playerStartReady) {
+                                if (allowed && !origin.flag_playerStartReady && !destination.flag_playerStartReady) {
                                     //Swap the players
                                     std::string originName = origin.name();
                                     if (destination.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
@@ -573,7 +573,7 @@ void PNetCenter::HostReceiveQuant()
                             (*p)->m_flag_Ready=true;
                             (*p)->clientGameCRC=event.gameCRC_;
 
-                            LogMsg("Player 0x%X (GCRC=0x%X) reported ready\n", netid, (*p)->clientGameCRC);
+                            LogMsg("Player 0x%" PRIX64 " (GCRC=0x%" PRIX32 ") reported ready\n", netid, (*p)->clientGameCRC);
 
                             //Flag the client as restore finished if was desynced
                             for (auto& client : m_clients) {
@@ -598,7 +598,7 @@ void PNetCenter::HostReceiveQuant()
 
                             netCommand4H_DesyncAcknowledge event(in_HostBuf);
 
-                            LogMsg("Desync Ack %llu\n", netid);
+                            LogMsg("Desync Ack %" PRIX64 "\n", netid);
 
                             //Flag the client as acknowledged
                             for (auto& client : m_clients) {
@@ -666,22 +666,20 @@ void PNetCenter::HostReceiveQuant()
                             while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
                                 terEventID event = (terEventID)in_buffer.currentNetCommandID();
                                 switch(event){
-                                    case NETCOM_4G_ID_UNIT_COMMAND:
-                                    {
+                                    case NETCOM_4G_ID_UNIT_COMMAND: {
                                         netCommand4G_UnitCommand*  pnc= new netCommand4G_UnitCommand(in_buffer);
                                         tmpListGameCommands.push_back(pnc);
-                                    }
                                         break;
-                                    case NETCOM_4G_ID_REGION:
-                                    {
+                                    }
+                                    case NETCOM_4G_ID_REGION: {
                                         netCommand4G_Region*  pnc= new netCommand4G_Region(in_buffer);
                                         tmpListGameCommands.push_back(pnc);
-                                    }
                                         break;
-                                    case NETCOM_4G_ID_FORCED_DEFEAT:
-                                    {
+                                    }
+                                    case NETCOM_4G_ID_FORCED_DEFEAT: {
                                         netCommand4G_ForcedDefeat* pnc=new netCommand4G_ForcedDefeat(in_buffer);
                                         tmpListGameCommands.push_back(pnc);
+                                        break;
                                     }
                                     default:
                                         xassert(0&&"Incorrect commanf in playReel file!");

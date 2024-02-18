@@ -51,9 +51,10 @@ cMeshTri::~cMeshTri() = default;
 void cMeshTri::GetBoundingBox(Vect3f &Min,Vect3f &Max)
 {
 	Min.set(1e30f,1e30f,1e30f),Max.set(-1e30f,-1e30f,-1e30f);
+    Vect3f v;
 	for(int i=0;i<NumVertex;i++)
 	{
-		const Vect3f&v=GetPos(i);
+        VertexBuffer[i].getPos(v);
 		Min=::GetMin(Min,v);
 		Max=::GetMax(Max,v);
 	}
@@ -103,8 +104,8 @@ void cMeshTri::CalcBumpST()
 		sVertexDot3 &v0=v[p.p1],&v1=v[p.p2],&v2=v[p.p3];
 
 		// x, s, t
-		edge01.set( v1.pos.x-v0.pos.x, v1.u1()-v0.u1(), v1.v1()-v0.v1() );
-		edge02.set( v2.pos.x-v0.pos.x, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
+		edge01.set( v1.x-v0.x, v1.u1()-v0.u1(), v1.v1()-v0.v1() );
+		edge02.set( v2.x-v0.x, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
 
 		cp.cross(edge01,edge02);
 		if (xm::abs(cp.x) > FLT_EPS )
@@ -120,8 +121,8 @@ void cMeshTri::CalcBumpST()
 		}
 
 		// y, s, t
-		edge01.set( v1.pos.y-v0.pos.y, v1.u1()-v0.u1(), v1.v1()-v0.v1() );
-		edge02.set( v2.pos.y-v0.pos.y, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
+		edge01.set( v1.y-v0.y, v1.u1()-v0.u1(), v1.v1()-v0.v1() );
+		edge02.set( v2.y-v0.y, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
 
 		cp.cross(edge01, edge02);
 		if (xm::abs(cp.x) > FLT_EPS )
@@ -137,8 +138,8 @@ void cMeshTri::CalcBumpST()
 		}
 
 		// z, s, t
-		edge01.set( v1.pos.z-v0.pos.z, v1.u1()-v0.u1(), v1.v1()-v0.v1() );
-		edge02.set( v2.pos.z-v0.pos.z, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
+		edge01.set( v1.z-v0.z, v1.u1()-v0.u1(), v1.v1()-v0.v1() );
+		edge02.set( v2.z-v0.z, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
 
 		cp.cross(edge01,edge02);
 		if (xm::abs(cp.x) > FLT_EPS )
@@ -160,11 +161,12 @@ void cMeshTri::CalcBumpST()
   		cv.S.Normalize();
 		cv.T.Normalize();
   		cv.SxT.cross(cv.S, cv.T);
-  		cv.n.Normalize();
-    		
+        Vect3f n(cv.n);
+  		n.Normalize();
+        n.write(cv.n);
+
   		// Get the direction of the SxT vector
-  		if (cv.SxT.dot(cv.n) < 0.0f)
-  		{
+  		if (cv.SxT.dot(n) < 0.0f) {
   			cv.SxT = -cv.SxT;
   		}
 	}
@@ -183,12 +185,12 @@ bool cMeshTri::Intersect(const Vect3f& p0,const Vect3f& p1)
 	for(int i=0;i<NumPolygon;i++) {
 		sPolygon &p=PolygonBuffer[i];
 		float t;
-		Vect3f a=GetPos(p.p1 - OffsetVertex);
-		Vect3f b=GetPos(p.p2 - OffsetVertex);
-		Vect3f c=GetPos(p.p3 - OffsetVertex);
+        Vect3f a, b, c;
+		VertexBuffer[p.p1 - OffsetVertex].getPos(a);
+		VertexBuffer[p.p2 - OffsetVertex].getPos(b);
+		VertexBuffer[p.p3 - OffsetVertex].getPos(c);
 
-		if(Intersection(a,b,c,p0,p1,pn,t))
-		{
+		if (Intersection(a,b,c,p0,p1,pn,t)) {
 			intersect=true;
 			break;
 		}

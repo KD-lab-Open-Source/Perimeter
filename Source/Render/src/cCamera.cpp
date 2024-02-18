@@ -768,9 +768,9 @@ struct SortMaterialByNodeBank
 						return true;
 					if(s1->ambient==s2->ambient)
 					{
-						if(s1->attribute<s1->attribute)
+						if(s1->attribute<s2->attribute)
 							return true;
-						if(s1->attribute==s1->attribute)
+						if(s1->attribute==s2->attribute)
 							if(s1->phase<s2->phase)
 								return true;
 					}
@@ -790,7 +790,7 @@ void cCamera::DrawSortMaterial()
 	std::sort(ar.begin(),ar.end(),SortMaterialByNodeBank());
 
 	sDataRenderMaterial Data;
-	int change_mat=1,draw_object=0;
+	//int change_mat=1,draw_object=0;
 
 	cMeshSortingPhase* cur_mat=ar.front();
 
@@ -813,7 +813,7 @@ void cCamera::DrawSortMaterial()
 				cur_mat->GetMaterial(&Data);
 
                 gb_RenderDevice->SetSimplyMaterialMesh(cur_mat->GetFront(), &Data);
-				change_mat++;
+				//change_mat++;
 			}
 
 			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting()) {
@@ -822,7 +822,7 @@ void cCamera::DrawSortMaterial()
                 }
 
                 gb_RenderDevice->DrawNoMaterialMesh(pMesh, &Data);
-				draw_object++;
+				//draw_object++;
 			}
 		}
 	} else {
@@ -834,12 +834,12 @@ void cCamera::DrawSortMaterial()
 				cur_mat->GetMaterial(&Data);
 
                 gb_RenderDevice->SetSimplyMaterialMesh(cur_mat->GetFront(), &Data);
-				change_mat++;
+				//change_mat++;
 			}
 
 			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting()) {
                 gb_RenderDevice->DrawNoMaterialMesh(pMesh, &Data);
-				draw_object++;
+				//draw_object++;
 			}
 		}
 	}
@@ -867,7 +867,7 @@ void cCamera::DrawSortMaterialShadow()
 	cMeshBank *CurBank=NULL;
 
     gb_RenderDevice->BeginDrawShadow(GetAttribute(ATTRCAMERA_SHADOWMAP));
-    int change_mat=0,draw_object=0;
+    //int change_mat=0,draw_object=0;
 
 	std::vector<cMeshSortingPhase*>::iterator it;
 	FOR_EACH(ar,it)
@@ -880,7 +880,7 @@ void cCamera::DrawSortMaterialShadow()
 
 			cTexture* Texture=CurBank->GetMaterial()->GetAttribute(MAT_ALPHA_TEST)?CurBank->GetTexture(0):0;
             gb_RenderDevice->SetSimplyMaterialShadow(s.GetFront(),Texture);
-			change_mat++;
+			//change_mat++;
 		}
 
 		for(cObjMesh* pMesh=s.GetFront();pMesh;pMesh=pMesh->GetNextSorting())
@@ -889,7 +889,7 @@ void cCamera::DrawSortMaterialShadow()
 				continue;
 			if(pMesh->GetAttr(ATTRCAMERA_SHADOW))
                 gb_RenderDevice->DrawNoMaterialShadow(pMesh);
-			draw_object++;
+			//draw_object++;
 		}
 	}
 

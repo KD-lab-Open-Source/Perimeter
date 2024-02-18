@@ -701,13 +701,13 @@ void cScene::CheckPendingObjects(std::vector<cIUnkClass*>& allowed) {
     UpdateLists(INT_MAX);
     for (auto e : grid) {
         if (std::count(allowed.begin(), allowed.end(), e) == 0) {
-            fprintf(stderr, "Pending Object: %p refs %ld\n", e, e->GetRef());
+            fprintf(stderr, "Pending Object: %p refs %" PRIiMAX "\n", e, e->GetRef());
             xxassert(0, "Pending Object");
         }
     }
     for (auto e : UnkLightArray) {
         if (std::count(allowed.begin(), allowed.end(), e) == 0) {
-            fprintf(stderr, "Pending Light: %p refs %ld\n", e, e->GetRef());
+            fprintf(stderr, "Pending Light: %p refs %" PRIiMAX "\n", e, e->GetRef());
             xxassert(0, "Pending Light");
         }
     }

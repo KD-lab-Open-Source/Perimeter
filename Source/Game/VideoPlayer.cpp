@@ -80,7 +80,7 @@ void AudioBuffer::writeAudio(const uint8_t* inbuf, size_t len) {
         size_t first = size - offset; 
         size_t second = len - first;
         if (second > offset) {
-            fprintf(stderr, "Audio buffer second part overflow %ld %ld > %ld\n", first, second, offset);
+            fprintf(stderr, "Audio buffer second part overflow %" PRIsize " %" PRIsize " > %" PRIsize "\n", first, second, offset);
             second = offset;
             xassert(0);
         }
@@ -91,7 +91,7 @@ void AudioBuffer::writeAudio(const uint8_t* inbuf, size_t len) {
         bool head_ahead = head > offset;
         offset = second;
         if (head_ahead && head < offset) {
-            fprintf(stderr, "Audio buffer overflow %ld %ld\n", head, offset);
+            fprintf(stderr, "Audio buffer overflow %" PRIsize " %" PRIsize "\n", head, offset);
         }
     } else {
         if (inbuf) {
@@ -100,7 +100,7 @@ void AudioBuffer::writeAudio(const uint8_t* inbuf, size_t len) {
         bool head_ahead = head > offset;
         offset += len;
         if (head_ahead && head < offset) {
-            fprintf(stderr, "Audio buffer overflow %ld %ld\n", head, offset);
+            fprintf(stderr, "Audio buffer overflow %" PRIsize " %" PRIsize "\n", head, offset);
         }
     }
 
@@ -513,7 +513,7 @@ void VideoPlayer::decodeFrames() {
     while (!wrapper->audioFrames.empty()) {
         //Check if we wrote enough in this loop or buffer is already full enough
         size_t write_loop = audioBuffer->write_counter - write_old;
-        //printf("Audio frame into buffer %ld %ld\n", write_loop, audioBuffer->written);
+        //printf("Audio frame into buffer %" PRIsize " %" PRIsize "\n", write_loop, audioBuffer->written);
         if (AUDIO_DECODE_AHEAD < SNDcomputeAudioLengthS(std::max(write_loop, audioBuffer->written))) {
             break;
         }
@@ -522,7 +522,7 @@ void VideoPlayer::decodeFrames() {
         WriteAudioFrame(audioFrame);
         delete audioFrame;
     }
-    //printf("decodedFrames %ld %f\n", wrapper->videoFrames.size(), SNDcomputeAudioLengthS(audioBuffer->written));
+    //printf("decodedFrames %" PRIsize " %f\n", wrapper->videoFrames.size(), SNDcomputeAudioLengthS(audioBuffer->written));
 }
 
 void VideoPlayer::channelBufferEffect(int _channel, void *stream, int len, void *udata) {
@@ -532,7 +532,7 @@ void VideoPlayer::channelBufferEffect(int _channel, void *stream, int len, void 
     size_t need = static_cast<size_t>(len);
 
 #ifdef PERIMETER_DEBUG
-    //printf("CBE %ld %f -> %ld %f\n", audioBuffer->written, SNDcomputeAudioLengthS(audioBuffer->written), need, SNDcomputeAudioLengthS(need));
+    //printf("CBE %" PRIsize " %f -> %" PRIsize " %f\n", audioBuffer->written, SNDcomputeAudioLengthS(audioBuffer->written), need, SNDcomputeAudioLengthS(need));
 #endif
 
     audioBuffer->readAudio(static_cast<uint8_t*>(stream), need);

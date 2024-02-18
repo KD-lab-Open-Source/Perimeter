@@ -350,8 +350,8 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		Vect3f v = x*x_axis + z*z_axis;
         sVertexXYZDT2& vtx0 = vb[i*2];
         sVertexXYZDT2& vtx1 = vb[i*2+1];
-		vtx0.pos = v-Weight;
-		vtx1.pos = v+Weight;
+		vtx0.setPos(v-Weight);
+		vtx1.setPos(v+Weight);
 		vtx0.diffuse=vtx1.diffuse=Diffuse;
 		vtx0.u1()=   vtx1.u1()=(u1+=du1);
 		vtx0.v1()=0; vtx1.v1()=1;

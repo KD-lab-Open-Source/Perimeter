@@ -588,7 +588,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     }
 #endif
 
-#ifdef PERIMETER_DEBUG
+#ifdef DEBUG_TILES
     int st_VBSw = 0, st_Poly = 0;
     int nTiles = 0;
     VertexBuffer* lastVB = nullptr;
@@ -614,7 +614,9 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             int nVertex = bumpNumVertices(iLod);
             VertexBuffer* vb = vtxPoolMan->GetBuffer(bumpTile->vtx);
 
+#ifdef DEBUG_TILES
             int nPolygon=0;
+#endif
             for (int j=0;j<bumpTile->index.size();j++) {
                 sPlayerIB& pib=bumpTile->index[j];
                 if(pib.player==-1)
@@ -648,14 +650,16 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                     nIndexOffset = idxPoolMan->GetBaseIndex(pib.index);
                     ib = idxPoolMan->GetBuffer(pib.index);
                 }
+#ifdef DEBUG_TILES
                 nPolygon=nIndex/3;
+#endif
                 DrawRange range;
                 range.offset = nIndexOffset;
                 range.len = nIndex;
                 gb_RenderDevice->SubmitBuffers(PT_TRIANGLES, vb, nVertex, ib, ib_len, &range);
             }
 
-#ifdef PERIMETER_DEBUG
+#ifdef DEBUG_TILES
             if (vb != lastVB) {
                 lastVB = vb;
                 st_VBSw++;

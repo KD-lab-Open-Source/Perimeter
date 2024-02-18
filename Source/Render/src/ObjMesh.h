@@ -16,11 +16,11 @@ public:
 	cObjMesh();
 	virtual ~cObjMesh();
 	// общие интерфейсные функции унаследованы от cUnkObj
-	void PreDraw(cCamera *UCamera);
-	virtual void Draw(cCamera *UCamera);
-	virtual cIUnkObj* BuildCopy();
-	virtual void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
-	virtual void CalcObj();
+	void PreDraw(cCamera *UCamera) override;
+	void Draw(cCamera *UCamera) override;
+	cIUnkObj* BuildCopy() override;
+	void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0) override;
+	void CalcObj() override;
 	// общие интерфейсные функции унаследованы от cUnkTile
 	void GetBoundingBox(Vect3f &min,Vect3f &max) override;
 	// инлайновые функции доступа к переменным
@@ -32,22 +32,22 @@ public:
 
 	void CalcBorder(Vect3f& Min,Vect3f& Max) override;
 
-	virtual void RestoreOriginalMaterial();
-	virtual void SetAnotherMaterial(cTexture *Tex1,cTexture *Tex2,AllAnotherMaterial* aroot);
+	void RestoreOriginalMaterial() override;
+	void SetAnotherMaterial(cTexture *Tex1,cTexture *Tex2,AllAnotherMaterial* aroot) override;
 	inline const sColor4f& GetDiffuse(){return RootNode->GetDiffuse();};
 	inline const sColor4f& GetSpecular(){return RootNode->GetSpecular();};
 	inline const sColor4f& GetAmbient(){return RootNode->GetAmbient();};
 
 	cObjMesh* GetNextSorting(){return pSortingNext;}
 
-	virtual bool Intersect(const Vect3f& p0,const Vect3f& p1);
+	bool Intersect(const Vect3f& p0,const Vect3f& p1) override;
 
 	void GetAllPoints(std::vector<Vect3f>& point);
 	void GetAllNormals(std::vector<Vect3f>& point);
 	int GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices);
-	virtual void ChangeBank(cAllMeshBank* new_root);
+	void ChangeBank(cAllMeshBank* new_root) override;
 	virtual void DrawBadUV(cCamera *DrawNode);
 protected:
-	void BuildShadow();
+	void BuildShadow() override;
 };
 

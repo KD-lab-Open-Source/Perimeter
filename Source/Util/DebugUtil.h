@@ -2,7 +2,6 @@
 #ifndef __PHYSICS_UTIL_H__
 #define __PHYSICS_UTIL_H__
 
-#include <strstream>
 #include "../XPrm/Statistics.h"
 #include "../Render/inc/Umath.h"
 

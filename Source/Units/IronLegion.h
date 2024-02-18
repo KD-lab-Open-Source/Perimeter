@@ -80,18 +80,18 @@ public:
 		return safe_cast<const AttributeLegionary*>(terUnitReal::attr());
 	}
 
-	void Start();
+	void Start() override;
 	void finalizeConstruction();
 
-	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(SaveUnitData* data);
+	SaveUnitData* universalSave(SaveUnitData* data) override;
+	void universalLoad(SaveUnitData* data) override;
 	
-	void DestroyLink();
+	void DestroyLink() override;
 
-	void Quant();
-	void Kill();
+	void Quant() override;
+	void Kill() override;
 
-	void WayPointController();
+	void WayPointController() override;
 
 	void setRequestStatus(int request);
 	int requestStatus() const { return requestStatus_; }
@@ -104,16 +104,15 @@ public:
 	int RequestScriptFreeze();
 
 	void SetSquadPoint(class terUnitSquad* p);
-	terUnitSquad* GetSquadPoint() { return SquadPoint; }
+	terUnitSquad* GetSquadPoint() override { return SquadPoint; }
 
-	bool selectAble() const;
+	bool selectAble() const override;
 
-	int GetLegionMorphing() const { return !(requestStatus() & (LEGION_ACTION_STATUS_DISINTEGRATE | LEGION_ACTION_STATUS_INTEGRATE)); }
+	int GetLegionMorphing() const override { return !(requestStatus() & (LEGION_ACTION_STATUS_DISINTEGRATE | LEGION_ACTION_STATUS_INTEGRATE)); }
 	int GetLegionMutable() const { return !(requestStatus() & (LEGION_ACTION_STATUS_DISINTEGRATE | LEGION_ACTION_STATUS_INTEGRATE | LEGION_ACTION_STATUS_FREEZE)); }
 
-	void UnitDamageCheck();
-	void SetGenericDamage(float damage,int damage_type,terUnitBase* p);
-	void setDamage(const DamageData& damage,terUnitBase* p = NULL);
+	void UnitDamageCheck() override;
+	void setDamage(const DamageData& damage,terUnitBase* p = NULL) override;
 
 	//----------------------------
 	terUnitSquad* getSquad() const { return SquadPoint; }
@@ -123,7 +122,7 @@ public:
 	void addWayPoint(const Vect2f& p);
 	void setAttackPoint(terUnitBase* attack_target,bool is_manual = false);
 	void setAttackPosition(const Vect3f& attack_position,bool is_manual = false);
-	void clearAttackTarget(){ terUnitReal::clearAttackTarget(); manualAttackTarget_ = false; setAttackPoint(NULL); }
+	void clearAttackTarget() override { terUnitReal::clearAttackTarget(); manualAttackTarget_ = false; setAttackPoint(NULL); }
 	void quant();
 	void stop();
 
@@ -131,20 +130,20 @@ public:
 	void correctSpeed(float averagePath);
 	float deltaPath() const;
 	
-	bool isUnseen() const { return (invisibilityTimer_()) ? true : false; }
+	bool isUnseen() const override { return (invisibilityTimer_()) ? true : false; }
 	void setInvisibility(int time);
 	bool isFlying() const { return unitClass() & (UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY); }
 
 	void setInSquad();
 	bool inSquad() const { return inSquad_;	}
 	
-	void showDebugInfo();
+	void showDebugInfo() override;
 	
 	//----------------------------
-	void AvatarQuant();
+	void AvatarQuant() override;
 	
 	//-----------------------------
-	int GetFireControlCheck(terUnitBase* target){ return (target->unitClass() & attr()->AttackClass); };
+	int GetFireControlCheck(terUnitBase* target) { return (target->unitClass() & attr()->AttackClass); };
 
 	const DamageMolecula& transportAtom() const { return transportAtom_; }
 	void addToTransport(int atom_id, int numAtoms = 1);
@@ -165,11 +164,11 @@ public:
 	bool isDisintegrating() const { return isDisintegrating_; }
 	void toggleDisintegrate(){ isDisintegrating_ = true; }
 
-	bool effectsEnabled() const { return (!isUnseen() && !BodyPoint->underMutation()); }
+	bool effectsEnabled() const override { return (!isUnseen() && !BodyPoint->underMutation()); }
 
 protected:
 	/// Возвращает ID желаемой цепочки анимации.
-	ChainID chainRequest() const;
+	ChainID chainRequest() const override;
 
 private:
 	class terUnitSquad* SquadPoint;

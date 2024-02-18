@@ -88,7 +88,7 @@ const char* GetErrorText(HRESULT hr)
         case E_NOINTERFACE :
             return "No object interface is available. ";
         default:
-            fprintf(stderr, "Unknown D3D error: %d\n", hr);
+            fprintf(stderr, "Unknown D3D error: %" PRIi64 "\n", static_cast<int64_t>(hr));
             return "Unknown D3D error. ";
     }
 };
@@ -980,13 +980,8 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	D3DLIGHT9 GlobalLight;
 	memset(&GlobalLight,0,sizeof(GlobalLight));
 	GlobalLight.Type = D3DLIGHT_DIRECTIONAL;
-	if(vLight)
-		memcpy(&GlobalLight.Direction.x,&vLight->x,sizeof(GlobalLight.Direction));
-	else {
-        Vect3f v = Vect3f(0,0,1);
-        memcpy(&GlobalLight.Direction.x, v, sizeof(GlobalLight.Direction));
-    }
-	
+    Vect3f v = Vect3f(0,0,1);
+    memcpy(&GlobalLight.Direction.x, vLight ? &vLight->x : &v.x, sizeof(GlobalLight.Direction));
 	memcpy(&GlobalLight.Ambient.r,&Ambient->r,sizeof(GlobalLight.Ambient));
 	memcpy(&GlobalLight.Diffuse.r,&Diffuse->r,sizeof(GlobalLight.Diffuse));
 	memcpy(&GlobalLight.Specular.r,&Specular->r,sizeof(GlobalLight.Specular));
@@ -1651,7 +1646,7 @@ void cD3DRender::SaveStates(const char* fname)
 {
 	FILE* f=fopen(convert_path_content(fname).c_str(),"wt");
 	fprintf(f,"Render state\n");
-#define W(s) {DWORD d;RDCALL(lpD3DDevice->GetRenderState(s,&d));fprintf(f,"%s=%x\n",#s,d); }
+#define W(s) {DWORD d;RDCALL(lpD3DDevice->GetRenderState(s,&d));fprintf(f,"%s=%" PRIX64 "\n",#s,static_cast<uint64_t>(d)); }
 	W(D3DRS_ZENABLE);
     W(D3DRS_FILLMODE);
     W(D3DRS_SHADEMODE);
@@ -1758,7 +1753,7 @@ void cD3DRender::SaveStates(const char* fname)
 #undef W
 
 	fprintf(f,"\nSampler state\n");
-#define W(i,s) {DWORD d;RDCALL(lpD3DDevice->GetSamplerState(i,s,&d));fprintf(f,"[%i]%s=%x\n",i,#s,d); }
+#define W(i,s) {DWORD d;RDCALL(lpD3DDevice->GetSamplerState(i,s,&d));fprintf(f,"[%i]%s=%" PRIX64 "\n",i,#s,static_cast<uint64_t>(d)); }
 	for(int i=0;i<4;i++)
 	{
 		W(i,D3DSAMP_ADDRESSU);
@@ -1779,7 +1774,7 @@ void cD3DRender::SaveStates(const char* fname)
 #undef W
 
 	fprintf(f,"\nTexture stage state\n");
-#define W(i,s) {DWORD d;RDCALL(lpD3DDevice->GetTextureStageState(i,s,&d));fprintf(f,"[%i]%s=%x\n",i,#s,d); }
+#define W(i,s) {DWORD d;RDCALL(lpD3DDevice->GetTextureStageState(i,s,&d));fprintf(f,"[%i]%s=%" PRIX64 "\n",i,#s,static_cast<uint64_t>(d)); }
 	int i;
 	for(i=0;i<4;i++)
 	{

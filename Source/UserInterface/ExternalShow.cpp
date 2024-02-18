@@ -247,11 +247,11 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
             
             db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
 
-            vb[0].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+            vb[0].setPos(tp.x-dn.x,tp.y-dn.y,z0);
             vb[0].u1() = selection ? v_pos : u;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 		
-			vb[1].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+			vb[1].setPos(tp.x+dn.x,tp.y+dn.y,z0);
             vb[1].u1() = selection ? v_pos : vb[0].u1();
             
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
@@ -287,11 +287,11 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
             float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(pos.x)), vMap.YCYCL(xm::round(y))) >> VX_FRACTION);
             
-            vb[0].pos.set(x1, y, z0);
+            vb[0].setPos(x1, y, z0);
             vb[0].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-            vb[1].pos.set(x2, y, z0);
+            vb[1].setPos(x2, y, z0);
             vb[1].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
@@ -315,11 +315,11 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
             db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
 
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(x)), vMap.YCYCL(xm::round(pos.y))) >> VX_FRACTION);
-			vb[0].pos.set(x, y1, z0);
+			vb[0].setPos(x, y1, z0);
 			vb[0].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 		
-			vb[1].pos.set(x, y2, z0);
+			vb[1].setPos(x, y2, z0);
 			vb[1].u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
@@ -354,7 +354,7 @@ void terExternalRegionShowUniform(Region* region,uint32_t color)
 		const int addup=0,adddown=20;
 		const float kdn=adddown/32.0f;
 
-		float umap=0,umap_old;
+		float umap=0, umap_old = 0;
 		Vect3f o1,o2,begin1,begin2;
 
 		t = 0;
@@ -431,22 +431,22 @@ void terExternalRegionShowUniform(Region* region,uint32_t color)
 			if(!first)
 			{
                 db->AutoLockQuad(10, 1, vertex_data, indices);
-				vertex_data[0].pos=o1;
+				vertex_data[0].setPos(o1);
 				vertex_data[0].diffuse=color;
 				vertex_data[0].u1() = umap_old;
 				vertex_data[0].v1() = 1.0f;
 
-				vertex_data[1].pos=o2;
+				vertex_data[1].setPos(o2);
 				vertex_data[1].diffuse=color;
 				vertex_data[1].u1() = umap_old;
 				vertex_data[1].v1() = 0.0f;
 				
-				vertex_data[2].pos.set(pp1.x,pp1.y,z1);
+				vertex_data[2].setPos(pp1.x,pp1.y,z1);
 				vertex_data[2].diffuse=color;
 				vertex_data[2].u1() = umap;
 				vertex_data[2].v1() = 1.0f;
 
-				vertex_data[3].pos.set(pp2.x,pp2.y,z2);
+				vertex_data[3].setPos(pp2.x,pp2.y,z2);
 				vertex_data[3].diffuse=color;
 				vertex_data[3].u1() = umap;
 				vertex_data[3].v1() = 0.0f;
@@ -470,22 +470,22 @@ void terExternalRegionShowUniform(Region* region,uint32_t color)
 
 		{
             db->AutoLockQuad(10, 1, vertex_data, indices);
-			vertex_data[0].pos=o1;
+			vertex_data[0].setPos(o1);
 			vertex_data[0].diffuse=color;
 			vertex_data[0].u1() = umap_old;
 			vertex_data[0].v1() = 1.0f;
 
-			vertex_data[1].pos=o2;
+			vertex_data[1].setPos(o2);
 			vertex_data[1].diffuse=color;
 			vertex_data[1].u1() = umap_old;
 			vertex_data[1].v1() = 0.0f;
 			
-			vertex_data[2].pos=begin1;
+			vertex_data[2].setPos(begin1);
 			vertex_data[2].diffuse=color;
 			vertex_data[2].u1() = umap;
 			vertex_data[2].v1() = 1.0f;
 
-			vertex_data[3].pos=begin2;
+			vertex_data[3].setPos(begin2);
 			vertex_data[3].diffuse=color;
 			vertex_data[3].u1() = umap;
 			vertex_data[3].v1() = 0.0f;
@@ -523,11 +523,11 @@ void terExternalRegionShowLine(Region* region,uint32_t diffuse)
 
 			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 
-			vb[0].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+			vb[0].setPos(tp.x+dn.x,tp.y+dn.y,z0);
 			vb[0].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			vb[1].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+			vb[1].setPos(tp.x-dn.x,tp.y-dn.y,z0);
 			vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
@@ -573,11 +573,11 @@ void terExternalRegionShowLineZeroplast(Region* region,uint32_t diffuse)
 
             db->AutoLockTriangleStripStep(GAME_SHELL_SHOW_REGION_TRIANGLESTRIP_LOCK_SIZE, 1, vb, ib);
 
-            vb[0].pos.set(tp.x+dn.x,tp.y+dn.y,z0);
+            vb[0].setPos(tp.x+dn.x,tp.y+dn.y,z0);
             vb[0].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-			vb[1].pos.set(tp.x-dn.x,tp.y-dn.y,z0);
+			vb[1].setPos(tp.x-dn.x,tp.y-dn.y,z0);
 			vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
@@ -624,11 +624,11 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,uint32_t diffuse)
 			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 			if(z0>zero) z0=zero;
 
-            vb[0].pos.set(tp.x,tp.y,zero_fix);
+            vb[0].setPos(tp.x,tp.y,zero_fix);
             vb[0].v1() = v_pos; 
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
-            vb[1].pos.set(tp.x,tp.y,z0);
+            vb[1].setPos(tp.x,tp.y,z0);
             vb[1].v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
@@ -740,8 +740,8 @@ void terExternalRegionShowColumn(Column* column,uint32_t color) {
             p[2].u1()=0, p[2].v1()=0;
 			p[0].diffuse=p[1].diffuse=p[2].diffuse=color;
 
-			p[0].pos.set(c.xl,c.y,z);
-			p[2].pos.set(c.xl,c.y+1,z);
+			p[0].setPos(c.xl,c.y,z);
+			p[2].setPos(c.xl,c.y+1,z);
 
 			if(next_cell) {
                 for (; it_next != next_cell->end(); it_next++) {
@@ -756,14 +756,14 @@ void terExternalRegionShowColumn(Column* column,uint32_t color) {
 
                     if (cn.xl > c.xl && cn.xl < c.xr) {
                         p[1] = p[2];
-                        p[2].pos.set(cn.xl, cn.y, z);
+                        p[2].setPos(cn.xl, cn.y, z);
                         db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
 
                     if (cn.xr > c.xl && cn.xr < c.xr) {
                         p[1] = p[2];
-                        p[2].pos.set(cn.xr, cn.y, z);
+                        p[2].setPos(cn.xr, cn.y, z);
                         db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
@@ -771,7 +771,7 @@ void terExternalRegionShowColumn(Column* column,uint32_t color) {
             }
 
 			p[1]=p[2];
-			p[2].pos.set(c.xr,c.y+1,z);
+			p[2].setPos(c.xr,c.y+1,z);
             db->AutoLockTriangle(locked, 1, vp, ip);
             memcpy(vp, p, v_len);
 
@@ -792,7 +792,7 @@ void terExternalRegionShowColumn(Column* column,uint32_t color) {
                             first = false;
                         else
                             p[0] = p[1];
-                        p[1].pos.set(cn.xl, c.y, z);
+                        p[1].setPos(cn.xl, c.y, z);
                         db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
@@ -802,7 +802,7 @@ void terExternalRegionShowColumn(Column* column,uint32_t color) {
                             first = false;
                         else
                             p[0] = p[1];
-                        p[1].pos.set(cn.xr, c.y, z);
+                        p[1].setPos(cn.xr, c.y, z);
                         db->AutoLockTriangle(locked, 1, vp, ip);
                         memcpy(vp, p, v_len);
                     }
@@ -811,10 +811,10 @@ void terExternalRegionShowColumn(Column* column,uint32_t color) {
 
 			if(first) {
 				p[1]=p[2];
-				p[2].pos.set(c.xr,c.y,z);
+				p[2].setPos(c.xr,c.y,z);
 			} else {
 				p[0]=p[1];
-				p[1].pos.set(c.xr,c.y,z);
+				p[1].setPos(c.xr,c.y,z);
 			}
 
             db->AutoLockTriangle(locked, 1, vp, ip);

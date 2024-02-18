@@ -140,7 +140,7 @@ private:
 		static TreeNodePtr treeNode_;
 		if(!inited){
 			inited = true;
-			T t;
+			T t = T();
 			EditOArchive archive;
 			archive << WRAP_NAME(t, 0);
 			treeNode_ = const_cast<TreeNode*>(archive.rootNode());

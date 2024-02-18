@@ -148,8 +148,8 @@ void cInterfaceRenderDevice::DrawFieldDispatcher(FieldDispatcher *ffd, uint8_t t
                 for (int x = 0; x <= tile_size; x++) {
                     int xm = x + x_begin;
                     int ym = y + y_begin;
-                    int xw = ffd->m2w(xm);
-                    int yw = ffd->m2w(ym);
+                    float xw = ffd->m2w(xm);
+                    float yw = ffd->m2w(ym);
                     xm = clamp(xm, 1, ffd->mapSizeX() - 2);
                     ym = clamp(ym, 1, ffd->mapSizeY() - 2);
                     const FieldDispatcher::Cell& cell = ffd->map(xm, ym);
@@ -165,8 +165,8 @@ void cInterfaceRenderDevice::DrawFieldDispatcher(FieldDispatcher *ffd, uint8_t t
                     }
                     sVertexXYZDT2& v = pv[db.lock_written_vertices];
                     db.lock_written_vertices += 1;
-                    v.pos.set(xw, yw, zw);
-                    if (cell.cluster && v.pos.z > FieldCluster::ZeroGround && cell.cluster->GetTT() == transparent) {
+                    v.setPos(xw, yw, zw);
+                    if (cell.cluster && v.z > FieldCluster::ZeroGround && cell.cluster->GetTT() == transparent) {
                         v.diffuse = ConvertColor(cell.cluster->GetColor());
                         flDraw = 1;
                     } else {

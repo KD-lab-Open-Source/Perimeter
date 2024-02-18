@@ -652,7 +652,8 @@ end_while_01:;
 			for (auto& client : m_clients) {
 				if ((client->requestPause && ((clocki()-client->timeRequestPause) > MAX_TIME_PAUSE_GAME))
                 || (!hostPause && client->netidPlayer != NETID_HOST && (client->last_time_latency_response + (TIMEOUT_DISCONNECT * 1000) < clock_us()))) {
-                    fprintf(stdout, "Removing non responding player: %lu %s\n", client->netidPlayer, client->playerName);
+                    fprintf(stdout, "Removing non responding player: 0x%" PRIX64 " %s\n", client->netidPlayer, client->playerName);
+
 					RemovePlayer(client->netidPlayer);
 					break;
 				}
@@ -1131,7 +1132,7 @@ void PNetCenter::ClientPredReceiveQuant()
     if(!out_ClientBuf.isEmpty()) SendNetBuffer(&out_ClientBuf, m_hostNETID);
 
     if(flag_LockIputPacket) return; //return 0;
-    int cnt=0;
+    //int cnt=0;
     std::list<InputPacket*>::iterator p=m_InputPacketList.begin();
     while(p != m_InputPacketList.end()){
         InputPacket* packet = *p;
@@ -1152,7 +1153,7 @@ void PNetCenter::ClientPredReceiveQuant()
             if (in_ClientBuf.putBufferPacket(packet->address(), packet->tell())) {
                 delete packet;
                 p=m_InputPacketList.erase(p);
-                cnt++;
+                //cnt++;
             } else {
                 break;
             }

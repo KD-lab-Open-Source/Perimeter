@@ -45,14 +45,12 @@ typedef std::list<TriggerChain> TriggerChainList;
 
 struct SaveDamageMolecula
 {
-	bool isAlive;
+	bool isAlive = true;
 	std::vector<int> elementsDead;
 
-	SaveDamageMolecula() {
-		isAlive = true;
-	}
+	SaveDamageMolecula() = default;
 
-	const SaveDamageMolecula& operator=(const class DamageMolecula& data);
+	SaveDamageMolecula& operator=(const class DamageMolecula& data);
 
     SERIALIZE(ar) {
 		ar & WRAP_OBJECT(isAlive);
@@ -218,21 +216,15 @@ struct SaveToolzerControllerData
 //---------------------------------
 struct SaveUnitData : ShareHandleBaseSerializeVirtual
 {
-	int unitID;
-	EnumWrapper<terUnitAttributeID> attributeID;
-	Vect3f position;
-	QuatF orientaion;
-	float radius;
+	int unitID = 0;
+	EnumWrapper<terUnitAttributeID> attributeID = UNIT_ATTRIBUTE_NONE;
+	Vect3f position = Vect3f::ZERO;
+	QuatF orientaion = QuatF::ID;
+	float radius = 0.0f;
 	PrmString label;
 	SaveDamageMolecula damageMolecula;
 
-	SaveUnitData() {
-		unitID = 0;
-		attributeID = UNIT_ATTRIBUTE_NONE;
-		position = Vect3f::ZERO;
-		orientaion = QuatF::ID;
-		radius = 0;
-	}
+	SaveUnitData() = default;
     virtual ~SaveUnitData() {}
 
 	VIRTUAL_SERIALIZE(ar) {
@@ -1705,7 +1697,7 @@ struct ActionForAI : Action // ---------------
 		onlyIfAi = true; 
 	}
 
-	bool onlyIfAI() const { return onlyIfAi; }
+	bool onlyIfAI() const override { return onlyIfAi; }
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -1726,8 +1718,8 @@ struct ActionDelay : Action // Задержка времени
 		scaleByDifficulty = false;
 	}
 
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -1753,8 +1745,8 @@ struct ActionSetCamera : Action // Установка Камеры
 		smoothTransition = false; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -1775,7 +1767,7 @@ struct ActionOscillateCamera : Action // Тряска Камеры
 		factor = 1; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -1788,7 +1780,7 @@ struct ActionOscillateCamera : Action // Тряска Камеры
 //-------------------------------------
 struct ActionVictory : Action // Победа
 {
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
     VIRTUAL_SERIALIZE(ar) {
         Action::serialize_template(ar);
@@ -1797,7 +1789,7 @@ struct ActionVictory : Action // Победа
 
 struct ActionDefeat : Action // Поражение
 {
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
     VIRTUAL_SERIALIZE(ar) {
         Action::serialize_template(ar);
@@ -1807,8 +1799,8 @@ struct ActionDefeat : Action // Поражение
 //-------------------------------------
 struct ActionTeleportationOut : Action // Телепортировать Фрейм с мира
 {
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
 
     VIRTUAL_SERIALIZE(ar) {
         Action::serialize_template(ar);
@@ -1823,8 +1815,8 @@ struct ActionKillObject : Action // Уничтожить объект
 		object = UNIT_ATTRIBUTE_NONE; 
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const { return findObject(); }
-	bool workedOut(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override { return findObject(); }
+	bool workedOut(AIPlayer& aiPlayer) override;
 	terUnitBase* findObject() const;
 
 	VIRTUAL_SERIALIZE(ar) {
@@ -1836,8 +1828,8 @@ struct ActionKillObject : Action // Уничтожить объект
 //-------------------------------------
 struct ActionInstallFrame : ActionForAI // Инсталлировать фрейм
 {
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 
     VIRTUAL_SERIALIZE(ar) {
         ActionForAI::serialize_template(ar);
@@ -1867,8 +1859,8 @@ struct ActionOrderBuilding : ActionForAI // Заказать здание
 		waitingCounter_ = 0;
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	bool workedOut(AIPlayer& aiPlayer); 
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	bool workedOut(AIPlayer& aiPlayer) override; 
 	void setAccepted() { workedOut_ = false; accepted_ = true; }
 	void setWorkedOut() { workedOut_ = true; }
 
@@ -1899,7 +1891,7 @@ struct ActionHoldBuilding : ActionForAI // Заморозить строител
 		building = UNIT_ATTRIBUTE_ANY; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		ActionForAI::serialize_template(ar);
@@ -1928,8 +1920,8 @@ struct ActionSellBuilding : ActionForAI // Продать здание
 		index_ = 0;
 	}
 
- 	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
+ 	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
 	class terUnitBase* findBuilding(AIPlayer& aiPlayer) const;
 
 	VIRTUAL_SERIALIZE(ar) {
@@ -1961,8 +1953,8 @@ struct ActionSwitchGuns : ActionForAI // Включить/выключить п�
 		gunID = UNIT_ATTRIBUTE_LASER_CANNON; 
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		ActionForAI::serialize_template(ar);
@@ -1973,8 +1965,8 @@ struct ActionSwitchGuns : ActionForAI // Включить/выключить п�
 
 struct ActionUpgradeOmega : ActionForAI // Апргрейд Омеги
 {
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
 
     VIRTUAL_SERIALIZE(ar) {
         ActionForAI::serialize_template(ar);
@@ -1998,8 +1990,8 @@ struct ActionChargeCores : ActionForAI // Зарядить ядра
 		chargeCoresStrategy = CHARGE_CORES_ALL; 
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		ActionForAI::serialize_template(ar);
@@ -2022,9 +2014,9 @@ struct ActionSwitchFieldOn : ActionForAI // Включить поле
 		onlyIfCoreDamaged = true; 
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		ActionForAI::serialize_template(ar);
@@ -2053,9 +2045,9 @@ struct ActionSquadOrderUnits : ActionForAI // Заказать юнитов в �
 		energyReserve = 100; 
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		ActionForAI::serialize_template(ar);
@@ -2116,9 +2108,9 @@ struct ActionSquadAttack : ActionForAI // Атаковать сквадом
 		interrupt_ = true;
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 	void interrupt(class terUnitSquad* squad);
 
 	VIRTUAL_SERIALIZE(ar) {
@@ -2169,7 +2161,7 @@ struct ActionSquadMove : ActionForAI // Послать сквад в точку 
 		chooseSquadID = CHOOSE_SQUAD_1; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		ActionForAI::serialize_template(ar);
@@ -2188,8 +2180,8 @@ struct ActionAttackBySpecialWeapon : ActionForAI // Атаковать спец�
 		weapon = UNIT_ATTRIBUTE_GUN_BALLISTIC; 
 	}
 
-	bool automaticCondition(AIPlayer& aiPlayer) const;
-	void activate(AIPlayer& aiPlayer);
+	bool automaticCondition(AIPlayer& aiPlayer) const override;
+	void activate(AIPlayer& aiPlayer) override;
 	terUnitBase* findTarget(AIPlayer& aiPlayer, const Vect2f& position, float radiusMin) const;
 
 	VIRTUAL_SERIALIZE(ar) {
@@ -2208,7 +2200,7 @@ struct ActionRepareObjectByLabel : Action // Отремонтировать об
 	label(editLabelDialog)
 	{}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2225,7 +2217,7 @@ struct ActionActivateObjectByLabel : Action // Активировать объе
 	label(editLabelDialog)
 	{}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2241,7 +2233,7 @@ struct ActionDeactivateObjectByLabel : Action // Деактивировать о
 	label(editLabelDialog)
 	{}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2251,7 +2243,7 @@ struct ActionDeactivateObjectByLabel : Action // Деактивировать о
 
 struct ActionActivateAllSpots : Action // Активировать все споты
 {
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
     VIRTUAL_SERIALIZE(ar) {
         Action::serialize_template(ar);
@@ -2260,7 +2252,7 @@ struct ActionActivateAllSpots : Action // Активировать все спо
 
 struct ActionDeactivateAllSpots : Action // Деактивировать все споты
 {
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
     
     VIRTUAL_SERIALIZE(ar) {
         Action::serialize_template(ar);
@@ -2275,7 +2267,7 @@ struct ActionSetControlEnabled : Action // Запретить/разрешить
 		controlEnabled = false; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2305,8 +2297,8 @@ struct ActionMessage : Action // Cообщение
 
 	bool started_;
 
-	void activate(AIPlayer& aiPlayer) { delayTimer.start(delay*1000); started_ = false; }
-	bool workedOut(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override { delayTimer.start(delay*1000); started_ = false; }
+	bool workedOut(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2344,8 +2336,8 @@ struct ActionTask : Action // Задача
 		showTips = true;
 	}
 
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2376,8 +2368,8 @@ struct ActionSetCameraAtObject : Action // Установить камеру н�
 		turnTime = 0;
 	}
 
-	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
+	bool workedOut(AIPlayer& aiPlayer) override;
 	terUnitBase* findUnit(AIPlayer& aiPlayer);
 
 	VIRTUAL_SERIALIZE(ar) {
@@ -2423,7 +2415,7 @@ struct ActionSetControls : Action // Установить параметры к�
 {
 	std::vector<SaveControlData> controls;
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2439,7 +2431,7 @@ struct ActionSelectUnit : Action // Селектировать юнита
 		unitID = UNIT_ATTRIBUTE_SQUAD; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2455,7 +2447,7 @@ struct ActionProduceBrigadierOrProrab : Action // Произвести бриг�
 		produceBrigadier = true; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2471,7 +2463,7 @@ struct ActionFrameMove : Action // Послать фрейм к метке
 	label(editLabelDialog)
 	{ }
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2484,7 +2476,7 @@ struct ActionFrameDetach : Action // Поднять фрейм
 {
 	ActionFrameDetach(){ }
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);
@@ -2499,7 +2491,7 @@ struct ActionSetInterface : Action // Включить/выключить инт
 		enableInterface = true; 
 	}
 
-	void activate(AIPlayer& aiPlayer);
+	void activate(AIPlayer& aiPlayer) override;
 
 	VIRTUAL_SERIALIZE(ar) {
 		Action::serialize_template(ar);

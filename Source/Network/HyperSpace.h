@@ -67,7 +67,7 @@ private:
 	int EventWaitTime;
 	int MaxEventTime;
 	int RealMaxEventTime;
-	int EventLagHole;
+	//int EventLagHole;
 
 	int AverageEventTime;
 	int AverageEventCount;

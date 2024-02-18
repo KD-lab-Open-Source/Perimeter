@@ -58,10 +58,10 @@ void cSpriteManager::Draw(cCamera *camera)
 
         db->AutoLockQuad(std::min(sprites.size(), static_cast<size_t>(10)), 1, v, ib);
 
-        v[0].pos=s.pos+sx+sy; v[0].u1()=0, v[0].v1()=0;
-        v[1].pos=s.pos+sx-sy; v[1].u1()=0, v[1].v1()=1;
-        v[2].pos=s.pos-sx+sy; v[2].u1()=1, v[2].v1()=0;
-        v[3].pos=s.pos-sx-sy; v[3].u1()=1, v[3].v1()=1;
+        v[0].setPos(s.pos+sx+sy); v[0].u1()=0, v[0].v1()=0;
+        v[1].setPos(s.pos+sx-sy); v[1].u1()=0, v[1].v1()=1;
+        v[2].setPos(s.pos-sx+sy); v[2].u1()=1, v[2].v1()=0;
+        v[3].setPos(s.pos-sx-sy); v[3].u1()=1, v[3].v1()=1;
         v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=gb_RenderDevice->ConvertColor(s.color);
     }
 

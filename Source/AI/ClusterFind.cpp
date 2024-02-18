@@ -680,7 +680,7 @@ void ClusterFind::FindClusterFront(int x, int y, uint32_t to,
 	pone[0]=pnt;
 	size_one=1;
 
-	int num_point=1;
+	//int num_point=1;
 	uint32_t id=pmap[y * dx + x];
 
 	is_used[y*dx+x]=1;
@@ -718,7 +718,7 @@ void ClusterFind::FindClusterFront(int x, int y, uint32_t to,
 					if(w==0 && size_two<max_cell_in_front)
 					{
 						w=i+2;
-						num_point++;
+						//num_point++;
 
 						Front pnt;
 						pnt.x=xx;pnt.y=yy;
@@ -896,14 +896,14 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 
 	bool first=true;
 	int iteration=0;
-	bool no_all_escape;
+	//bool no_all_escape;
 
 	const bool badd=true;
 	const uint8_t cmax_walk=4;
 
 	do
 	{
-		no_all_escape=false;//Ни одна из точек не перемещается
+		//no_all_escape=false;//Ни одна из точек не перемещается
 		
 		int maxd=first?(max_distance+1)/2:max_distance;
 		first=false;
@@ -967,7 +967,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 
 				if(is_ok)
 				{
-					no_all_escape=true;
+					//no_all_escape=true;
 					cf.cur_len=curd;
 					out_path[i]=cur;
 					break;

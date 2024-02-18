@@ -55,19 +55,19 @@ public:
 		return safe_cast<const AttributeSquad*>(terUnitBase::attr());
 	}
 
-	void Start();
-	void Quant();
-	void MoveQuant();
-	void AvatarInterpolation();
-	void DestroyLink();
-	void executeCommand(const UnitCommand& command);
-	void setPose(const Se3f& pose, bool initPose);
+	void Start() override;
+	void Quant() override;
+	void MoveQuant() override;
+	void AvatarInterpolation() override;
+	void DestroyLink() override;
+	void executeCommand(const UnitCommand& command) override;
+	void setPose(const Se3f& pose, bool initPose) override;
 
-	void ShowCircles();
+	void ShowCircles() override;
 
 	const SquadUnitList& squadUnits() const { return Units; }
 
-	void AvatarQuant();
+	void AvatarQuant() override;
 
 	void setCommander(terUnitBase* p) { commander_ = p; }
 	terUnitBase* commander() { return commander_; }
@@ -104,19 +104,19 @@ public:
 	int countUnits(terUnitAttributeID id, bool inSquad = true) const;
 	int countPossibleUnits(terUnitAttributeID id) const;
 
-	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(SaveUnitData* data);
+	SaveUnitData* universalSave(SaveUnitData* data) override;
+	void universalLoad(SaveUnitData* data) override;
 
-	terUnitSquad* GetSquadPoint(){ return this; }
+	terUnitSquad* GetSquadPoint() override { return this; }
 
-	void setDamage(const DamageData& damage, terUnitBase* p);
+	void setDamage(const DamageData& damage, terUnitBase* p) override;
 
 	void setHomePosition(const Vect2f& homePosition) { homePosition_ = homePosition; }
 	const Vect2f& homePosition() const { return homePosition_; }
 
 	int GetInterfaceOffensiveMode();
 
-	void ChangeUnitOwner(terPlayer* player);
+	void ChangeUnitOwner(terPlayer* player) override;
 
 	const terUnitLegionary* RequestTransportPoint(const terUnitBase* transported_unit) const;
 	bool isTransport() const;
@@ -127,10 +127,10 @@ public:
 
 	void clearOrders();
 
-	int GetInterfaceLegionMode();
+	int GetInterfaceLegionMode() override;
 
-	int isBuildingPowerOn(){ return 1; }
-	int CanBuildingEnable(){ return 1; }
+	int isBuildingPowerOn() override { return 1; }
+	int CanBuildingEnable() override { return 1; }
 
 	void GetAtomPaused(DamageMolecula& paused);
 	void GetAtomProduction(DamageMolecula& atom_request,DamageMolecula& atom_progress,DamageMolecula& atom_enabled);
@@ -138,7 +138,7 @@ public:
 	int loadedTechnicsCount() const;
 	int dischargeTechnics(int count);
 
-	void ShowInfo();
+	void ShowInfo() override;
 
 	void showPath(const std::vector<Vect2f>& wayPoints, const std::vector<Vect2f>& patrolPoints, AttackPoint* attackPoint);
 	const std::vector<Vect2f>& getWayPoints() const {
@@ -151,16 +151,16 @@ public:
 		return !attack_points.empty() ? &attack_points.front() : 0;
 	}
 	
-	void Select();
-	void Deselect();
+	void Select() override;
+	void Deselect() override;
 	
-	void UpdateSkinColor();
+	void UpdateSkinColor() override;
 
 	//-------------------------------------------------
 	void addUnit(terUnitLegionary* unit, bool set_position);
 	void removeUnit(terUnitLegionary* unit);
 	void addSquad(terUnitSquad* squad);
-    void Kill();
+    void Kill() override;
     void explode();
 	
 	bool Empty() const { return Units.empty(); }
@@ -214,7 +214,7 @@ public:
 	void holdProduction();
 	void unholdProduction();
 
-	float chargeLevel() const;
+	float chargeLevel() const override;
 
 	struct ActionSquadAttack* attackAction() const { return attackAction_; }
 	void setAttackAction(ActionSquadAttack* attackAction) { attackAction_ = attackAction; }
@@ -224,7 +224,7 @@ public:
 
 	void setSquadToFollow(terUnitBase* squadToFollow);
 
-	void showDebugInfo();
+	void showDebugInfo() override;
 
 	bool checkAttackPosition(const Vect3f& to) const;
 	float getAttackRadius() const { return radius() + currentAttribute()->fireRadius(); }
@@ -329,7 +329,6 @@ private:
 
 	//------------------------------
 	friend AttackPoint;
-	friend class SquadBestTargetScanOp;
 	friend class AIPlayer;
 	friend class SquadSearchTargetScanOp;
 };

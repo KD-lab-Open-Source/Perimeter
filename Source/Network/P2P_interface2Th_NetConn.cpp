@@ -57,7 +57,7 @@ void PNetCenter::SetConnectionTimeout(int _ms) {
 
 void PNetCenter::RemovePlayer(NETID netid)
 {
-    fprintf(stdout, "RemovePlayer: %lu\n", netid);
+    fprintf(stdout, "RemovePlayer: 0x%" PRIX64 "\n", netid);
     if(isHost() && netid==m_localNETID && netid==m_hostNETID){
         ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
         ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
@@ -181,7 +181,7 @@ bool PNetCenter::isConnected() const {
 size_t PNetCenter::SendNetBuffer(InOutNetComBuffer* netbuffer, NETID destination) {
     size_t sent = 0;
     if (destination == m_localNETID || (destination != m_hostNETID && !isHost())) {
-        fprintf(stderr, "Discarding sending %lu -> %lu\n", m_localNETID, destination);
+        fprintf(stderr, "Discarding sending 0x%" PRIX64 " -> 0x%" PRIX64 "\n", m_localNETID, destination);
         //xassert(0);
     } else {
         sent = connectionHandler.sendToNETID(reinterpret_cast<uint8_t*>(netbuffer->buf), netbuffer->filled_size, destination);
@@ -244,7 +244,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
                 //Print warning if arch is diff but was masked
                 if (!clientInfo.isArchCompatible(0)) {
                     fprintf(
-                        stderr, "Arch mismatch, desync may happen! Server %llX Client %llX Mask %llX\n",
+                        stderr, "Arch mismatch, desync may happen! Server 0x%" PRIX64 " Client 0x%" PRIX64 " Mask 0x%" PRIX64 "\n",
                         NetConnectionInfo::computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
                     );
                 }
@@ -277,7 +277,8 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
 
     //If not OK close it
     if (ret <= 0) {
-        fprintf(stderr, "Incoming connection %lu closed response %d ret %d\n", connection->netid, response.connectResult, ret);
+        fprintf(stderr, "Incoming connection 0x%" PRIX64 " closed response %d ret %d\n", connection->netid, response.connectResult, ret);
+
         connection->close();
         
         //Delete connection since is not stored anywhere

@@ -22,6 +22,7 @@ namespace tx3d {
 
 	class Serializable {
 		public:
+            virtual ~Serializable() = default;
 			virtual string paramString() const = 0;
 			virtual const string& getType() const = 0;
 	};

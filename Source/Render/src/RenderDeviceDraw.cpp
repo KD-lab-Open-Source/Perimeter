@@ -514,14 +514,14 @@ void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, c
     sVertexXYZDT1* v = nullptr;
     db->Lock(8, 12*sPolygon::PN, v, reinterpret_cast<indices_t*&>(p), true);
     
-    v[0].pos.set(min.x,min.y,min.z);
-    v[1].pos.set(max.x,min.y,min.z);
-    v[2].pos.set(min.x,max.y,min.z);
-    v[3].pos.set(max.x,max.y,min.z);
-    v[4].pos.set(min.x,min.y,max.z);
-    v[5].pos.set(max.x,min.y,max.z);
-    v[6].pos.set(min.x,max.y,max.z);
-    v[7].pos.set(max.x,max.y,max.z);
+    v[0].setPos(min.x,min.y,min.z);
+    v[1].setPos(max.x,min.y,min.z);
+    v[2].setPos(min.x,max.y,min.z);
+    v[3].setPos(max.x,max.y,min.z);
+    v[4].setPos(min.x,min.y,max.z);
+    v[5].setPos(max.x,min.y,max.z);
+    v[6].setPos(min.x,max.y,max.z);
+    v[7].setPos(max.x,max.y,max.z);
     v[0].diffuse=v[1].diffuse=v[2].diffuse=
     v[3].diffuse=v[4].diffuse=v[5].diffuse=
     v[6].diffuse=v[7].diffuse=diffuse;
@@ -632,10 +632,10 @@ void cInterfaceRenderDevice::DrawScene(class cScene *Scene) {
             db->AutoLockQuad(locked, 1, v, ib);
             Vect3f& p=ULight->GetPos();
             float r=ULight->GetRadius();
-            v[0].pos.x=p.x-r; v[0].pos.y=p.y-r; v[0].pos.z=p.z; v[0].u1()=0; v[0].v1()=0;
-            v[1].pos.x=p.x-r; v[1].pos.y=p.y+r; v[1].pos.z=p.z; v[1].u1()=0; v[1].v1()=1;
-            v[2].pos.x=p.x+r; v[2].pos.y=p.y-r; v[2].pos.z=p.z; v[2].u1()=1; v[2].v1()=0;
-            v[3].pos.x=p.x+r; v[3].pos.y=p.y+r; v[3].pos.z=p.z; v[3].u1()=1; v[3].v1()=1;
+            v[0].x=p.x-r; v[0].y=p.y-r; v[0].z=p.z; v[0].u1()=0; v[0].v1()=0;
+            v[1].x=p.x-r; v[1].y=p.y+r; v[1].z=p.z; v[1].u1()=0; v[1].v1()=1;
+            v[2].x=p.x+r; v[2].y=p.y-r; v[2].z=p.z; v[2].u1()=1; v[2].v1()=0;
+            v[3].x=p.x+r; v[3].y=p.y+r; v[3].z=p.z; v[3].u1()=1; v[3].v1()=1;
 
             v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ConvertColor(Diffuse);
         }
@@ -671,7 +671,7 @@ void cInterfaceRenderDevice::DrawElasticSphere(ElasticSphere *es) {
     int i;
     for (i=0; i<=is; i++) {
         const Vect3f &n=es->normal(0,i);
-        vb->pos=es->point(0,i);
+        es->point(0,i).write(vb->pos);
         vb->GetTexel().set(static_cast<float>(0) / static_cast<float>(es->psi_size),
                           static_cast<float>(i) / static_cast<float>(es->theta_size));
         vb->GetTexel2().set(n.y*0.5f+0.5f, n.z*0.5f+dv);
@@ -687,7 +687,7 @@ void cInterfaceRenderDevice::DrawElasticSphere(ElasticSphere *es) {
         for (i = 0; i <= is; i++) {
             int isi = j & 1 ? (is - i) : i;
             const Vect3f& n = es->normal(j + 1, isi);
-            vb->pos = es->point(j + 1, isi);
+            es->point(j + 1, isi).write(vb->pos);
             vb->GetTexel().set(static_cast<float>(j + 1) / static_cast<float>(es->psi_size),
                                static_cast<float>(isi) / static_cast<float>(es->theta_size));
             vb->GetTexel2().set(n.y * 0.5f + 0.5f, n.z * 0.5f + dv);

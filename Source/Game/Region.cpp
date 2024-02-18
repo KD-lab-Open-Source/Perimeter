@@ -1023,8 +1023,9 @@ void RegionDispatcher::vectorize(int minimalRegionSize, bool initSpline)
 	SeedList seeds;
 	restoreSeeds(edit_column, seeds);
 	Region::clear();
-
+#ifndef _FINAL_VERSION_
 	int analyze_cnt = 0;
+#endif
 	if(edit_column.front().changed()) {
 	    CellLine line = CellLine();
         CellLine::analyze(line, edit_column.front(), seeds);
@@ -1033,14 +1034,18 @@ void RegionDispatcher::vectorize(int minimalRegionSize, bool initSpline)
 	for(i = i_next = edit_column.begin(), ++i_next; i_next != edit_column.end(); i = i_next, ++i_next)
 		if(i->changed() || i_next->changed()){
 			CellLine::analyze(*i,*i_next, seeds);
+#ifndef _FINAL_VERSION_
 			analyze_cnt++;
+#endif
 		}
     if(edit_column.back().changed()) {
         CellLine line = CellLine();
         CellLine::analyze(edit_column.back(), line, seeds);
     }
 
+#ifndef _FINAL_VERSION_
 	statistics_add(analyze_cnt, STATISTICS_GROUP_NUMERIC, analyze_cnt);
+#endif
 
 	typedef std::vector<Region*> RegionList;
 	RegionList regions;

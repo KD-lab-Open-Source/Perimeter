@@ -241,10 +241,10 @@ void DrawBWQuadrate(int r, unsigned char * bitmap, int xcenter, int ycenter, int
 
 	if(r >MAX_RADIUS_CIRCLEARR) r=MAX_RADIUS_CIRCLEARR; 
 	int j;
-	int* xx,*yy;
+	//int* xx,*yy;
 	int max = maxRad[r];
-	xx = xRad[r];
-	yy = yRad[r];
+	//xx = xRad[r];
+	//yy = yRad[r];
 	for(j = -r;j < r;j++) {
 		int x=xcenter + j; if(x<0)continue; if(x>=sizex) continue;//x=sizex-1;
 		int y=ycenter + -r; if(y<0)continue; if(y>=sizey) continue;

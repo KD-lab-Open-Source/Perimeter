@@ -12,7 +12,7 @@ typedef std::list<std::string> StringList;
 class Token : public ShareHandleBase
 {
 public:
-	explicit Token(const char* name = 0) : name_(name) { assert(name); }
+	explicit Token(const char* name = nullptr) : name_(name) { assert(name); }
 	Token(const Token& token) : ShareHandleBase(), name_(token.name()) {}
 	~Token() override = default;
 	const char* name() const { return name_.c_str(); }
@@ -208,10 +208,10 @@ protected:
 public:
 	DataType(const char* type_name, int size) : type_name_(type_name), size_(size) {}
 	const char* type_name() const { return type_name_.c_str(); }
-	int sizeOf() const { return size_; }
-	void description(unsigned& crc) const { crc = CRC(type_name_.c_str(), crc); }
+	int sizeOf() const override { return size_; }
+	void description(unsigned& crc) const override { crc = CRC(type_name_.c_str(), crc); }
 	virtual class Variable* create(const char* name) const = 0;
-	void affect(Compiler& comp) const;
+	void affect(Compiler& comp) const override;
 };
 
 class Variable : public DescriptedToken 
@@ -238,7 +238,7 @@ public:
 	int declarable() const { return !static_flag && !new_emulation_flag; }
 	int definible() const { return !static_flag; }
 	Token* clone() const override = 0;
-	void affect(Compiler& comp) const;
+	void affect(Compiler& comp) const override;
 	bool newEmulated() const { return new_emulation_flag; }
 };
 
@@ -397,8 +397,7 @@ public:
 struct StructToken : Token 
 {
 	StructToken() : Token("struct") {}
-	void affect(Compiler& comp) const
-	{
+	void affect(Compiler& comp) const override {
 		comp.context().add(new StructDataType(comp));
 		comp.skip_token(";");
 	}

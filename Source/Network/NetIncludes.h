@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <cinttypes>
 #include <climits>
 #include <SDL_net.h>
 #include <unordered_map>
