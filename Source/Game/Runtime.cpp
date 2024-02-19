@@ -80,6 +80,7 @@ int terScreenIndex = 0;
 #ifdef GPX
 constexpr int terFullScreen = 0;
 constexpr int terResizableWindow = 0;
+bool isRuntimePaused = false;
 #else
 int terFullScreen = 0;
 int terResizableWindow = 1;
@@ -577,10 +578,14 @@ cInterfaceRenderDevice* SetGraph()
     terBitPerPixel = 32;
     terScreenSizeX = gpx()->sys()->getWidth();
     terScreenSizeY = gpx()->sys()->getHeight();
-    if (terScreenSizeY < 720) {
-        terScreenSizeY = 720;
-        terScreenSizeX = 720.0f * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    auto minHeight = min(dm.h, 960);
+    if (terScreenSizeY < minHeight) {
+        terScreenSizeY = minHeight;
+        terScreenSizeX = (float) minHeight * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
     }
+    printf("Display size: %dx%d, screen height %d, min height %d\n", terScreenSizeX, terScreenSizeY, dm.h, minHeight);
     int ModeRender = RENDERDEVICE_MODE_RGB32 | RENDERDEVICE_MODE_WINDOW;
 #else
 	int ModeRender=0;
@@ -912,6 +917,15 @@ char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
     strcpy(str, arg.c_str());
     return str;
 }
+#ifdef GPX
+void pauseRuntime() {
+    isRuntimePaused = true;
+}
+
+void resumeRuntime() {
+    isRuntimePaused = false;
+}
+#endif
 
 int SDL_main(int argc, char *argv[])
 {
@@ -995,6 +1009,15 @@ int SDL_main(int argc, char *argv[])
 
     bool run = true;
     while (run) {
+#ifdef GPX
+        if (isRuntimePaused) {
+#ifdef EMSCRIPTEN
+            emscripten_sleep(0);
+            continue;
+#endif
+        }
+#endif
+
         app_event_poll();
 
         //NetworkPause handler
@@ -1025,14 +1048,14 @@ int SDL_main(int argc, char *argv[])
 #ifdef GPX
         static bool gpx_ready = false;
         if (!gpx_ready) {
-            gpx_ready = false;
+            gpx_ready = true;
 #ifdef EMSCRIPTEN
             EM_ASM(({
-                if (!document.pointerLockElement) {
-                    Module["canvas"].addEventListener("pointerdown", () => {
+                Module["canvas"].addEventListener("pointerdown", () => {
+                    if (!document.pointerLockElement) {
                         Module["canvas"].requestPointerLock().catch((e) => console.error("Can't lock mouse", e));
-                    });
-                }
+                    }
+                });
             }));
 #endif
             gpx()->sys()->mainReady(true);

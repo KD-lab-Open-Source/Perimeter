@@ -731,7 +731,14 @@ int SwitchMenuBGQuant2( float, float ) {
 			switch (_id_on) {
                 case SQSH_MM_START_SCR:
                     //Only enable if user didn't choose a specific content
+#ifdef GPX
+                    _shellIconManager.GetWnd(SQSH_MM_QUIT_BTN)->Enable(false);
+                    _shellIconManager.GetWnd(SQSH_MM_LANG_BTN)->Enable(false);
+                    _shellIconManager.GetWnd(SQSH_MM_CONTENT_CHOOSER_BTN)->Enable(false);
+                    _shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_BTN)->Enable(false);
+#else
                     _shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_BTN)->Enable(terGameContentAvailable == terGameContentSelect);
+#endif
                     break;
 				case SQSH_MM_SINGLE_SCR:
                     //Only enable if user didn't choose a specific content
