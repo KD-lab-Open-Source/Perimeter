@@ -185,7 +185,8 @@ void terCameraType::setFocus(float focus)
 void terCameraType::update()
 {
 	Vect3f position;
-	position.setSpherical(coordinate().psi(), coordinate().theta(), coordinate().distance());
+	auto aspectScale = ((float) terScreenSizeX) / terScreenSizeY / (4.0f / 3);
+	position.setSpherical(coordinate().psi(), coordinate().theta(), coordinate().distance() * aspectScale);
 	position += coordinate().position();
 	if(oscillatingTimer_()){
 		float t = (float)(explodingDuration_ - oscillatingTimer_())/1000;
