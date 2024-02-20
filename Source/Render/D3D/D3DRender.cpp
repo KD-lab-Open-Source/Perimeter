@@ -1005,18 +1005,18 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	lpD3DDevice->LightEnable(0,TRUE);
 }
 uint32_t cD3DRender::GetRenderState(eRenderStateOption option) {
-
+    D3DRENDERSTATETYPE state_type = static_cast<D3DRENDERSTATETYPE>(option);
     switch (option) {
         default:
             break;
         case RS_WIREFRAME:
-            option = static_cast<eRenderStateOption>(D3DRS_FILLMODE);
+            state_type = D3DRS_FILLMODE;
             break;
         case RS_ALPHA_TEST_MODE:
-            option = static_cast<eRenderStateOption>(D3DRS_ALPHAREF);
+            state_type = D3DRS_ALPHAREF;
             break;
     }
-    uint32_t value = GetRenderState(static_cast<D3DRENDERSTATETYPE>(option));
+    uint32_t value = GetRenderState(state_type);
     switch (option) {
         default:
             break;
