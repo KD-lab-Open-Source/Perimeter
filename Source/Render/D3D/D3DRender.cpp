@@ -679,7 +679,12 @@ int cD3DRender::Fill(int r,int g,int b,int a)
 	if(lpD3DDevice==0) return -1;
 	RestoreDeviceIfLost();
 
-	D3DVIEWPORT9 vp={0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+	D3DVIEWPORT9 vp={
+            0, 0,
+            static_cast<DWORD>(ScreenSize.x),
+            static_cast<DWORD>(ScreenSize.y),
+            0.0f, 1.0f
+    };
 	RDCALL(lpD3DDevice->SetViewport(&vp));
 	RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|((RenderMode&RENDERDEVICE_MODE_STRENCIL)?D3DCLEAR_STENCIL:0),
 		D3DCOLOR_RGBA(r,g,b,a),1,0));
@@ -940,7 +945,12 @@ int cD3DRender::BeginScene()
 		SetRenderState( D3DRS_FOGTABLEMODE,  D3DFOG_NONE ),
 		SetRenderState( D3DRS_FOGVERTEXMODE,  D3DFOG_NONE );
     
-    D3DVIEWPORT9 vp = {0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+    D3DVIEWPORT9 vp = {
+            0, 0,
+            static_cast<DWORD>(ScreenSize.x),
+            static_cast<DWORD>(ScreenSize.y),
+            0.0f, 1.0f
+    };
     RDCALL(lpD3DDevice->SetViewport(&vp));
     
 	return hr;
@@ -1810,7 +1820,12 @@ void cD3DRender::UseOrthographicProjection() {
     RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
     RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&orthoVP)));
     //SetDrawTransform may have changed viewport, set screen viewport just in case
-    D3DVIEWPORT9 vp={0,0,ScreenSize.x,ScreenSize.y,0.0f,1.0f};
+    D3DVIEWPORT9 vp={
+            0, 0,
+            static_cast<DWORD>(ScreenSize.x),
+            static_cast<DWORD>(ScreenSize.y),
+            0.0f, 1.0f
+    };
     RDCALL(lpD3DDevice->SetViewport(&vp));
 }
 

@@ -698,7 +698,11 @@ void MissionDescription::setSinglePlayerDifficulty(Difficulty difficutyIn)
 
 void MissionDescription::shufflePlayers()
 {
-	shuffle(&playersShufflingIndices[0], &playersShufflingIndices[0] + playerAmountScenarioMax, std::default_random_engine(clocki()));
+	shuffle(
+        playersShufflingIndices.data(),
+        playersShufflingIndices.data() + playerAmountScenarioMax,
+        std::default_random_engine(clocki())
+    );
 }
 
 void MissionDescription::clearData() {
@@ -716,7 +720,7 @@ void MissionDescription::fitPlayerArrays() {
     }
     while (playersShufflingIndices.size() != playersData.size()) {
         if (playersShufflingIndices.size() < playersData.size()) {
-            playersShufflingIndices.emplace_back(playersShufflingIndices.size());
+            playersShufflingIndices.emplace_back(static_cast<int>(playersShufflingIndices.size()));
         } else {
             playersShufflingIndices.pop_back();
         }

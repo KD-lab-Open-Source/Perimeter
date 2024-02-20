@@ -1034,16 +1034,9 @@ void GameShell::EventHandler(SDL_Event& event) {
         return;
     }
 
-/*
-
-    switch(uMsg){
-        case WM_MOUSELEAVE:
-            MouseLeave();
-            break;
-    }
-*/
     //Sets the SDL2 text input mode according to current text edit mode in UI
-    if (_shellIconManager.isInEditMode() != SDL_IsTextInputActive()) {
+    bool text_input_active = SDL_TRUE == SDL_IsTextInputActive();
+    if (_shellIconManager.isInEditMode() != text_input_active) {
         if (_shellIconManager.isInEditMode()) {
             SDL_StartTextInput();
         } else {

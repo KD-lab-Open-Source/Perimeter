@@ -410,7 +410,7 @@ void PerimeterSetupDisplayMode() {
     }
 
     //Set current fullscreen state
-    if (windowFullscreen != terFullScreen) {
+    if (windowFullscreen != (terFullScreen != 0)) {
 #if PERIMETER_DEBUG
         printf("SDL_SetWindowFullscreen %d\n", terFullScreen);
 #endif

@@ -187,7 +187,7 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
 void GraphOptions::apply() {
 #ifndef GPX
 	bool change_depth=terBitPerPixel!=colorDepth;
-    bool change_display_mode = terFullScreen != resolution.fullscreen;
+    bool change_display_mode = (terFullScreen != 0) != resolution.fullscreen;
     if (resolution.fullscreen) {
         change_display_mode |= terScreenRefresh != resolution.refresh || terScreenIndex != resolution.display;
     } else {
@@ -212,7 +212,7 @@ void GraphOptions::apply() {
 		gameShell->updateResolution(change_depth, change_size, change_display_mode);
 	}
 
-    if (terGrabInput != grabInput) {
+    if ((terGrabInput != 0) != grabInput) {
         terGrabInput = grabInput;
         check_command_line_parameter("GrabInput", terGrabInput);
         if (terGrabInput && !terFullScreen) {
