@@ -41,7 +41,8 @@ uniform normal_texture_fs_params {
     float un_alpha_test;
     int material; // 0 - NONE; 1 - MAT_LIGHT
 };
-uniform sampler2D un_tex0;
+uniform sampler un_sampler0;
+uniform texture2D un_tex0;
 
 //Fragment shader inputs from Vertex shader
 layout(location=0) in vec3 fs_normal;
@@ -74,7 +75,7 @@ vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye,
 }
 
 void main() {
-    frag_color = texture(un_tex0, fs_uv0);
+    frag_color = texture(sampler2D(un_tex0, un_sampler0), fs_uv0);
     if (material > 0) {
         frag_color = frag_color * gamma(
             phong(fs_position, fs_normal, -light_dir, eye_pos,

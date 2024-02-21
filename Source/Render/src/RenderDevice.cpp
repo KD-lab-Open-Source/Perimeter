@@ -480,10 +480,11 @@ Vect3f NormalByColor(uint32_t d)
     return v;
 }
 
-void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
+void BuildMipMap(int x,int y,int bpp,int bplSrc,const void *pSrc,int bplDst,void *pDst,
 				 int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Attr)
 {
-	char *Src=(char*)pSrc,*Dst=(char*)pDst;
+	const uint8_t* Src=static_cast<const uint8_t*>(pSrc);
+    uint8_t* Dst=static_cast<uint8_t*>(pDst);
 	int ofsDst=bplDst-x*bpp, ofsSrc=bplSrc-2*x*bpp;
 	int rm=(1<<rc)-1,gm=(1<<gc)-1,bm=(1<<bc)-1,am=(1<<ac)-1,xm=x-1,ym=y-1;
 

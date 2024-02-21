@@ -26,7 +26,8 @@ uniform terrain_fs_params {
     vec4 un_tile_color;
     float un_alpha_test;
 };
-uniform sampler2D un_tex0;
+uniform sampler un_sampler0;
+uniform texture2D un_tex0;
 
 //Fragment shader inputs from Vertex shader
 layout(location=0) in vec2 fs_uv0;
@@ -35,7 +36,7 @@ layout(location=0) in vec2 fs_uv0;
 out vec4 frag_color;
 
 void main() {
-    frag_color = un_tile_color * texture(un_tex0, fs_uv0);
+    frag_color = un_tile_color * texture(sampler2D(un_tex0, un_sampler0), fs_uv0);
     if (un_alpha_test >= frag_color.a) discard;
 }
 @end

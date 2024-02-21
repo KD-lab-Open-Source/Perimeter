@@ -66,6 +66,7 @@ size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
 
 SokolBuffer::SokolBuffer(sg_buffer_desc* desc)
 : buffer(sg_make_buffer(desc)) {
+    xassert(buffer.id != SG_INVALID_ID);
 }
 
 SokolBuffer::~SokolBuffer() {
@@ -157,6 +158,7 @@ void SokolTexture2D::update() {
 #endif
         xassert(desc->usage == SG_USAGE_IMMUTABLE || data);
         image = sg_make_image(desc);
+        xassert(image.id != SG_INVALID_ID);
         if (desc->usage == SG_USAGE_IMMUTABLE) {
             //Cleanup subimages
             for (int ci = 0; ci < SG_CUBEFACE_NUM; ++ci) {

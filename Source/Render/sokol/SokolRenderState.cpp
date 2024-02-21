@@ -48,12 +48,15 @@ int cSokolRender::EndScene() {
 
     //Begin pass
     sg_pass_action pass_action = {};
-    pass_action.colors[0].action = SG_ACTION_CLEAR;
-    pass_action.colors[0].value = fill_color;
-    pass_action.depth.action = SG_ACTION_CLEAR;
-    pass_action.depth.value = 1.0f;
-    pass_action.stencil.action = SG_ACTION_CLEAR;
-    pass_action.stencil.value = 0;
+    pass_action.colors[0].load_action = SG_LOADACTION_CLEAR;
+    pass_action.colors[0].store_action = SG_STOREACTION_STORE;
+    pass_action.colors[0].clear_value = fill_color;
+    pass_action.depth.load_action = SG_LOADACTION_CLEAR;
+    pass_action.depth.store_action = SG_STOREACTION_DONTCARE;
+    pass_action.depth.clear_value = 1.0f;
+    pass_action.stencil.load_action = SG_LOADACTION_CLEAR;
+    pass_action.stencil.store_action = SG_STOREACTION_DONTCARE;
+    pass_action.stencil.clear_value = 0;
     sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
 
     //Iterate each command
@@ -144,8 +147,9 @@ int cSokolRender::EndScene() {
         }
 #endif
         bindings.index_buffer = command->index_buffer->buffer;
+        bindings.fs.samplers[pipeline->shader_fs_sampler_slot] = sampler;
         
-        //Bind images for samplers
+        //Bind images
         for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
             int fs_slot = pipeline->shader_fs_texture_slot[i];
             if (fs_slot < 0) continue;
@@ -166,7 +170,7 @@ int cSokolRender::EndScene() {
                 continue;
             }
 #endif
-            bindings.fs_images[fs_slot] = tex->image;
+            bindings.fs.images[fs_slot] = tex->image;
         }
         sg_apply_bindings(&bindings);
         
@@ -714,10 +718,7 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
         pDrawNode->vp.Y + pDrawNode->vp.Height
     );
     activeCommand.viewport[0].set(pDrawNode->vp.X, pDrawNode->vp.Y);
-    activeCommand.viewport[1].set(
-            pDrawNode->vp.X + pDrawNode->vp.Width,
-            pDrawNode->vp.Y + pDrawNode->vp.Height
-    );
+    activeCommand.viewport[1].set(pDrawNode->vp.Width, pDrawNode->vp.Height);
     SetVPMatrix(&pDrawNode->matViewProj);
     activePipelineMode.cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
     CameraCullMode = activePipelineMode.cull;

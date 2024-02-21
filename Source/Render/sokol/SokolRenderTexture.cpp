@@ -32,18 +32,9 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         desc->label = nullptr; //Added later
         desc->width = dx;
         desc->height = dy;
-        desc->wrap_u = desc->wrap_v = SG_WRAP_REPEAT;
         desc->pixel_format = SG_PIXELFORMAT_RGBA8;
         desc->num_slices = 1;
-#ifdef SOKOL_GL
-        //TODO check why mipmaps isn't working
-        desc->num_mipmaps = 1;
-#else
         desc->num_mipmaps = std::min(static_cast<int>(SG_MAX_MIPMAPS), Texture->GetNumberMipMap());
-#endif
-        //Filter must be linear for small font textures to not look unreadable
-        desc->min_filter = 1 < desc->num_mipmaps ? SG_FILTER_LINEAR_MIPMAP_LINEAR : SG_FILTER_LINEAR;
-        desc->mag_filter = SG_FILTER_LINEAR;
 
         if (!FileImage) {
             desc->usage = SG_USAGE_DYNAMIC;

@@ -132,15 +132,26 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 #ifdef PERIMETER_DEBUG
     printf("cSokolRender::Init sg_setup done\n");
 #endif
+
+    //Create sampler
+    sg_sampler_desc sampler_desc = {};
+    sampler_desc.label = "SamplerLinear";
+    sampler_desc.wrap_u = SG_WRAP_REPEAT;
+    sampler_desc.wrap_v = SG_WRAP_REPEAT;
+    sampler_desc.min_lod = 0.0f;
+    sampler_desc.max_lod = 0.0f;    // for max_lod, zero-initialized means "FLT_MAX"
+    //Filter must be linear for small font textures to not look unreadable
+    sampler_desc.min_filter = SG_FILTER_LINEAR;
+    sampler_desc.mag_filter = SG_FILTER_LINEAR;
+    sampler_desc.mipmap_filter = SG_FILTER_LINEAR;
+    sampler = sg_make_sampler(sampler_desc);
     
     //Create empty texture
     sg_image_desc* imgdesc = new sg_image_desc();
     imgdesc->label = nullptr;
     imgdesc->width = imgdesc->height = 64;
-    imgdesc->wrap_u = imgdesc->wrap_v = SG_WRAP_REPEAT;
     imgdesc->pixel_format = SG_PIXELFORMAT_RGBA8;
     imgdesc->num_mipmaps = 1;
-    imgdesc->min_filter = imgdesc->mag_filter = SG_FILTER_NEAREST;
     imgdesc->usage = SG_USAGE_IMMUTABLE;
     size_t pixel_len = sokol_pixelformat_bytesize(imgdesc->pixel_format);
     size_t buf_len = imgdesc->height * imgdesc->width * pixel_len;

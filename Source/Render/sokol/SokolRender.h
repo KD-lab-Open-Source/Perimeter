@@ -43,8 +43,8 @@ struct SokolCommand {
     void* fs_params = nullptr;
     size_t vs_params_len = 0;
     size_t fs_params_len = 0;
-    Vect2i viewport[2];
-    Vect2i clip[2];
+    Vect2i viewport[2]; //0 Pos 1 Size
+    Vect2i clip[2]; //0 Pos 1 Size
 };
 
 class cSokolRender: public cInterfaceRenderDevice {
@@ -62,6 +62,7 @@ private:
     bool isOrthographicProjSet = false;
     sg_color fill_color;
     std::vector<SokolCommand*> commands;
+    sg_sampler sampler;
     
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;

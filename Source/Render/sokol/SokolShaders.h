@@ -8,6 +8,7 @@ struct shader_funcs {
     const sg_shader_desc* (*shader_desc)(sg_backend) = nullptr;
     int (*attr_slot)(const char*) = nullptr;
     int (*image_slot)(sg_shader_stage, const char*) = nullptr;
+    int (*sampler_slot)(sg_shader_stage, const char*) = nullptr;
     int (*uniformblock_slot)(sg_shader_stage, const char*) = nullptr;
     size_t (*uniformblock_size)(sg_shader_stage, const char*) = nullptr;
 };
@@ -29,6 +30,7 @@ shader_funcs shader_##MODULE_NAME = { \
     MODULE_NAME##_program_shader_desc, \
     MODULE_NAME##_program_attr_slot, \
     MODULE_NAME##_program_image_slot, \
+    MODULE_NAME##_program_sampler_slot, \
     MODULE_NAME##_program_uniformblock_slot, \
     MODULE_NAME##_program_uniformblock_size, \
 };

@@ -276,6 +276,9 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
             fprintf(stderr, "RegisterPipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
         }
     }
+    if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0") < 0) {
+        fprintf(stderr, "RegisterPipeline: 'un_sampler0' sampler slot not found at pipeline '%s'\n", desc.label);
+    }
     
     //Common attributes
     bind_attr_slot(ctx, "vs_position", SG_VERTEXFORMAT_FLOAT3);
@@ -313,6 +316,7 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         std::string name = "un_tex" + std::to_string(i);
         pipeline->shader_fs_texture_slot[i] = ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, name.c_str());
     }
+    pipeline->shader_fs_sampler_slot = ctx.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0");
     if (pipelines.size() + 1 > PERIMETER_SOKOL_PIPELINES_MAX) {
         fprintf(stderr, "RegisterPipeline: reached maximum amount of registered pipelines '%d'\n", pipeline->id);
         xassert(0);

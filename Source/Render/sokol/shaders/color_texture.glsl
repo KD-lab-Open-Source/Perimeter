@@ -40,9 +40,10 @@ uniform color_texture_fs_params {
     float un_tex2_lerp;
     float un_alpha_test;
 };
-uniform sampler2D un_tex0;
+uniform sampler un_sampler0;
+uniform texture2D un_tex0;
 #if defined(SHADER_TEX_2)
-uniform sampler2D un_tex1;
+uniform texture2D un_tex1;
 #endif
 
 //Fragment shader inputs from Vertex shader
@@ -57,7 +58,7 @@ out vec4 frag_color;
 
 void main() {
     #if defined(SHADER_TEX_2)
-    vec4 tex0 = texture(un_tex0, fs_uv0);
+    vec4 tex0 = texture(sampler2D(un_tex0, un_sampler0), fs_uv0);
     if (0 <= un_tex2_lerp) { //Modulate color add alpha
         tex0 = (
             tex0
@@ -66,28 +67,29 @@ void main() {
         );
     }
     //eColorMode
+    vec4 tex1 = texture(sampler2D(un_tex1, un_sampler0), fs_uv1);
     switch (un_color_mode) {
         default:
         case 0: { //COLOR_MOD Modulate
-            frag_color = texture(un_tex1, fs_uv1) * tex0 * fs_color;
+            frag_color = tex1 * tex0 * fs_color;
             break;
         }
         case 1: { //COLOR_ADD Add
-            frag_color = (texture(un_tex1, fs_uv1) + tex0) * fs_color;
+            frag_color = (tex1 + tex0) * fs_color;
             break;
         }
         case 2: { //COLOR_MOD2 Modulate and mul x2
-            frag_color = texture(un_tex1, fs_uv1) * tex0 * 2 * fs_color;
+            frag_color = tex1 * tex0 * 2 * fs_color;
             break;
         }
         case 3: { //COLOR_MOD4 Modulate and mul x4
-            frag_color = texture(un_tex1, fs_uv1) * tex0 * 4 * fs_color;
+            frag_color = tex1 * tex0 * 4 * fs_color;
             break;
         }
     };
     #else //SHADER_TEX_2
     //Modulate each other
-    frag_color = texture(un_tex0, fs_uv0) * fs_color;
+    frag_color = texture(sampler2D(un_tex0, un_sampler0), fs_uv0) * fs_color;
     #endif //SHADER_TEX_2
     if (un_alpha_test >= frag_color.a) discard;
 }
