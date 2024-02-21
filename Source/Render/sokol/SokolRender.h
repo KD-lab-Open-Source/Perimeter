@@ -43,8 +43,8 @@ struct SokolCommand {
     void* fs_params = nullptr;
     size_t vs_params_len = 0;
     size_t fs_params_len = 0;
-    Vect2i clipPos = Vect2i(0, 0);
-    Vect2i clipSize = Vect2i(0, 0);
+    Vect2i viewport[2];
+    Vect2i clip[2];
 };
 
 class cSokolRender: public cInterfaceRenderDevice {
@@ -72,6 +72,7 @@ private:
     static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, const PIPELINE_MODE& mode);
     static void GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, PIPELINE_MODE* mode);
     void ClearPipelines();
+    void ResetViewport();
     void RegisterPipeline(pipeline_id_t id);
     
     //Active pipeline/command state

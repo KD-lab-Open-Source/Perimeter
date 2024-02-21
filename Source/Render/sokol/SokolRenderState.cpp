@@ -28,6 +28,8 @@ int cSokolRender::BeginScene() {
     }
     ActiveScene = true;
 
+    ResetViewport();
+
     return cInterfaceRenderDevice::BeginScene();
 }
 
@@ -66,8 +68,11 @@ int cSokolRender::EndScene() {
         }
 
         //Apply viewport/clip
-        auto& clipPos = command->clipPos;
-        auto& clipSize = command->clipSize;
+        auto& viewportPos = command->viewport[0];
+        auto& viewportSize = command->viewport[1];
+        sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
+        auto& clipPos = command->clip[0];
+        auto& clipSize = command->clip[1];
         sg_apply_scissor_rect(clipPos.x, clipPos.y, clipSize.x, clipSize.y, true);
         
         //Get pipeline
@@ -217,6 +222,8 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
         xassert(0);
         EndScene();
     }
+
+    ResetViewport();
 
 #ifdef PERIMETER_DEBUG
     if (r == 0 && g == 0 && b == 0) {
@@ -387,8 +394,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     cmd->base_elements = activeCommand.base_elements;
     cmd->vertices = activeCommand.vertices;
     cmd->indices = activeCommand.indices;
-    cmd->clipPos = activeCommand.clipPos;
-    cmd->clipSize = activeCommand.clipSize;
+    memcpy(cmd->viewport, activeCommand.viewport, sizeof(Vect2i) * 2);
+    memcpy(cmd->clip, activeCommand.clip, sizeof(Vect2i) * 2);
     
     //Set shader params
     cmd->CreateShaderParams();
@@ -566,6 +573,7 @@ void cSokolRender::UseOrthographicProjection() {
         FinishActiveDrawBuffer();
     }
     isOrthographicProjSet = true;
+    ResetViewport();
 }
 
 void cSokolRender::SetColorMode(eColorMode color_mode) {
@@ -704,6 +712,11 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
         pDrawNode->vp.Y,
         pDrawNode->vp.X + pDrawNode->vp.Width,
         pDrawNode->vp.Y + pDrawNode->vp.Height
+    );
+    activeCommand.viewport[0].set(pDrawNode->vp.X, pDrawNode->vp.Y);
+    activeCommand.viewport[1].set(
+            pDrawNode->vp.X + pDrawNode->vp.Width,
+            pDrawNode->vp.Y + pDrawNode->vp.Height
     );
     SetVPMatrix(&pDrawNode->matViewProj);
     activePipelineMode.cull = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) == 0 ? CULL_CW : CULL_CCW;
