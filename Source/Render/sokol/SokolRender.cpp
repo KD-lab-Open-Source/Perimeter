@@ -194,6 +194,7 @@ int cSokolRender::Done() {
     RenderSubmitEvent(RenderEvent::DONE, "Sokol start");
     bool do_sg_shutdown = sdl_window != nullptr;
     int ret = cInterfaceRenderDevice::Done();
+    activeCommand.Clear();
     ClearCommands();
     ClearPipelines();
     shaders.clear();
@@ -344,16 +345,14 @@ void SokolCommand::CreateShaderParams() {
 }
 
 void SokolCommand::ClearDrawData() {
-    if (owned_vertex_buffer) {
-        delete vertex_buffer;
-        owned_vertex_buffer = false;
+    if (vertex_buffer) {
+        vertex_buffer->DecRef();
+        vertex_buffer = nullptr;
     }
-    if (owned_index_buffer) {
-        delete index_buffer;
-        owned_index_buffer = false;
+    if (index_buffer) {
+        index_buffer->DecRef();
+        index_buffer = nullptr;
     }
-    vertex_buffer = nullptr;
-    index_buffer = nullptr;
     vertices = 0;
     indices = 0;
     
@@ -386,7 +385,7 @@ void SokolCommand::ClearShaderParams() {
 
 void SokolCommand::ClearTextures() {
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
-        sokol_textures[i] = nullptr;
+        SetTexture(i, nullptr);
     }
 }
 
@@ -396,7 +395,13 @@ void SokolCommand::Clear() {
     ClearTextures();
 }
 
-void SokolCommand::SetTexture(size_t index, SokolTexture2D* sokol_texture) {
+void SokolCommand::SetTexture(size_t index, SokolResourceTexture* texture) {
     xassert(index<PERIMETER_SOKOL_TEXTURES);
-    sokol_textures[index] = sokol_texture;
+    if (texture) {
+        texture->IncRef();
+    }
+    if (sokol_textures[index]) {
+        sokol_textures[index]->DecRef();
+    }
+    sokol_textures[index] = texture;
 }

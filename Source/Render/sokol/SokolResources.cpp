@@ -2,6 +2,7 @@
 #include "xmath.h"
 #include <sokol_gfx.h>
 #include "SokolResources.h"
+#include "SokolTypes.h"
 
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     //Probably the only pixel format used, so we cache it
@@ -12,18 +13,38 @@ size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     return sg_query_pixelformat(fmt).bytes_per_pixel;
 }
 
-SokolBuffer::SokolBuffer(sg_buffer_desc* desc)
-: buffer(sg_make_buffer(desc)) {
-    xassert(buffer.id != SG_INVALID_ID);
-}
-
-SokolBuffer::~SokolBuffer() {
-    if (buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(buffer);
+template<>
+void SokolResourceBuffer::destroy_res() {
+    if (res.id != SG_INVALID_ID) {
+        sg_destroy_buffer(res);
+        res.id = SG_INVALID_ID;
     }
 }
 
-void SokolBuffer::update(MemoryResource* resource, size_t len) {
+template<>
+void SokolResourceTexture::destroy_res() {
+    if (res.id != SG_INVALID_ID) {
+        sg_destroy_image(res);
+        res.id = SG_INVALID_ID;
+    }
+}
+
+SokolBuffer::SokolBuffer(sg_buffer _buffer) {
+    buffer = new SokolResource(_buffer);
+}
+
+SokolBuffer::~SokolBuffer() {
+    release_buffer();
+}
+
+void SokolBuffer::release_buffer() {
+    if (buffer) {
+        buffer->DecRef();
+        buffer = nullptr;
+    }
+}
+
+void SokolBuffer::update(MemoryResource* resource, size_t len) const {
     xassert(!resource->burned);
     xassert(!resource->locked);
     if (!resource->dirty) return;
@@ -36,8 +57,13 @@ void SokolBuffer::update(MemoryResource* resource, size_t len) {
 
     resource->burned = true;
     resource->dirty = false;
+    if (!buffer) {
+        xassert(0);
+        return;
+    }
+    xassert(buffer->res.id != SG_INVALID_ID);
     sg_range range = {resource->data, len};
-    sg_update_buffer(buffer, &range);
+    sg_update_buffer(buffer->res, &range);
 }
 
 SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
@@ -48,7 +74,10 @@ SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
 }
 
 SokolTexture2D::~SokolTexture2D() {
-    if (image.id != SG_INVALID_ID) sg_destroy_image(image);
+    if (image) {
+        image->DecRef();
+        image = nullptr;
+    }
     delete desc;
 }
 
@@ -64,8 +93,7 @@ void SokolTexture2D::update() {
         }
 #endif
         xassert(desc->usage == SG_USAGE_IMMUTABLE || data);
-        image = sg_make_image(desc);
-        xassert(image.id != SG_INVALID_ID);
+        image = new SokolResource(sg_make_image(desc));
         if (desc->usage == SG_USAGE_IMMUTABLE) {
             //Cleanup subimages
             for (int ci = 0; ci < SG_CUBEFACE_NUM; ++ci) {
@@ -85,8 +113,9 @@ void SokolTexture2D::update() {
     } 
     
     if (data) {
+        xassert(image->res.id != SG_INVALID_ID);
         sg_image_data imageData;
         imageData.subimage[0][0] = {data, data_len};
-        sg_update_image(image, &imageData);
+        sg_update_image(image->res, &imageData);
     }
 }

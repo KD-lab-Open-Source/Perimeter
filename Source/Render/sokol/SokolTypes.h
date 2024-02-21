@@ -40,4 +40,8 @@ struct PIPELINE_MODE {
     void FromValue(pipeline_mode_value_t value);
 };
 
+template<typename T> class SokolResource;
+using SokolResourceTexture = SokolResource<sg_image>;
+using SokolResourceBuffer = SokolResource<sg_buffer>;
+
 #endif //PERIMETER_SOKOLTYPES_H

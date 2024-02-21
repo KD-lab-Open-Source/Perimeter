@@ -204,7 +204,6 @@ void cMeshStatic::EndBuildMesh(bool bump)
     }
 #endif
     db.Create(n_vertex, false, n_indices, false, fmt, PT_TRIANGLES);
-    db.set_as_active = false;
 
     void* pVertex = nullptr;
     indices_t* indices = nullptr;

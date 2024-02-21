@@ -130,48 +130,38 @@ int cSokolRender::EndScene() {
             continue;
         }
 #ifdef PERIMETER_DEBUG
-        if (sg_query_buffer_state(command->vertex_buffer->buffer) != SG_RESOURCESTATE_VALID) {
+        if (sg_query_buffer_state(command->vertex_buffer->res) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene vertex_buffer not valid state");
             continue;
         }
 #endif
-        bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
+        bindings.vertex_buffers[0] = command->vertex_buffer->res;
         xassert(command->indices);
         if (!command->index_buffer) {
             xxassert(0, "cSokolRender::EndScene missing index_buffer");
             continue;
         }
 #ifdef PERIMETER_DEBUG
-        if (sg_query_buffer_state(command->index_buffer->buffer) != SG_RESOURCESTATE_VALID) {
+        if (sg_query_buffer_state(command->index_buffer->res) != SG_RESOURCESTATE_VALID) {
             xxassert(0, "cSokolRender::EndScene index_buffer not valid state");
             continue;
         }
 #endif
-        bindings.index_buffer = command->index_buffer->buffer;
+        bindings.index_buffer = command->index_buffer->res;
         bindings.fs.samplers[pipeline->shader_fs_sampler_slot] = sampler;
         
         //Bind images
         for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
             int fs_slot = pipeline->shader_fs_texture_slot[i];
             if (fs_slot < 0) continue;
-            SokolTexture2D* tex = command->sokol_textures[i];
-            if (!tex) {
-                tex = emptyTexture;
-                if (!tex) {
-                    xxassert(0, "cSokolRender::EndScene sampler tex missing");
-                    continue;
-                }
-            }
-            if (tex->dirty) {
-                tex->update();
-            }
+            SokolResourceTexture* tex = command->sokol_textures[i];
 #ifdef PERIMETER_DEBUG
-            if (sg_query_image_state(tex->image) != SG_RESOURCESTATE_VALID) {
+            if (sg_query_image_state(tex->res) != SG_RESOURCESTATE_VALID) {
                 xxassert(0, "cSokolRender::EndScene sampler tex not valid state");
                 continue;
             }
 #endif
-            bindings.fs.images[fs_slot] = tex->image;
+            bindings.fs.images[fs_slot] = tex->res;
         }
         sg_apply_bindings(&bindings);
         
@@ -272,7 +262,7 @@ int cSokolRender::Flush(bool wnd) {
     return 0;
 }
 
-SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynamic, sg_buffer_type type) {
+void CreateSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* resource, size_t len, bool dynamic, sg_buffer_type type) {
     MT_IS_GRAPH();
     xassert(!resource->locked);
     xassert(len <= resource->data_len);
@@ -288,6 +278,7 @@ SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynami
         desc.label = "CreateSokolBuffer";
     }
     if (desc.usage == SG_USAGE_IMMUTABLE) {
+        xassert(buffer_ptr == nullptr);
         xassert(resource->data);
         xassert(!resource->burned);
         desc.data = {resource->data, len};
@@ -297,9 +288,16 @@ SokolBuffer* CreateSokolBuffer(MemoryResource* resource, size_t len, bool dynami
         resource->dirty = true;
     }
 
-    SokolBuffer* buffer = new SokolBuffer(&desc);
-    
-    return buffer;
+    if (buffer_ptr == nullptr) {
+        sg_buffer buffer = sg_make_buffer(&desc);
+        buffer_ptr = new SokolBuffer(buffer);
+    } else if (buffer_ptr->buffer == nullptr) {
+        //Buffer exists but the resource no, recreate it
+        sg_buffer buffer = sg_make_buffer(&desc);
+        buffer_ptr->buffer = new SokolResourceBuffer(buffer);
+    } else {
+        xassert(0);
+    }
 }
 
 void cSokolRender::FinishActiveDrawBuffer() {
@@ -357,10 +355,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
 
 #ifdef PERIMETER_DEBUG
     if (vb->fmt & VERTEX_FMT_TEX1) {
-        if (activeCommand.sokol_textures[0] != emptyTexture) {
-            xassert(activeCommand.sokol_textures[0]);
-        }
-        
+        xassert(activeCommand.sokol_textures[0]);
     }
     if (vb->fmt & VERTEX_FMT_TEX2) {
         xassert(activeCommand.sokol_textures[1]);
@@ -370,8 +365,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     //Update buffers
     if (vb->data && (vb->sg == nullptr || vb->dirty)) {
         size_t len = vertices * vb->VertexSize;
-        if (vb->sg == nullptr) {
-            vb->sg = CreateSokolBuffer(vb, len, vb->dynamic, SG_BUFFERTYPE_VERTEXBUFFER);
+        if (vb->sg == nullptr || vb->sg->buffer == nullptr) {
+            CreateSokolBuffer(vb->sg, vb, len, vb->dynamic, SG_BUFFERTYPE_VERTEXBUFFER);
         }
         if (vb->dynamic) {
             vb->sg->update(vb, len);
@@ -379,8 +374,8 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     }
     if (ib->data && (!ib->sg || ib->dirty)) {
         size_t len = indices * sizeof(indices_t);
-        if (ib->sg == nullptr) {
-            ib->sg = CreateSokolBuffer(ib, len, ib->dynamic, SG_BUFFERTYPE_INDEXBUFFER);
+        if (ib->sg == nullptr || ib->sg->buffer == nullptr) {
+            CreateSokolBuffer(ib->sg, ib, len, ib->dynamic, SG_BUFFERTYPE_INDEXBUFFER);
         }
         if (ib->dynamic) {
             ib->sg->update(ib, len);
@@ -448,18 +443,10 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     }
     
     //Transfer buffers to command
-    cmd->owned_vertex_buffer = vb->dynamic;
-    cmd->owned_index_buffer = ib->dynamic;
-    cmd->vertex_buffer = vb->sg;
-    cmd->index_buffer = ib->sg;
-    if (cmd->owned_vertex_buffer) {
-        vb->sg = nullptr;
-        vb->burned = false;
-    }
-    if (cmd->owned_index_buffer) {
-        ib->sg = nullptr;
-        ib->burned = false;
-    }
+    vb->sg->buffer->IncRef();
+    ib->sg->buffer->IncRef();
+    cmd->vertex_buffer = vb->sg->buffer;
+    cmd->index_buffer = ib->sg->buffer;
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
@@ -498,6 +485,19 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
+    //Those that are dynamic should have their buffer released and unburned since we wil recreate later 
+    if (db->vb.dynamic && db->vb.burned) {
+        db->vb.burned = false;
+        if (db->vb.sg) {
+            db->vb.sg->release_buffer();
+        }
+    }
+    if (db->ib.dynamic && db->ib.burned) {
+        db->ib.burned = false;
+        if (db->ib.sg) {
+            db->ib.sg->release_buffer();
+        }
+    }
 }
 
 void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawRange* range) {
@@ -638,14 +638,17 @@ void cSokolRender::SetBlendState(eBlendMode blend) {
 
 void cSokolRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
     xassert(slot < GetMaxTextureSlots());
-    SokolTexture2D* tex = texture_image ? texture_image->sg : nullptr;
-    //Required as sometimes empty slot must be used with color_tex1 shader
-    if (!tex && slot == 0) {
-        tex = emptyTexture;
+    SokolTexture2D* tex = texture_image == nullptr ? emptyTexture : texture_image->sg;
+    if (!tex) {
+        xxassert(0, "cSokolRender::EndScene sampler tex missing");
+        return;
     }
-    if (activeCommand.sokol_textures[slot] != tex) {
+    if (tex->dirty) {
+        tex->update();
+    }
+    if (activeCommand.sokol_textures[slot] != tex->image) {
         FinishActiveDrawBuffer();
-        activeCommand.SetTexture(slot, tex);
+        activeCommand.SetTexture(slot, tex->image);
     }
 }
 

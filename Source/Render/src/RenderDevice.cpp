@@ -298,6 +298,7 @@ DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveTy
         drawBuffers.resize(key + 1);
     }
     if (!db) {
+        //No drawbuffer exists for this key, create new one
         db = new DrawBuffer();
         db->Create(PERIMETER_RENDER_VERTEXBUF_LEN, true, PERIMETER_RENDER_INDEXBUF_LEN, true, fmt, primitive);
         drawBuffers[key] = db;

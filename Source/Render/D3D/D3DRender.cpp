@@ -1437,7 +1437,6 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
             xassert((range->offset + range->len) <= vertices);
             vertices = range->len;
         }
-        vertices = range ? range->len : vertices;
         xassert(0);
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, vertices));
     }

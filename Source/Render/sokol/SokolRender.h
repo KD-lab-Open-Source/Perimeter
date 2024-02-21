@@ -25,7 +25,7 @@ struct SokolCommand {
     void Clear();
     void ClearDrawData();
     void ClearShaderParams();
-    void SetTexture(size_t index, SokolTexture2D* sokol_texture);
+    void SetTexture(size_t index, SokolResource<sg_image>* sokol_texture);
     void ClearTextures();
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
@@ -34,11 +34,9 @@ struct SokolCommand {
     size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
-    struct SokolTexture2D* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
-    bool owned_vertex_buffer = false;
-    bool owned_index_buffer = false;
-    struct SokolBuffer* vertex_buffer = nullptr;
-    struct SokolBuffer* index_buffer = nullptr;
+    SokolResourceTexture* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
+    SokolResourceBuffer* vertex_buffer = nullptr;
+    SokolResourceBuffer* index_buffer = nullptr;
     void* vs_params = nullptr;
     void* fs_params = nullptr;
     size_t vs_params_len = 0;
