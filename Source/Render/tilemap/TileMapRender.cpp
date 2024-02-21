@@ -402,8 +402,12 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     cTileMap::calcVisMap(DrawNode, tilemap->GetTileNumber(), tilemap->GetTileSize(), visMap, true);
 
 #ifdef PERIMETER_D3D9
-    uint32_t minfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MINFILTER);
-    uint32_t magfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MAGFILTER);
+    uint32_t minfilter1=0;
+    uint32_t magfilter1=0;
+    if (gb_RenderDevice3D) {
+        minfilter1 = gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MINFILTER);
+        magfilter1 = gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MAGFILTER);
+    }
 #endif
 
     uint32_t zfunc=gb_RenderDevice->GetRenderState(RS_ZFUNC);

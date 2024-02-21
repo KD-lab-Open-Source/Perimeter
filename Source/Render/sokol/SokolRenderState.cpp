@@ -14,6 +14,7 @@
 #include "Texture.h"
 #include "DrawBuffer.h"
 #include "RenderTracker.h"
+#include "RenderUtils.h"
 
 #ifdef GPX
 #include <c/gamepix.h>
@@ -526,16 +527,25 @@ void cSokolRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, siz
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
     RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
 #endif
-    if (activeDrawBuffer != nullptr) {
-        //We need to submit internal render buffer first
-        FinishActiveDrawBuffer();
-    }
-    activePipelineType = getPipelineType(primitive);
-    activeDrawBuffer = nullptr;
-    activeCommand.base_elements = range ? range->offset : 0;
-    activeCommand.vertices = vertices;
-    activeCommand.indices = range ? range->len : indices;
-    CreateCommand(vb, vertices, ib, indices);
+    DrawBuffer* db = GetDrawBuffer(vb->fmt, primitive);
+    size_t indices_count = range ? range->len : indices;
+
+    void* vb_dst = nullptr;
+    indices_t* ib_dst = nullptr;
+    db->LockRaw(vertices, indices_count, vb_dst, ib_dst, false);
+    size_t written_vertices = db->written_vertices;
+    db->lock_written_vertices = vertices;
+    db->lock_written_indices = indices_count;
+    
+    //Write vertices
+    memcpy(vb_dst, vb->data, vertices * vb->VertexSize);
+
+    //Write indices
+    indices_t* ib_src = static_cast<indices_t*>(ib->data);
+    if (range) ib_src += range->offset;
+    copy_indices_list(ib_dst, ib_src, indices_count, written_vertices);
+    
+    db->Unlock();
 }
 
 void cSokolRender::SetVPMatrix(const Mat4f* matrix) {
