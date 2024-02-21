@@ -9,7 +9,6 @@
 
 #include "MemoryResource.h"
 
-//TODO copied from _sg_pixelformat_bytesize private function, remove if becomes public
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
 struct SokolBuffer {

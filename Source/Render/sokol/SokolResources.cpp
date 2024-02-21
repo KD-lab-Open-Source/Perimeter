@@ -4,59 +4,12 @@
 #include "SokolResources.h"
 
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
-    switch (fmt) {
-        case SG_PIXELFORMAT_R8:
-        case SG_PIXELFORMAT_R8SN:
-        case SG_PIXELFORMAT_R8UI:
-        case SG_PIXELFORMAT_R8SI:
-            return 1;
-
-        case SG_PIXELFORMAT_R16:
-        case SG_PIXELFORMAT_R16SN:
-        case SG_PIXELFORMAT_R16UI:
-        case SG_PIXELFORMAT_R16SI:
-        case SG_PIXELFORMAT_R16F:
-        case SG_PIXELFORMAT_RG8:
-        case SG_PIXELFORMAT_RG8SN:
-        case SG_PIXELFORMAT_RG8UI:
-        case SG_PIXELFORMAT_RG8SI:
-            return 2;
-
-        case SG_PIXELFORMAT_R32UI:
-        case SG_PIXELFORMAT_R32SI:
-        case SG_PIXELFORMAT_R32F:
-        case SG_PIXELFORMAT_RG16:
-        case SG_PIXELFORMAT_RG16SN:
-        case SG_PIXELFORMAT_RG16UI:
-        case SG_PIXELFORMAT_RG16SI:
-        case SG_PIXELFORMAT_RG16F:
-        case SG_PIXELFORMAT_RGBA8:
-        case SG_PIXELFORMAT_RGBA8SN:
-        case SG_PIXELFORMAT_RGBA8UI:
-        case SG_PIXELFORMAT_RGBA8SI:
-        case SG_PIXELFORMAT_BGRA8:
-        case SG_PIXELFORMAT_RGB10A2:
-        case SG_PIXELFORMAT_RG11B10F:
-            return 4;
-
-        case SG_PIXELFORMAT_RG32UI:
-        case SG_PIXELFORMAT_RG32SI:
-        case SG_PIXELFORMAT_RG32F:
-        case SG_PIXELFORMAT_RGBA16:
-        case SG_PIXELFORMAT_RGBA16SN:
-        case SG_PIXELFORMAT_RGBA16UI:
-        case SG_PIXELFORMAT_RGBA16SI:
-        case SG_PIXELFORMAT_RGBA16F:
-            return 8;
-
-        case SG_PIXELFORMAT_RGBA32UI:
-        case SG_PIXELFORMAT_RGBA32SI:
-        case SG_PIXELFORMAT_RGBA32F:
-            return 16;
-
-        default:
-            return 0;
+    //Probably the only pixel format used, so we cache it
+    if (fmt == SG_PIXELFORMAT_RGBA8) {
+        static int rgba8 = sg_query_pixelformat(fmt).bytes_per_pixel;
+        return rgba8;
     }
+    return sg_query_pixelformat(fmt).bytes_per_pixel;
 }
 
 SokolBuffer::SokolBuffer(sg_buffer_desc* desc)
