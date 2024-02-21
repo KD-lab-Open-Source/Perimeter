@@ -3,11 +3,6 @@
 #include <sokol_gfx.h>
 #include "SokolResources.h"
 
-#if defined(GPX) && defined(EMSCRIPTEN)
-#include <emscripten.h>
-#include <SDL_opengl.h>
-#endif
-
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     switch (fmt) {
         case SG_PIXELFORMAT_R8:
@@ -92,15 +87,9 @@ void SokolBuffer::update(MemoryResource* resource, size_t len) {
     sg_update_buffer(buffer, &range);
 }
 
-#ifdef GPX
-SokolTexture2D::SokolTexture2D(sg_image_desc* _desc, bool generateMipMaps)
-    : MemoryResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
-    , desc(_desc), generateMipMaps(generateMipMaps)
-#else
 SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
     : MemoryResource(_desc->usage == SG_USAGE_IMMUTABLE ? 0 : _desc->width * _desc->height * sokol_pixelformat_bytesize(_desc->pixel_format))
     , desc(_desc)
-#endif
 {
     pixel_format = desc->pixel_format;
 }
@@ -111,41 +100,6 @@ SokolTexture2D::~SokolTexture2D() {
 }
 
 void SokolTexture2D::update() {
-#if defined(GPX) && defined(EMSCRIPTEN)
-    static bool mipMapCode = ([]() {
-        EM_ASM(({
-            const gl = Module["ctx"];
-            const generateMipMaps = (target) => {
-                if (Module.generateMipMaps) {
-                    gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-                    gl.generateMipmap(target);
-                }
-            };
-
-            gl.texImage2D = ((originalFn) => {
-                return function(target) {
-                    originalFn.apply(gl, arguments);
-                    generateMipMaps(target);
-                }
-            })(gl.texImage2D.bind(gl));
-            
-            gl.texSubImage2D = ((originalFn) => {
-                return function(target) {
-                    originalFn.apply(gl, arguments);
-                    generateMipMaps(target);
-                }
-            })(gl.texSubImage2D.bind(gl));
-        }));
-        return true;
-    })();
-
-    if (generateMipMaps) {
-        EM_ASM((
-            Module.generateMipMaps = true;
-        ));
-    }
-#endif
-
     xassert(!locked);
     if (!dirty) return;
     dirty = false;
@@ -182,12 +136,4 @@ void SokolTexture2D::update() {
         imageData.subimage[0][0] = {data, data_len};
         sg_update_image(image, &imageData);
     }
-
-#if defined(GPX) && defined(EMSCRIPTEN)
-    if (generateMipMaps) {
-        EM_ASM((
-           Module.generateMipMaps = false;
-        ));
-    }
-#endif
 }

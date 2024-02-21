@@ -158,11 +158,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     uint8_t* buf = new uint8_t[buf_len];
     memset(buf, 0xFF, buf_len);
     imgdesc->data.subimage[0][0] = { buf, buf_len };
-#ifdef GPX
-    emptyTexture = new SokolTexture2D(imgdesc, false);
-#else
     emptyTexture = new SokolTexture2D(imgdesc);
-#endif
 
 #ifdef PERIMETER_DEBUG
     emptyTexture->label = "EmptySlotTexture";
