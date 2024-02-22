@@ -10,6 +10,7 @@
  */
 
 #include "MemoryResource.h"
+#include "RenderMT.h"
 
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
@@ -47,6 +48,7 @@ public:
         if (0 < refcount) {
             refcount--;
             if (refcount == 0) {
+                MTG();
                 destroy_res();
                 delete this;
                 return 0;
