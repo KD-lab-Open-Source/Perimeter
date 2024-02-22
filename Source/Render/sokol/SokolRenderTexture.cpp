@@ -41,10 +41,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             img = new SokolTexture2D(desc);
         } else {
             desc->usage = SG_USAGE_IMMUTABLE;
-            std::vector<uint8_t*> buffers;
-
             uint8_t* buf = new uint8_t[tex_len];
-            buffers.push_back(buf);
             memset(buf, 0xFF, tex_len);
             //Load in RGBA
             FileImage->GetTextureRGB(buf, i * Texture->GetTimePerFrame(), 4, 4 * dx,
@@ -91,7 +88,6 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
                     int mmh = dy >> nMipMap;
                     size_t bufNextLen = mmw * mmh * 4;
                     uint8_t *bufNext = new uint8_t[bufNextLen];
-                    buffers.push_back(bufNext);
 
                     BuildMipMap(mmw, mmh, 4, 8 * mmw, buf, 4 * mmw, bufNext,
                                 8, 8, 8, 8,

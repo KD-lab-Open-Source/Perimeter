@@ -49,6 +49,7 @@ public:
             if (refcount == 0) {
                 destroy_res();
                 delete this;
+                return 0;
             }
         }
         return refcount;
