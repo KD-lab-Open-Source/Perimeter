@@ -18,8 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          {build_type: Release, arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
-          {build_type: Debug,   arch: x86_64, name: "D3D9 + Sokol + Asserts", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON -DOPTION_DEBUG_ASSERT=ON"},
+          {build_type: Release, arch: x86_64, cmake: ""},
+          {build_type: Debug,   arch: x86_64, cmake: ""},
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.arch}}
     if: github.event.pull_request.draft != true
@@ -68,7 +68,7 @@ jobs:
       matrix:
         env: [
           {build_type: Release, arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
-          {build_type: Debug,   arch: x86_64, name: "D3D9 + Sokol", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON"},
+          {build_type: Debug,   arch: x86_64, name: "D3D9 + Sokol + Asserts", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=ON -DOPTION_DEBUG_ASSERT=ON"},
           {build_type: Debug,   arch: x86_64, name: "D3D9", cmake: "-DOPTION_D3D9=ON -DOPTION_SOKOL=OFF"},
           {build_type: Debug,   arch: x86_64, name: "Sokol", cmake: "-DOPTION_D3D9=OFF -DOPTION_SOKOL=ON"},
           {build_type: Release, arch: x86_64, name: "Scripts Check", cmake: "-DOPTION_CHECK_SCRIPTS=ON "},

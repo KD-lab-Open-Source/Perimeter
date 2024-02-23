@@ -30,7 +30,7 @@ OPTION(OPTION_LINK_LIBS "Link executables with provided libraries, placed before
 OPTION(OPTION_LINK_LIBS_POST "Link executables with provided libraries, placed after the rest" "")
 OPTION(OPTION_DXVK_1 "Use old DXVK-native (DXVK 1.x) instead of DXVK 2.x" OFF)
 OPTION(OPTION_DXVK_SOURCE_DIR "Path for predownloaded DXVK source code")
-OPTION(OPTION_SOKOL "Enable Sokol GFX based renderer" OFF)
+OPTION(OPTION_SOKOL "Enable Sokol GFX based renderer" ON)
 OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
 OPTION(OPTION_FFMPEG_MOVIES "Use FFMPEG to decode ingame movies" ON)
 OPTION(OPTION_ASAN "Enable AddressSanitizer" OFF)

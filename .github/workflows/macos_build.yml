@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          {build_type: Debug, cmake: "-DOPTION_SOKOL=ON"},
+          {build_type: Debug, cmake: ""},
           {build_type: Release, cmake: ""}
         ]
     name: ${{matrix.env.build_type}}
