@@ -81,9 +81,9 @@ void SetAssertRestoreGraphicsFunction(void(*func)());
 
 #else  //  ...
 
-#define SetAssertRestoreGraphicsFunction(func)
-#define xxassert(exp, msg) 
-#define xassert(exp) 
+#define SetAssertRestoreGraphicsFunction(func) {}
+#define xxassert(exp, msg) {}
+#define xassert(exp) {}
 
 #endif  //  ...
 
