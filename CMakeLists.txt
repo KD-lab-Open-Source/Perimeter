@@ -254,10 +254,10 @@ IF(FFMPEG_FOUND)
         INCLUDE_DIRECTORIES(${FFMPEG_LIBSWSCALE_INCLUDE_DIRS})
         INCLUDE_DIRECTORIES(${FFMPEG_LIBAVFILTER_INCLUDE_DIRS})
     ELSE()
-        MESSAGE("WARNING: Movies disabled!")
+        MESSAGE(WARNING "Movies disabled!")
     ENDIF()
 ELSE()
-    MESSAGE("WARNING: FFMPEG not found!, movies unavailable!")
+    MESSAGE(WARNING "FFMPEG not found!, movies unavailable!")
 ENDIF()
 
 #Required for more compliant floating point math

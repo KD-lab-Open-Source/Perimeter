@@ -97,7 +97,7 @@ ENDIF()
 
 #Add gperftools
 IF(OPTION_GPERFTOOLS)
-    MESSAGE("WARNING: Linking gperftools")
+    MESSAGE(WARNING "Linking gperftools")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc -lprofiler)
 ENDIF()
 
