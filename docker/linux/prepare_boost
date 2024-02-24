@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+# Download boost, untar, setup install with bootstrap and install
+mkdir /opt/boost
+cd /opt/boost
+wget http://downloads.sourceforge.net/project/boost/boost/1.84.0/boost_1_84_0.tar.gz
+tar xfvz boost_1_84_0.tar.gz
+rm boost_1_84_0.tar.gz
+cd boost_1_84_0
+./bootstrap.sh --prefix=/usr
+./b2 install --with-system --with-stacktrace
+cd /opt
+rm -rf /opt/boost

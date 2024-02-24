@@ -35,8 +35,7 @@ cmake -S $WORK_DIR -B $BUILD_DIR -G Ninja \
   -DCMAKE_INSTALL_RPATH="\$ORIGIN" \
   $@`
 `
-  #-DSDL2_INCLUDE_DIR="$LIBS_ROOT/sdl/include/SDL2" \
-  #-DSDL2_LIBRARY="$LIBS_ROOT/sdl/lib/libSDL2.so" \
+
 # Build dependencies
 ninja dependencies
 
