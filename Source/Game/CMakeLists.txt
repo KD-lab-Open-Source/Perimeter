@@ -54,26 +54,7 @@ SET(perimeter_LINK_LIBS
 )
 
 IF(PERIMETER_WINDOWS)
-    #Add Windows and DirectX libs
-
-    #DirectX 64 or 32 libs
-    IF(OPTION_D3D9)
-        IF(PERIMETER_ARCH_64)
-            MESSAGE("Linking against DirectX 64 bits")
-            SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
-        ELSE()
-            MESSAGE("Linking against DirectX 32 bits")
-            SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
-        ENDIF()
-        LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
-
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-                ${LIBS_MSDXSDK}/d3d9.lib
-                ${LIBS_MSDXSDK}/d3dx9.lib
-                ${LIBS_MSDXSDK}/DxErr.lib
-        )
-    ENDIF()
-
+    #Add Windows libs
     IF(MSVC_CL_BUILD)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
                 legacy_stdio_definitions
@@ -83,10 +64,6 @@ IF(PERIMETER_WINDOWS)
                 mingw32
         )
     ENDIF()
-ELSE()
-    IF(OPTION_D3D9)
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_D3D9_LIB})
-    ENDIF ()
 ENDIF()
 
 #Add TriggerEditor
@@ -121,13 +98,6 @@ ENDIF()
 
 IF(PERIMETER_EXODUS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
-    IF (OPTION_D3D9)
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ExodusD3D9)
-        #Make Exodus depend on lib that provides D3D9 API
-        ADD_DEPENDENCIES(ExodusD3D9 dxvk)
-        #Make other modules depend on Exodus
-        ADD_DEPENDENCIES(dependencies ExodusD3D9)
-    ENDIF()
 ENDIF()
 
 IF(OPTION_PROCESS_SCRIPTS)
@@ -177,7 +147,4 @@ ENDIF()
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 #Install rules
-IF(OPTION_D3D9 AND NOT PERIMETER_WINDOWS)
-    install (FILES ${DXVK_D3D9_LIB} TYPE LIB)
-ENDIF()
 install (TARGETS perimeter RUNTIME)

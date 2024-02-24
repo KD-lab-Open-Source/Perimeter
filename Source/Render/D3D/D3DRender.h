@@ -1,5 +1,6 @@
 #pragma once
 
+#include <d3d9.h>
 #include "../shader/shaders.h"
 #include "DrawType.h"
 #include "VertexFormat.h"
@@ -279,16 +280,7 @@ public:
                                          reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
-    IDirect3DTexture9* CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
-	{
-        IDirect3DTexture9* pTexture=NULL;
-		HRESULT hr=D3DXCreateTextureFromFileInMemory(lpD3DDevice,
-			pSrcData,SrcData,&pTexture);
-
-		if(FAILED(hr))
-			return NULL;
-		return pTexture;
-	}
+    IDirect3DTexture9* CreateTextureFromMemory(void* pSrcData, uint32_t SrcData);
 
 	void RestoreShader();
 

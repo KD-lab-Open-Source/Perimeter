@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "D3DRender.h"
+#include <d3dx9.h>
 #include "FileImage.h"
 #include "files/files.h"
 #include "SystemUtil.h"
@@ -252,4 +253,15 @@ void cD3DRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
         FlushActiveDrawBuffer();
         RDCALL(lpD3DDevice->SetTexture(slot, CurrentTexture[slot] = pTexture));
     }
+}
+
+IDirect3DTexture9* cD3DRender::CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
+{
+    IDirect3DTexture9* pTexture=NULL;
+    HRESULT hr=D3DXCreateTextureFromFileInMemory(lpD3DDevice,
+                                                 pSrcData,SrcData,&pTexture);
+
+    if(FAILED(hr))
+        return NULL;
+    return pTexture;
 }

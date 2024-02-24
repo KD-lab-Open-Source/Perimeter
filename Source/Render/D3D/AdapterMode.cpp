@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include <d3d9.h>
 
 int GetTextureFormatSize(D3DFORMAT f)
 {

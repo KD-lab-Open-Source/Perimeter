@@ -16,11 +16,6 @@
 #include <iostream>
 #endif
 
-#ifdef PERIMETER_D3D9
-#include <d3d9.h>
-#include <d3dx9.h>
-#endif
-
 #include "../inc/RenderTypes.h"
 
 #include "../inc/Umath.h"

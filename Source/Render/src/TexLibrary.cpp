@@ -3,13 +3,16 @@
 #include "files/files.h"
 
 #ifdef PERIMETER_D3D9
+#ifdef _WIN32
 #include "ddraw.h"
-#include "D3DRender.h"
 #endif
+#include "D3DRender.h"
+#endif //PERIMETER_D3D9
+
 #ifdef PERIMETER_SOKOL
 #include <sokol_gfx.h>
 #include "sokol/SokolResources.h"
-#endif
+#endif //PERIMETER_SOKOL
 
 #ifdef TEXTURE_NOTFREE
 struct BeginNF
@@ -24,7 +27,7 @@ struct BeginNF
 	}
 };
 static BeginNF begin_nf;
-#endif
+#endif //TEXTURE_NOTFREE
 
 cTexLibrary* GetTexLibrary()
 {
@@ -458,27 +461,28 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		}
 	} auto_delete(buf);
 
+#ifdef _WIN32
 	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP) {
         Error(Texture);
         Texture->Release();
         return false;
-	} else {
-        IDirect3DTexture9* pTexture=gb_RenderDevice3D->CreateTextureFromMemory(buf,size);
-		if(!pTexture)
-		{
-			Error(Texture);
-			Texture->Release();
-			return false;
-		}
-
-		D3DSURFACE_DESC desc;
-		RDCALL(pTexture->GetLevelDesc(0,&desc));
-		Texture->SetWidth(desc.Width);
-		Texture->SetHeight(desc.Height);
-
-		Texture->frames.emplace_back().d3d = pTexture;
-		return true;
 	}
+#endif
+    IDirect3DTexture9* pTexture=gb_RenderDevice3D->CreateTextureFromMemory(buf,size);
+    if(!pTexture)
+    {
+        Error(Texture);
+        Texture->Release();
+        return false;
+    }
+
+    D3DSURFACE_DESC desc;
+    RDCALL(pTexture->GetLevelDesc(0,&desc));
+    Texture->SetWidth(desc.Width);
+    Texture->SetHeight(desc.Height);
+
+    Texture->frames.emplace_back().d3d = pTexture;
+    return true;
 }
 #endif

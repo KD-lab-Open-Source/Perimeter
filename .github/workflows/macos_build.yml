@@ -96,23 +96,31 @@ jobs:
       - name: perimeter -- create build dir
         run: mkdir build
       - name: perimeter -- configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DOPTION_D3D9=ON ${{matrix.env.cmake}}
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} ${{matrix.env.cmake}}
         working-directory: build
       - name: perimeter -- build project
         run: ninja
         working-directory: build
-      - name: perimeter -- strip binary
-        run: strip -x Source/Perimeter
+      - name: perimeter -- install project
+        run: cmake --install . --prefix output
         working-directory: build
-      - name: perimeter -- package app
-        run: macos/package.sh
-        env:
-          TEMPLATE_DIR: "macos/Perimeter.app.template"
-          BUILD_DIR: "build"
-          APP_DIR: "Perimeter.app"
-          LIB_DIR: "/usr/local/lib"
-      - name: perimeter -- release tar
-        run: tar -cvf Perimeter.app.tar Perimeter.app
+      - name: perimeter -- strip
+        run: |
+          if [[ -d output/lib ]]; then
+            strip -x output/lib/*
+          fi
+          strip -x output/bin/*
+        working-directory: build
+      #TODO update package.sh to handle cmake install result
+      #- name: perimeter -- package app
+      #  run: macos/package.sh
+      #  env:
+      #    TEMPLATE_DIR: "macos/Perimeter.app.template"
+      #    BUILD_DIR: "build"
+      #    APP_DIR: "Perimeter.app"
+      #    LIB_DIR: "/usr/local/lib"
+      #- name: perimeter -- release tar
+      #  run: tar -cvf Perimeter.app.tar Perimeter.app
       #TODO Expose artifacts once we build universal binaries
       #- uses: actions/upload-artifact@v4
       #  with:
