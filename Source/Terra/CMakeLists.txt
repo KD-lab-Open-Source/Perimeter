@@ -20,7 +20,7 @@ add_library(Terra STATIC
 )
 
 target_include_directories(Terra PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/tx3d"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
 )

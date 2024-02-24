@@ -23,6 +23,6 @@ add_library(PluginMAX STATIC
 target_compile_options(PluginMAX PRIVATE ${PERIMETER_COMPILE_OPTIONS})
 
 target_include_directories(PluginMAX PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/XTool"
 )

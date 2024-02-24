@@ -7,7 +7,7 @@ add_library(XPrmLib STATIC
 )
 
 target_include_directories(XPrmLib PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/Source/Util"
 )
@@ -27,7 +27,7 @@ target_compile_options(XPrmLib PRIVATE ${PERIMETER_COMPILE_OPTIONS})
 add_executable(XPrm ${XPrm_SRCS} XPrm.cpp)
 
 target_include_directories(XPrm PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/Source/Util"
 )

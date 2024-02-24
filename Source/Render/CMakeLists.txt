@@ -67,7 +67,7 @@ IF (OPTION_D3D9)
 ENDIF()
 
 target_include_directories(Render PRIVATE
-        BEFORE .
+        .
         "inc"
         "src"
         "client"

@@ -9,7 +9,7 @@ add_library(Sound STATIC
 )
 
 target_include_directories(Sound PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
 )

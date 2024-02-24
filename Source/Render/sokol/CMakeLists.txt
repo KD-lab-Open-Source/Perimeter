@@ -135,7 +135,7 @@ ENDIF()
 add_dependencies(RenderSokol dependencies)
 
 target_include_directories(RenderSokol PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/Source/Render/inc"

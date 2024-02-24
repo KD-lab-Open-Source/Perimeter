@@ -1,11 +1,3 @@
-INCLUDE_DIRECTORIES(
-        BEFORE .
-        "${PROJECT_SOURCE_DIR}/Source/Util"
-        "${PROJECT_SOURCE_DIR}/Source/Game"
-        "${PROJECT_SOURCE_DIR}/Source/Scripts"
-        "${PROJECT_SOURCE_DIR}/Source/XTool"
-)
-
 SET(TriggerEditor_SRCS
         Main/ChooseName.cpp
         StdAfx.cpp
@@ -77,5 +69,13 @@ ADD_DEFINITIONS(-D_TRIGGER_EDITOR)
 
 ADD_LIBRARY(TriggerEditor STATIC ${TriggerEditor_SRCS})
 target_compile_options(TriggerEditor PRIVATE ${PERIMETER_COMPILE_OPTIONS})
+
+target_include_directories(TriggerEditor PRIVATE
+        .
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/Game"
+        "${PROJECT_SOURCE_DIR}/Source/Scripts"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+)
 
 TARGET_LINK_LIBRARIES(TriggerEditor PRIVATE ${BOOST_LIBRARY})

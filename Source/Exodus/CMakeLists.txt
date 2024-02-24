@@ -5,7 +5,7 @@ add_library(Exodus STATIC
 )
 
 target_include_directories(Exodus PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/XTool"
 )
 

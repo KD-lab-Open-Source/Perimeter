@@ -84,7 +84,7 @@ target_compile_options(XTool PRIVATE ${PERIMETER_COMPILE_OPTIONS})
 target_link_libraries(XTool PRIVATE ${XTool_LINK_LIBS})
 
 target_include_directories(XTool PRIVATE
-        BEFORE .
+        .
         "${gamemath_SOURCE_DIR}/include"
 )
 

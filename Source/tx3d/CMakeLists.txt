@@ -43,7 +43,7 @@ add_library(tx3d STATIC
 )
 
 target_include_directories(tx3d PRIVATE
-        BEFORE .
+        .
         "${PROJECT_SOURCE_DIR}/Source/XTool"
 )
 
