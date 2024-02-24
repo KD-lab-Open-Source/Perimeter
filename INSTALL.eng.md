@@ -82,7 +82,6 @@ Packages: `gcc cmake make ninja SDL2 SDL2_image SDL2_net SDL2_mixer boost lld li
 - `mkdir build`
 - `cd build`
 - `cmake -G Ninja ..`
-- `ninja dependencies`
 - `ninja -j4` (replace 4 with number of logical cores in your computer)
 
 ### Launching the game
@@ -115,7 +114,6 @@ libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev`
 - `mkdir build`
 - `cd build`
 - `cmake -G Ninja ..`
-- `ninja dependencies`
 - `ninja -j$(nproc --all)` or `ninja -j4` (replace 4 with number of logical cores in your computer)
 
 ### Launching the game
@@ -144,7 +142,6 @@ Packages in MacPorts: `ninja cmake meson ffmpeg boost libsdl2-dev libsdl2-image-
 - `mkdir build`
 - `cd build`
 - `cmake -G Ninja ..`
-- `ninja dependencies`
 - `ninja -j$(nproc --all)` or `ninja -j4` (replace 4 with number of logical cores in your computer)
 
 ### Launching the game

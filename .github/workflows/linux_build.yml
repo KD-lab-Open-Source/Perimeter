@@ -91,9 +91,6 @@ jobs:
           -DOPTION_USE_BACKTRACE=ON \
           ${{matrix.env.cmake}}
         working-directory: build
-      - name: build dependencies
-        run: ninja dependencies
-        working-directory: build
       - name: Scripts check
         run: ninja ScriptsCheck
         working-directory: build

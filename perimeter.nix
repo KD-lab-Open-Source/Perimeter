@@ -119,7 +119,6 @@ in pkgs.stdenv.mkDerivation {
   
   buildPhase = ''
     cd build
-    ninja dependencies
     ninja
   '';
   

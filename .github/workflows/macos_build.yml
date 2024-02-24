@@ -98,9 +98,6 @@ jobs:
       - name: perimeter -- configure
         run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DOPTION_D3D9=ON ${{matrix.env.cmake}}
         working-directory: build
-      - name: perimeter -- build dependencies
-        run: ninja dependencies
-        working-directory: build
       - name: perimeter -- build project
         run: ninja
         working-directory: build
