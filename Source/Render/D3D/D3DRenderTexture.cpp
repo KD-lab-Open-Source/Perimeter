@@ -255,6 +255,12 @@ void cD3DRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
     }
 }
 
+void cD3DRender::SetTextureTransform(uint32_t slot, const Mat4f& transform) {
+    VISASSERT(slot<GetMaxTextureSlots());
+    RDCALL(lpD3DDevice->SetTransform(D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0 + slot),
+                                     reinterpret_cast<const D3DMATRIX*>(&transform)));
+}
+
 IDirect3DTexture9* cD3DRender::CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 {
     IDirect3DTexture9* pTexture=NULL;

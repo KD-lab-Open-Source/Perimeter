@@ -352,7 +352,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             Mat4f mat = pShadowMapCamera->matViewProj * matTexAdj;
 
             // set texture coord 1
-            gb_RenderDevice3D->SetTextureTransform(1, &mat);
+            gb_RenderDevice3D->SetTextureTransformInv(1, mat);
 
             gb_RenderDevice3D->SetTextureStageState(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
             gb_RenderDevice3D->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
@@ -372,7 +372,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 #ifdef PERIMETER_D3D9
         if (gb_RenderDevice3D) {
             // set texture coord 1
-            gb_RenderDevice3D->SetTextureTransform(1, &tilemap->matLightMap);
+            gb_RenderDevice3D->SetTextureTransformInv(1, tilemap->matLightMap);
 
             gb_RenderDevice3D->SetTextureStageState(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
             gb_RenderDevice3D->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);

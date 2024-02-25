@@ -112,6 +112,7 @@ public:
     void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override;
 	void UnlockTexture(class cTexture *Texture) override;
     void SetTextureImage(uint32_t slot, struct TextureImage* texture_image) override;
+    void SetTextureTransform(uint32_t slot, const Mat4f& transform) override;
     uint32_t GetMaxTextureSlots() override { return nSupportTexture; }
 
 	void SetDrawNode(class cCamera *DrawNode) override;
@@ -269,15 +270,14 @@ public:
 	void SetVertexShaderConstant(int StartRegister,const Vect4f *pVect);
 	void SetPixelShaderConstant(int StartRegister,const Vect4f *pVect);
 
-	inline void SetTextureTransform(int Stage,Mat4f *matTexSpace)
+	inline void SetTextureTransformInv(int Stage,Mat4f& matTexSpace)
 	{
         FlushActiveDrawBuffer();
 		float det=1;
 		Mat4f mat,matViewInv;	// matViewWorld=matWorld*matView=matView, because matWorld==ID
 		Mat4fInverse(&matViewInv,&det,&DrawNode->matView);
-        mat = matViewInv * *matTexSpace;
-		RDCALL(lpD3DDevice->SetTransform(D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+Stage),
-                                         reinterpret_cast<const D3DMATRIX*>(&mat)));
+        mat = matViewInv * matTexSpace;
+        SetTextureTransform(Stage, mat);
 	}
 
     IDirect3DTexture9* CreateTextureFromMemory(void* pSrcData, uint32_t SrcData);

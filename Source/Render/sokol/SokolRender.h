@@ -95,9 +95,7 @@ private:
     sColor4f activeLightDiffuse;
     sColor4f activeLightAmbient;
     sColor4f activeLightSpecular;
-
-    Mat4f activeTex0Transform;
-    Mat4f activeTex1Transform;
+    Mat4f activeTextureTransform[PERIMETER_SOKOL_TEXTURES];
 
     //Commands handling
     void ClearCommands();
@@ -175,6 +173,7 @@ public:
     void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override;
     void UnlockTexture(class cTexture *Texture) override;
     void SetTextureImage(uint32_t slot, struct TextureImage* texture_image) override;
+    void SetTextureTransform(uint32_t slot, const Mat4f& transform) override;
     uint32_t GetMaxTextureSlots() override;
 
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override;
@@ -216,9 +215,6 @@ public:
     void SetMaterialTilemap(cTileMap *TileMap) override;
     void SetMaterialTilemapShadow() override;
     void SetTileColor(sColor4f color) override;
-
-    void setTexture0Transform(const Mat4f& tex0Transform);
-    void setTexture1Transform(const Mat4f& tex1Transform);
 
     // //// cInterfaceRenderDevice impls end ////
 };

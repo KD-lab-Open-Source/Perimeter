@@ -72,6 +72,7 @@ public:
     void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) override { return nullptr; };
     void UnlockTexture(class cTexture *Texture) override {}
     void SetTextureImage(uint32_t slot, TextureImage* texture_image) override {}
+    void SetTextureTransform(uint32_t slot, const Mat4f& transform) override {}
     uint32_t GetMaxTextureSlots() override { return 0; }
 
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override {};

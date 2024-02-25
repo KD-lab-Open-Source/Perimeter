@@ -164,6 +164,10 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     emptyTexture->label = "EmptySlotTexture";
 #endif
 
+    for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+        activeTextureTransform[i] = Mat4f::ID;
+    }
+
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
     return UpdateRenderMode();
 }

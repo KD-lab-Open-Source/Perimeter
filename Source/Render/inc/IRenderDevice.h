@@ -295,6 +295,7 @@ public:
     virtual void* LockTextureRect(class cTexture* Texture, int& Pitch, Vect2i pos, Vect2i size) = 0;
     virtual void UnlockTexture(class cTexture *Texture) = 0;
     virtual void SetTextureImage(uint32_t slot, struct TextureImage* texture_image) = 0;
+    virtual void SetTextureTransform(uint32_t slot, const Mat4f& transform) = 0;
     virtual uint32_t GetMaxTextureSlots() = 0;
     
     virtual void SetGlobalFog(const sColor4f &color,const Vect2f &v) = 0;

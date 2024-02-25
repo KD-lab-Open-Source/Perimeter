@@ -131,23 +131,30 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
     //TODO SetPointLight(mesh->GetRootNode()->GetLight());
 
     SetWorldMatXf(mesh->GetGlobalMatrix());
-    activeTex0Transform = Mat4f::ID;
+    Mat4f& tex0mat = activeTextureTransform[0];
     if(data->mat&MAT_TEXMATRIX_STAGE1) {
         MatXf &m=data->TexMatrix;
-        activeTex0Transform.xx = m.rot()[0][0],	activeTex0Transform.xy = m.rot()[0][1];
-        activeTex0Transform.yx = m.rot()[1][0],	activeTex0Transform.yy = m.rot()[1][1];
-        activeTex0Transform.zx = m.trans().x,	activeTex0Transform.zy = m.trans().y;
+        tex0mat.xx = m.rot()[0][0],	tex0mat.xy = m.rot()[0][1];
+        tex0mat.yx = m.rot()[1][0],	tex0mat.yy = m.rot()[1][1];
+        tex0mat.zx = m.trans().x,	tex0mat.zy = m.trans().y;
+    } else {
+        tex0mat = Mat4f::ID;
     }
 
-    activeTex1Transform = Mat4f::ID;
+    Mat4f& tex1mat = activeTextureTransform[1];
     if(data->mat&MAT_RENDER_SPHEREMAP) { // сферический мапинг
         Mat4f mat;
         memset(&mat,0,sizeof(mat));
-        activeTex1Transform.xx=activeTex1Transform.yy=activeTex1Transform.wx=activeTex1Transform.wy=0.5f;
+        tex1mat.xx=tex1mat.yy=tex1mat.wx=tex1mat.wy=0.5f;
+    } else {
+        tex1mat = Mat4f::ID;
     }
 
     cMeshTri* Tri = mesh->GetTri();
     SubmitDrawBuffer(Tri->db, &Tri->dbr);
+
+    tex0mat = Mat4f::ID;
+    tex1mat = Mat4f::ID;
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {
