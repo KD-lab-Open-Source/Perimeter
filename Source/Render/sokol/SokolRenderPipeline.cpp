@@ -199,6 +199,11 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
 
     //Get shader desc and make if not cached already
     const sg_shader_desc* shader_desc = ctx.shader_funcs->shader_desc(sg_query_backend());
+    if (shader_desc == nullptr) {
+        fprintf(stderr, "RegisterPipeline: no shader desc for pipeline '%d'\n", id);
+        xassert(0);
+        return;
+    }
     if (shaders.count(shader_desc->label)) {
         desc.shader = shaders[shader_desc->label];
     } else {

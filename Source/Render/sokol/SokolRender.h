@@ -7,9 +7,11 @@
 
 #include <sokol_gfx.h>
 #include <SDL_video.h>
+
 #ifdef SOKOL_METAL
 #include <SDL_metal.h>
 #endif
+
 #include "SokolTypes.h"
 
 const int PERIMETER_SOKOL_TEXTURES = 8;
@@ -49,11 +51,24 @@ class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
 #ifdef SOKOL_GL
-    SDL_GLContext sdlGlContext = nullptr;
+    SDL_GLContext sdl_gl_context = nullptr;
 #endif
 #ifdef SOKOL_METAL
-    SDL_MetalView sdlMetalView = nullptr;
+    SDL_MetalView sdl_metal_view = nullptr;
 #endif
+    //D3D backend stuff
+#ifdef SOKOL_D3D11
+    struct sokol_d3d_context* d3d_context;
+    
+    void d3d_CreateDefaultRenderTarget();
+    void d3d_DestroyDefaultRenderTarget();
+
+    friend const void* sokol_d3d_render_target_view_cb();
+    friend const void* sokol_d3d_depth_stencil_view_cb();
+#endif
+    
+    //Samples to use
+    uint32_t sample_count = 1;
     
     //Renderer state
     bool ActiveScene = false;

@@ -20,6 +20,19 @@
 #ifdef SOKOL_D3D11
 #define RENDERUTILS_HWND_FROM_SDL_WINDOW
 #include "RenderUtils.h"
+#include "SokolD3D.h"
+
+//Callbacks for Sokol with D3D 
+
+const void* sokol_d3d_render_target_view_cb() {
+    cSokolRender* renderer = reinterpret_cast<cSokolRender*>(gb_RenderDevice);
+    return (const void*) renderer->d3d_context->render_target_view;
+}
+
+const void* sokol_d3d_depth_stencil_view_cb() {
+    cSokolRender* renderer = reinterpret_cast<cSokolRender*>(gb_RenderDevice);
+    return (const void*) renderer->d3d_context->depth_stencil_view;
+}
 #endif
 
 cSokolRender::cSokolRender() = default;
@@ -40,11 +53,16 @@ uint32_t cSokolRender::GetWindowCreationFlags() const {
 #ifdef SOKOL_METAL
     flags |= SDL_WINDOW_METAL;
 #endif
+#if defined(SOKOL_D3D11) && !defined(_WIN32)
+    //On non Windows we use dxvk which uses Vulkan
+    flags |= SDL_WINDOW_VULKAN;
+#endif
     return flags;
 }
 
 int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int RefreshRateInHz) {
     RenderSubmitEvent(RenderEvent::INIT, "Sokol start");
+
     int res = cInterfaceRenderDevice::Init(xScr, yScr, mode, wnd, RefreshRateInHz);
     if (res != 0) {
         return res;
@@ -52,6 +70,8 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 
     ClearCommands();
     ClearPipelines();
+    
+    const char* sokol_backend = "Unknown";
     
     //Init some state
     activePipelineType = PIPELINE_TYPE_TRIANGLE;
@@ -65,6 +85,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
     desc.context.color_format = SG_PIXELFORMAT_RGBA8;
     desc.context.depth_format = SG_PIXELFORMAT_DEPTH_STENCIL;
+    desc.context.sample_count = sample_count;
     desc.logger.func = slog_func;
 
     //OpenGL / OpenGLES
@@ -83,6 +104,8 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 
 #ifdef SOKOL_GLCORE33
     //Use OpenGL 3.3 Core
+    sokol_backend = "OpenGL Core 3.3";
+    
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengl", SDL_HINT_OVERRIDE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
@@ -96,43 +119,155 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #ifdef SOKOL_GLES2
+    sokol_backend = "OpenGLES2";
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles2", SDL_HINT_OVERRIDE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 #else
+    sokol_backend = "OpenGLES3";
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengles", SDL_HINT_OVERRIDE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 #endif
-#endif
-#endif
-
-#ifdef SOKOL_D3D11
-    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "direct3d", SDL_HINT_OVERRIDE);
-#endif
+#endif //SOKOL_GL
     
-#ifdef SOKOL_METAL
-    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "metal", SDL_HINT_OVERRIDE);
-#endif
-
-    const char* render_driver = SDL_GetHint(SDL_HINT_RENDER_DRIVER);
-    printf("SDL render driver: %s\n", render_driver);
-
-#ifdef SOKOL_METAL
-    // Obtain Metal device by creating a SDL Metal View, also useful to retain the Metal device
-    sdlMetalView = SDL_Metal_CreateView(sdl_window);
-    if (sdlMetalView == nullptr) {
-        ErrH.Abort("Error creating SDL Metal View", XERR_CRITICAL, 0, SDL_GetError());
-    }
-    sokol_metal_setup_desc(sdlMetalView, &desc);
-#endif
-
-#ifdef SOKOL_GL
     // Create an OpenGL context associated with the window.
-    sdlGlContext = SDL_GL_CreateContext(sdl_window);
-    if (sdlGlContext == nullptr) {
+    sdl_gl_context = SDL_GL_CreateContext(sdl_window);
+    if (sdl_gl_context == nullptr) {
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
     printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
 #endif
+
+    //Direct3D
+#ifdef SOKOL_D3D11
+    sokol_backend = "Direct3D 11";
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "direct3d11", SDL_HINT_OVERRIDE);
+    
+    //Create context
+    d3d_context = new sokol_d3d_context();
+
+    //Get hwnd
+    d3d_context->hwnd = get_hwnd_from_sdl_window(sdl_window);
+
+    // Create D3D11 Device and Context
+    D3D_FEATURE_LEVEL featureLevels[] = {
+            D3D_FEATURE_LEVEL_11_1,
+            D3D_FEATURE_LEVEL_11_0,
+    };
+    UINT create_flags = 0;
+    //We will make d3d11 calls only from render thread so this should be safe
+    create_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
+    create_flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT; 
+#if defined(PERIMETER_DEBUG) && 0 
+    creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+    D3D_FEATURE_LEVEL feature_level;
+    HRESULT hr = D3D11CreateDevice(
+            nullptr,
+            D3D_DRIVER_TYPE_HARDWARE,
+            nullptr,
+            create_flags,
+            featureLevels,
+            1,
+            D3D11_SDK_VERSION,
+            &d3d_context->device,
+            &feature_level,
+            &d3d_context->device_context
+    );
+
+    printf("D3D Feature Level: %" PRIu32 "\n", feature_level);
+    if (!SUCCEEDED(hr) || !d3d_context->device || !d3d_context->device_context) {
+        fprintf(stderr, "Error creating D3D device: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        xassert(0);
+        return false;
+    }
+
+    //Get DXGI Factory (needed to create Swap Chain)
+    IDXGIFactory* dxgiFactory;
+    IDXGIDevice* dxgiDevice;
+    hr = d3d_context->device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice));
+    if (!SUCCEEDED(hr)) {
+        fprintf(stderr, "Error getting DXGI device: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        xassert(0);
+        return false;
+    }
+
+    IDXGIAdapter* dxgiAdapter;
+    hr = dxgiDevice->GetAdapter(&dxgiAdapter);
+    if (!SUCCEEDED(hr)) {
+        fprintf(stderr, "Error getting DXGI adapter: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        xassert(0);
+        return false;
+    }
+    dxgiDevice->Release();
+
+    DXGI_ADAPTER_DESC adapterDesc;
+    dxgiAdapter->GetDesc(&adapterDesc);
+
+#ifdef PERIMETER_DEBUG
+    printf("DXGI Graphics Device: %ls\n", adapterDesc.Description);
+#endif
+
+    hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&dxgiFactory));
+    if (!SUCCEEDED(hr)) {
+        fprintf(stderr, "Error getting DXGI factory: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        xassert(0);
+        return false;
+    }
+    dxgiAdapter->Release();
+
+    //Create swap chain
+    DXGI_SWAP_CHAIN_DESC* swap_chain_desc = &d3d_context->swap_chain_desc;
+    memset(&d3d_context->swap_chain_desc, 0, sizeof(DXGI_SWAP_CHAIN_DESC));
+    swap_chain_desc->BufferDesc.Width = static_cast<uint32_t>(xScr);
+    swap_chain_desc->BufferDesc.Height = static_cast<uint32_t>(yScr);
+    swap_chain_desc->BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    swap_chain_desc->BufferDesc.RefreshRate = { static_cast<uint32_t>(RefreshRateInHz), 1 };
+    swap_chain_desc->OutputWindow = d3d_context->hwnd;
+    swap_chain_desc->Windowed = (mode & RENDERDEVICE_MODE_WINDOW) != 0;
+    swap_chain_desc->SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    swap_chain_desc->BufferCount = 1;
+    swap_chain_desc->SampleDesc.Count = sample_count;
+    swap_chain_desc->SampleDesc.Quality = 1 < sample_count ? static_cast<uint32_t>(D3D11_STANDARD_MULTISAMPLE_PATTERN) : 0;
+    swap_chain_desc->BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swap_chain_desc->Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+    hr = dxgiFactory->CreateSwapChain(d3d_context->device, swap_chain_desc, &d3d_context->swap_chain);
+    if (!SUCCEEDED(hr) || !d3d_context->swap_chain) {
+        fprintf(stderr, "Error creating swap chain: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        xassert(0);
+        return false;
+    }
+
+    dxgiFactory->Release();
+
+    // default render target and depth-stencil-buffer
+    d3d_CreateDefaultRenderTarget();
+
+    //Setup d3d context
+    desc.context.d3d11.device = d3d_context->device;
+    desc.context.d3d11.device_context = d3d_context->device_context;
+    desc.context.d3d11.render_target_view_cb = sokol_d3d_render_target_view_cb;
+    desc.context.d3d11.depth_stencil_view_cb = sokol_d3d_depth_stencil_view_cb;
+
+#endif
+    
+#ifdef SOKOL_METAL
+    sokol_backend = "Metal";
+    SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "metal", SDL_HINT_OVERRIDE);
+
+    // Obtain Metal device by creating a SDL Metal View, also useful to retain the Metal device
+    sdl_metal_view = SDL_Metal_CreateView(sdl_window);
+    if (sdl_metal_view == nullptr) {
+        ErrH.Abort("Error creating SDL Metal View", XERR_CRITICAL, 0, SDL_GetError());
+    }
+    
+    //Setup metal sokol context
+    sokol_metal_setup_desc(sdl_metal_view, &desc);
+#endif
+
+    const char* render_driver = SDL_GetHint(SDL_HINT_RENDER_DRIVER);
+    printf("SDL / Sokol render driver: %s\n", render_driver);
+    printf("Sokol render backend: %s\n", sokol_backend);
     
     //Call sokol gfx setup
     sg_setup(&desc);
@@ -182,7 +317,9 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
     int mode_mask = RENDERDEVICE_MODE_WINDOW;
 
-    if (xScr == ScreenSize.x && yScr == ScreenSize.y && (RenderMode&mode_mask) == mode) {
+    bool need_resize = xScr != ScreenSize.x || yScr != ScreenSize.y;
+
+    if (!need_resize && (RenderMode&mode_mask) == mode) {
         return true; //Nothing to do
     }
 
@@ -190,6 +327,20 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
     ScreenSize.y = yScr;
     RenderMode &= ~mode_mask;
     RenderMode |= mode;
+
+#ifdef SOKOL_D3D11
+    if (d3d_context->swap_chain && need_resize) {
+        d3d_DestroyDefaultRenderTarget();
+        d3d_context->swap_chain->ResizeBuffers( 
+            1,
+            static_cast<uint32_t>(ScreenSize.x),
+            static_cast<uint32_t>(ScreenSize.y),
+            DXGI_FORMAT_B8G8R8A8_UNORM, 
+            0
+        );
+        d3d_CreateDefaultRenderTarget();
+    }
+#endif
     
     return UpdateRenderMode() == 0;
 }
@@ -214,18 +365,32 @@ int cSokolRender::Done() {
     //At this point sokol stuff should be cleaned up, is important as calling sg_* after this will result in crashes
     //Make sure is called only once, as repeated shutdowns may crash in some backends/OSes
     if (do_sg_shutdown) {
+        RenderSubmitEvent(RenderEvent::DONE, "Sokol shutdown");
         sg_shutdown();
     }
+#ifdef SOKOL_D3D11
+    if (d3d_context) {
+        RenderSubmitEvent(RenderEvent::DONE, "Sokol D3D11 shutdown");
+        d3d_DestroyDefaultRenderTarget();
+        RELEASE(d3d_context->swap_chain);
+        RELEASE(d3d_context->device_context);
+        RELEASE(d3d_context->device);
+        delete d3d_context;
+        d3d_context = nullptr;
+    }
+#endif
 #ifdef SOKOL_METAL
-    if (sdlMetalView != nullptr) {
-        SDL_Metal_DestroyView(sdlMetalView);
-        sdlMetalView = nullptr;
+    if (sdl_metal_view != nullptr) {
+        RenderSubmitEvent(RenderEvent::DONE, "Sokol Metal shutdown");
+        SDL_Metal_DestroyView(sdl_metal_view);
+        sdl_metal_view = nullptr;
     }
 #endif
 #ifdef SOKOL_GL
-    if (sdlGlContext != nullptr) {
-        SDL_GL_DeleteContext(sdlGlContext);
-        sdlGlContext = nullptr;
+    if (sdl_gl_context != nullptr) {
+        RenderSubmitEvent(RenderEvent::DONE, "Sokol GL shutdown");
+        SDL_GL_DeleteContext(sdl_gl_context);
+        sdl_gl_context = nullptr;
     }
 #endif
     RenderSubmitEvent(RenderEvent::DONE, "Sokol done");
@@ -317,6 +482,49 @@ bool cSokolRender::IsEnableSelfShadow() {
     //TODO
     return false;
 }
+
+#ifdef SOKOL_D3D11
+void cSokolRender::d3d_CreateDefaultRenderTarget() {
+    HRESULT hr;
+    hr = d3d_context->swap_chain->GetBuffer(
+            0,
+            __uuidof(ID3D11Texture2D),
+            reinterpret_cast<void**>(&d3d_context->render_target)
+    );
+    assert(SUCCEEDED(hr) && d3d_context->render_target);
+    hr = d3d_context->device->CreateRenderTargetView(
+            d3d_context->render_target,
+            nullptr,
+            &d3d_context->render_target_view
+    );
+    assert(SUCCEEDED(hr) && d3d_context->render_target_view);
+
+    D3D11_TEXTURE2D_DESC ds_desc = {};
+    ds_desc.Width = static_cast<uint32_t>(ScreenSize.x);
+    ds_desc.Height = static_cast<uint32_t>(ScreenSize.y);
+    ds_desc.MipLevels = 1;
+    ds_desc.ArraySize = 1;
+    ds_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    ds_desc.SampleDesc = d3d_context->swap_chain_desc.SampleDesc;
+    ds_desc.Usage = D3D11_USAGE_DEFAULT;
+    ds_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    hr = d3d_context->device->CreateTexture2D(&ds_desc, nullptr, &d3d_context->depth_stencil_buffer);
+    assert(SUCCEEDED(hr) && d3d_context->depth_stencil_buffer);
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsv_desc = {};
+    dsv_desc.Format = ds_desc.Format;
+    dsv_desc.ViewDimension = sample_count > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
+    hr = d3d_context->device->CreateDepthStencilView(d3d_context->depth_stencil_buffer, &dsv_desc, &d3d_context->depth_stencil_view);
+    assert(SUCCEEDED(hr) && d3d_context->depth_stencil_view);
+}
+
+void cSokolRender::d3d_DestroyDefaultRenderTarget() {
+    RELEASE(d3d_context->render_target);
+    RELEASE(d3d_context->render_target_view);
+    RELEASE(d3d_context->depth_stencil_buffer);
+    RELEASE(d3d_context->depth_stencil_view);
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -71,7 +71,10 @@ vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye,
     float r_dot_v = max(dot(r, v), 0.0);
     float diff = n_dot_l;
     float spec = pow(r_dot_v, spec_power) * n_dot_l;
-    return vec4(l_ambient * ambient * ambient_k + l_diffuse * diffuse * diff + l_specular * specular * spec, 1.0);
+    vec3 ambient_v = l_ambient * ambient * ambient_k;
+    vec3 diffuse_v = l_diffuse * diffuse * diff;
+    vec3 specular_v = l_specular * specular * spec;
+    return vec4(ambient_v + diffuse_v + specular_v, 1.0);
 }
 
 void main() {

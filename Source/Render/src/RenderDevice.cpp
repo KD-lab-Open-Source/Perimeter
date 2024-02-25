@@ -621,7 +621,7 @@ cInterfaceRenderDevice *gb_RenderDevice = nullptr;
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection) {
     cInterfaceRenderDevice* device = nullptr;
-    //TODO make this runtime selectable
+    //TODO make this ingame selectable?
     switch (selection) {
         case DEVICE_D3D9:
 #ifdef PERIMETER_D3D9

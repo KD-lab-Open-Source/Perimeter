@@ -20,6 +20,10 @@
 #include <c/gamepix.h>
 #endif
 
+#ifdef SOKOL_D3D11
+#include "SokolD3D.h"
+#endif
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -249,7 +253,13 @@ int cSokolRender::Flush(bool wnd) {
 
     sg_commit();
 
+    //Swap the window
+#ifdef SOKOL_GL
     SDL_GL_SwapWindow(sdl_window);
+#endif
+#ifdef SOKOL_D3D11
+    d3d_context->swap_chain->Present(1, 0);
+#endif
 
     ClearCommands();
 

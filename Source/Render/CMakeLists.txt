@@ -85,14 +85,9 @@ target_include_directories(Render PRIVATE
 
 SET(Render_LINK_LIBS PluginMAX)
 
-IF (OPTION_SOKOL)
-    INCLUDE("sokol/CMakeLists.txt")
-    SET(Render_LINK_LIBS ${Render_LINK_LIBS} RenderSokol)
-ENDIF()
-
-IF(OPTION_D3D9)
+if(OPTION_D3D9)
     #D3D9 Renderer enabled
-    IF(PERIMETER_WINDOWS)
+    if(PERIMETER_WINDOWS)
         #DirectX SDK libs
         target_include_directories(Render PUBLIC "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
 
@@ -111,79 +106,119 @@ IF(OPTION_D3D9)
                 ${LIBS_MSDXSDK}/d3dx9.lib
                 ${LIBS_MSDXSDK}/DxErr.lib
         )
-    ELSE()
-        #For non windows we use DXVK to provide headers and impl
-        MESSAGE("Using DXVK for D3D9 API")
+    else()
+        set(NEED_DXVK ON)
+    endif()
+endif()
 
-        set(DXVK_BUILD_OPTIONS --buildtype=release -Denable_d3d9=true -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false)
-        #DXVK wrapper lib retrieval and building
-        IF (MACOS)
-            IF (CMAKE_OSX_ARCHITECTURES)
-                #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
-                set(DXVK_BUILD_COMMAND
-                        ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
-                        ${CMAKE_OSX_ARCHITECTURES}
-                        ${PROJECT_SOURCE_DIR}/macos/
-                )
-            ENDIF()
-            #TODO change this to upstream if DXVK2 works with MoltenVK and MacOS
-            set(OPTION_DXVK_1 ON)
+if(OPTION_SOKOL AND NOT PERIMETER_WINDOWS AND OPTION_SOKOL_API MATCHES "D3D11")
+    MESSAGE(WARNING "Using DXVK for Sokol D3D backend, this is only to check compilation! is NOT supported")
+    set(NEED_DXVK ON)
+endif()
+
+if(NEED_DXVK)
+    #For non windows we use DXVK to provide headers and impl
+    MESSAGE("Using DXVK for D3D API")
+
+    set(DXVK_BUILD_OPTIONS -Denable_d3d10=false)
+    
+    if(PERIMETER_DEBUG AND OFF)
+        #Set ON in case one needs to go down a rabbit hole
+        MESSAGE(WARNING "Building debug DXVK!")
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} --buildtype=debug)
+    else()
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} --buildtype=release)
+    endif ()
+    if(OPTION_D3D9)
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Denable_d3d9=true)
+    else()
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Denable_d3d9=false)
+    endif()
+    if(OPTION_SOKOL_API MATCHES "D3D11")
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Denable_d3d11=true -Denable_dxgi=true)
+    else()
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Denable_d3d11=false -Denable_dxgi=false)
+    endif()
+
+    #DXVK wrapper lib retrieval and building
+    IF (MACOS)
+        IF (CMAKE_OSX_ARCHITECTURES)
+            #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
+            set(DXVK_BUILD_COMMAND
+                    ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
+                    ${CMAKE_OSX_ARCHITECTURES}
+                    ${PROJECT_SOURCE_DIR}/macos/
+            )
         ENDIF()
-        IF(OPTION_DXVK_1)
+        #TODO change this to upstream if DXVK2 works with MoltenVK and MacOS
+        set(OPTION_DXVK_1 ON)
+    ENDIF()
+    IF(OPTION_DXVK_1)
+        if (NOT DXVK_GIT_URL)
             set(DXVK_GIT_URL https://github.com/IonAgorria/dxvk-native)
+        endif ()
+        if (NOT DXVK_GIT_TAG)
             set(DXVK_GIT_TAG "43aedc756cbd620b9ee8b1cf2c17b17cc49b3781")
-        ELSE()
+        endif ()
+    ELSE()
+        if (NOT DXVK_GIT_URL)
             set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
+        endif ()
+        if (NOT DXVK_GIT_TAG)
             set(DXVK_GIT_TAG "80e075406b1b7d9d2508c9dc05e9745b3d3cf7e2") # v2.3
-            set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
-        ENDIF()
-        IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
-            set(DXVK_BUILD_COMMAND meson setup)
-        ENDIF()
-        IF(OPTION_DXVK_SOURCE_DIR)
-            MESSAGE("DXVK Source path provided: ${OPTION_DXVK_SOURCE_DIR}")
-            ExternalProject_Add(dxvk
-                    SOURCE_DIR        ${OPTION_DXVK_SOURCE_DIR}
-                    BUILD_ALWAYS      OFF
-                    CONFIGURE_HANDLED_BY_BUILD ON
-                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ${OPTION_DXVK_SOURCE_DIR} ${DXVK_BUILD_OPTIONS}
-                    BUILD_COMMAND     ninja
-                    INSTALL_COMMAND   ""
-                    BUILD_BYPRODUCTS <BINARY_DIR>/src/d3d9/libdxvk_d3d9${CMAKE_SHARED_LIBRARY_SUFFIX}
-            )
-        ELSE()
-            ExternalProject_Add(dxvk
-                    GIT_REPOSITORY    ${DXVK_GIT_URL}
-                    GIT_TAG           ${DXVK_GIT_TAG}
-                    GIT_SHALLOW       OFF
-                    BUILD_ALWAYS      OFF
-                    CONFIGURE_HANDLED_BY_BUILD ON
-                    CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk ${DXVK_BUILD_OPTIONS}
-                    BUILD_COMMAND     ninja
-                    INSTALL_COMMAND   ""
-                    BUILD_BYPRODUCTS <BINARY_DIR>/src/d3d9/libdxvk_d3d9${CMAKE_SHARED_LIBRARY_SUFFIX}
-            )
-        ENDIF()
-        ExternalProject_Get_property(dxvk SOURCE_DIR BINARY_DIR)
-        set(DXVK_INCLUDE_DIRS
-                "${SOURCE_DIR}/include/native/directx"
-                "${SOURCE_DIR}/include/native/windows"
-        )
-        
+        endif ()
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
+    ENDIF()
+    IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
+        set(DXVK_BUILD_COMMAND meson setup)
+    ENDIF()
+    IF(OPTION_DXVK_SOURCE_DIR)
+        MESSAGE("DXVK Source path provided: ${OPTION_DXVK_SOURCE_DIR}")
+        UNSET(DXVK_GIT_URL)
+        UNSET(DXVK_GIT_TAG)
+        SET(DXVK_BUILD_COMMAND ${DXVK_BUILD_COMMAND} ${OPTION_DXVK_SOURCE_DIR})
+    ELSE()
+        SET(DXVK_BUILD_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk)
+    ENDIF()
+    ExternalProject_Add(dxvk
+            SOURCE_DIR        ${OPTION_DXVK_SOURCE_DIR}
+            GIT_REPOSITORY    ${DXVK_GIT_URL}
+            GIT_TAG           ${DXVK_GIT_TAG}
+            GIT_SHALLOW       OFF
+            BUILD_ALWAYS      OFF
+            CONFIGURE_HANDLED_BY_BUILD ON
+            CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ${DXVK_BUILD_OPTIONS}
+            BUILD_COMMAND     ninja
+            INSTALL_COMMAND   ""
+            BUILD_BYPRODUCTS 
+                <BINARY_DIR>/src/d3d9/libdxvk_d3d9${CMAKE_SHARED_LIBRARY_SUFFIX}
+                <BINARY_DIR>/src/d3d11/libdxvk_d3d11${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+    ExternalProject_Get_property(dxvk SOURCE_DIR BINARY_DIR)
+    set(DXVK_BINARY_DIR ${BINARY_DIR})
+    set(DXVK_INCLUDE_DIRS
+            "${SOURCE_DIR}/include/native/directx"
+            "${SOURCE_DIR}/include/native/windows"
+    )
+
+    if(OPTION_D3D9)        
+        #Make sure our d3dx9 is before dxvk includes!
+        target_include_directories(Render PUBLIC "d3dx9")
+
         #Handle output lib file and also export it during install
-        set(DXVK_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9${CMAKE_SHARED_LIBRARY_SUFFIX})
+        set(DXVK_D3D9_LIB ${DXVK_BINARY_DIR}/src/d3d9/libdxvk_d3d9${CMAKE_SHARED_LIBRARY_SUFFIX})
         set(Render_LINK_LIBS ${Render_LINK_LIBS} ${DXVK_D3D9_LIB})
         install (FILES ${DXVK_D3D9_LIB} TYPE LIB)
-        
-        #This way dxvk will be fetched and compiled before Render 
-        add_dependencies(Render dxvk)
+    endif()
 
-        target_include_directories(Render PUBLIC
-                #Make sure our d3dx9 is before dxvk!
-                "d3dx9"
-                "${DXVK_INCLUDE_DIRS}"
-        )
-    ENDIF()
+    #This way dxvk will be fetched and compiled before Render
+    add_dependencies(Render dxvk)
+    target_include_directories(Render PUBLIC "${DXVK_INCLUDE_DIRS}")
+endif()
+
+IF (OPTION_SOKOL)
+    INCLUDE("sokol/CMakeLists.txt")
+    SET(Render_LINK_LIBS ${Render_LINK_LIBS} RenderSokol)
 ENDIF()
 
 target_link_libraries(Render PRIVATE ${Render_LINK_LIBS})

@@ -16,8 +16,10 @@ IF (OPTION_PROCESS_SHADERS)
     FetchContent_MakeAvailable(sokol-tools-bin)
 
     if(NOT DEFINED ENV{PERIMETER_SHADER_LANG})
-        #Use all GLSL dialects
-        set(PERIMETER_SHADER_LANG "glsl330:glsl100:glsl300es:metal_macos")
+        #Use all GLSL dialects, HLSL for D3d and WebGPU
+        set(PERIMETER_SHADER_LANG "glsl330:glsl300es:hlsl5:wgsl")
+        #Metal for Apple platforms
+        set(PERIMETER_SHADER_LANG "${PERIMETER_SHADER_LANG}:metal_macos:metal_ios:metal_sim")
     endif()
     
     add_custom_target(sokol_shaders)
@@ -60,6 +62,9 @@ ENDIF()
 
 #Select Sokol API per platform and options
 set(RenderSokol_SokolImpl sokol/SokolImpl.cpp)
+if(OPTION_SOKOL_API MATCHES "GL")
+    set(OPTION_SOKOL_API "GLCORE33")
+endif()
 if (MACOS)
     if(NOT OPTION_SOKOL_API)
         set(OPTION_SOKOL_API "METAL")
@@ -69,6 +74,7 @@ if (MACOS)
     if(OPTION_SOKOL_API MATCHES "GLCORE33")
         message("Sokol API: OpenGL Core 3.3")
         add_definitions(-DSOKOL_GLCORE33)
+        set(SOKOL_GL ON)
         set(RenderSokol_LINK_LIBS "-framework OpenGL")
     elseif(OPTION_SOKOL_API MATCHES "METAL")
         message("Sokol API: Metal")
@@ -87,9 +93,11 @@ elseif(PERIMETER_WINDOWS)
     if(OPTION_SOKOL_API MATCHES "D3D11")
         message("Sokol API: DirectX 11")
         add_definitions(-DSOKOL_D3D11)
+        set(RenderSokol_LINK_LIBS d3d11)
     elseif(OPTION_SOKOL_API MATCHES "GLCORE33")
         message("Sokol API: OpenGL Core 3.3")
         add_definitions(-DSOKOL_GLCORE33)
+        set(SOKOL_GL ON)
         set(RenderSokol_LINK_LIBS opengl32)
     else()
         message(SEND_ERROR "Unknown Sokol API selected: ${OPTION_SOKOL_API}")
@@ -101,22 +109,31 @@ else()
     if(OPTION_SOKOL_API MATCHES "GLES2")
         message("Sokol API: OpenGLES 2.0")
         add_definitions(-DSOKOL_GLES2)
-        set(RenderSokol_LINK_LIBS GL)
+        set(SOKOL_GL ON)
     elseif(OPTION_SOKOL_API MATCHES "GLES3")
         message("Sokol API: OpenGLES 3.0")
         add_definitions(-DSOKOL_GLES3)
-        set(RenderSokol_LINK_LIBS GL)
+        set(SOKOL_GL ON)
     elseif(OPTION_SOKOL_API MATCHES "GLCORE33")
         message("Sokol API: OpenGL Core 3.3")
         add_definitions(-DSOKOL_GLCORE33)
-        set(RenderSokol_LINK_LIBS GL)
+        set(SOKOL_GL ON)
+    elseif(OPTION_SOKOL_API MATCHES "D3D11")
+        message("Sokol API: D3D11")
+        add_definitions(-DSOKOL_D3D11)
+        #The rest done after add_library()
     else()
         message(SEND_ERROR "Unknown Sokol API selected: ${OPTION_SOKOL_API}")
     endif()
+    if (SOKOL_GL)
+        set(RenderSokol_LINK_LIBS GL)
+    endif ()
 endif()
 
-#Required for SDL_GL_* funcs called during render init
-set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY} XTool)
+if (SOKOL_GL)
+    #Required for SDL_GL_* funcs called during render init
+    set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY} XTool)
+endif ()
 
 add_library(RenderSokol STATIC
     ${RenderSokol_SokolImpl}
@@ -128,6 +145,19 @@ add_library(RenderSokol STATIC
     sokol/SokolRenderPipeline.cpp
     sokol/SokolShaders.cpp
 )
+
+if(NOT PERIMETER_WINDOWS AND OPTION_SOKOL_API MATCHES "D3D11")
+    #This way dxvk will be fetched and compiled before RenderSokol
+    add_dependencies(RenderSokol dxvk)
+    target_include_directories(RenderSokol PRIVATE
+            "${DXVK_INCLUDE_DIRS}"
+    )
+
+    #Handle output lib file and also export it during install
+    set(DXVK_D3D11_LIB ${DXVK_BINARY_DIR}/src/d3d11/libdxvk_d3d11${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${DXVK_D3D11_LIB})
+    install (FILES ${DXVK_D3D11_LIB} TYPE LIB)
+endif()
 
 IF (OPTION_PROCESS_SHADERS)
     add_dependencies(RenderSokol sokol_shaders)
