@@ -10,13 +10,13 @@
 #include "RenderTracker.h"
 #include "DebugUtil.h"
 #include "SystemUtil.h"
+#define RENDERUTILS_HWND_FROM_SDL_WINDOW
+#include "RenderUtils.h"
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #define execv _execv
-//Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
-#include <SDL_syswm.h>
 #include <commdlg.h>
 #endif
 
@@ -204,17 +204,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
 	memset(CurrentTexture,0,sizeof(CurrentTexture));
 	memset(ArrayRenderState,0xEF,sizeof(ArrayRenderState));
 
-#ifdef _WIN32
-    //Get HWND from SDL window
-    SDL_SysWMinfo wm_info;
-    SDL_VERSION(&wm_info.version);
-    SDL_GetWindowWMInfo(sdlWindow, &wm_info);
-    
-    this->hWnd = hWndVisGeneric = wm_info.info.win.window;
-#else
-    //dxvk-native uses HWND as SDL2 window handle, so this is allowed
-    this->hWnd = static_cast<HWND>(sdl_window);
-#endif
+    this->hWnd = get_hwnd_from_sdl_window(sdl_window);
 
 	if(!lpD3D)
 		RDERR((lpD3D=Direct3DCreate9(D3D_SDK_VERSION))==0);

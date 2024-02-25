@@ -17,6 +17,11 @@
 #include <SDL_opengl.h>
 #endif
 
+#ifdef SOKOL_D3D11
+#define RENDERUTILS_HWND_FROM_SDL_WINDOW
+#include "RenderUtils.h"
+#endif
+
 cSokolRender::cSokolRender() = default;
 
 cSokolRender::~cSokolRender() {
