@@ -177,7 +177,7 @@ public:
     cAutoRelease& operator=(cAutoRelease const&) = delete;
 };
 
-#define RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+#define RELEASE(p) { if(p) { (p)->Release(); (p)=nullptr; } }
 
 template <class xvector>
 void remove_null_element(xvector& ar)

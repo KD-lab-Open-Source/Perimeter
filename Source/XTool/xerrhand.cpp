@@ -454,6 +454,7 @@ void XErrorHandler::RedirectStdio() const {
     }
     //Check if we should redirect stdio
     printf("Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
+    fflush(stdout);
 
     //Reopen streams, Win32 needs wide char version to handle cyrillic
     
