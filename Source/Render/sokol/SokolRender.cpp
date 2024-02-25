@@ -2,6 +2,7 @@
 #include "xmath.h"
 #include "Umath.h"
 #include <sokol_gfx.h>
+#include <sokol_log.h>
 #include "SokolResources.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
@@ -59,6 +60,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
     desc.context.color_format = SG_PIXELFORMAT_RGBA8;
     desc.context.depth_format = SG_PIXELFORMAT_DEPTH_STENCIL;
+    desc.logger.func = slog_func;
 
     //OpenGL / OpenGLES
 #ifdef SOKOL_GL
