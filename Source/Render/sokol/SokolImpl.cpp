@@ -8,8 +8,12 @@
 #endif
 #define SOKOL_IMPL
 #define SOKOL_ASSERT xassert
+#ifdef __GNUG__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wextra"
+#endif
 #include <sokol_gfx.h>
 #include <sokol_log.h>
+#ifdef __GNUG__
 #pragma GCC diagnostic pop
+#endif

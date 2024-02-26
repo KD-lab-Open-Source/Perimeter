@@ -62,9 +62,6 @@ ENDIF()
 
 #Select Sokol API per platform and options
 set(RenderSokol_SokolImpl sokol/SokolImpl.cpp)
-if(OPTION_SOKOL_API MATCHES "GL")
-    set(OPTION_SOKOL_API "GLCORE33")
-endif()
 if (MACOS)
     if(NOT OPTION_SOKOL_API)
         set(OPTION_SOKOL_API "METAL")
@@ -106,11 +103,7 @@ else()
     if(NOT OPTION_SOKOL_API)
         set(OPTION_SOKOL_API "GLCORE33")
     endif ()
-    if(OPTION_SOKOL_API MATCHES "GLES2")
-        message("Sokol API: OpenGLES 2.0")
-        add_definitions(-DSOKOL_GLES2)
-        set(SOKOL_GL ON)
-    elseif(OPTION_SOKOL_API MATCHES "GLES3")
+    if(OPTION_SOKOL_API MATCHES "GLES3")
         message("Sokol API: OpenGLES 3.0")
         add_definitions(-DSOKOL_GLES3)
         set(SOKOL_GL ON)
@@ -130,10 +123,8 @@ else()
     endif ()
 endif()
 
-if (SOKOL_GL)
-    #Required for SDL_GL_* funcs called during render init
-    set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY} XTool)
-endif ()
+#Required for SDL_GL_* and SDL_SetHint/SDL_GetHint funcs called during render init
+set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY})
 
 add_library(RenderSokol STATIC
     ${RenderSokol_SokolImpl}
