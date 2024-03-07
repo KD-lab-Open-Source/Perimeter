@@ -251,15 +251,17 @@
       );
 
       # Dev envs
-      devShells = forSystems buildSystems ({ system }: {
-        default = let
+      devShells = forSystems buildSystems ({ system }: (
+        let
           package = self.packages.${system}.default;
           pkgs = import nixpkgs { inherit system; };
-        in pkgs.mkShell {
-          buildInputs = package.buildInputs ++ package.nativeBuildInputs ++ [
-            pkgs.clang
-          ];
-        };
-      });
+          mkDevShell = extras: pkgs.mkShell {
+            buildInputs = package.buildInputs ++ package.nativeBuildInputs ++ extras;
+          };
+        in {
+          default = mkDevShell [];
+          clang = mkDevShell [ pkgs.clang ];
+        }
+      ));
     };
 }
