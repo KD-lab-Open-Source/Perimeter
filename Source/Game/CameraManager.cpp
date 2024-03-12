@@ -280,35 +280,35 @@ void terCameraType::controlQuant()
 //	cameraMouseZoom = isPressed(VK_LBUTTON) && isPressed(VK_RBUTTON);
 	
 	if(!unit_follow){
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_DOWN).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_DOWN))
 			cameraPositionForce.y = CAMERA_SCROLL_SPEED_DELTA;
 		
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_UP).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_UP))
 			cameraPositionForce.y = -CAMERA_SCROLL_SPEED_DELTA;
 		
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_RIGHT).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_RIGHT))
 			cameraPositionForce.x = CAMERA_SCROLL_SPEED_DELTA;
 		
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_LEFT).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_LEFT))
 			cameraPositionForce.x = -CAMERA_SCROLL_SPEED_DELTA;
 	}
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_UP).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_UP))
 		cameraThetaForce = -CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_DOWN).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_DOWN))
 		cameraThetaForce = CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_LEFT).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_LEFT))
 		cameraPsiForce = CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_RIGHT).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_RIGHT))
 		cameraPsiForce = -CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ZOOM_INC).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ZOOM_INC))
 		cameraZoomForce = -CAMERA_ZOOM_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ZOOM_DEC).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ZOOM_DEC))
         cameraZoomForce = CAMERA_ZOOM_SPEED_DELTA;
 }
 

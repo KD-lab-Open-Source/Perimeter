@@ -190,38 +190,38 @@ void HistorySceneCamera::quant(const Vect2f& mousePos, float dt) {
 //		}
 		
 		if (
-				g_controls_converter.key(CTRL_CAMERA_MOVE_UP).pressed()
+				g_controls_converter.pressed(CTRL_CAMERA_MOVE_UP)
 			|| xm::abs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP ) {
 
 			position.theta -= HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if (
-				g_controls_converter.key(CTRL_CAMERA_MOVE_DOWN).pressed()
+				g_controls_converter.pressed(CTRL_CAMERA_MOVE_DOWN)
 			|| xm::abs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN ) {
 
 			position.theta += HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if (
-				g_controls_converter.key(CTRL_CAMERA_MOVE_LEFT).pressed()
+				g_controls_converter.pressed(CTRL_CAMERA_MOVE_LEFT)
 			|| xm::abs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
 
 			position.psi += HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if ( 
-				g_controls_converter.key(CTRL_CAMERA_MOVE_RIGHT).pressed()
+				g_controls_converter.pressed(CTRL_CAMERA_MOVE_RIGHT)
 			|| xm::abs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
 
 			position.psi -= HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
-		if ( g_controls_converter.key(CTRL_CAMERA_ZOOM_INC).pressed() ) {
+		if ( g_controls_converter.pressed(CTRL_CAMERA_ZOOM_INC) ) {
 			position.distanceToPivot -= CAMERA_ZOOM_SPEED_DELTA * dt;
 		}
 		
-		if ( g_controls_converter.key(CTRL_CAMERA_ZOOM_DEC).pressed() ) {
+		if ( g_controls_converter.pressed(CTRL_CAMERA_ZOOM_DEC) ) {
 			position.distanceToPivot += CAMERA_ZOOM_SPEED_DELTA * dt;
 		}
 		if (position.distanceToPivot < HISTORY_SCENE_CAMERA_MIN_DISTANCE) {
