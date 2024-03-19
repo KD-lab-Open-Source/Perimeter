@@ -53,7 +53,12 @@ public:
 	void reset();
 
 	void setFocus(float focus);
-	void setCoordinate(const CameraCoordinate& coord) { coordinate_ = coord; update(); }
+	void setCoordinate(const CameraCoordinate& coord, bool doUpdate = true) {
+        coordinate_ = coord;
+        if (doUpdate) {
+            update();
+        }
+    }
 	
 	float focus() const { return focus_; }
 	const CameraCoordinate& coordinate() const { return coordinate_; }

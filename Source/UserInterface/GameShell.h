@@ -315,9 +315,11 @@ private:
 	bool showWireFrame_;
 	int activePlayerID_;
 
+    Vect3f mapMoveCenter_;
 	Vect3f mapMoveStartPoint_;
-		
-	float game_speed;
+    Vect2f mapMoveCursorStartPoint_;
+
+    float game_speed;
 	float game_speed_to_resume;
 	//MeasurementTimer gameTimer_;
 

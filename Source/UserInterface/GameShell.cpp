@@ -1745,8 +1745,8 @@ void GameShell::ControlPressed(int key)
 			if(!cameraMouseShift){
 				cameraMouseShift = true;
 				_shellCursorManager.HideCursor();
-				
-				terCamera->cursorTrace(mousePosition(), mapMoveStartPoint_);
+
+                mapMoveCenter_ = terCamera->coordinate().position();
 			}
 			break;
 
@@ -1927,6 +1927,12 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		mouseLeftPressed_ = true;
 		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_= pos;
+
+        if (cameraMouseShift) {
+            mapMoveCursorStartPoint_ = mousePosition();
+            terCamera->cursorTrace(mousePosition(), mapMoveStartPoint_);
+    		setCursorPosition(mapMoveStartPoint_);
+        }
 
 		if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack)
 		{
@@ -2217,9 +2223,11 @@ void GameShell::CameraQuant()
 	}
 	
 	//смещение вслед за мышью
-	if(cameraMouseShift && MouseMoveFlag){
-		terCamera->shift(mousePositionDelta());
-		setCursorPosition(mapMoveStartPoint());
+	if(cameraMouseShift && MouseMoveFlag && mouseLeftPressed_){
+        terCamera->setCoordinate(CameraCoordinate(mapMoveCenter_,
+                  terCamera->coordinate().psi(), terCamera->coordinate().theta(),
+                  terCamera->coordinate().distance()), false);
+        terCamera->shift(mousePosition() - mapMoveCursorStartPoint_);
 		MousePositionLock = 1;
 	}
 
