@@ -132,6 +132,9 @@ bool isPressed(uint32_t key) {
 
 sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     key = 0;
+    if (keysym.scancode == SDL_SCANCODE_GRAVE) {
+        keysym.sym = SDLK_BACKQUOTE;
+    }
     switch (keysym.sym) {
         case SDLK_LGUI:
         case SDLK_RGUI:
