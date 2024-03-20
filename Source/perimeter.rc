@@ -119,11 +119,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "K-D LAB"
             VALUE "FileDescription", "Perimeter"
-            VALUE "FileVersion", "3.0.0"
+            VALUE "FileVersion", "3.1.0"
             VALUE "InternalName", "Perimeter"
             VALUE "LegalCopyright", "Copyright (C) K-D LAB"
             VALUE "ProductName", "Perimeter"
-            VALUE "ProductVersion", "3.0.0"
+            VALUE "ProductVersion", "3.1.0"
         END
     END
     BLOCK "VarFileInfo"
