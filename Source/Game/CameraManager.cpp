@@ -401,22 +401,25 @@ bool terCameraType::cursorTrace(const Vect2f& pos2, Vect3f& v)
 	return terScene->Trace(pos,pos+dir,&v);
 }
 
-void terCameraType::shift(const Vect2f& mouseDelta)
+bool terCameraType::shift(const Vect2f& mouseDelta)
 {
-	if (gameShell->isCutSceneMode()) {
-		return;
-	}
-	if(interpolationTimer_ || unit_follow)
-		return;
+    return shift(Vect2f::ZERO, mouseDelta);
+}
 
-	Vect2f delta = mouseDelta;
-	Vect3f v1, v2;
-	if(cursorTrace(Vect2f::ZERO, v1) && cursorTrace(delta, v2))
-		delta = v2 - v1; 
-	else
-		delta = Vect2f::ZERO;
-	
-	coordinate().position() -= to3D(delta, 0);
+bool terCameraType::shift(const Vect2f& pos1, const Vect2f pos2) {
+    if (gameShell->isCutSceneMode()) {
+        return false;
+    }
+    if(interpolationTimer_ || unit_follow)
+        return false;
+
+    Vect3f v1, v2;
+    if (cursorTrace(pos1, v1) && cursorTrace(pos2, v2)) {
+        auto delta = v2 - v1;
+        coordinate().position() -= to3D(delta, 0);
+        return true;
+    }
+    return false;
 }
 
 void terCameraType::mouseWheel(int delta)
