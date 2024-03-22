@@ -11,6 +11,7 @@
 #include <set>
 #include <SDL.h>
 #include "files/files.h"
+#include "../HT/ht.h"
 
 #ifdef _WIN32
 #include <combaseapi.h>
@@ -58,9 +59,10 @@ uint32_t WINAPI TestServerThread(void* lpParameter)
 }
 */
 
-extern SDL_threadID net_thread_id;
+extern std::atomic_uint64_t net_thread_id;
 
 //Second thread
+PNetCenter* netCenter = nullptr;
 int InternalServerThread(void* lpParameter)
 {
 /*	// TEST thread!!!!
@@ -68,22 +70,38 @@ int InternalServerThread(void* lpParameter)
 	HANDLE  hTestThread=CreateThread( NULL, 0, TestServerThread, lpParameter, 0, &ThreadId);
 */
 
+    xassert(netCenter == nullptr);
     net_thread_id = SDL_ThreadID();
 
 	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
-	pPNetCenter->SecondThread();
+    pPNetCenter->SecondThreadInit();
 
-    net_thread_id = -1;
-    
-	//We are creating it with SDL thread, so we need to manually signal it
-    SetEvent(pPNetCenter->hSecondThread);
-    
+    if (HTManager::instance()->IsUseHT()) {
+        while (pPNetCenter->SecondThreadLive()) {
+            pPNetCenter->SecondThreadQuant();
+        }
+        pPNetCenter->SecondThreadDeinit();
+    } else {
+        netCenter = pPNetCenter;
+    }
+
 	return 0;
 }
+
+extern void PNetCenterNetQuant() {
+    if (netCenter) {
+        if (netCenter->SecondThreadLive()) {
+            netCenter->SecondThreadQuant();
+        } else {
+            netCenter = nullptr;
+            netCenter->SecondThreadDeinit();
+        }
+    }
+}
+
 XBuffer BUFFER_LOG(10000, true);
 
-bool PNetCenter::SecondThread()
-{
+void PNetCenter::SecondThreadInit() {
     xassert(net_thread_id == SDL_ThreadID());
 
 #ifdef _WIN32
@@ -91,38 +109,45 @@ bool PNetCenter::SecondThread()
     CoInitializeEx(0, COINIT_MULTITHREADED);
 #endif
 
-	Init();
+    Init();
 
-	m_state=PNC_STATE__CLIENT_FIND_HOST;
+    m_state=PNC_STATE__CLIENT_FIND_HOST;
     serverList->startFind();
 
-	//Инициализация завершена - XDPConnection создан
-	SetEvent(hSecondThreadInitComplete);
+    //Инициализация завершена - XDPConnection создан
+    SetEvent(hSecondThreadInitComplete);
 
-	bool flag_end = false;
+    flag_end = false;
+}
 
-	while(!flag_end){
-		CAutoLock* _pLock=new CAutoLock(m_GeneralLock);
-		//decoding command 
-		if(internalCommandList.size() > 0){
-			e_PNCInternalCommand curInternalCommand;
-			//{ //Сейчас сделано так, что нельзя поместить команду если другая выполняется
-			curInternalCommand=*internalCommandList.begin();
-			internalCommandList.pop_front();
-			//}
-			switch(curInternalCommand){
-			case PNC_COMMAND__STOP_GAME_AND_ASSIGN_HOST_2_MY:
-				{
-					m_state=PNC_STATE__NEWHOST_PHASE_0;
-				}
-				SetEvent(hCommandExecuted);
-				break;
-			case PNC_COMMAND__STOP_GAME_AND_WAIT_ASSIGN_OTHER_HOST:
-				{
-					m_state=PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_0;
-				}
-				SetEvent(hCommandExecuted);
-				break;
+bool PNetCenter::SecondThreadLive() {
+    return !flag_end;
+}
+
+void PNetCenter::SecondThreadQuant()
+{
+    xassert(net_thread_id == SDL_ThreadID());
+    CAutoLock* _pLock=new CAutoLock(m_GeneralLock);
+    //decoding command
+    if(!internalCommandList.empty()){
+        e_PNCInternalCommand curInternalCommand;
+        //{ //Сейчас сделано так, что нельзя поместить команду если другая выполняется
+        curInternalCommand=*internalCommandList.begin();
+        internalCommandList.pop_front();
+        //}
+        switch(curInternalCommand){
+        case PNC_COMMAND__STOP_GAME_AND_ASSIGN_HOST_2_MY:
+            {
+                m_state=PNC_STATE__NEWHOST_PHASE_0;
+            }
+            SetEvent(hCommandExecuted);
+            break;
+        case PNC_COMMAND__STOP_GAME_AND_WAIT_ASSIGN_OTHER_HOST:
+            {
+                m_state=PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_0;
+            }
+            SetEvent(hCommandExecuted);
+            break;
 
 			case PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST:
             case PNC_COMMAND__CONNECT_2_RELAY_ROOM_AND_STOP_FIND_HOST:
@@ -169,188 +194,194 @@ bool PNetCenter::SecondThread()
                     //Set here so the isHost() gives true
                     m_state=PNC_STATE__HOST_TUNING_GAME;
 
-					if (isConnected()) {
-                        connectionHandler.reset();
-					}
-
-                    LogMsg("New game <%s> for start...\n", m_GameName.c_str());
-                    
-                    LogMsg("Starting server...\n");
-                    bool isPublic = curInternalCommand == PNC_COMMAND__CONNECT_RELAY_AND_CREATE_GAME_AND_STOP_FIND_HOST;
-                    flag_connected = connectionHandler.startHost(hostConnection.port(), isPublic);
-
-                    if (!isConnected()) {
-                        fprintf(stderr, "...error!\n");
-                        m_state=PNC_STATE__RESETTING;
-                        ExecuteInternalCommand(PNC_COMMAND__RESET, false);
-                    } else {
-                        if (!isPublic) {
-                            //If not public we assign NETIDs ourselves
-                            m_hostNETID = m_localNETID = NETID_HOST;
-                        }
-                        serverList->stopFind();
-                        LogMsg("...started OK\n");
-
-                        ClearClients();
-                        PlayerData pd;
-                        pd.set(m_PlayerName, m_localNETID);
-                        if (AddClient(pd) == -1) {
-                            if (hostMissionDescription->gameType_ == GT_MULTI_PLAYER_LOAD) {
-                                //Try forcing first player as open to allocate host
-                                if (0 < hostMissionDescription->playersAmountScenarioMax()) {
-                                    hostMissionDescription->playersData[0].realPlayerType = REAL_PLAYER_TYPE_OPEN;
-                                }
-                                if (AddClient(pd) == -1) {
-                                    ErrH.Abort("Network: Couldnt add host player to saved scenario");
-                                }
-                            } else {
-                                ErrH.Abort("Network: Couldnt add host player to scenario");
-                            }
-                        }
-
-                        hostMissionDescription->clearAllPlayerGameReady();
-                        hostMissionDescription->setChanged();
-                    }
-                }
-				SetEvent(hCommandExecuted);
-				break;
-            case PNC_COMMAND__DESYNC:
-                {
-                    flag_SkipProcessingGameCommand = true;
-                    if (isHost()) {
-                        m_state=PNC_STATE__HOST_DESYNC;
-                    } else {
-                        m_state=PNC_STATE__CLIENT_DESYNC;
-                    }
-                }
-                SetEvent(hCommandExecuted);
-                break;
-            case PNC_COMMAND__RESET:
-				{
-                    LogMsg("PNC_COMMAND__RESET\n");
-                    m_state = PNC_STATE__RESETTING;
-                    CAutoLock _lock(m_GeneralLock); //! Lock
-                    bool is_host = isHost();
-                    if (isConnected()
-                        && m_localNETID != NETID_NONE && m_hostNETID != NETID_NONE
-                        && (is_host || connectionHandler.hasClient(m_hostNETID, true))) {
-
-                        //Guaranteed sending of the last quant
-                        if (m_bStarted && is_host) {
-                            netCommandNextQuant com(m_numberGameQuant, 0, hostGeneralCommandCounter, 0);
-                            SendEvent(com, NETID_ALL);
-                        }
-
-                        //Send exit event to everyone connected (host or clients)
-                        netCommand4G_Exit ex(m_localNETID);
-                        SendEvent(ex, NETID_ALL);
-                        LogMsg("Sent Exit packets to NETID_ALL\n");
-                    }
-
-                    //Start shutdown
-                    bool was_started = m_bStarted;
+                if (isConnected()) {
                     connectionHandler.reset();
-                    flag_connected = false;
-                    m_bStarted = false;
-                    ClearClients();
+                }
 
-                    //Stay closed if game was active as we don't want to find host yet
-                    if (was_started) {
-                        LogMsg("State: PNC_STATE__CLOSED\n");
-                        m_state = PNC_STATE__CLOSED;
-                    } else {
-                        LogMsg("State: PNC_STATE__CLIENT_FIND_HOST\n");
-                        m_state = PNC_STATE__CLIENT_FIND_HOST;
-                        serverList->startFind();
+                LogMsg("New game <%s> for start...\n", m_GameName.c_str());
+
+                LogMsg("Starting server...\n");
+                bool isPublic = curInternalCommand == PNC_COMMAND__CONNECT_RELAY_AND_CREATE_GAME_AND_STOP_FIND_HOST;
+                flag_connected = connectionHandler.startHost(hostConnection.port(), isPublic);
+
+                if (!isConnected()) {
+                    fprintf(stderr, "...error!\n");
+                    m_state=PNC_STATE__RESETTING;
+                    ExecuteInternalCommand(PNC_COMMAND__RESET, false);
+                } else {
+                    if (!isPublic) {
+                        //If not public we assign NETIDs ourselves
+                        m_hostNETID = m_localNETID = NETID_HOST;
                     }
-				}
-				SetEvent(hCommandExecuted);
-				break;
-			case PNC_COMMAND__END:
-				{
-					flag_end=true;
-					//m_state=PNC_STATE__END;
-				}
-				SetEvent(hCommandExecuted);
-				break;
-			case PNC_COMMAND__ABORT_PROGRAM:
-				{
-					m_state=PNC_STATE__NET_CENTER_CRITICAL_ERROR;
-					///ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED); //????????
-				}
-				SetEvent(hCommandExecuted);
-				break;
-            case PNC_COMMAND__CLIENT_STARTING_LOAD_GAME: {
-                m_state=PNC_STATE__CLIENT_LOADING_GAME;
-                SetEvent(hCommandExecuted);
-                break;
-            }
-            case PNC_COMMAND__CLIENT_GAME_IS_READY: {
-                m_state=PNC_STATE__CLIENT_GAME;
-                
-                //Set this off to return to usual client business after a desync
-                flag_SkipProcessingGameCommand = false;
-                
-                SetEvent(hCommandExecuted);
-                break;
-            }
-			default:
-				SetEvent(hCommandExecuted);
-				break;
-			}
-		}
-        
-        if (flag_connected) {
-            //Check connection states
-            connectionHandler.pollConnections();
+                    serverList->stopFind();
+                    LogMsg("...started OK\n");
 
-            //Host/Client quant
-            if (isHost()) {
-                connectionHandler.acceptConnection();
-                HostReceiveQuant();
-            } else {
-                ClientPredReceiveQuant();
+                    ClearClients();
+                    PlayerData pd;
+                    pd.set(m_PlayerName, m_localNETID);
+                    if (AddClient(pd) == -1) {
+                        if (hostMissionDescription->gameType_ == GT_MULTI_PLAYER_LOAD) {
+                            //Try forcing first player as open to allocate host
+                            if (0 < hostMissionDescription->playersAmountScenarioMax()) {
+                                hostMissionDescription->playersData[0].realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                            }
+                            if (AddClient(pd) == -1) {
+                                ErrH.Abort("Network: Couldnt add host player to saved scenario");
+                            }
+                        } else {
+                            ErrH.Abort("Network: Couldnt add host player to scenario");
+                        }
+                    }
+
+                    hostMissionDescription->clearAllPlayerGameReady();
+                    hostMissionDescription->setChanged();
+                }
             }
+            SetEvent(hCommandExecuted);
+            break;
+        case PNC_COMMAND__DESYNC:
+            {
+                flag_SkipProcessingGameCommand = true;
+                if (isHost()) {
+                    m_state=PNC_STATE__HOST_DESYNC;
+                } else {
+                    m_state=PNC_STATE__CLIENT_DESYNC;
+                }
+            }
+            SetEvent(hCommandExecuted);
+            break;
+        case PNC_COMMAND__RESET:
+            {
+                LogMsg("PNC_COMMAND__RESET\n");
+                m_state = PNC_STATE__RESETTING;
+                CAutoLock _lock(m_GeneralLock); //! Lock
+                bool is_host = isHost();
+                if (isConnected()
+                    && m_localNETID != NETID_NONE && m_hostNETID != NETID_NONE
+                    && (is_host || connectionHandler.hasClient(m_hostNETID, true))) {
+
+                    //Guaranteed sending of the last quant
+                    if (m_bStarted && is_host) {
+                        netCommandNextQuant com(m_numberGameQuant, 0, hostGeneralCommandCounter, 0);
+                        SendEvent(com, NETID_ALL);
+                    }
+
+                    //Send exit event to everyone connected (host or clients)
+                    netCommand4G_Exit ex(m_localNETID);
+                    SendEvent(ex, NETID_ALL);
+                    LogMsg("Sent Exit packets to NETID_ALL\n");
+                }
+
+                //Start shutdown
+                bool was_started = m_bStarted;
+                connectionHandler.reset();
+                flag_connected = false;
+                m_bStarted = false;
+                ClearClients();
+
+                //Stay closed if game was active as we don't want to find host yet
+                if (was_started) {
+                    LogMsg("State: PNC_STATE__CLOSED\n");
+                    m_state = PNC_STATE__CLOSED;
+                } else {
+                    LogMsg("State: PNC_STATE__CLIENT_FIND_HOST\n");
+                    m_state = PNC_STATE__CLIENT_FIND_HOST;
+                    serverList->startFind();
+                }
+            }
+            SetEvent(hCommandExecuted);
+            break;
+        case PNC_COMMAND__END:
+            {
+                flag_end=true;
+                //m_state=PNC_STATE__END;
+            }
+            SetEvent(hCommandExecuted);
+            break;
+        case PNC_COMMAND__ABORT_PROGRAM:
+            {
+                m_state=PNC_STATE__NET_CENTER_CRITICAL_ERROR;
+                ///ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED); //????????
+            }
+            SetEvent(hCommandExecuted);
+            break;
+        case PNC_COMMAND__CLIENT_STARTING_LOAD_GAME: {
+            m_state=PNC_STATE__CLIENT_LOADING_GAME;
+            SetEvent(hCommandExecuted);
+            break;
         }
+        case PNC_COMMAND__CLIENT_GAME_IS_READY: {
+            m_state=PNC_STATE__CLIENT_GAME;
 
-		delete _pLock;
+            //Set this off to return to usual client business after a desync
+            flag_SkipProcessingGameCommand = false;
 
-		if(flag_end) break; //для быстрого выхода
+            SetEvent(hCommandExecuted);
+            break;
+        }
+        default:
+            SetEvent(hCommandExecuted);
+            break;
+        }
+    }
 
-		//Logic quant
-		
-		int curTime=clocki();
-		int minWakingTime=curTime+m_quantInterval;//NORMAL_QUANT_INTERVAL;
+    if (flag_connected) {
+        //Check connection states
+        connectionHandler.pollConnections();
 
-		if(m_nextQuantTime==0) m_nextQuantTime=curTime; //tracking start game
-		if(m_nextQuantTime<=curTime) { 
-			m_nextQuantTime+=m_quantInterval;//m_quantPeriod;
-			if(minWakingTime > m_nextQuantTime) minWakingTime=m_nextQuantTime;
-			LLogicQuant();
-		}
+        //Host/Client quant
+        if (isHost()) {
+            connectionHandler.acceptConnection();
+            HostReceiveQuant();
+        } else {
+            ClientPredReceiveQuant();
+        }
+    }
+
+    delete _pLock;
+
+    if(flag_end) return; //для быстрого выхода
+
+    //Logic quant
+
+    int curTime=clocki();
+    int minWakingTime=curTime+m_quantInterval;//NORMAL_QUANT_INTERVAL;
+
+    if(m_nextQuantTime==0) m_nextQuantTime=curTime; //tracking start game
+    if(m_nextQuantTime<=curTime) {
+        m_nextQuantTime+=m_quantInterval;//m_quantPeriod;
+        if(minWakingTime > m_nextQuantTime) minWakingTime=m_nextQuantTime;
+        LLogicQuant();
+    }
 
 
-		curTime=clocki();
-        uint32_t sleepTime = minWakingTime > curTime ? minWakingTime - curTime : 0;
-		if (0 < sleepTime) {
-			Sleep(min(sleepTime, PNC_MIN_SLEEP_TIME));
-		}
-		//end logic quant
-	}
+    curTime=clocki();
+    uint32_t sleepTime = minWakingTime > curTime ? minWakingTime - curTime : 0;
+    if (0 < sleepTime) {
+        Sleep(min(sleepTime, PNC_MIN_SLEEP_TIME));
+    }
+    //end logic quant
+}
 
-    serverList->stopFind();
+void PNetCenter::SecondThreadDeinit() {
+    if (net_thread_id != -1) {
+        serverList->stopFind();
 
-	SetConnectionTimeout(1);//Для быстрого завершения
-	//if(m_pConnection->Connected()) m_pConnection->Close();
-    connectionHandler.reset();
-    flag_connected = false;
-    m_bStarted = false;
+        SetConnectionTimeout(1);//Для быстрого завершения
+        //if(m_pConnection->Connected()) m_pConnection->Close();
+        connectionHandler.reset();
+        flag_connected = false;
+        m_bStarted = false;
 
 #ifdef _WIN32
-    CoUninitialize();
+        CoUninitialize();
 #endif
 
-	return false;
+        net_thread_id = -1;
+
+        //We are creating it with SDL thread, so we need to manually signal it
+        SetEvent(hSecondThread);
+    }
 }
 
 bool PNetCenter::Init()

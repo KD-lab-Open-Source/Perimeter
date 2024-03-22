@@ -477,7 +477,11 @@ public:
 
 	HANDLE hSecondThread;
 	//Second Thread
-	bool SecondThread();
+    std::atomic_bool flag_end;
+    void SecondThreadInit();
+    bool SecondThreadLive();
+	void SecondThreadQuant();
+    void SecondThreadDeinit();
 	void ClearClientData(){
 		ClientMapType::iterator p;
 		for(p=m_clients.begin(); p!=m_clients.end(); p++){

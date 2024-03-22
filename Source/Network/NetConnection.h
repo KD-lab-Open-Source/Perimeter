@@ -91,10 +91,10 @@ protected:
     virtual int32_t receive_raw(uint8_t* buffer, uint32_t len, int32_t timeout) = 0;
     
 public:
-    static const int32_t NT_STATUS_NO_DATA = -1;
-    static const int32_t NT_STATUS_TIMEOUT = -2;
-    static const int32_t NT_STATUS_CLOSED = -3;
-    static const int32_t NT_STATUS_ERROR = -4;
+    static const int32_t NT_STATUS_NO_DATA = -0x1000001;
+    static const int32_t NT_STATUS_TIMEOUT = -0x1000002;
+    static const int32_t NT_STATUS_CLOSED  = -0x1000003;
+    static const int32_t NT_STATUS_ERROR   = -0x1000004;
     
     NetTransport() = default;
     virtual ~NetTransport() {

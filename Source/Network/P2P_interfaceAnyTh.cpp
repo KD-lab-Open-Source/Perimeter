@@ -1,6 +1,7 @@
 #include "NetIncludes.h"
 #include "P2P_interface.h"
 #include "NetConnectionAux.h"
+#include "../HT/ht.h"
 
 extern SDL_threadID net_thread_id;
 
@@ -15,26 +16,35 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 	}
 
 	if(waitExecution) ResetEvent(hCommandExecuted);
+    internalCommandList.push_back(ic);
 
-	{
-		internalCommandList.push_back(ic);
-	}
 	if (waitExecution) {
+        if (HTManager::instance()->IsUseHT()) {
 #ifdef PERIMETER_DEBUG
-        //Ensure is not being called from net thread since it will deadlock
-        xassert(net_thread_id != SDL_ThreadID() && "Waiting execution from net thread!");
+            //Ensure is not being called from net thread since it will deadlock
+            xassert(net_thread_id != SDL_ThreadID() && "Waiting execution from net thread!");
 #endif
-        
-		//if(WaitForSingleObject(hCommandExecuted, INFINITE) != WAIT_OBJECT_0) xassert(0&&"Error execute command");
-		const unsigned char ha_size=2;
-		HANDLE ha[ha_size];
-		ha[0]=hSecondThread;
-		ha[1]=hCommandExecuted;
-		uint32_t result=WaitForMultipleObjects(ha_size, ha, false, INFINITE);
-		if (result>= (WAIT_OBJECT_0+ha_size)) {
-			xassert(0&&"Error execute command");
-		}
+
+            //if(WaitForSingleObject(hCommandExecuted, INFINITE) != WAIT_OBJECT_0) xassert(0&&"Error execute command");
+            const unsigned char ha_size = 2;
+            HANDLE ha[ha_size];
+            ha[0] = hSecondThread;
+            ha[1] = hCommandExecuted;
+            uint32_t result = WaitForMultipleObjects(ha_size, ha, false, INFINITE);
+            if (result >= (WAIT_OBJECT_0 + ha_size)) {
+                xassert(0 && "Error execute command");
+            }
+        } else {
+            while (!internalCommandList.empty()) {
+                auto cmd = *internalCommandList.begin();
+                SecondThreadQuant();
+                if (cmd == ic) {
+                    break;
+                }
+            }
+        }
 	}
+
 	return true;
 }
 
