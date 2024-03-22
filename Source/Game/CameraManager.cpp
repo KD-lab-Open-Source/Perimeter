@@ -280,35 +280,35 @@ void terCameraType::controlQuant()
 //	cameraMouseZoom = isPressed(VK_LBUTTON) && isPressed(VK_RBUTTON);
 	
 	if(!unit_follow){
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_DOWN).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_DOWN))
 			cameraPositionForce.y = CAMERA_SCROLL_SPEED_DELTA;
 		
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_UP).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_UP))
 			cameraPositionForce.y = -CAMERA_SCROLL_SPEED_DELTA;
 		
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_RIGHT).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_RIGHT))
 			cameraPositionForce.x = CAMERA_SCROLL_SPEED_DELTA;
 		
-		if(g_controls_converter.key(CTRL_CAMERA_MOVE_LEFT).pressed())
+		if(g_controls_converter.pressed(CTRL_CAMERA_MOVE_LEFT))
 			cameraPositionForce.x = -CAMERA_SCROLL_SPEED_DELTA;
 	}
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_UP).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_UP))
 		cameraThetaForce = -CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_DOWN).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_DOWN))
 		cameraThetaForce = CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_LEFT).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_LEFT))
 		cameraPsiForce = CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_RIGHT).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ROTATE_RIGHT))
 		cameraPsiForce = -CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ZOOM_INC).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ZOOM_INC))
 		cameraZoomForce = -CAMERA_ZOOM_SPEED_DELTA;
 	
-	if(g_controls_converter.key(CTRL_CAMERA_ZOOM_DEC).pressed())
+	if(g_controls_converter.pressed(CTRL_CAMERA_ZOOM_DEC))
         cameraZoomForce = CAMERA_ZOOM_SPEED_DELTA;
 }
 
@@ -401,22 +401,25 @@ bool terCameraType::cursorTrace(const Vect2f& pos2, Vect3f& v)
 	return terScene->Trace(pos,pos+dir,&v);
 }
 
-void terCameraType::shift(const Vect2f& mouseDelta)
+bool terCameraType::shift(const Vect2f& mouseDelta)
 {
-	if (gameShell->isCutSceneMode()) {
-		return;
-	}
-	if(interpolationTimer_ || unit_follow)
-		return;
+    return shift(Vect2f::ZERO, mouseDelta);
+}
 
-	Vect2f delta = mouseDelta;
-	Vect3f v1, v2;
-	if(cursorTrace(Vect2f::ZERO, v1) && cursorTrace(delta, v2))
-		delta = v2 - v1; 
-	else
-		delta = Vect2f::ZERO;
-	
-	coordinate().position() -= to3D(delta, 0);
+bool terCameraType::shift(const Vect2f& pos1, const Vect2f pos2) {
+    if (gameShell->isCutSceneMode()) {
+        return false;
+    }
+    if(interpolationTimer_ || unit_follow)
+        return false;
+
+    Vect3f v1, v2;
+    if (cursorTrace(pos1, v1) && cursorTrace(pos2, v2)) {
+        auto delta = v2 - v1;
+        coordinate().position() -= to3D(delta, 0);
+        return true;
+    }
+    return false;
 }
 
 void terCameraType::mouseWheel(int delta)

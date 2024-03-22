@@ -9,6 +9,7 @@
 #include "../Network/P2P_interface.h"
 #include "LogicUpdater.h"
 #include "ReelManager.h"
+#include "CameraManager.h"
 #include <SDL_events.h>
 
 struct LocalizedText;
@@ -292,6 +293,8 @@ public:
 		return startedWithMainmenu;
 	}
 
+    void setCameraMouseShift(bool cameraMouseShift);
+
 private:
 	class CChaos* chaos;
 	
@@ -318,9 +321,11 @@ private:
 	bool showWireFrame_;
 	int activePlayerID_;
 
+    CameraCoordinate mapMoveOrigin_;
 	Vect3f mapMoveStartPoint_;
-		
-	float game_speed;
+    Vect2f mapMoveCursorStartPoint_;
+
+    float game_speed;
 	float game_speed_to_resume;
 	//MeasurementTimer gameTimer_;
 

@@ -53,7 +53,10 @@ public:
 	void reset();
 
 	void setFocus(float focus);
-	void setCoordinate(const CameraCoordinate& coord) { coordinate_ = coord; update(); }
+	void setCoordinate(const CameraCoordinate& coord) {
+        coordinate_ = coord;
+        update();
+    }
 	
 	float focus() const { return focus_; }
 	const CameraCoordinate& coordinate() const { return coordinate_; }
@@ -74,7 +77,8 @@ public:
 
 	void mouseQuant(const Vect2f& mousePos);
 	void tilt(Vect2f mouseDelta);
-	void shift(const Vect2f& mouseDelta);
+	bool shift(const Vect2f& mouseDelta);
+    bool shift(const Vect2f& pos1, const Vect2f pos2);
 	void controlQuant();
 	void mouseWheel(int delta);
 	void quant(float mouseDeltaX, float mouseDeltaY, float delta_time, bool tilting);

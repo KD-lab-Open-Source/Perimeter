@@ -45,7 +45,7 @@ enum eGameKeysControl
 	CTRL_MAX
 };
 
-class ControlsConverter 
+class ControlsConverter
 {
 	unsigned char KeyToCtrl[2048];		// таблица перехода от кнопок в команды
 	sKey CtrlToKey[CTRL_MAX];		// таблица перехода от команд к кнопкам
@@ -61,7 +61,7 @@ public:
 	const std::string& declaration(int ctrl) const { return CtrlToDeclaration[ctrl]; }
 	const std::string& name(int key) const { return KeyToName[key]; }
 	unsigned char control(int key) const { return KeyToCtrl[key]; }
-	const sKey& key(int ctrl) const { return CtrlToKey[ctrl]; }
+	bool pressed(int ctrl) const;
 };
 
 extern ControlsConverter g_controls_converter;

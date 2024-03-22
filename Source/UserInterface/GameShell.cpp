@@ -1762,12 +1762,7 @@ void GameShell::ControlPressed(int key)
 			break;
 
 		case CTRL_CAMERA_MAP_SHIFT:
-			if(!cameraMouseShift){
-				cameraMouseShift = true;
-				_shellCursorManager.HideCursor();
-				
-				terCamera->cursorTrace(mousePosition(), mapMoveStartPoint_);
-			}
+            setCameraMouseShift(true);
 			break;
 
 		case CTRL_CAMERA_TO_EVENT:
@@ -1947,6 +1942,13 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		mouseLeftPressed_ = true;
 		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_= pos;
+
+        if (cameraMouseShift) {
+            mapMoveCursorStartPoint_ = mousePosition();
+            mapMoveOrigin_ = terCamera->coordinate();
+            terCamera->cursorTrace(mousePosition(), mapMoveStartPoint_);
+    		setCursorPosition(mapMoveStartPoint_);
+        }
 
 		if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack)
 		{
@@ -2237,15 +2239,27 @@ void GameShell::CameraQuant()
 	}
 	
 	//смещение вслед за мышью
-	if(cameraMouseShift && MouseMoveFlag){
-		terCamera->shift(mousePositionDelta());
-		setCursorPosition(mapMoveStartPoint());
-		MousePositionLock = 1;
+	if(cameraMouseShift && mouseLeftPressed_){
+            if (MouseMoveFlag) {
+                auto delta = mousePosition_ - mapMoveCursorStartPoint_;
+                static Vect2f prevDelta = Vect2f::ZERO;
+                auto deltaDiff = prevDelta - delta;
+                if (abs(deltaDiff.x) > 0.01 || abs(deltaDiff.y) > 0.01) {
+                    CameraCoordinate coordinate = terCamera->coordinate();
+                    terCamera->setCoordinate(mapMoveOrigin_);
+                    if (terCamera->shift(mapMoveCursorStartPoint_, mousePosition_)) {
+                        terCamera->coordinate().check(terCamera->restricted());
+                    } else {
+                        terCamera->setCoordinate(coordinate);
+                    }
+                    prevDelta = delta;
+                }
+            }
 	}
 
     float delta = frame_time.delta() / 1000.0f;// * PerimeterCameraControlFPS / 1000.0f;
-	terCamera->quant(mousePositionDelta().x, mousePositionDelta().y, delta, cameraMouseTrack && MouseMoveFlag);
-	
+    terCamera->quant(mousePositionDelta().x, mousePositionDelta().y, delta, cameraMouseTrack && MouseMoveFlag);
+
 //	mousePositionDelta_ = Vect2f::ZERO;
 	MouseMoveFlag = 0;
 
@@ -2709,12 +2723,7 @@ void GameShell::prepareForInGameMenu() {
 		if(_shellIconManager.IsInterface())
 			_shellCursorManager.ShowCursor();
 	}
-	if (cameraMouseShift) {
-		cameraMouseShift = false;
-		
-		if(_shellIconManager.IsInterface())
-			_shellCursorManager.ShowCursor();
-	}
+    setCameraMouseShift(false);
 	CancelEditWorkarea();
 	_shellCursorManager.m_bShowSideArrows=0;
 	_shellCursorManager.ShowCursor();
@@ -2925,4 +2934,20 @@ void GameShell::editParameters()
 	terCamera->setFocus(HardwareCameraFocus);
     SDL_ShowCursor(SDL_FALSE);
 	RestoreFocus();
+}
+
+void GameShell::setCameraMouseShift(bool _cameraMouseShift) {
+    if (cameraMouseShift == _cameraMouseShift) {
+        return;
+    }
+
+    cameraMouseShift = _cameraMouseShift;
+
+    if (cameraMouseShift){
+        _shellCursorManager.HideCursor();
+    } else {
+        if (_shellIconManager.IsInterface()) {
+            _shellCursorManager.ShowCursor();
+        }
+    }
 }

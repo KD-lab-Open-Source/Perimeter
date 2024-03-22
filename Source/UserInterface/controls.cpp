@@ -53,3 +53,8 @@ void ControlsConverter::LoadCtrlTable(const char *strMain)
 	}
 }
 
+#ifndef GPX
+bool ControlsConverter::pressed(int ctrl) const {
+    return CtrlToKey[ctrl].pressed();
+}
+#endif
