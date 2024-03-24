@@ -43,11 +43,13 @@ struct NetRelay_RoomInfo {
 };
 
 struct NetRelay_LobbyWithRooms {
-    std::string host = {};
+    std::string host_tcp = {};
+    std::string host_ws = {};
     std::vector<NetRelay_RoomInfo> rooms = {};
 
     SERIALIZE(ar) {
-        ar & WRAP_OBJECT(host);
+        ar & WRAP_OBJECT(host_tcp);
+        ar & WRAP_OBJECT(host_ws);
         ar & WRAP_OBJECT(rooms);
     }
 };
@@ -126,7 +128,11 @@ void ServerList::fetchRelayHostInfoList() {
         for (auto& lobby : lobbies) {
             for (auto& room : lobby.rooms) {
                 GameInfo info;
-                info.gameHost = lobby.host;
+#ifdef GPX
+                info.gameHost = lobby.host_ws;
+#else
+                info.gameHost = lobby.host_tcp;
+#endif
                 info.gameRoomID = room.room_id;
                 info.gameName = room.room_name;
                 info.gameVersion = room.game_version;
