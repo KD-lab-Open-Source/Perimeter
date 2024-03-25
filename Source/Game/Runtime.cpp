@@ -116,6 +116,7 @@ HWND hWndVisGeneric = nullptr;
 #endif
 
 extern char _bMenuMode;
+extern void PNetCenterNetQuant();
 
 SyncroTimer global_time;
 SyncroTimer frame_time;
@@ -578,6 +579,7 @@ cInterfaceRenderDevice* SetGraph()
     terBitPerPixel = 32;
     terScreenSizeX = gpx()->sys()->getWidth();
     terScreenSizeY = gpx()->sys()->getHeight();
+#ifdef EMSCRIPTEN
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
     auto minHeight = min(dm.h, 960);
@@ -586,6 +588,7 @@ cInterfaceRenderDevice* SetGraph()
         terScreenSizeX = (float) minHeight * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
     }
     printf("Display size: %dx%d, screen height %d, min height %d\n", terScreenSizeX, terScreenSizeY, dm.h, minHeight);
+#endif
     int ModeRender = RENDERDEVICE_MODE_RGB32 | RENDERDEVICE_MODE_WINDOW;
 #else
 	int ModeRender=0;
@@ -1004,7 +1007,7 @@ int SDL_main(int argc, char *argv[])
     int ht = IniManager("Perimeter.ini").getInt("Game", "HT");
     check_command_line_parameter("HT", ht);
     HTManager* runtime_object = new HTManager(ht);
-    runtime_object->setUseHT(ht ? true : false);
+    runtime_object->setUseHT(ht);
 
     xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
@@ -1044,6 +1047,10 @@ int SDL_main(int argc, char *argv[])
             //TODO is this necessary under SDL2 in Win32?
             WaitMessage();
 #endif
+        }
+
+        if (!HTManager::instance()->IsUseHT()) {
+            PNetCenterNetQuant();
         }
 
 #ifdef GPX
