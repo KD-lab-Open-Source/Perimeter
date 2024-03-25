@@ -195,6 +195,10 @@ int32_t NetTransportTCP::send_raw(const uint8_t* buffer, uint32_t len, int32_t _
 }
 
 int32_t NetTransportTCP::receive_raw(uint8_t* buffer, uint32_t len, int32_t _timeout) {
+#ifdef GPX
+    if (len == 8 && _timeout == 0) {
+#endif
+
     int32_t n = SDLNet_CheckSockets(socket_set, 0);
     if (n == -1) {
         fprintf(stderr, "CheckSockets error: %s\n", SDLNet_GetError());
@@ -203,9 +207,16 @@ int32_t NetTransportTCP::receive_raw(uint8_t* buffer, uint32_t len, int32_t _tim
     } else if (n == 0) {
         return NT_STATUS_NO_DATA;
     }
+
+#ifndef EMSCRIPTEN
     if (SDLNet_SocketReady(socket) == 0) {
         return NT_STATUS_NO_DATA;
     }
+#endif
+
+#ifdef GPX
+    }
+#endif
 
     //May return 0 if closed
     int32_t amount = SDLNet_TCP_Recv(socket, buffer, static_cast<int32_t>(len));
