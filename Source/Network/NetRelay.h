@@ -2,7 +2,7 @@
 #define PERIMETER_NETRELAY_H
 
 #ifdef EMSCRIPTEN
-static const char* NET_RELAY_DEFAULT_ADDRESS = "127.0.0.1";
+static const char* NET_RELAY_DEFAULT_ADDRESS = "herald.local";
 static const uint16_t NET_RELAY_DEFAULT_PORT = 11655;
 #else
 static const char* NET_RELAY_DEFAULT_ADDRESS = "relay.kdlab.com";

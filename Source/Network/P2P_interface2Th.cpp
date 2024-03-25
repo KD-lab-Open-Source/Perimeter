@@ -202,7 +202,11 @@ void PNetCenter::SecondThreadQuant()
 
                 LogMsg("Starting server...\n");
                 bool isPublic = curInternalCommand == PNC_COMMAND__CONNECT_RELAY_AND_CREATE_GAME_AND_STOP_FIND_HOST;
+#ifdef GPX
+                flag_connected = connectionHandler.startHost(0, isPublic);
+#else
                 flag_connected = connectionHandler.startHost(hostConnection.port(), isPublic);
+#endif
 
                 if (!isConnected()) {
                     fprintf(stderr, "...error!\n");
