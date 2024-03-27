@@ -75,6 +75,7 @@ in pkgs.stdenv.mkDerivation {
   # Build / Runtime dependencies
   buildInputs = with (if flag_static then pkgs.pkgsStatic else pkgs); [
     zlib
+    libbacktrace
     boost
     ffmpeg
     SDL2
