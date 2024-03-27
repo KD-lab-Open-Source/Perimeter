@@ -83,18 +83,6 @@ connectionHandler(this)
     hostConnection=NetAddress();
 
     m_hostNETID = m_localNETID = NETID_NONE;
-	
-    flag_connected=false;
-	flag_NetworkSimulation=false;
-	if(IniManager("Network.ini").getInt("General", "NetworkSimulator")) flag_NetworkSimulation=true;
-	flag_HostMigrate=false;
-	if(IniManager("Network.ini").getInt("General", "HostMigrate")) flag_HostMigrate=true;
-	flag_NoUseDPNSVR=false;
-	if(IniManager("Network.ini").getInt("General", "NoUseDPNSVR")) flag_NoUseDPNSVR=true;
-
-	m_DPSigningLevel=0;
-	m_DPSigningLevel=IniManager("Network.ini").getInt("General", "DPSigningLevel");
-
 
 	m_clients.reserve(NETWORK_PLAYERS_MAX);
 

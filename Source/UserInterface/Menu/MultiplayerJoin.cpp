@@ -21,15 +21,6 @@ int toLobbyQuant( float, float ) {
     return 1;
 }
 
-int hideBoxToLobbyQuant( float, float ) {
-    if (menuChangingDone) {
-        hideMessageBox();
-        _shellIconManager.AddDynamicHandler( toLobbyQuant, CBCODE_QUANT );
-        return 0;
-    }
-    return 1;
-}
-
 ///Join handling
 
 void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode, std::string extraInfo) {
@@ -37,7 +28,8 @@ void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode, std::s
     bool returnMultiplayerList = false;
     switch (retCode) {
         case JG_RC_OK:
-            _shellIconManager.AddDynamicHandler( hideBoxToLobbyQuant, CBCODE_QUANT );
+            hideMessageBox();
+            _shellIconManager.AddDynamicHandler( toLobbyQuant, CBCODE_QUANT );
             return;
         case JG_RC_CONNECTION_ERR: {
             textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";

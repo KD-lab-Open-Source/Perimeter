@@ -4,6 +4,8 @@
 #include "P2P_interface.h"
 #include "NetConnectionAux.h"
 
+const uint32_t TRANSPORT_RECV_SLEEP = 10;
+
 ///////// NetAddress //////////////
 
 NetAddress::NetAddress(uint32_t host, uint16_t port): addr() {
@@ -135,6 +137,7 @@ int32_t NetTransport::receive(void* buffer, uint32_t minlen, uint32_t maxlen, in
         int32_t amount = receive_raw(static_cast<uint8_t*>(buffer) + received, static_cast<int32_t>(maxlen) - received, timeout);
         if (has_timeout && amount == NT_STATUS_NO_DATA) {
             //Keep waiting
+            Sleep(TRANSPORT_RECV_SLEEP);
             continue;
         }
         if (amount < 0) {
@@ -270,12 +273,12 @@ int32_t NetConnection::send(const XBuffer* data, NETID source, NETID destination
         return -1;
     }
     if (data == nullptr) {
-        fprintf(stderr, "NetConnection::send NETID %" PRIX64 " null buffer\n", netid);
+        fprintf(stderr, "NetConnection::send NETID 0x%" PRIX64 " null buffer\n", netid);
         ErrH.Abort("Got null buffer in send");
     }
     if (data->tell() == 0) {
         xassert(0);
-        fprintf(stderr, "NetConnection::send NETID %" PRIX64 " data to sent is empty!\n", netid);
+        fprintf(stderr, "NetConnection::send NETID 0x%" PRIX64 " data to sent is empty!\n", netid);
         return -2;
     }
     if (destination == NETID_NONE) {
@@ -308,7 +311,7 @@ int32_t NetConnection::send(const XBuffer* data, NETID source, NETID destination
     int32_t msg_size = static_cast<int32_t>(body_len + header_len);
     if (msg_size > PERIMETER_MESSAGE_MAX_SIZE) {
         xassert(0);
-        fprintf(stderr, "NetConnection::send NETID %" PRIX64 " data too big len %d\n", netid, msg_size);
+        fprintf(stderr, "NetConnection::send NETID 0x%" PRIX64 " data too big len %d\n", netid, msg_size);
         return -2;
     }
 
@@ -324,7 +327,7 @@ int32_t NetConnection::send(const XBuffer* data, NETID source, NETID destination
 
 #ifdef PERIMETER_DEBUG
     if (xbuf.tell() != msg_size) {
-        fprintf(stderr, "NetConnection::send NETID %" PRIX64 " written buffer mismatch buf %" PRIsize " msg %" PRIi32 " len %" PRIsize " %s\n",
+        fprintf(stderr, "NetConnection::send NETID 0x%" PRIX64 " written buffer mismatch buf %" PRIsize " msg %" PRIi32 " len %" PRIsize " %s\n",
                 netid, xbuf.tell(), msg_size, sending_buffer.tell(), SDLNet_GetError());
         close_error();
         return -4;
@@ -333,7 +336,7 @@ int32_t NetConnection::send(const XBuffer* data, NETID source, NETID destination
     int32_t sent = transport->send(xbuf.buf, xbuf.tell(), timeout);
 
     if (sent != msg_size) {
-        fprintf(stderr, "NetConnection::send NETID %" PRIX64 " length mismatch sent %" PRIi32 " msg %" PRIi32 " len %" PRIsize " %s\n",
+        fprintf(stderr, "NetConnection::send NETID 0x%" PRIX64 " length mismatch sent %" PRIi32 " msg %" PRIi32 " len %" PRIsize " %s\n",
                 netid, sent, msg_size, sending_buffer.tell(), SDLNet_GetError());
         close_error();
         return -4;
@@ -358,14 +361,14 @@ int32_t NetConnection::receive(NetConnectionMessage** packet_ptr, int32_t timeou
         return amount;
     }
     if (amount != sizeof(header)) {
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " header failed amount %d %s\n", netid, amount, SDLNet_GetError());
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " header failed amount %d %s\n", netid, amount, SDLNet_GetError());
         return -2;
     }
     header = SDL_SwapBE64(header);
     
     //Check magic
     if ((header & NC_HEADER_MASK) != NC_HEADER_MAGIC) {
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " header failed magic mismatch 0x%" PRIX64 " %s\n", netid, header, SDLNet_GetError());
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " header failed magic mismatch 0x%" PRIX64 " %s\n", netid, header, SDLNet_GetError());
         return -2;
     }
 
@@ -376,7 +379,7 @@ int32_t NetConnection::receive(NetConnectionMessage** packet_ptr, int32_t timeou
     //Ensure is not too big
     if (amount >= PERIMETER_MESSAGE_MAX_SIZE) {
         xassert(0);
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " header failed too long 0x%" PRIX64 " len %" PRIu32 "\n", netid, header, amount);
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " header failed too long 0x%" PRIX64 " len %" PRIu32 "\n", netid, header, amount);
         return -2;
     }
     
@@ -394,10 +397,10 @@ int32_t NetConnection::receive(NetConnectionMessage** packet_ptr, int32_t timeou
             std::max(timeout, 0) + RECV_DATA_AFTER_HEADER_TIMEOUT
     );
     if (received <= 0) {
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " data chunk failed amount %d received %d %s\n", netid, amount, received, SDLNet_GetError());
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " data chunk failed amount %d received %d %s\n", netid, amount, received, SDLNet_GetError());
         amount = -5;
     } else if (amount != received) {
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " data failed amount %d received %d %s\n", netid, amount, received, SDLNet_GetError());
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " data failed amount %d received %d %s\n", netid, amount, received, SDLNet_GetError());
         amount = -6;
     }
 
@@ -406,10 +409,10 @@ int32_t NetConnection::receive(NetConnectionMessage** packet_ptr, int32_t timeou
     amount -= sizeof(NETID) * 2;
     if (amount < 0) {
         xassert(0);
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " header without message 0x%" PRIX64 " len %" PRIu32 "\n", netid, header, amount);
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " header without message 0x%" PRIX64 " len %" PRIu32 "\n", netid, header, amount);
         amount = -7;
     } else if (amount == 0) {
-        fprintf(stderr, "NetConnection::receive NETID %" PRIX64 " message is empty 0x%" PRIX64 "\n", netid, header);
+        fprintf(stderr, "NetConnection::receive NETID 0x%" PRIX64 " message is empty 0x%" PRIX64 "\n", netid, header);
     } else {
         *packet > packet->source;
         *packet > packet->destination;

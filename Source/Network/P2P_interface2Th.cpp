@@ -18,9 +18,9 @@
 
 const int PNC_MIN_SLEEP_TIME = 10; //millis
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
-const int PNC_DESYNC_RESTORE_ATTEMPTS = 5;
+const int PNC_DESYNC_RESTORE_ATTEMPTS = 3;
 const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
-const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 4 * 60 * 1000; //3 mins
+const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 4 * 60 * 1000; //4 mins
 const int PNC_DESYNC_RESTORE_MODE_FULL = PNC_DESYNC_RESTORE_MODE_PARTIAL + 1;
 const size_t PNC_LATENCY_UPDATE_INTERVAL = 50 * 1000; //us
 
@@ -138,7 +138,7 @@ bool PNetCenter::SecondThread()
                     
                     NetConnection* connection = nullptr;
                     if (curInternalCommand == PNC_COMMAND__CONNECT_2_RELAY_ROOM_AND_STOP_FIND_HOST) {
-                        LogMsg("SendClientHandshake Room to: %s room %" PRIX64 "\n", hostConnection.getString().c_str(), clientRoom);
+                        LogMsg("SendClientHandshake Room to: %s room 0x%" PRIX64 "\n", hostConnection.getString().c_str(), clientRoom);
                         connection = connectionHandler.startRelayRoomConnection(hostConnection, clientRoom);
                     } else {
                         LogMsg("SendClientHandshake Direct to: %s\n", hostConnection.getString().c_str());
@@ -592,7 +592,7 @@ void PNetCenter::LLogicQuant()
 
                                 XBuffer to(1024,true);
 								to < "Unmatched number quants ! N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
-                                fprintf(stderr, "Error network synchronization with %" PRIX64 ": %s\n", client->netidPlayer, to.address());
+                                fprintf(stderr, "Error network synchronization with 0x%" PRIX64 ": %s\n", client->netidPlayer, to.address());
 								ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
                                 return;
 							} else if ((*firstList.begin()).signature_ != (*secondList.begin()).signature_) {
@@ -606,7 +606,7 @@ void PNetCenter::LLogicQuant()
                                             netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
                                             ev_notify.desync_amount = client->desync_amount;
                                             SendEvent(ev_notify, client->netidPlayer);
-                                            fprintf(stderr, "Failed to recover network synchronization with %" PRIX64 " after %d times\n", client->netidPlayer, client->desync_amount);
+                                            fprintf(stderr, "Failed to recover network synchronization with 0x%" PRIX64 " after %d times\n", client->netidPlayer, client->desync_amount);
                                         } else {
                                             client_desync |= true;
                                             if (client->desync_last_time && clocki() - client->desync_last_time >
@@ -614,7 +614,7 @@ void PNetCenter::LLogicQuant()
                                                 client->desync_amount = 1;
                                             }
                                             client->desync_state = PNC_DESYNC_DETECTED;
-                                            fprintf(stderr, "Error network synchronization with %" PRIX64 ": "
+                                            fprintf(stderr, "Error network synchronization with 0x%" PRIX64 ": "
                                                             "Unmatched game quants signatures ! Quant=%u\n",
                                                     client->netidPlayer, (*firstList.begin()).quant_);
                                         }
@@ -655,7 +655,7 @@ void PNetCenter::LLogicQuant()
 						list.erase(list.begin());
                         if (client->desync_state == PNC_DESYNC_RESTORE_FINISHED) {
                             //If we are here then is resynced
-                            fprintf(stdout, "Client network synchronization restored with %" PRIX64 "\n", client->netidPlayer);
+                            fprintf(stdout, "Client network synchronization restored with 0x%" PRIX64 "\n", client->netidPlayer);
                             client->desync_state = PNC_DESYNC_NONE;
                         }
 					}

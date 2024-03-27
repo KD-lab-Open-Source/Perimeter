@@ -1,13 +1,11 @@
 #include "NetIncludes.h"
+#include "P2P_interface.h"
+#include "NetConnectionAux.h"
 #include "NetRelay.h"
 
-bool getNetRelayAddress(NetAddress& addr) {
+const char* getPrimaryNetRelayAddress() {
     const char* cmdline_relay = check_command_line("netrelay");
-    return NetAddress::resolve(
-            addr,
-            cmdline_relay ? cmdline_relay : NET_RELAY_DEFAULT_ADDRESS,
-            NET_RELAY_DEFAULT_PORT
-    );
+    return cmdline_relay ? cmdline_relay : NET_RELAY_DEFAULT_ADDRESS;
 }
 
 bool receiveNetRelayMessage(
@@ -30,10 +28,10 @@ bool receiveNetRelayMessage(
             fprintf(stderr, "Missing packet?\n");
             ret = -1;
         } else if (packet->source != relay->getNETID()) {
-            fprintf(stderr, "Unexpected relay message source %" PRIX64 " expected %" PRIX64 "\n", packet->source, relay->getNETID());
+            fprintf(stderr, "Unexpected relay message source 0x%" PRIX64 " expected 0x%" PRIX64 "\n", packet->source, relay->getNETID());
             ret = -1;
         } else if (packet->destination != source) {
-            fprintf(stderr, "Unexpected relay message destination %" PRIX64 " expected %" PRIX64 "\n", packet->destination, source);
+            fprintf(stderr, "Unexpected relay message destination 0x%" PRIX64 " expected 0x%" PRIX64 "\n", packet->destination, source);
             ret = -1;
         }
     }
@@ -44,7 +42,7 @@ bool receiveNetRelayMessage(
         result->read_relay_header(*packet);
         if (result->protocol_version != NET_RELAY_PROTOCOL_VERSION) {
             xassert(0);
-            fprintf(stderr, "Unexpected relay protocol %" PRIX32 "\n", result->protocol_version);
+            fprintf(stderr, "Unexpected relay protocol 0x%" PRIX32 "\n", result->protocol_version);
             ret = -1;
         } else if (result->msg_type == RELAY_MSG_CLOSE) {
             static NetRelayMessage_Close msg_close;
@@ -54,7 +52,7 @@ bool receiveNetRelayMessage(
             ret = -1;
         } else if (result_type_expected != RELAY_MSG_UNKNOWN && result->msg_type != result_type_expected) {
             xassert(0);
-            fprintf(stderr, "Unexpected relay message type %" PRIX32 " expected %" PRIX32 "\n", result->msg_type, result_type_expected);
+            fprintf(stderr, "Unexpected relay message type 0x%" PRIX32 " expected 0x%" PRIX32 "\n", result->msg_type, result_type_expected);
             ret = -1;
         }
     }
@@ -167,11 +165,22 @@ void NetRelayMessage_Close::write(XBuffer& out) const {
     out < code;
 }
 
-void NetRelayMessage_PeerListRooms::write(XBuffer& out) const {
+void NetRelayMessage_PeerListLobbyHosts::write(XBuffer& out) const {
     //Game identifier 
     write_string(out, "perimeter", 32);
+    //Game version required
+    write_string(out, PERIMETER_VERSION, 32);
     //Send in XPrm format
-    out < FORMAT_XPRM;
+    out < NET_RELAY_FORMAT_XPRM;
+}
+
+void NetRelayMessage_PeerListLobbies::write(XBuffer& out) const {
+    //Game identifier 
+    write_string(out, "perimeter", 32);
+    //Game version required
+    write_string(out, PERIMETER_VERSION, 32);
+    //Send in XPrm format
+    out < NET_RELAY_FORMAT_XPRM;
 }
 
 void NetRelayMessage_PeerSetupRoom::write(XBuffer& out) const {
@@ -191,6 +200,7 @@ void NetRelayMessage_PeerSetupRoom::write(XBuffer& out) const {
     write_map(out, {
         { "scenario", scenarioName },
         { "game_content", std::to_string(gameContent) },
+        { "arch", std::to_string(NetConnectionInfo::computeArchFlags()) },
     }, 32, 64, 128);
 }
 
@@ -210,6 +220,10 @@ void NetRelayMessage_PeerClosePeer::write(XBuffer& out) const {
 void NetRelayMessage_PeerPingResponse::write(XBuffer& out) const {
     out < secs;
     out < subsecs;
+}
+
+void NetRelayMessage_RelayListLobbyHosts::read(XBuffer& in) {
+    data = in;
 }
 
 void NetRelayMessage_RelayListLobbies::read(XBuffer& in) {

@@ -514,25 +514,34 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 
 void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if (code == EVENT_DRAWWND){
-        const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-        bool enable = true;
-        //Lock host enable until all slots are closed
-        if (gameShell->getNetClient()->isHost() && currMission.gameType_ == GT_MULTI_PLAYER_LOAD) {
-            for (int i = 0; i < currMission.playerAmountScenarioMax; ++i) {
-                if (currMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_OPEN) {
-                    enable = false;
-                    break;
+        CPushButton* btn = reinterpret_cast<CPushButton*>(pWnd);
+        bool enable = false;
+        bool state = false;
+        if (gameShell->getNetClient()->isTuning()) {
+            const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
+            enable = true;
+            state = currMission.playersData[currMission.activePlayerID].flag_playerStartReady;
+            //Lock host enable until all slots are closed
+            if (gameShell->getNetClient()->isHost() && currMission.gameType_ == GT_MULTI_PLAYER_LOAD) {
+                for (int i = 0; i < currMission.playerAmountScenarioMax; ++i) {
+                    if (currMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_OPEN) {
+                        enable = false;
+                        state = false;
+                        break;
+                    }
                 }
             }
         }
-		pWnd->Enable(enable);
-	} else if (code == EVENT_UNPRESSED){
-        const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-        bool state = !currMission.playersData[currMission.activePlayerID].flag_playerStartReady;
-		gameShell->getNetClient()->StartLoadTheGame(state);
         //Set button state
-        CPushButton* btn = reinterpret_cast<CPushButton*>(pWnd);
+        btn->Enable(enable);
         btn->setText(qdTextDB::instance().getText(state ? "Interface.Menu.ButtonLabels.CANCEL" : "Interface.Menu.ButtonLabels.READY"));
+	} else if (code == EVENT_UNPRESSED){
+        bool state = false;
+        if (gameShell->getNetClient()->isTuning()) {
+            const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
+            state = !currMission.playersData[currMission.activePlayerID].flag_playerStartReady;
+        }
+		gameShell->getNetClient()->StartLoadTheGame(state);
 	}
 }
 void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {

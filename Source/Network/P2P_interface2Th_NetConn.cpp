@@ -133,7 +133,7 @@ void PNetCenter::ProcessClientHandshakeResponse(NetConnection* connection, NetCo
     msg->set(0);
     NetConnectionInfoResponse response;
     response.read(*msg);
-    printf("ProcessClientHandshakeResponse NETID %" PRIX64 "\n", msg->source);
+    printf("ProcessClientHandshakeResponse NETID 0x%" PRIX64 "\n", msg->source);
     if(response.checkOwnCorrect()){
         if (response.connectResult == e_ConnectResult::CR_OK) {
             if (msg->source != response.hostID) {

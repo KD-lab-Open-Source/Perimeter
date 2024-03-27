@@ -58,6 +58,11 @@ public:
         return *this;
     }
 
+    bool operator==(const NetAddress& other) const {
+        return this->addr.host == other.addr.host
+            && this->addr.port == other.addr.port;
+    }
+
     NetAddress();
     NetAddress(uint32_t host, uint16_t port);
     ~NetAddress();

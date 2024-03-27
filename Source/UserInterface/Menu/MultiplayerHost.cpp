@@ -20,19 +20,11 @@ int fromCreateToLobbyQuant( float, float ) {
     return 1;
 }
 
-int createHostHideBoxToLobbyQuant( float, float ) {
-    if (menuChangingDone) {
-        hideMessageBox();
-        _shellIconManager.AddDynamicHandler( fromCreateToLobbyQuant, CBCODE_QUANT );
-        return 0;
-    }
-    return 1;
-}
-
 void GameShell::callBack_CreateGameReturnCode(e_CreateGameReturnCode retCode) {
     switch (retCode) {
         case CG_RC_OK:
-            _shellIconManager.AddDynamicHandler( createHostHideBoxToLobbyQuant, CBCODE_QUANT );
+            hideMessageBox();
+            _shellIconManager.AddDynamicHandler( fromCreateToLobbyQuant, CBCODE_QUANT );
             break;
         case CG_RC_CREATE_HOST_ERR:
             setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.CreateFailed");

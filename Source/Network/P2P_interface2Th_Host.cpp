@@ -113,7 +113,7 @@ void PNetCenter::ProcessClientHandshake(NetConnection* connection, NetConnection
 }
 
 void PNetCenter::SendClientHandshakeResponse(NetConnection* connection, NETID netid, e_ConnectResult result) {
-    printf("SendClientHandshakeResponse NETID %" PRIX64 " response: %d\n", netid, result);
+    printf("SendClientHandshakeResponse NETID 0x%" PRIX64 " response: %d\n", netid, result);
     NetConnectionInfoResponse response;
     if (result == e_ConnectResult::CR_OK) {
         //Connection is active now
@@ -126,7 +126,7 @@ void PNetCenter::SendClientHandshakeResponse(NetConnection* connection, NETID ne
         }
 
         //Close connection if result was not OK
-        fprintf(stderr, "Incoming connection NETID %" PRIX64 " closed, host response: %d\n", netid, result);
+        fprintf(stderr, "Incoming connection NETID 0x%" PRIX64 " closed, host response: %d\n", netid, result);
         connectionHandler.terminateNETID(netid);
     }
 }
@@ -288,7 +288,7 @@ void PNetCenter::SendBattleData() {
         if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
             mission->activePlayerID = pd.playerID;
             netCommand4C_StartLoadGame nccsl(mission);
-            printf("Sending mission to idx %d id %d netid %" PRIX64 "\n", i, pd.playerID, pd.netid);
+            printf("Sending mission to idx %d id %d netid 0x%" PRIX64 "\n", i, pd.playerID, pd.netid);
             SendEvent(nccsl, pd.netid);
         }
     }
@@ -388,7 +388,7 @@ bool PNetCenter::AddClientToMigratedHost(const NETID _netid, unsigned int _curLa
 
         hostMissionDescription->setChanged();
 
-        LogMsg("ReJoin client NID %" PRIX64 " PID %d for game %s\n", _netid, idxPlayerData, m_GameName.c_str());
+        LogMsg("ReJoin client NID 0x%" PRIX64 " PID %d for game %s\n", _netid, idxPlayerData, m_GameName.c_str());
 
         return 1;
     }

@@ -287,6 +287,7 @@ int showGeneralErrorMessageQuant(float, float ) {
 }
 
 void GameShell::generalErrorOccured(GeneralErrorType error) {
+    fprintf(stderr, "GameShell::generalErrorOccured: 0x%" PRIX32 "\n", static_cast<uint32_t>(error));
     gtError = error;
     _shellIconManager.AddDynamicHandler(showGeneralErrorMessageQuant, CBCODE_QUANT);
 }

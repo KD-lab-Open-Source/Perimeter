@@ -21,13 +21,10 @@ int startCmdlineQuant(float, float ) {
         gameShell->prepareNetClient();
         
         NetAddress conn;
-        bool resolved;
         if (cmdLineData.address.empty() && cmdLineData.roomID != 0) {
-            resolved = !getNetRelayAddress(conn);
-        } else {
-            resolved = NetAddress::resolve(conn, cmdLineData.address, cmdLineData.addressDefaultPort);
+            cmdLineData.address = getPrimaryNetRelayAddress();
         }
-        if (!resolved) {
+        if (!NetAddress::resolve(conn, cmdLineData.address, cmdLineData.addressDefaultPort)) {
             setMessageBoxTextID("Interface.Menu.Messages.IPEmpty");
             showMessageBoxButtons();
             return 0;

@@ -70,6 +70,7 @@ void updateMessageBoxButtonsVisibility() {
 }
 
 void showMessageBox() {
+    xassert(!((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_SUBMIT_TXT))->getText().empty());
 	_shellIconManager.SwitchMenuScreens( FAKE, SQSH_MM_SUBMIT_DIALOG_SCR );
 }
 

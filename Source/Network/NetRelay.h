@@ -7,6 +7,7 @@ static const uint16_t NET_RELAY_MAX_STRING_LENGTH = 256;
 static const uint16_t NET_RELAY_MAX_LIST_ELEMENTS = 128;
 static const uint16_t NET_RELAY_MAX_MAP_ELEMENTS = 64;
 static const uint8_t NET_RELAY_PROTOCOL_VERSION = 1;
+static const uint16_t NET_RELAY_FORMAT_XPRM = 1;
 
 ///IDs for messages from/to relay, keep it in sync with relay
 enum NetRelayMessageType {
@@ -22,6 +23,7 @@ enum NetRelayMessageType {
     RELAY_MSG_PEER_LEAVE_ROOM [[maybe_unused]],
     RELAY_MSG_PEER_PING_RESPONSE,
     RELAY_MSG_PEER_CLOSE_PEER,
+    RELAY_MSG_PEER_LIST_LOBBY_HOSTS,
 
     //Sent by relay to peer
     RELAY_MSG_RELAY_START [[maybe_unused]] = 0x20000,
@@ -30,6 +32,7 @@ enum NetRelayMessageType {
     RELAY_MSG_RELAY_LIST_PEERS,
     RELAY_MSG_RELAY_ADD_PEER,
     RELAY_MSG_RELAY_REMOVE_PEER,
+    RELAY_MSG_RELAY_LIST_LOBBY_HOSTS,
 };
 
 struct NetRelayMessage {
@@ -70,10 +73,17 @@ struct NetRelayMessage_Close : NetRelayMessage {
 
 ///////// Peer to Relay /////////
 
-struct NetRelayMessage_PeerListRooms : NetRelayMessage {
-    static const uint16_t FORMAT_XPRM = 1;
+struct NetRelayMessage_PeerListLobbyHosts : NetRelayMessage {
+    NetRelayMessage_PeerListLobbyHosts()
+            : NetRelayMessage(RELAY_MSG_PEER_LIST_LOBBY_HOSTS) {
+    }
+
+    void write(XBuffer& out) const override;
+};
+
+struct NetRelayMessage_PeerListLobbies : NetRelayMessage {
     
-    NetRelayMessage_PeerListRooms()
+    NetRelayMessage_PeerListLobbies()
             : NetRelayMessage(RELAY_MSG_PEER_LIST_LOBBIES) {
     }
 
@@ -140,6 +150,16 @@ struct NetRelayMessage_PeerPingResponse : NetRelayMessage {
 
 ///////// Relay to Peer /////////
 
+struct NetRelayMessage_RelayListLobbyHosts : NetRelayMessage {
+    XBuffer data = XBuffer(0, false);
+
+    NetRelayMessage_RelayListLobbyHosts()
+            : NetRelayMessage(RELAY_MSG_RELAY_LIST_LOBBY_HOSTS) {
+    }
+
+    void read(XBuffer& in) override;
+};
+
 struct NetRelayMessage_RelayListLobbies : NetRelayMessage {
     XBuffer data = XBuffer(0, false);
     
@@ -191,7 +211,7 @@ struct NetRelayMessage_RelayRemovePeer : NetRelayMessage {
     void read(XBuffer& in) override;
 };
 
-bool getNetRelayAddress(NetAddress& addr);
+const char* getPrimaryNetRelayAddress();
 
 bool receiveNetRelayMessage(
         NetConnection* relay,

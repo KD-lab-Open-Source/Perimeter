@@ -5,6 +5,7 @@
 #include "NetConnectionAux.h"
 #include "NetRelay.h"
 #include "codepages/codepages.h"
+#include "NetRelaySerialization.h"
 
 NetConnectionHandler::NetConnectionHandler(PNetCenter* center): net_center(center) {
     stopConnections();
@@ -328,7 +329,8 @@ void NetConnectionHandler::stopListening() {
 bool NetConnectionHandler::startRelayRoom() {
     //Create relay connection
     NetAddress conn;
-    if (!getNetRelayAddress(conn)) {
+    const char* primary_relay = getPrimaryNetRelayAddress();
+    if (!primary_relay || !NetAddress::resolve(conn, primary_relay, NET_RELAY_DEFAULT_PORT)) {
         return false;
     }
     TCPsocket socket = conn.openTCP();
@@ -340,14 +342,62 @@ bool NetConnectionHandler::startRelayRoom() {
         delete connection;
         return false;
     }
-
     connection->is_relay = true;
     has_relay_connection = true;
 
+    //Do the request to list relays we can use to create the room
+    static NetRelayMessage_PeerListLobbyHosts msg_lobby_hosts;
+    static NetRelayMessage_RelayListLobbies response_lobby_hosts;
+    bool ok = sendNetRelayMessage(connection, &msg_lobby_hosts, NETID_NONE);
+    if (ok) ok = receiveNetRelayMessage(connection, NETID_NONE, &response_lobby_hosts, RELAY_MSG_RELAY_LIST_LOBBY_HOSTS);
+    if (ok) {
+        bool use_current_relay = false;
+        XPrmIArchive ia;
+        std::swap(ia.buffer(), response_lobby_hosts.data);
+        ia.reset();
+        std::vector<NetRelay_LobbyHost> hosts = {};
+        ia >> hosts;
+        NetAddress host_conn;
+        for (NetRelay_LobbyHost& host : hosts) {
+            std::string host_address = host.getAddress();
+            if (host_address == primary_relay) {
+                use_current_relay = true;                
+                break;
+            }
+            NetAddress::resolve(
+                host_conn,
+                host_address,
+                NET_RELAY_DEFAULT_PORT
+            );
+            if (host_conn == conn) {
+                use_current_relay = true;
+                break;
+            }
+        }
+
+        //Use last host we got from list and establish connection        
+        if (!use_current_relay) {
+            connection->close();
+
+            conn = host_conn;            
+            socket = conn.openTCP();
+            if (!socket) {
+                ok = false;
+            } else {
+                connection = newConnectionFromSocket(socket, NETID_RELAY);
+                if (!connection || connection->netid == NETID_NONE) {
+                    delete connection;
+                    ok = false;
+                }
+            }
+        }
+    }
+
     //Send our room info to create it
-    const NetRelayMessage_PeerSetupRoom& msg = net_center->GenerateRelaySetupRoom();
-    
-    bool ok = sendNetRelayMessage(connection, &msg, NETID_HOST);
+    if (ok) {
+        const NetRelayMessage_PeerSetupRoom& msg_setup_room = net_center->GenerateRelaySetupRoom();
+        ok = sendNetRelayMessage(connection, &msg_setup_room, NETID_HOST);
+    }
 
     //Receive list of peers and our own netid
     if (ok) {
@@ -575,7 +625,7 @@ bool NetConnectionHandler::reassignConnectionNETID(NetConnection* connection, NE
     
     //Couldn't be reassigned
     xassert(0);
-    fprintf(stderr, "Couldn't reassign connection %" PRIX64 " to %" PRIX64 "\n", connection->netid, netid);
+    fprintf(stderr, "Couldn't reassign connection 0x%" PRIX64 " to 0x%" PRIX64 "\n", connection->netid, netid);
     return false;
 }
 
@@ -589,7 +639,7 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
     bool terminate = false;
     if (msg_header.protocol_version != NET_RELAY_PROTOCOL_VERSION) {
         xassert(0);
-        fprintf(stderr, "[Relay] Unexpected protocol %" PRIX32 "\n", msg_header.protocol_version);
+        fprintf(stderr, "[Relay] Unexpected protocol 0x%" PRIX32 "\n", msg_header.protocol_version);
         terminate = true;
     } else {
         bool wrong_destination;
@@ -615,7 +665,7 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
             default: {
 #ifdef PERIMETER_DEBUG
                 xassert(0);
-                fprintf(stderr, "[Relay] connection sent unknown msg type: %" PRIX32 "\n", msg_header.msg_type);
+                fprintf(stderr, "[Relay] connection sent unknown msg type: 0x%" PRIX32 "\n", msg_header.msg_type);
 #endif
                 break;
             }
@@ -667,12 +717,12 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
                 }
 
 #ifdef PERIMETER_DEBUG
-                printf("[Relay] room list destination %" PRIX64 " peers: %" PRIsize " [",
+                printf("[Relay] room list destination 0x%" PRIX64 " peers: %" PRIsize " [",
                        msg->destination, message.peers.size());
                 for (NETID netid : message.peers) {
-                    printf(" %" PRIX64, netid);
+                    printf(" 0x%" PRIX64, netid);
                 }
-                printf(" ]\nNETIDs local: %" PRIX64 " host: %" PRIX64 "\n", net_center->m_localNETID, net_center->m_hostNETID);
+                printf(" ]\nNETIDs local: 0x%" PRIX64 " host: 0x%" PRIX64 "\n", net_center->m_localNETID, net_center->m_hostNETID);
 #endif
                 break;
             }
@@ -680,7 +730,7 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
                 static NetRelayMessage_RelayAddPeer message;
                 message.read(*msg);
 #ifdef PERIMETER_DEBUG
-                printf("[Relay] room add peer %" PRIX64 "\n", message.netid);
+                printf("[Relay] room add peer 0x%" PRIX64 "\n", message.netid);
 #endif
                 NetRelayPeerInfo info;
                 info.relay_netid = msg->source;
@@ -692,7 +742,7 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
                 static NetRelayMessage_RelayRemovePeer message;
                 message.read(*msg);
 #ifdef PERIMETER_DEBUG
-                printf("[Relay] room remove peer %" PRIX64 "\n", message.netid);
+                printf("[Relay] room remove peer 0x%" PRIX64 "\n", message.netid);
 #endif
                 auto it = relayPeers.begin();
                 auto end = relayPeers.end();

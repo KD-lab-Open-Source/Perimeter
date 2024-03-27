@@ -171,7 +171,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 
     printf("D3D Feature Level: %" PRIu32 "\n", feature_level);
     if (!SUCCEEDED(hr) || !d3d_context->device || !d3d_context->device_context) {
-        fprintf(stderr, "Error creating D3D device: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        fprintf(stderr, "Error creating D3D device: HR 0x%" PRIX32 "\n", static_cast<uint32_t>(hr));
         xassert(0);
         return false;
     }
@@ -181,7 +181,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     IDXGIDevice* dxgiDevice;
     hr = d3d_context->device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice));
     if (!SUCCEEDED(hr)) {
-        fprintf(stderr, "Error getting DXGI device: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        fprintf(stderr, "Error getting DXGI device: HR 0x%" PRIX32 "\n", static_cast<uint32_t>(hr));
         xassert(0);
         return false;
     }
@@ -189,7 +189,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     IDXGIAdapter* dxgiAdapter;
     hr = dxgiDevice->GetAdapter(&dxgiAdapter);
     if (!SUCCEEDED(hr)) {
-        fprintf(stderr, "Error getting DXGI adapter: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        fprintf(stderr, "Error getting DXGI adapter: HR 0x%" PRIX32 "\n", static_cast<uint32_t>(hr));
         xassert(0);
         return false;
     }
@@ -204,7 +204,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 
     hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&dxgiFactory));
     if (!SUCCEEDED(hr)) {
-        fprintf(stderr, "Error getting DXGI factory: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        fprintf(stderr, "Error getting DXGI factory: HR 0x%" PRIX32 "\n", static_cast<uint32_t>(hr));
         xassert(0);
         return false;
     }
@@ -227,7 +227,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     swap_chain_desc->Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
     hr = dxgiFactory->CreateSwapChain(d3d_context->device, swap_chain_desc, &d3d_context->swap_chain);
     if (!SUCCEEDED(hr) || !d3d_context->swap_chain) {
-        fprintf(stderr, "Error creating swap chain: HR %" PRIX32 "\n", static_cast<uint32_t>(hr));
+        fprintf(stderr, "Error creating swap chain: HR 0x%" PRIX32 "\n", static_cast<uint32_t>(hr));
         xassert(0);
         return false;
     }

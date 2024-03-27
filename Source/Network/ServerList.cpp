@@ -1,4 +1,5 @@
 #include "NetIncludes.h"
+#include "NetRelaySerialization.h"
 #include "NetRelay.h"
 #include "ServerList.h"
 
@@ -43,13 +44,11 @@ struct NetRelay_RoomInfo {
 };
 
 struct NetRelay_LobbyWithRooms {
-    std::string host_tcp = {};
-    std::string host_ws = {};
+    NetRelay_LobbyHost host = {};
     std::vector<NetRelay_RoomInfo> rooms = {};
 
     SERIALIZE(ar) {
-        ar & WRAP_OBJECT(host_tcp);
-        ar & WRAP_OBJECT(host_ws);
+        ar & WRAP_OBJECT(host);
         ar & WRAP_OBJECT(rooms);
     }
 };
@@ -88,7 +87,8 @@ bool ServerList::checkRelayConnection() {
     }
     
     NetAddress conn;
-    if (!getNetRelayAddress(conn)) {
+    const char* primary_relay = getPrimaryNetRelayAddress();
+    if (!primary_relay || !NetAddress::resolve(conn, primary_relay, NET_RELAY_DEFAULT_PORT)) {
         return false;
     }
     
@@ -111,8 +111,8 @@ void ServerList::fetchRelayHostInfoList() {
     lastRelayFetch = clocki();
     lastRelayGameInfoList.clear();
     
-    //Do the request to relay
-    static NetRelayMessage_PeerListRooms msg;
+    //Do the request to list lobbies to relay
+    static NetRelayMessage_PeerListLobbies msg;
     static NetRelayMessage_RelayListLobbies response;
     bool ok = checkRelayConnection();
     if (ok) ok = sendNetRelayMessage(relayConnection, &msg, NETID_NONE);
@@ -124,15 +124,10 @@ void ServerList::fetchRelayHostInfoList() {
         ia.reset();
         std::vector<NetRelay_LobbyWithRooms> lobbies = {};
         ia >> lobbies;
-        //ia & WRAP_NAME(lobbies, nullptr);
         for (auto& lobby : lobbies) {
             for (auto& room : lobby.rooms) {
                 GameInfo info;
-#ifdef GPX
-                info.gameHost = lobby.host_ws;
-#else
-                info.gameHost = lobby.host_tcp;
-#endif
+                info.gameHost = lobby.host.getAddress();
                 info.gameRoomID = room.room_id;
                 info.gameName = room.room_name;
                 info.gameVersion = room.game_version;

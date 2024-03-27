@@ -512,6 +512,10 @@ public:
 
     bool isHost() { return (m_state&PNC_State_Host) != 0; }
     bool isGameRun() { return (m_state&PNC_State_GameRun) != 0; }
+    bool isTuning() { 
+        return m_state == PNC_STATE__HOST_TUNING_GAME
+            || m_state == PNC_STATE__CLIENT_TUNING_GAME;
+    }
 
     bool isSaveGame() {
         return lobbyMissionDescription.gameType_ == GT_MULTI_PLAYER_LOAD;
@@ -552,28 +556,7 @@ public:
 
 	NETID netidClientWhichWeWait; //netid игрока которому хост при миграции посылает команду прислать игровые комманды; нужен чтобы в случае выхода переслать комманду другому
 
-	enum e_perimeterGameState{
-		PGS_OPEN_WAITING,
-		PGS_CLOSE_WAITING,
-		PGS_CLOSED_PLAYING
-	};
-	e_perimeterGameState getGameState(void){
-		switch(m_state){
-		case PNC_STATE__HOST_TUNING_GAME:
-			return PGS_OPEN_WAITING;
-		case PNC_STATE__HOST_GAME:
-			return PGS_CLOSED_PLAYING;
-		default:
-			return PGS_CLOSED_PLAYING;
-		}
-	}
 	std::string gamePassword;
-
-	//Network settings
-	bool flag_NetworkSimulation;
-	bool flag_HostMigrate;
-	bool flag_NoUseDPNSVR;
-	int m_DPSigningLevel;//0-none 1-fast signed 2-full signed
 
 	//Pause client
 	bool setPause(bool pause);
