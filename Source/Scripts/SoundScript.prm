@@ -88,19 +88,19 @@ SoundScriptPrm mainmenuSoundPrm = {
 		{
 			name = "menu_rectangle";
 			soundName = new string[] { "menu\\menu_rectangle" };
-			max_num_sound = 2;
+			max_num_sound = 1;
 		},
 		{
 			name = "menu_button_switth_1";
 			soundName = new string[] { "menu\\menu_button_switch_1" };
-			max_num_sound = 2;
+			max_num_sound = 1;
 			volume = 0.2;
 		},
 		{
 			name = "menu_button_switth_2";
 			soundName = new string[] { "menu\\menu_button_switch_2" };
 			volume = 0.4;
-			max_num_sound = 2;
+			max_num_sound = 1;
 		},
 		{
 			name = "mainmenu_clock";

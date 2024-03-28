@@ -4933,12 +4933,18 @@ void CScaleButton::draw(int bFocus)
 					{ phase=1; if (!OnEffectStop(m_effect)) return; }
 				else if( phase<=_fEffectButtonTime1 )
 				{
-					if( !snd1 && soundEnabled ) SND2DPlaySound( "menu_button_switth_1"), snd1=1;
+					if( !snd1 && soundEnabled ) {
+                        SND2DPlaySound( "menu_button_switth_1");
+                        snd1=1;
+                    }
 					phase/=_fEffectButtonTime1, _sy=sy*0.1f, _sx=sx*phase, _size=0;
 				}
 				else if( (phase-=_fEffectButtonTime1)<=_fEffectButtonTime2 )
 				{
-					if( !snd2 && soundEnabled ) SND2DPlaySound( "menu_button_switth_2"), snd2=1;
+					if( !snd2 && soundEnabled ) {
+                        SND2DPlaySound( "menu_button_switth_2");
+                        snd2=1;
+                    }
 					phase/=_fEffectButtonTime2, _sy=sy*phase, _size=size*phase, Color3= xm::round(128 * phase);
 				}
 				else if( (phase-=_fEffectButtonTime2)<=_fEffectButtonTime3 )
