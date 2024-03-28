@@ -779,15 +779,19 @@ bool SND2DPlaySound(const char* name,float x)
 {
 	if(!g_enable_sound || !name)
 		return false;
+    xassert(0 <= x && x <= 1.0f);
 	ScriptParam* script;
 	int nfree;
 
 	bool b=script2d.FindFree(name,script,nfree);
-	if(!b || (!g_enable_voices && script->language_dependency)) return false;
+	if(!b || (!g_enable_voices && script->language_dependency)) {
+        return false;
+    }
 
 	MTAuto lock(script->GetLock());
 
 	SNDOneBuffer& s=script->GetBuffer()[nfree];
+    //printf("SND2DPlaySound %p pos %f name %s\n", &s, x, name);
 	s.pos.x=x;
 	s.volume=script->def_volume;
 

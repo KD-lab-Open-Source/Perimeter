@@ -531,13 +531,13 @@ bool CShellWindow::actionPerformed(InterfaceEventCode code, int param) {
 	return false;
 }
 
-void CShellWindow::OnLButtonDown(float _x, float _y)
+void CShellWindow::OnLButtonDown(float pos_x, float _y)
 {
 	if(m_handler)
 	{
 		if((canHandleDisabledInput() || state & SQSH_ENABLED) && m_effect == 0)
 		{
-			SND2DPlaySound( m_sound, x);
+			SND2DPlaySound( m_sound, pos_x);
 			m_handler(this, EVENT_PRESSED, 0);
 		}
 		else
