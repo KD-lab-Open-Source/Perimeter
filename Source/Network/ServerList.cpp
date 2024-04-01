@@ -86,21 +86,20 @@ bool ServerList::checkRelayConnection() {
         return true;
     }
     
-    NetAddress conn;
+    NetAddress address;
     const char* primary_relay = getPrimaryNetRelayAddress();
-    if (!primary_relay || !NetAddress::resolve(conn, primary_relay, NET_RELAY_DEFAULT_PORT)) {
+    if (!primary_relay || !NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
         return false;
     }
-    
-    TCPsocket socket = conn.openTCP();
-    if (!socket) {
+
+    NetTransport *transport = NetTransport::create(address);
+    if (!transport) {
 #if !defined(PERIMETER_DEBUG) || 1
         stopFind();
 #endif
         return false;
     }
     
-    NetTransportTCP* transport = new NetTransportTCP(socket);
     relayConnection->set_transport(transport, NETID_RELAY);
     return relayConnection->hasTransport();
 }

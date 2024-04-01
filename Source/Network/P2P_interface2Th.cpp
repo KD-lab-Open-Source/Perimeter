@@ -62,7 +62,7 @@ uint32_t WINAPI TestServerThread(void* lpParameter)
 extern std::atomic_uint64_t net_thread_id;
 
 //Second thread
-PNetCenter* netCenter = nullptr;
+extern PNetCenter* netCenter = nullptr;
 int InternalServerThread(void* lpParameter)
 {
 /*	// TEST thread!!!!
@@ -202,14 +202,10 @@ void PNetCenter::SecondThreadQuant()
 
                 LogMsg("Starting server...\n");
                 bool isPublic = curInternalCommand == PNC_COMMAND__CONNECT_RELAY_AND_CREATE_GAME_AND_STOP_FIND_HOST;
-#ifdef GPX
-                flag_connected = connectionHandler.startHost(0, isPublic);
-#else
                 flag_connected = connectionHandler.startHost(hostConnection.port(), isPublic);
-#endif
 
                 if (!isConnected()) {
-                    fprintf(stderr, "...error!\n");
+                    fprintf(stderr, "Can't start host, check network\n");
                     m_state=PNC_STATE__RESETTING;
                     ExecuteInternalCommand(PNC_COMMAND__RESET, false);
                 } else {

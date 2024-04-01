@@ -49,37 +49,30 @@ public:
  */
 class NetAddress {
 private:
+#ifndef EMSCRIPTEN
     IPaddress addr;
+#else
+    std::string address;
+#endif
     
 public:
-    NetAddress& operator=(const NetAddress& other) {
-        this->addr.host = other.addr.host;
-        this->addr.port = other.addr.port;
-        return *this;
-    }
-
-    bool operator==(const NetAddress& other) const {
-        return this->addr.host == other.addr.host
-            && this->addr.port == other.addr.port;
-    }
-
-    NetAddress();
-    NetAddress(uint32_t host, uint16_t port);
-    ~NetAddress();
-    
-    void reset() {
-        addr.host = 0;
-        addr.port = 0;
-    }
-
     static bool resolve(NetAddress& address, const std::string& host, uint16_t default_port = 0);
 
-    uint32_t crc() const;
-    uint16_t port() const;
-    void setPort(uint16_t port);
-    std::string getString() const;
-    std::string getStringIP() const;
+    NetAddress();
+    ~NetAddress();
+
+    NetAddress& operator=(const NetAddress& other);
+    bool operator==(const NetAddress& other) const;
+
+#ifndef EMSCRIPTEN
+    NetAddress(uint32_t host, uint16_t port);
     TCPsocket openTCP() const;
+#endif
+
+    void reset();
+    uint16_t port() const;
+
+    std::string getString() const;
 };
 
 /**
@@ -95,7 +88,9 @@ public:
     static const int32_t NT_STATUS_TIMEOUT = -0x1000002;
     static const int32_t NT_STATUS_CLOSED  = -0x1000003;
     static const int32_t NT_STATUS_ERROR   = -0x1000004;
-    
+
+    static NetTransport* create(const NetAddress&);
+
     NetTransport() = default;
     virtual ~NetTransport() {
         close();
@@ -145,12 +140,32 @@ protected:
     
 public:
     explicit NetTransportTCP(TCPsocket socket);
-    
+
     void close() override;
 
     bool is_closed() const override {
         return socket == nullptr;
     }
+
+    TCPsocket getSocket();
+};
+
+/**
+ * Encapsulates WebSocket transport
+ */
+class NetTransportWS: public NetTransport{
+private:
+    int32_t handle = -1;
+
+protected:
+    int32_t send_raw(const uint8_t* buffer, uint32_t len, int32_t timeout) override;
+    int32_t receive_raw(uint8_t* buffer, uint32_t len, int32_t timeout) override;
+
+public:
+    explicit NetTransportWS(int32_t handle);
+
+    void close() override;
+    bool is_closed() const override;
 };
 
 /**
@@ -265,7 +280,7 @@ class NetConnectionHandler {
 private:
     size_t max_connections = 0;
     PNetCenter* net_center = nullptr;
-    TCPsocket accept_socket = nullptr;
+    NetTransportTCP* accept_transport = nullptr;
     std::unordered_map<NETID, NetConnection*> connections;
     std::unordered_map<NETID, NetRelayPeerInfo> relayPeers;
     bool has_relay_connection = false;
@@ -275,10 +290,10 @@ private:
     void stopConnections();
     void handleRelayDisconnected();
     
-    ///Creates a new NetConnection instance from socket and assign's to netid
+    ///Creates a new NetConnection instance from transport and assign's to netid
     ///If connection couldn't be allocated the connection->getNETID() will return NETID_NONE
     ///and must be free'd
-    NetConnection* newConnectionFromSocket(TCPsocket socket, NETID netid);
+    NetConnection* newConnectionFromTransport(NetTransport* transport, NETID netid);
     
     /// Reads messages from connection until empty or max_packets reached
     void readConnectionMessages(NetConnection* connection, size_t max_packets);

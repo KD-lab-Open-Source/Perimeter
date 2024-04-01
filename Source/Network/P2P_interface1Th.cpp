@@ -21,7 +21,7 @@ extern const char* currentShortVersion;
 const int NORMAL_QUANT_INTERVAL=100;
 const int PNETCENTER_BUFFER_SIZE = PERIMETER_MESSAGE_MAX_SIZE * 2;
 
-SDL_threadID net_thread_id=-1;
+extern SDL_threadID net_thread_id=-1;
 
 const char* PNetCenter::getStrState() const
 {
@@ -159,14 +159,17 @@ connectionHandler(this)
     LogMsg("Created PNetCenter\n");
 }
 
-
+extern PNetCenter* netCenter;
 PNetCenter::~PNetCenter()
 {
+    netCenter = nullptr;
 	ExecuteInternalCommand(PNC_COMMAND__END, true);
 	const unsigned int TIMEOUT=5000;// ms
 	if( WaitForSingleObject(hSecondThread, TIMEOUT) != WAIT_OBJECT_0) {
         LogMsg("Net Thread terminated!!!\n");
+#ifndef GPX
 		xassert(0);
+#endif
         SetEvent(hSecondThread); //TODO not sure if this even necessary
 	}
 

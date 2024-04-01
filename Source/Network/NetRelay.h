@@ -3,7 +3,7 @@
 
 #ifdef EMSCRIPTEN
 static const char* NET_RELAY_DEFAULT_ADDRESS = "herald.local";
-static const uint16_t NET_RELAY_DEFAULT_PORT = 11655;
+static const uint16_t NET_RELAY_DEFAULT_PORT = 8888;
 #else
 static const char* NET_RELAY_DEFAULT_ADDRESS = "relay.kdlab.com";
 static const uint16_t NET_RELAY_DEFAULT_PORT = 11654;
