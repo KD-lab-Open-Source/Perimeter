@@ -115,6 +115,8 @@ struct NetRelayMessage_PeerSetupRoom : NetRelayMessage {
     std::string scenarioName = {};
     ///Game contents used
     GAME_CONTENT gameContent = GAME_CONTENT::CONTENT_NONE;
+    ///Locale that game host used, needed to decode server name properly
+    std::string locale = {};
 
     NetRelayMessage_PeerSetupRoom()
             : NetRelayMessage(RELAY_MSG_PEER_SETUP_ROOM) {

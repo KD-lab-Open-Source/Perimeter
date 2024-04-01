@@ -888,13 +888,14 @@ public:
 struct sItem
 {
 	float x;
-	std::deque<std::string> m_data;
+	std::deque<LocalizedText> m_data;
 	int id;
 };
 
 class CListBoxWindow : public CShellWindow
 {
-//	cFont*          m_hFont;
+    cFont*          m_hFont1250;
+    cFont*          m_hFont1251;
 	sItem			*m_pItem;
 	int				m_nNumberItem;
 	int				m_nCurSel;
@@ -935,7 +936,8 @@ public:
 	void updateScroller();
 
 	void Clear();
-	void AddString(const char* cb,int nrow=0);
+	void AddString(const std::string& cb,int nrow=0);
+    void AddLocalizedText(const LocalizedText& text, int nrow=0);
 	int GetItemCount(int nrow=0) {
 		return m_pItem[nrow].m_data.size();
 	}
@@ -947,8 +949,6 @@ public:
 	void SetCurSelPassive(int n);
     
     int ItemFromPoint(float _y, bool nearest_when_outside = true);
-
-	const char* GetCurSelString();
 
 	void Load(const sqshControl* attr) override;
 	void draw(int bFocus) override;
@@ -1008,9 +1008,6 @@ protected:
 	/// возвращает длину части строки, которая влезет в окно по ширине
 	/// если строка войдёт целиком, то возвращает -1
 	int GetStringBreak(const std::string& str, bool ignore_spaces = false) const;
-    
-    void freeLocaleFonts();
-    void setupLocaleFonts(int size);
 
 public:
 	ChatWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);

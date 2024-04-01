@@ -2,16 +2,20 @@
 #include "NetRelaySerialization.h"
 #include "NetRelay.h"
 #include "ServerList.h"
+#include "codepages/codepages.h"
+#include "MainMenu.h"
 
 const int SERVER_LIST_INTERVAL = 3000;
 
 struct NetRelay_RoomInfoExtraData {
     std::string scenario = {};
     std::string game_content = {};
+    std::string locale = {};
 
     SERIALIZE(ar) {
         ar & WRAP_OBJECT(scenario);
         ar & WRAP_OBJECT(game_content);
+        ar & WRAP_OBJECT(locale);
     }
 };
 
@@ -105,10 +109,9 @@ bool ServerList::checkRelayConnection() {
 }
 
 void ServerList::fetchRelayHostInfoList() {
-    
     if (!findingHosts || (lastRelayFetch + SERVER_LIST_INTERVAL > clocki())) return;
+    MTL();
     lastRelayFetch = clocki();
-    lastRelayGameInfoList.clear();
     
     //Do the request to list lobbies to relay
     static NetRelayMessage_PeerListLobbies msg;
@@ -116,8 +119,9 @@ void ServerList::fetchRelayHostInfoList() {
     bool ok = checkRelayConnection();
     if (ok) ok = sendNetRelayMessage(relayConnection, &msg, NETID_NONE);
     if (ok) ok = receiveNetRelayMessage(relayConnection, NETID_NONE, &response, RELAY_MSG_RELAY_LIST_LOBBIES);
-    
+
     if (ok) {
+        std::vector<GameInfo> gameList;
         XPrmIArchive ia;
         std::swap(ia.buffer(), response.data);
         ia.reset();
@@ -125,10 +129,11 @@ void ServerList::fetchRelayHostInfoList() {
         ia >> lobbies;
         for (auto& lobby : lobbies) {
             for (auto& room : lobby.rooms) {
+                std::string locale = room.extra_data.locale;
                 GameInfo info;
                 info.gameHost = lobby.host.getAddress();
                 info.gameRoomID = room.room_id;
-                info.gameName = room.room_name;
+                info.gameName = LocalizedText(room.room_name.c_str(), locale);
                 info.gameVersion = room.game_version;
                 info.maximumPlayers = room.players_max;
                 info.currentPlayers = room.players_count;
@@ -136,23 +141,26 @@ void ServerList::fetchRelayHostInfoList() {
                 info.gameStarted = room.game_started;
                 info.gameClosed = room.room_closed;
                 info.ping = room.ping;
-                info.scenario = room.extra_data.scenario;
+                info.scenario = getMapName(room.extra_data.scenario.c_str());
                 uint32_t game_content = strtoul(room.extra_data.game_content.c_str(), nullptr, 0);
                 info.gameContent = static_cast<GAME_CONTENT>(game_content);
-                lastRelayGameInfoList.emplace_back(info);
+                gameList.emplace_back(info);
             }
         }
+        lastRelayGameInfoList.clear();
+        lastRelayGameInfoList = gameList;
+        listNeedUpdate = true;
     }
     
     //Cleanup
     if (!ok) {
         closeNetRelay(relayConnection);
     }
-    listNeedUpdate = true;
 }
 
 void ServerList::refreshHostInfoList() {
     if (!findingHosts || !listNeedUpdate) return;
+    MTG();
     listNeedUpdate = false;
     gameInfoList.clear();
     for (auto& host : lastRelayGameInfoList) {

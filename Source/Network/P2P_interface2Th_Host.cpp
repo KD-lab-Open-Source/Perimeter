@@ -938,7 +938,8 @@ const NetRelayMessage_PeerSetupRoom& PNetCenter::GenerateRelaySetupRoom() const 
     msg.playersMax = mission->playerSlotsAvailable();
     msg.isClosed = false; //We handle the connections ourselves, this way we can tell why we are rejecting them
     msg.gameStarted = m_bStarted;
-    msg.scenarioName = convertToUnicode(mission->missionName(), locale);
+    msg.scenarioName = mission->worldName();
     msg.gameContent = terGameContentSelect;
+    msg.locale = locale;
     return msg;
 }

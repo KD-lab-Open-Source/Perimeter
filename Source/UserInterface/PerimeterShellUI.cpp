@@ -194,6 +194,45 @@ std::string getValidatedText(const std::string& text, float validWidth) {
     return result;
 }
 
+void freeLocaleFonts(cFont*& font1250, cFont*& font1251) {
+    if (font1250 != nullptr && font1250 == font1251) {
+        //Avoid double free if font are same
+        font1251 = nullptr;
+    }
+    _RELEASE(font1250);
+    _RELEASE(font1251);
+}
+
+void setupLocaleFonts(cFont*& font1250, cFont*& font1251, int size) {
+    freeLocaleFonts(font1250, font1251);
+
+    font1250 = font1251 = nullptr;
+    for (auto locale : getLocales()) {
+        locale = string_to_lower(locale.c_str());
+        if (startsWith(locale, "russian")) {
+            if (font1251) {
+                continue;
+            }
+            font1251 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false, locale);
+        } else {
+            if (font1250) {
+                continue;
+            }
+            font1250 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false, locale);
+        }
+    }
+
+    if (font1250 == nullptr && font1251 == nullptr) {
+        //Not supposed to happen
+        xassert(0);
+        font1250 = font1251 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false);
+    } else if (font1250 == nullptr) {
+        font1250 = font1251;
+    } else if (font1251 == nullptr) {
+        font1251 = font1250;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////
 
 CShellWindow::CShellWindow(int id, CShellWindow* pParent, EVENTPROC p)
@@ -3358,16 +3397,18 @@ void CTextScrollableWindow::Load(const sqshControl* attr)
 
 CListBoxWindow::CListBoxWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(id, pParent, p)
 {
-	m_pItem = 0;
+	m_pItem = nullptr;
 	m_nNumberItem = 0; 
-	m_hFont = 0;
+	m_hFont = nullptr;
+    m_hFont1250 = nullptr;
+    m_hFont1251 = nullptr;
 	m_nCurSel = -1;
 	m_bScroller = 0;
 	m_nTopItem = 0;
 	m_fStringHeight = listBoxRowHeight;
 	currentScrollDirection = thumb_none;
-	thumbTexture = 0;
-	m_hTextureBG = 0;
+	thumbTexture = nullptr;
+	m_hTextureBG = nullptr;
 	NewItem(1);
 	if( m_handler )
 		m_handler(this, EVENT_CREATEWND, 0);
@@ -3375,7 +3416,11 @@ CListBoxWindow::CListBoxWindow(int id, CShellWindow* pParent, EVENTPROC p):CShel
 CListBoxWindow::~CListBoxWindow()
 {
 	_RELEASE(m_hFont);
-	if(m_pItem) delete [] m_pItem; m_pItem=0;
+    freeLocaleFonts(m_hFont1250, m_hFont1251);
+	if (m_pItem) {
+        delete[] m_pItem;
+        m_pItem = nullptr;
+    }
 	_RELEASE(thumbTexture);
 	RELEASE(m_hTextureBG);
 }
@@ -3435,10 +3480,12 @@ void CListBoxWindow::Clear()
 	m_nCurSel = -1;
 	updateScroller();
 }
-void CListBoxWindow::AddString(const char* cb,int nrow)
-{
-	m_pItem[nrow].m_data.push_back(cb);
-	updateScroller();
+void CListBoxWindow::AddString(const std::string& cb,int nrow) {
+    AddLocalizedText(LocalizedText(cb, getLocale()));
+}
+void CListBoxWindow::AddLocalizedText(const LocalizedText& text, int nrow) {
+    m_pItem[nrow].m_data.emplace_back(text);
+    updateScroller();
 }
 void CListBoxWindow::updateScroller() {
 	int size = m_pItem[0].m_data.size();
@@ -3452,14 +3499,6 @@ void CListBoxWindow::updateScroller() {
 		m_fScrollerThumbPos = y + vScrollSY + 1 + float(m_nTopItem)/(m_pItem[0].m_data.size() - int(sy/m_fStringHeight))*(sy - 2*vScrollSY - vScrollThmbSY);
 }
 
-const char* CListBoxWindow::GetCurSelString()
-{
-	if(m_nCurSel >= 0)
-		return m_pItem[0].m_data[m_nCurSel].c_str();
-
-	return 0;
-}
-
 void CListBoxWindow::Load(const sqshControl* attr)
 {
 	CShellWindow::Load(attr);
@@ -3469,8 +3508,7 @@ void CListBoxWindow::Load(const sqshControl* attr)
 
 	m_fStringHeight = absoluteY(listBoxRowHeight);
 
-	_RELEASE(m_hFont);
-    m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsHeadTableFontSize);
+    setupLocaleFonts(m_hFont1250, m_hFont1251, statsHeadTableFontSize);
 //	m_vTexPos[0] = Vect2f(attr->image._ix, attr->image._iy);
 //	m_vTexPos[1] = Vect2f(attr->image.ix, attr->image.iy);
 	if (m_hTexture) {
@@ -3640,14 +3678,12 @@ void CListBoxWindow::draw(int bFocus)
 		}
 	}
 
-	terRenderDevice->SetFont(m_hFont);
-
 	for(int nItem=0; nItem<m_nNumberItem; nItem++ )
 	{
 		int i, sz = m_pItem[nItem].m_data.size();
 		float y_str = y;
 
-		int width = (nItem == m_nNumberItem - 1) ? sx : sx * m_pItem[nItem + 1].x;
+		float width = (nItem == m_nNumberItem - 1) ? sx : sx * m_pItem[nItem + 1].x;
 		width -= sx * m_pItem[nItem].x;
 		if (m_attr->alnum == 0 && nItem % 2) {
 			DrawSprite(x+sx * m_pItem[nItem].x + txtdx, y, width, sy, 
@@ -3660,10 +3696,14 @@ void CListBoxWindow::draw(int bFocus)
 			if(y_str+m_fStringHeight > y+sy)
 				break;
 
-			std::string toStr = getValidatedText(m_pItem[nItem].m_data[i], _sx_client - txtdx);
+            const LocalizedText& textItem = m_pItem[nItem].m_data[i];
+            cFont* font = startsWith(textItem.locale, "russian") ? m_hFont1251 : m_hFont1250;
+            terRenderDevice->SetFont(font);
+
+			std::string toStr = getValidatedText(textItem.text, _sx_client - txtdx);
 //			string toStr = getValidatedText(m_pItem[nItem].m_data[i], _sx_client - txtdx - m_fStringHeight/2);
 
-			float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
+			float yS = y_str + m_fStringHeight / 2 - font->GetHeight() / 2;
 
             sColor4f color(1, 1, 1, Alpha);
 			if (m_hTextureBG) {
@@ -3686,7 +3726,7 @@ void CListBoxWindow::draw(int bFocus)
 			y_str += m_fStringHeight;
 		}
 	}
-	terRenderDevice->SetFont(0);
+	terRenderDevice->SetFont(nullptr);
 	if(m_handler)
 		m_handler(this, EVENT_DRAWWND, 0);
 }
@@ -3772,12 +3812,12 @@ void CStatListBoxWindow::Clear()
 }
 void CStatListBoxWindow::AddString(const char* cb,int nrow)
 {
-	m_pItem[nrow].m_data.push_back(cb);
+	m_pItem[nrow].m_data.push_back(LocalizedText(cb, ""));
 }
 
 void CStatListBoxWindow::AddRace(int race, const sColor4c& color)
 {
-	m_pItem[0].m_data.push_back("");
+	m_pItem[0].m_data.push_back(LocalizedText());
 	races.push_back(race);
 	colors.push_back(color);
 }
@@ -3864,7 +3904,7 @@ void CStatListBoxWindow::draw(int bFocus) {
 //					x + sx * m_pItem[nItem].x + txtdx, y_str + txtdy, sy, sy, m_vTexPosRace[0][races[i]].x, m_vTexPosRace[0][races[i]].y, m_vTexPosRace[1][races[i]].x, m_vTexPosRace[1][races[i]].y,
 //					m_hTexture, colors[i], fmodf(m_ftime,1000)/1000);
 			} else {
-				std::string toStr = getValidatedText(m_pItem[nItem].m_data[i], width);
+				std::string toStr = getValidatedText(m_pItem[nItem].m_data[i].text, width);
 
                 sColor4f color(1, 1, 1, Alpha);
 				OutText(
@@ -3905,7 +3945,7 @@ ChatWindow::ChatWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(
 ChatWindow::~ChatWindow()
 {
     _RELEASE(m_hFont);
-    freeLocaleFonts();
+    freeLocaleFonts(m_hFont1250, m_hFont1251);
 	_RELEASE(thumbTexture);
 	RELEASE(m_hTextureBG);
 }
@@ -4017,7 +4057,8 @@ void ChatWindow::Load(const sqshControl* attr)
 	_RELEASE(thumbTexture);
 	_RELEASE(m_hTextureBG);
 
-    setupLocaleFonts(16);
+    setupLocaleFonts(m_hFont1250, m_hFont1251, 16);
+    m_fStringHeight = absoluteY(18.0f);
 
 	if (m_hTexture) {
 		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
@@ -4053,47 +4094,6 @@ void ChatWindow::Load(const sqshControl* attr)
 		dudv.x = 1.0f / tsx;
 		dudv.y = 1.0f / tsy;
 	}
-}
-
-void ChatWindow::freeLocaleFonts() {
-    if (m_hFont1250 != nullptr && m_hFont1250 == m_hFont1251) {
-        //Avoid double free if font are same
-        m_hFont1251 = nullptr;
-    }
-    _RELEASE(m_hFont1250);
-    _RELEASE(m_hFont1251);
-}
-
-void ChatWindow::setupLocaleFonts(int size) {
-    freeLocaleFonts();
-
-    m_hFont1250 = m_hFont1251 = nullptr;
-    for (auto locale : getLocales()) {
-        locale = string_to_lower(locale.c_str());
-        if (startsWith(locale, "russian")) {
-            if (m_hFont1251) {
-                continue;
-            }
-            m_hFont1251 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false, locale);
-        } else {
-            if (m_hFont1250) {
-                continue;
-            }
-            m_hFont1250 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false, locale);
-        }
-    }
-
-    if (m_hFont1250 == nullptr && m_hFont1251 == nullptr) {
-        //Not supposed to happen
-        xassert(0);
-        m_hFont1250 = m_hFont1251 = terVisGeneric->CreateGameFont(sqshShellMainFont1, size, false);
-    } else if (m_hFont1250 == nullptr) {
-        m_hFont1250 = m_hFont1251;
-    } else if (m_hFont1251 == nullptr) {
-        m_hFont1251 = m_hFont1250;
-    }
-
-    m_fStringHeight = absoluteY(size + 2);
 }
 
 void ChatWindow::draw(int bFocus)
@@ -6037,7 +6037,8 @@ void CChatInfoWindow::Load(const sqshControl* attr) {
     _RELEASE(m_hPopupTexture);
     m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
     
-    setupLocaleFonts(HINT_FONT_SIZE);
+    setupLocaleFonts(m_hFont1250, m_hFont1251, HINT_FONT_SIZE);
+    m_fStringHeight = absoluteY(HINT_FONT_SIZE + 2.0f);
     updateScroller();
 }
 

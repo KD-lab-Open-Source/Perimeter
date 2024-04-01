@@ -1,6 +1,8 @@
 #ifndef PERIMETER_SERVERLIST_H
 #define PERIMETER_SERVERLIST_H
 
+#include "Localization.h"
+
 //Contains info about host/room and game itself
 struct GameInfo {
     ///Address of game server or relay server to connect
@@ -9,7 +11,7 @@ struct GameInfo {
     NetRoomID gameRoomID = 0;
     
     //Game info
-    std::string gameName = {};
+    LocalizedText gameName = {};
     std::string gameVersion = {};
     uint8_t maximumPlayers = 0;
     uint8_t currentPlayers = 0;
