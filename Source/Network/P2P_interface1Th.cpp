@@ -21,7 +21,7 @@ extern const char* currentShortVersion;
 const int NORMAL_QUANT_INTERVAL=100;
 const int PNETCENTER_BUFFER_SIZE = PERIMETER_MESSAGE_MAX_SIZE * 2;
 
-extern SDL_threadID net_thread_id=-1;
+extern std::atomic_uint64_t net_thread_id=-1;
 
 const char* PNetCenter::getStrState() const
 {

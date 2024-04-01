@@ -3,7 +3,7 @@
 #include "NetConnectionAux.h"
 #include "../HT/ht.h"
 
-extern SDL_threadID net_thread_id;
+extern std::atomic_uint64_t net_thread_id;
 
 //Запускается из 1 2-го потока
 //Может вызываться с фдагом waitExecution только из одного потока (сейчас 1-го)
