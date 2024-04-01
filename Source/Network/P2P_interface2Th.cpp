@@ -93,8 +93,9 @@ extern void PNetCenterNetQuant() {
         if (netCenter->SecondThreadLive()) {
             netCenter->SecondThreadQuant();
         } else {
+            PNetCenter* ref = netCenter;
             netCenter = nullptr;
-            netCenter->SecondThreadDeinit();
+            ref->SecondThreadDeinit();
         }
     }
 }
