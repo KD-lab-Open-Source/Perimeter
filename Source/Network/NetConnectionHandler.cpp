@@ -47,8 +47,9 @@ void NetConnectionHandler::readConnectionMessages(NetConnection* connection, siz
 }
 
 void NetConnectionHandler::acceptConnection() {
-    if (accept_socket) {
-        TCPsocket incoming_socket = SDLNet_TCP_Accept(accept_socket);
+#ifndef EMSCRIPTEN
+    if (accept_transport) {
+        TCPsocket incoming_socket = SDLNet_TCP_Accept(accept_transport->getSocket());
         if(!incoming_socket) {
             SDLNet_SetError(nullptr);
         } else {
@@ -68,8 +69,8 @@ void NetConnectionHandler::acceptConnection() {
 
             //Couldn't find any connection to reuse, create new
             if (incoming == nullptr) {
-                incoming = newConnectionFromSocket(
-                    incoming_socket,
+                incoming = newConnectionFromTransport(
+                    new NetTransportTCP(incoming_socket),
                     NETID_CLIENTS_START + connections.size()
                 );
             }
@@ -87,6 +88,7 @@ void NetConnectionHandler::acceptConnection() {
             }
         }
     }
+#endif
 }
 
 void NetConnectionHandler::setHasClient(NETID netid, bool state) {
@@ -301,15 +303,21 @@ bool NetConnectionHandler::startHost(uint16_t listen_port, bool start_public_roo
         }
     }
 
+#ifdef EMSCRIPTEN
+    ok = ok && start_public_room;
+#else
     if (ok && 0 < listen_port) {
         NetAddress addr(INADDR_ANY, listen_port);
-        accept_socket = addr.openTCP();
-        if (accept_socket == nullptr) {
+        NetTransport* transport = NetTransport::create(addr);
+        if (transport == nullptr || dynamic_cast<NetTransportTCP*>(transport) == nullptr) {
             ok = false;
+            delete transport;
         } else {
+            accept_transport = dynamic_cast<NetTransportTCP*>(transport);
             LogMsg("TCP listening on port %d\n", listen_port);
         }
     }
+#endif
 
     if (!ok && start_public_room) {
         stopRelay();
@@ -319,25 +327,25 @@ bool NetConnectionHandler::startHost(uint16_t listen_port, bool start_public_roo
 }
 
 void NetConnectionHandler::stopListening() {
-    if (accept_socket) {
+    if (accept_transport) {
         LogMsg("TCP listen socket closed\n");
-        SDLNet_TCP_Close(accept_socket);
-        accept_socket = nullptr;
+        delete accept_transport;
+        accept_transport = nullptr;
     }
 }
 
 bool NetConnectionHandler::startRelayRoom() {
     //Create relay connection
-    NetAddress conn;
+    NetAddress address;
     const char* primary_relay = getPrimaryNetRelayAddress();
-    if (!primary_relay || !NetAddress::resolve(conn, primary_relay, NET_RELAY_DEFAULT_PORT)) {
+    if (!primary_relay || !NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
         return false;
     }
-    TCPsocket socket = conn.openTCP();
-    if (!socket) {
+    NetTransport* transport = NetTransport::create(address);
+    if (!transport) {
         return false;
     }
-    NetConnection* connection = newConnectionFromSocket(socket, NETID_RELAY);
+    NetConnection* connection = newConnectionFromTransport(transport, NETID_RELAY);
     if (!connection || connection->netid == NETID_NONE) {
         delete connection;
         return false;
@@ -357,19 +365,19 @@ bool NetConnectionHandler::startRelayRoom() {
         ia.reset();
         std::vector<NetRelay_LobbyHost> hosts = {};
         ia >> hosts;
-        NetAddress host_conn;
+        NetAddress host_address;
         for (NetRelay_LobbyHost& host : hosts) {
-            std::string host_address = host.getAddress();
-            if (host_address == primary_relay) {
+            std::string host_address_str = host.getAddress();
+            if (host_address_str == primary_relay) {
                 use_current_relay = true;                
                 break;
             }
             NetAddress::resolve(
-                host_conn,
                 host_address,
+                host_address_str,
                 NET_RELAY_DEFAULT_PORT
             );
-            if (host_conn == conn) {
+            if (host_address == address) {
                 use_current_relay = true;
                 break;
             }
@@ -379,12 +387,12 @@ bool NetConnectionHandler::startRelayRoom() {
         if (!use_current_relay) {
             connection->close();
 
-            conn = host_conn;            
-            socket = conn.openTCP();
-            if (!socket) {
+            address = host_address;
+            NetTransport *transport = NetTransport::create(address);
+            if (!transport) {
                 ok = false;
             } else {
-                connection = newConnectionFromSocket(socket, NETID_RELAY);
+                connection = newConnectionFromTransport(transport, NETID_RELAY);
                 if (!connection || connection->netid == NETID_NONE) {
                     delete connection;
                     ok = false;
@@ -421,11 +429,11 @@ NetConnection* NetConnectionHandler::startRelayRoomConnection(const NetAddress& 
     max_connections = 1;
 
     //Start relay connection and assign as host since it will act as one after sending join room
-    TCPsocket socket = address.openTCP();
-    if (!socket) {
+    NetTransport *transport = NetTransport::create(address);
+    if (!transport) {
         return nullptr;
     }
-    NetConnection* connection = newConnectionFromSocket(socket, NETID_RELAY);
+    NetConnection* connection = newConnectionFromTransport(transport, NETID_RELAY);
     if (!connection || connection->netid == NETID_NONE) {
         delete connection;
         stopRelay();
@@ -491,12 +499,12 @@ void NetConnectionHandler::handleRelayDisconnected() {
 NetConnection* NetConnectionHandler::startDirectConnection(const NetAddress& address) {
     max_connections = 1;
 
-    TCPsocket socket = address.openTCP();
-	if (!socket) {
+    NetTransport *transport = NetTransport::create(address);
+	if (!transport) {
         return nullptr;
 	}
     
-    NetConnection* connection = newConnectionFromSocket(socket, NETID_HOST);
+    NetConnection* connection = newConnectionFromTransport(transport, NETID_HOST);
     if (connection && connection->netid != NETID_NONE) {
         return connection;
     } else {
@@ -506,8 +514,7 @@ NetConnection* NetConnectionHandler::startDirectConnection(const NetAddress& add
     }
 }
 
-NetConnection* NetConnectionHandler::newConnectionFromSocket(TCPsocket socket, NETID netid) {
-    xassert(socket);
+NetConnection* NetConnectionHandler::newConnectionFromTransport(NetTransport* transport, NETID netid) {
     NetConnection* connection = nullptr;
     if (connections.size() < max_connections) {
         if (connections.count(netid)) {
@@ -535,7 +542,6 @@ NetConnection* NetConnectionHandler::newConnectionFromSocket(TCPsocket socket, N
         //Connection couldn't be assigned, return empty one so we can put socket on it
         connection = new NetConnection(nullptr, NETID_NONE);
     }
-    NetTransportTCP* transport = new NetTransportTCP(socket);
     connection->set_transport(transport, netid);
     //Set initial time of contact
     connection->time_contact = clock_us();

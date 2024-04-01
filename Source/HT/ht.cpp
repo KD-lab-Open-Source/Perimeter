@@ -316,9 +316,13 @@ void HTManager::ClearDeleteUnit(bool delete_all)
 
 bool HTManager::PossibilityHT()
 {
+#ifdef GPX
+    return false;
+#else
     const unsigned int processor_count = std::thread::hardware_concurrency();
     //NOTE: processor_count may be 0 if couldn't be detected
     return 1 < processor_count;
+#endif
 }
 
 float HTManager::GetLogicFps()

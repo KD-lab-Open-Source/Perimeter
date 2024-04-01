@@ -4,59 +4,37 @@
 #include "P2P_interface.h"
 #include "NetConnectionAux.h"
 
+#ifdef EMSCRIPTEN
+#include "emscripten.h"
+#endif
+
 const uint32_t TRANSPORT_RECV_SLEEP = 10;
 
 ///////// NetAddress //////////////
 
+#ifndef EMSCRIPTEN
 NetAddress::NetAddress(uint32_t host, uint16_t port): addr() {
     addr.host = host;
-    setPort(port);
+    SDLNet_Write16(port, &addr.port);
 }
 
 NetAddress::NetAddress(): NetAddress(INADDR_NONE, 0) {}
 
+TCPsocket NetAddress::openTCP() const {
+    TCPsocket socket = SDLNet_TCP_Open(const_cast<IPaddress*>(&addr));
+    if (socket == nullptr) {
+        fprintf(stderr, "NetAddress::openTCP failed address %s error %s\n", getString().c_str(), SDLNet_GetError());
+    }
+    return socket;
+}
+#else
+NetAddress::NetAddress() {}
+#endif
+
 NetAddress::~NetAddress() = default;
 
-uint32_t NetAddress::crc() const {
-    uint32_t crc = startCRC32;
-    crc=crc32((unsigned char*)&addr, sizeof(addr), crc);
-    return crc;
-}
-
-uint16_t NetAddress::port() const {
-    return SDLNet_Read16(&addr.port);
-}
-
-void NetAddress::setPort(uint16_t port) {
-    SDLNet_Write16(port, &addr.port);
-}
-
-std::string NetAddress::getString() const {
-    std::string text;
-
-    if (addr.host != INADDR_NONE) {
-        text = getStringIP();
-        if (addr.port) {
-            text += ":" + std::to_string(port());
-        }
-    } else {
-        text = "none";
-    }
-
-    return text;
-}
-
-std::string NetAddress::getStringIP() const {
-    std::string text;
-    for (size_t i = 0; i < 4; ++i) {
-        if (i > 0) text += ".";
-        uint8_t v = (addr.host >> (8 * i)) & 0xff;
-        text += std::to_string(v);
-    }
-    return text;
-}
-
 bool NetAddress::resolve(NetAddress& address, const std::string& host, uint16_t default_port) {
+#ifndef EMSCRIPTEN
     std::string ip;
     uint16_t port;
     if (default_port == 0) {
@@ -79,17 +57,94 @@ bool NetAddress::resolve(NetAddress& address, const std::string& host, uint16_t 
         return false;
     }
     return true;
+#else
+    address.address = host + ":" + std::to_string(NET_RELAY_DEFAULT_PORT);
+    return true;
+#endif
 }
 
-TCPsocket NetAddress::openTCP() const {
-    TCPsocket socket = SDLNet_TCP_Open(const_cast<IPaddress*>(&addr));
-    if (socket == nullptr) {
-        fprintf(stderr, "NetAddress::openTCP failed address %s error %s\n", getString().c_str(), SDLNet_GetError());
+uint16_t NetAddress::port() const {
+#ifndef EMSCRIPTEN
+    return SDLNet_Read16(&addr.port);
+#else
+    return NET_RELAY_DEFAULT_PORT;
+#endif
+}
+
+NetAddress& NetAddress::operator=(const NetAddress& other) {
+#ifndef EMSCRIPTEN
+    this->addr.host = other.addr.host;
+    this->addr.port = other.addr.port;
+#else
+    this->address = other.address;
+#endif
+    return *this;
+}
+
+bool NetAddress::operator==(const NetAddress& other) const {
+#ifndef EMSCRIPTEN
+    return this->addr.host == other.addr.host
+           && this->addr.port == other.addr.port;
+#else
+    return this->address == other.address;
+#endif
+}
+
+void NetAddress::reset() {
+#ifndef EMSCRIPTEN
+    addr.host = 0;
+    addr.port = 0;
+#else
+    address = "";
+#endif
+}
+
+std::string NetAddress::getString() const {
+#ifndef EMSCRIPTEN
+    std::string text;
+
+    if (addr.host != INADDR_NONE) {
+        for (size_t i = 0; i < 4; ++i) {
+            if (i > 0) text += ".";
+            uint8_t v = (addr.host >> (8 * i)) & 0xff;
+            text += std::to_string(v);
+        }
+
+        if (addr.port) {
+            text += ":" + std::to_string(port());
+        }
+    } else {
+        text = "none";
     }
-    return socket;
+
+    return text;
+#else
+    return address;
+#endif
 }
 
 ///////// NetTransport //////////////
+NetTransport* NetTransport::create(const NetAddress& address) {
+#ifdef EMSCRIPTEN
+    int32_t handle = EM_ASM_INT((
+        return Module.transportCreate($0);
+    ), address.getString().c_str());
+
+    if (handle == -1) {
+        return nullptr;
+    }
+
+    return new NetTransportWS(handle);
+#else
+    TCPsocket socket = address.openTCP();
+    if (socket) {
+        return new NetTransportTCP(socket);
+    }
+#endif
+
+    return nullptr;
+}
+
 
 int32_t NetTransport::send(const void* buffer, uint32_t len, int32_t timeout) {
     if (is_closed()) {
@@ -195,6 +250,10 @@ int32_t NetTransportTCP::send_raw(const uint8_t* buffer, uint32_t len, int32_t _
 }
 
 int32_t NetTransportTCP::receive_raw(uint8_t* buffer, uint32_t len, int32_t _timeout) {
+#ifdef GPX
+    if (len == 8 && _timeout == 0) {
+#endif
+
     int32_t n = SDLNet_CheckSockets(socket_set, 0);
     if (n == -1) {
         fprintf(stderr, "CheckSockets error: %s\n", SDLNet_GetError());
@@ -203,9 +262,16 @@ int32_t NetTransportTCP::receive_raw(uint8_t* buffer, uint32_t len, int32_t _tim
     } else if (n == 0) {
         return NT_STATUS_NO_DATA;
     }
+
+#ifndef EMSCRIPTEN
     if (SDLNet_SocketReady(socket) == 0) {
         return NT_STATUS_NO_DATA;
     }
+#endif
+
+#ifdef GPX
+    }
+#endif
 
     //May return 0 if closed
     int32_t amount = SDLNet_TCP_Recv(socket, buffer, static_cast<int32_t>(len));
@@ -216,6 +282,45 @@ int32_t NetTransportTCP::receive_raw(uint8_t* buffer, uint32_t len, int32_t _tim
         return NT_STATUS_ERROR;
     }
     return amount;
+}
+
+TCPsocket NetTransportTCP::getSocket() {
+    return socket;
+}
+
+///////// NetTransportWS //////////////
+
+NetTransportWS::NetTransportWS(int32_t handle): handle(handle) {}
+
+int32_t NetTransportWS::send_raw(const uint8_t* buffer, uint32_t len, int32_t timeout) {
+#ifdef EMSCRIPTEN
+    return EM_ASM_INT((
+        return Module.transportSend($0, $1, $2, $3);
+    ), handle, buffer, len, timeout);
+#endif
+    return -1;
+}
+
+int32_t NetTransportWS::receive_raw(uint8_t* buffer, uint32_t len, int32_t timeout) {
+#ifdef EMSCRIPTEN
+    return EM_ASM_INT((
+        return Module.transportReceive($0, $1, $2, $3);
+    ), handle, buffer, len, timeout);
+#endif
+    return -1;
+}
+
+void NetTransportWS::close() {
+#ifdef EMSCRIPTEN
+    EM_ASM((
+        Module.transportClose($0);
+    ), handle);
+    handle = -1;
+#endif
+}
+
+bool NetTransportWS::is_closed() const {
+    return handle == -1;
 }
 
 ///////// NetConnection //////////////

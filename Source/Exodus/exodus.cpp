@@ -2,11 +2,18 @@
 #include "tweaks.h"
 #include <cctype>
 #include <thread>
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Sleep(uint32_t millis) {
+#ifndef EMSCRIPTEN
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+#else
+    emscripten_sleep(millis);
+#endif
 }
 
 //According to MSDN: Both __iscsym and __iswcsym return a nonzero value if c is a letter, underscore, or digit. 

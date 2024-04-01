@@ -21,7 +21,7 @@ extern const char* currentShortVersion;
 const int NORMAL_QUANT_INTERVAL=100;
 const int PNETCENTER_BUFFER_SIZE = PERIMETER_MESSAGE_MAX_SIZE * 2;
 
-SDL_threadID net_thread_id=-1;
+extern std::atomic_uint64_t net_thread_id=-1;
 
 const char* PNetCenter::getStrState() const
 {
@@ -137,31 +137,39 @@ connectionHandler(this)
 	hCommandExecuted=CreateEvent(0, true, false, 0);
 
     hSecondThread = CreateEvent(0, true, false, 0);
-    SDL_Thread* thread = SDL_CreateThread(InternalServerThread, "perimeter_server_thread", this);
-    if (thread == nullptr) {
-        SDL_FATAL_ERROR("SDL_CreateThread perimeter_server_thread failed");
-    }
-    SDL_DetachThread(thread);
+    if (HTManager::instance()->IsUseHT()) {
+        SDL_Thread *thread = SDL_CreateThread(InternalServerThread, "perimeter_server_thread", this);
+        if (thread == nullptr) {
+            SDL_FATAL_ERROR("SDL_CreateThread perimeter_server_thread failed");
+        }
+        SDL_DetachThread(thread);
 
-	if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {
-		xassert(0&&"NetCenter:Error second thread init");
-		ErrH.Abort("Network: General error 1!");
-	}
-    xassert(net_thread_id == SDL_GetThreadID(thread));
+        if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {
+            xassert(0&&"NetCenter:Error second thread init");
+            ErrH.Abort("Network: General error 1!");
+        }
+        xassert(net_thread_id == SDL_GetThreadID(thread));
+    } else {
+        InternalServerThread(this);
+    }
+
 
 	lastTimeServerPacket=clocki();
 
     LogMsg("Created PNetCenter\n");
 }
 
-
+extern PNetCenter* netCenter;
 PNetCenter::~PNetCenter()
 {
+    netCenter = nullptr;
 	ExecuteInternalCommand(PNC_COMMAND__END, true);
 	const unsigned int TIMEOUT=5000;// ms
 	if( WaitForSingleObject(hSecondThread, TIMEOUT) != WAIT_OBJECT_0) {
         LogMsg("Net Thread terminated!!!\n");
+#ifndef GPX
 		xassert(0);
+#endif
         SetEvent(hSecondThread); //TODO not sure if this even necessary
 	}
 

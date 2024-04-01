@@ -1,8 +1,14 @@
 #ifndef PERIMETER_NETRELAY_H
 #define PERIMETER_NETRELAY_H
 
+#ifdef EMSCRIPTEN
+static const char* NET_RELAY_DEFAULT_ADDRESS = "herald.local";
+static const uint16_t NET_RELAY_DEFAULT_PORT = 8888;
+#else
 static const char* NET_RELAY_DEFAULT_ADDRESS = "relay.kdlab.com";
 static const uint16_t NET_RELAY_DEFAULT_PORT = 11654;
+#endif
+
 static const uint16_t NET_RELAY_MAX_STRING_LENGTH = 256;
 static const uint16_t NET_RELAY_MAX_LIST_ELEMENTS = 128;
 static const uint16_t NET_RELAY_MAX_MAP_ELEMENTS = 64;
