@@ -145,7 +145,6 @@ NetTransport* NetTransport::create(const NetAddress& address) {
     return nullptr;
 }
 
-
 int32_t NetTransport::send(const void* buffer, uint32_t len, int32_t timeout) {
     if (is_closed()) {
         return NT_STATUS_CLOSED;

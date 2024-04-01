@@ -96,7 +96,7 @@ public:
         close();
     };
     
-    /** Close the transport */
+    /** Close the transport, must be called on subclasses's destructors */
     virtual void close() {};
     
     /** @return true if transport is closed */
@@ -140,6 +140,9 @@ protected:
     
 public:
     explicit NetTransportTCP(TCPsocket socket);
+    ~NetTransportTCP() override {
+        close();
+    };
 
     void close() override;
 
@@ -163,6 +166,9 @@ protected:
 
 public:
     explicit NetTransportWS(int32_t handle);
+    ~NetTransportWS() override { 
+        close();
+    };
 
     void close() override;
     bool is_closed() const override;

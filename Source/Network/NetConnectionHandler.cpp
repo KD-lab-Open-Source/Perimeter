@@ -351,64 +351,77 @@ bool NetConnectionHandler::startRelayRoom() {
         return false;
     }
     connection->is_relay = true;
-    has_relay_connection = true;
 
     //Do the request to list relays we can use to create the room
     static NetRelayMessage_PeerListLobbyHosts msg_lobby_hosts;
     static NetRelayMessage_RelayListLobbies response_lobby_hosts;
     bool ok = sendNetRelayMessage(connection, &msg_lobby_hosts, NETID_NONE);
     if (ok) ok = receiveNetRelayMessage(connection, NETID_NONE, &response_lobby_hosts, RELAY_MSG_RELAY_LIST_LOBBY_HOSTS);
+    std::vector<NetRelay_LobbyHost> hosts = {};
     if (ok) {
-        bool use_current_relay = false;
         XPrmIArchive ia;
         std::swap(ia.buffer(), response_lobby_hosts.data);
         ia.reset();
-        std::vector<NetRelay_LobbyHost> hosts = {};
         ia >> hosts;
-        NetAddress host_address;
-        for (NetRelay_LobbyHost& host : hosts) {
-            std::string host_address_str = host.getAddress();
-            if (host_address_str == primary_relay) {
-                use_current_relay = true;                
-                break;
-            }
-            NetAddress::resolve(
-                host_address,
-                host_address_str,
-                NET_RELAY_DEFAULT_PORT
-            );
-            if (host_address == address) {
-                use_current_relay = true;
-                break;
-            }
+        if (hosts.empty()) {
+            ok = false;
         }
+    }
+    if (!ok) {
+        fprintf(stderr, "No relay host available to connect at\n");
+        return false;
+    }
 
-        //Use last host we got from list and establish connection        
-        if (!use_current_relay) {
-            connection->close();
+    //Pick a host if necessary
+    bool use_current_relay = false;
+    NetAddress host_address;
+    for (NetRelay_LobbyHost& host: hosts) {
+        std::string host_address_str = host.getAddress();
+        if (host_address_str == primary_relay) {
+            LogMsg("Current primary relay selected based on host string address\n");
+            use_current_relay = true;                
+            break;
+        }
+        if (!NetAddress::resolve(
+            host_address,
+            host_address_str,
+            NET_RELAY_DEFAULT_PORT
+        )) {
+            continue;
+        }
+        if (host_address == address) {
+            LogMsg("Current primary relay selected based on host resolved address\n");
+            use_current_relay = true;
+            break;
+        }
+    }
 
-            address = host_address;
-            NetTransport *transport = NetTransport::create(address);
-            if (!transport) {
-                ok = false;
-            } else {
-                connection = newConnectionFromTransport(transport, NETID_RELAY);
-                if (!connection || connection->netid == NETID_NONE) {
-                    delete connection;
-                    ok = false;
-                }
+    //Use last host we got from list and establish connection        
+    if (!use_current_relay) {
+        connection->close();
+        LogMsg("Connecting to secondary relay for room creation\n");
+
+        address = host_address;
+        transport = NetTransport::create(address);
+        if (!transport) {
+            return false;
+        } else {
+            connection = newConnectionFromTransport(transport, NETID_RELAY);
+            if (!connection || connection->netid == NETID_NONE) {
+                delete connection;
+                return false;
             }
+            connection->is_relay = true;
         }
     }
 
     //Send our room info to create it
-    if (ok) {
-        const NetRelayMessage_PeerSetupRoom& msg_setup_room = net_center->GenerateRelaySetupRoom();
-        ok = sendNetRelayMessage(connection, &msg_setup_room, NETID_HOST);
-    }
+    const NetRelayMessage_PeerSetupRoom& msg_setup_room = net_center->GenerateRelaySetupRoom();
+    ok = sendNetRelayMessage(connection, &msg_setup_room, NETID_HOST);
 
     //Receive list of peers and our own netid
     if (ok) {
+        has_relay_connection = true;
         NetConnectionMessage* msg_response = nullptr;
         connection->receive(&msg_response, CONNECTION_RELAY_TIMEOUT);
         if (!msg_response) {
