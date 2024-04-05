@@ -26,8 +26,6 @@ cD3DRender *gb_RenderDevice3D = nullptr;
 
 void IsDeleteAllDefaultTextures();
 
-FILE* fRD= nullptr;
-
 const char* GetErrorText(HRESULT hr)
 {
     switch(hr)
@@ -93,31 +91,28 @@ const char* GetErrorText(HRESULT hr)
     }
 };
 
-void RDOpenLog(const char *fname="RenderDevice.!!!")
-{
-#ifndef _FINAL_VERSION_
-    fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
-	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
-#endif
-}
 int RDWriteLog(HRESULT err,const char *exp,const char *file,int line)
 {
-#ifndef _FINAL_VERSION_
-    if (fRD==nullptr) RDOpenLog();
-	fprintf(fRD,"%s line: %i - %s = 0x%X , %s\n",file,line,exp,err,GetErrorText(err));
-	fflush(fRD);
+#ifdef PERIMETER_DEBUG
+	fprintf(
+        stdout, 
+        "%s line: %i - %s = 0x%" PRIX64 " , %s\n",
+        file,line,exp,
+        static_cast<uint64_t>(err),
+        GetErrorText(err)
+    );
+	fflush(stdout);
 #endif
     return err;
 }
 void RDWriteLog(const char *exp,int size)
 {
-#ifndef _FINAL_VERSION_
-    if (fRD==nullptr) RDOpenLog();
+#ifdef PERIMETER_DEBUG
 	if(size==-1)
 		size=strlen(exp);
-	fwrite(exp,size,1,fRD);
-	fprintf(fRD,"\n");
-	fflush(fRD);
+	fwrite(exp,size,1,stdout);
+	fprintf(stdout,"\n");
+	fflush(stdout);
 #endif
 }
 
