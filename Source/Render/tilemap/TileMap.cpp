@@ -674,7 +674,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	Vect2f Focus(1,1);
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
-    Vect2f zplane(0,1000);
+    Vect2f zplane(0,1e4f);
 	ShadowDrawNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	ShadowDrawNode->SetPosition(DrawNode->GetMatrix());
 
@@ -756,7 +756,7 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
 	PlanarNode->SetRenderTarget(light?GetLightMap():GetShadowMap(),SurfaceImage::NONE);
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
-    Vect2f zplane(10,1e6f);
+    Vect2f zplane(10,1e7f);
     PlanarNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	
 	PlanarNode->SetPosition(LightMatrix);
@@ -793,7 +793,7 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 	PlanarNode->SetRenderTarget(GetShadowMap(),SurfaceImage::NONE);
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
-    Vect2f zplane(10,1e6f);
+    Vect2f zplane(10,1e7f);
     PlanarNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	
 	PlanarNode->SetPosition(LightMatrix);

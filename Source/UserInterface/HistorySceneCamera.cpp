@@ -98,7 +98,7 @@ void HistorySceneCamera::setup() {
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f focus(1.0f, 1.0f);
-    Vect2f zplane(10.0f, 10000.0f);
+    Vect2f zplane(10.0f, 1e5f);
     camera->SetFrustum(
             &center,								// центр камеры
             &clip,									// видимая область камеры

@@ -209,7 +209,7 @@ void terCameraType::SetFrustumGame()
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f focus(focus_,focus_);
-    Vect2f zplane(30.0f,10000.0f);
+    Vect2f zplane(30.0f,1e5f);
 	Camera->SetFrustum(								// устанавливается пирамида видимости
 		&center,									// центр камеры
 		&clip,										// видимая область камеры
@@ -223,7 +223,7 @@ void terCameraType::SetFrustumMenu()
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f focus(focus_,focus_);
-    Vect2f zplane(30.0f,10000.0f);
+    Vect2f zplane(30.0f,1e5f);
     Camera->SetFrustum(								// устанавливается пирамида видимости
             &center,								// центр камеры
             &clip,									// видимая область камеры
@@ -237,7 +237,7 @@ void terCameraType::SetFrustumCutScene()
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,CUT_SCENE_TOP,0.5f,CUT_SCENE_BOTTOM);
     Vect2f focus(focus_,focus_);
-    Vect2f zplane(30.0f,10000.0f);
+    Vect2f zplane(30.0f,1e5f);
     Camera->SetFrustum(								// устанавливается пирамида видимости
             &center,								// центр камеры
             &clip,									// видимая область камеры

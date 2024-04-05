@@ -2376,7 +2376,7 @@ void CShellLogicDispatcher::updateSmallCamera() {
         sRectangle4f clip(-_small_camera_rect_dx, -_small_camera_rect_dy,
                           _small_camera_rect_dx, _small_camera_rect_dy);
         Vect2f focus(1.0f, 1.0f);
-        Vect2f zplane(30.0f, 10000.0f);
+        Vect2f zplane(30.0f, 1e5f);
         m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
                 &center,								// центр камеры
                 &clip,									// видимая область камеры
