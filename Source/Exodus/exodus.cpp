@@ -2,9 +2,6 @@
 #include "tweaks.h"
 #include <cctype>
 #include <thread>
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +9,8 @@ void Sleep(uint32_t millis) {
 #ifndef EMSCRIPTEN
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 #else
-    emscripten_sleep(millis);
+    // emscripten version must be Sleep free
+    abort();
 #endif
 }
 

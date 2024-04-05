@@ -46,6 +46,7 @@
 //#define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN
 #define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN_DESKTOP
 
+#include "../HT/mt_config.h"
 #include "../HT/ht.h"
 #include "GraphicsOptions.h"
 #include "GameContent.h"
@@ -1004,11 +1005,12 @@ int SDL_main(int argc, char *argv[])
 
     g_controls_converter.LoadKeyNameTable();
 
-    int ht = IniManager("Perimeter.ini").getInt("Game", "HT");
-    check_command_line_parameter("HT", ht);
-    HTManager* runtime_object = new HTManager(ht);
-    runtime_object->setUseHT(ht);
+    int mt = 1;
+    IniManager("Perimeter.ini").getInt("Game", "HT", mt);
+    check_command_line_parameter("HT", mt);
+    MTConfig::setMultithreading(mt);
 
+    HTManager* runtime_object = new HTManager();
     xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
     bool run = true;
@@ -1049,7 +1051,7 @@ int SDL_main(int argc, char *argv[])
 #endif
         }
 
-        if (!HTManager::instance()->IsUseHT()) {
+        if (!MTConfig::multithreading()) {
             PNetCenterNetQuant();
         }
 

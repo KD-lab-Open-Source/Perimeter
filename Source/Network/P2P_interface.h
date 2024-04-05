@@ -160,7 +160,8 @@ public:
 
 // {DF006380-BF70-4397-9A18-51133CEEE3B6}
 
-int InternalServerThread(void* lpParameter);
+int InternalServerThreadInit(void* lpParameter);
+void InternalServerThreadDeinit(HANDLE secondThread);
 
 enum e_PNCDesyncState {
     PNC_DESYNC_NONE,
@@ -481,7 +482,6 @@ public:
     void SecondThreadInit();
     bool SecondThreadLive();
 	void SecondThreadQuant();
-    void SecondThreadDeinit();
 	void ClearClientData(){
 		ClientMapType::iterator p;
 		for(p=m_clients.begin(); p!=m_clients.end(); p++){

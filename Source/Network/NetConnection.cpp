@@ -6,9 +6,11 @@
 
 #ifdef EMSCRIPTEN
 #include "emscripten.h"
+constexpr uint32_t TRANSPORT_RECV_SLEEP = 0;
+#else
+constexpr uint32_t TRANSPORT_RECV_SLEEP = 10;
 #endif
 
-const uint32_t TRANSPORT_RECV_SLEEP = 10;
 
 ///////// NetAddress //////////////
 
@@ -191,7 +193,11 @@ int32_t NetTransport::receive(void* buffer, uint32_t minlen, uint32_t maxlen, in
         int32_t amount = receive_raw(static_cast<uint8_t*>(buffer) + received, static_cast<int32_t>(maxlen) - received, timeout);
         if (has_timeout && amount == NT_STATUS_NO_DATA) {
             //Keep waiting
+#ifdef EMSCRIPTEN
+            emscripten_sleep(TRANSPORT_RECV_SLEEP);
+#else
             Sleep(TRANSPORT_RECV_SLEEP);
+#endif
             continue;
         }
         if (amount < 0) {

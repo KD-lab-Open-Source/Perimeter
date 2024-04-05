@@ -9,19 +9,37 @@
 #include <thread>
 #include <SDL_thread.h>
 
+#include "./mt_config.h"
+
 #ifdef _WIN32
 #include "objbase.h"
 #endif
 
 const SDL_threadID bad_thread_id=-1;
 
+namespace MTConfig {
+#ifdef EMSCRIPTEN
+    constexpr int mtValue = 0;
+#else
+    int mtValue = -1;
+#endif
+    bool multithreading() {
+        xassert(mtValue != -1);
+        return mtValue == 1;
+    }
+    void setMultithreading(bool value) {
+#ifndef EMSCRIPTEN
+        xassert(mtValue == -1);
+        mtValue = value ? 1 : 0;
+#endif
+    }
+}
+
 HTManager* HTManager::self=nullptr;
-HTManager::HTManager(bool ht)
+HTManager::HTManager()
 {
 	lag_stat=new LagStatistic;
 	logic_thread_id=bad_thread_id;
-	setUseHT(ht);
-
 	restartGame_ = false;
 	
 	global_time.setUsePerfomance(false);
@@ -31,7 +49,6 @@ HTManager::HTManager(bool ht)
 	frame_time.setAverageInterval(-1);
 	scale_time.setAverageInterval(-1);
 	self=this;
-	init_logic=false;
 	end_logic=nullptr;
 
 	start_timer=false;
@@ -68,15 +85,6 @@ int logic_thread_init(void*)
 	return 0;
 }
 
-void HTManager::setUseHT(bool use_ht_)
-{
-	if (PossibilityHT()) {
-        use_ht = use_ht_;
-    } else {
-        use_ht = false;
-    }
-}
-
 void HTManager::GameStart(const MissionDescription& mission)
 {
     MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
@@ -85,7 +93,7 @@ void HTManager::GameStart(const MissionDescription& mission)
 	syncro_timer.skip();
 	syncro_timer.next_frame();
 	time=syncro_timer();
-	if(use_ht)
+	if(MTConfig::multithreading())
 	{
 		xassert(logic_thread_id==bad_thread_id);
         SDL_Thread* thread = SDL_CreateThread(logic_thread_init, "perimeter_logic_thread", nullptr);
@@ -103,7 +111,7 @@ void HTManager::GameClose()
 {
 	MTG();
     MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
-	if(use_ht && logic_thread_id!=bad_thread_id)
+	if(MTConfig::multithreading() && logic_thread_id!=bad_thread_id)
 	{
 		end_logic=SDL_CreateSemaphore(0);
 
@@ -120,17 +128,15 @@ void HTManager::GameClose()
 }
 
 void HTManager::logic_thread()
-{	
-	init_logic=true;
+{
     SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
-//	gameShell->GameStart(logic_arg.mission);
-	init_logic=false;
-	if(!start_timer){
-		start_timer = true;
-		syncro_timer.setTime(1);
-		syncro_timer.skip();
-		time = syncro_timer();
-	}
+
+    if(!start_timer){
+        start_timer = true;
+        syncro_timer.setTime(1);
+        syncro_timer.skip();
+        time = syncro_timer();
+    }
     if (check_command_line("dump_mt_tls")) {
         debug_dump_mt_tls();
     }
@@ -189,11 +195,8 @@ bool HTManager::Quant()
 		GameStart(missionToStart_);
 	}
 
-	if(use_ht)
+	if(MTConfig::multithreading())
 	{
-		if(init_logic)
-			Sleep(100);
-
 		if(logic_thread_id==bad_thread_id)
 		{
 			gameShell->NetQuant();
@@ -276,7 +279,7 @@ void HTManager::ClearDeleteUnit(bool delete_all)
 		else
 			quant=0;
 
-		if(use_ht)
+		if(MTConfig::multithreading())
 		{
 			while(gb_VisGeneric->GetGraphLogicQuant()<quant-wait_to_delete+2)
 			{
@@ -312,17 +315,6 @@ void HTManager::ClearDeleteUnit(bool delete_all)
 
 		itd=DeleteList.erase(DeleteList.begin());
 	}
-}
-
-bool HTManager::PossibilityHT()
-{
-#ifdef GPX
-    return false;
-#else
-    const unsigned int processor_count = std::thread::hardware_concurrency();
-    //NOTE: processor_count may be 0 if couldn't be detected
-    return 1 < processor_count;
-#endif
 }
 
 float HTManager::GetLogicFps()

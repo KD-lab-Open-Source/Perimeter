@@ -10,7 +10,7 @@
 #include "files/files.h"
 #include "NetConnectionAux.h"
 #include "Runtime.h"
-#include "../HT/ht.h"
+#include "../HT/mt_config.h"
 
 #include <algorithm>
 #include "qd_textdb.h"
@@ -21,7 +21,7 @@ extern const char* currentShortVersion;
 const int NORMAL_QUANT_INTERVAL=100;
 const int PNETCENTER_BUFFER_SIZE = PERIMETER_MESSAGE_MAX_SIZE * 2;
 
-extern std::atomic_uint64_t net_thread_id=-1;
+std::atomic_uint64_t net_thread_id = -1;
 
 const char* PNetCenter::getStrState() const
 {
@@ -137,8 +137,8 @@ connectionHandler(this)
 	hCommandExecuted=CreateEvent(0, true, false, 0);
 
     hSecondThread = CreateEvent(0, true, false, 0);
-    if (HTManager::instance()->IsUseHT()) {
-        SDL_Thread *thread = SDL_CreateThread(InternalServerThread, "perimeter_server_thread", this);
+    if (MTConfig::multithreading()) {
+        SDL_Thread *thread = SDL_CreateThread(InternalServerThreadInit, "perimeter_server_thread", this);
         if (thread == nullptr) {
             SDL_FATAL_ERROR("SDL_CreateThread perimeter_server_thread failed");
         }
@@ -150,7 +150,7 @@ connectionHandler(this)
         }
         xassert(net_thread_id == SDL_GetThreadID(thread));
     } else {
-        InternalServerThread(this);
+        InternalServerThreadInit(this);
     }
 
 
@@ -164,18 +164,17 @@ PNetCenter::~PNetCenter()
 {
     netCenter = nullptr;
 	ExecuteInternalCommand(PNC_COMMAND__END, true);
-	const unsigned int TIMEOUT=5000;// ms
-	if( WaitForSingleObject(hSecondThread, TIMEOUT) != WAIT_OBJECT_0) {
-        LogMsg("Net Thread terminated!!!\n");
-#ifndef GPX
+	if(MTConfig::multithreading() && WaitForSingleObject(hSecondThread, 5000) != WAIT_OBJECT_0) {
+        LogMsg("PNetCenter::~PNetCenter(): InternalServerThread deadlock!!!\n");
 		xassert(0);
-#endif
-        SetEvent(hSecondThread); //TODO not sure if this even necessary
 	}
+
+    serverList->stopFind();
+    SetConnectionTimeout(1); // For quick termination
+    connectionHandler.reset();
 
 	ClearClients();
 
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ClearInputPacketList();
 
 

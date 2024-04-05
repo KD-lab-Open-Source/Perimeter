@@ -6,11 +6,10 @@ GameShell в графическом потоке.
 #include "fps.h"
 #include <SDL_thread.h>
 
-
 class HTManager
 {
 public:
-	HTManager(bool ht);
+	HTManager();
 	~HTManager();
 
 	bool Quant();
@@ -30,9 +29,6 @@ public:
 	void GameStart(const MissionDescription& mission);
 	void GameClose();
 
-	void setUseHT(bool use_ht_);
-	bool IsUseHT()const{return use_ht;};
-	bool PossibilityHT();
 	float interpolationFactor() const { return interpolation_factor_; }
 
 	MTSection* GetLockDeleteUnit(){return &lock_delete;};
@@ -50,7 +46,6 @@ protected:
 	bool LogicQuant();
 	void GraphQuant();
 
-	bool use_ht;
 	cFont* pDefaultFont;
 	void init();
 	void done();
@@ -66,8 +61,6 @@ protected:
 	void logic_thread();
 
     friend int logic_thread_init(void*);
-
-	bool init_logic;
 
 	int interpolation_timer_;
 	float interpolation_factor_;

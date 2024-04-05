@@ -1,7 +1,7 @@
 #include "NetIncludes.h"
 #include "P2P_interface.h"
 #include "NetConnectionAux.h"
-#include "../HT/ht.h"
+#include "../HT/mt_config.h"
 
 extern std::atomic_uint64_t net_thread_id;
 
@@ -19,7 +19,7 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
     internalCommandList.push_back(ic);
 
 	if (waitExecution) {
-        if (HTManager::instance()->IsUseHT()) {
+        if (MTConfig::multithreading()) {
 #ifdef PERIMETER_DEBUG
             //Ensure is not being called from net thread since it will deadlock
             xassert(net_thread_id != SDL_ThreadID() && "Waiting execution from net thread!");
