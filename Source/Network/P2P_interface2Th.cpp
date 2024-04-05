@@ -62,7 +62,7 @@ uint32_t WINAPI TestServerThread(void* lpParameter)
 extern std::atomic_uint64_t net_thread_id;
 
 //Second thread
-extern PNetCenter* netCenter = nullptr;
+PNetCenter* netCenter = nullptr;
 int InternalServerThreadInit(void* lpParameter)
 {
     xassert(netCenter == nullptr);
@@ -87,7 +87,7 @@ extern void PNetCenterNetQuant() {
         if (netCenter->SecondThreadLive()) {
             netCenter->SecondThreadQuant();
         } else {
-            InternalServerThreadDeinit(0);
+            InternalServerThreadDeinit(nullptr);
         }
     }
 }
@@ -369,7 +369,9 @@ void InternalServerThreadDeinit(HANDLE secondThread) {
         CoUninitialize();
 #endif
         //We are creating it with SDL thread, so we need to manually signal it
-        SetEvent(secondThread);
+        if (secondThread) {
+            SetEvent(secondThread);
+        }
     }
 }
 
