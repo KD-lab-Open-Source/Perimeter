@@ -11,7 +11,7 @@
 #include <set>
 #include <SDL.h>
 #include "files/files.h"
-#include "../HT/ht.h"
+#include "../HT/mt_config.h"
 
 #ifdef _WIN32
 #include <combaseapi.h>
@@ -63,26 +63,20 @@ extern std::atomic_uint64_t net_thread_id;
 
 //Second thread
 extern PNetCenter* netCenter = nullptr;
-int InternalServerThread(void* lpParameter)
+int InternalServerThreadInit(void* lpParameter)
 {
-/*	// TEST thread!!!!
-	DWORD ThreadId;
-	HANDLE  hTestThread=CreateThread( NULL, 0, TestServerThread, lpParameter, 0, &ThreadId);
-*/
-
     xassert(netCenter == nullptr);
     net_thread_id = SDL_ThreadID();
 
-	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
-    pPNetCenter->SecondThreadInit();
+	netCenter = (PNetCenter*) lpParameter;
+    netCenter->SecondThreadInit();
+    HANDLE hSecondThread = netCenter->hSecondThread;
 
-    if (HTManager::instance()->IsUseHT()) {
-        while (pPNetCenter->SecondThreadLive()) {
-            pPNetCenter->SecondThreadQuant();
+    if (MTConfig::multithreading()) {
+        while (netCenter && netCenter->SecondThreadLive()) {
+            netCenter->SecondThreadQuant();
         }
-        pPNetCenter->SecondThreadDeinit();
-    } else {
-        netCenter = pPNetCenter;
+        InternalServerThreadDeinit(hSecondThread);
     }
 
 	return 0;
@@ -93,9 +87,7 @@ extern void PNetCenterNetQuant() {
         if (netCenter->SecondThreadLive()) {
             netCenter->SecondThreadQuant();
         } else {
-            PNetCenter* ref = netCenter;
-            netCenter = nullptr;
-            ref->SecondThreadDeinit();
+            InternalServerThreadDeinit(0);
         }
     }
 }
@@ -114,11 +106,10 @@ void PNetCenter::SecondThreadInit() {
 
     m_state=PNC_STATE__CLIENT_FIND_HOST;
     serverList->startFind();
+    flag_end = false;
 
     //Инициализация завершена - XDPConnection создан
     SetEvent(hSecondThreadInitComplete);
-
-    flag_end = false;
 }
 
 bool PNetCenter::SecondThreadLive() {
@@ -203,7 +194,11 @@ void PNetCenter::SecondThreadQuant()
 
                 LogMsg("Starting server...\n");
                 bool isPublic = curInternalCommand == PNC_COMMAND__CONNECT_RELAY_AND_CREATE_GAME_AND_STOP_FIND_HOST;
+#ifdef GPX
+                flag_connected = connectionHandler.startHost(0, isPublic);
+#else
                 flag_connected = connectionHandler.startHost(hostConnection.port(), isPublic);
+#endif
 
                 if (!isConnected()) {
                     fprintf(stderr, "Can't start host, check network\n");
@@ -356,32 +351,25 @@ void PNetCenter::SecondThreadQuant()
     }
 
 
-    curTime=clocki();
-    uint32_t sleepTime = minWakingTime > curTime ? minWakingTime - curTime : 0;
-    if (0 < sleepTime) {
-        Sleep(min(sleepTime, PNC_MIN_SLEEP_TIME));
+    if (MTConfig::multithreading()) {
+        curTime = clocki();
+        uint32_t sleepTime = minWakingTime > curTime ? minWakingTime - curTime : 0;
+        if (0 < sleepTime) {
+            Sleep(min(sleepTime, PNC_MIN_SLEEP_TIME));
+        }
     }
     //end logic quant
 }
 
-void PNetCenter::SecondThreadDeinit() {
-    if (net_thread_id != -1) {
-        serverList->stopFind();
+void InternalServerThreadDeinit(HANDLE secondThread) {
+    net_thread_id = -1;
 
-        SetConnectionTimeout(1);//Для быстрого завершения
-        //if(m_pConnection->Connected()) m_pConnection->Close();
-        connectionHandler.reset();
-        flag_connected = false;
-        m_bStarted = false;
-
+    if (MTConfig::multithreading()) {
 #ifdef _WIN32
         CoUninitialize();
 #endif
-
-        net_thread_id = -1;
-
         //We are creating it with SDL thread, so we need to manually signal it
-        SetEvent(hSecondThread);
+        SetEvent(secondThread);
     }
 }
 

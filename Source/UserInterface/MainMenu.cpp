@@ -731,8 +731,10 @@ int SwitchMenuBGQuant2( float, float ) {
 			switch (_id_on) {
                 case SQSH_MM_START_SCR:
                     //Only enable if user didn't choose a specific content
-#ifdef GPX
+#ifdef EMSCRIPTEN
                     _shellIconManager.GetWnd(SQSH_MM_QUIT_BTN)->Enable(false);
+#endif
+#ifdef GPX
                     _shellIconManager.GetWnd(SQSH_MM_LANG_BTN)->Enable(false);
                     _shellIconManager.GetWnd(SQSH_MM_CONTENT_CHOOSER_BTN)->Enable(false);
 #endif
@@ -900,9 +902,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 			}
 			switch (_id_on) {
 				case SQSH_MM_START_SCR:
-                    if (gameShell->getNetClient()) {
-                        gameShell->destroyNetClient();
-                    }
+                    gameShell->destroyNetClient();
                     //Remove last game type Multiplayer if set
                     if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
                         gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::UNDEFINED);

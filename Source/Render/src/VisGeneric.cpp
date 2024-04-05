@@ -8,6 +8,7 @@
 #include "Font.h"
 #include "Localization.h"
 #include "SystemUtil.h"
+#include "../../HT/mt_config.h"
 
 static void get_string(char*& str,char* s)
 {
@@ -81,11 +82,11 @@ void MT_SET_TYPE(uint32_t val) {
 }
 
 bool MT_IS_GRAPH() {
-    return (tls_thread_type & MT_GRAPH_THREAD) != 0;
+    return !MTConfig::multithreading() || (tls_thread_type & MT_GRAPH_THREAD) != 0;
 }
 
 bool MT_IS_LOGIC() {
-    return (tls_thread_type & MT_LOGIC_THREAD) != 0;
+    return !MTConfig::multithreading() || (tls_thread_type & MT_LOGIC_THREAD) != 0;
 }
 
 float CONVERT_PROCENT(float x,float min,float max)
