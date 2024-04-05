@@ -58,7 +58,7 @@ const vec3 gamma_power = vec3(1.0/2.2);
 const vec3 ambient_k = vec3(1);
 
 vec4 gamma(vec4 c) {
-    return vec4(pow(c.xyz, gamma_power), c.w);
+    return vec4(pow(abs(c.xyz), gamma_power), c.w);
 }
 
 vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye,
@@ -70,7 +70,7 @@ vec4 phong(vec3 pos, vec3 nrm, vec3 l, vec3 eye,
     vec3 r = reflect(-l, n);
     float r_dot_v = max(dot(r, v), 0.0);
     float diff = n_dot_l;
-    float spec = pow(r_dot_v, spec_power) * n_dot_l;
+    float spec = pow(abs(r_dot_v), spec_power) * n_dot_l;
     vec3 ambient_v = l_ambient * ambient * ambient_k;
     vec3 diffuse_v = l_diffuse * diffuse * diff;
     vec3 specular_v = l_specular * specular * spec;
