@@ -21,18 +21,11 @@
 #define RENDERUTILS_HWND_FROM_SDL_WINDOW
 #include "RenderUtils.h"
 #include "SokolD3D.h"
+#endif
 
-//Callbacks for Sokol with D3D 
-
-const void* sokol_d3d_render_target_view_cb() {
-    cSokolRender* renderer = reinterpret_cast<cSokolRender*>(gb_RenderDevice);
-    return (const void*) renderer->d3d_context->render_target_view;
-}
-
-const void* sokol_d3d_depth_stencil_view_cb() {
-    cSokolRender* renderer = reinterpret_cast<cSokolRender*>(gb_RenderDevice);
-    return (const void*) renderer->d3d_context->depth_stencil_view;
-}
+#ifdef SOKOL_METAL
+void sokol_metal_setup(SDL_Window* sdl_window, sg_desc* desc, sg_swapchain* swapchain, uint32_t ScreenHZ);
+void sokol_metal_destroy(sg_swapchain* swapchain);
 #endif
 
 cSokolRender::cSokolRender() = default;
@@ -83,10 +76,22 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     desc.shader_pool_size = 8,
     desc.buffer_pool_size = 1024 * 8;
     desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
-    desc.context.color_format = SG_PIXELFORMAT_RGBA8;
-    desc.context.depth_format = SG_PIXELFORMAT_DEPTH_STENCIL;
-    desc.context.sample_count = sample_count;
     desc.logger.func = slog_func;
+    
+    //Setup swapchain pass
+    swapchain_pass = {};
+    swapchain_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+    swapchain_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+    swapchain_pass.action.colors[0].clear_value = sg_color { 0.0f, 0.0f, 0.0f, 1.0f };
+    swapchain_pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+    swapchain_pass.action.depth.store_action = SG_STOREACTION_DONTCARE;
+    swapchain_pass.action.depth.clear_value = 1.0f;
+    swapchain_pass.action.stencil.load_action = SG_LOADACTION_CLEAR;
+    swapchain_pass.action.stencil.store_action = SG_STOREACTION_DONTCARE;
+    swapchain_pass.action.stencil.clear_value = 0;
+    swapchain_pass.swapchain.width = ScreenSize.x;
+    swapchain_pass.swapchain.height = ScreenSize.y;
+    swapchain_pass.swapchain.sample_count = 1;
 
     //OpenGL / OpenGLES
 #ifdef SOKOL_GL
@@ -129,6 +134,8 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
     printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
+    
+    swapchain_pass.swapchain.gl.framebuffer = 0;
 #endif //SOKOL_GL
 
     //Direct3D
@@ -211,6 +218,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     dxgiAdapter->Release();
 
     //Create swap chain
+    uint32_t sample_count = swapchain_pass.swapchain.sample_count;
     DXGI_SWAP_CHAIN_DESC* swap_chain_desc = &d3d_context->swap_chain_desc;
     memset(&d3d_context->swap_chain_desc, 0, sizeof(DXGI_SWAP_CHAIN_DESC));
     swap_chain_desc->BufferDesc.Width = static_cast<uint32_t>(xScr);
@@ -238,25 +246,16 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     d3d_CreateDefaultRenderTarget();
 
     //Setup d3d context
-    desc.context.d3d11.device = d3d_context->device;
-    desc.context.d3d11.device_context = d3d_context->device_context;
-    desc.context.d3d11.render_target_view_cb = sokol_d3d_render_target_view_cb;
-    desc.context.d3d11.depth_stencil_view_cb = sokol_d3d_depth_stencil_view_cb;
-
+    desc.environment.d3d11.device = d3d_context->device;
+    desc.environment.d3d11.device_context = d3d_context->device_context;
 #endif
     
 #ifdef SOKOL_METAL
     sokol_backend = "Metal";
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "metal", SDL_HINT_OVERRIDE);
 
-    // Obtain Metal device by creating a SDL Metal View, also useful to retain the Metal device
-    sdl_metal_view = SDL_Metal_CreateView(sdl_window);
-    if (sdl_metal_view == nullptr) {
-        ErrH.Abort("Error creating SDL Metal View", XERR_CRITICAL, 0, SDL_GetError());
-    }
-    
     //Setup metal sokol context
-    sokol_metal_setup_desc(sdl_metal_view, &desc);
+    sokol_metal_setup(sdl_window, &desc, &swapchain_pass.swapchain, ScreenHZ);
 #endif
 
     const char* render_driver = SDL_GetHint(SDL_HINT_RENDER_DRIVER);
@@ -321,6 +320,10 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
     ScreenSize.y = yScr;
     RenderMode &= ~mode_mask;
     RenderMode |= mode;
+    
+    //Update swapchain
+    swapchain_pass.swapchain.width = ScreenSize.x;
+    swapchain_pass.swapchain.height = ScreenSize.y;
 
 #ifdef SOKOL_D3D11
     if (d3d_context->swap_chain && need_resize) {
@@ -374,10 +377,9 @@ int cSokolRender::Done() {
     }
 #endif
 #ifdef SOKOL_METAL
-    if (sdl_metal_view != nullptr) {
+    if (swapchain_pass.swapchain.metal.current_drawable != nullptr) {
         RenderSubmitEvent(RenderEvent::DONE, "Sokol Metal shutdown");
-        SDL_Metal_DestroyView(sdl_metal_view);
-        sdl_metal_view = nullptr;
+        sokol_metal_destroy(&swapchain_pass.swapchain);
     }
 #endif
 #ifdef SOKOL_GL
@@ -483,11 +485,11 @@ void cSokolRender::d3d_CreateDefaultRenderTarget() {
     hr = d3d_context->swap_chain->GetBuffer(
             0,
             __uuidof(ID3D11Texture2D),
-            reinterpret_cast<void**>(&d3d_context->render_target)
+            reinterpret_cast<void**>(&d3d_context->render_target_texture)
     );
-    assert(SUCCEEDED(hr) && d3d_context->render_target);
+    assert(SUCCEEDED(hr) && d3d_context->render_target_texture);
     hr = d3d_context->device->CreateRenderTargetView(
-            d3d_context->render_target,
+            d3d_context->render_target_texture,
             nullptr,
             &d3d_context->render_target_view
     );
@@ -498,25 +500,44 @@ void cSokolRender::d3d_CreateDefaultRenderTarget() {
     ds_desc.Height = static_cast<uint32_t>(ScreenSize.y);
     ds_desc.MipLevels = 1;
     ds_desc.ArraySize = 1;
-    ds_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    ds_desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
     ds_desc.SampleDesc = d3d_context->swap_chain_desc.SampleDesc;
     ds_desc.Usage = D3D11_USAGE_DEFAULT;
-    ds_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    hr = d3d_context->device->CreateTexture2D(&ds_desc, nullptr, &d3d_context->depth_stencil_buffer);
-    assert(SUCCEEDED(hr) && d3d_context->depth_stencil_buffer);
+    ds_desc.BindFlags = D3D11_BIND_RENDER_TARGET;
+    
+    // MSAA render target and view
+    uint32_t sample_count = ds_desc.SampleDesc.Count;
+    if (1 < sample_count) {
+        hr = d3d_context->device->CreateTexture2D(&ds_desc, nullptr, &d3d_context->msaa_texture);
+        assert(SUCCEEDED(hr) && d3d_context->msaa_texture);
+        hr = d3d_context->device->CreateRenderTargetView(d3d_context->msaa_texture, nullptr, &d3d_context->msaa_view);
+        assert(SUCCEEDED(hr) && d3d_context->msaa_view);
+    }
 
-    D3D11_DEPTH_STENCIL_VIEW_DESC dsv_desc = {};
-    dsv_desc.Format = ds_desc.Format;
-    dsv_desc.ViewDimension = sample_count > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
-    hr = d3d_context->device->CreateDepthStencilView(d3d_context->depth_stencil_buffer, &dsv_desc, &d3d_context->depth_stencil_view);
+    // Depth-stencil render target and view
+    ds_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    ds_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    hr = d3d_context->device->CreateTexture2D(&ds_desc, nullptr, &d3d_context->depth_stencil_texture);
+    assert(SUCCEEDED(hr) && d3d_context->depth_stencil_texture);
+    hr = d3d_context->device->CreateDepthStencilView(d3d_context->depth_stencil_texture, nullptr, &d3d_context->depth_stencil_view);
     assert(SUCCEEDED(hr) && d3d_context->depth_stencil_view);
+    
+    //Apply into swapchain pass
+    swapchain_pass.swapchain.d3d11.render_view = 1 < sample_count ? d3d_context->msaa_view : d3d_context->render_target_view;
+    swapchain_pass.swapchain.d3d11.resolve_view = 1 < sample_count ? d3d_context->render_target_view : nullptr;
+    swapchain_pass.swapchain.d3d11.depth_stencil_view = d3d_context->depth_stencil_view;
 }
 
 void cSokolRender::d3d_DestroyDefaultRenderTarget() {
-    RELEASE(d3d_context->render_target);
+    swapchain_pass.swapchain.d3d11.render_view = nullptr;
+    swapchain_pass.swapchain.d3d11.resolve_view = nullptr;
+    swapchain_pass.swapchain.d3d11.depth_stencil_view = nullptr;
+    RELEASE(d3d_context->render_target_texture);
     RELEASE(d3d_context->render_target_view);
-    RELEASE(d3d_context->depth_stencil_buffer);
+    RELEASE(d3d_context->depth_stencil_texture);
     RELEASE(d3d_context->depth_stencil_view);
+    RELEASE(d3d_context->msaa_texture);
+    RELEASE(d3d_context->msaa_view);
 }
 #endif
 

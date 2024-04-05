@@ -31,7 +31,7 @@
   });
   sokol_git = builtins.fetchGit {
     url = https://github.com/floooh/sokol;
-    rev = "c0e54485457b2e1645f2d809394753b53bf50cd4";
+    rev = "7f7cd64c6d9d1d4ed08d88a3879b1d69841bf0a4";
     ref = "master";
   };
   gamemath_git = builtins.fetchGit {

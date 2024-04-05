@@ -4,7 +4,7 @@ OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
 #Include Sokol
 FetchContent_Declare(sokol
         GIT_REPOSITORY    https://github.com/floooh/sokol
-        GIT_TAG           "004223737d9f6d07a0aa5c63659662480285de29"
+        GIT_TAG           "7f7cd64c6d9d1d4ed08d88a3879b1d69841bf0a4"
         GIT_SHALLOW       OFF
         )
 FetchContent_MakeAvailable(sokol)
@@ -34,7 +34,7 @@ IF (OPTION_PROCESS_SHADERS)
             set(SOKOL_SHDC_BIN ${sokol-tools-bin_SOURCE_DIR}/bin/osx/sokol-shdc)
         ENDIF()
     ELSEIF(PERIMETER_WINDOWS)
-        set(SOKOL_SHDC_BIN ${sokol-tools-bin_SOURCE_DIR}/bin/win32/sokol-shdc)
+        set(SOKOL_SHDC_BIN ${sokol-tools-bin_SOURCE_DIR}/bin/win32/sokol-shdc.exe)
     ELSE()
         set(SOKOL_SHDC_BIN ${sokol-tools-bin_SOURCE_DIR}/bin/linux/sokol-shdc)
     ENDIF()

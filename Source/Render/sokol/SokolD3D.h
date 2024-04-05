@@ -10,9 +10,11 @@ struct sokol_d3d_context {
     ID3D11Device* device = nullptr;
     ID3D11DeviceContext* device_context = nullptr;
     IDXGISwapChain* swap_chain = nullptr;
-    ID3D11Texture2D* render_target = nullptr;
+    ID3D11Texture2D* render_target_texture = nullptr;
     ID3D11RenderTargetView* render_target_view = nullptr;
-    ID3D11Texture2D* depth_stencil_buffer = nullptr;
+    ID3D11Texture2D* msaa_texture = nullptr;
+    ID3D11RenderTargetView* msaa_view = nullptr;
+    ID3D11Texture2D* depth_stencil_texture = nullptr;
     ID3D11DepthStencilView* depth_stencil_view = nullptr;
 };
 

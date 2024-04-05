@@ -5,34 +5,83 @@
 
 //ObjC Sokol - SDL2 glue code for Metal
 #ifdef SOKOL_METAL
-#import <QuartzCore/CAMetalLayer.h>
-#import <SDL_metal.h>
+#import <Metal/Metal.h>
+#import <MetalKit/MetalKit.h>
+#import <SDL_syswm.h>
 
-static CAMetalLayer* sokol_metal_layer;
-static id<CAMetalDrawable> sokol_metal_drawable;
-static MTLRenderPassDescriptor* sokol_metal_render_pass_descriptor;
+//TODO This should be stored in a metal_context struct like in d3d11 impl
+static id<MTLDevice> mtl_device;
+static MTKView* mtk_view;
+#if TARGET_OS_IPHONE
+static id mtk_view_controller;
+#endif
 
-const void* sokol_metal_drawable_cb() {
-    return (__bridge const void*) sokol_metal_drawable;
-}
+void sokol_metal_setup(SDL_Window* sdl_window, sg_desc* desc, sg_swapchain* swapchain, uint32_t ScreenHZ) {
+    //Get window from SDL which we will use to associate Metal stuff
+    SDL_SysWMinfo wm_info;
+    SDL_VERSION(&wm_info.version);
+    SDL_GetWindowWMInfo(sdl_window, &wm_info);
+#if TARGET_OS_IPHONE
+    UIWindow* window = wm_info.info.uikit.window
+#else
+    NSWindow* window = wm_info.info.cocoa.window;
+#endif
 
-const void* sokol_metal_renderpass_descriptor_cb() {
-    sokol_metal_drawable = [sokol_metal_layer nextDrawable];
-
-    sokol_metal_render_pass_descriptor = [[MTLRenderPassDescriptor alloc] init];
-    sokol_metal_render_pass_descriptor.colorAttachments[0].texture = sokol_metal_drawable.texture;
-    return (__bridge const void*) sokol_metal_render_pass_descriptor;
-}
-
-void sokol_metal_setup_desc(SDL_MetalView view, sg_desc* desc) {
-    //Get Metal layer from SDL and add Metal device
-    sokol_metal_layer = (__bridge CAMetalLayer*) SDL_Metal_GetLayer(view);
-    sokol_metal_layer.device = MTLCreateSystemDefaultDevice();
+    // MTKView and Metal device
+    mtl_device = MTLCreateSystemDefaultDevice();
+    mtk_view = [[MTKView alloc] init];
+    mtk_view.paused = true;
+    mtk_view.enableSetNeedsDisplay = false;
+    [mtk_view setPreferredFramesPerSecond:ScreenHZ];
+    [mtk_view setDevice: mtl_device];
+    [mtk_view setColorPixelFormat:MTLPixelFormatBGRA8Unorm];
+    [mtk_view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float_Stencil8];
+    [mtk_view setSampleCount:(NSUInteger) swapchain->sample_count];
+#if TARGET_OS_IPHONE
+    [mtk_view setContentScaleFactor:1.0f];
+    [mtk_view setUserInteractionEnabled:YES];
+    [mtk_view setMultipleTouchEnabled:YES];
+    [window addSubview:mtk_view];
+    mtk_view_controller = [[UIViewController<MTKViewDelegate> alloc] init];
+    [mtk_view_controller setView:mtk_view];
+    [window setRootViewController:mtk_view_controller];
+    [window makeKeyAndVisible];
+#else
+    [window setContentView:mtk_view];
+    CGSize drawable_size = { (CGFloat) swapchain->width, (CGFloat) swapchain->height };
+    [mtk_view setDrawableSize:drawable_size];
+    [[mtk_view layer] setMagnificationFilter:kCAFilterNearest];
+    NSApp.activationPolicy = NSApplicationActivationPolicyRegular;
+    [NSApp activateIgnoringOtherApps:YES];
+    [window makeKeyAndOrderFront:nil];
+#endif
     
     //Setup Metal specific context
-    sg_metal_context_desc& metalctx = desc->context.metal;
-    metalctx.device = sokol_metal_layer.device;
-    metalctx.renderpass_descriptor_cb = sokol_metal_renderpass_descriptor_cb;
-    metalctx.drawable_cb = sokol_metal_drawable_cb;
+    desc->environment.metal.device = (__bridge const void*) mtl_device;
 }
+
+void sokol_metal_render(sg_swapchain* swapchain, void (*callback)()) {
+    @autoreleasepool {
+        swapchain->metal.current_drawable = (__bridge const void*) [mtk_view currentDrawable];
+        swapchain->metal.depth_stencil_texture = (__bridge const void*) [mtk_view depthStencilTexture];
+        swapchain->metal.msaa_color_texture = (__bridge const void*) [mtk_view multisampleColorTexture];
+        callback();
+    }
+}
+
+void sokol_metal_draw() {
+    [mtk_view draw];
+}
+
+void sokol_metal_destroy(sg_swapchain* swapchain) {
+    swapchain->metal.msaa_color_texture = nullptr;
+    swapchain->metal.depth_stencil_texture = nullptr;
+    swapchain->metal.current_drawable = nullptr;
+#if TARGET_OS_IPHONE
+    mtk_view_controller = nullptr;
+#endif
+    mtk_view = nullptr;
+    mtl_device = nullptr;
+}
+
 #endif

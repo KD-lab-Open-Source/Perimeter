@@ -8,17 +8,9 @@
 #include <sokol_gfx.h>
 #include <SDL_video.h>
 
-#ifdef SOKOL_METAL
-#include <SDL_metal.h>
-#endif
-
 #include "SokolTypes.h"
 
 const int PERIMETER_SOKOL_TEXTURES = 8;
-
-#ifdef SOKOL_METAL
-void sokol_metal_setup_desc(SDL_MetalView view, sg_desc* desc);
-#endif
 
 struct SokolCommand {
     SokolCommand();
@@ -54,7 +46,7 @@ private:
     SDL_GLContext sdl_gl_context = nullptr;
 #endif
 #ifdef SOKOL_METAL
-    SDL_MetalView sdl_metal_view = nullptr;
+    friend void sokol_metal_render_callback();
 #endif
     //D3D backend stuff
 #ifdef SOKOL_D3D11
@@ -67,13 +59,12 @@ private:
     friend const void* sokol_d3d_depth_stencil_view_cb();
 #endif
     
-    //Samples to use
-    uint32_t sample_count = 1;
+    //For swapchain pass that renders into final device
+    sg_pass swapchain_pass;
     
     //Renderer state
     bool ActiveScene = false;
     bool isOrthographicProjSet = false;
-    sg_color fill_color;
     std::vector<SokolCommand*> commands;
     sg_sampler sampler;
     
@@ -124,6 +115,9 @@ private:
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
+    
+    //Does actual drawing using sokol API
+    void DoSokolRendering();
 
     //Set common VS/FS parameters
     template<typename T_VS, typename T_FS>

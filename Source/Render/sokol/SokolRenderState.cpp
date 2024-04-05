@@ -24,6 +24,17 @@
 #include "SokolD3D.h"
 #endif
 
+#ifdef SOKOL_METAL
+void sokol_metal_render(sg_swapchain* swapchain, void (*callback)());
+void sokol_metal_draw();
+
+//According to sokol metal example the sokol render calls must be wrapped by @autoreleasepool
+void sokol_metal_render_callback() {
+    cSokolRender* sokolRender = reinterpret_cast<cSokolRender*>(gb_RenderDevice);
+    sokolRender->DoSokolRendering();
+}
+#endif
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -48,21 +59,23 @@ int cSokolRender::EndScene() {
 
     //Make sure there is nothing left to send as command
     FinishActiveDrawBuffer();
-    
+
     ActiveScene = false;
 
-    //Begin pass
-    sg_pass_action pass_action = {};
-    pass_action.colors[0].load_action = SG_LOADACTION_CLEAR;
-    pass_action.colors[0].store_action = SG_STOREACTION_STORE;
-    pass_action.colors[0].clear_value = fill_color;
-    pass_action.depth.load_action = SG_LOADACTION_CLEAR;
-    pass_action.depth.store_action = SG_STOREACTION_DONTCARE;
-    pass_action.depth.clear_value = 1.0f;
-    pass_action.stencil.load_action = SG_LOADACTION_CLEAR;
-    pass_action.stencil.store_action = SG_STOREACTION_DONTCARE;
-    pass_action.stencil.clear_value = 0;
-    sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
+#ifdef SOKOL_METAL
+    sokol_metal_render(&swapchain_pass.swapchain, &sokol_metal_render_callback);
+#else
+    DoSokolRendering();
+#endif
+
+    return cInterfaceRenderDevice::EndScene();
+}
+
+void cSokolRender::DoSokolRendering() {
+    //This function might be called from a callback!
+    
+    //Begin main swapchain pass
+    sg_begin_pass(&swapchain_pass);
 
     //Iterate each command
     for (auto& command : commands) {
@@ -212,7 +225,42 @@ int cSokolRender::EndScene() {
     //End pass
     sg_end_pass();
 
-    return cInterfaceRenderDevice::EndScene();
+    //Commit it
+    sg_commit();
+}
+
+int cSokolRender::Flush(bool wnd) {
+    MT_IS_GRAPH();
+    RenderSubmitEvent(RenderEvent::FLUSH_SCENE);
+    if (!sdl_window) {
+        xassert(0);
+        return -1;
+    }
+    if (ActiveScene) {
+        xassert(0);
+        EndScene();
+    }
+
+    //Swap the window
+#ifdef SOKOL_GL
+    SDL_GL_SwapWindow(sdl_window);
+#endif
+#ifdef SOKOL_D3D11
+    d3d_context->swap_chain->Present(1, 0);
+#endif
+#ifdef SOKOL_METAL
+    sokol_metal_draw();
+#endif
+
+    ClearCommands();
+
+    xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
+
+#ifdef GPX
+    gpx()->sys()->frameReady();
+#endif
+
+    return 0;
 }
 
 int cSokolRender::Fill(int r, int g, int b, int a) {
@@ -231,43 +279,12 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
     }
 #endif
 
+    sg_color fill_color;
     fill_color.r = static_cast<float>(r) / 255.f;
     fill_color.g = static_cast<float>(g) / 255.f;
     fill_color.b = static_cast<float>(b) / 255.f;
     fill_color.a = static_cast<float>(a) / 255.f;
-
-    return 0;
-}
-
-int cSokolRender::Flush(bool wnd) {
-    MT_IS_GRAPH();
-    RenderSubmitEvent(RenderEvent::FLUSH_SCENE);
-    if (!sdl_window) {
-        xassert(0);
-        return -1;
-    }
-    if (ActiveScene) {
-        xassert(0);
-        EndScene();
-    }
-
-    sg_commit();
-
-    //Swap the window
-#ifdef SOKOL_GL
-    SDL_GL_SwapWindow(sdl_window);
-#endif
-#ifdef SOKOL_D3D11
-    d3d_context->swap_chain->Present(1, 0);
-#endif
-
-    ClearCommands();
-
-    xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
-
-#ifdef GPX
-    gpx()->sys()->frameReady();
-#endif
+    swapchain_pass.action.colors[0].clear_value = fill_color;
 
     return 0;
 }
