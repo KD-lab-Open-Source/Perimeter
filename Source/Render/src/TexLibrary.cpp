@@ -381,12 +381,18 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 	
 	cFileImage* FileImage = path.length() > 0 ? cFileImage::Create(path.c_str()) : nullptr;
 	if(!FileImage) {
+        bool err;
 #ifdef PERIMETER_D3D9
 	    //If the file extension is not recognized, try open it using DirectX 
-		return ReLoadDDS(Texture);
+        err = ReLoadDDS(Texture);
 #else
-        return false;
+        err = true;
 #endif
+        if (err) {
+            Error(Texture);
+            Texture->Release();
+            return false;
+        }
 	}
 	
 	if(FileImage->load(path.c_str()))
@@ -443,8 +449,11 @@ void cTexLibrary::ReloadAllTexture()
 #ifdef PERIMETER_D3D9
 bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 {
-	char* buf=NULL;
-	int size;
+    if (!gb_RenderDevice3D) {
+        return false;
+    }
+	char* buf = nullptr;
+	int size = 0;
 	//0 - alpha_none, 1- alpha_test, 2 - alpha_blend
 	int ret=ResourceFileRead(Texture->GetName(),buf,size);
 	if(ret)
@@ -464,16 +473,12 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 #ifdef _WIN32
 	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP) {
-        Error(Texture);
-        Texture->Release();
         return false;
 	}
 #endif
     IDirect3DTexture9* pTexture=gb_RenderDevice3D->CreateTextureFromMemory(buf,size);
     if(!pTexture)
     {
-        Error(Texture);
-        Texture->Release();
         return false;
     }
 
