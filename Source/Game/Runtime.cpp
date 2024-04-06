@@ -298,8 +298,10 @@ void HTManager::done()
 		PerimeterDataChannelSave();
 	
 	// Logic
-	delete gameShell;
-	gameShell = 0;
+    if (gameShell) {
+        delete gameShell;
+        gameShell = nullptr;
+    }
 
 	FinitSound();
 	finitGraphics();
@@ -683,7 +685,10 @@ void HTManager::initGraphics()
 
 void HTManager::finitGraphics()
 {
-	gameShell->done();
+    if (gameShell) {
+        delete gameShell;
+        gameShell = nullptr;
+    }
 
 	RELEASE(terLight);
 	if(terCamera){
