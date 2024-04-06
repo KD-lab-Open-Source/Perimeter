@@ -70,30 +70,32 @@ public:
         xassert(compiler <= 0x7F);
         val |= compiler<<1;
 
-        //OS type - 8-16 (8) bits
+        //OS type - 8-15 (8) bits
         arch_flags os;
 #if defined(__linux__)
         os = 1;
-#elif defined( __APPLE__)
+#elif defined(__APPLE__)
         os = 2;
 #elif defined(_WIN32)
         os = 3;
+#elif defined(EMSCRIPTEN)
+        os = 4;
 #else
         os = 0;
 #endif
         xassert(os <= 0xFF);
         val |= os<<8;
 
-        //CPU type - 60-61-62-63 (4) bits
+        //CPU type - 16-23 (4) bits
         arch_flags cpu = 0;
-        //Arch - 60-61 bits (0 = under 32, 1 = 32, 2 = 64, 3 = above 64)
+        //Arch - 16-17 bits (0 = under 32, 1 = 32, 2 = 64, 3 = above 64)
         cpu |= (sizeof(void*) / 4) & 3;
-        //CPU endianness - 63 bit
+        //CPU endianness - 23 bit
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
         cpu |= 1<<3;
 #endif
         xassert(cpu <= 0xF);
-        val |= cpu<<60;
+        val |= cpu<<16;
 
         return val;
     }
@@ -151,11 +153,7 @@ public:
     }
 
     bool isArchCompatible(arch_flags mask) const {
-        if (mask) {
-            return (arch & mask) == (computeArchFlags() & mask);
-        } else {
-            return arch == computeArchFlags();
-        }
+        return (arch & mask) == (computeArchFlags() & mask);
     }
     
     arch_flags getArchFlags() const {
