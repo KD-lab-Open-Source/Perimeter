@@ -66,7 +66,8 @@ jobs:
           copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.pdb ${{ env.outDir }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Perimeter MSVC ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
-          path: ${{ env.outDir }}
+      #TODO fix MSVC builds
+      #- uses: actions/upload-artifact@v4
+      #  with:
+      #    name: Perimeter MSVC ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
+      #    path: ${{ env.outDir }}

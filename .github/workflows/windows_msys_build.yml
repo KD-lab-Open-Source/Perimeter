@@ -18,6 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         env: [
+          #{sys: mingw32, build_type: Debug,   arch: i686,   arch_zip: x86},
           {sys: mingw64, build_type: Debug,   arch: x86_64, arch_zip: x64},
           {sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86},
           {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64},
