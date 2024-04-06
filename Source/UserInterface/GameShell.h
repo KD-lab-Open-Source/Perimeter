@@ -157,8 +157,6 @@ public:
 	const Vect2f mousePressControl() const { return mousePressControl_; }
 	void setMousePressControl(const Vect2f& pos) { mousePressControl_ = pos; }
 
-	const Vect3f& mapMoveStartPoint() const { return mapMoveStartPoint_; }
-
 	void setWindowClientSize(const Vect2i& size);
 	const Vect2i& windowClientSize() const { return windowClientSize_; }
 
@@ -321,9 +319,9 @@ private:
 	bool showWireFrame_;
 	int activePlayerID_;
 
-    CameraCoordinate mapMoveOrigin_;
-	Vect3f mapMoveStartPoint_;
-    Vect2f mapMoveCursorStartPoint_;
+    Vect3f mapMoveStartWorldPos_ = Vect3f::ZERO;
+    Vect3f mapMoveStartCameraPos_ = Vect3f::ZERO;
+    cCamera* mapMoveStartCamera_ = nullptr;
 
     float game_speed;
 	float game_speed_to_resume;

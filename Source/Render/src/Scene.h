@@ -55,7 +55,7 @@ public:
 
 	// функции для работы с картой мира
 	virtual class cTileMap* CreateMap(class TerraInterface* terra,int zeroplastnumber=0);
-	virtual bool Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace=0);
+	virtual bool Trace(const Vect3f& pStart, const Vect3f& pFinish, Vect3f *pTrace, bool ignore_height);
 
 	// эффекты верхнего уровня
 	virtual void AttachObj(cIUnkClass *UObj);

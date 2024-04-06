@@ -582,7 +582,7 @@ void cCamera::SetRenderTarget(cTexture* texture, SurfaceImage zbuffer)
 	UpdateVieport();
 }
 
-void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe)
+void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe) const
 {
 	Vect3f pv0,pe0;
 	if(pw==0) return;
@@ -591,7 +591,7 @@ void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe)
     Mat4fConvert(matViewProjScr, *pw, *pv, *pe);
 }
 
-void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f *pe,int *ScreenRadius)
+void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f *pe,int *ScreenRadius) const
 {
 	Vect3f pv,pe0;
 	if(pw==0) return;
@@ -600,7 +600,7 @@ void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f
 	if(ScreenRadius) *ScreenRadius= xm::round(WorldRadius * GetFocusViewPort().x / pv.z);
 }
 
-void cCamera::ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe)
+void cCamera::ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe) const
 {
 	if(pw==0||pe==0) return;
 	float d;
@@ -610,7 +610,7 @@ void cCamera::ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe)
 	pe->y=GetScaleViewPort().y*pe->y*d;
 }
 
-void cCamera::ConvertorCameraToWorld(Vect3f *pw,const Vect2f *pe)
+void cCamera::ConvertorCameraToWorld(Vect3f *pw,const Vect2f *pe) const
 {
 	float x,y;
 	float cx=(Clip.xmin()+Clip.xmax())*0.5f,
@@ -628,8 +628,7 @@ void cCamera::ConvertorCameraToWorld(Vect3f *pw,const Vect2f *pe)
 	GetMatrix().invXformPoint(Vect3f(x*focus.x,-y*focus.y,zPlane.x),*pw);
 }
 
-void cCamera::GetWorldRay(const Vect2f& pos_in,Vect3f& pos,Vect3f& dir)
-{
+void cCamera::GetWorldRay(const Vect2f& pos_in,Vect3f& pos,Vect3f& dir) const {
 	if(GetAttribute(ATTRCAMERA_PERSPECTIVE))
 	{
 		ConvertorCameraToWorld(&pos,&pos_in);

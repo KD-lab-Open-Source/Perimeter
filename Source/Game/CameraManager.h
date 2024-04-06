@@ -53,7 +53,7 @@ public:
 	void reset();
 
 	void setFocus(float focus);
-	void setCoordinate(const CameraCoordinate& coord) {
+    void setCoordinate(const CameraCoordinate& coord) {
         coordinate_ = coord;
         update();
     }
@@ -68,7 +68,8 @@ public:
 
 	void calcRayIntersection(float x,float y,Vect3f& v0,Vect3f& v1);
 
-	cCamera* GetCamera() { return Camera; }
+    cCamera* GetCamera() { return Camera; }
+    const cCamera* GetCamera() const { return Camera; }
 
 	void setTarget(const CameraCoordinate& coord, int duration);
 
@@ -77,8 +78,8 @@ public:
 
 	void mouseQuant(const Vect2f& mousePos);
 	void tilt(Vect2f mouseDelta);
-	bool shift(const Vect2f& mouseDelta);
-    bool shift(const Vect2f& pos1, const Vect2f pos2);
+    bool shift(const cCamera* originCamera, const Vect3f& originCoordinatePos,
+               const Vect3f& originPos, const Vect2f& mousePos);
 	void controlQuant();
 	void mouseWheel(int delta);
 	void quant(float mouseDeltaX, float mouseDeltaY, float delta_time, bool tilting);
@@ -90,7 +91,8 @@ public:
 
 	void destroyLink();
 
-	bool cursorTrace(const Vect2f& pos2,Vect3f& v);
+    bool cursorTrace(const Vect2f& cursor, Vect3f& trace) const;
+    static bool cursorTrace(const cCamera* camera, const Vect2f& cursor, Vect3f* trace, bool ignore_height);
 
 	bool restricted() const { return restricted_; }
 	void setRestriction(bool restricted) { restricted_ = restricted; }

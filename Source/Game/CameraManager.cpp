@@ -394,32 +394,35 @@ void terCameraType::tilt(Vect2f mouseDelta)
     }
 }
 
-bool terCameraType::cursorTrace(const Vect2f& pos2, Vect3f& v)
-{
+bool terCameraType::cursorTrace(const Vect2f& cursor, Vect3f& trace) const {
+    return terCameraType::cursorTrace(GetCamera(), cursor, &trace, false);
+}
+
+bool terCameraType::cursorTrace(const cCamera* camera, const Vect2f& cursor, Vect3f* trace, bool ignore_height) {
 	Vect3f pos,dir;
-	GetCamera()->GetWorldRay(pos2, pos, dir);
-	return terScene->Trace(pos,pos+dir,&v);
+    camera->GetWorldRay(cursor, pos, dir);
+	return terScene->Trace(pos, pos+dir, trace, ignore_height);
 }
 
-bool terCameraType::shift(const Vect2f& mouseDelta)
-{
-    return shift(Vect2f::ZERO, mouseDelta);
-}
-
-bool terCameraType::shift(const Vect2f& pos1, const Vect2f pos2) {
-    if (gameShell->isCutSceneMode()) {
+bool terCameraType::shift(const cCamera* originCamera, const Vect3f& originCameraPos, const Vect3f& originWorldPos, const Vect2f& mousePos) {
+    if (gameShell->isCutSceneMode() || interpolationTimer_ || unit_follow) {
         return false;
     }
-    if(interpolationTimer_ || unit_follow)
-        return false;
 
-    Vect3f v1, v2;
-    if (cursorTrace(pos1, v1) && cursorTrace(pos2, v2)) {
-        auto delta = v2 - v1;
-        coordinate().position() -= to3D(delta, 0);
-        return true;
-    }
-    return false;
+    Vect3f worldPos;
+    if (!terCameraType::cursorTrace(
+        originCamera,
+        mousePos,
+        &worldPos,
+        true
+    )) return false;
+    
+    //Take the current projected world pos from mouse at "worldPos", get delta from origin world pos at "originWorldPos"
+    //and reverse it, so it looks like player is dragging the map, then add the original camera coordinate's pos
+    //at "originCameraPos" to obtain the new camera position during drag operation
+    coordinate_.position() = (worldPos - originWorldPos) * Vect3f(-1, -1, 0) + originCameraPos;
+    update();
+    return true;
 }
 
 void terCameraType::mouseWheel(int delta)

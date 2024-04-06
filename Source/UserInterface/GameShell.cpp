@@ -222,7 +222,7 @@ windowClientSize_(1024, 768)
 	activePlayerID_ = 0;
 	
 	mousePressControl_ = Vect2f::ZERO;
-	mapMoveStartPoint_ = Vect3f::ZERO;
+    mapMoveStartCamera_ = terScene->CreateCamera();
 
 	debugFont_ = terVisGeneric->CreateGameFont(sqshFontPopup, 15);
 
@@ -408,6 +408,10 @@ void GameShell::done() {
 	bgScene.done();
 	_shellIconManager.Done();
 	_shellCursorManager.Done();
+    if (mapMoveStartCamera_) {
+        mapMoveStartCamera_->Release();
+        mapMoveStartCamera_ = nullptr;
+    }
 }
 
 void GameShell::terminate() {
@@ -1751,18 +1755,18 @@ void GameShell::ControlPressed(int key)
 			break;
 
 		case CTRL_CAMERA_MOUSE_LOOK:
-			if(IsMapArea(mousePosition()))
-				if(!cameraMouseTrack)
-				{
-					cameraMouseTrack = true;
-					mousePressControl_ = mousePosition();
-					_shellCursorManager.HideCursor();
-                    SDL_SetRelativeMouseMode(SDL_TRUE);
-				}
+			if (IsMapArea(mousePosition()) && !cameraMouseTrack && !cameraMouseShift) {
+                cameraMouseTrack = true;
+                mousePressControl_ = mousePosition();
+                _shellCursorManager.HideCursor();
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+            }
 			break;
 
 		case CTRL_CAMERA_MAP_SHIFT:
-            setCameraMouseShift(true);
+            if (!cameraMouseShift && !cameraMouseTrack && !mouseLeftPressed_) {
+                setCameraMouseShift(true);
+            }
 			break;
 
 		case CTRL_CAMERA_TO_EVENT:
@@ -1833,18 +1837,7 @@ void GameShell::ControlUnpressed(int key)
 			break;
 
 		case CTRL_CAMERA_MAP_SHIFT:
-			if(cameraMouseShift){
-				cameraMouseShift = false;
-				
-				if(_shellIconManager.IsInterface())
-					_shellCursorManager.ShowCursor();
-				
-				//восстановить положение курсора
-				//Vect2f v;
-				//ConvertWorldToScreen(_MapMoveStartPoint, v);
-				//SetCursorPos(v.x, v.y);
-				
-			}
+            setCameraMouseShift(false);
 			break;
 	}
 }
@@ -1944,10 +1937,18 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		mousePosition_= pos;
 
         if (cameraMouseShift) {
-            mapMoveCursorStartPoint_ = mousePosition();
-            mapMoveOrigin_ = terCamera->coordinate();
-            terCamera->cursorTrace(mousePosition(), mapMoveStartPoint_);
-    		setCursorPosition(mapMoveStartPoint_);
+            if (terCameraType::cursorTrace(
+                    terCamera->GetCamera(),
+                    mousePosition_,
+                    &mapMoveStartWorldPos_,
+                    true
+            )) {
+                terCamera->GetCamera()->SetCopy(mapMoveStartCamera_);
+                mapMoveStartCameraPos_ = terCamera->coordinate().position();
+            } else {
+                setCameraMouseShift(false);
+            }
+            return;
         }
 
 		if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack)
@@ -2086,7 +2087,7 @@ void GameShell::OnWindowActivate()
 	cameraMouseShift = false;
 	cameraMouseTrack = false;
 	toolzerSizeTrack = false;
-	 _shellCursorManager.ShowCursor();
+	_shellCursorManager.ShowCursor();
 }
 
 void GameShell::MouseLeftDoubleClick(const Vect2f& pos)
@@ -2239,22 +2240,15 @@ void GameShell::CameraQuant()
 	}
 	
 	//смещение вслед за мышью
-	if(cameraMouseShift && mouseLeftPressed_){
-            if (MouseMoveFlag) {
-                auto delta = mousePosition_ - mapMoveCursorStartPoint_;
-                static Vect2f prevDelta = Vect2f::ZERO;
-                auto deltaDiff = prevDelta - delta;
-                if (abs(deltaDiff.x) > 0.01 || abs(deltaDiff.y) > 0.01) {
-                    CameraCoordinate coordinate = terCamera->coordinate();
-                    terCamera->setCoordinate(mapMoveOrigin_);
-                    if (terCamera->shift(mapMoveCursorStartPoint_, mousePosition_)) {
-                        terCamera->coordinate().check(terCamera->restricted());
-                    } else {
-                        terCamera->setCoordinate(coordinate);
-                    }
-                    prevDelta = delta;
-                }
-            }
+	if(cameraMouseShift && mouseLeftPressed_ && MouseMoveFlag) {
+        if (IsMapArea(mousePosition_) && abs(mousePosition_.x) <= 0.5f) {
+            terCamera->shift(
+                    mapMoveStartCamera_,
+                    mapMoveStartCameraPos_,
+                    mapMoveStartWorldPos_,
+                    mousePosition_
+            );
+        }
 	}
 
     float delta = frame_time.delta() / 1000.0f;// * PerimeterCameraControlFPS / 1000.0f;

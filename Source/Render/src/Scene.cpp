@@ -316,7 +316,7 @@ bool cScene::GetLighting(sColor4f &Ambient,sColor4f &Diffuse,sColor4f &Specular,
 
 #define PREC_TRACE							10
 #define PREC_TRACE_RAY						18
-bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
+bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bool ignore_height)
 { // тест на пересечение луча с объектами сцены, в том числе и с ландшафтом
 
 	TerraInterface* terra=TileMap->GetTerra();
@@ -332,7 +332,7 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
 	else
 	{
 		//VISASSERT(0);
-		if(pTrace) pTrace->set(xb,yb,terra->GetZ(xm::round(xb), xm::round(yb)));
+		if(pTrace) pTrace->set(xb,yb, ignore_height ? 0 : terra->GetZ(xm::round(xb), xm::round(yb)));
 		return true;
 	}
 
@@ -358,14 +358,19 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
 
 	int xb_= xm::round(xb * (1 << PREC_TRACE_RAY)),yb_= xm::round(yb * (1 << PREC_TRACE_RAY)),zb_= xm::round(
             zb * (1 << PREC_TRACE_RAY));
-	for(;(xb_>>PREC_TRACE_RAY)>=0 && (xb_>>PREC_TRACE_RAY)<x_size && 
-		 (yb_>>PREC_TRACE_RAY)>=0 && (yb_>>PREC_TRACE_RAY)<y_size;
-				xb_+=dx_,yb_+=dy_,zb_+=dz_)
-		if(terra->GetZ((xb_>>PREC_TRACE_RAY),(yb_>>PREC_TRACE_RAY))>(zb_>>PREC_TRACE_RAY))
-		{
-			if(pTrace) pTrace->set(xb_>>PREC_TRACE_RAY,yb_>>PREC_TRACE_RAY,terra->GetZ((xb_>>PREC_TRACE_RAY),(yb_>>PREC_TRACE_RAY)));
-			return true;
-		}
+	for(;(
+            (xb_>>PREC_TRACE_RAY)>=0 && (xb_>>PREC_TRACE_RAY)<x_size &&
+            (yb_>>PREC_TRACE_RAY)>=0 && (yb_>>PREC_TRACE_RAY)<y_size
+        ); xb_+=dx_,yb_+=dy_,zb_+=dz_) {
+        int z_height = ignore_height ? 0 : terra->GetZ((xb_ >> PREC_TRACE_RAY), (yb_ >> PREC_TRACE_RAY));
+        if (z_height > (zb_ >> PREC_TRACE_RAY)) {
+            if (pTrace) {
+                pTrace->set(xb_ >> PREC_TRACE_RAY, yb_ >> PREC_TRACE_RAY,
+                            terra->GetZ((xb_ >> PREC_TRACE_RAY), (yb_ >> PREC_TRACE_RAY)));
+            }
+            return true;
+        }
+    }
 
 	return false;
 }

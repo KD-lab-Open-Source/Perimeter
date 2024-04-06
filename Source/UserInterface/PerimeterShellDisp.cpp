@@ -525,7 +525,7 @@ CShellCursorManager::CShellCursorManager()
 }
 CShellCursorManager::~CShellCursorManager()
 {
-//	Done();
+	Done();
 }
 void CShellCursorManager::Done()
 {
@@ -680,30 +680,24 @@ void CShellCursorManager::draw()
 	//Draw camera icons
 	if(_shellIconManager.IsInterface())
 	{
-		if(gameShell->cameraMouseShift)
-		{
-			//курсор сдвига карты
-			Vect3f v1,e1;
-			terCamera->GetCamera()->ConvertorWorldToViewPort(&gameShell->mapMoveStartPoint(), &v1, &e1);
-
-            CShellCursor* pCursor = &m_cursors[map_move];
-
-			e1.x -= 16;
-			e1.y -= 16;
-
-            DrawCursor(pCursor, e1.x, e1.y);
-
-			return;
-		}
-		if(gameShell->cameraMouseTrack)
-		{
+        if (gameShell->cameraMouseShift) {
+            CShellCursor* cursor = &m_cursors[map_move];
             DrawCursor(
-                &m_cursors[terCamera->tilting() ? tilt : rotate],
-                static_cast<int>((gameShell->mousePressControl().x + 0.5f)*terScreenSizeX) - 16,
-                static_cast<int>((gameShell->mousePressControl().y + 0.5f)*terScreenSizeY) - 16
+                    cursor,
+                    static_cast<int>((gameShell->mousePosition().x + 0.5f)*terScreenSizeX) - 16,
+                    static_cast<int>((gameShell->mousePosition().y + 0.5f)*terScreenSizeY) - 16
             );
-			return;
-		}
+            return;
+        }
+        if (gameShell->cameraMouseTrack) {
+            CShellCursor* cursor = &m_cursors[terCamera->tilting() ? tilt : rotate];
+            DrawCursor(
+                    cursor,
+                    static_cast<int>((gameShell->mousePressControl().x + 0.5f)*terScreenSizeX) - 16,
+                    static_cast<int>((gameShell->mousePressControl().y + 0.5f)*terScreenSizeY) - 16
+            );
+            return;
+        }
 	}
 
 	//Draw displacement arrows

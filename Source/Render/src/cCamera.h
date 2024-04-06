@@ -47,13 +47,13 @@ public:
 	virtual void PreDrawScene();
 	virtual void DrawScene();
 
-	virtual void ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe);
-	virtual void ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f *pe,int *ScreenRadius);
-	virtual void ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe);
-	virtual void ConvertorCameraToWorld(Vect3f *pw,const Vect2f *pe);
+	virtual void ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe) const;
+	virtual void ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f *pe,int *ScreenRadius) const;
+	virtual void ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe) const;
+	virtual void ConvertorCameraToWorld(Vect3f *pw,const Vect2f *pe) const;
 
 	//По точке на экране возвращает луч в глобальных координатах
-	virtual void GetWorldRay(const Vect2f& pe,Vect3f& pos,Vect3f& dir);
+	virtual void GetWorldRay(const Vect2f& pe,Vect3f& pos,Vect3f& dir) const;
 	// функции позиционирования камеры и изменения ее матрицы
 	virtual void SetPosition(const MatXf& matrix);
 	virtual void GetPosition(MatXf *Matrix,Vect3f *Pos=0);
@@ -76,6 +76,8 @@ public:
 	//cCamera
 	inline MatXf& GetMatrix()								{ return GlobalMatrix; }
 	inline Vect3f& GetPos()									{ return Pos; }
+    inline const MatXf& GetMatrix() const					{ return GlobalMatrix; }
+    inline const Vect3f& GetPos() const						{ return Pos; }
 
 	cCamera* GetRoot()	{return RootCamera;}
 	cCamera* GetParent(){return Parent;}
@@ -88,12 +90,12 @@ public:
 	inline const Vect2f& GetZPlane()				{ return zPlane; }
 	void SetZPlaneTemp(Vect2f zp)					{ zPlane=zp;Update(); }
 
-	inline float GetFocusX()						{ return Focus.x; }
-	inline float GetFocusY()						{ return Focus.y; }
-	inline float GetCenterX()						{ return Center.x; }
-	inline float GetCenterY()						{ return Center.y; }
+	inline float GetFocusX() const					{ return Focus.x; }
+	inline float GetFocusY() const					{ return Focus.y; }
+	inline float GetCenterX() const					{ return Center.x; }
+	inline float GetCenterY() const					{ return Center.y; }
 
-	inline eSceneNode GetCameraPass()				{ return camerapass; }
+	inline eSceneNode GetCameraPass() const			{ return camerapass; }
 
 	// функции теста видимости
 	eTestVisible TestVisible(const Vect3f &min,const Vect3f &max);
@@ -115,15 +117,15 @@ public:
 	inline int GetNumberDraw(int pos)							{ return DrawArray[pos].size(); }
 
 	inline sPlane4f& GetPlaneClip3d(int number)					{ return PlaneClip3d[number]; }
-	inline int GetNumberPlaneClip3d()							{ return PlaneClip3d_size; }
+	inline int GetNumberPlaneClip3d() const						{ return PlaneClip3d_size; }
 
-	inline const Vect2f& GetFocusViewPort()						{ return FocusViewPort; }
-	inline const Vect2f& GetScaleViewPort()						{ return ScaleViewPort; }
+	inline const Vect2f& GetFocusViewPort() const				{ return FocusViewPort; }
+	inline const Vect2f& GetScaleViewPort() const				{ return ScaleViewPort; }
 	// функции для работы с отрисовкой
-	inline const Vect2f& GetRenderSize()						{ return RenderSize; }
-	inline const Vect3f& GetWorldI()							{ return WorldI; }
-	inline const Vect3f& GetWorldJ()							{ return WorldJ; }
-	inline const Vect3f& GetWorldK()							{ return WorldK; }
+	inline const Vect2f& GetRenderSize() const					{ return RenderSize; }
+	inline const Vect3f& GetWorldI() const						{ return WorldI; }
+	inline const Vect3f& GetWorldJ() const						{ return WorldJ; }
+	inline const Vect3f& GetWorldK() const						{ return WorldK; }
 
 	inline cTexture* GetRenderTarget()							{ return RenderTarget; }
     
