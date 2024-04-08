@@ -1770,7 +1770,7 @@ void GameShell::ControlPressed(int key)
 
 		case CTRL_CAMERA_TO_EVENT:
 			if (_shellIconManager.getMiniMapEventIcons().size()) {
-				terCamera->setCoordinate(CameraCoordinate(_shellIconManager.getMiniMapEventIcons().back().pos, terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance()));
+				terCamera->setPosition(_shellIconManager.getMiniMapEventIcons().back().pos);
 			}
 			break;
 		case CTRL_TOGGLE_MUSIC:
@@ -1847,6 +1847,7 @@ void GameShell::cancelMouseLook() {
 		cameraMouseTrack = false;
         SDL_SetRelativeMouseMode(SDL_FALSE);
 		setCursorPosition(mousePressControl_);
+        mousePosition_ = mousePressControl_;
 
 		if(_shellIconManager.IsInterface())
 			_shellCursorManager.ShowCursor();
@@ -2062,7 +2063,7 @@ void GameShell::MouseRightUnpressed(const Vect2f& pos)
 
 void GameShell::MouseWheel(int delta)
 {
-	if(!_bMenuMode && GameActive && !isScriptReelEnabled()) {
+	if(!_bMenuMode && GameActive && !isScriptReelEnabled() && !(cameraMouseShift && mouseLeftPressed_)) {
         CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
         if (!chatInfo || !chatInfo->isVisible() || !chatInfo->HitTest(mousePosition().x+0.5f, mousePosition().y+0.5f)) {
             terCamera->mouseWheel(delta);
@@ -2239,7 +2240,8 @@ void GameShell::CameraQuant()
 	}
 	
 	//смещение вслед за мышью
-	if(cameraMouseShift && mouseLeftPressed_ && MouseMoveFlag) {
+    bool mouseShiftActive = cameraMouseShift && mouseLeftPressed_;
+	if (mouseShiftActive && MouseMoveFlag) {
         if (IsMapArea(mousePosition_) && abs(mousePosition_.x) <= 0.5f) {
             terCamera->shift(
                     mapMoveStartCamera_,
@@ -2256,7 +2258,7 @@ void GameShell::CameraQuant()
 //	mousePositionDelta_ = Vect2f::ZERO;
 	MouseMoveFlag = 0;
 
-	if (!_bMenuMode && !isScriptReelEnabled()) {
+	if (!_bMenuMode && !mouseShiftActive && !isScriptReelEnabled()) {
 		terCamera->controlQuant();
 	}
 }

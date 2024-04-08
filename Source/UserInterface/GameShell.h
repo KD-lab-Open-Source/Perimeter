@@ -153,8 +153,7 @@ public:
 	const Vect2f& mousePosition() const { return mousePosition_; }
     const Vect2f& mousePositionDelta() const { return mousePositionDelta_; }
     const Vect2f& mousePositionRelative() const { return mousePositionRelative_; }
-	
-	const Vect2f mousePressControl() const { return mousePressControl_; }
+    const Vect2f& mousePressControl() const { return mousePressControl_; }
 	void setMousePressControl(const Vect2f& pos) { mousePressControl_ = pos; }
 
 	void setWindowClientSize(const Vect2i& size);

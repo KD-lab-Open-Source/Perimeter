@@ -1556,7 +1556,7 @@ public:
 	void OnMouseMove(float x, float y);
 
 	void draw();
-    static void DrawCursor(CShellCursor* cursor, int x, int y, float phase = 0, float scale = 1.0f);
+    static void DrawCursor(const CShellCursor* cursor, int x, int y, float phase = 0, float scale = 1.0f);
 
 	float GetSize();
 	void  SetSize(float sx);

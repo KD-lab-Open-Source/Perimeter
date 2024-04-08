@@ -1340,7 +1340,7 @@ void OnMapWindowClicked(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		y *= vMap.V_SIZE / pWnd->sy;
 
 		if(x > 0 && y > 0 && x < vMap.H_SIZE && y < vMap.V_SIZE)
-			terCamera->setCoordinate(CameraCoordinate(Vect2f(x, y), terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance()));
+			terCamera->setPosition(Vect2f(x, y));
 	}
 	if (code == EVENT_RPRESSED) {
 		if (!universe()) {
@@ -1433,7 +1433,7 @@ void OnButtonTerrainBuild(CShellWindow* pWnd, InterfaceEventCode code, int param
 		if (mt_interface_quant) {
 			TerrainButtonData* slotData = &(gameShell->getLogicUpdater().getLogicData()->slots[nSlot]);
 			if(slotData->unit)
-				terCamera->setCoordinate(CameraCoordinate(slotData->unit->position2D(), terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance()));
+				terCamera->setPosition(slotData->unit->position2D());
 		}
 	}
 }
@@ -1482,7 +1482,7 @@ void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	else if(code == EVENT_DOUBLECLICK)
 	{
 		if(!pSquad->Empty())
-			terCamera->setCoordinate(CameraCoordinate(pSquad->position2D(), terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance()));
+			terCamera->setPosition(pSquad->position2D());
 	}
 	else if(code == EVENT_RPRESSED)
 	{
@@ -1506,7 +1506,7 @@ void OnFrameTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	{
 		terUnitBase* pFrame = universe()->activePlayer()->frame();
 		if(pFrame)
-			terCamera->setCoordinate(CameraCoordinate(pFrame->position2D(), terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance()));
+			terCamera->setPosition(pFrame->position2D());
 	}
 }
 

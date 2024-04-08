@@ -649,10 +649,10 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 	}
 }
 
-void CShellCursorManager::DrawCursor(CShellCursor* cursor, int x, int y, float phase, float scale) {
+void CShellCursorManager::DrawCursor(const CShellCursor* cursor, int x, int y, float phase, float scale) {
     int sx = static_cast<int>(cursor->sx * scale);
     int sy = static_cast<int>(cursor->sy * scale);
-    ANIFile* ani = cursor->anifile;
+    const ANIFile* ani = cursor->anifile;
     if (ani) {
         int i = static_cast<int>(phase * 1000) / ani->tpf;
 #ifdef PERIMETER_DEBUG_ASSERT
@@ -680,21 +680,21 @@ void CShellCursorManager::draw()
 	//Draw camera icons
 	if(_shellIconManager.IsInterface())
 	{
+        const CShellCursor* cursor = nullptr;
+        Vect2f pos;
         if (gameShell->cameraMouseShift) {
-            CShellCursor* cursor = &m_cursors[map_move];
-            DrawCursor(
-                    cursor,
-                    static_cast<int>((gameShell->mousePosition().x + 0.5f)*terScreenSizeX) - 16,
-                    static_cast<int>((gameShell->mousePosition().y + 0.5f)*terScreenSizeY) - 16
-            );
-            return;
+            cursor = &m_cursors[map_move];
+            pos = gameShell->mousePosition();
         }
         if (gameShell->cameraMouseTrack) {
-            CShellCursor* cursor = &m_cursors[terCamera->tilting() ? tilt : rotate];
+            cursor = &m_cursors[terCamera->tilting() ? tilt : rotate];
+            pos = gameShell->mousePressControl();
+        }
+        if (cursor) {
             DrawCursor(
                     cursor,
-                    static_cast<int>((gameShell->mousePressControl().x + 0.5f)*terScreenSizeX) - 16,
-                    static_cast<int>((gameShell->mousePressControl().y + 0.5f)*terScreenSizeY) - 16
+                    static_cast<int>(((pos.x + 0.5f)*terScreenSizeX) - cursor->sx * 0.5f),
+                    static_cast<int>(((pos.y + 0.5f)*terScreenSizeY) - cursor->sy * 0.5f)
             );
             return;
         }

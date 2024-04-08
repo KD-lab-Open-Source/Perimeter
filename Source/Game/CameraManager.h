@@ -57,6 +57,10 @@ public:
         coordinate_ = coord;
         update();
     }
+    void setPosition(const Vect2f& pos) {
+        coordinate_.position() = To3Dzero(pos);
+        update();
+    }
 	
 	float focus() const { return focus_; }
 	const CameraCoordinate& coordinate() const { return coordinate_; }

@@ -325,14 +325,15 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bo
 	float xe=pFinish.x,ye=pFinish.y,ze=pFinish.z;
 	float dx=xe-xb,dy=ye-yb,dz=ze-zb,dxAbs=ABS(dx),dyAbs=ABS(dy);
 	int dx_,dy_,dz_;
-	if(dxAbs>dyAbs)
+	if(dxAbs>dyAbs) {
         dy_= xm::round(dy * (1 << PREC_TRACE_RAY) / dxAbs), dz_= xm::round(dz * (1 << PREC_TRACE_RAY) / dxAbs), dx_=((dx >= 0) ? 1 : -1) << PREC_TRACE_RAY;
-	else if(dyAbs>FLT_EPS)
+    } else if(dyAbs>FLT_EPS) {
         dx_= xm::round(dx * (1 << PREC_TRACE_RAY) / dyAbs), dz_= xm::round(dz * (1 << PREC_TRACE_RAY) / dyAbs), dy_=((dy >= 0) ? 1 : -1) << PREC_TRACE_RAY;
-	else
-	{
+    } else {
 		//VISASSERT(0);
-		if(pTrace) pTrace->set(xb,yb, ignore_height ? 0 : terra->GetZ(xm::round(xb), xm::round(yb)));
+		if (pTrace) {
+            pTrace->set(xb,yb, ignore_height ? terra->GetHZeroPlast() : terra->GetZ(xm::round(xb), xm::round(yb)));
+        }
 		return true;
 	}
 
@@ -362,7 +363,8 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bo
             (xb_>>PREC_TRACE_RAY)>=0 && (xb_>>PREC_TRACE_RAY)<x_size &&
             (yb_>>PREC_TRACE_RAY)>=0 && (yb_>>PREC_TRACE_RAY)<y_size
         ); xb_+=dx_,yb_+=dy_,zb_+=dz_) {
-        int z_height = ignore_height ? 0 : terra->GetZ((xb_ >> PREC_TRACE_RAY), (yb_ >> PREC_TRACE_RAY));
+        int z_height = ignore_height ? terra->GetHZeroPlast()
+                     : terra->GetZ((xb_ >> PREC_TRACE_RAY), (yb_ >> PREC_TRACE_RAY));
         if (z_height > (zb_ >> PREC_TRACE_RAY)) {
             if (pTrace) {
                 pTrace->set(xb_ >> PREC_TRACE_RAY, yb_ >> PREC_TRACE_RAY,
