@@ -943,6 +943,10 @@ bool mainQuant() {
     if (isRuntimePaused) {
         return run;
     }
+
+    while (!gpx()->sys()->isTrustedDomain()) {
+        // pass
+    }
 #endif
 
     app_event_poll();
