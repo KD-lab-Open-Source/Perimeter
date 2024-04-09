@@ -15,6 +15,10 @@
 #include "objbase.h"
 #endif
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 const SDL_threadID bad_thread_id=-1;
 
 namespace MTConfig {
@@ -87,44 +91,50 @@ int logic_thread_init(void*)
 
 void HTManager::GameStart(const MissionDescription& mission)
 {
-    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
-	gameShell->GameStart(mission);
-    MT_SET_TYPE(MT_GRAPH_THREAD);
-	syncro_timer.skip();
-	syncro_timer.next_frame();
-	time=syncro_timer();
-	if(MTConfig::multithreading())
-	{
-		xassert(logic_thread_id==bad_thread_id);
-        SDL_Thread* thread = SDL_CreateThread(logic_thread_init, "perimeter_logic_thread", nullptr);
-        if (thread == nullptr) {
-            SDL_PRINT_ERROR("SDL_CreateThread perimeter_logic_thread failed");
-            logic_thread_id = bad_thread_id;
-        }  else {
-            logic_thread_id = SDL_GetThreadID(thread);
-            SDL_DetachThread(thread);
+        MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
+        gameShell->GameStart(mission);
+        MT_SET_TYPE(MT_GRAPH_THREAD);
+        syncro_timer.skip();
+        syncro_timer.next_frame();
+        time = syncro_timer();
+        if (MTConfig::multithreading()) {
+            xassert(logic_thread_id == bad_thread_id);
+            SDL_Thread *thread = SDL_CreateThread(logic_thread_init, "perimeter_logic_thread", nullptr);
+            if (thread == nullptr) {
+                SDL_PRINT_ERROR("SDL_CreateThread perimeter_logic_thread failed");
+                logic_thread_id = bad_thread_id;
+            } else {
+                logic_thread_id = SDL_GetThreadID(thread);
+                SDL_DetachThread(thread);
+            }
         }
-	}
+
+#ifdef GPX
+    gpx()->sdk4()->interstitialAd();
+#endif
 }
 
 void HTManager::GameClose()
 {
-	MTG();
-    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
-	if(MTConfig::multithreading() && logic_thread_id!=bad_thread_id)
-	{
-		end_logic=SDL_CreateSemaphore(0);
+        MTG();
+        MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
+        if (MTConfig::multithreading() && logic_thread_id != bad_thread_id) {
+            end_logic = SDL_CreateSemaphore(0);
 
-		uint32_t ret= SDL_SemWait(end_logic);
-		xassert(ret==0);
+            uint32_t ret = SDL_SemWait(end_logic);
+            xassert(ret == 0);
 
-        SDL_DestroySemaphore(end_logic);
-		end_logic=nullptr;
-		logic_thread_id=bad_thread_id;
-	}
+            SDL_DestroySemaphore(end_logic);
+            end_logic = nullptr;
+            logic_thread_id = bad_thread_id;
+        }
 
-	gameShell->GameClose();
-    MT_SET_TYPE(MT_GRAPH_THREAD);
+        gameShell->GameClose();
+        MT_SET_TYPE(MT_GRAPH_THREAD);
+
+#ifdef GPX
+        gpx()->sdk4()->interstitialAd();
+#endif
 }
 
 void HTManager::logic_thread()

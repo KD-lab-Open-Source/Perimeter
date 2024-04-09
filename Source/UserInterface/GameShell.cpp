@@ -48,6 +48,10 @@
 #include "codepages/codepages.h"
 #include <SDL.h>
 
+#ifdef GPX
+#include <c/gamepix.h>
+#endif
+
 int terShowFPS = 0;
 
 CShellIconManager   _shellIconManager;
@@ -150,11 +154,6 @@ windowClientSize_(1024, 768)
 
     terShowFPS = IniManager("Perimeter.ini").getInt("Game","ShowFPS");
     check_command_line_parameter("show_fps", terShowFPS);
-
-#ifdef GPX
-    // TODO: remove
-    terShowFPS = 1;
-#endif
 
     MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 	check_command_line_parameter("mainmenu", MainMenuEnable);
@@ -2483,6 +2482,12 @@ void GameShell::setSpeed(float d)
 		SNDPausePush();
 	}
 	_shellIconManager.speedChanged(game_speed);
+
+#ifdef GPX
+    if (d < 1) {
+        gpx()->sdk4()->interstitialAd();
+    }
+#endif
 }
 
 void GameShell::setWindowClientSize(const Vect2i& size) {

@@ -937,6 +937,76 @@ void resumeRuntime() {
 }
 #endif
 
+bool mainQuant() {
+    bool run = true;
+#ifdef GPX
+    if (isRuntimePaused) {
+        return run;
+    }
+
+    while (!gpx()->sys()->isTrustedDomain()) {
+        // pass
+    }
+#endif
+
+    app_event_poll();
+
+    //NetworkPause handler
+    static bool runapp = true;
+    if (applicationIsGo() != runapp) {
+        if (gameShell && (!gameShell->alwaysRun())) {
+            if (gameShell->getNetClient()) {
+                if (gameShell->getNetClient()->setPause(!applicationHasFocus())) {
+                    runapp = applicationIsGo();
+                }
+            }
+        }
+    }
+//		if(gameShell && (!gameShell->alwaysRun()) ){
+//			if(gameShell->getNetClient())
+//				gameShell->getNetClient()->pauseQuant(applicationIsGo()));
+//		}
+
+    if (applicationIsGo()) {
+        run = HTManager::instance()->Quant();
+    } else {
+#ifdef _WIN32
+        //TODO is this necessary under SDL2 in Win32?
+        WaitMessage();
+#endif
+    }
+
+    if (!MTConfig::multithreading()) {
+        PNetCenterNetQuant();
+    }
+
+#ifdef GPX
+    static bool gpx_ready = false;
+    if (!gpx_ready) {
+        gpx_ready = true;
+#ifdef EMSCRIPTEN
+        EM_ASM(({
+            Module["canvas"].addEventListener("pointerdown", () => {
+                if (!document.pointerLockElement) {
+                    Module["canvas"].requestPointerLock().catch((e) => console.error("Can't lock mouse", e));
+                }
+            });
+        }));
+#endif
+        gpx()->sys()->mainReady(true);
+    }
+    gpx()->async()->runNextTask();
+#endif
+
+    return run;
+}
+
+#ifdef EMSCRIPTEN
+void mainLoop() {
+    mainQuant();
+}
+#endif
+
 int SDL_main(int argc, char *argv[])
 {
     //Show help if requested
@@ -1015,72 +1085,16 @@ int SDL_main(int argc, char *argv[])
     check_command_line_parameter("HT", mt);
     MTConfig::setMultithreading(mt);
 
-    HTManager* runtime_object = new HTManager();
+    auto runtime_object = new HTManager();
     xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
-    bool run = true;
-    while (run) {
-#ifdef GPX
-        if (isRuntimePaused) {
-#ifdef EMSCRIPTEN
-            emscripten_sleep(0);
-            continue;
-#endif
-        }
-#endif
-
-        app_event_poll();
-
-        //NetworkPause handler
-        static bool runapp = true;
-        if (applicationIsGo() != runapp) {
-            if (gameShell && (!gameShell->alwaysRun())) {
-                if (gameShell->getNetClient()) {
-                    if (gameShell->getNetClient()->setPause(!applicationHasFocus())) {
-                        runapp = applicationIsGo();
-                    }
-                }
-            }
-        }
-//		if(gameShell && (!gameShell->alwaysRun()) ){
-//			if(gameShell->getNetClient())
-//				gameShell->getNetClient()->pauseQuant(applicationIsGo()));
-//		}
-
-        if (applicationIsGo()) {
-            run = runtime_object->Quant();
-        } else {
-#ifdef _WIN32
-            //TODO is this necessary under SDL2 in Win32?
-            WaitMessage();
-#endif
-        }
-
-        if (!MTConfig::multithreading()) {
-            PNetCenterNetQuant();
-        }
-
-#ifdef GPX
-        static bool gpx_ready = false;
-        if (!gpx_ready) {
-            gpx_ready = true;
-#ifdef EMSCRIPTEN
-            EM_ASM(({
-                Module["canvas"].addEventListener("pointerdown", () => {
-                    if (!document.pointerLockElement) {
-                        Module["canvas"].requestPointerLock().catch((e) => console.error("Can't lock mouse", e));
-                    }
-                });
-            }));
-#endif
-            gpx()->sys()->mainReady(true);
-        }
-        gpx()->async()->runNextTask();
-#ifdef EMSCRIPTEN
-        emscripten_sleep(0);
-#endif
-#endif
+#ifndef EMSCRIPTEN
+    while (mainQuant())  {
+        // pass
     }
+#else
+    emscripten_set_main_loop(mainLoop, 0, true);
+#endif
 
     delete runtime_object;
 	
