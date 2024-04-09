@@ -1267,8 +1267,15 @@ void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
     void* lock_ptr = nullptr;
     uint32_t flags = vb->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
     RDCALL(vb->d3d->Lock(0, len, &lock_ptr, flags));
-    memcpy(lock_ptr, vb->data, len);
-    vb->d3d->Unlock();
+    if (lock_ptr) {
+        memcpy(lock_ptr, vb->data, len);
+        vb->d3d->Unlock();
+    } else {
+        xassert(0);
+#ifdef PERIMETER_EXODUS
+        fprintf(stderr, "D3D vertex buffer lock failed!\n");
+#endif
+    }
 }
 
 void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
@@ -1301,8 +1308,15 @@ void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
     void* lock_ptr = nullptr;
     uint32_t flags = ib->dynamic ? D3D_LOCK_FLAGS_DYNAMIC : D3D_LOCK_FLAGS_STATIC;
     RDCALL(ib->d3d->Lock(0, len, &lock_ptr, flags));
-    memcpy(lock_ptr, ib->data, len);
-    ib->d3d->Unlock();
+    if (lock_ptr) {
+        memcpy(lock_ptr, ib->data, len);
+        ib->d3d->Unlock();
+    } else {
+        xassert(0);
+#ifdef PERIMETER_EXODUS
+        fprintf(stderr, "D3D index buffer lock failed!\n");
+#endif
+    }
 }
 
 void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb) {
