@@ -9,6 +9,8 @@
 
 #define PRIsize "zu"
 
+typedef uint64_t arch_flags;
+
 struct XBuffer;
 
 unsigned int XRnd(unsigned int m);
@@ -117,3 +119,6 @@ std::string BreakLongLines(const char* ptext, size_t max_width, char endline = '
     const wchar_t* wchar_##VAR = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>( u16string_##VAR.c_str());
 
 #endif
+
+///Computes the arch flags for this build
+arch_flags computeArchFlags();

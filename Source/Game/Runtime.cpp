@@ -61,6 +61,11 @@ const char* currentVersion =
 #ifdef PERIMETER_DEBUG
 " Debug"
 #endif
+#ifdef PERIMETER_ARCH_64
+" 64b"
+#else
+" 32b"
+#endif
 ;
 
 uint16_t currentVersionNumbers[] = {0, 0, 0};
@@ -255,7 +260,9 @@ void HTManager::init()
 	interpolation_timer_ = 0;
 	interpolation_factor_ = 0;
 
-    ErrH.SetPrefix(currentVersion);
+    std::string err_prefix = currentVersion;
+    err_prefix += " (A:" + std::to_string(computeArchFlags()) + ")";
+    ErrH.SetPrefix(err_prefix.c_str());
     ErrH.SetRestore(InternalErrorHandler);
     ErrH.SetCrash(CrashHandler);
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
@@ -1015,7 +1022,7 @@ int SDL_main(int argc, char *argv[])
         if (arg == "help" || arg == "--help" || arg == "-h" || arg == "/?") {
             show_help();
         } else if (arg == "--version" || arg == "-v") {
-            printf("Perimeter %s\n%s\n", currentShortVersion, currentVersion);
+            printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n", currentVersion, computeArchFlags());
             ErrH.Exit();
         }
     }
@@ -1031,7 +1038,7 @@ int SDL_main(int argc, char *argv[])
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
-    printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
+    printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n", currentVersion, computeArchFlags());
 
     //Parse version string
     decode_version(currentShortVersion, currentVersionNumbers);

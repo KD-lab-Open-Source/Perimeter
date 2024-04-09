@@ -474,3 +474,58 @@ std::string BreakLongLines(const char* ptext, size_t max_width, char endline) {
     }
     return text;
 }
+
+arch_flags computeArchFlags() {
+    arch_flags val = 0;
+
+    //Release build - 0 (1) bit
+#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
+    //Don't set if debug_key_handler is active in Release
+        if (!check_command_line("debug_key_handler")) {
+            val |= 1;
+        }
+#endif
+
+    //Compiler type - 1-7 (7) bits
+    arch_flags compiler;
+#if defined(_MSC_VER)
+    compiler = 1;
+#elif defined(__clang__)
+    compiler = 2;
+#elif defined(__GNUC__)
+    compiler = 3; //Must be checked after clang as it also defines __GNUC__
+#else
+    compiler = 0;
+#endif
+    xassert(compiler <= 0x7F);
+    val |= compiler<<1;
+
+    //OS type - 8-15 (8) bits
+    arch_flags os;
+#if defined(__linux__)
+    os = 1;
+#elif defined(__APPLE__)
+    os = 2;
+#elif defined(_WIN32)
+        os = 3;
+#elif defined(EMSCRIPTEN)
+        os = 4;
+#else
+        os = 0;
+#endif
+    xassert(os <= 0xFF);
+    val |= os<<8;
+
+    //CPU type - 16-23 (4) bits
+    arch_flags cpu = 0;
+    //Arch - 16-17 bits (0 = under 32, 1 = 32, 2 = 64, 3 = above 64)
+    cpu |= (sizeof(void*) / 4) & 3;
+    //CPU endianness - 23 bit
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+    cpu |= 1<<3;
+#endif
+    xassert(cpu <= 0xF);
+    val |= cpu<<16;
+
+    return val;
+}

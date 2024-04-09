@@ -77,7 +77,7 @@ void PNetCenter::ProcessClientHandshake(NetConnection* connection, NetConnection
             connectResult = e_ConnectResult::CR_ERR_INCORRECT_ARCH;
             fprintf(
                     stderr, "Arch mismatch, Server 0x%" PRIX64 " Client 0x%" PRIX64 " Mask 0x%" PRIX64 "\n",
-                    NetConnectionInfo::computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
+                    computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
             );
         } else if (!clientInfo.isGameContentCompatible(terGameContentSelect)) {
             connectResult = e_ConnectResult::CR_ERR_INCORRECT_CONTENT;
@@ -92,7 +92,7 @@ void PNetCenter::ProcessClientHandshake(NetConnection* connection, NetConnection
             if (!clientInfo.isArchCompatible(0xFFFFFFFFFFFFFFFF)) {
                 fprintf(
                         stderr, "Arch mismatch, desync may happen! Server 0x%" PRIX64 " Client 0x%" PRIX64 " Mask 0x%" PRIX64 "\n",
-                        NetConnectionInfo::computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
+                        computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
                 );
             }
 

@@ -429,7 +429,7 @@ void PNetCenter::HandlerInputNetCommand()
                 //Write net log
                 XBuffer netlog(2048, true);
                 netlog < currentVersion < "\r\n";
-                netlog < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
+                netlog < "ArchFlags: " <= computeArchFlags();
                 netlog < " HostNETID: " <= m_hostNETID;
                 netlog < " LocalNETID: " <= m_localNETID;
                 netlog < " Amount: " <= nc.desync_amount;

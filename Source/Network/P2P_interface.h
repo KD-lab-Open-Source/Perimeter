@@ -350,8 +350,6 @@ enum e_ConnectResult{
 
 struct NetConnectionMessage;
 
-typedef uint64_t arch_flags;
-
 class PNetCenter {
 private:
     class ServerList* serverList = nullptr;

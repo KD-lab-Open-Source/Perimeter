@@ -200,7 +200,7 @@ void NetRelayMessage_PeerSetupRoom::write(XBuffer& out) const {
     write_map(out, {
         { "scenario", scenarioName },
         { "game_content", std::to_string(gameContent) },
-        { "arch", std::to_string(NetConnectionInfo::computeArchFlags()) },
+        { "arch", std::to_string(computeArchFlags()) },
         { "locale", locale },
     }, 32, 64, 128);
 }
