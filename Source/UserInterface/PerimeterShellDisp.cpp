@@ -159,7 +159,7 @@ _handlertbl[] = {
 	{SQSH_MM_INMISSION_LOAD_BTN, onMMInMissLoadButton},
 	{SQSH_MM_INMISSION_OPTIONS_BTN, onMMInMissOptionsButton},
 	{SQSH_MM_INMISSION_RESTART_BTN, onMMInMissRestartButton},
-	{SQSH_MM_INMISSION_RESUME_BTN, onMMInMissResumeButton},
+	{SQSH_MM_INMISSION_RESUME_BTN, onMMBackButton},
 	{SQSH_MM_INMISSION_QUIT_BTN, onMMInMissQuitButton},
 
 	//battle

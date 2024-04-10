@@ -604,14 +604,22 @@ void CShellWindow::OnLButtonHold()
 }
 void CShellWindow::OnRButtonDown(float _x, float _y)
 {
+    //Don't check for SQSH_ENABLED as you need right click on disable buttons
 	//SND2DPlaySound( m_sound, x );
-	if(m_handler /*&& (state & SQSH_ENABLED)*/ && m_effect == 0) //нужен правый клик в задизабленые кнопки!
-		m_handler(this, EVENT_RPRESSED, 0);
+	if (m_effect == 0) {
+        if (m_handler) {
+            m_handler(this, EVENT_RPRESSED, 0);
+        } else if (isContainer() && (m_attr_cont->load_group & SHELL_LOAD_GROUP_GAME)) {
+            this->checkDefaultEscBtn();
+        }
+    }
 }
 void CShellWindow::OnRButtonUp(float _x, float _y)
 {
-	if(m_handler /*&& (state & SQSH_ENABLED)*/ && m_effect == 0)// нужен правый клик в задизабленые кнопки!
-		m_handler(this, EVENT_RUNPRESSED, 0);
+    //Don't check for SQSH_ENABLED as you need right click on disable buttons
+	if (m_handler && m_effect == 0) {
+        m_handler(this, EVENT_RUNPRESSED, 0);
+    }
 }
 
 void CShellWindow::Move(float _x, float _y, float _sx, float _sy)

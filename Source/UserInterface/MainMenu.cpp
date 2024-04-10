@@ -1611,83 +1611,91 @@ void OnSplashScreenKeyLast(CShellWindow* pWnd, InterfaceEventCode code, int para
 
 //-----------------------------------
 //general
-void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		int nShow;
-		switch ( pWnd->m_pParent->ID ) {
-			case SQSH_MM_SINGLE_SCR:
-            case SQSH_MM_MULTIPLAYER_LIST_SCR:
-            case SQSH_MM_COMMUNITY_SCR:
-            case SQSH_MM_OPTIONS_SCR:
-            case SQSH_MM_CREDITS_SCR:
-                nShow = SQSH_MM_START_SCR;
-                break;
-            case SQSH_MM_ADDONS_SCR:
-                nShow = SQSH_MM_COMMUNITY_SCR;
-                break;
-			case SQSH_MM_GAME_SCR:
-			case SQSH_MM_SOUND_SCR:
-				nShow = SQSH_MM_OPTIONS_SCR;
-				break;
-			case SQSH_MM_GRAPHICS_SCR:
-				GraphOptionsManager::getInstance().reset();
-				nShow = SQSH_MM_OPTIONS_SCR;
-				break;
-            case SQSH_MM_MULTIPLAYER_JOIN_SCR:
-            case SQSH_MM_MULTIPLAYER_LOBBY_SCR:
-            case SQSH_MM_MULTIPLAYER_PASSWORD_SCR:
-				nShow = SQSH_MM_MULTIPLAYER_LIST_SCR;
-				break;
-            case SQSH_MM_MULTIPLAYER_HOST_SCR:
-                nShow = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
-                break;
-			case SQSH_MM_SCENARIO_SCR:
-			case SQSH_MM_BATTLE_SCR:
-			case SQSH_MM_LOAD_SCR:
-			case SQSH_MM_LOAD_REPLAY_SCR:
-            case SQSH_MM_CONTENT_CHOOSER_SCR:
-				nShow = SQSH_MM_SINGLE_SCR;
-				break;
-			case SQSH_MM_LOAD_IN_GAME_SCR:
-			case SQSH_MM_SAVE_GAME_SCR:
-				nShow = SQSH_MM_INMISSION_SCR;
-				break;
-			case SQSH_MM_SAVE_REPLAY_SCR:
-				nShow = SQSH_MM_STATS_SCR;
-				break;
-			case SQSH_MM_PROFILE_SCR:
-				showSingleMenu(pWnd);
-				return;
-			case SQSH_MM_MISSION_TASK_SCR:
-				nShow = RESUME_GAME;
-				break;
-			case SQSH_MM_CUSTOM_SCR:
-				OnComboGraphicsSettings(_shellIconManager.GetWnd(SQSH_MM_SETTINGS_COMBO), EVENT_CREATEWND, -1);
-				nShow = SQSH_MM_GRAPHICS_SCR;
-				break;
-			case SQSH_MM_SCREEN_OPTIONS:
+
+void goToPreviousScreen(CShellWindow* pWnd, int current_screen_id) {
+    int nShow = 0;
+    switch (current_screen_id) {
+        case SQSH_MM_SINGLE_SCR:
+        case SQSH_MM_MULTIPLAYER_LIST_SCR:
+        case SQSH_MM_COMMUNITY_SCR:
+        case SQSH_MM_OPTIONS_SCR:
+        case SQSH_MM_CREDITS_SCR:
+            nShow = SQSH_MM_START_SCR;
+            break;
+        case SQSH_MM_ADDONS_SCR:
+            nShow = SQSH_MM_COMMUNITY_SCR;
+            break;
+        case SQSH_MM_GAME_SCR:
+        case SQSH_MM_SOUND_SCR:
+            nShow = SQSH_MM_OPTIONS_SCR;
+            break;
+        case SQSH_MM_GRAPHICS_SCR:
+            GraphOptionsManager::getInstance().reset();
+            nShow = SQSH_MM_OPTIONS_SCR;
+            break;
+        case SQSH_MM_MULTIPLAYER_JOIN_SCR:
+        case SQSH_MM_MULTIPLAYER_LOBBY_SCR:
+        case SQSH_MM_MULTIPLAYER_PASSWORD_SCR:
+            nShow = SQSH_MM_MULTIPLAYER_LIST_SCR;
+            break;
+        case SQSH_MM_MULTIPLAYER_HOST_SCR:
+            nShow = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
+            break;
+        case SQSH_MM_SCENARIO_SCR:
+        case SQSH_MM_BATTLE_SCR:
+        case SQSH_MM_LOAD_SCR:
+        case SQSH_MM_LOAD_REPLAY_SCR:
+        case SQSH_MM_CONTENT_CHOOSER_SCR:
+            nShow = SQSH_MM_SINGLE_SCR;
+            break;
+        case SQSH_MM_LOAD_IN_GAME_SCR:
+        case SQSH_MM_SAVE_GAME_SCR:
+            nShow = SQSH_MM_INMISSION_SCR;
+            break;
+        case SQSH_MM_SAVE_REPLAY_SCR:
+            nShow = SQSH_MM_STATS_SCR;
+            break;
+        case SQSH_MM_PROFILE_SCR:
+            showSingleMenu(pWnd);
+            return;
+        case SQSH_MM_INMISSION_SCR:
+        case SQSH_MM_MISSION_TASK_SCR:
+            nShow = RESUME_GAME;
+            break;
+        case SQSH_MM_CUSTOM_SCR:
+            OnComboGraphicsSettings(_shellIconManager.GetWnd(SQSH_MM_SETTINGS_COMBO), EVENT_CREATEWND, -1);
+            nShow = SQSH_MM_GRAPHICS_SCR;
+            break;
+        case SQSH_MM_SCREEN_OPTIONS:
 //				GraphOptionsManager::getInstance().reset();
 //				extern void PerimeterDataChannelSave();
 //				PerimeterDataChannelSave();
-				nShow = SQSH_MM_INMISSION_SCR;
-				break;
-			case SQSH_MM_SCREEN_GAME:
-			case SQSH_MM_SCREEN_SOUND:
-				nShow = SQSH_MM_SCREEN_OPTIONS;
-				break;
-			case SQSH_MM_INGAME_CUSTOM_SCR:
-				OnComboGraphicsSettings(_shellIconManager.GetWnd(SQSH_MM_SETTINGS_COMBO), EVENT_CREATEWND, -1);
-				nShow = SQSH_MM_SCREEN_GRAPHICS;
-				break;
-			case SQSH_MM_SCREEN_GRAPHICS:
-				GraphOptionsManager::getInstance().reset();
-				nShow = SQSH_MM_SCREEN_OPTIONS;
-				break;
-			default:
-				return;
-		}
-		_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, nShow );
-	}
+            nShow = SQSH_MM_INMISSION_SCR;
+            break;
+        case SQSH_MM_SCREEN_GAME:
+        case SQSH_MM_SCREEN_SOUND:
+            nShow = SQSH_MM_SCREEN_OPTIONS;
+            break;
+        case SQSH_MM_INGAME_CUSTOM_SCR:
+            OnComboGraphicsSettings(_shellIconManager.GetWnd(SQSH_MM_SETTINGS_COMBO), EVENT_CREATEWND, -1);
+            nShow = SQSH_MM_SCREEN_GRAPHICS;
+            break;
+        case SQSH_MM_SCREEN_GRAPHICS:
+            GraphOptionsManager::getInstance().reset();
+            nShow = SQSH_MM_SCREEN_OPTIONS;
+            break;
+        default:
+            return;
+    }
+    if (nShow != 0) {
+        _shellIconManager.SwitchMenuScreens(current_screen_id, nShow);
+    }
+}
+
+void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
+        goToPreviousScreen(pWnd, pWnd->m_pParent->ID);
+    }
 }
 
 //start menu
@@ -1858,11 +1866,6 @@ void onMMInMissRestartButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 		setupYesNoMessageBox(restartAction, 0, text);
 
 		showMessageBox();
-	}		
-}
-void onMMInMissResumeButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, RESUME_GAME );
 	}		
 }
 void exitToInterfaceMessage(CShellWindow* pWnd) {
