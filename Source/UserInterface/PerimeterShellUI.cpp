@@ -4439,6 +4439,7 @@ void CMultiTexWindow::LoadMenuWnd(const sqshControlContainer* attr)
     
 	init();
 }
+
 void CMultiTexWindow::Load(const sqshControl* attr)
 {
 	loadFlashingParams(attr);
@@ -4455,19 +4456,36 @@ void CMultiTexWindow::init() {
 	_RELEASE(m_hTexture3);
     
     loadAnchor();
+    
     //In theory these are only used as background textures that need to be full screen
-	x = absoluteUISizeX(m_attr_cont->x, SHELL_ANCHOR_SCALED);
-	y = absoluteY(m_attr_cont->y);
-	sx = absoluteUISizeX(m_attr_cont->sx, SHELL_ANCHOR_SCALED);
-	sy = absoluteY(m_attr_cont->sy);
-	if(strlen(m_attr_cont->image.texture))
-	{
-		m_hTexture3 = terVisGeneric->CreateTexture( m_attr_cont->image.texture );
-		SetTexPos(Vect2f(0,0), Vect2f(1, 1));
-	}
-
-	if(strlen(m_attr_cont->image2.texture))
-		m_hTexture2 = terVisGeneric->CreateTexture( m_attr_cont->image2.texture );
+    if (m_attr_cont) {
+        x = absoluteUISizeX(m_attr_cont->x, SHELL_ANCHOR_SCALED);
+        y = absoluteY(m_attr_cont->y);
+        sx = absoluteUISizeX(m_attr_cont->sx, SHELL_ANCHOR_SCALED);
+        sy = absoluteY(m_attr_cont->sy);
+        image2hasBelligerentVersion = m_attr_cont->image2.hasBelligerentVersion;
+        if (strlen(m_attr_cont->image.texture)) {
+            m_hTexture3 = terVisGeneric->CreateTexture(m_attr_cont->image.texture);
+            SetTexPos(Vect2f(0, 0), Vect2f(1, 1));
+        }
+        if (strlen(m_attr_cont->image2.texture)) {
+            m_hTexture2 = terVisGeneric->CreateTexture(m_attr_cont->image2.texture);
+        }
+    } else if (m_attr) {
+        x = absoluteUISizeX(m_attr->x, SHELL_ANCHOR_SCALED);
+        y = absoluteY(m_attr->y);
+        sx = absoluteUISizeX(m_attr->sx, SHELL_ANCHOR_SCALED);
+        sy = absoluteY(m_attr->sy);
+        image2hasBelligerentVersion = m_attr->image2.hasBelligerentVersion;
+        if (strlen(m_attr->image.texture)) {
+            m_hTexture3 = terVisGeneric->CreateTexture(m_attr->image.texture);
+            SetTexPos(Vect2f(0, 0), Vect2f(1, 1));
+        }
+        if (strlen(m_attr->image2.texture)) {
+            m_hTexture2 = terVisGeneric->CreateTexture(m_attr->image2.texture);
+        }
+    }
+    
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, defaultFontSize);
 }
@@ -4480,7 +4498,7 @@ void CMultiTexWindow::draw(int bFocus)
 
 	if( m_hTexture3 && m_hTexture2 ) // draw button
 	{
-		if (m_attr_cont->image2.hasBelligerentVersion) {
+		if (image2hasBelligerentVersion) {
 			DrawSprite(x, y, sx, sy, 0, 0, sx/128, sy/128,
                        m_hTexture3, sColor4c(255,255,255,100), xm::fmod(m_ftime, 250) / 250 );
 			DrawSprite(x, y, sx, sy, 0, 0, 1, 1,
@@ -4492,7 +4510,7 @@ void CMultiTexWindow::draw(int bFocus)
 	}
 	else if( m_hTexture3 )
 	{
-		if (m_attr_cont->image2.hasBelligerentVersion) {
+		if (image2hasBelligerentVersion) {
 			DrawSprite(x, y, sx, sy, 0, 0, 1, 1,
                        m_hTexture3, sColor4c(255,255,255,50), xm::fmod(m_ftime, 250) / 250 );
 		} else {
@@ -4620,8 +4638,8 @@ void CMoveButton::Load(const sqshControl* attr)
 	snd=0;
 	CShellWindow::Load(attr);
 
-	xstart= xm::round(attr->xstart * terRenderDevice->GetSizeX() / SQSH_COORD_WIDTH_SCALE);
-	ystart= xm::round(attr->ystart * terRenderDevice->GetSizeY() / SQSH_COORD_HEIGHT_SCALE);
+	xstart = absoluteUIPosX(attr->xstart, SHELL_ANCHOR_MENU);
+	ystart = absoluteY(attr->ystart);
 }
 void CMoveButton::draw(int bFocus)
 {

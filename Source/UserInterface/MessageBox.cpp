@@ -78,6 +78,24 @@ void hideMessageBox() {
 	_shellIconManager.SwitchMenuScreens( SQSH_MM_SUBMIT_DIALOG_SCR, FAKE );
 }
 
+//background control
+void onMMSubmitDialogBackground(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if( code == EVENT_SHOWWND ) {
+        //Pick the current active screen if any, if is a CMultiTexWindow check if it has any bg and if it has then
+        // not show one from dialog to avoid duplicate bg's
+        bool showBackground = true;
+        int id = _shellIconManager.getVisibleMenuScr();
+        CMultiTexWindow* current_scr = 0 < id ? dynamic_cast<CMultiTexWindow*>(_shellIconManager.GetWnd(id)) : nullptr;
+        if (current_scr) {
+            showBackground = current_scr->m_hTexture2 == nullptr
+                          && current_scr->m_hTexture3 == nullptr;
+        }
+        if (!showBackground) {
+            pWnd->Show(false);
+        }
+    }
+}
+
 //submit dialog
 void onMMSubmitYesButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED ) {

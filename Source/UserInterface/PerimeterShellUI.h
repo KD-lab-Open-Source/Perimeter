@@ -596,6 +596,7 @@ public:
 class CMultiTexWindow : public CShellWindow
 {
 public:
+    bool image2hasBelligerentVersion = false;
 	cTexture *m_hTexture2 = nullptr;
 	cTexture *m_hTexture3 = nullptr;
     
@@ -1990,7 +1991,6 @@ void onMMInMissSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMInMissLoadButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMInMissOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMInMissRestartButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMInMissResumeButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMInMissQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //battle
@@ -2078,6 +2078,7 @@ void onMMGraphicsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSoundButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //submit dialog
+void onMMSubmitDialogBackground(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSubmitYesButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSubmitNoButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 

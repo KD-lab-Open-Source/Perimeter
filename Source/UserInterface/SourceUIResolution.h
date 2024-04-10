@@ -99,12 +99,12 @@ inline Vect2f relativeUV(float x, float y, cTexture *texture, SHELL_ANCHOR ancho
 }
 
 inline int absoluteX(float x) {
-    if (x >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
+    if (xm::abs(x) >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
     return xm::round(x * terRenderDevice->GetSizeX());
 }
 
 inline int absoluteY(float y) {
-    if (y >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
+    if (xm::abs(y) >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
     return xm::round(y * terRenderDevice->GetSizeY());
 }
 

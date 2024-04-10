@@ -323,6 +323,7 @@ _handlertbl[] = {
 	{SQSH_MM_BACK_FROM_SOUND_BTN, onMMBackButton},
 
 	//submit dialog
+    {SQSH_MM_SUBMIT_BACKGROUND, onMMSubmitDialogBackground},
 	{SQSH_MM_SUBMIT_YES_BTN, onMMSubmitYesButton},
 	{SQSH_MM_SUBMIT_NO_BTN, onMMSubmitNoButton},
 	{SQSH_MM_SUBMIT_OK_BTN, onMMSubmitYesButton},
