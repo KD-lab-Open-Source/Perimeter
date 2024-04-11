@@ -168,7 +168,7 @@ constexpr const char* CREDITS_PERIMETER_RUSSIAN = R"(
 Программный продукт для PC
 "Периметр" разработан
 компанией "К-Д ЛАБ".
-Все права защищены. (C) 2023
+Все права защищены. (C) 2024
 
 Все права на вселенную "Периметра"
 принадлежат компании "К-Д ЛАБ".
@@ -178,7 +178,7 @@ constexpr const char* CREDITS_PERIMETER_RUSSIAN = R"(
 принадлежат компании "К-Д ЛАБ".
 
 Ogg Vorbis (tm) Xiph.Org
-Copyright (C) 1994-2023 Xiph.Org
+Copyright (C) 1994-2024 Xiph.Org
 
 )"; //END CREDITS_PERIMETER_RUSSIAN
 
@@ -287,7 +287,7 @@ constexpr const char* CREDITS_PERIMETER_ET_RUSSIAN = R"(
 Программный продукт для PC
 "Периметр: Завет Императора"
 разработан компанией "К-Д ЛАБ".
-Все права защищены. (C) 2023
+Все права защищены. (C) 2024
 
 Все права на вселенную
 "Периметр: Завет Императора"
@@ -298,7 +298,7 @@ constexpr const char* CREDITS_PERIMETER_ET_RUSSIAN = R"(
 принадлежат компании "К-Д ЛАБ".
 
 Ogg Vorbis (tm) Xiph.Org
-Copyright (C) 1994-2023 Xiph.Org
+Copyright (C) 1994-2024 Xiph.Org
 
 )"; //END CREDITS_PERIMETER_ET_RUSSIAN
 
@@ -497,7 +497,7 @@ Igor Vasilenko
 The software product for PC
 "Perimeter" was developed by
 the "K-D LAB" company.
-All rights reserved. (C) 2023
+All rights reserved. (C) 2024
 
 All rights to the "Perimeter" universe
 belong to the "K-D LAB" company.
@@ -506,7 +506,7 @@ All rights to the music used in the
 game belong to the "K-D LAB" company.
 
 Ogg Vorbis (tm) Xiph.Org.
-Copyright (C) 1994-2023 Xiph.Org.
+Copyright (C) 1994-2024 Xiph.Org.
 
 )"; //END CREDITS_PERIMETER_ENGLISH
 
@@ -610,7 +610,7 @@ Roman "Guro" Gunyavy
 The software product for PC
 "Perimeter: Emperor's Testament"
 was developed by the "K-D LAB" company.
-All rights reserved. (C) 2023
+All rights reserved. (C) 2024
 
 All rights to the 
 "Perimeter: Emperor's Testament"
@@ -620,7 +620,7 @@ All rights to the music used in the
 game belong to the "K-D LAB" company.
 
 Ogg Vorbis (tm) Xiph.Org.
-Copyright (C) 1994-2023 Xiph.Org.
+Copyright (C) 1994-2024 Xiph.Org.
 
 )"; //END CREDITS_PERIMETER_ET_ENGLISH
 
