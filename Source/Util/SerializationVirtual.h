@@ -15,8 +15,8 @@
 
 //Virtual declarations for base classes/structs
 #define VIRTUAL_SERIALIZE_VIRTUAL(TYPE_I, TYPE_O, VAR_AR) \
-    virtual void serialize(TYPE_O& VAR_AR) { abort(); } \
-    virtual void serialize(TYPE_I& VAR_AR) { abort(); }
+    virtual void serialize(TYPE_O& VAR_AR) { xassert(0); abort(); } \
+    virtual void serialize(TYPE_I& VAR_AR) { xassert(0); abort(); }
 
 //Forwarders that override virtual serialize to call serialize_template
 #define VIRTUAL_SERIALIZE_FORWARDERS(TYPE_I, TYPE_O, VAR_AR) \
@@ -25,8 +25,8 @@
 
 //We need this to not mess vtables as each header would have different layout otherwise, these shouldn't be called in any form
 #define VIRTUAL_SERIALIZE_PLACEHOLDER(TYPE_I, TYPE_O, VAR_AR) \
-    virtual void serialize_placeholder_##TYPE_I(Placeholder##TYPE_I& VAR_AR) { abort(); } \
-    virtual void serialize_placeholder_##TYPE_O(Placeholder##TYPE_O& VAR_AR) { abort(); }
+    virtual void serialize_placeholder_##TYPE_I(Placeholder##TYPE_I& VAR_AR) { xassert(0); abort(); } \
+    virtual void serialize_placeholder_##TYPE_O(Placeholder##TYPE_O& VAR_AR) { xassert(0); abort(); }
 
 #ifdef __EDIT_ARCHIVE_H__
 #define VIRTUAL_SERIALIZE_FORWARDERS_EDIT(VAR_AR) VIRTUAL_SERIALIZE_FORWARDERS(EditIArchive, EditOArchive, VAR_AR)

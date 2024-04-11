@@ -44,22 +44,32 @@ static void process_type_name(std::string& name) {
     }
 }
 
-//We use ptr to specialize the type_id when only pointer is know at compile time (like "this")
+//Uses SERIALIZATION_TYPE_CLASS_NAME method for getting type class name for class/structs
 template<class CLASS_T>
-static std::string get_type_id(const CLASS_T* ptr = nullptr) {
-    if (ptr) {}
-	std::string name = ptr->type_class_name();
+static std::string get_type_id() {
+	std::string name = CLASS_T::type_class_name();
+#if defined(PERIMETER_DEBUG) && 0
+    //Sanity check
+    const static CLASS_T a;
+    xassert(a.type_name() == name);
+#endif
     process_type_name(name);
     //printf("get_type_id %s = %s\n", typeid(CLASS_T).name(), name.c_str());
+    xassert(!name.empty());
     return name;
 }
 
-//Uses SERIALIZE_TYPE_NAME methods for getting runtime type name for class/structs
+//Uses SERIALIZATION_TYPE_NAME methods for getting runtime type name for class/structs
 template<class CLASS_T>
 static std::string get_type_id_runtime(const CLASS_T* ptr) {
+    if (!ptr) {
+        xassert(0);
+        return "";
+    }
     std::string name = ptr->type_name();
     process_type_name(name);
     //printf("get_type_id_runtime %s = %s\n", typeid(CLASS_T).name(), name.c_str());
+    xassert(!name.empty());
     return name;
 }
 

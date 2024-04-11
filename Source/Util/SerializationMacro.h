@@ -5,7 +5,7 @@
     const char* type_name() const
 
 #define SERIALIZATION_TYPE_CLASS_NAME \
-    const char* type_class_name() const
+    static const char* type_class_name();
 
 #define SERIALIZATION_TYPE_NAME_VIRTUAL \
     virtual SERIALIZATION_TYPE_NAME = 0
@@ -17,7 +17,7 @@
 
 #define SERIALIZATION_TYPE_NAME_IMPL(className) \
     const char* className::type_name() const { return #className; } \
-    const char* className::type_class_name() const { return #className; }
+    const char* className::type_class_name() { return #className; }
 
 #define SERIALIZE(VAR_AR) \
     SERIALIZATION_TYPE_NAME; \
