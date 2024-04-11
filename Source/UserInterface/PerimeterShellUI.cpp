@@ -3489,7 +3489,7 @@ void CListBoxWindow::Clear()
 	updateScroller();
 }
 void CListBoxWindow::AddString(const std::string& cb,int nrow) {
-    AddLocalizedText(LocalizedText(cb, getLocale()));
+    AddLocalizedText(LocalizedText(cb, getLocale()), nrow);
 }
 void CListBoxWindow::AddLocalizedText(const LocalizedText& text, int nrow) {
     m_pItem[nrow].m_data.emplace_back(text);
