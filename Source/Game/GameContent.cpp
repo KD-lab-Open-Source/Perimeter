@@ -122,10 +122,6 @@ void loadMappings(const std::string& path, const filesystem_scan_options* option
 void findGameContent() {
     //Get the path where game content is located by scanning diff paths
     std::vector<std::string> paths;
-
-    //Check cmdline first
-    const char* cmdlinePath = check_command_line("content");
-    if (cmdlinePath) paths.emplace_back(cmdlinePath);
     
     //Add path stored in settings if any
     IniManager* ini = getSettings();
@@ -171,6 +167,13 @@ void findGameContent() {
 
     //Path stored in settings from last run
     if (settingsPath) paths.emplace_back(settingsPath);
+
+    //Check cmdline, overrides other methods
+    const char* cmdlinePath = check_command_line("content");
+    if (cmdlinePath) {
+        paths.clear();
+        paths.emplace_back(cmdlinePath);
+    }
 
 #ifdef GPX
     paths.clear();
