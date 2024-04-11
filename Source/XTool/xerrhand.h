@@ -32,7 +32,7 @@ struct XErrorHandler
 {
 	unsigned state;
 
-	const char* prefix;
+	std::string prefix;
 
     std::string log_path;
 

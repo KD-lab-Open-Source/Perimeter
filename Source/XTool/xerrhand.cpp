@@ -487,7 +487,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
     //Assemble text
     std::ostringstream stream;
-    if (prefix) {
+    if (!prefix.empty()) {
         stream << prefix << std::endl;
     }
     stream << "Error ocurred! Code: " << code << " Val: " << val << std::endl;

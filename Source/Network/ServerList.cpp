@@ -160,7 +160,6 @@ void ServerList::fetchRelayHostInfoList() {
 
 void ServerList::refreshHostInfoList() {
     if (!findingHosts || !listNeedUpdate) return;
-    MTG();
     listNeedUpdate = false;
     gameInfoList.clear();
     for (auto& host : lastRelayGameInfoList) {
