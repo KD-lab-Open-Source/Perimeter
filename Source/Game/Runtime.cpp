@@ -1117,16 +1117,21 @@ int SDL_main(int argc, char *argv[])
         const char* exec_path = nullptr;
         std::vector<char*> exec_argv;
         for (int i = 0; i < app_argc; ++i) {
-            if (startsWith(app_argv[i], "tmp_")) {
+            std::string arg = app_argv[i];
+            if (startsWith(arg, "tmp_")) {
                 //These are passed internally and are not supposed to pass into next instance
+                continue;
+            }
+            if (startsWith(arg, "initial_menu")) {
+                //Ignore it as is only for first time
                 continue;
             }
 
             if (i == 0) {
                 //Doesn't like "s
-                exec_path = alloc_exec_arg_string(app_argv[i], false);
+                exec_path = alloc_exec_arg_string(arg, false);
             }
-            exec_argv.emplace_back(alloc_exec_arg_string(app_argv[i], true));
+            exec_argv.emplace_back(alloc_exec_arg_string(arg, true));
         }
         
         //Add extra args
