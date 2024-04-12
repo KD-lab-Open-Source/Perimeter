@@ -340,7 +340,7 @@ void qdTextDB::load_from_directory(const std::string& locale, const std::string&
     for (const auto& entry: get_content_entries_directory(path)) {
         //Only load files from non mod folders if exclude_mods is true, otherwise only load from mods
         //This ensures every file is parsed only once, that mod can override base content if required and
-        if (startsWith(entry->key_content, "mods/") == exclude_mods) {
+        if (startsWith(entry->key_content, ("mods" PATH_SEP_STR)) == exclude_mods) {
             continue;
         }
         std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
