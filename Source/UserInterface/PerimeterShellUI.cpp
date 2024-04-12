@@ -20,6 +20,12 @@
 #include "Localization.h"
 #include "codepages/codepages.h"
 
+#ifdef GPX
+const static float TOP_LEFT_SCALE = 1.5f;
+#else
+const static float TOP_LEFT_SCALE = 1.1f;
+#endif
+
 #define _RELEASE(p) if(p) {(p)->Release(); (p) = 0;}
 
 #define SLIDER_ARROW_SIZE			0
@@ -454,6 +460,24 @@ void CShellWindow::Load(const sqshControl* attr)
     y = absoluteUIPosY(m_attr->y, anchor);
     sx = absoluteUISizeX(m_attr->sx, anchor);
     sy = absoluteUISizeY(m_attr->sy, anchor);
+
+    switch (m_attr->id) {
+        default:
+            break;
+        //Top-left buttons
+        case SQSH_RAMKA_ID:
+        case SQSH_MENU_BUTTON_ID:
+        case SQSH_TASK_BUTTON_ID:
+        case SQSH_SPEED_PAUSE:
+        case SQSH_SPEED_50:
+        case SQSH_SPEED_100:
+        case SQSH_SPEED_150:
+            x *= TOP_LEFT_SCALE;
+            y *= TOP_LEFT_SCALE;
+            sx *= TOP_LEFT_SCALE;
+            sy *= TOP_LEFT_SCALE;
+            break;
+    }
 
 	if(strlen(attr->image.texture))
 	{
