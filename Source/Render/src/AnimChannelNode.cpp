@@ -1,5 +1,9 @@
 #include "StdAfxRD.h"
 #include "AnimChannelNode.h"
+#ifdef PERIMETER_DEBUG_ASSERT
+//Used for std::isfinite if asserts are enabled
+#include <cmath>
+#endif
 
 cAnimChainNode::cAnimChainNode()
 {
