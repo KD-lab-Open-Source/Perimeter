@@ -20,7 +20,8 @@
 
 extern char _bMenuMode;
 
-int _nActiveClusterNum = -1;
+//Avoid cross-edge terraforming by keeping distance
+const int TOOLZER_EXTRA_MARGIN = 20;
 
 bool bNoUnitAction = false;
 bool bNoTracking = false;
@@ -140,8 +141,8 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 			if(rg_wanted == editRegion1)
 			{
-				int r = _pShellDispatcher->regionMetaDispatcher()->getToolzerRadius()*2;
-				_shellCursorManager.SetSize(r);
+                float sx = _pShellDispatcher->regionMetaDispatcher()->getToolzerRadius() * 2.0f;
+				_shellCursorManager.SetSize(sx);
 			}
 
 			((CShellComplexPushButton*)pWnd)->SetCheck(true);
@@ -174,7 +175,7 @@ int OnLBDownWorkarea(float x,float y)
 			if(terCamera->cursorTrace(Vect2f(x - 0.5f, y - 0.5f), v))
 			{
 				MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
-				float radius = 2*_pShellDispatcher->regionMetaDispatcher()->getToolzerRadius();
+				float radius = _pShellDispatcher->regionMetaDispatcher()->getToolzerRadius() + TOOLZER_EXTRA_MARGIN;
 				v.x = clamp(v.x, radius, vMap.H_SIZE - radius - 1);
 				v.y = clamp(v.y, radius, vMap.V_SIZE - radius - 1);
 
@@ -235,26 +236,24 @@ int OnMouseMoveRegionEdit(float x, float y)
 		if((_shellIconManager.m_nMouseButtonsState & MK_LBUTTON) && !bWasShiftUnpressed)
 		{
 			Vect3f v;
-			if(terCamera->cursorTrace(Vect2f(x - 0.5f, y - 0.5f), v))
-			{
+			if (terCameraType::cursorTrace(terCamera->GetCamera(), Vect2f(x - 0.5f, y - 0.5f), &v, false, true)) {
 				MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
-				float radius = 2*_pShellDispatcher->regionMetaDispatcher()->getToolzerRadius();
+				float radius = _pShellDispatcher->regionMetaDispatcher()->getToolzerRadius() + TOOLZER_EXTRA_MARGIN;
 				v.x = clamp(v.x, radius, vMap.H_SIZE - radius - 1);
 				v.y = clamp(v.y, radius, vMap.V_SIZE - radius - 1);
 
 				_pShellDispatcher->regionMetaDispatcher()->setOperation(_shellIconManager.getCurrentEnabledOperation());
 				_pShellDispatcher->regionMetaDispatcher()->activeLayer()->moveToolzer(Vect2f(v));
 				_pShellDispatcher->regionMetaDispatcher()->operate();
-			}
+            }
 		}
 	} else {
 		if( (_shellIconManager.m_nMouseButtonsState & MK_LBUTTON) )
 		{
 			Vect3f v;
-			if(terCamera->cursorTrace(Vect2f(x - 0.5f, y - 0.5f), v))
-			{
+            if (terCameraType::cursorTrace(terCamera->GetCamera(), Vect2f(x - 0.5f, y - 0.5f), &v, false, true)) {
 				MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
-				float radius = 2*_pShellDispatcher->regionMetaDispatcher()->getToolzerRadius();
+				float radius = _pShellDispatcher->regionMetaDispatcher()->getToolzerRadius() + TOOLZER_EXTRA_MARGIN;
 				v.x = clamp(v.x, radius, vMap.H_SIZE - radius - 1);
 				v.y = clamp(v.y, radius, vMap.V_SIZE - radius - 1);
 
@@ -278,10 +277,9 @@ int OnMouseMoveRegionEdit2(float x, float y)
 	if(!_pShellDispatcher->m_bTolzerFirstClick)
 	{
 		Vect3f v;
-		if(terCamera->cursorTrace(Vect2f(x - 0.5f, y - 0.5f), v))
-		{
+        if (terCameraType::cursorTrace(terCamera->GetCamera(), Vect2f(x - 0.5f, y - 0.5f), &v, false, true)) {
 			MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
-			float radius = 2*_pShellDispatcher->regionMetaDispatcher()->getToolzerRadius();
+			float radius = _pShellDispatcher->regionMetaDispatcher()->getToolzerRadius() + TOOLZER_EXTRA_MARGIN;
 			v.x = clamp(v.x, radius, vMap.H_SIZE - radius - 1);
 			v.y = clamp(v.y, radius, vMap.V_SIZE - radius - 1);
 
@@ -299,9 +297,8 @@ void OnToolzerSizeChange(float y)
 	RegionMetaDispatcher* disp=_pShellDispatcher->regionMetaDispatcher();
 	MetaRegionLock lock(disp);
 	disp->changeToolzerRadius(s*DeltaToolzerRadius);
-	int r = disp->getToolzerRadius()*2;
-
-	_shellCursorManager.SetSize(r);
+	float sx = disp->getToolzerRadius() * 2.0f;
+	_shellCursorManager.SetSize(sx);
 }
 
 void ToolzerSizeChangeQuant()

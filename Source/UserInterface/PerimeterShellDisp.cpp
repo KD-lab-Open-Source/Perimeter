@@ -49,7 +49,6 @@ extern MusicPlayer gb_Music;
 
 extern bool  bNoUnitAction;
 extern bool  bNoTracking;
-extern int _nActiveClusterNum;
 
 extern cFont* hFontMainmenu1;
 extern cFont* hFontMainmenu2;
