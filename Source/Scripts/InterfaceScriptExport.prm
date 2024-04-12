@@ -320,29 +320,6 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			state = SQSH_ENABLED|SQSH_VISIBLE|SQSH_NOEFFECT;
 //			txt_align = SHELL_ALIGN_LEFT;
 		},
-/*
-		{
-			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
-			id   = SQSH_TASK_BUTTON_ID;
-			state = SQSH_ENABLED|SQSH_VISIBLE|SQSH_NOEFFECT;
-			x = 75.0f / 1024.0f;
-			y = 9.0f / 768.0f;
-			sx= 51.0f / 1024.0f;
-			sy= 18.0f / 768.0f;
-			image = {
-				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 367.0f; _iy = 152.0f;
-			};
-			image_h = {
-				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 367.0f; _iy = 171.0f;
-			};
-			image_check = {
-				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 367.0f; _iy = 171.0f;
-			};
-		},
-*/
 		{
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_SELPANEL_MOVE_ID;
@@ -3999,29 +3976,6 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			sound = "mainmenu_button";
 			state = SQSH_ENABLED|SQSH_VISIBLE;
 		}
-/*
-		{
-			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
-			id   = SQSH_MENU_BUTTON_ID;
-			state = SQSH_ENABLED|SQSH_VISIBLE|SQSH_NOEFFECT;
-			x = 11.0f / 1024.0f;
-			y = 9.0f / 768.0f;
-			sx= 51.0f / 1024.0f;
-			sy= 18.0f / 768.0f;
-			image = {
-				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 367.0f; _iy = 114.0f;
-			};
-			image_h = {
-				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 367.0f; _iy = 133.0f;
-			};
-			image_check = {
-				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 367.0f; _iy = 133.0f;
-			};
-		}
-*/
 	};
 },
 
