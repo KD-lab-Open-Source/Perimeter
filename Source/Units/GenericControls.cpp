@@ -15,6 +15,7 @@
 terUnitBase::terUnitBase(const UnitTemplate& data) 
 {
 	attr_.setKey(AttributeIDBelligerent(data.attribute()->ID, data.attribute()->belligerent));
+    xassert(attr() != nullptr);
 
 	Player = data.player();
 	alive_ = true;

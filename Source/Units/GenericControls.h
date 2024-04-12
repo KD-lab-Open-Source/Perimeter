@@ -233,7 +233,7 @@ public:
 	virtual bool needCrater() const { return true; }
 
 	virtual const AttributeBase* attr() const {
-		return attr_;
+		return attr_.get();
 	}
 
 	VIRTUAL_SERIALIZE(ar) {

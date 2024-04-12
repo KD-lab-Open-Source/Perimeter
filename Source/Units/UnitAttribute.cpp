@@ -856,8 +856,8 @@ void loadUnitAttributes(bool campaign, XBuffer* scriptsSerialized) {
     auto& attrLib = attributeLibrary().map();
     for (auto first = attrLib.begin(), last = attrLib.end(); first != last;) {
         const AttributeIDBelligerent& attribute = (*first).first;
-        if (unavailableContentUnitAttribute(attribute.attributeID(), terGameContentSelect)
-            || unavailableContentBelligerent(attribute.belligerent(), terGameContentSelect)) {
+        if (unavailableContentUnitAttribute(attribute.attributeID(), terGameContentAvailable)
+            || unavailableContentBelligerent(attribute.belligerent(), terGameContentAvailable)) {
             first = attrLib.erase(first);
         } else {
             ++first;
