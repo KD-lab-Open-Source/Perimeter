@@ -11,7 +11,7 @@ SHELL_ANCHOR shell_anchor = SHELL_ANCHOR_DEFAULT;
 std::vector<UIResolution> resolutions;
 
 int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
-    if (x >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
+    if (xm::abs(x) >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
     if (anchor == SHELL_ANCHOR_DEFAULT) anchor = shell_anchor;
     switch (anchor) {
         case SHELL_ANCHOR_DEFAULT:
@@ -19,7 +19,7 @@ int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
         case SHELL_ANCHOR_CENTER: {
             //Centered
             float c = terRenderDevice->GetSizeX() * 0.5f;
-            float sx = anchor == SHELL_ANCHOR_MENU ? static_cast<float>(source_ui_resolution.mx) : getUIX(anchor);
+            float sx = getUIX(anchor);
             x = c + (x - 0.5f) * sx * source_ui_factor.y;
             break;
         }
@@ -36,21 +36,32 @@ int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
         }
         case SHELL_ANCHOR_SCALED: {
             //Scaled
-            x = x * terRenderDevice->GetSizeX();
+            x *= terRenderDevice->GetSizeX();
             break;
         }
     }
     return xm::round(x);
 }
 
+int absoluteUIPosY(float y, SHELL_ANCHOR anchor) {
+    return absoluteUISizeY(y, anchor);
+}
+
 int absoluteUISizeX(float x, SHELL_ANCHOR anchor) {
-    if (x >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
+    if (xm::abs(x) >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
     if (anchor == SHELL_ANCHOR_DEFAULT) anchor = shell_anchor;
     if (anchor == SHELL_ANCHOR_SCALED) {
-        return xm::round(x * terRenderDevice->GetSizeX());
+        x *= terRenderDevice->GetSizeX();
     } else {
-        return xm::round(x * getUIX(anchor) * source_ui_factor.y);
+        x *= getUIX(anchor) * source_ui_factor.y;
     }
+    return xm::round(x);
+}
+
+int absoluteUISizeY(float y, SHELL_ANCHOR) {
+    if (xm::abs(y) >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
+    y *= terRenderDevice->GetSizeY();
+    return xm::round(y);
 }
 
 void initSourceUIResolution() {

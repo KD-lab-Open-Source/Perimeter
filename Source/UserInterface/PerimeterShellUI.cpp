@@ -417,9 +417,9 @@ void CShellWindow::LoadMenuWnd(const sqshControlContainer* attr)
 	}
         
 	x = absoluteUIPosX(attr->x, anchor);
-	y = absoluteY(attr->y);
+	y = absoluteUIPosY(attr->y, anchor);
 	sx = absoluteUISizeX(attr->sx, anchor);
-	sy = absoluteY(attr->sy);
+	sy = absoluteUISizeY(attr->sy, anchor);
 
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont, defaultFontSize);
@@ -451,9 +451,9 @@ void CShellWindow::Load(const sqshControl* attr)
     loadAnchor();
 
     x = absoluteUIPosX(m_attr->x, anchor);
-    y = absoluteY(m_attr->y);
+    y = absoluteUIPosY(m_attr->y, anchor);
     sx = absoluteUISizeX(m_attr->sx, anchor);
-    sy = absoluteY(m_attr->sy);
+    sy = absoluteUISizeY(m_attr->sy, anchor);
 
 	if(strlen(attr->image.texture))
 	{
@@ -804,13 +804,13 @@ void CComboWindow::OnRButtonUp(float _x, float _y)
 void CComboWindow::Load(const sqshControl* attr)
 {
 	CShellWindow::Load( attr );
-	m_fStringHeight = absoluteY(comboBoxRowHeight);
+	m_fStringHeight = absoluteUISizeY(comboBoxRowHeight, anchor);
 	target = attr->target;
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
-		float ty = absoluteY(m_attr->image.dy);
+		float ty = absoluteUIPosY(m_attr->image.dy, anchor);
 		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
-		float tsy = absoluteY(m_attr->image.dsy);
+		float tsy = absoluteUISizeY(m_attr->image.dsy, anchor);
 
 		uv.x = (x - tx) / tsx;
 		uv.y = (y - ty) / tsy;
@@ -941,13 +941,13 @@ void CShellPushButton::Load(const sqshControl* attr)
         labelText = qdTextDB::instance().getText(key.c_str());
     }
 
-	txtdy = absoluteY(attr->txt_dy);
+	txtdy = absoluteUIPosY(attr->txt_dy, anchor);
 
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
-		float ty = absoluteY(m_attr->image.dy);
+		float ty = absoluteUIPosY(m_attr->image.dy, anchor);
 		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
-		float tsy = absoluteY(m_attr->image.dsy);
+		float tsy = absoluteUISizeY(m_attr->image.dsy, anchor);
 
 		uv.x = (x - tx) / tsx;
 		uv.y = (y - ty + txtdy) / tsy;
@@ -1422,7 +1422,7 @@ void CShellComplexPushButton::Load(const sqshControl* attr)
 		m_vTex2CheckPos = relativeUV(attr->image2_check._ix, attr->image2_check._iy, m_hTexture2Pressed, anchor);
 	}
 	m_label_x = absoluteUISizeX(_buttonLabelX, anchor);
-	m_label_y = absoluteY(_buttonLabelY);
+	m_label_y = absoluteUISizeY(_buttonLabelY, anchor);
 
 	_RELEASE(m_hFontLabel);
 	m_hFontLabel = terVisGeneric->CreateGameFont(sqshShellMainFont2, inGameLegionDigit);
@@ -1974,7 +1974,7 @@ void CShellAtomButton::Load(const sqshControl* attr)
 	CShellComplexPushButton::Load(attr);
 
 	button_atom_x = absoluteUISizeX(_button_atom4_x, anchor);
-	button_atom_y = absoluteY(_button_atom4_y);
+	button_atom_y = absoluteUISizeY(_button_atom4_y, anchor);
 }
 
 void CShellAtomButton::draw(int bFocus)
@@ -2424,14 +2424,14 @@ void CUITabSheet::LoadSheet(const sqshTabSheet* attr)
 			tabFlashingTextures[i] = 0;
 		}
 		tabXs[i] = absoluteUIPosX(page.x, anchor);
-		tabYs[i] = absoluteY(page.y);
+		tabYs[i] = absoluteUIPosY(page.y, anchor);
 		tabSXs[i] = absoluteUISizeX(page.sx, anchor);
-		tabSYs[i] = absoluteY(page.sy);
+		tabSYs[i] = absoluteUISizeY(page.sy, anchor);
 		tabActiveTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.activeTabImage)).c_str());
 		tabActiveXs[i] = absoluteUIPosX(page.activeX, anchor);
-		tabActiveYs[i] = absoluteY(page.activeY);
+		tabActiveYs[i] = absoluteUIPosY(page.activeY, anchor);
 		tabActiveSXs[i] = absoluteUISizeX(page.activeSX, anchor);
-		tabActiveSYs[i] = absoluteY(page.activeSY);
+		tabActiveSYs[i] = absoluteUISizeY(page.activeSY, anchor);
 
 		tabActiveUVs[i] = relativeUV(page.activeTabImage._ix, page.activeTabImage._iy, tabActiveTextures[i], anchor);
 		tabActiveDUDVs[i] = relativeUV(page.activeTabImage.ix, page.activeTabImage.iy, tabActiveTextures[i], anchor);
@@ -2463,14 +2463,14 @@ void CUITabSheet::LoadSheet(const sqshTabSheet* attr)
 	}
 
 	x = absoluteUIPosX(attr->x, anchor);
-	y = absoluteY(attr->y);
+	y = absoluteUIPosY(attr->y, anchor);
 	sx = absoluteUISizeX(attr->sx, anchor);
-	sy = absoluteY(attr->sy);
+	sy = absoluteUISizeY(attr->sy, anchor);
 
 	dx = absoluteUISizeX(attr->dx, anchor);
-	dy = absoluteY(attr->dy);
+	dy = absoluteUIPosY(attr->dy, anchor);
 	ddsx = absoluteUISizeX(attr->dsx, anchor);
-	ddsy = absoluteY(attr->dsy);
+	ddsy = absoluteUISizeY(attr->dsy, anchor);
 }
 
 void CUITabSheet::setFlashingPageInterval(int nPage, float interval) {
@@ -2871,13 +2871,13 @@ void CMapWindow::Load(const sqshControl* attr)
 
 	activeObjectTx = terVisGeneric->CreateTexture( activeObjectSymbol.image );
 	activeObjectSx = absoluteUISizeX(activeObjectSymbol.sx, anchor);
-	activeObjectSy = absoluteY( activeObjectSymbol.sy );
+	activeObjectSy = absoluteUISizeY(activeObjectSymbol.sy, anchor);
 
 	for (int i = 0; i < EVENT_MINI_MAP_MAX; i++) {
 		_RELEASE(eventTx[i]);
 		eventTx[i] = terVisGeneric->CreateTexture( eventSymbols[i].image );
 		eventSx[i] = absoluteUISizeX(eventSymbols[i].sx, anchor);
-		eventSy[i] = absoluteY( eventSymbols[i].sy );
+		eventSy[i] = absoluteUISizeY(eventSymbols[i].sy, anchor);
 	}
 
 	map_xs = sx / vMap.H_SIZE;
@@ -3076,9 +3076,9 @@ void CTextWindow::Load(const sqshControl* attr)
 
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
-		float ty = absoluteY(m_attr->image.dy);
+		float ty = absoluteUISizeY(m_attr->image.dy, anchor);
 		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
-		float tsy = absoluteY(m_attr->image.dsy);
+		float tsy = absoluteUISizeY(m_attr->image.dsy, anchor);
 
 		uv.x = (x - tx) / tsx;
 		uv.y = (y - ty) / tsy;
@@ -3388,7 +3388,7 @@ void CTextScrollableWindow::Load(const sqshControl* attr)
         m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
     }
     vScrollSX = absoluteUISizeX(attr->xstart, anchor);
-    vScrollSY = absoluteY(attr->ystart);
+    vScrollSY = absoluteUISizeY(attr->ystart, anchor);
     vScrollMarginX = absoluteUISizeX(attr->txt_dy, anchor);
     vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
     vScrollThmbSY = relativeY(attr->image_h.iy);
@@ -3514,7 +3514,7 @@ void CListBoxWindow::Load(const sqshControl* attr)
 	_RELEASE(thumbTexture);
 	_RELEASE(m_hTextureBG);
 
-	m_fStringHeight = absoluteY(listBoxRowHeight);
+	m_fStringHeight = absoluteUISizeY(listBoxRowHeight, anchor);
 
     setupLocaleFonts(m_hFont1250, m_hFont1251, statsHeadTableFontSize);
 //	m_vTexPos[0] = Vect2f(attr->image._ix, attr->image._iy);
@@ -3523,9 +3523,9 @@ void CListBoxWindow::Load(const sqshControl* attr)
 		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
 	}
 	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
-	txtdy = absoluteY(attr->txt_dy);
+	txtdy = absoluteUISizeY(attr->txt_dy, anchor);
 	vScrollSX = absoluteUISizeX(attr->xstart, anchor);
-	vScrollSY = absoluteY(attr->ystart);
+	vScrollSY = absoluteUISizeY(attr->ystart, anchor);
 	vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
@@ -3542,9 +3542,9 @@ void CListBoxWindow::Load(const sqshControl* attr)
 		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG, anchor);
 
 		float tx = absoluteUISizeX(m_attr->image_check.dx, anchor);
-		float ty = absoluteY(m_attr->image_check.dy);
+		float ty = absoluteUISizeY(m_attr->image_check.dy, anchor);
 		float tsx = absoluteUISizeX(m_attr->image_check.dsx, anchor);
-		float tsy = absoluteY(m_attr->image_check.dsy);
+		float tsy = absoluteUISizeY(m_attr->image_check.dsy, anchor);
 
 		uv.x = (x - tx + txtdx) / tsx;
 		uv.y = (y - ty + txtdy) / tsy;
@@ -3835,7 +3835,7 @@ void CStatListBoxWindow::Load(const sqshControl* attr) {
 
 	_RELEASE(m_hTextureBG);
 
-	m_fStringHeight = absoluteY(statsTableRowHeight);
+	m_fStringHeight = absoluteUISizeY(statsTableRowHeight, anchor);
 
 	if (m_hTexture) {
 		for (int i = 0; i < 3; i++) {
@@ -3853,7 +3853,7 @@ void CStatListBoxWindow::Load(const sqshControl* attr) {
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, statsTableFontSize);
 	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
-	txtdy = absoluteY(attr->txt_dy);
+	txtdy = absoluteUISizeY(attr->txt_dy, anchor);
 }
 
 void CStatListBoxWindow::draw(int bFocus) {
@@ -4066,15 +4066,15 @@ void ChatWindow::Load(const sqshControl* attr)
 	_RELEASE(m_hTextureBG);
 
     setupLocaleFonts(m_hFont1250, m_hFont1251, 16);
-    m_fStringHeight = absoluteY(18.0f);
+    m_fStringHeight = absoluteUISizeY(18.0f, anchor);
 
 	if (m_hTexture) {
 		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
 	}
 	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
-	txtdy = absoluteY(attr->txt_dy);
+	txtdy = absoluteUISizeY(attr->txt_dy, anchor);
 	vScrollSX = absoluteUISizeX(attr->xstart, anchor);
-	vScrollSY = absoluteY(attr->ystart);
+	vScrollSY = absoluteUISizeY(attr->ystart, anchor);
 	vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
@@ -4091,9 +4091,9 @@ void ChatWindow::Load(const sqshControl* attr)
 		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG, anchor);
 
 		float tx = absoluteUISizeX(m_attr->image_check.dx, anchor);
-		float ty = absoluteY(m_attr->image_check.dy);
+		float ty = absoluteUISizeY(m_attr->image_check.dy, anchor);
 		float tsx = absoluteUISizeX(m_attr->image_check.dsx, anchor);
-		float tsy = absoluteY(m_attr->image_check.dsy);
+		float tsy = absoluteUISizeY(m_attr->image_check.dsy, anchor);
 
 		uv.x = (x - tx + txtdx) / tsx;
 		uv.y = (y - ty + txtdy) / tsy;
@@ -4468,9 +4468,9 @@ void CMultiTexWindow::init() {
     //In theory these are only used as background textures that need to be full screen
     if (m_attr_cont) {
         x = absoluteUISizeX(m_attr_cont->x, SHELL_ANCHOR_SCALED);
-        y = absoluteY(m_attr_cont->y);
+        y = absoluteUISizeY(m_attr_cont->y, SHELL_ANCHOR_SCALED);
         sx = absoluteUISizeX(m_attr_cont->sx, SHELL_ANCHOR_SCALED);
-        sy = absoluteY(m_attr_cont->sy);
+        sy = absoluteUISizeY(m_attr_cont->sy, SHELL_ANCHOR_SCALED);
         image2hasBelligerentVersion = m_attr_cont->image2.hasBelligerentVersion;
         if (strlen(m_attr_cont->image.texture)) {
             m_hTexture3 = terVisGeneric->CreateTexture(m_attr_cont->image.texture);
@@ -4481,9 +4481,9 @@ void CMultiTexWindow::init() {
         }
     } else if (m_attr) {
         x = absoluteUISizeX(m_attr->x, SHELL_ANCHOR_SCALED);
-        y = absoluteY(m_attr->y);
+        y = absoluteUISizeY(m_attr->y, SHELL_ANCHOR_SCALED);
         sx = absoluteUISizeX(m_attr->sx, SHELL_ANCHOR_SCALED);
-        sy = absoluteY(m_attr->sy);
+        sy = absoluteUISizeY(m_attr->sy, SHELL_ANCHOR_SCALED);
         image2hasBelligerentVersion = m_attr->image2.hasBelligerentVersion;
         if (strlen(m_attr->image.texture)) {
             m_hTexture3 = terVisGeneric->CreateTexture(m_attr->image.texture);
@@ -4647,7 +4647,7 @@ void CMoveButton::Load(const sqshControl* attr)
 	CShellWindow::Load(attr);
 
 	xstart = absoluteUIPosX(attr->xstart, SHELL_ANCHOR_MENU);
-	ystart = absoluteY(attr->ystart);
+	ystart = absoluteUIPosY(attr->ystart, SHELL_ANCHOR_MENU);
 }
 void CMoveButton::draw(int bFocus)
 {
@@ -4907,7 +4907,7 @@ CScaleButton::~CScaleButton()
 void CScaleButton::Load(const sqshControl* attr)
 {
 	CShellWindow::Load( attr );
-	size = absoluteY(attr->ystart);
+	size = absoluteUISizeY(attr->ystart, anchor);
 	_RELEASE(m_hTextureBG);
 //	m_vTexPos[1] = Vect2f(attr->image.ix, attr->image.iy);
 	if (m_hTexture) {
@@ -5128,13 +5128,13 @@ void CEditWindow::Load(const sqshControl* attr)
 	if (m_attr->font_group == 4) {
 		txtdy = 0;
 	} else {
-		txtdy = absoluteY(m_attr->txt_dy);
+		txtdy = absoluteUISizeY(m_attr->txt_dy, anchor);
 	}
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
-		float ty = absoluteY(m_attr->image.dy);
+		float ty = absoluteUISizeY(m_attr->image.dy, anchor);
 		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
-		float tsy = absoluteY(m_attr->image.dsy);
+		float tsy = absoluteUISizeY(m_attr->image.dsy, anchor);
 
 		uv.x = (x - tx) / tsx;
 		uv.y = (y - ty + txtdy) / tsy;
@@ -5308,7 +5308,7 @@ CChatInGameEditWindow::~CChatInGameEditWindow() {
 void CChatInGameEditWindow::Load(const sqshControl* attr) {
 	CEditWindow::Load(attr);
 
-    x = absoluteX(m_attr->x);
+    x = absoluteUIPosX(m_attr->x, SHELL_ANCHOR_LEFT);
     
 	_RELEASE(m_hPopupTexture);
 	m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
@@ -5437,9 +5437,9 @@ void CSplashWindow::LoadMenuWnd(const sqshControlContainer* attr) {
     loadAnchor();
     
 	x = absoluteUIPosX(m_attr_cont->x, anchor);
-	y = absoluteY(m_attr_cont->y);
+	y = absoluteUIPosY(m_attr_cont->y, anchor);
 	sx = absoluteUISizeX(m_attr_cont->sx, anchor);
-	sy = absoluteY(m_attr_cont->sy);
+	sy = absoluteUISizeY(m_attr_cont->sy, anchor);
 	if(strlen(attr->image.texture))
 	{
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image)).c_str() );
@@ -5537,7 +5537,7 @@ void CProgressEnergy::Load(const sqshControl* attr) {
 
 	xstart = absoluteUISizeX(m_attr->xstart, anchor);
 	arrowSx = absoluteUISizeX(m_attr->txt_dx, anchor);
-	arrowSy = absoluteY(m_attr->txt_dy);
+	arrowSy = absoluteUISizeY(m_attr->txt_dy, anchor);
 
 	m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture, anchor);
 	m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
@@ -5963,12 +5963,12 @@ CHintWindow::CHintWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWin
 
 void CHintWindow::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
-	x = absoluteX(hintX);
-	y = absoluteY(hintY);
+	x = absoluteUIPosX(hintX, anchor);
+	y = absoluteUIPosY(hintY, anchor);
 	sx = absoluteUISizeX(hintSX, anchor);
-//	sy = absoluteY(hintSY);
-	cutSceneX = absoluteX(cutSceneHintX);
-	cutSceneY = absoluteY(cutSceneHintY);
+//	sy = absoluteUISizeY(hintSY);
+	cutSceneX = absoluteUIPosX(cutSceneHintX, anchor);
+	cutSceneY = absoluteUIPosY(cutSceneHintY, anchor);
 	cutSceneSX = absoluteUISizeX(cutSceneHintSX, anchor);
 }
 
@@ -6056,7 +6056,7 @@ int CChatInfoWindow::HitTest(float x, float y) {
 void CChatInfoWindow::Load(const sqshControl* attr) {
     ChatWindow::Load(attr);
 
-    x = absoluteX(m_attr->x);
+    x = absoluteUIPosX(m_attr->x, SHELL_ANCHOR_LEFT);
     vScrollThmbSX /= 2;
     vScrollThmbSY /= 2;
     
@@ -6064,7 +6064,7 @@ void CChatInfoWindow::Load(const sqshControl* attr) {
     m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
     
     setupLocaleFonts(m_hFont1250, m_hFont1251, HINT_FONT_SIZE);
-    m_fStringHeight = absoluteY(HINT_FONT_SIZE + 2.0f);
+    m_fStringHeight = absoluteUISizeY(HINT_FONT_SIZE + 2.0f, anchor);
     updateScroller();
 }
 
@@ -6439,7 +6439,7 @@ void CCreditsWindow::Show(int bShow) {
 		Vect2f v1, v2;
 		OutTextRect(0, 0, textData.c_str(), -1, v1, v2);
 		terRenderDevice->SetFont(0);
-		maxTime = (v2.y - v1.y + sy + 10) / absoluteY(CREDITS_SCROLL_SPEED) * 1000.0f;
+		maxTime = (v2.y - v1.y + sy + 10) / absoluteUISizeY(CREDITS_SCROLL_SPEED, anchor) * 1000.0f;
 	} else {
 		timer = -1;
 	}
@@ -6455,7 +6455,7 @@ void CCreditsWindow::draw(int bFocus)
 		timer = 0;
 	}
 
-    offset.y = sy - float(absoluteY(CREDITS_SCROLL_SPEED)) * timer / 1000.0f;
+    offset.y = sy - float(absoluteUISizeY(CREDITS_SCROLL_SPEED, anchor)) * timer / 1000.0f;
     
     CTextWindow::draw(bFocus);
 }

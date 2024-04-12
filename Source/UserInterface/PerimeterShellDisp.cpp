@@ -2477,7 +2477,7 @@ void CShellIconManager::draw()
 						v2.x += 2;
 
 						int pos_x = terScreenSizeX - (v2.x-v1.x) - 1;
-						int delta_y = absoluteY(nPopupTextPosY + nPopupSY) - (v2.y-v1.y);
+						int delta_y = absoluteUIPosY(nPopupTextPosY + nPopupSY, SHELL_ANCHOR_DEFAULT) - (v2.y-v1.y);
 
 						terRenderDevice->DrawSprite(pos_x - 2, delta_y, v2.x-v1.x + 2, v2.y-v1.y,
 							0, 0, 1, 1, m_hPopupTexture, sColor4c(255,255,255,255));
@@ -2523,7 +2523,7 @@ void CShellIconManager::draw()
             //Render text
             const float separationX = 30.0f;
 			int baseUnitsX = terRenderDevice->GetSizeX() - w - separationX;
-			int baseUnitsY = absoluteY(scripts_export::gameTopEdge);
+			int baseUnitsY = absoluteUISizeY(scripts_export::gameTopEdge, SHELL_ANCHOR_RIGHT);
             sColor4f c(1, 1, 1, 1);
 			OutText(baseUnitsX, baseUnitsY, topLine.c_str(), &c, -1);
 
@@ -2538,7 +2538,13 @@ void CShellIconManager::draw()
                 if (!gameShell->getCountDownTime().empty()) {
                     terRenderDevice->SetFont(m_hFontCountDownTime);
                     sColor4f c(sqshFontCountDownTimeColor);
-                    OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &c, -1);
+                    OutText(
+                        absoluteUIPosX(countDownTimerX, SHELL_ANCHOR_RIGHT),
+                        absoluteUIPosY(countDownTimerY, SHELL_ANCHOR_RIGHT),
+                        gameShell->getCountDownTime().c_str(),
+                        &c,
+                        -1
+                    );
                 }
 
                 //Add total time

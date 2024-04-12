@@ -75,7 +75,11 @@ inline float getRenderRatio() {
 }
 
 inline float getUIX(SHELL_ANCHOR anchor) {
-    return anchor == SHELL_ANCHOR_MENU ? source_ui_resolution.mx : static_cast<float>(source_ui_resolution.x);
+    if (anchor == SHELL_ANCHOR_MENU) {
+        return source_ui_resolution.mx;
+    } else {
+        return static_cast<float>(source_ui_resolution.x);
+    }
 }
 
 inline float getUIY() {
@@ -98,19 +102,13 @@ inline Vect2f relativeUV(float x, float y, cTexture *texture, SHELL_ANCHOR ancho
     );
 }
 
-inline int absoluteX(float x) {
-    if (xm::abs(x) >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
-    return xm::round(x * terRenderDevice->GetSizeX());
-}
-
-inline int absoluteY(float y) {
-    if (xm::abs(y) >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
-    return xm::round(y * terRenderDevice->GetSizeY());
-}
-
 int absoluteUIPosX(float x, SHELL_ANCHOR anchor);
 
+int absoluteUIPosY(float y, SHELL_ANCHOR anchor);
+
 int absoluteUISizeX(float x, SHELL_ANCHOR anchor);
+
+int absoluteUISizeY(float y, SHELL_ANCHOR anchor);
 
 void initSourceUIResolution();
 
