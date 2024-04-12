@@ -314,9 +314,10 @@ bool cScene::GetLighting(sColor4f &Ambient,sColor4f &Diffuse,sColor4f &Specular,
 	return found;
 }
 
+#define TRACE_DEBUG 0
 #define PREC_TRACE							10
 #define PREC_TRACE_RAY						18
-bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bool ignore_height)
+bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bool ignore_height, bool ignore_bounds)
 { // тест на пересечение луча с объектами сцены, в том числе и с ландшафтом
 
 	TerraInterface* terra=TileMap->GetTerra();
@@ -325,10 +326,15 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bo
 	float xe=pFinish.x,ye=pFinish.y,ze=pFinish.z;
 	float dx=xe-xb,dy=ye-yb,dz=ze-zb,dxAbs=ABS(dx),dyAbs=ABS(dy);
 	int dx_,dy_,dz_;
-	if(dxAbs>dyAbs) {
-        dy_= xm::round(dy * (1 << PREC_TRACE_RAY) / dxAbs), dz_= xm::round(dz * (1 << PREC_TRACE_RAY) / dxAbs), dx_=((dx >= 0) ? 1 : -1) << PREC_TRACE_RAY;
-    } else if(dyAbs>FLT_EPS) {
-        dx_= xm::round(dx * (1 << PREC_TRACE_RAY) / dyAbs), dz_= xm::round(dz * (1 << PREC_TRACE_RAY) / dyAbs), dy_=((dy >= 0) ? 1 : -1) << PREC_TRACE_RAY;
+
+	if (dxAbs > dyAbs) {
+        dy_= xm::round(dy * (1 << PREC_TRACE_RAY) / dxAbs);
+        dz_= xm::round(dz * (1 << PREC_TRACE_RAY) / dxAbs);
+        dx_=((dx >= 0) ? 1 : -1) << PREC_TRACE_RAY;
+    } else if (dyAbs > FLT_EPS) {
+        dx_= xm::round(dx * (1 << PREC_TRACE_RAY) / dyAbs);
+        dz_= xm::round(dz * (1 << PREC_TRACE_RAY) / dyAbs);
+        dy_=((dy >= 0) ? 1 : -1) << PREC_TRACE_RAY;
     } else {
 		//VISASSERT(0);
 		if (pTrace) {
@@ -340,35 +346,93 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bo
 	int x_size=terra->SizeX();
 	int y_size=terra->SizeY();
 
-	if(xb<0) {
-		if(dxAbs) xb=(0-xb)/dxAbs,yb+=xb*dy,zb+=xb*dz,xb=0;
-		else return false;
+#if defined(PERIMETER_DEBUG) && TRACE_DEBUG
+    if (ignore_bounds) {
+        printf("pS %d, %d, %d\n", (int) xb, (int) yb, (int) zb);
     }
-	if(yb<0) {
-		if(dyAbs) yb=(0-yb)/dyAbs,xb+=yb*dx,zb+=yb*dz,yb=0;
-		else return false;
-    }
-	if(xb>=x_size) {
-		if(dxAbs) xb=(xb-(x_size-1))/dxAbs,yb+=xb*dy,zb+=xb*dz,xb=x_size-1;
-		else return false;
-    }
-	if(yb>=y_size) {
-		if(dyAbs) yb=(yb-(y_size-1))/dyAbs,xb+=yb*dx,zb+=yb*dz,yb=y_size-1;
-		else return false;
+#endif
+
+    if (!ignore_bounds) {
+        if (xb < 0) {
+            if (dxAbs) {
+                xb = (0 - xb) / dxAbs, yb += xb * dy, zb += xb * dz, xb = 0;
+            } else {
+                return false;
+            }
+        }
+        if (yb < 0) {
+            if (dyAbs) {
+                yb = (0-yb)/dyAbs,xb+=yb*dx,zb+=yb*dz,yb=0;
+            } else {
+                return false;
+            }
+        }
+        if (xb >= x_size) {
+            if(dxAbs) {
+                xb = (xb - (x_size-1)) / dxAbs;
+                yb += xb*dy;
+                zb += xb*dz;
+                xb = x_size - 1;
+            } else {
+                return false;
+            }
+        }
+        if (yb >= y_size) {
+            if(dyAbs) {
+                yb = (yb - (y_size-1)) / dyAbs;
+                xb += yb*dx;
+                zb += yb*dz;
+                yb = y_size - 1;
+            } else {
+                return false;
+            }
+        }
     }
 
-	int xb_= xm::round(xb * (1 << PREC_TRACE_RAY)),yb_= xm::round(yb * (1 << PREC_TRACE_RAY)),zb_= xm::round(
-            zb * (1 << PREC_TRACE_RAY));
-	for(;(
-            (xb_>>PREC_TRACE_RAY)>=0 && (xb_>>PREC_TRACE_RAY)<x_size &&
-            (yb_>>PREC_TRACE_RAY)>=0 && (yb_>>PREC_TRACE_RAY)<y_size
-        ); xb_+=dx_,yb_+=dy_,zb_+=dz_) {
-        int z_height = ignore_height ? terra->GetHZeroPlast()
-                     : terra->GetZ((xb_ >> PREC_TRACE_RAY), (yb_ >> PREC_TRACE_RAY));
-        if (z_height > (zb_ >> PREC_TRACE_RAY)) {
+	int xb_= xm::round(xb * (1 << PREC_TRACE_RAY));
+    int yb_= xm::round(yb * (1 << PREC_TRACE_RAY));
+    int zb_= xm::round(zb * (1 << PREC_TRACE_RAY));
+	while (true) {
+        xb_+=dx_;
+        yb_+=dy_;
+        zb_+=dz_;
+        //Check if ray is still inside world
+        int xbp = xb_ >> PREC_TRACE_RAY;
+        int ybp = yb_ >> PREC_TRACE_RAY;
+        int zbp = zb_ >> PREC_TRACE_RAY;
+        bool inside_bounds = xbp>=0 && xbp<x_size &&
+                             ybp>=0 && ybp<y_size;
+        if (!inside_bounds) {
+            if (!ignore_bounds) {
+                break;
+            } else {
+                int max_edge = max(x_size, y_size); 
+                if (xbp<(-max_edge) || xbp>(x_size + max_edge) ||
+                    ybp<(-max_edge) || ybp>(y_size + max_edge)) {
+                    //Even if "ignoring bounds" we don't compute beyond the edge that is as big as the size
+                    //printf("pR EDGE %d, %d, %d\n", xbp, ybp, zbp);
+                    return false;
+                }
+            }
+        }
+        
+        //Get height to check ray collision
+        int z_height = 0;
+        if (ignore_height) {
+            z_height = terra->GetHZeroPlast();
+        } else if (inside_bounds) {
+            z_height = terra->GetZ(xbp, ybp);
+        }
+        
+        //Hit ground
+        if (z_height >= zbp) {
             if (pTrace) {
-                pTrace->set(xb_ >> PREC_TRACE_RAY, yb_ >> PREC_TRACE_RAY,
-                            terra->GetZ((xb_ >> PREC_TRACE_RAY), (yb_ >> PREC_TRACE_RAY)));
+                pTrace->set(xbp, ybp, z_height);
+#if defined(PERIMETER_DEBUG) && TRACE_DEBUG
+                if (ignore_bounds) {
+                    printf("pT  %f, %f, %f\n", pTrace->x, pTrace->y, pTrace->z);
+                }
+#endif
             }
             return true;
         }

@@ -1941,6 +1941,7 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
                     terCamera->GetCamera(),
                     mousePosition_,
                     &mapMoveStartWorldPos_,
+                    true,
                     true
             )) {
                 terCamera->GetCamera()->SetCopy(mapMoveStartCamera_);

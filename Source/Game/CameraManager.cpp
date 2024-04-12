@@ -395,13 +395,13 @@ void terCameraType::tilt(Vect2f mouseDelta)
 }
 
 bool terCameraType::cursorTrace(const Vect2f& cursor, Vect3f& trace) const {
-    return terCameraType::cursorTrace(GetCamera(), cursor, &trace, false);
+    return terCameraType::cursorTrace(GetCamera(), cursor, &trace, false, false);
 }
 
-bool terCameraType::cursorTrace(const cCamera* camera, const Vect2f& cursor, Vect3f* trace, bool ignore_height) {
+bool terCameraType::cursorTrace(const cCamera* camera, const Vect2f& cursor, Vect3f* trace, bool ignore_height, bool ignore_bounds) {
 	Vect3f pos,dir;
     camera->GetWorldRay(cursor, pos, dir);
-	return terScene->Trace(pos, pos+dir, trace, ignore_height);
+	return terScene->Trace(pos, pos+dir, trace, ignore_height, ignore_bounds);
 }
 
 bool terCameraType::shift(const cCamera* originCamera, const Vect3f& originCameraPos, const Vect3f& originWorldPos, const Vect2f& mousePos) {
@@ -414,6 +414,7 @@ bool terCameraType::shift(const cCamera* originCamera, const Vect3f& originCamer
         originCamera,
         mousePos,
         &worldPos,
+        true,
         true
     )) return false;
     

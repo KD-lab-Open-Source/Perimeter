@@ -96,7 +96,7 @@ public:
 	void destroyLink();
 
     bool cursorTrace(const Vect2f& cursor, Vect3f& trace) const;
-    static bool cursorTrace(const cCamera* camera, const Vect2f& cursor, Vect3f* trace, bool ignore_height);
+    static bool cursorTrace(const cCamera* camera, const Vect2f& cursor, Vect3f* trace, bool ignore_height, bool ignore_bounds);
 
 	bool restricted() const { return restricted_; }
 	void setRestriction(bool restricted) { restricted_ = restricted; }
