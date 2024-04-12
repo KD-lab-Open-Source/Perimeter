@@ -699,12 +699,20 @@ void AVWrapper::clearFrames() {
     audioFrames.clear();
 }
 
-int AVWrapper::getVideoWidth() const {
+int AVWrapper::getVideoCodecWidth() const {
     return videoCodecCtx->width;
 }
 
-int AVWrapper::getVideoHeight() const {
+int AVWrapper::getVideoCodecHeight() const {
     return videoCodecCtx->height;
+}
+
+int AVWrapper::getVideoWidth() const {
+    return swsCtx ? swsWidth : videoCodecCtx->width;
+}
+
+int AVWrapper::getVideoHeight() const {
+    return swsCtx ? swsHeight : videoCodecCtx->height;
 }
 
 int AVWrapper::getVideoBPP() const {

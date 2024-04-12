@@ -198,10 +198,15 @@ bool VideoPlayer::Init(const char* path) {
 		xassert(0);
 		return false;
 	}
-    
+
+    IniManager cfg("Perimeter.ini", false);
+    int scalerWidth = 1280;
+    int scalerHeight = 720;
+    cfg.getInt("Graphics", "MaxVideoResolutionWidth", scalerWidth);
+    cfg.getInt("Graphics", "MaxVideoResolutionHeight", scalerHeight);
     wrapper->setupVideoScaler(
-        wrapper->getVideoWidth(),
-        wrapper->getVideoHeight(),
+        min(scalerWidth, wrapper->getVideoCodecWidth()),
+        min(scalerHeight, wrapper->getVideoCodecHeight()),
         gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9 ? AVPixelFormat::AV_PIX_FMT_BGRA : AVPixelFormat::AV_PIX_FMT_RGBA,
         SWS_BILINEAR
     );
@@ -386,7 +391,12 @@ void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
     int pitch=0;
     static Vect2i size;
     getSize(size);
-    uint8_t* ptr = pTexture->LockTexture(pitch);
+    uint8_t* ptr = static_cast<uint8_t*>(gb_VisGeneric->GetRenderDevice()->LockTextureRect(
+            pTexture,
+            pitch,
+            Vect2i::ZERO,
+            size
+    ));
 
     //Dump frame into texture
     frame->copyBuffer(&ptr);

@@ -175,9 +175,15 @@ public:
     void clearFrames();
 
     ///Get video codec width
-    int getVideoWidth() const;
+    int getVideoCodecWidth() const;
 
     ///Get video codec height
+    int getVideoCodecHeight() const;
+
+    ///Get video output width
+    int getVideoWidth() const;
+
+    ///Get video output height
     int getVideoHeight() const;
 
     ///Get video codec bpp
