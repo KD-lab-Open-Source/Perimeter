@@ -743,6 +743,12 @@ int SwitchMenuBGQuant2( float, float ) {
 				case SQSH_MM_SINGLE_SCR:
                     //Only enable if user didn't choose a specific content
                     _shellIconManager.GetWnd(SQSH_MM_BATTLE_BTN)->Enable(terGameContentAvailable == terGameContentSelect);
+#ifdef EMSCRIPTEN
+                    _shellIconManager.GetWnd(SQSH_MM_BACK_FROM_SINGLE_BTN)->Enable(false);
+#endif
+#ifdef GPX
+                    _shellIconManager.GetWnd(SQSH_MM_CONTENT_CHOOSER_BTN)->Enable(false);
+#endif
 					if (!debug_allow_replay) {
 						_shellIconManager.GetWnd(SQSH_MM_REPLAY_LINE)->Show(0);
 						_shellIconManager.GetWnd(SQSH_MM_REPLAY_BORDER)->Show(0);
