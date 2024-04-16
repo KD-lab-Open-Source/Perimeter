@@ -7,9 +7,9 @@ ENDIF ()
 
 #GameMath retrieval
 FetchContent_Declare(gamemath
-    GIT_REPOSITORY    https://github.com/TheAssemblyArmada/GameMath
-    GIT_TAG           "59f7ccd494f7e7c916a784ac26ef266f9f09d78d"
-    GIT_SHALLOW       OFF
+		GIT_REPOSITORY    https://github.com/caiiiycuk/perimeter-gamemath
+		GIT_TAG           "7be32d7c86eefe83fa32a0706e43bdfae05d93a9"
+		GIT_SHALLOW       OFF
 )
 FetchContent_MakeAvailable(gamemath)
 

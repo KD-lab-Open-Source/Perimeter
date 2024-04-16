@@ -293,7 +293,7 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
 // 2D primitives
 
 float cInterfaceRenderDevice::getThinLineWidth() const {
-    return static_cast<float>(ScreenSize.y * (1.0 / 768.0) / 2.0);
+    return static_cast<float>(max(600, ScreenSize.y) * (1.0 / 600.0) / 2.0);
 }
 
 void cInterfaceRenderDevice::DrawLine(int x1,int y1,int x2,int y2,const sColor4c& color, float width) {    

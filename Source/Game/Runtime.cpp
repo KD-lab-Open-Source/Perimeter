@@ -51,6 +51,10 @@
 #include "GraphicsOptions.h"
 #include "GameContent.h"
 
+#ifdef GPX
+extern void pollGpxEvents();
+#endif
+
 const char* currentShortVersion = PERIMETER_VERSION;
 
 const char* currentVersion = 
@@ -590,14 +594,12 @@ cInterfaceRenderDevice* SetGraph()
     terScreenSizeX = gpx()->sys()->getWidth();
     terScreenSizeY = gpx()->sys()->getHeight();
 #ifdef EMSCRIPTEN
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-    auto minHeight = min(dm.h, 960);
+    float minHeight = 600;
     if (terScreenSizeY < minHeight) {
         terScreenSizeY = minHeight;
-        terScreenSizeX = (float) minHeight * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
+        terScreenSizeX = minHeight * gpx()->sys()->getWidth() / gpx()->sys()->getHeight();
     }
-    printf("Display size: %dx%d, screen height %d, min height %d\n", terScreenSizeX, terScreenSizeY, dm.h, minHeight);
+    printf("Display size: %dx%d\n", terScreenSizeX, terScreenSizeY);
 #endif
     int ModeRender = RENDERDEVICE_MODE_RGB32 | RENDERDEVICE_MODE_WINDOW;
 #else
@@ -1186,6 +1188,9 @@ void app_event_poll() {
     //Iterate each SDL event that we may have queued since last poll
     SDL_Event event;
     bool closing = false;
+#ifdef GPX
+    pollGpxEvents();
+#endif
     while (SDL_PollEvent(&event) == 1) {
         if (sdlWindow && event.window.windowID && event.window.windowID != windowID) {
             //Event is for a window that is not current or window is not available
