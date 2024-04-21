@@ -234,34 +234,50 @@ void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHid
 	}
 }
 
-void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
-	//fill map list
-	std::string path_str = convert_path_native(path.c_str());
-    path_str = string_to_lower(path_str.c_str());
-	
-	//Collect files and order
-	std::vector<std::string> paths;
-    for (const auto & entry : get_content_entries_directory(path_str)) {
-        if (mask.empty() || endsWith(entry->key, mask)) {
-            paths.emplace_back(entry->key);
-        }
-    }
-    sort(paths.begin(), paths.end());
-    
-    //Fill map list from paths
-    for (std::string& entry_path : paths) {
-        MissionDescription mission;
-        mission.setSaveName(entry_path.c_str());
-        mission.setReelName(entry_path.c_str());
-//			mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
-        if((!replay) || isCorrectPlayReelFile(mission.playReelPath().c_str())) {
-            mapVector.push_back(mission);
-//			MissionDescription mission((string(path) + FindFileData.cFileName).c_str(), replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame);
-//			if(mission.worldID() != -1)
-//				mapVector.push_back(mission);
-        }
-    }
+void loadMapVector(
+        std::vector<MissionDescription>& maps,
+        const std::string& path,
+        const std::string& mask, bool replay
+) {
+    static std::vector<const char*> paths = { nullptr };
+    paths[0] = path.c_str();
+    loadMapVector(maps, paths, mask, replay);
 }
+
+void loadMapVector(
+        std::vector<MissionDescription>& mapVector,
+        const std::vector<const char*>& paths,
+        const std::string& mask, bool replay
+) {	
+	//Collect files
+    //std::set<std::string> names;
+    for (const auto& path : paths) {
+        std::string path_str = convert_path_native(path);
+        path_str = string_to_lower(path_str.c_str());
+        for (const auto& entry: get_content_entries_directory(path_str)) {
+            if (mask.empty() || endsWith(entry->key, mask)) {
+                MissionDescription mission;
+                mission.setSaveName(entry->key.c_str());
+                const auto& missionName = mission.missionName();
+                if (missionName.empty()) {// || !names.insert(missionName).second) {
+                    continue;
+                }
+                mission.setReelName(entry->key.c_str());
+                
+                //If we are loading relays and is not correct, skip
+                if (replay && !isCorrectPlayReelFile(mission.playReelPath().c_str())) {
+                    continue;
+                }
+                
+                mapVector.push_back(mission);
+            }
+        }
+    }
+    
+    //Sort it
+    std::sort(mapVector.begin(), mapVector.end());
+}
+
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, GameType gameType) {
 	if (mVect[index].worldID() == -1) {
         const char* filepath;

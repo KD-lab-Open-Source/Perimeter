@@ -328,9 +328,6 @@ void loadAddonET(ModMetadata& mod) {
             paths[src.ModelNameArray[j]] = {};
         }
     }
-
-    //Make ET campaign maps available normally since we cant unlock em
-    paths["resource/battle/scenario"] = { "resource/battle" };
     
     //Add textures, these don't overlap original harkback structures textures
     paths["resource/models/main/exodus"] = {};

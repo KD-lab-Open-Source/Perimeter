@@ -225,6 +225,19 @@ public:
     XBuffer binaryData = XBuffer(0, true); //Contains compressed binary data (.bin, previously .gmp and .dat)
     XBuffer scriptsData = XBuffer(0, true); //Contains Scripts attributes
 
+    inline bool operator <(const MissionDescription& rhs) const {
+        if (missionName().empty() || rhs.missionName().empty()) {
+            return savePathContent() < rhs.savePathContent();
+        } else {
+            if (missionName() < rhs.missionName()) {
+                return true;
+            } else if (missionName() == rhs.missionName()) {
+                return savePathContent() < rhs.savePathContent();
+            }
+        }
+        return false;
+    }
+
 private:
     std::string resolve_mission_path(const std::string& path);
     

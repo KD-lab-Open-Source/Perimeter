@@ -37,9 +37,8 @@ int battlePlayersPage = 0;
 //battle menu
 void loadBattleList() {
 	if (battleMaps.empty()) {
-		loadMapVector(battleMaps, "RESOURCE/BATTLE", ".spg");
-		defaultBattleMapCount = battleMaps.size();
-        loadMapVector(battleMaps, "RESOURCE/BATTLE/SCENARIO", ".spg");
+        const std::vector<const char*> paths = { "RESOURCE/BATTLE", "RESOURCE/BATTLE/SCENARIO" };
+        loadMapVector(battleMaps, paths, ".spg", false);
 	}
 }
 
@@ -274,14 +273,9 @@ void onBattleMenuOpening() {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MAP_LIST);
 	list->NewItem(1);
 	list->Clear();
-    int s = defaultBattleMapCount + gameShell->currentSingleProfile.getLastMissionNumber();
-//	int s = defaultBattleMapCount;
-    if(s > battleMaps.size() || s < 0)
-        s = battleMaps.size();
-
-	for (int i = 0; i < s; i++) {
+    for (int i = 0; i < battleMaps.size(); i++) {
 		std::string name = getMapName(battleMaps[i].missionName().c_str());
-		list->AddString(name.c_str(), 0 );
+		list->AddString(name, 0);
 	}
     
     battleColors.reset(UI_PLAYERS_MAX, playerAllowedColorSize);
@@ -292,13 +286,13 @@ void onBattleMenuOpening() {
     setSlotClosed(2, true);
     setSlotClosed(3, true);
 
-    if (s) {
+    if (battleMaps.empty()) {
+        list->SetCurSel(-1);
+        clearMapDescWnd(SQSH_MM_BATTLE_MAP, SQSH_MM_BATTLE_MAP_DESCR_TXT, -1);
+    } else {
         list->SetCurSel(0);
         setupBattleDescWnd(0, battleMaps, SQSH_MM_BATTLE_MAP, SQSH_MM_BATTLE_MAP_DESCR_TXT);
-	} else {
-		list->SetCurSel(-1);
-		clearMapDescWnd(SQSH_MM_BATTLE_MAP, SQSH_MM_BATTLE_MAP_DESCR_TXT, -1);
-	}
+    }
 
     flagNeedRefresh = true;
 }
