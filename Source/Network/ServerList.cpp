@@ -67,17 +67,13 @@ ServerList::~ServerList() {
 
 void ServerList::startFind() {
     if (findingHosts) return;
-#ifdef PERIMETER_DEBUG
     printf("ServerList::startFind\n");
-#endif
     findingHosts = true;
 }
 
 void ServerList::stopFind() {
     if (!findingHosts) return;
-#ifdef PERIMETER_DEBUG
     printf("ServerList::stopFind\n");
-#endif
     findingHosts = false;
     listNeedUpdate = false;
     lastRelayGameInfoList.clear();
@@ -91,16 +87,19 @@ bool ServerList::checkRelayConnection() {
     }
     
     NetAddress address;
-    const char* primary_relay = getPrimaryNetRelayAddress();
-    if (!primary_relay || !NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
+    std::string primary_relay;
+    getPrimaryNetRelayAddress(primary_relay);
+    if (primary_relay.empty()) {
+        fprintf(stderr, "Error connecting to relay: no relay address\n");
+        return false;
+    } else if (!NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
+        fprintf(stderr, "Error connecting to relay: couldn't resolve address '%s'\n", primary_relay.c_str());
         return false;
     }
 
     NetTransport *transport = NetTransport::create(address);
     if (!transport) {
-#if !defined(PERIMETER_DEBUG) || 1
-        stopFind();
-#endif
+        fprintf(stderr, "Error connecting to relay: no transport\n");
         return false;
     }
     
@@ -147,6 +146,7 @@ void ServerList::fetchRelayHostInfoList() {
                 gameList.emplace_back(info);
             }
         }
+        //printf("ServerList::fetchRelayHostInfoList: found %" PRIsize "\n", gameList.size());
         lastRelayGameInfoList.clear();
         lastRelayGameInfoList = gameList;
         listNeedUpdate = true;
@@ -165,4 +165,5 @@ void ServerList::refreshHostInfoList() {
     for (auto& host : lastRelayGameInfoList) {
         gameInfoList.emplace_back(host);
     }
+    //printf("ServerList::refreshHostInfoList: %" PRIsize " -> %" PRIsize "\n", lastRelayGameInfoList.size(), gameInfoList.size());
 }

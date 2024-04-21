@@ -337,8 +337,9 @@ void NetConnectionHandler::stopListening() {
 bool NetConnectionHandler::startRelayRoom() {
     //Create relay connection
     NetAddress address;
-    const char* primary_relay = getPrimaryNetRelayAddress();
-    if (!primary_relay || !NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
+    std::string primary_relay;
+    getPrimaryNetRelayAddress(primary_relay);
+    if (primary_relay.empty() || !NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
         return false;
     }
     NetTransport* transport = NetTransport::create(address);

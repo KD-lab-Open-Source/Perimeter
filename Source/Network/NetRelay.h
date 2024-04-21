@@ -218,7 +218,7 @@ struct NetRelayMessage_RelayRemovePeer : NetRelayMessage {
     void read(XBuffer& in) override;
 };
 
-const char* getPrimaryNetRelayAddress();
+void getPrimaryNetRelayAddress(std::string& relay);
 
 bool receiveNetRelayMessage(
         NetConnection* relay,

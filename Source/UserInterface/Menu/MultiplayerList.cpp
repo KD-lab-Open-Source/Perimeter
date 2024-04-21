@@ -23,9 +23,10 @@ int startCmdlineQuant(float, float ) {
         
         NetAddress conn;
         if (cmdLineData.address.empty() && cmdLineData.roomID != 0) {
-            cmdLineData.address = getPrimaryNetRelayAddress();
+            getPrimaryNetRelayAddress(cmdLineData.address);
         }
-        if (!NetAddress::resolve(conn, cmdLineData.address, cmdLineData.addressDefaultPort)) {
+        if (cmdLineData.address.empty()
+        || !NetAddress::resolve(conn, cmdLineData.address, cmdLineData.addressDefaultPort)) {
             setMessageBoxTextID("Interface.Menu.Messages.IPEmpty");
             showMessageBoxButtons();
             return 0;
