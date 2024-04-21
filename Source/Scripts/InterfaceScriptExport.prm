@@ -4188,7 +4188,9 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
 
 		sqshControl_ScaleButton { x=(220 + 10)/1024; y=521/768; sx=(694 - 20)/1024; sy=157/768; ystart=116/768; },
-		{type = SQSH_TEXT_WINDOW_TYPE; id = SQSH_MM_BRIEFING_TXT;				x=(220 + 10)/1024; y=(521 + 5)/768; sx=(694 - 10)/1024; sy=(157 - 20)/768; txt_align=SHELL_ALIGN_LEFT;txt_vert_align=SHELL_ALIGN_LEFT; image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};txt_dx = 0.7f;},
+		{type = SQSH_TEXT_WINDOW_TYPE; id = SQSH_MM_BRIEFING_TXT;				x=(220 + 10)/1024; y=(521 + 5)/768; sx=(694 - 10)/1024; sy=(157 - 20)/768;
+                                                                                image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
+		                                                                        txt_align=SHELL_ALIGN_LEFT; txt_vert_align=SHELL_ALIGN_LEFT; txt_dx = 0.7f; font_group = 3; },
 		sqshControl_ScaleButton { x=105/1024; y=520/768; sx=113/1024; sy=157/768; ystart=157/768; },
 		{type = SQSH_PORTRAIT_TYPE; id = SQSH_MM_BRIEFING_ICON;					x=105/1024; y=520/768; sx=113/1024; sy=157/768; image={texture="";ix = 113; iy = 157;};image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 113; iy = 157;hasResolutionVersion=0;}; },
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_SKIP_BRIEFING_BORDER;		x=middleSeparateBottomBtn.x;  y=middleSeparateBottomBtn.y; sx=middleSeparateBottomBtn.sx; sy=middleSeparateBottomBtn.sy; hitTestMode = HITTEST_NONE; },
