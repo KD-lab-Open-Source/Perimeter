@@ -1124,8 +1124,8 @@ int SDL_main(int argc, char *argv[])
                 //These are passed internally and are not supposed to pass into next instance
                 continue;
             }
-            if (startsWith(arg, "initial_menu")) {
-                //Ignore it as is only for first time
+            if (startsWith(arg, "initial_menu") || startsWith(arg, "content_select")) {
+                //Ignore it as is only for first time, also some can cause game restart in a loop
                 continue;
             }
 
