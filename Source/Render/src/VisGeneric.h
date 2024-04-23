@@ -81,7 +81,6 @@ public:
 	void SetDrawMeshScreen(bool);
 	void SetMapLevel(float);
 	void SetShowRenderTextureDBG(bool);
-	void SetFavoriteLoadDDS(bool);
 	void SetAnisotropic(bool);
 	bool GetAnisotropic();
 

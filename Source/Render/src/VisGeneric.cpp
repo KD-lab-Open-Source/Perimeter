@@ -51,7 +51,6 @@ DebugType<float>	Option_MapLevel(0.8f);
 DebugType<int>		Option_ShowRenderTextureDBG(0);
 DebugType<int>		Option_DebugShowShadowVolume(0);
 DebugType<int>		Option_ShadowType(false);
-DebugType<int>		Option_FavoriteLoadDDS(false);
 bool				Option_IsShadowMap=false;
 DebugType<int>		Option_EnableBump(true);
 DebugType<int>		Option_EnableLinkEffectToModel(true);
@@ -141,7 +140,6 @@ cVisGeneric::cVisGeneric() : cUnknownClass(KIND_UI_VISGENERIC)//: SceneArray(KIN
 		RDI(ShowRenderTextureDBG);
 		RDI(DebugShowShadowVolume);
 		RDI(ShadowType);
-		RDI(FavoriteLoadDDS);
 		RDI(EnableOcclusion);
 		RDI(EnablePointLight);
 		RDI(ShadowMapSelf4x4);
@@ -234,11 +232,6 @@ void cVisGeneric::SetShowRenderTextureDBG(bool p)
 void cVisGeneric::SetDebugShowShadowVolume(int p)
 {
 	Option_DebugShowShadowVolume=p;
-}
-
-void cVisGeneric::SetFavoriteLoadDDS(bool p)
-{
-	Option_FavoriteLoadDDS=p;
 }
 
 void cVisGeneric::SetShadowType(eShadowType p,int shadow_size)

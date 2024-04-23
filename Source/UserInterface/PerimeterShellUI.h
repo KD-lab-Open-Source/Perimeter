@@ -2109,7 +2109,6 @@ void onPointLightCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onSamplesCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onBumpCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onBumpChaosCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onCompressCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsFurrows(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsShadows(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsReflection(CShellWindow* pWnd, InterfaceEventCode code, int param);

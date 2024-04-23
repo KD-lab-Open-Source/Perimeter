@@ -315,7 +315,6 @@ _handlertbl[] = {
 	{SQSH_MM_GRAPHICS_SHADOWS_SAMPLES_COMBO, onSamplesCombo},
 	{SQSH_MM_GRAPHICS_BUMP_COMBO, onBumpCombo},
 	{SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO, onBumpChaosCombo},
-	{SQSH_MM_GRAPHICS_COMPRESS_COMBO, onCompressCombo},
 	{SQSH_MM_BACK_FROM_CUSTOM_BTN, onMMBackButton},
 
 	//sound

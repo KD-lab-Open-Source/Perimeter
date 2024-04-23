@@ -9,28 +9,10 @@ IDirect3DTexture9* cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 {
 	IDirect3DTexture9* lpTexture = nullptr;
 
-#ifndef PERIMETER_EXODUS //We don't support DXT textures in our D3DXLoadSurfaceFromMemory
-	if((TextureFormat==SURFMT_COLOR || TextureFormat==SURFMT_COLORALPHA || TextureFormat==SURFMT_GRAYALPHA) && Option_FavoriteLoadDDS)
-	{
-		if(TextureFormat==SURFMT_GRAYALPHA)
-		{
-			RDCALL(lpD3DDevice->CreateTexture(x,y,MipMap,0,
-				D3DFMT_DXT3,
-				D3DPOOL_MANAGED,&lpTexture,NULL));
-		}else
-		{
-			RDCALL(lpD3DDevice->CreateTexture(x,y,MipMap,0,
-				(TextureFormat==SURFMT_COLOR)?D3DFMT_DXT1:D3DFMT_DXT5,
-				D3DPOOL_MANAGED,&lpTexture,NULL));
-		}
-		VISASSERT(lpTexture);
-		return lpTexture;
-	}
-#endif
-
 	VISASSERT(x&&y&&TextureFormat>=0&&TextureFormat<SURFMT_NUMBER);
 	int Usage=0;
 	D3DPOOL Pool=D3DPOOL_MANAGED;
+
 	if(TextureFormat==SURFMT_RENDERMAP16 || TextureFormat==SURFMT_RENDERMAP32 || TextureFormat==SURFMT_RENDERMAP_FLOAT)
 	{
 		Usage=D3DUSAGE_RENDERTARGET;

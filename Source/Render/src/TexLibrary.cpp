@@ -306,60 +306,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 #endif
 		return true;
 	}
-/*
-	if(Option_FavoriteLoadDDS && !bump)
-	{
-		char drive[_MAX_DRIVE];
-		char dir[_MAX_DIR];
-		char fname[_MAX_FNAME];
-		char ext[_MAX_EXT];
-		_splitpath( Texture->GetName(), drive, dir, fname, ext );
-
-		char path_buffer[MAX_PATH];
-		_makepath(path_buffer, drive, dir, fname, "dds" );
-
-		void* buf;
-		int size;
-		//0 - alpha_none, 1- alpha_test, 2 - alpha_blend
-		int ret=ResourceFileRead(path_buffer,buf,size);///Утечка памяти
-		if(!ret)
-		{
-			BYTE alpha_type=((BYTE*)buf)[size-1];
-			switch(alpha_type)
-			{
-			case 0:
-				break;
-			case 1:
-				Texture->SetAttribute(TEXTURE_ALPHA_TEST);
-				break;
-			case 2:
-				Texture->SetAttribute(TEXTURE_ALPHA_BLEND);
-				break;
-			default:
-				//Неправильный dds файл. В конце должен быть байт с alpha.
-				Error(Texture);
-				Texture->Release();
-				return false;
-			}
-
-			IDirect3DTexture9* pTexture=gb_RenderDevice->CreateTextureFromMemory(buf,size-1);
-			if(!pTexture)
-			{
-				Error(Texture);
-				Texture->Release();
-				return false;
-			}
-
-			D3DSURFACE_DESC desc;
-			RDCALL(pTexture->GetLevelDesc(0,&desc));
-			Texture->SetWidth(desc.Width);
-			Texture->SetHeight(desc.Height);
-
-			Texture->BitMap.push_back(pTexture);
-			return true;
-		}
-	}
-*/
+    
 	//Get path for file and open it
     std::string path = Texture->GetName();
     if (get_content_entry(path)) {

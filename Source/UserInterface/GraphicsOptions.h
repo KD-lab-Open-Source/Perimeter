@@ -82,8 +82,6 @@ class CustomGraphOptions : public Options {
 		bool bumpChaos;
 		float particleRate;
 
-		bool compressedTextures;
-
 		bool operator == (const CustomGraphOptions &cgo) const {
 			return (
 						landscapeDetails == cgo.landscapeDetails
@@ -97,7 +95,6 @@ class CustomGraphOptions : public Options {
 					&&	bumpMapping == cgo.bumpMapping
 					&&	bumpChaos == cgo.bumpChaos
 					&&	particleRate == cgo.particleRate
-					&&	compressedTextures == cgo.compressedTextures
 				);
 		};
 		bool operator != (const CustomGraphOptions &cgo) const {

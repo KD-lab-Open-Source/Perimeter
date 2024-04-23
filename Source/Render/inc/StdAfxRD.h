@@ -80,7 +80,6 @@ extern DebugType<float>	Option_MapLevel;
 extern DebugType<int>	Option_ShowRenderTextureDBG;
 extern DebugType<int>	Option_DebugShowShadowVolume;
 extern DebugType<int>	Option_ShadowType;
-extern DebugType<int>	Option_FavoriteLoadDDS;
 extern DebugType<int>	Option_EnableBump;
 extern DebugType<int>	Option_EnableLinkEffectToModel;
 extern DebugType<int>	Option_EnableOcclusion;

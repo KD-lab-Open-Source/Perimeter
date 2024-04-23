@@ -41,7 +41,6 @@ void OnIngameGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int 
 		onSamplesCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_SAMPLES_COMBO), EVENT_CREATEWND, -1);
 		onBumpCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_COMBO), EVENT_CREATEWND, -1);
 		onBumpChaosCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO), EVENT_CREATEWND, -1);
-		onCompressCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_COMPRESS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsFurrows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_FURROWS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsShadows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsReflection(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_REFLECTION_COMBO), EVENT_CREATEWND, -1);
@@ -189,7 +188,6 @@ void OnGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		onSamplesCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_SAMPLES_COMBO), EVENT_CREATEWND, -1);
 		onBumpCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_COMBO), EVENT_CREATEWND, -1);
 		onBumpChaosCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO), EVENT_CREATEWND, -1);
-		onCompressCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_COMPRESS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsFurrows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_FURROWS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsShadows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsReflection(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_REFLECTION_COMBO), EVENT_CREATEWND, -1);
@@ -360,19 +358,6 @@ void onBumpChaosCombo(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().customOptions.bumpChaos;
 	} else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
 		GraphOptionsManager::getInstance().getGraphicsOptions().customOptions.bumpChaos = pCombo->pos;
-	}
-}
-void onCompressCombo(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	CComboWindow *pCombo = (CComboWindow*) pWnd;
-	if ( code == EVENT_CREATEWND ) {
-		if (param != -1) {
-			pCombo->Array.push_back( getItemTextFromBase("Off").c_str() );
-			pCombo->Array.push_back( getItemTextFromBase("On").c_str() );
-			pCombo->size = 2;
-		}
-		pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().customOptions.compressedTextures;
-	} else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
-		GraphOptionsManager::getInstance().getGraphicsOptions().customOptions.compressedTextures = pCombo->pos;
 	}
 }
 

@@ -49,8 +49,6 @@ void CustomGraphOptions::load(const char* sectionName, const char* iniFileName) 
 	bumpMapping = terVisGeneric->PossibilityBump() ? iniManager.getInt(sectionName, "EnableBump") : 0;
 	bumpChaos = terVisGeneric->PossibilityBumpChaos() ? iniManager.getInt(sectionName, "EnableBumpChaos") : 0;
 	particleRate = iniManager.getFloat(sectionName, "ParticleRate");
-
-	compressedTextures = iniManager.getFloat(sectionName, "FavoriteLoadDDS");
 }
 
 void CustomGraphOptions::save(const char* iniFileName) {
@@ -72,8 +70,6 @@ void CustomGraphOptions::save(const char* iniFileName) {
 	iniManager.putInt("Graphics", "EnableBump", bumpMapping);
 	iniManager.putInt("Graphics", "EnableBumpChaos", bumpChaos);
 	iniManager.putFloat("Graphics", "ParticleRate", particleRate);
-
-	iniManager.putInt("Graphics", "FavoriteLoadDDS", compressedTextures);
 }
 
 void CustomGraphOptions::apply() {
@@ -108,8 +104,6 @@ void CustomGraphOptions::apply() {
 	}
 
 	terVisGeneric->SetGlobalParticleRate(particleRate);
-
-	gb_VisGeneric->SetFavoriteLoadDDS(compressedTextures);
 }
 
 void GraphOptions::load(const char* sectionName, const char* iniFileName) {

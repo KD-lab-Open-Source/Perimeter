@@ -67,7 +67,6 @@ void PerimeterDataChannelLoad()
 	terDrawMeshShadow = ini.getInt("Graphics","DrawMeshShadow");
 	terShadowType = ini.getInt("Graphics","ShadowType");
 	terEnableBumpChaos = ini.getInt("Graphics","EnableBumpChaos");
-	gb_VisGeneric->SetFavoriteLoadDDS(ini.getInt("Graphics","FavoriteLoadDDS"));
 
 	terNearDistanceLOD = ini.getInt("Graphics","NearDistanceLOD");
 	terFarDistanceLOD = ini.getInt("Graphics","FarDistanceLOD");
