@@ -107,26 +107,29 @@ void ShowDispatcher::Shape::show()
 {
 	switch(type){
 		case Point: {
-			Vect3f vs = G2S(point1);
-			if(vs.z > 10)
-				clip_pixel(vs.xi(), vs.yi(), color, 1);
-			} break;
+			Vect3f vs = G2S(points[0]);
+			if(vs.z > 10) {
+                clip_pixel(vs.xi(), vs.yi(), color, 1);
+            }
+            break;
+        }
 
 		case Text: {
-			Vect3f vs = G2S(point1);
-			terRenderDevice->OutText(vs.xi(), vs.yi(), text, sColor4f(color));
-			} break;
+			Vect3f vs = G2S(points[0]);
+			terRenderDevice->OutText(vs.xi(), vs.yi(), text.c_str(), sColor4f(color));
+            break;
+        }
 
 		case Circle: 
-			clip_circle_3D(point1, radius, color);
+			clip_circle_3D(points[0], radius, color);
 			break;
 
 		case Delta: 
-			clip_line_3D(point1, point1 + point2*show_vector_scale, color);
+			clip_line_3D(points[0], points[0] + points[1] * show_vector_scale, color);
 			break;
 
 		case Line: 
-			clip_line_3D(point1, point2, color);
+			clip_line_3D(points[0], points[1], color);
 			break;
 
 		case Triangle: 
@@ -154,19 +157,30 @@ void ShowDispatcher::Shape::show()
 
 void ShowDispatcher::draw()
 {
-	cFont* font = 0;
+	cFont* font = nullptr;
 	if(need_font){
 		font = terVisGeneric->CreateDebugFont();
 		terRenderDevice->SetFont(font);
 		need_font = false;
 	}
-
-	List::iterator i;
-	FOR_EACH(shapes, i)
-		i -> show();
+    
+    bool paused = gameShell->isPaused();
+    unsigned int time = gameShell->gameTimer();
+    auto i_shape = shapes.begin();
+    while(i_shape != shapes.end()){
+        if (i_shape->rendered_at == 0) {
+            i_shape->rendered_at = time;
+        } else if (paused || i_shape->rendered_at < time) {
+            //From older logic quant, discard
+            i_shape = shapes.erase(i_shape);
+            continue;
+        }
+        i_shape->show();
+        ++i_shape;
+    }
 
 	if(font){
-		terRenderDevice->SetFont(0);
+		terRenderDevice->SetFont(nullptr);
 		font->Release();
 	}
 }

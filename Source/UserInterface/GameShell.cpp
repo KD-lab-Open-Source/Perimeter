@@ -899,10 +899,8 @@ void GameShell::Show()
 		showWays();		
 
 		terRenderDevice->SetDrawTransform(terCamera->GetCamera());
-		if(debug_show_mode){
-            if (debug_show_mode != 2) {
-                show_dispatcher.clear();
-            }
+		if (debug_show_mode) {
+            MTAutoSingleThread debug_show_lock;
 			universe()->showDebugInfo();
 			show_dispatcher.draw();
 		}
