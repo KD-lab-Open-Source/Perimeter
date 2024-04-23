@@ -186,7 +186,7 @@ class AimControllerBase
 {
 public:
 	AimControllerBase(terUnitBase* owner) : owner_(owner){ }
-	virtual ~AimControllerBase(){ }
+	virtual ~AimControllerBase() = default;
 
 	terUnitBase* owner() const { xassert(owner_); return owner_; }
 
@@ -216,23 +216,31 @@ class AimControllerOmnidirectional : public AimControllerBase
 {
 public:
 	AimControllerOmnidirectional(terUnitBase* owner) : AimControllerBase(owner) { }
-	~AimControllerOmnidirectional(){ }
+	~AimControllerOmnidirectional() override = default;
 
-	bool init(cLogicObject* logic_root,cObjectNodeRoot* model_root,const terWeaponControllerSetup& setup){ return true; }
+	bool init(cLogicObject* logic_root,cObjectNodeRoot* model_root,const terWeaponControllerSetup& setup) override {
+        return true;
+    }
 
-	void updateLogic(){ }
+	void updateLogic() override { }
 
-	void avatarQuant(){ }
-	void avatarInterpolation(){ }
+	void avatarQuant() override { }
+	void avatarInterpolation() override { }
 
-	void aim(float psi,float theta){ }
-	bool isAimed(float psi,float theta) const { return true; }
-	bool isAimed(float psi,float theta,int& fire_status) const { return true; }
+	void aim(float psi,float theta) override { }
+	bool isAimed(float psi,float theta) const override { return true; }
+	bool isAimed(float psi,float theta,int& fire_status) const override { return true; }
 
-	void aimDefault(){ }
+	void aimDefault() override { }
 
-	bool getTargetingPosition(Vect3f& targeting0,Vect3f& targeting1) const { targeting0 = owner()->position(); targeting1 = owner()->position() + Vect3f::K; return true; }
-	void getGunPosition(Vect3f& pos) const { pos = owner()->position(); }
+	bool getTargetingPosition(Vect3f& targeting0,Vect3f& targeting1) const override {
+        targeting0 = owner()->position();
+        targeting1 = owner()->position() + Vect3f::K;
+        return true;
+    }
+	void getGunPosition(Vect3f& pos) const override {
+        pos = owner()->position();
+    }
 private:
 };
 
@@ -241,29 +249,27 @@ class AimControllerDirectional : public AimControllerBase
 {
 public:
 	AimControllerDirectional(terUnitBase* owner) : AimControllerBase(owner), targetingObject_(NULL) { }
-	~AimControllerDirectional(){ }
+	~AimControllerDirectional() override = default;
 
-	bool init(cLogicObject* logic_root,cObjectNodeRoot* model_root,const terWeaponControllerSetup& setup);
+	bool init(cLogicObject* logic_root,cObjectNodeRoot* model_root,const terWeaponControllerSetup& setup) override;
 
-	void updateLogic(){ psi_.updateLogic(Z_AXIS); theta_.updateLogic(X_AXIS); }
+	void updateLogic() override { psi_.updateLogic(Z_AXIS); theta_.updateLogic(X_AXIS); }
 
-	void avatarQuant(){ psi_.avatarQuant(); theta_.avatarQuant(); }
-	void avatarInterpolation(){ psi_.avatarInterpolation(Z_AXIS); theta_.avatarInterpolation(X_AXIS); }
+	void avatarQuant() override { psi_.avatarQuant(); theta_.avatarQuant(); }
+	void avatarInterpolation() override { psi_.avatarInterpolation(Z_AXIS); theta_.avatarInterpolation(X_AXIS); }
 
-	void aim(float psi,float theta){ psi_.change(psi); theta_.change(theta); }
-	bool isAimed(float psi,float theta) const { return (psi_ == psi && theta_ == theta); }
-	bool isAimed(float psi,float theta,int& fire_status) const;
+	void aim(float psi,float theta) override { psi_.change(psi); theta_.change(theta); }
+	bool isAimed(float psi,float theta) const override { return (psi_ == psi && theta_ == theta); }
+	bool isAimed(float psi,float theta,int& fire_status) const override;
 
-	void aimDefault(){ psi_.changeToDefault(); theta_.changeToDefault(); }
+	void aimDefault() override { psi_.changeToDefault(); theta_.changeToDefault(); }
 
-	bool getTargetingPosition(Vect3f& targeting0,Vect3f& targeting1) const;
-	void getGunPosition(Vect3f& pos) const 
-	{ 
+	bool getTargetingPosition(Vect3f& targeting0,Vect3f& targeting1) const override;
+	void getGunPosition(Vect3f& pos) const override { 
 		owner()->avatar()->updateLogicObject();
 		if(theta_.logicObjectPosition(pos)) return;
 
 		pos = owner()->position();
-		return;
 	}
 
 private:
@@ -279,25 +285,25 @@ class WeaponDerivedBase : public terWeapon
 {
 public:
 	WeaponDerivedBase(terUnitReal* owner) : terWeapon(owner), aimController_(owner), turnSuggestPrm_(NULL){ turnSuggestPrm_ = owner->attr()->weaponSetup.turnSuggestPrm; }
-	~WeaponDerivedBase(){ }
+	~WeaponDerivedBase() override = default;
 
-	bool init(){
+	bool init() override {
 		xassert(owner()->attr()->weaponSetup.enabled());
 
 		if(!terWeapon::init()) return false;
 		return aimController_.init(owner()->LogicObjectPoint,owner()->avatar()->GetModelPoint(),owner()->attr()->weaponSetup.controllerSetup);
 	}
 
-	void updateLogic(){ if(isEnabled()) aimController_.updateLogic(); }
+	void updateLogic() override { if(isEnabled()) aimController_.updateLogic(); }
 
-	void avatarQuant(){ if(isEnabled()) aimController_.avatarQuant(); }
-	void avatarInterpolation(){ if(isEnabled()) aimController_.avatarInterpolation(); }
+	void avatarQuant() override { if(isEnabled()) aimController_.avatarQuant(); }
+	void avatarInterpolation() override { if(isEnabled()) aimController_.avatarInterpolation(); }
 
 protected:
 
 	const AimControllerBase* aimController() const { return &aimController_; }
 
-	bool aim(const Vect3f& to,int& status){
+	bool aim(const Vect3f& to,int& status) override {
 		float psi,theta;
 
 		if(turnSuggestPrm_)
@@ -318,7 +324,7 @@ protected:
 		return ret;
 	}
 
-	void aimDefault(){ aimController_.aimDefault(); }
+	void aimDefault() override { aimController_.aimDefault(); }
 
 	const RigidBodyPrm* turnSuggestPrm() const { return turnSuggestPrm_; }
 
@@ -338,8 +344,8 @@ class terWeaponArtillery : public WeaponDirectionalBase
 {
 public:
 	terWeaponArtillery(terUnitReal* owner) : WeaponDirectionalBase(owner) { }
-	bool fire(const Vect3f& to,terUnitBase* target);
-	int estimatedDamage() const;
+	bool fire(const Vect3f& to,terUnitBase* target) override;
+	int estimatedDamage() const override;
 };
 
 /// Оружие, стреляющее ракетами.
@@ -347,15 +353,15 @@ class terWeaponLauncher : public WeaponDirectionalBase
 {
 public:
 	terWeaponLauncher(terUnitReal* owner);
-	bool fire(const Vect3f& to,terUnitBase* target);
-	int estimatedDamage() const;
+	bool fire(const Vect3f& to,terUnitBase* target) override;
+	int estimatedDamage() const override;
 
-	void moveQuant();
+	void moveQuant() override;
 
-	bool isLoaded() const { return (WeaponDirectionalBase::isLoaded() && owner()->isDockReady(missileIndex_)); }
-	void enable();
+	bool isLoaded() const override { return (WeaponDirectionalBase::isLoaded() && owner()->isDockReady(missileIndex_)); }
+	void enable() override;
 
-	void unload();
+	void unload() override;
 
 private:
 
@@ -369,14 +375,14 @@ class terWeaponLaser : public WeaponDirectionalBase
 public:
 	terWeaponLaser(terUnitReal* owner);
 
-	void avatarQuant();
+	void avatarQuant() override;
 
-	bool fire(const Vect3f& to,terUnitBase* target);
-	bool fireTest(const Vect3f& to,terUnitBase* target,int& status) const;
+	bool fire(const Vect3f& to,terUnitBase* target) override;
+	bool fireTest(const Vect3f& to,terUnitBase* target,int& status) const override;
 
-	int estimatedDamage() const;
+	int estimatedDamage() const override;
 
-	void disable();
+	void disable() override;
 };
 
 /// Замораживающее оружие - стреляет как лазер, лишает на время способности атаковать.
@@ -385,7 +391,7 @@ class terWeaponFreezeLaser : public terWeaponLaser
 public:
 	terWeaponFreezeLaser(terUnitReal* owner) : terWeaponLaser(owner) { }
 
-	bool fire(const Vect3f& to,terUnitBase* target);
+	bool fire(const Vect3f& to,terUnitBase* target) override;
 };
 
 class terWeaponHealLaser : public terWeaponLaser
@@ -393,7 +399,7 @@ class terWeaponHealLaser : public terWeaponLaser
 public:
 	terWeaponHealLaser(terUnitReal* owner) : terWeaponLaser(owner) { }
 
-	bool fire(const Vect3f& to,terUnitBase* target);
+	bool fire(const Vect3f& to,terUnitBase* target) override;
 };
 
 /// Электроразрядник - бьёт врага молнией.
@@ -401,19 +407,20 @@ class terWeaponLighting : public WeaponDirectionalBase
 {
 public:
 	terWeaponLighting(terUnitReal* owner);
-	~terWeaponLighting();
+	~terWeaponLighting() override;
 
-	void quant();
+	void quant() override;
 
-	bool fire(const Vect3f& to,terUnitBase* target);
-	bool fireTest(const Vect3f& to,terUnitBase* target,int& status) const;
+	bool fire(const Vect3f& to,terUnitBase* target) override;
+    bool fireRequest(const Vect3f* to,terUnitBase* target,int& status) override;
+	bool fireTest(const Vect3f& to,terUnitBase* target,int& status) const override;
 
-	int estimatedDamage() const;
+	int estimatedDamage() const override;
 	
-	void destroyLink();
+	void destroyLink() override;
 
-	void kill();
-	void disable();
+	void kill() override;
+	void disable() override;
 
 private:
 	/// визуализация молнии
@@ -422,11 +429,10 @@ private:
 	/// цель
 	terUnitBase* target_;
 
-	bool releaseLighting()
-	{
+	bool releaseLighting() {
 		if(lighting_){
 			lighting_->Release();
-			lighting_ = 0;
+			lighting_ = nullptr;
 
 			return true;
 		}
@@ -444,10 +450,10 @@ class terWeaponPiercer : public WeaponOmnidirectionalBase
 public:
 	terWeaponPiercer(terUnitReal* owner) : WeaponOmnidirectionalBase(owner), targetPos_(0,0,0) { fire_ = false; }
 
-	void quant();
+	void quant() override ;
 
-	bool fire(const Vect3f& to,terUnitBase* target);
-	int estimatedDamage() const { return 0; }
+	bool fire(const Vect3f& to,terUnitBase* target) override ;
+	int estimatedDamage() const override { return 0; }
 	
 private:
 
@@ -1591,10 +1597,10 @@ void terWeaponConductor::quant()
 			}
 		}
 
-		lighting_->Init(v0, vect);
-	}
-	else
-		releaseLighting();
+		lighting_->Init(v0, vect, (setup().laserWidth / 2.0f) * 10.0f);
+	} else {
+        releaseLighting();
+    }
 }
 
 bool terWeaponConductor::fire(const Vect3f& to,terUnitBase* target)
@@ -2145,48 +2151,60 @@ bool terWeaponInvisibilityGenerator::fire(const Vect3f& to,terUnitBase* target)
 //-------------------------------------------------------
 
 terWeaponLighting::terWeaponLighting(terUnitReal* owner) : WeaponDirectionalBase(owner),
-	target_(NULL),
-	lighting_(NULL)
+    lighting_(nullptr),
+    target_(nullptr)
 {
 }
 
-terWeaponLighting::~terWeaponLighting()
-{
-}
+terWeaponLighting::~terWeaponLighting() = default;
 
 void terWeaponLighting::quant()
 {
 	WeaponDirectionalBase::quant();
 
-	if(isSwitchedOn() && target_ && owner()->alive()){
+	if (isSwitchedOn() && target_ && owner()->alive()) {
 		xassert(owner());
+        
+        if (lighting_) {
+            Vect3f v0,v1;
+            aimController()->getTargetingPosition(v0,v1);
+            v1 = target_->position();
 
-		if(isFireAnimationPlaying()){
-			if(fireEnabled()){
-				target_->SetHotCount(5);
-				target_->setDamage(owner()->damageData(),owner());
-				owner()->DestroyLink();
-				destroyLink();
-				if(!target_)
-					return;
-			}
+            std::vector<Vect3f> vect;
+            vect.push_back(v1);
+            //On default ET AttrLib Eflair has 2.0, Impaler 4.0
+            lighting_->Init(v0, vect, setup().laserWidth / 2.0f);
+        }
 
-			if(!lighting_){
-				lighting_ = new cLighting;
-				terScene->AttachObj(lighting_);
-			}
+        if (fireEnabled()) {
+            startFireDelay();
+            
+            //If lighting is not created we don't damage, so we give enough time for it to show
+            //the fire is delayed thanks to startFireDelay() so it wont kill before arc is displayed
+            if (!lighting_) {
+                lighting_ = new cLighting;
+                terScene->AttachObj(lighting_);
+            } else {
+                target_->SetHotCount(5);
+                
+                //We consider setup's damage data to be per sec, divide by fireDelay to get damage to apply
+                //as this weapon is constant firing and not oneshot like most weapons
+                float factor = max(0.01f, static_cast<float>(setup().fireDelay) / 1000.0f);
+                DamageData damage = owner()->damageData();
+                damage.width = static_cast<int>(max(1.0, xm::ceil(static_cast<float>(damage.width) * factor)));
+                damage.power = static_cast<int>(max(1.0, xm::ceil(static_cast<float>(damage.power) * factor)));
+                target_->setDamage(damage, owner());
 
-			Vect3f v0,v1;
-			aimController()->getTargetingPosition(v0,v1);
-			v1 = target_->position();
-
-			std::vector<Vect3f> vect;
-			vect.push_back(v1);
-			lighting_->Init(v0, vect);
-		}
-	}
-	else
-		releaseLighting();
+                owner()->DestroyLink();
+                destroyLink();
+                if (!target_) {
+                    return;
+                }
+            }
+        }
+	} else if (lighting_) {
+        releaseLighting();
+    }
 }
 
 bool terWeaponLighting::fire(const Vect3f& to,terUnitBase* target)
@@ -2197,9 +2215,29 @@ bool terWeaponLighting::fire(const Vect3f& to,terUnitBase* target)
 	return true;
 }
 
+bool terWeaponLighting::fireRequest(const Vect3f* to,terUnitBase* target,int& status) {
+    if (!WeaponDirectionalBase::fireRequest(to,target,status)) {
+        if (lighting_ && (status & (
+                LEGION_FIRE_STATUS_GROUND_OBSTACLE |
+                LEGION_FIRE_STATUS_FRIENDLY_FIRE |
+                LEGION_FIRE_STATUS_BORDER_ANGLE |
+                LEGION_FIRE_STATUS_DISTANCE | 
+                LEGION_FIRE_STATUS_FIELD_OBSTACLE |
+                LEGION_FIRE_STATUS_BAD_TARGET
+              ))
+            ) {
+            releaseLighting();
+        }
+        return false;
+    }
+    return true;
+}
+
 bool terWeaponLighting::fireTest(const Vect3f& to,terUnitBase* target,int& status) const
 {
-	if(!WeaponDirectionalBase::fireTest(to,target,status)) return false;
+	if (!WeaponDirectionalBase::fireTest(to,target,status)) {
+        return false;
+    }
 
 	xassert(owner());
 

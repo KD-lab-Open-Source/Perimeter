@@ -8,7 +8,8 @@ struct LightingParameters
 	float strip_width_time;
 	float strip_length;
 	float fade_time;
-	float lighting_amplitude;
+    float min_amplitude;
+    float max_amplitude;
 	LightingParameters();
 };
 
@@ -17,7 +18,7 @@ class cLighting:public cIUnkClass
 public:
 	cLighting();
 	~cLighting();
-	void Init(Vect3f pos_begin, std::vector<Vect3f>& pos_end);
+	void Init(Vect3f pos_begin, std::vector<Vect3f>& pos_end,float scaler);
 	void SetParameters(LightingParameters& param_);
 
 	virtual void PreDraw(cCamera *UCamera);
@@ -31,6 +32,7 @@ public:
 protected:
 	void Generate(Vect3f pos_begin,Vect3f pos_end,cCamera *pCamera);
 	float time;
+    float scaler;
 	MatXf global_pos;
 	Vect3f pos_begin;
 	std::vector<Vect3f> pos_end;
@@ -56,7 +58,7 @@ protected:
 		void Generate(Vect3f pos_begin,Vect3f pos_end,cCamera *pCamera,cLighting* parent);
 		void Draw(cCamera *pCamera,cLighting* parent);
 		void Animate(float dt);
-		void GenerateInterpolate(std::vector<float>& pos,int size,float amplitude);
+		void GenerateInterpolate(std::vector<float>& pos,int size,float min_amp, float max_amp);
 		float get(std::vector<float>& p,float t);
 
 		void BuildStrip(cCamera *pCamera,cLighting* parent);

@@ -111,9 +111,17 @@ void terUnitLegionary::AvatarQuant()
 		
 		avatar()->Show();
 		realAvatar()->setSight(SightFactor);
-		realAvatar()->setHeal(HealFactor);
-		realAvatar()->setFreeze(FreezeFactor);
-		realAvatar()->setHot(HotFactor);
+        
+        float maxFactor = 1.0f;
+        //Conductors have electro effect in mesh that becomes red when hot, mitigate this
+        const AttributeLegionary* attrs = attr();
+        if (attrs && attrs->ID == UNIT_ATTRIBUTE_CONDUCTOR) {
+            maxFactor = 0.5f;
+        }
+
+        realAvatar()->setHeal(min(HealFactor, maxFactor));
+        realAvatar()->setFreeze(min(FreezeFactor, maxFactor));
+        realAvatar()->setHot(min(HotFactor, maxFactor));
 
 		if(MoveSoundPoint){
 			MoveSoundPoint->setVolume(SpeedFactor);
