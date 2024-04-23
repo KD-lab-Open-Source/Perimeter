@@ -86,9 +86,8 @@ jobs:
           --enable-swresample \
           --enable-zlib \
           --enable-libvpx \
-          --enable-libvorbis \
           --enable-demuxer=rawvideo,bink,matroska \
-          --enable-decoder=rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9 \
+          --enable-decoder=rawvideo,bink,binkaudio_dct,opus,vp8,vp9 \
           --enable-parser=vp9 \
           --enable-filter=aresample,aformat \
           --enable-protocol=file \

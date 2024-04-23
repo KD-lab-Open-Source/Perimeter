@@ -78,8 +78,7 @@ const char* PNetCenter::getStrState() const
 PNetCenter::PNetCenter() :
 in_ClientBuf(PNETCENTER_BUFFER_SIZE, true), out_ClientBuf(PNETCENTER_BUFFER_SIZE, true),
 in_HostBuf(PNETCENTER_BUFFER_SIZE, true), out_HostBuf(PNETCENTER_BUFFER_SIZE, true),
-connectionHandler(this),
-flag_connected(false)
+connectionHandler(this)
 {
     hostConnection=NetAddress();
 

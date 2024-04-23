@@ -13,7 +13,7 @@ env:
   VULKAN_SDK_VERSION: '1.3.250.1'
   VULKAN_LIB_VERSION: '1.3.250'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
-  GH_CACHE_KEY: 9
+  GH_CACHE_KEY: 10
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
       - name: install libs
         run: |
           brew install ninja yasm dylibbundler \
-          libogg libvorbis libvpx boost meson cmake zlib \
+          libvpx boost meson cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
       - uses: actions/cache@v4
         id: cache
@@ -56,16 +56,15 @@ jobs:
           hdiutil detach /Volumes/VulkanSDK
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone --depth 1 --branch n5.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        run: git clone --depth 1 --branch n6.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./configure
           --prefix=/usr/local
           --enable-shared --disable-static
           --cc="clang"
-          --arch=${{matrix.env.arch}}
-          --extra-cflags="-arch x86_64"
-          --extra-ldflags="-arch x86_64"
+          --extra-cflags="-arch arm64"
+          --extra-ldflags="-arch arm64"
           --target-os=darwin
           --sysroot=$(xcrun --sdk macosx --show-sdk-path)
           --disable-everything
@@ -73,9 +72,8 @@ jobs:
           --enable-swresample
           --enable-zlib
           --enable-libvpx
-          --enable-libvorbis
           --enable-demuxer=rawvideo,bink,matroska
-          --enable-decoder=rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9
+          --enable-decoder=rawvideo,bink,binkaudio_dct,opus,vp8,vp9
           --enable-parser=vp9
           --enable-filter=aresample,aformat
           --enable-protocol=file

@@ -525,7 +525,7 @@ public:
 
     NETID	m_hostNETID;
     NETID	m_localNETID;
-    bool flag_connected;
+    bool flag_connected = false;
 
     void Reset();
 

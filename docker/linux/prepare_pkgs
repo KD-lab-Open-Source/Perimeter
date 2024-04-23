@@ -19,7 +19,6 @@ apt-get install -t buster-backports -y \
   libsdl2-net-dev \
   libsdl2-mixer-dev \
   zlib1g-dev \
-  libvorbis-dev \
   libvulkan-dev glslang-tools \
   build-essential \
   cmake meson ninja-build

@@ -67,9 +67,6 @@ cp ${SDL_DIR}/bin/SDL2.dll output
 cp ${SDL_DIR}/bin/SDL2_image.dll output
 cp ${SDL_DIR}/bin/SDL2_mixer.dll output
 cp ${SDL_DIR}/bin/SDL2_net.dll output
-#cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libogg*.dll output
-#cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbis*.dll output
-#cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbisfile*.dll output
 #cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/zlib*.dll output
 #cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libstdc*.dll output
 #cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libgcc*.dll output

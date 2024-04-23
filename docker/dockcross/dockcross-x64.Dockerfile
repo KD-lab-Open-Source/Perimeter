@@ -1,6 +1,4 @@
-FROM dockcross/windows-shared-x64:latest
-
-RUN echo "v2"
+FROM dockcross/windows-shared-x64:20231208-4e4d3ad
 
 ENV DEFAULT_DOCKCROSS_IMAGE dockcross-x64-perimeter
 

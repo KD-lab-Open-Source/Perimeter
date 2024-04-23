@@ -154,8 +154,7 @@
             ffmpegVariant = "headless";
             
             withHeadlessDeps = false;
-            withOgg = true;
-            withVorbis = true;
+            withOpus = true;
             withZlib = true;
             withVpx = !super.stdenv.hostPlatform.isMinGW
                    && !super.stdenv.hostPlatform.isDarwin;
@@ -176,7 +175,7 @@
             configureFlags = attrs.configureFlags ++ [
               "--disable-everything"
               "--enable-demuxer=rawvideo,bink,matroska"
-              "--enable-decoder=rawvideo,bink,binkaudio_dct,vorbis,opus,vp9"
+              "--enable-decoder=rawvideo,bink,binkaudio_dct,opus,vp9"
               "--enable-parser=vp9"
               "--enable-filter=aresample,aformat"
               "--enable-protocol=file"
