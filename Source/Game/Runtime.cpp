@@ -1034,13 +1034,13 @@ int SDL_main(int argc, char *argv[])
 
     //Init clock
     initclock();
-
-    //Decode stacktrace if requested
-    decode_stacktrace();
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
     printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n", currentVersion, computeArchFlags());
+
+    //Decode stacktrace if requested
+    decode_stacktrace();
 
     //Parse version string
     decode_version(currentShortVersion, currentVersionNumbers);
