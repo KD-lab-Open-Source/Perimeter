@@ -83,10 +83,8 @@ const int INT_INF = 0x7fffffff;
 //  give different result and cause desync on multiplayer
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef GPX
 //Use gamemath instead of stdlib
 #define XMATH_USE_GAMEMATH
-#endif
 
 namespace xm {
     //Math functions

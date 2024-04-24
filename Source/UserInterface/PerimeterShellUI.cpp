@@ -21,7 +21,7 @@
 #include "codepages/codepages.h"
 
 #ifdef GPX
-const static float TOP_LEFT_SCALE = 1.5f;
+extern float TOP_LEFT_SCALE;
 #else
 const static float TOP_LEFT_SCALE = 1.1f;
 #endif

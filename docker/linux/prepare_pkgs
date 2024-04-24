@@ -2,7 +2,7 @@
 set -e
 
 # Add backports to sources and update
-echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list
+echo "deb http://archive.debian.org/debian buster-backports main" >> /etc/apt/sources.list
 apt-get update
 
 #Backport git version doesn't work properly
