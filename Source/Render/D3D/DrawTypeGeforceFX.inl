@@ -312,7 +312,7 @@ void DrawTypeGeforceFX::SetMaterialTilemap(cTileMap *TileMap)
 		gb_RenderDevice3D->SetSamplerState(ss, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		gb_RenderDevice3D->SetSamplerState(ss, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
         TextureImage teximg(ptZBuffer);
-        gb_RenderDevice3D->SetTextureImage(0,&teximg);
+        gb_RenderDevice3D->SetTextureImage(ss,&teximg);
 	}
 
 	gb_RenderDevice3D->SetTexture(offset+1,pLightMap,0);
