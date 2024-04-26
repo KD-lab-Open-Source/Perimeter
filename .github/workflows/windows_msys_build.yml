@@ -135,7 +135,7 @@ jobs:
       - name: perimeter -- strip binary
         run: strip -g -x perimeter/bin/perimeter.exe
         if: matrix.env.build_type == 'Release'
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Perimeter MSYS ${{matrix.env.build_type}} ${{matrix.env.sys}}
           path: perimeter/bin/
