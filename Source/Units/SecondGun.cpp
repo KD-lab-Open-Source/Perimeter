@@ -2161,24 +2161,52 @@ terWeaponLighting::~terWeaponLighting() = default;
 void terWeaponLighting::quant()
 {
 	WeaponDirectionalBase::quant();
-
-	if (isSwitchedOn() && target_ && owner()->alive()) {
-		xassert(owner());
-        
+    
+    if (!target_ || !isSwitchedOn()) {
+        //No target active currently
         if (lighting_) {
-            Vect3f v0,v1;
-            aimController()->getTargetingPosition(v0,v1);
-            v1 = target_->position();
-
-            std::vector<Vect3f> vect;
-            vect.push_back(v1);
-            //On default ET AttrLib Eflair has 2.0, Impaler 4.0
-            lighting_->Init(v0, vect, setup().laserWidth / 2.0f);
+            releaseLighting();
         }
+        return;
+    }
 
-        if (fireEnabled()) {
-            startFireDelay();
-            
+    xassert(owner());
+    Vect3f target_pos = target_->position();
+    if (!owner()->alive() || !fireDistanceCheck(target_pos)) {
+        //Not on / weapon owner is not alive / target too far
+        if (lighting_) {
+            releaseLighting();
+        }
+        target_ = nullptr;
+        return;
+    }
+
+    if (lighting_) {        
+        Vect3f v0,v1;
+        aimController()->getTargetingPosition(v0,v1);
+
+        std::vector<Vect3f> vect;
+        vect.push_back(target_pos);
+        //On default ET AttrLib Eflair has 2.0, Impaler 4.0
+        lighting_->Init(v0, vect, setup().laserWidth / 2.0f);
+    }
+
+    if (fireEnabled()) {
+        startFireDelay();
+
+        int fire_status = 0;
+        bool fire = fireTest(target_pos,target_,fire_status);
+        if (!fire || (fire_status & (
+                LEGION_FIRE_STATUS_GROUND_OBSTACLE |
+                LEGION_FIRE_STATUS_FRIENDLY_FIRE |
+                LEGION_FIRE_STATUS_BORDER_ANGLE |
+                LEGION_FIRE_STATUS_DISTANCE |
+                LEGION_FIRE_STATUS_FIELD_OBSTACLE |
+                LEGION_FIRE_STATUS_BAD_TARGET
+        ))) {
+            //Target is no longer valid
+            target_ = nullptr;
+        } else {
             //If lighting is not created we don't damage, so we give enough time for it to show
             //the fire is delayed thanks to startFireDelay() so it wont kill before arc is displayed
             if (!lighting_) {
@@ -2186,7 +2214,7 @@ void terWeaponLighting::quant()
                 terScene->AttachObj(lighting_);
             } else {
                 target_->SetHotCount(5);
-                
+
                 //We consider setup's damage data to be per sec, divide by fireDelay to get damage to apply
                 //as this weapon is constant firing and not oneshot like most weapons
                 float factor = max(0.01f, static_cast<float>(setup().fireDelay) / 1000.0f);
@@ -2197,13 +2225,13 @@ void terWeaponLighting::quant()
 
                 owner()->DestroyLink();
                 destroyLink();
-                if (!target_) {
-                    return;
-                }
             }
         }
-	} else if (lighting_) {
-        releaseLighting();
+
+        //If no target then destroy lighting
+        if (lighting_ && !target_) {
+            releaseLighting();
+        }
     }
 }
 
