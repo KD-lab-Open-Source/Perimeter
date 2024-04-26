@@ -151,12 +151,13 @@ std::string formatGameInfoWindow(const GameInfo& info) {
     }
     
     //Show version
+    text += "&FFFFFF - ";
     if (info.gameVersion == currentShortVersion) {
         text += "&FFFFFF";
     } else {
         text += "&FF2222";
     }
-    text += " - " + info.gameVersion + "\n";
+    text += info.gameVersion + "\n";
     
     //Show map
     text += "&FFFFFF";

@@ -31,8 +31,9 @@ cVisError& cVisError::operator << (const char *a)
             ErrH.Abort(buf.c_str());
         }
 		buf.clear();
-	}else
-		buf+=a;
+	} else {
+        buf += a;
+    }
 	return *this;
 }
 
