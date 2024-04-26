@@ -4,6 +4,7 @@
 #include "GameShell.h"
 #include "Universe.h"
 #include "SourceUIResolution.h"
+#include "PerimeterShellUI.h"
 #include <set>
 #include <unordered_set>
 
@@ -203,7 +204,9 @@ void GraphOptions::apply() {
         terScreenSizeX = resolution.x;
         terScreenSizeY = resolution.y;
         change_display_mode |= change_size;
-		gameShell->updateResolution(change_depth, change_size, change_display_mode);
+        if (gameShell) {
+            gameShell->updateResolution(change_depth, change_size, change_display_mode);
+        }
 	}
 
     if ((terGrabInput != 0) != grabInput) {
@@ -217,6 +220,7 @@ void GraphOptions::apply() {
     }
 #endif
     shell_anchor = static_cast<SHELL_ANCHOR>(uiAnchor);
+    _shellIconManager.reloadDesktop();
     
 	customOptions.apply();
 }

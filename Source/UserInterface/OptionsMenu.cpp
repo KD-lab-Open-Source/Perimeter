@@ -132,7 +132,14 @@ void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int pa
         }
         pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().uiAnchor;
     } else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
-        GraphOptionsManager::getInstance().getGraphicsOptions().uiAnchor = pCombo->pos;
+        if (0 <= pCombo->pos && pCombo->pos < SHELL_ANCHOR_DEFAULT) {
+            shell_anchor = static_cast<SHELL_ANCHOR>(pCombo->pos);
+            GraphOptionsManager::getInstance().getGraphicsOptions().uiAnchor = shell_anchor;
+            //Reload UI if ingame to apply new anchor positioning
+            if (gameShell && gameShell->GameActive) {
+                _shellIconManager.reloadDesktop();
+            }
+        }
     }
 }
 

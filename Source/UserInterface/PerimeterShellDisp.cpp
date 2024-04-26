@@ -1108,10 +1108,7 @@ void CShellIconManager::save(SaveTaskList& tasksOut) const {
 
 void CShellIconManager::onSizeChanged() {
 	_pShellDispatcher->updateSmallCamera();
-
-	if (m_pDesktop) {
-		reload(m_pDesktop);
-	}
+    reloadDesktop();
 
 	//scale textures
 	_RELEASE(m_hPopupTexture);
@@ -1120,13 +1117,21 @@ void CShellIconManager::onSizeChanged() {
 	m_hTextureProgressBars = terVisGeneric->CreateTexture(progress_texture);
 }
 
+void CShellIconManager::reloadDesktop() {
+    if (m_pDesktop) {
+        reload(m_pDesktop);
+    }
+}
+
 void CShellIconManager::reload(CShellWindow* pTop) {
-	if (pTop) {
-		pTop->reload();
-		std::list<CShellWindow*>::iterator i;
-		FOR_EACH(pTop->m_children, i)
-			if (*i) reload(*i);
-	}
+	if (!pTop) return;
+
+    pTop->reload();
+    for (auto wnd : pTop->m_children) {
+        if (wnd) {
+            reload(wnd);
+        }
+    }
 }
 
 void CShellIconManager::LoadControlsGroup(int nGroup, bool force)

@@ -1755,6 +1755,7 @@ public:
 
 	CShellWindow* GetWnd(int id);
 	CShellWindow* CreateWnd(int id, ShellControlType type, CShellWindow* pParent = 0, EVENTPROC proc = 0);
+    void reloadDesktop();
 	void reload(CShellWindow* pTop);
 
 	bool isDynQueueEmpty();
@@ -1817,7 +1818,7 @@ public:
 	void UnEffectControls(CShellWindow* pWnd, int effect);
 	void fillTaskWnd();
 	CShellWindow* getDesktop() {
-		return cutSceneModeOn ? 0 : m_pDesktop;
+		return cutSceneModeOn ? nullptr : m_pDesktop;
 	}
 	bool isCutSceneMode() {
 		return cutSceneModeOn;
