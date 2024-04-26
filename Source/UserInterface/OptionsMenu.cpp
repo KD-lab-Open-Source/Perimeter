@@ -495,10 +495,11 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	CSliderWindow *pSlider = (CSliderWindow*) pWnd;
-	if( code == EVENT_SLIDERUPDATE )
-		SetVolumeMusic( terMusicVolume = pSlider->pos );
-	else if( code == EVENT_CREATEWND )
-		SetVolumeMusic( pSlider->pos = terMusicVolume );
+	if( code == EVENT_SLIDERUPDATE ) {
+        SetVolumeMusic(terMusicVolume = pSlider->pos);
+    } else if( code == EVENT_CREATEWND ) {
+        SetVolumeMusic(pSlider->pos = terMusicVolume);
+    }
 }
 // game
 void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param)
@@ -514,11 +515,12 @@ void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void OnSliderScrollRate(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	CSliderWindow *pSlider = dynamic_cast<CSliderWindow*>(pWnd);
-	if( code == EVENT_SLIDERUPDATE )
-		CAMERA_SCROLL_SPEED_DELTA = 
-		CAMERA_BORDER_SCROLL_SPEED_DELTA = 1+pSlider->pos*19.f;
-	else if( code == EVENT_CREATEWND )
-		pSlider->pos = (CAMERA_SCROLL_SPEED_DELTA-1)/19.f;
+    if (code == EVENT_SLIDERUPDATE) {
+        CAMERA_SCROLL_SPEED_DELTA = 1 + pSlider->pos * 19.f;
+        CAMERA_BORDER_SCROLL_SPEED_DELTA = CAMERA_SCROLL_SPEED_DELTA;
+    } else if (code == EVENT_CREATEWND) {
+        pSlider->pos = (CAMERA_SCROLL_SPEED_DELTA - 1) / 19.f;
+    }
 }
 
 void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param) {
