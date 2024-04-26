@@ -7,8 +7,8 @@ LightingParameters::LightingParameters()
 {
 	generate_time=0.100f; //How often generate new pattern
 	texture_name="RESOURCE\\Effect\\freeze.tga";
-	strip_width_begin=2.5f;
-	strip_width_time=5.0f;
+	strip_width_begin=3.0f;
+	strip_width_time=5.5f;
 	strip_length=30.0f; //How long each segment will be
 	fade_time=0.150f;
     min_amplitude=4.0f; //The min width that the arc pattern will have from the line center
