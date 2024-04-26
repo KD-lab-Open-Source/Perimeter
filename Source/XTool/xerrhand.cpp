@@ -6,15 +6,6 @@
 #include <vector>
 #include <SDL.h>
 #include "files/files.h"
-
-#ifdef _WIN32 //For Windows specific exHandler code
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-#include <process.h>
-#include <crtdbg.h>
-#include <cfloat>
-#include <cinttypes>
-#endif
 #include "tweaks.h"
 #include "xstream.h"
 #include "xerrhand.h"
@@ -35,220 +26,18 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 
 #endif
 
-#if defined(_WIN32) && (defined(_M_IX86) || defined (_M_AMD64))
-//Specific to Windows X86/X86_64 archs
-#define USE_ORIGINAL_HANDLER
-#endif
-
 #ifndef _WIN32
 #define APIENTRY
 #endif
 
 typedef void (*sighandler) (int);
 std::string lastException;
-std::terminate_handler originalTerminateHandler = nullptr;
 
 static const char *defprefix 	= "XHANDLER INFORM";
 static const char *exceptMSG 	= "EXCEPTION OCCURED";
 static const char *rterrorMSG	= "RUN-TIME ERROR";
 
 XErrorHandler ErrH;
-
-//All the Win32 on x86/64 specific error handling
-#ifdef USE_ORIGINAL_HANDLER
-#define CONV_BUFFER_LEN	63
-char convBuf[CONV_BUFFER_LEN + 1];
-
-void win32_break(const char* error,char* msg) {
-    std::cerr << "--------------------------------\n";
-    std::cerr << error << "\n";
-    std::cerr << msg << "\n";
-    std::cerr  << "--------------------------------" << std::endl;
-    _ASSERT(FALSE) ;
-}
-
-#define HANDLE_EXEPT(string,mask) { strcat(msg,(string)); break; }
-
-char* qwtoa(uint64_t a)
-{
-    sprintf(convBuf, "%" PRIX64, a);
-    size_t len = 16 - strlen(convBuf);
-    for(int i = 0; i < len;i++)
-        convBuf[i] = '0';
-    sprintf(convBuf + len, "%" PRIX64, a);
-    return convBuf;
-}
-char* dwtoa(uint32_t a)
-{
-    sprintf(convBuf, "%X", a);
-	size_t len = 8 - strlen(convBuf);
-	for(int i = 0; i < len;i++)
-		convBuf[i] = '0';
-    sprintf(convBuf + len, "%X", a);
-	return convBuf;
-}
-char* wtoa(uint16_t a)
-{
-    sprintf(convBuf, "%X", a);
-    size_t len = 4 - strlen(convBuf);
-    for(int i = 0; i < len;i++)
-        convBuf[i] = '0';
-    sprintf(convBuf + len, "%X", a);
-	return convBuf;
-}
-char* uctoa(uint8_t a)
-{
-    sprintf(convBuf, "%X", a);
-    size_t len = 2 - strlen(convBuf);
-    if(len == 1)
-        convBuf[0] = '0';
-    sprintf(convBuf + len, "%X", a);
-	return convBuf;
-}
-
-long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
-{
-    fprintf(stderr, "exHandler\n");
-	//_clearfp();
-	//_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
-	SetUnhandledExceptionFilter(NULL);
-
-	static char msg[10000];
-
-	strcpy(msg, "");
-
-	switch(except_info->ExceptionRecord->ExceptionCode)
-	{
-	 case EXCEPTION_INT_DIVIDE_BY_ZERO:
-		 HANDLE_EXEPT("INTEGER DIVIDE ERROR",XERR_MATH)
-	 case EXCEPTION_INT_OVERFLOW:
-		 HANDLE_EXEPT("INTEGER OVERFLOW",XERR_MATH)
-	 case EXCEPTION_ACCESS_VIOLATION:
-		 HANDLE_EXEPT("MEMORY ACCESS VIOLATION",XERR_ACCESSVIOLATION)
-	 case EXCEPTION_BREAKPOINT:
-		 HANDLE_EXEPT("A BREAKPOINT WAS ENCOUNTERED",XERR_DEBUG)
-	 case EXCEPTION_DATATYPE_MISALIGNMENT:
-		 HANDLE_EXEPT("DATA TYPE MISALIGMENT",XERR_ACCESSVIOLATION)
-	 case EXCEPTION_SINGLE_STEP:
-		 HANDLE_EXEPT("TRACE TRAP",XERR_DEBUG)
-	 case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
-		 HANDLE_EXEPT("OUT OF BOUNDS FOR ARRAY",XERR_ACCESSVIOLATION)
-	 case EXCEPTION_FLT_DENORMAL_OPERAND:
-		 HANDLE_EXEPT("FLOATING POINT DENORMAL OPERAND",XERR_FLOAT)
-	 case EXCEPTION_FLT_DIVIDE_BY_ZERO:
-		 HANDLE_EXEPT("FLOATING POINT DIVIDE BY ZERO",XERR_FLOAT)
-	 case EXCEPTION_FLT_INEXACT_RESULT:
-		 HANDLE_EXEPT("FLOATING POINT INEXACT RESULT",XERR_FLOAT)
-	 case EXCEPTION_FLT_INVALID_OPERATION:
-		 HANDLE_EXEPT("FLOATING POINT INVALID OPERATION",XERR_FLOAT)
-	 case EXCEPTION_FLT_OVERFLOW:
-		 HANDLE_EXEPT("FLOATING POINT OVERFLOW",XERR_FLOAT)
-	 case EXCEPTION_FLT_STACK_CHECK:
-		 HANDLE_EXEPT("FLOATING POINT STACK CHECK FAILED",XERR_FLOAT)
-	 case EXCEPTION_FLT_UNDERFLOW:
-		 HANDLE_EXEPT("FLOATING POINT UNDERFLOW",XERR_FLOAT)
-	 case EXCEPTION_PRIV_INSTRUCTION:
-		 HANDLE_EXEPT("PRIVELEGED INSTRUCTION",XERR_ACCESSVIOLATION)
-	 default:
-		 HANDLE_EXEPT("UNKNOWN ERROR TYPE",XERR_UNKNOWN)
-	}
-
-	strcat(msg," AT LOCATION 0x");
-#ifdef PERIMETER_ARCH_64
-	strcat(msg, qwtoa((uint64_t) except_info->ExceptionRecord->ExceptionAddress));
-#else
-    strcat(msg, dwtoa((uint32_t) except_info->ExceptionRecord->ExceptionAddress));
-#endif
-
-	static int attempted_to_show_context = 0;
-	if(!attempted_to_show_context){
-		PCONTEXT p = except_info -> ContextRecord;
-		if((p -> ContextFlags & CONTEXT_INTEGER) && (p -> ContextFlags & CONTEXT_CONTROL) &&
-			(p -> ContextFlags & CONTEXT_CONTROL)){
-            attempted_to_show_context = 1;
-#ifdef PERIMETER_ARCH_64
-            strcat(msg,"\r\n\r\nRegisters:\r\n");
-            strcat(msg,"RAX="); strcat(msg, qwtoa(p -> Rax));
-            strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
-            strcat(msg,"  RIP="); strcat(msg, qwtoa(p -> Rip));
-            strcat(msg,"  EFLAGS="); strcat(msg, dwtoa(p -> EFlags));
-
-            strcat(msg,"\r\nRBX="); strcat(msg, qwtoa(p -> Rbx));
-            strcat(msg,"  SS="); strcat(msg, wtoa(p -> SegSs));
-            strcat(msg,"  RSP="); strcat(msg, qwtoa(p -> Rsp));
-            strcat(msg,"  RBP="); strcat(msg, qwtoa(p -> Rbp));
-
-            strcat(msg,"\r\nRCX="); strcat(msg, qwtoa(p -> Rcx));
-            strcat(msg,"  DS="); strcat(msg, wtoa(p -> SegDs));
-            strcat(msg,"  RSI="); strcat(msg, qwtoa(p -> Rsi));
-            strcat(msg,"  FS="); strcat(msg, wtoa(p -> SegFs));
-
-            strcat(msg,"\r\nRDX="); strcat(msg, qwtoa(p -> Rdx));
-            strcat(msg,"  ES="); strcat(msg, wtoa(p -> SegEs));
-            strcat(msg,"  RDI="); strcat(msg, qwtoa(p -> Rdi));
-            strcat(msg,"  GS="); strcat(msg, wtoa(p -> SegGs));
-
-            strcat(msg,"\r\n\r\nBytes at CS::RIP:\r\n");
-            unsigned char* code = (unsigned char*)(p -> Rip);
-            for(int i = 0;i < 16;i++){
-                strcat(msg, uctoa(code[i]));
-                strcat(msg," ");
-            }
-
-            strcat(msg,"\r\n\r\nStack dump:\r\n");
-            unsigned int* stack = (unsigned int*)(p -> Rsp);
-            for(int i = 0;i < 32;i++){
-                strcat(msg, qwtoa(stack[i]));
-                strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
-            }
-#else
-			strcat(msg,"\r\n\r\nRegisters:\r\n");
-			strcat(msg,"EAX="); strcat(msg, dwtoa(p -> Eax));
-			strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
-			strcat(msg,"  EIP="); strcat(msg, dwtoa(p -> Eip));
-			strcat(msg,"  EFLAGS="); strcat(msg, dwtoa(p -> EFlags));
-
-			strcat(msg,"\r\nEBX="); strcat(msg, dwtoa(p -> Ebx));
-			strcat(msg,"  SS="); strcat(msg, wtoa(p -> SegSs));
-			strcat(msg,"  ESP="); strcat(msg, dwtoa(p -> Esp));
-			strcat(msg,"  EBP="); strcat(msg, dwtoa(p -> Ebp));
-
-			strcat(msg,"\r\nECX="); strcat(msg, dwtoa(p -> Ecx));
-			strcat(msg,"  DS="); strcat(msg, wtoa(p -> SegDs));
-			strcat(msg,"  ESI="); strcat(msg, dwtoa(p -> Esi));
-			strcat(msg,"  FS="); strcat(msg, wtoa(p -> SegFs));
-
-			strcat(msg,"\r\nEDX="); strcat(msg, dwtoa(p -> Edx));
-			strcat(msg,"  ES="); strcat(msg, wtoa(p -> SegEs));
-			strcat(msg,"  EDI="); strcat(msg, dwtoa(p -> Edi));
-			strcat(msg,"  GS="); strcat(msg, wtoa(p -> SegGs));
-
-			strcat(msg,"\r\n\r\nBytes at CS::EIP:\r\n");
-			unsigned char* code = (unsigned char*)(p -> Eip);
-			for(int i = 0;i < 16;i++){
-				strcat(msg, uctoa(code[i]));
-				strcat(msg," ");
-            }
-
-			strcat(msg,"\r\n\r\nStack dump:\r\n");
-			unsigned int* stack = (unsigned int*)(p -> Esp);
-			for(int i = 0;i < 32;i++){
-				strcat(msg, dwtoa(stack[i]));
-				strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
-            }
-#endif
-        }
-    }
-
-#if defined(_DEBUG) || defined(_EXCEPTION_CATCH)
-	win32_break(exceptMSG,msg);
-	return EXCEPTION_CONTINUE_EXECUTION;
-#else
-	ErrH.Abort(exceptMSG,XERR_USER,-1,msg);
-	return EXCEPTION_EXECUTE_HANDLER;
-#endif
-}
-#endif //USE_ORIGINAL_HANDLER
 
 void setSignalHandler(sighandler signalHandler) {
     signal(SIGSEGV, signalHandler);
@@ -433,11 +222,7 @@ XErrorHandler::XErrorHandler() {
     }
 
     //Register handler
-#ifdef USE_ORIGINAL_HANDLER
-    SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
-#else
     setTerminateHandler(handleTerminate);
-#endif
     setSignalHandler(handleSignal);
 }
 
