@@ -375,27 +375,42 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 	terUnitBase::executeCommand(command);
 																		 				   
 	switch(command.commandID()){
-	case COMMAND_ID_OBJECT:
-		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+	case COMMAND_ID_OBJECT: {
+        if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
             clearOrders();
         }
-		if(command.unit()) {
-			if (isEnemy(command.unit())) {
-				addTarget(command.unit());
-                if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
-                    soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
-                }
-			} else {
-				if (dynamic_cast<terUnitLegionary*>(command.unit())) {
-                    setSquadToFollow(command.unit());
-                } else if(command.unit()->Player->isWorld()) {
-                    addTarget(command.unit());
+        terUnitBase* pUnit = command.unit();
+        if (pUnit) {
+            int attackClass = UNIT_CLASS_IGNORE;
+            if (!Empty()) {
+                if (!isBase()) {
+                    attackClass = pUnit->Player->unitAttribute(currentMutation_)->AttackClass;
                 } else {
-                    addWayPoint(command.unit()->position(), command.selectionMode() & COMMAND_SELECTED_MODE_OVERRIDE);
+                    attackClass = attackEnemyClass();
+                }
+            }
+            if (isEnemy(pUnit)) {
+                if (pUnit->unitClass() & attackClass) {
+                    addTarget(pUnit);
+                    if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+                        soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
+                    }
+                }
+            } else {
+                if (dynamic_cast<terUnitLegionary*>(pUnit)) {
+                    setSquadToFollow(pUnit);
+                } else if (pUnit->Player->isWorld()) {
+                    if (pUnit->unitClass() & attackClass) {
+                        addTarget(pUnit);
+                    }
+                } else {
+                    bool bypassPathfinder = command.selectionMode() & COMMAND_SELECTED_MODE_OVERRIDE;
+                    addWayPoint(pUnit->position(), bypassPathfinder);
                 }
             }
         }
-		break;
+        break;
+    }
 																			 
 	case COMMAND_ID_PATROL:
 		if (patrolPoints_.empty() || (patrolIndex_ == 1 && patrolPoints_.empty())) {

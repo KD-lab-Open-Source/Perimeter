@@ -111,15 +111,20 @@ void terBuildingMilitary::executeCommand(const UnitCommand& command)
 
 	switch(command.commandID()){
 	case COMMAND_ID_POINT:
-		setAttackTarget(NULL,true);
+        setAttackTarget(nullptr, true);
 		xassert(!wayPoints().empty());
 		break;
-	case COMMAND_ID_OBJECT:
-		if(!command.unit() || command.unit()->Player->clan() != Player->clan())
-			setAttackTarget(safe_cast<terUnitReal*>(command.unit()),true);
-		break;
-	case COMMAND_ID_STOP: 
-		setAttackTarget(NULL,true);
+	case COMMAND_ID_OBJECT: {
+        terUnitReal* pUnit = dynamic_cast<terUnitReal*>(command.unit());
+        if (pUnit && isEnemy(pUnit) && pUnit->unitClass() & attr()->AttackClass) {
+            setAttackTarget(pUnit, true);
+        } else {
+            setAttackTarget(nullptr, true);
+        }
+        break;
+    }
+	case COMMAND_ID_STOP:
+        setAttackTarget(nullptr, true);
 		break;
     default:
         break;
