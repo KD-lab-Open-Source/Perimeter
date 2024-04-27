@@ -2172,8 +2172,8 @@ void terWeaponLighting::quant()
 
     xassert(owner());
     Vect3f target_pos = target_->position();
-    if (!owner()->alive() || !fireDistanceCheck(target_pos)) {
-        //Not on / weapon owner is not alive / target too far
+    if (!owner()->alive() || !fireDistanceCheck(target_pos) || target_->isUnseen()) {
+        //Weapon owner is not alive / target too far / target is invisible
         if (lighting_) {
             releaseLighting();
         }
@@ -2324,8 +2324,9 @@ void terWeaponLighting::destroyLink()
 {
 	WeaponDirectionalBase::destroyLink();
 
-	if(target_ && !target_->alive())
-		target_ = NULL;
+	if (target_ && !target_->alive()) {
+        target_ = nullptr;
+    }
 }
 
 void terWeaponLighting::kill()
