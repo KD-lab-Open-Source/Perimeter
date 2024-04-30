@@ -760,7 +760,9 @@ int SwitchMenuBGQuant2( float, float ) {
                     //Only enable if user didn't choose a specific content
                     _shellIconManager.GetWnd(SQSH_MM_BATTLE_BTN)->Enable(terGameContentAvailable == terGameContentSelect);
 #ifdef EMSCRIPTEN
-                    _shellIconManager.GetWnd(SQSH_MM_BACK_FROM_SINGLE_BTN)->Enable(false);
+                    if (_shellIconManager.initialMenu == SQSH_MM_SINGLE_SCR) {
+                        _shellIconManager.GetWnd(SQSH_MM_BACK_FROM_SINGLE_BTN)->Enable(false);
+                    }
 #endif
 #ifdef GPX
                     _shellIconManager.GetWnd(SQSH_MM_CONTENT_CHOOSER_BTN)->Enable(false);
