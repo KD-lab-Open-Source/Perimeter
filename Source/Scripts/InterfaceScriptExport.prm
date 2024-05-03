@@ -234,8 +234,8 @@ int ingameCustomUp = 100;
 int ingameCustomStep = 50;
 int battleUp = 405;
 int battleStep = 40;
-int startUp = 174 + 109;
-int startStep = 70;
+int startUp = 294;
+int startStep = 68;
 int optionsUp = 115 + 70;
 int optionsStep = 122;
 
