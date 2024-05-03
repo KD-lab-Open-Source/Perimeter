@@ -2,7 +2,6 @@
 OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 
 target_sources(perimeter PRIVATE
-        "${PROJECT_SOURCE_DIR}/Source/version.cpp"
         CameraManager.cpp
         MonkManager.cpp
         MusicManager.cpp

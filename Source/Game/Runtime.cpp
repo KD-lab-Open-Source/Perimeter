@@ -1,3 +1,4 @@
+#include "../version.h"
 #include "StdAfx.h"
 
 #include "Umath.h"

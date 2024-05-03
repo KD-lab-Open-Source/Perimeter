@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
 # root
-PROJECT(perimeter VERSION 3.1.1)
+PROJECT(perimeter VERSION 3.1.2)
 message("Version ${PROJECT_VERSION}")
 
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
