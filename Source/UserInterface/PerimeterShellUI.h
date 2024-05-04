@@ -202,8 +202,8 @@ public:
 		return (flashTimer >= 0);
 	}
 	virtual void OnWindow(int enable);
-	virtual void OnFormatPopupMessage(char* cbBuffer);
-	virtual void OnFormatHotKeyPopupMessage(char* cbBuffer);
+	virtual void OnFormatPopupMessage(std::string& cbuffer);
+	virtual void OnFormatHotKeyPopupMessage(std::string& cbuffer);
 
 	virtual void draw(int bFocus);
 
@@ -352,7 +352,7 @@ public:
 	void OnWindow(int enable) override;
 	void Enable(int bEnable) override;
 	void draw(int bFocus) override;
-	void OnFormatPopupMessage(char* cbBuffer) override;
+	void OnFormatPopupMessage(std::string& cbuffer) override;
 	void scale(Vect2f& scaleV) override;
 
 	void SetCheck(bool b);
@@ -460,7 +460,7 @@ public:
 
 	void draw(int bFocus) override;
 	int  HitTest(float _x, float _y) override;
-	void OnFormatPopupMessage(char* cbBuffer) override;
+	void OnFormatPopupMessage(std::string& cbuffer) override;
 	void Load(const sqshControl* attr) override;
 	void setParams(bool _unitReady, float _productionPhase, bool _isBrig) {
 		unitReady = _unitReady;
@@ -1387,13 +1387,13 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //инвормационное окошко
 
-typedef void (*InfoWndFormatProcType)(char*, void*);
+typedef void (*InfoWndFormatProcType)(std::string&, void*);
 
 class CInfoWindow : public CShellWindow
 {
 	bool  m_bCentered;
 
-	char  m_cbText[255];
+	std::string  m_cbText;
 	int   m_nTimeToDisplay;
 
 	void*                  m_pParam = nullptr;
@@ -1760,8 +1760,8 @@ public:
 
 	bool isDynQueueEmpty();
 
-	void FormatUnitPopup(const AttributeBase* attr, char* cbBuffer, bool onControl, terUnitBase* unit);
-	char* FormatMessageText(const char* cbTag, char* cb, ...);
+	void FormatUnitPopup(const AttributeBase* attr, std::string& cbBuffer, bool onControl, terUnitBase* unit);
+	void FormatMessageText(const char* cbTag, std::string* cb, ...);
 
 	void AddDynamicHandler(DYNCALLBACK _p, int code, int delay = 0);
 	void DelDynamicHandler(DYNCALLBACK _p, int code);

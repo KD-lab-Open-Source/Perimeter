@@ -1583,9 +1583,10 @@ void OnButtonFrameInstall(CShellWindow* pWnd, InterfaceEventCode code, int param
 					CInfoWindow* pWndInfo = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID);
 					xassert(pWndInfo);
 			
-					static char _cb[200];
+					static std::string _cb;
 					pWndInfo->Show(true);
-					pWndInfo->SetText(_shellIconManager.FormatMessageText("<frame_cant_install>", _cb)); 
+                    _shellIconManager.FormatMessageText("<frame_cant_install>", &_cb);
+					pWndInfo->SetText(_cb.c_str()); 
 					pWndInfo->SetTime(3000);
 					pWndInfo->Centered();
 				}

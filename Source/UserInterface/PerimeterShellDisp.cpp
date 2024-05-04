@@ -1303,10 +1303,12 @@ void CShellIconManager::PostLoadTabSheets()
 void CShellIconManager::OpenPromtMessagesFile()
 {
 }
-char* CShellIconManager::FormatMessageText(const char* cbTag, char* cb, ...)
+
+void CShellIconManager::FormatMessageText(const char* cbTag, std::string* cb, ...)
 {
 	const int bufferSize = 2000;
 	static char cbTempBuffer[bufferSize];
+    xassert(cbTag && cb);
 
 	std::string text;
 	//ищем тэг
@@ -1319,21 +1321,16 @@ char* CShellIconManager::FormatMessageText(const char* cbTag, char* cb, ...)
         text = (cbTag + 1);
     }
 	if (text.length()) {
-		strncpy(cbTempBuffer, text.c_str(), text.length());
-		cbTempBuffer[text.length()] = '\0';
-
 		va_list va;
 		va_start(va, cb);
-		vsprintf(cb, cbTempBuffer, va);
+        vsnprintf(cbTempBuffer, bufferSize - 1, text.c_str(), va);
 		va_end(va);
-	}
-	else
-		*cb = '\0';
-
-	xassert(strlen(cb) < bufferSize);
-
-	return cb;
-}
+        cbTempBuffer[bufferSize-1] = 0;
+        *cb = cbTempBuffer;
+	} else {
+        cb->clear();
+    }
+}   
 
 void CShellIconManager::setCutSceneMode(bool on, bool animated) {
 	if (!on) {
@@ -2144,7 +2141,7 @@ inline int rect_height(sRect& rc)
 	return rc.bottom - rc.top;
 }
 
-void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
+void PopupFormatAttack(const AttributeBase* attr, std::string& cbBuffer, bool gun) {
 	std::string attacks;
 	std::string unitClass;
 	int count = 0;
@@ -2173,15 +2170,15 @@ void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
 	}
 
 	std::string balance;
-	static char cbTemp[200];
+	static std::string cbTemp;
 	if (attr->intfBalanceData.power) {
-		_shellIconManager.FormatMessageText("<damage>", cbTemp, attr->intfBalanceData.power, attr->intfBalanceData.width );
+		_shellIconManager.FormatMessageText("<damage>", &cbTemp, attr->intfBalanceData.power, attr->intfBalanceData.width );
 		balance += "\n";
 		balance += cbTemp;
 	}
 	if (!gun) {
         int armor = xm::round(attr->intfBalanceData.armor);
-		_shellIconManager.FormatMessageText("<armor>", cbTemp, armor );
+		_shellIconManager.FormatMessageText("<armor>", &cbTemp, armor );
 		if (balance.empty()) {
 			balance += "\n";
 		}
@@ -2191,14 +2188,14 @@ void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
 
 	_shellIconManager.FormatMessageText(
 		"<Attack>",
-		cbBuffer,
+        &cbBuffer,
 		balance.c_str(),
 		unitClass.c_str(),
 		attacks.c_str()
 	);
 }
 
-void PopupFormatBuilding(const AttributeBase* attr, char* cbBuffer, bool onControl, terUnitBase* unit, bool ampl, bool gun)
+void PopupFormatBuilding(const AttributeBase* attr, std::string& cbBuffer, bool onControl, terUnitBase* unit, bool ampl, bool gun)
 {
 	const UnitInterfacePrm& prm = attr->interfacePrm;
 
@@ -2208,8 +2205,8 @@ void PopupFormatBuilding(const AttributeBase* attr, char* cbBuffer, bool onContr
 	terPlayer* player = unit ? universe()->findPlayer(unit->playerID()) : universe()->activePlayer();
 	bool enemy = unit ? (unit->playerID() != universe()->activePlayer()->playerID()) : false;
 
-	static char cbTemp[200];
-	_shellIconManager.FormatMessageText("<requires>", cbTemp);
+	static std::string cbTemp;
+	_shellIconManager.FormatMessageText("<requires>", &cbTemp);
 	if (enemy) {
 		if(attr->isBuilding())
 		{
@@ -2240,10 +2237,10 @@ void PopupFormatBuilding(const AttributeBase* attr, char* cbBuffer, bool onContr
 			sRequired += "&FFFFFF";
 			if (gun) {
 				PopupFormatAttack(attr, cbTemp, true);
-				_shellIconManager.FormatMessageText(prm.popup, cbBuffer, sRequired.c_str(), "", attr->buildEnergy(), cbTemp);
+				_shellIconManager.FormatMessageText(prm.popup, &cbBuffer, sRequired.c_str(), "", attr->buildEnergy(), cbTemp.c_str());
 			} else {
 				float buildEnergy = attr->buildEnergy();
-				_shellIconManager.FormatMessageText(prm.popup, cbBuffer, sRequired.c_str(), "", buildEnergy, ampl ? attr->energyCapacity : attr->MakeEnergy);
+				_shellIconManager.FormatMessageText(prm.popup, &cbBuffer, sRequired.c_str(), "", buildEnergy, ampl ? attr->energyCapacity : attr->MakeEnergy);
 			}
 //		}
 	} else {
@@ -2285,51 +2282,51 @@ void PopupFormatBuilding(const AttributeBase* attr, char* cbBuffer, bool onContr
 			sRequired += "&FFFFFF";
 			if (gun) {
 				PopupFormatAttack(attr, cbTemp, true);
-				_shellIconManager.FormatMessageText( prm.popup,	cbBuffer, sRequired.c_str(), (noEnergy ? "&FF0000" : ""), attr->buildEnergy(), cbTemp);
+				_shellIconManager.FormatMessageText( prm.popup,	&cbBuffer, sRequired.c_str(), (noEnergy ? "&FF0000" : ""), attr->buildEnergy(), cbTemp.c_str());
 			} else {
-				_shellIconManager.FormatMessageText(prm.popup, cbBuffer, sRequired.c_str(), (noEnergy ? "&FF0000" : ""), attr->buildEnergy(), ampl ? attr->energyCapacity : attr->MakeEnergy);
+				_shellIconManager.FormatMessageText(prm.popup, &cbBuffer, sRequired.c_str(), (noEnergy ? "&FF0000" : ""), attr->buildEnergy(), ampl ? attr->energyCapacity : attr->MakeEnergy);
 			}
 //		}
 	}
 
 }
-void PopupFormatCore(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit)
+void PopupFormatCore(const AttributeBase* attr, std::string& cbBuffer, terUnitBase* unit)
 {
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
-		cbBuffer,
+		&cbBuffer,
 		"",
 		attr->buildEnergy(),
 		attr->MakeEnergy,
 		(unit && safe_cast<terProtector*>(unit)->canStartField()) ? "&00FF00" : "&FF0000");
 }
-void PopupFormatFrame(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit)
+void PopupFormatFrame(const AttributeBase* attr, std::string& cbBuffer, terUnitBase* unit)
 {
 	int spiralLevel = unit ? static_cast<int>(xm::round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f)) : 0;
     spiralLevel = std::max(0, spiralLevel);
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
-		cbBuffer,
+		&cbBuffer,
 		attr->MakeEnergy,
 		attr->energyCapacity,
 		spiralLevel);
 }
-void PopupFormatSquad(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit)
+void PopupFormatSquad(const AttributeBase* attr, std::string& cbBuffer, terUnitBase* unit)
 {
-	static char cbTemp[256];
+	static std::string cbTemp;
 	PopupFormatAttack(attr, cbTemp, false);
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
-		cbBuffer,
+		&cbBuffer,
 		attr->interfaceName(),
-		cbTemp);
+		cbTemp.c_str());
 }
-void PopupFormatMMP(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit) {
+void PopupFormatMMP(const AttributeBase* attr, std::string& cbBuffer, terUnitBase* unit) {
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
-		cbBuffer);
+		&cbBuffer);
 }
-void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffer, bool onControl, terUnitBase* unit)
+void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, std::string& cbBuffer, bool onControl, terUnitBase* unit)
 {
 	if(strlen(attr->interfacePrm.popup) == 0)
 		return;
@@ -2361,13 +2358,11 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 		break;
 	}
 
-    if (!strlen(cbBuffer)) {
-        std::string finalPopup = attr->interfaceName();
-        finalPopup += cbBuffer;
-        strcpy(cbBuffer, finalPopup.c_str());
+    if (cbBuffer.empty()) {
+        cbBuffer = attr->interfaceName();
     }
 
-	if (strlen(cbBuffer) && unit && !unit->Player->isWorld()) {
+	if (!cbBuffer.empty() && unit && !unit->Player->isWorld()) {
 //		string finalPopup(qdTextDB::instance().getText("Player"));
 		std::string finalPopup = "[";
         finalPopup += unit->Player->name();
@@ -2402,10 +2397,8 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 		}
 
 		finalPopup += "&FFFFFF\n\n";
-		finalPopup += cbBuffer;
-		strcpy(cbBuffer, finalPopup.c_str());
+        cbBuffer = finalPopup + cbBuffer;
 	}
-
 }
 
 void CShellIconManager::draw()
@@ -2453,11 +2446,11 @@ void CShellIconManager::draw()
 		{
 			if(!_bMenuMode)
 			{
-				static char cbPopupBuffer[2000];
+				static std::string cbPopupBuffer;
 
 				if((GetWnd(SQSH_INFOWND_ID)->state & SQSH_VISIBLE) == 0)
 				{
-					*cbPopupBuffer = 0;
+					cbPopupBuffer.clear();
 
 					if(m_pCtrlHover)
 					{
@@ -2472,12 +2465,12 @@ void CShellIconManager::draw()
 //					else if(_pShellDispatcher->m_pUnitInfo)
 //						FormatUnitPopup(_pShellDispatcher->m_pUnitInfo, cbPopupBuffer, false, 0);
 
-					if(*cbPopupBuffer)
+					if(!cbPopupBuffer.empty())
 					{
 						terRenderDevice->SetFont(m_hFontPopup);
 
 						Vect2f v1, v2;
-						OutTextRect(0, 0 , cbPopupBuffer, -1, v1, v2);
+						OutTextRect(0, 0 , cbPopupBuffer.c_str(), -1, v1, v2);
 						v2.x += 2;
 
 						int pos_x = terScreenSizeX - (v2.x-v1.x) - 1;
@@ -2486,7 +2479,7 @@ void CShellIconManager::draw()
 						terRenderDevice->DrawSprite(pos_x - 2, delta_y, v2.x-v1.x + 2, v2.y-v1.y,
 							0, 0, 1, 1, m_hPopupTexture, sColor4c(255,255,255,255));
 
-						terRenderDevice->OutText(pos_x, delta_y, cbPopupBuffer, sColor4f(1, 1, 1, 1), -1);
+						terRenderDevice->OutText(pos_x, delta_y, cbPopupBuffer.c_str(), sColor4f(1, 1, 1, 1), -1);
 						terRenderDevice->SetFont(0);
 
 
@@ -2498,12 +2491,13 @@ void CShellIconManager::draw()
 				}
 
 				if(gameShell->showKeysHelp()){
-					FormatMessageText(gameShell->missionEditor() ? "<mission_editor_help>" : "<keys_help>", cbPopupBuffer);
-					if(gameShell->missionEditor())
-						strcat(cbPopupBuffer, gameShell->missionEditor()->info());
+					FormatMessageText(gameShell->missionEditor() ? "<mission_editor_help>" : "<keys_help>", &cbPopupBuffer);
+					if(gameShell->missionEditor()) {
+                        cbPopupBuffer += gameShell->missionEditor()->info();
+                    }
 					terRenderDevice->SetFont(m_hFontPopup);
                     sColor4f c(1, 1, 1, 1);
-					OutText(10, 30, cbPopupBuffer, &c, -1);
+					OutText(10, 30, cbPopupBuffer.c_str(), &c, -1);
 					terRenderDevice->SetFont(0);
 				}
 				else if(gameShell->missionEditor()){

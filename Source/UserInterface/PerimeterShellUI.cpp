@@ -433,12 +433,12 @@ void CShellWindow::LoadMenuWnd(const sqshControlContainer* attr)
 
 void CShellWindow::createHotKeyString() {
 	hotKeyPopupString = "\n";
-	static char hotKeyBuffer[200];
+	static std::string hotKeyBuffer;
 	for (int i = 0; i < m_attr->actions.size(); i++) {
 		if (strlen(m_attr->actions[i].name) && strlen(m_attr->actions[i].hotKeyPopup)) {
 			_shellIconManager.FormatMessageText(
 				m_attr->actions[i].hotKeyPopup,
-				hotKeyBuffer,
+				&hotKeyBuffer,
 				gameShell->hotKeyManager->getKeyNameForControlAction(m_attr->actions[i]).c_str()
 			);
 			hotKeyPopupString += hotKeyBuffer;
@@ -711,16 +711,17 @@ void CShellWindow::OnWindow(int enable)
 	if(m_handler)
 		m_handler(this, EVENT_ON_WINDOW, enable);
 }
-void CShellWindow::OnFormatPopupMessage(char* cbBuffer)
+void CShellWindow::OnFormatPopupMessage(std::string& cbBuffer)
 {
-	if(m_attr->popup[0] == '<')
-		_shellIconManager.FormatMessageText(m_attr->popup, cbBuffer);
-	else
-		strcpy(cbBuffer, m_attr->popup);
+	if(m_attr->popup[0] == '<') {
+        _shellIconManager.FormatMessageText(m_attr->popup, &cbBuffer);
+    } else {
+        cbBuffer = m_attr->popup;
+    }
 }
 
-void CShellWindow::OnFormatHotKeyPopupMessage(char* cbBuffer) {
-	strcat(cbBuffer, hotKeyPopupString.c_str());
+void CShellWindow::OnFormatHotKeyPopupMessage(std::string& cbBuffer) {
+	cbBuffer += hotKeyPopupString;
 }
 
 ///////////////////////////
@@ -1494,27 +1495,27 @@ void CShellComplexPushButton::OnLButtonUp(float _x, float _y)
 }
 
 
-void FormatTerraText1(char* cb, void* param)
+void FormatTerraText1(std::string& cb, void* param)
 {
 	terUnitBase* pFrame = universe()->activePlayer()->frame();
 	if (pFrame) {
 		const terFrameStatisticsType& t = universe()->activePlayer()->GetFrameStats();
-		_shellIconManager.FormatMessageText("<Terra_bar1>", cb, t.ZeroSquareRequest, t.ZeroSquareComplete);
+		_shellIconManager.FormatMessageText("<Terra_bar1>", &cb, t.ZeroSquareRequest, t.ZeroSquareComplete);
 		workAreaBtnForInfo->OnFormatHotKeyPopupMessage(cb);
 	} else {
-		_shellIconManager.FormatMessageText("<Terra_bar1>", cb, 0, 0);
+		_shellIconManager.FormatMessageText("<Terra_bar1>", &cb, 0, 0);
 		workAreaBtnForInfo->OnFormatHotKeyPopupMessage(cb);
 	}
 }
-void FormatTerraText2(char* cb, void* param)
+void FormatTerraText2(std::string& cb, void* param)
 {
 	terUnitBase* pFrame = universe()->activePlayer()->frame();
 	if (pFrame) {
 		const terFrameStatisticsType& t = universe()->activePlayer()->GetFrameStats();
-		_shellIconManager.FormatMessageText("<Terra_bar2>", cb, t.AbyssSquareRequest, t.AbyssSquareComplete);
+		_shellIconManager.FormatMessageText("<Terra_bar2>", &cb, t.AbyssSquareRequest, t.AbyssSquareComplete);
 		workAreaBtnForInfo->OnFormatHotKeyPopupMessage(cb);
 	} else {
-		_shellIconManager.FormatMessageText("<Terra_bar2>", cb, 0, 0);
+		_shellIconManager.FormatMessageText("<Terra_bar2>", &cb, 0, 0);
 		workAreaBtnForInfo->OnFormatHotKeyPopupMessage(cb);
 	}
 }
@@ -1686,10 +1687,10 @@ void CShellComplexPushButton::draw(int bFocus)
 		terRenderDevice->SetFont(0);
 	}
 }
-extern void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun);
+extern void PopupFormatAttack(const AttributeBase* attr, std::string& cbBuffer, bool gun);
 
 //pSquad=0 -> base unit
-void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffer, int nBtnID, SquadPageData* pSquad)
+void FormatLegionPopup(const sqshControl* pAttr, std::string& cbBuffer, int nBtnID, SquadPageData* pSquad)
 {
 	terUnitAttributeID nAttrID = Button2LegionID(nBtnID);
 
@@ -1717,7 +1718,7 @@ void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffer, int nBtnID, Squ
 
 	xassert(!sRequired.empty());
 
-	static char cbTemp[256];
+	static std::string cbTemp;
 	PopupFormatAttack(attrUnit, cbTemp, false);
 	if(pSquad){
 		//наличие базовых юнитов
@@ -1737,25 +1738,24 @@ void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffer, int nBtnID, Squ
 			//pSquad->countPossibleUnits(nAttrID)
 		}
 
-		_shellIconManager.FormatMessageText(pAttr->popup, cbBuffer, 
+		_shellIconManager.FormatMessageText(pAttr->popup, &cbBuffer, 
 			attrUnit->interfaceName(), sRequired.c_str(),
 			bSold ? "&00FF00" : "&FF0000", damage_molecula[0],
 			bOff  ? "&00FF00" : "&FF0000", damage_molecula[1],
 			bTech ? "&00FF00" : "&FF0000", damage_molecula[2], count_possible, attrUnit->interfaceName(),
-			cbTemp);
-	}
-	else{
-		_shellIconManager.FormatMessageText(pAttr->popup, cbBuffer, 
-			attrUnit->interfaceName(), sRequired.c_str(), attrUnit->buildEnergy(), cbTemp);
+			cbTemp.c_str());
+	} else {
+		_shellIconManager.FormatMessageText(pAttr->popup, &cbBuffer, 
+			attrUnit->interfaceName(), sRequired.c_str(), attrUnit->buildEnergy(), cbTemp.c_str());
 	}
 }
-void CShellComplexPushButton::OnFormatPopupMessage(char* cbBuffer)
+void CShellComplexPushButton::OnFormatPopupMessage(std::string& cbBuffer)
 {
 	if (*(m_attr->popupChecked)) {
 		if (m_bChecked) {
-			_shellIconManager.FormatMessageText(m_attr->popupChecked, cbBuffer);
+			_shellIconManager.FormatMessageText(m_attr->popupChecked, &cbBuffer);
 		} else {
-			_shellIconManager.FormatMessageText(m_attr->popup, cbBuffer);
+			_shellIconManager.FormatMessageText(m_attr->popup, &cbBuffer);
 		}
 		return;
 	}
@@ -1842,10 +1842,11 @@ void CShellComplexPushButton::OnFormatPopupMessage(char* cbBuffer)
 				pSquad = &(gameShell->getLogicUpdater().getLogicData()->squads[nActivePage]);
 			}
 
-			if(pSquad)
-				FormatLegionPopup(m_attr, cbBuffer, ID, pSquad);
-			else
-				*cbBuffer = 0;
+			if(pSquad) {
+                FormatLegionPopup(m_attr, cbBuffer, ID, pSquad);
+            } else {
+                cbBuffer.clear();
+            }
 		}
 		break;
 
@@ -1861,7 +1862,7 @@ void CShellComplexPushButton::OnFormatPopupMessage(char* cbBuffer)
 				float buildEnergy = attr->buildEnergy();
 				if(attr->isUpgrade)
                     buildEnergy -= universe()->activePlayer()->unitAttribute(safe_cast<const AttributeBuilding*>(attr)->Downgrades.front())->buildEnergy();
-				_shellIconManager.FormatMessageText(m_attr->popup, cbBuffer, "", buildEnergy);
+				_shellIconManager.FormatMessageText(m_attr->popup, &cbBuffer, "", buildEnergy);
 			//}
 		} else {
 			CShellWindow::OnFormatPopupMessage(cbBuffer);
@@ -2192,22 +2193,19 @@ int CTerrainBuildButton::HitTest(float _x, float _y)
 	return CShellComplexPushButton::HitTest(_x, _y);
 }
 
-void CTerrainBuildButton::OnFormatPopupMessage(char* cbBuffer)
+void CTerrainBuildButton::OnFormatPopupMessage(std::string& cbBuffer)
 {
 	if(productionPhase == 0)
-		_shellIconManager.FormatMessageText("<Frame_slot_empty>", cbBuffer);
+		_shellIconManager.FormatMessageText("<Frame_slot_empty>", &cbBuffer);
 	else if(unitReady)
 	{
-		if(isBrig)
-			_shellIconManager.FormatMessageText("<Prorab>", cbBuffer);
-		else
-			_shellIconManager.FormatMessageText("<Brigadier>", cbBuffer);
+		_shellIconManager.FormatMessageText(isBrig ? "<Prorab>" : "<Brigadier>", &cbBuffer);
 	} else if (productionPhase >= 1) {
 		m_bPointingLeft = _pShellDispatcher->m_fMouseCurrentX * (float)terRenderDevice->GetSizeX() < x + sx/2;
 		if (m_bPointingLeft && partDisable != 1) {
-			_shellIconManager.FormatMessageText("<Brigadier_slot>", cbBuffer);
+			_shellIconManager.FormatMessageText("<Brigadier_slot>", &cbBuffer);
 		} else if (!m_bPointingLeft && partDisable != 2) {
-			_shellIconManager.FormatMessageText("<Prorab_slot>", cbBuffer);
+			_shellIconManager.FormatMessageText("<Prorab_slot>", &cbBuffer);
 		}
 	}
 }
@@ -2386,12 +2384,12 @@ void CUITabSheet::SetPageNumber(int nPage, int nNumber)
 
 void CUITabSheet::createHotKeyString() {
 	hotKeyPopupString = "";
-	char cbBuffer[200];
+	std::string cbBuffer;
 	for (int i = 0; i < m_tabattr->actions.size(); i++) {
 		if (strlen(m_tabattr->actions[i].name) && strlen(m_tabattr->actions[i].hotKeyPopup)) {
 			_shellIconManager.FormatMessageText(
 				m_tabattr->actions[i].hotKeyPopup,
-				cbBuffer,
+				&cbBuffer,
 				gameShell->hotKeyManager->getKeyNameForControlAction(m_tabattr->actions[i]).c_str()
 			);
 			hotKeyPopupString += cbBuffer;
@@ -2780,14 +2778,15 @@ void CUITabSheet::OnWindow(int enable)
 				pWnd->Show(enable);
 
 				if(enable){
-					static char cbText[200];
+					static std::string cbText;
 
 					const terFrameStatisticsType& t = universe()->activePlayer()->GetFrameStats();
 
 					int num_core=gameShell->getLogicUpdater().getLogicData()->num_core;
-					pWnd->SetText(_shellIconManager.FormatMessageText("<Shield_bar>", cbText, 
-						num_core, 
-						t.EnergyArea, t.ProtectedArea)); 
+                    _shellIconManager.FormatMessageText("<Shield_bar>", &cbText,
+                                                        num_core,
+                                                        t.EnergyArea, t.ProtectedArea);
+					pWnd->SetText(cbText.c_str()); 
 				}
 			}
 		}
@@ -5625,15 +5624,15 @@ void CProgressEnergy::draw(int bFocus)
 	}
 }
 
-void FormatEnergyText(char* cb, void* param)
+void FormatEnergyText(std::string& cb, void* param)
 {
 	terUnitBase* pFrame = universe()->activePlayer()->frame();
 	if(pFrame)
 	{
 		terEnergyDataType& t = universe()->activePlayer()->energyData();
-		_shellIconManager.FormatMessageText("<Energy_bar>", cb, t.accumulated(), t.capacity(), t.produced()*10, t.used()*10, (t.produced() - t.used())*10, t.efficiency()); 
+		_shellIconManager.FormatMessageText("<Energy_bar>", &cb, t.accumulated(), t.capacity(), t.produced()*10, t.used()*10, (t.produced() - t.used())*10, t.efficiency()); 
 	} else {
-		_shellIconManager.FormatMessageText("<Energy_bar>", cb, 0, 0, 0, 0, 0, 0); 
+		_shellIconManager.FormatMessageText("<Energy_bar>", &cb, 0, 0, 0, 0, 0, 0); 
 	}
 }
 void CProgressEnergy::OnWindow(int enable)
@@ -5796,9 +5795,12 @@ void CProgressShield::OnWindow(int enable)
 		pWnd->Show(enable);
 
 		if(enable){
-			static char cbText[200];
-			pWnd->SetText(_shellIconManager.FormatMessageText("<Shield_bar>", cbText, 0, 
-				universe()->activePlayer()->countUnits(UNIT_ATTRIBUTE_CORE), 0, 0)); 
+			static std::string cbText;
+            _shellIconManager.FormatMessageText(
+                    "<Shield_bar>", &cbText, 0,
+                    universe()->activePlayer()->countUnits(UNIT_ATTRIBUTE_CORE), 0, 0
+            );
+			pWnd->SetText(cbText.c_str()); 
 		}
 	}
 }
@@ -5818,8 +5820,9 @@ void CProgressTerrain::OnWindow(int enable)
 
 		if(enable)
 		{
-			static char cbText[200];
-			pWnd->SetText(_shellIconManager.FormatMessageText("<Terra_bar>", cbText, 0, 0, 0, 0)); 
+			static std::string cbText;
+            _shellIconManager.FormatMessageText("<Terra_bar>", &cbText, 0, 0, 0, 0);
+			pWnd->SetText(cbText.c_str()); 
 		}
 	}
 }
@@ -5847,7 +5850,7 @@ void CProgressMutation::draw(int bFocus)
 	//draw_rect(Vect2i(x, y), Vect2i(x + fEn*sx, y+sy), sColor4c(r, g, 0, 128));
 }
 
-void FormatProgressText(char* cb, void* param)
+void FormatProgressText(std::string& cb, void* param)
 {
 	terUnitSquad* pSquad = safe_cast<terUnitSquad*>((terUnitBase*)param);
 	int elements = pSquad->squadMutationMolecula().elementCount(DAMAGE_FILTER_BASE);
@@ -5868,7 +5871,7 @@ void FormatProgressText(char* cb, void* param)
         text.erase(newlines[1]);
     }
     text = "#" + text;
-	_shellIconManager.FormatMessageText(text.c_str(), cb, elements, energy);
+	_shellIconManager.FormatMessageText(text.c_str(), &cb, elements, energy);
 }
 void CProgressMutation::OnWindow(int enable)
 {
@@ -5911,7 +5914,7 @@ void CProgressUnitCharge::draw(int bFocus)
 CInfoWindow::CInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p)
 {
 	m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, infoWndFontSize);
-	*m_cbText = 0;
+	m_cbText = "";
 	m_pFmtProc = 0;
 	m_bCentered = false;
 }
@@ -5928,10 +5931,11 @@ void CInfoWindow::SetText(const char* cb, InfoWndFormatProcType proc, void* para
 
 	SetTime(INT_MAX);
 
-	if(cb)
-		strncpy(m_cbText, cb, 254);
-	else
-		*m_cbText = 0;
+	if (cb) {
+        m_cbText = cb;
+    } else {
+        m_cbText.clear();
+    }
 
 	m_bCentered = false;
 }
@@ -5945,18 +5949,19 @@ void CInfoWindow::draw(int bFocus)
 	if(state & SQSH_VISIBLE)
 	{
 		m_nTimeToDisplay -= frame_time.delta();
-		if(m_nTimeToDisplay <= 0)
-			Show(false);
+		if (m_nTimeToDisplay <= 0) {
+            Show(false);
+        }
 
-		if(*m_cbText)
-		{
+		if (!m_cbText.empty()) {
 			terRenderDevice->SetFont(m_hFont);
 
-			if(m_pFmtProc)
-				m_pFmtProc(m_cbText, m_pParam);
+			if (m_pFmtProc) {
+                m_pFmtProc(m_cbText, m_pParam);
+            }
 
 			Vect2f v1, v2;
-			OutTextRect(0, 0 , m_cbText, -1, v1, v2);
+			OutTextRect(0, 0 , m_cbText.c_str(), -1, v1, v2);
 
 			int pos_x = m_bCentered ? terScreenSizeX/2 - (v2.x - v1.x) - 1 : terScreenSizeX - (v2.x - v1.x) - 1;
 			int delta_y = y + sy - (v2.y-v1.y);
@@ -5965,7 +5970,7 @@ void CInfoWindow::draw(int bFocus)
 				terRenderDevice->DrawSprite(pos_x - 2, delta_y, v2.x - v1.x + 2, v2.y - v1.y,
 					m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y, m_hTexture, sColor4c(255,255,255,255));
 
-			terRenderDevice->OutText(pos_x, delta_y, m_cbText, sColor4f(1, 1, 1, 1), -1);
+			terRenderDevice->OutText(pos_x, delta_y, m_cbText.c_str(), sColor4f(1, 1, 1, 1), -1);
 			terRenderDevice->SetFont(0);
 
 			Vect2f va(pos_x - 2, delta_y);
