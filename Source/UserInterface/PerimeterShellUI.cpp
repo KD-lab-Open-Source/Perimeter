@@ -5854,8 +5854,8 @@ void FormatProgressText(std::string& cb, void* param)
 {
 	terUnitSquad* pSquad = safe_cast<terUnitSquad*>((terUnitBase*)param);
 	int elements = pSquad->squadMutationMolecula().elementCount(DAMAGE_FILTER_BASE);
-    int energy = static_cast<int>(xm::round(pSquad->mutationEnergy() * 100));
-    energy = std::max(0, energy);
+    float energy = pSquad->mutationEnergy() * 100.0f;
+    energy = clamp(energy, 0.0f, 100.0f);
     std::string text = qdTextDB::instance().getText("Interface.Tips.Mutation_bar");
     std::vector<size_t> newlines;
 
