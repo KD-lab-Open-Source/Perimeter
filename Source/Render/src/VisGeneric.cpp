@@ -700,7 +700,7 @@ cFont* cVisGeneric::CreateGameFont(const char* TextureFileName, int height, bool
 	if(TextureFileName==nullptr||TextureFileName[0]==0) return nullptr;
     
     if (locale.empty()) {
-        locale = getLocale();
+        locale = getDefaultFontLocale();
     }
 
 	std::vector<cFontInternal*>::iterator it;

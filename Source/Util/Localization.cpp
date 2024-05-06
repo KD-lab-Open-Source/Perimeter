@@ -8,6 +8,7 @@
 
 bool isLocaleInit = false;
 std::string localeCurrent;
+std::string localeDefaultFont;
 std::string localePath;
 std::vector<std::string> localesAvailable;
 
@@ -117,6 +118,17 @@ void initLocale() {
         fprintf(stdout, "Current locale path: %s\n", localePath.c_str());
     }
     
+    //TODO workaround to fix multiplayer games with mixed russian locale and non russian locale players
+    localeDefaultFont.clear();
+    if (localeCurrent == "english") {
+        for (auto& locale : localesAvailable) {
+            if (stricmp(locale.c_str(), "russian") == 0) {
+                localeDefaultFont = "russian";
+                break;
+            }
+        }
+    }
+    
     isLocaleInit = true;
 }
 
@@ -125,6 +137,17 @@ const std::string& getLocale() {
         initLocale();
     }
     return localeCurrent;
+}
+
+const std::string& getDefaultFontLocale() {
+    if (!isLocaleInit) {
+        initLocale();
+    }
+    if (localeDefaultFont.empty()) {
+        return localeCurrent;
+    } else {
+        return localeDefaultFont;
+    }
 }
 
 const std::vector<std::string>& getLocales() {

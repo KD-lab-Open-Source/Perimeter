@@ -390,13 +390,12 @@ void loadAddonET(ModMetadata& mod) {
         }
     } else {
         //This is a reworked ET
-        
         paths["Resource/Models"] = {};
     }
 
     //Load texts, first try current lang, then english, then russian
-    std::string locale = getLocale();
-    std::string locpath = getLocDataPath();
+    const std::string& locale = getLocale();
+    const std::string& locpath = getLocDataPath();
     std::vector<std::string> lang_paths;
     lang_paths.emplace_back(locpath);
     lang_paths.emplace_back("Resource/LocData/English/");
