@@ -2958,7 +2958,7 @@ void CMapWindow::draw(int bFocus)
 				Vect2f posPrev = Vect2f(x + map_xs * logicData->alphaPath.back().x, y + map_ys * logicData->alphaPath.back().y);
 				FOR_EACH(logicData->alphaPath, ai) {
 					Vect2f pos = Vect2f(x + map_xs * (*ai).x, y + map_ys * (*ai).y);
-					draw_line(posPrev, pos, minimapAlphaPathColor);
+					draw_line(posPrev, pos, minimapAlphaPathColor, 0.5f);
 					posPrev = pos;
 				}
 			}

@@ -2258,13 +2258,13 @@ inline void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Ve
 	terRenderDevice->OutTextRect(x, y, string, align, bmin, bmax);
 }
 
-inline void draw_line(const Vect2f& a, const Vect2f& b, const sColor4f& c = sColor4f(1, 1, 1, 1))
+inline void draw_line(const Vect2f& a, const Vect2f& b, const sColor4f& c = sColor4f(1, 1, 1, 1), float width = 1.0f)
 {
 	int x1 = a.x;
 	int x2 = b.x;
 	int y1 = a.y;
 	int y2 = b.y;
-	terRenderDevice->DrawLine(x1, y1, x2, y2, sColor4c(c));
+	terRenderDevice->DrawLine(x1, y1, x2, y2, sColor4c(c), width);
 }
 
 inline void draw_rect(const Vect2f& a, const Vect2f& b, const sColor4f& c = sColor4f(0, 0, 0, 1))
