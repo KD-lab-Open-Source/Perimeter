@@ -422,6 +422,11 @@ void cSokolRender::ClearCommands() {
         delete command;
     }
     commands.clear();
+    for (auto & it : bufferCache) {
+        for (auto bufferIt = it.second.begin(); bufferIt != it.second.end(); bufferIt++) {
+            bufferIt->used = false;
+        }
+    }
 }
 
 void cSokolRender::ClearPipelines() {

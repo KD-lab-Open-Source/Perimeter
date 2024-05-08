@@ -12,6 +12,29 @@
 
 const int PERIMETER_SOKOL_TEXTURES = 8;
 
+struct SokolBufferCacheKey {
+    size_t len;
+    sg_buffer_type type;
+
+    bool operator==(const SokolBufferCacheKey &other) const {
+        return len == other.len && type == other.type;
+    }
+};
+
+template<>
+struct std::hash<SokolBufferCacheKey> {
+    std::size_t operator()(const SokolBufferCacheKey& k) const {
+        return k.len * k.type;
+    }
+};
+
+struct SokolBufferCacheValue {
+    bool used;
+    SokolResourceBuffer* buffer;
+};
+
+extern std::unordered_map<SokolBufferCacheKey, std::list<SokolBufferCacheValue>> bufferCache;
+
 struct SokolCommand {
     SokolCommand();
     ~SokolCommand();
