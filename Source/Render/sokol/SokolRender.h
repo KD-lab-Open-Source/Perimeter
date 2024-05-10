@@ -12,29 +12,6 @@
 
 const int PERIMETER_SOKOL_TEXTURES = 8;
 
-struct SokolBufferCacheKey {
-    size_t len;
-    sg_buffer_type type;
-
-    bool operator==(const SokolBufferCacheKey &other) const {
-        return len == other.len && type == other.type;
-    }
-};
-
-template<>
-struct std::hash<SokolBufferCacheKey> {
-    std::size_t operator()(const SokolBufferCacheKey& k) const {
-        return k.len * k.type;
-    }
-};
-
-struct SokolBufferCacheValue {
-    bool used;
-    SokolResourceBuffer* buffer;
-};
-
-extern std::unordered_map<SokolBufferCacheKey, std::list<SokolBufferCacheValue>> bufferCache;
-
 struct SokolCommand {
     SokolCommand();
     ~SokolCommand();
@@ -81,6 +58,9 @@ private:
     friend const void* sokol_d3d_render_target_view_cb();
     friend const void* sokol_d3d_depth_stencil_view_cb();
 #endif
+    
+    //Stores resources for reusing
+    std::unordered_multimap<uint64_t, SokolResourceBuffer*> bufferPool;
     
     //For swapchain pass that renders into final device
     sg_pass swapchain_pass;
@@ -135,6 +115,9 @@ private:
     void SetColorMode(eColorMode color_mode);
     void SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
                      const sColor4f& specular, const sColor4f& emissive, float power);
+
+    ///Assigns unused sokol buffer to buffer_ptr with requested 
+    void PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* resource, size_t len, bool dynamic, sg_buffer_type type);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();

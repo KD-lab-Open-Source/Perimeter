@@ -37,7 +37,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         desc->num_mipmaps = std::min(static_cast<int>(SG_MAX_MIPMAPS), Texture->GetNumberMipMap());
 
         if (!FileImage) {
-            desc->usage = SG_USAGE_DYNAMIC;
+            desc->usage = SG_USAGE_STREAM;
             img = new SokolTexture2D(desc);
         } else {
             desc->usage = SG_USAGE_IMMUTABLE;

@@ -419,14 +419,23 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
 
 void cSokolRender::ClearCommands() {
     for (SokolCommand* command : commands) {
+        //Reclaim resources that can be reused
+        SokolResourceBuffer* vertex_buffer = command->vertex_buffer;
+        if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone) {
+            command->vertex_buffer = nullptr;
+            xassert(vertex_buffer->RefCount() <= 50);
+            bufferPool.emplace(vertex_buffer->key, vertex_buffer);
+        }
+        SokolResourceBuffer* index_buffer = command->index_buffer;
+        if (index_buffer && index_buffer->key != SokolResourceKeyNone) {
+            command->index_buffer = nullptr;
+            xassert(index_buffer->RefCount() <= 50);
+            bufferPool.emplace(index_buffer->key, index_buffer);
+        }
+        
         delete command;
     }
     commands.clear();
-    for (auto & it : bufferCache) {
-        for (auto bufferIt = it.second.begin(); bufferIt != it.second.end(); bufferIt++) {
-            bufferIt->used = false;
-        }
-    }
 }
 
 void cSokolRender::ClearPipelines() {
@@ -594,7 +603,6 @@ void SokolCommand::ClearDrawData() {
     }
     vertices = 0;
     indices = 0;
-    
 }
 
 void SokolCommand::ClearShaderParams() {

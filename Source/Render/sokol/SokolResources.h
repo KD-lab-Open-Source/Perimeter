@@ -12,6 +12,12 @@
 #include "MemoryResource.h"
 #include "RenderMT.h"
 
+using SokolResourceKey = uint64_t;
+static const SokolResourceKey SokolResourceKeyNone = 0;
+
+SokolResourceKey get_sokol_resource_key_buffer(size_t len, sg_buffer_type type);
+SokolResourceKey get_sokol_resource_key_texture(uint32_t w, uint32_t h, sg_pixel_format format);
+
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
 /**
@@ -32,14 +38,18 @@ private:
         }
     }
 public:
+    SokolResourceKey key = SokolResourceKeyNone;
     T res;
-    bool owned;
 
-    explicit SokolResource(T res, bool owned = true) : res(res), owned(owned) {
+    SokolResource(SokolResourceKey key, T res) : key(key), res(res) {
         xassert(res.id != SG_INVALID_ID);
     }
 
     NO_COPY_CONSTRUCTOR(SokolResource<T>)
+
+    int32_t RefCount() const {
+        return refcount;
+    }
     
     int32_t IncRef() {
         return ++refcount;
@@ -49,9 +59,6 @@ public:
         if (0 < refcount) {
             refcount--;
             if (refcount == 0) {
-                if (!owned) {
-                    return 0;
-                }
                 MTG();
                 destroy_res();
                 delete this;
@@ -64,7 +71,6 @@ public:
 
 struct SokolBuffer {
     SokolResource<sg_buffer>* buffer = nullptr;
-    explicit SokolBuffer(sg_buffer buffer);
     explicit SokolBuffer(SokolResource<sg_buffer> *buffer);
     ~SokolBuffer();
 
@@ -78,6 +84,7 @@ struct SokolTexture2D : MemoryResource {
 #endif
     sg_pixel_format pixel_format;
     sg_image_desc* desc = nullptr;
+    SokolResourceKey resource_key = SokolResourceKeyNone;
     SokolResource<sg_image>* image = nullptr;
 
     explicit SokolTexture2D(sg_image_desc* desc);

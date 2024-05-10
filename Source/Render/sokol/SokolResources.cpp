@@ -4,6 +4,19 @@
 #include "SokolResources.h"
 #include "SokolTypes.h"
 
+SokolResourceKey get_sokol_resource_key_buffer(size_t len, sg_buffer_type type) {
+    return (len << 16) | static_cast<uint16_t>(type);
+}
+
+SokolResourceKey get_sokol_resource_key_texture(uint32_t w, uint32_t h, sg_pixel_format format) {
+    size_t len = w;
+    len << 32;
+    len |= h;
+    len << 8;
+    len |= static_cast<uint8_t>(sokol_pixelformat_bytesize(format));
+    return len;
+}
+
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     //Probably the only pixel format used, so we cache it
     if (fmt == SG_PIXELFORMAT_RGBA8) {
@@ -29,11 +42,8 @@ void SokolResourceTexture::destroy_res() {
     }
 }
 
-SokolBuffer::SokolBuffer(sg_buffer _buffer) {
-    buffer = new SokolResource(_buffer);
-}
-
 SokolBuffer::SokolBuffer(SokolResource<sg_buffer> *buffer): buffer(buffer) {
+    xassert(buffer);
 }
 
 SokolBuffer::~SokolBuffer() {
@@ -89,32 +99,10 @@ void SokolTexture2D::update() {
     if (!dirty) return;
     dirty = false;
 
-    if (desc) {
-#ifdef PERIMETER_DEBUG
-        if (!label.empty()) {
-            desc->label = label.c_str();
-        }
-#endif
-        xassert(desc->usage == SG_USAGE_IMMUTABLE || data);
-        image = new SokolResource(sg_make_image(desc));
-        if (desc->usage == SG_USAGE_IMMUTABLE) {
-            //Cleanup subimages
-            for (int ci = 0; ci < SG_CUBEFACE_NUM; ++ci) {
-                for (int i = 0; i < SG_MAX_MIPMAPS; ++i) {
-                    sg_range& range = desc->data.subimage[ci][i];
-                    if (!range.ptr) {
-                        break;
-                    }
-                    const uint8_t* buf = reinterpret_cast<const uint8_t*>(range.ptr);
-                    delete[] buf;
-                }
-            }
-            FreeData();
-        }
-        delete desc;
-        desc = nullptr;
-    } 
-    
+    if (!image) {
+        xassert(0);
+        return;
+    }
     if (data) {
         xassert(image->res.id != SG_INVALID_ID);
         sg_image_data imageData;
