@@ -33,21 +33,25 @@ private:
     }
 public:
     T res;
+    bool owned;
 
-    explicit SokolResource(T res) : res(res) {
+    explicit SokolResource(T res, bool owned = true) : res(res), owned(owned) {
         xassert(res.id != SG_INVALID_ID);
     }
-    
+
     NO_COPY_CONSTRUCTOR(SokolResource<T>)
     
     int32_t IncRef() {
         return ++refcount;
     }
-    
+
     int32_t DecRef() {
         if (0 < refcount) {
             refcount--;
             if (refcount == 0) {
+                if (!owned) {
+                    return 0;
+                }
                 MTG();
                 destroy_res();
                 delete this;
@@ -61,6 +65,7 @@ public:
 struct SokolBuffer {
     SokolResource<sg_buffer>* buffer = nullptr;
     explicit SokolBuffer(sg_buffer buffer);
+    explicit SokolBuffer(SokolResource<sg_buffer> *buffer);
     ~SokolBuffer();
 
     void release_buffer();

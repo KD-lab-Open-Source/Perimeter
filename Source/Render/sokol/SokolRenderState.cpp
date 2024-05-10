@@ -35,6 +35,8 @@ void sokol_metal_render_callback() {
 }
 #endif
 
+std::unordered_map<SokolBufferCacheKey, std::list<SokolBufferCacheValue>> bufferCache;
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -293,35 +295,71 @@ void CreateSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* resource, size_
     MT_IS_GRAPH();
     xassert(!resource->locked);
     xassert(len <= resource->data_len);
-    sg_buffer_desc desc = {};
-    desc.size = len;
-    desc.type = type;
-    desc.usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_IMMUTABLE;
-    if (type == SG_BUFFERTYPE_VERTEXBUFFER) {
-        desc.label = "CreateVertexBuffer";
-    } else if (type == SG_BUFFERTYPE_INDEXBUFFER) {
-        desc.label = "CreateIndexBuffer";
+
+    SokolResourceBuffer* buffer = nullptr;
+    if (dynamic) {
+        std::list<SokolBufferCacheValue> *candidates = nullptr;
+        SokolBufferCacheKey key {len, type };
+        auto it = bufferCache.find(key);
+        if (it == bufferCache.end()) {
+            candidates = &bufferCache[key];
+        } else {
+            candidates = &it->second;
+        }
+
+        for (auto candidate = candidates->begin(); candidate != candidates->end(); ++candidate) {
+            if (!candidate->used) {
+                candidate->used = true;
+                buffer = candidate->buffer;
+                break;
+            }
+        }
+
+        if (buffer == nullptr) {
+            sg_buffer_desc desc = {};
+            desc.size = len;
+            desc.type = type;
+            desc.usage = SG_USAGE_STREAM;
+            if (type == SG_BUFFERTYPE_VERTEXBUFFER) {
+                desc.label = "CreateVertexBuffer";
+            } else if (type == SG_BUFFERTYPE_INDEXBUFFER) {
+                desc.label = "CreateIndexBuffer";
+            } else {
+                desc.label = "CreateSokolBuffer";
+            }
+
+            resource->dirty = true;
+
+            sg_buffer sg_buffer = sg_make_buffer(&desc);
+            buffer = new SokolResourceBuffer(sg_buffer, false);
+            buffer->IncRef();
+            candidates->push_back(SokolBufferCacheValue {
+                true,
+                buffer,
+            });
+        }
     } else {
-        desc.label = "CreateSokolBuffer";
-    }
-    if (desc.usage == SG_USAGE_IMMUTABLE) {
+        sg_buffer_desc desc = {};
+        desc.size = len;
+        desc.type = type;
+        desc.usage = SG_USAGE_IMMUTABLE;
         xassert(buffer_ptr == nullptr);
         xassert(resource->data);
         xassert(!resource->burned);
         desc.data = {resource->data, len};
         resource->burned = true;
         resource->dirty = false;
-    } else {
-        resource->dirty = true;
+
+        buffer = new SokolResourceBuffer(sg_make_buffer(&desc));
     }
 
+
+
     if (buffer_ptr == nullptr) {
-        sg_buffer buffer = sg_make_buffer(&desc);
         buffer_ptr = new SokolBuffer(buffer);
     } else if (buffer_ptr->buffer == nullptr) {
         //Buffer exists but the resource no, recreate it
-        sg_buffer buffer = sg_make_buffer(&desc);
-        buffer_ptr->buffer = new SokolResourceBuffer(buffer);
+        buffer_ptr->buffer = buffer;
     } else {
         xassert(0);
     }

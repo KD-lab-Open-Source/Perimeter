@@ -33,6 +33,9 @@ SokolBuffer::SokolBuffer(sg_buffer _buffer) {
     buffer = new SokolResource(_buffer);
 }
 
+SokolBuffer::SokolBuffer(SokolResource<sg_buffer> *buffer): buffer(buffer) {
+}
+
 SokolBuffer::~SokolBuffer() {
     release_buffer();
 }
