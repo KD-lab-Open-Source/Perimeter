@@ -18,10 +18,10 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          #{sys: mingw32, build_type: Debug,   arch: i686,   arch_zip: x86},
-          {sys: mingw64, build_type: Debug,   arch: x86_64, arch_zip: x64},
-          {sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86},
-          {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64},
+          #{sys: mingw32, build_type: Debug,   arch: i686,   arch_zip: x86, packages: "},
+          {sys: mingw64, build_type: Debug,   arch: x86_64, arch_zip: x64, packages: "libbacktrace:p"},
+          {sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86, packages: ""},
+          {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64, packages: "libbacktrace:p"},
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.sys}}
     if: github.event.pull_request.draft != true
@@ -52,11 +52,11 @@ jobs:
             SDL2_mixer:p
             boost:p
             lld:p
-            libbacktrace:p
             libvpx:p
             nasm:p
             yasm:p
             zlib:p
+            ${{matrix.env.packages}}
       - uses: actions/cache@v4
         id: cache
         with:
