@@ -1,3 +1,4 @@
+#include <unordered_set>
 #include "StdAfxRD.h"
 #include "xmath.h"
 #include "Umath.h"
@@ -418,24 +419,30 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
 }
 
 void cSokolRender::ClearCommands() {
+    std::unordered_set<SokolResourceBuffer*> pooled;
     for (SokolCommand* command : commands) {
         //Reclaim resources that can be reused
         SokolResourceBuffer* vertex_buffer = command->vertex_buffer;
-        if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone) {
+        if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone && pooled.count(vertex_buffer) == 0) {
             command->vertex_buffer = nullptr;
-            xassert(vertex_buffer->RefCount() <= 50);
+            xassert(0 < vertex_buffer->RefCount() && vertex_buffer->RefCount() <= 50);
             bufferPool.emplace(vertex_buffer->key, vertex_buffer);
+            pooled.emplace(vertex_buffer);
         }
         SokolResourceBuffer* index_buffer = command->index_buffer;
-        if (index_buffer && index_buffer->key != SokolResourceKeyNone) {
+        if (index_buffer && index_buffer->key != SokolResourceKeyNone && pooled.count(index_buffer) == 0) {
             command->index_buffer = nullptr;
-            xassert(index_buffer->RefCount() <= 50);
+            xassert(0 < index_buffer->RefCount() && index_buffer->RefCount() <= 50);
             bufferPool.emplace(index_buffer->key, index_buffer);
+            pooled.emplace(index_buffer);
         }
         
         delete command;
     }
     commands.clear();
+#ifdef PERIMETER_DEBUG
+    //printf("%ld %ld\n", reclaimed.size(), bufferPool.size());
+#endif
 }
 
 void cSokolRender::ClearPipelines() {
