@@ -423,14 +423,16 @@ void cSokolRender::ClearCommands() {
     for (SokolCommand* command : commands) {
         //Reclaim resources that can be reused
         SokolResourceBuffer* vertex_buffer = command->vertex_buffer;
-        if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone && pooled.count(vertex_buffer) == 0) {
+        if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone
+        && (vertex_buffer->RefCount() == 1 || pooled.count(vertex_buffer) == 0)) {
             command->vertex_buffer = nullptr;
             xassert(0 < vertex_buffer->RefCount() && vertex_buffer->RefCount() <= 50);
             bufferPool.emplace(vertex_buffer->key, vertex_buffer);
             pooled.emplace(vertex_buffer);
         }
         SokolResourceBuffer* index_buffer = command->index_buffer;
-        if (index_buffer && index_buffer->key != SokolResourceKeyNone && pooled.count(index_buffer) == 0) {
+        if (index_buffer && index_buffer->key != SokolResourceKeyNone
+        && (index_buffer->RefCount() == 1 || pooled.count(index_buffer) == 0)) {
             command->index_buffer = nullptr;
             xassert(0 < index_buffer->RefCount() && index_buffer->RefCount() <= 50);
             bufferPool.emplace(index_buffer->key, index_buffer);
