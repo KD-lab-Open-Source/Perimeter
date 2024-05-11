@@ -1,4 +1,5 @@
 // This file implements shaders structs
+#include <cstring>
 #include <sokol_gfx.h>
 #include "xmath.h"
 #include "SokolShaders.h"

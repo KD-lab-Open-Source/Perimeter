@@ -4,7 +4,7 @@ OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
 #Include Sokol
 FetchContent_Declare(sokol
         GIT_REPOSITORY    https://github.com/floooh/sokol
-        GIT_TAG           "7f7cd64c6d9d1d4ed08d88a3879b1d69841bf0a4"
+        GIT_TAG           "67339198b75a7d04da3676db2b56514bf363d4b1"
         GIT_SHALLOW       OFF
         )
 FetchContent_MakeAvailable(sokol)
@@ -13,14 +13,14 @@ IF (OPTION_PROCESS_SHADERS)
     #Download precompiled sokol-shdc
     FetchContent_Declare(sokol-tools-bin
             GIT_REPOSITORY    https://github.com/floooh/sokol-tools-bin
-            GIT_TAG           "5b8d524b7faef9d479a48549b3f83511c83e92f0"
+            GIT_TAG           "9a54e8ea68807733d82f4b169a8752a8fcad2040"
             GIT_SHALLOW       OFF
             )
     FetchContent_MakeAvailable(sokol-tools-bin)
 
     if(NOT DEFINED ENV{PERIMETER_SHADER_LANG})
         #Use all GLSL dialects, HLSL for D3d and WebGPU
-        set(PERIMETER_SHADER_LANG "glsl330:glsl300es:hlsl5:wgsl")
+        set(PERIMETER_SHADER_LANG "glsl410:glsl300es:hlsl5:wgsl")
         #Metal for Apple platforms
         set(PERIMETER_SHADER_LANG "${PERIMETER_SHADER_LANG}:metal_macos:metal_ios:metal_sim")
     endif()
@@ -71,9 +71,9 @@ if (MACOS)
     endif ()
     #Required for compiling some glue as Obj-C
     set(RenderSokol_SokolImpl sokol/SokolImpl.mm)
-    if(OPTION_SOKOL_API MATCHES "GLCORE33")
-        message("Sokol API: OpenGL Core 3.3")
-        add_definitions(-DSOKOL_GLCORE33)
+    if(OPTION_SOKOL_API MATCHES "GLCORE")
+        message("Sokol API: OpenGL Core")
+        add_definitions(-DSOKOL_GLCORE)
         set(SOKOL_GL ON)
         set(RenderSokol_LINK_LIBS "-framework OpenGL")
     elseif(OPTION_SOKOL_API MATCHES "METAL")
@@ -94,9 +94,9 @@ elseif(PERIMETER_WINDOWS)
         message("Sokol API: DirectX 11")
         add_definitions(-DSOKOL_D3D11)
         set(RenderSokol_LINK_LIBS d3d11)
-    elseif(OPTION_SOKOL_API MATCHES "GLCORE33")
-        message("Sokol API: OpenGL Core 3.3")
-        add_definitions(-DSOKOL_GLCORE33)
+    elseif(OPTION_SOKOL_API MATCHES "GLCORE")
+        message("Sokol API: OpenGL Core")
+        add_definitions(-DSOKOL_GLCORE)
         set(SOKOL_GL ON)
         set(RenderSokol_LINK_LIBS opengl32)
     else()
@@ -104,15 +104,15 @@ elseif(PERIMETER_WINDOWS)
     endif()
 else()
     if(NOT OPTION_SOKOL_API)
-        set(OPTION_SOKOL_API "GLCORE33")
+        set(OPTION_SOKOL_API "GLCORE")
     endif ()
     if(OPTION_SOKOL_API MATCHES "GLES3")
         message("Sokol API: OpenGLES 3.0")
         add_definitions(-DSOKOL_GLES3)
         set(SOKOL_GL ON)
-    elseif(OPTION_SOKOL_API MATCHES "GLCORE33")
-        message("Sokol API: OpenGL Core 3.3")
-        add_definitions(-DSOKOL_GLCORE33)
+    elseif(OPTION_SOKOL_API MATCHES "GLCORE")
+        message("Sokol API: OpenGL Core")
+        add_definitions(-DSOKOL_GLCORE)
         set(SOKOL_GL ON)
     elseif(OPTION_SOKOL_API MATCHES "D3D11")
         message("Sokol API: D3D11")

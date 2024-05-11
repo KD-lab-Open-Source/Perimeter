@@ -109,9 +109,9 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
     //*/
 
-#ifdef SOKOL_GLCORE33
-    //Use OpenGL 3.3 Core
-    sokol_backend = "OpenGL Core 3.3";
+#ifdef SOKOL_GLCORE
+    //Use OpenGL Core
+    sokol_backend = "OpenGL Core";
     
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "opengl", SDL_HINT_OVERRIDE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);

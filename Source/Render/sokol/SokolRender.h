@@ -1,7 +1,7 @@
 #ifndef PERIMETER_SOKOLRENDER_H
 #define PERIMETER_SOKOLRENDER_H
 
-#if defined(SOKOL_GLCORE33) || defined(SOKOL_GLES3)
+#if defined(SOKOL_GLCORE) || defined(SOKOL_GLES3)
 #define SOKOL_GL (1)
 #endif
 
