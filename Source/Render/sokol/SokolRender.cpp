@@ -76,6 +76,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     desc.pipeline_pool_size = PERIMETER_SOKOL_PIPELINES_MAX,
     desc.shader_pool_size = 8,
     desc.buffer_pool_size = 1024 * 8;
+    desc.uniform_buffer_size = 1024 * 1024 * 32;
     desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
     desc.logger.func = slog_func;
     
