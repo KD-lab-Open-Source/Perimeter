@@ -297,12 +297,6 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
 
     SokolResourceBuffer* buffer;
     if (dynamic) {
-        //Get power of 2 to hold len
-        size_t i = 1;
-        while (i < len) {
-            i = i << 1;
-        }
-        len = i;
         SokolResourceKey resource_key = get_sokol_resource_key_buffer(len, type);
         auto nh = bufferPool.extract(resource_key);
         if (nh.empty()) {
@@ -711,7 +705,9 @@ void cSokolRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
             if (desc->usage == SG_USAGE_STREAM) {
                 resource_key = get_sokol_resource_key_texture(
                         desc->width,
-                        desc->height, desc->pixel_format);
+                        desc->height,
+                        desc->pixel_format
+                );
             }
             tex->image = new SokolResourceTexture(
                     resource_key,

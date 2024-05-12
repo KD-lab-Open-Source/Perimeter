@@ -4,16 +4,22 @@
 #include "SokolResources.h"
 #include "SokolTypes.h"
 
-SokolResourceKey get_sokol_resource_key_buffer(size_t len, sg_buffer_type type) {
-    return (len << 16) | static_cast<uint16_t>(type);
+SokolResourceKey get_sokol_resource_key_buffer(size_t& len, sg_buffer_type type) {
+    static const uint32_t LEN_SHIFT = 6; //64 bytes
+    size_t chunks = (len >> LEN_SHIFT) + 1; //Divide by LEN_SHIFT and add one extra chunk
+    len = chunks * (1 << LEN_SHIFT);
+    SokolResourceKey key = len;
+    key <<= 16;
+    key |= static_cast<uint16_t>(type & 0xFFFF);
+    return key;
 }
 
-SokolResourceKey get_sokol_resource_key_texture(uint32_t w, uint32_t h, sg_pixel_format format) {
-    size_t len = w;
-    len << 32;
-    len |= h;
-    len << 8;
-    len |= static_cast<uint8_t>(sokol_pixelformat_bytesize(format));
+SokolResourceKey get_sokol_resource_key_texture(int& w, int& h, sg_pixel_format format) {
+    SokolResourceKey len = static_cast<uint32_t>(w);
+    len <<= 32;
+    len |= static_cast<uint32_t>(h);
+    len <<= 8;
+    len |= static_cast<uint8_t>(sokol_pixelformat_bytesize(format) & 0xFF);
     return len;
 }
 
