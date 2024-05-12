@@ -1,0 +1,18 @@
+FROM dockcross/windows-shared-x64:20231208-4e4d3ad
+
+ENV DEFAULT_DOCKCROSS_IMAGE dockcross-x64-perimeter
+ENV DEPS_PREFIX /opt/mingw
+
+# Create work dir
+WORKDIR /work
+ 
+#Run scripts to prepare env for compilation
+COPY ./docker/dockcross/prepare_pkgs /tmp/prepare_pkgs
+RUN bash /tmp/prepare_pkgs && rm /tmp/prepare_pkgs
+COPY ./docker/prepare_boost /tmp/prepare_boost
+RUN bash /tmp/prepare_boost && rm /tmp/prepare_boost
+COPY ./docker/dockcross/prepare_backtrace /tmp/prepare_backtrace
+RUN bash /tmp/prepare_backtrace && rm /tmp/prepare_backtrace
+COPY ./docker/dockcross/prepare_sdl /tmp/prepare_sdl
+RUN bash /tmp/prepare_sdl && rm /tmp/prepare_sdl
+

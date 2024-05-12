@@ -2,6 +2,8 @@
 
 set -e
 
+#find /usr | grep sdl2 -i
+
 mkdir -p build
 
 NCPU=$(nproc --all)
@@ -19,9 +21,8 @@ fi
 BASE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}"
 BASE_STATIC_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE/shared/static}"
 BUILD_DIR="build/dockcross-${CROSS_TRIPLE}"
-BOOST_DIR="/usr/local/include"
-SDL_DIR="/usr/local"
-#BOOST_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include"
+BOOST_DIR="${DEPS_PREFIX}/include"
+SDL_DIR="${DEPS_PREFIX}"
 
 #rm -rf ${BUILD_DIR}
 
@@ -29,12 +30,12 @@ ${CROSS_TRIPLE}-cmake \
 -B "$BUILD_DIR" \
 -H. \
 -G"Ninja" \
--DOPTION_LINK_LIBS="${SDL_DIR}/lib/libSDL2main.a" \
 -DOPTION_STATIC_BUILD=OFF \
 -DOPTION_DEBUG_ASSERT=ON \
+-DOPTION_LINK_LIBS="${SDL_DIR}/lib/libSDL2main.a" \
 -DLIBRARY_SEARCH_PATHS="$BASE_DIR;$BASE_STATIC_DIR" \
--DBoost_INCLUDE_DIR=$BOOST_DIR \
--DBacktrace_INCLUDE_DIR="/usr/local/include" \
+-DBoost_INCLUDE_DIR="$BOOST_DIR" \
+-DBacktrace_INCLUDE_DIR="${DEPS_PREFIX}/include" \
 -DZLIB_INCLUDE_DIR="${BASE_STATIC_DIR}/include" \
 -DSDL2_INCLUDE_DIR="${SDL_DIR}/include/SDL2" \
 -DSDL2_IMAGE_INCLUDE_DIR="${SDL_DIR}/include/SDL2-image" \
@@ -43,7 +44,7 @@ ${CROSS_TRIPLE}-cmake \
 -DOFF_AVUTIL_INCLUDE_DIR="${BASE_DIR}/include" \
 -DOFF_AVCODEC_INCLUDE_DIR="${BASE_DIR}/include" \
 -DOFF_AVFORMAT_INCLUDE_DIR="${BASE_DIR}/include" \
--DBacktrace_LIBRARY="/usr/local/lib/libbacktrace.a" \
+-DBacktrace_LIBRARY="${DEPS_PREFIX}/lib/libbacktrace.a" \
 -DZLIB_LIBRARY="${BASE_STATIC_DIR}/lib/libz.a" \
 -DSDL2_LIBRARY="${SDL_DIR}/lib/libSDL2${LIB_SUFFIX}" \
 -DSDL2MAIN_LIBRARY="${SDL_DIR}/lib/libSDL2main.a" \

@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+
+SDL_ARCH=${CROSS_TRIPLE/.shared/}
+
+mkdir /opt/SDL2
+
+wget https://github.com/libsdl-org/SDL/releases/download/release-2.30.0/SDL2-devel-2.30.0-mingw.zip -O /opt/SDL2-mingw.zip
+unzip /opt/SDL2-mingw.zip -d /opt/SDL2
+cd /opt/SDL2/SDL2-*
+make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
+
+wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.0/SDL2_mixer-devel-2.8.0-mingw.zip -O /opt/SDL2_mixer-mingw.zip
+unzip /opt/SDL2_mixer-mingw.zip -d /opt/SDL2
+cd /opt/SDL2/SDL2_mixer-*
+make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
+
+wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-mingw.zip -O /opt/SDL2_image-mingw.zip
+unzip /opt/SDL2_image-mingw.zip -d /opt/SDL2
+cd /opt/SDL2/SDL2_image-*
+make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
+
+wget https://github.com/libsdl-org/SDL_net/releases/download/release-2.2.0/SDL2_net-devel-2.2.0-mingw.zip -O /opt/SDL2_net-mingw.zip
+unzip /opt/SDL2_net-mingw.zip -d /opt/SDL2
+cd /opt/SDL2/SDL2_net-*
+make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
+
+cd /opt
+rm -rf /opt/SDL2

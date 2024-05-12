@@ -13,7 +13,7 @@ CrashData
 
 # Build artifacts
 /build
-docker/dockcross-*-perimeter
+/docker/dockcross/dockcross-*-perimeter
 /result
 /result-*
 cmake-build-*

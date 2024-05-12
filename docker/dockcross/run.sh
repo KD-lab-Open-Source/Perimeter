@@ -4,20 +4,23 @@ set -e
 DOCKER_ROOT=./docker/dockcross
 export SSH_DIR=/noexist
 
-if [[ -z $BUILD_32 ]] && [[ -z $BUILD_64 ]]; then
-  BUILD_64=1;
-fi
-
 if [ ! -z $CLEAN ]; then
-  rm $DOCKER_ROOT/dockcross-*-perimeter
+  rm -vf ${DOCKER_ROOT}/dockcross-*-perimeter
 fi
 
-if [[ -n $BUILD_DOCKER ]] || [[ ! -f $DOCKER_ROOT/dockcross-x64-perimeter ]]; then
-  docker build -t dockcross-x64-perimeter -f $DOCKER_ROOT/dockcross-x64.Dockerfile $DOCKER_ROOT
-  docker run dockcross-x64-perimeter > $DOCKER_ROOT/dockcross-x64-perimeter
-  chmod a+x $DOCKER_ROOT/dockcross-x64-perimeter
+if [[ -z "${ARCH}" ]]; then
+  DOCKCROSS_ARCH=x64
+else
+  DOCKCROSS_ARCH=${ARCH}
+fi
+echo "Building under windows ${DOCKCROSS_ARCH}"
+DOCKCROSS_SCRIPT=$DOCKER_ROOT/dockcross-x86-perimeter
+
+if [[ -n $BUILD ]] || [[ ! -f ${DOCKCROSS_SCRIPT} ]]; then
+  docker build -t dockcross-${DOCKCROSS_ARCH}-perimeter -f $DOCKER_ROOT/${DOCKCROSS_ARCH}_Dockerfile .
+  docker run dockcross-${DOCKCROSS_ARCH}-perimeter > ${DOCKCROSS_SCRIPT}
+  chmod a+x ${DOCKCROSS_SCRIPT}
 fi
 
-echo "Building under windows x64"
-$DOCKER_ROOT/dockcross-x64-perimeter $DOCKER_ROOT/dockcross-cmake.sh $@
-  
+${DOCKCROSS_SCRIPT} $DOCKER_ROOT/dockcross-cmake.sh $@
+

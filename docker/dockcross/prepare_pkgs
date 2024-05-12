@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+apt-get update
+apt-get install software-properties-common lsb-release -y
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9
+add-apt-repository "deb [arch=amd64] http://pkg.mxe.cc/repos/apt buster main"
+apt-get update
+
+PKG_ARCH=${CROSS_TRIPLE/_/-}
+PKG_ARCH_SHARED=${PKG_ARCH/static/shared}
+PKG_ARCH_STATIC=${PKG_ARCH/shared/static}
+apt-get install -y \
+ mxe-${PKG_ARCH_SHARED}-pthread \
+ mxe-${PKG_ARCH_STATIC}-zlib
+

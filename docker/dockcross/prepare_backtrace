@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+cd /opt
+git clone https://github.com/ianlancetaylor/libbacktrace.git
+
+cd /opt/libbacktrace
+./configure --host=$CROSS_TRIPLE --prefix=$DEPS_PREFIX --enable-static --disable-shared
+make -j$NCPU
+sudo make install
+
+cd /opt
+rm -rf /opt/libbacktrace
