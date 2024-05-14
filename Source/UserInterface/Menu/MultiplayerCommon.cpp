@@ -367,6 +367,9 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
 ////////// Latency info ////////////
 
 int updateLatencyInfoWindowQuant( float, float ) {
+    if (!_shellIconManager.getDesktop()) {
+        return 0;
+    }
     CNetLatencyInfoWindow* wnd = safe_cast<CNetLatencyInfoWindow*>(_shellIconManager.GetWnd(SQSH_NET_LATENCY_INFO_ID));
     terUniverse* uni = universe();
     if (!wnd || !uni || !wnd->isVisible()) {

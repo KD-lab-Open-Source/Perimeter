@@ -2113,16 +2113,6 @@ void CShellIconManager::quant(float dTime)
 		m_nPromptMessageDelayTime -= dTime;
 		m_fPhase += dTime;
 	}
-    
-    //Set net info visibility
-    CShellWindow* wnd = GetWnd(SQSH_NET_LATENCY_INFO_ID);
-    if (wnd) {
-        bool visible = false;
-        if (gameShell->getNetClient()) {
-            visible = gameShell->getNetClient()->isGameRun();
-        }
-        wnd->Show(visible);
-    }
 
 	QuantDynQueue(dTime);
 	ProcessDynQueue(CBCODE_QUANT);
@@ -2437,8 +2427,21 @@ void CShellIconManager::draw()
 
 		//background
 		CShellWindow* pBackgrnd = GetWnd(SQSH_BACKGRND_ID);
-		if(pBackgrnd)
-			pBackgrnd->draw(false);
+		if (pBackgrnd) {
+            pBackgrnd->draw(false);
+        }
+
+        //Set net info visibility
+        CShellWindow* wnd = GetWnd(SQSH_NET_LATENCY_INFO_ID);
+        if (wnd) {
+            bool visible = false;
+            if (gameShell->getNetClient()) {
+                visible = gameShell->getNetClient()->isGameRun();
+            }
+            if (visible != wnd->isVisible()) {
+                wnd->Show(visible);
+            }
+        }
 
 		DrawControls(m_pDesktop);
 
