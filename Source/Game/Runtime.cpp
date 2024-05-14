@@ -562,7 +562,7 @@ void PerimeterCreateWindow(uint32_t window_flags) {
     PerimeterSetupDisplayMode();
     
     //Grab input
-    if (terGrabInput && !terFullScreen) {
+    if (terGrabInput) {
         SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
     }
 }
@@ -1222,7 +1222,7 @@ void app_event_poll() {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN: {
                 //Grab window at click if window is resizable and is not already grabbed
-                if (terGrabInput && !terFullScreen && applicationHasFocus_ && sdlWindow && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
+                if (terGrabInput && applicationHasFocus_ && sdlWindow && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
                     SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
                 }
                 break;
