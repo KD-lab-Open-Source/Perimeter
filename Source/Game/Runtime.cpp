@@ -71,6 +71,9 @@ const char* currentVersion =
 #else
 " 32b"
 #endif
+#ifdef GPX
+" html5 v8"
+#endif
 ;
 
 uint16_t currentVersionNumbers[] = {0, 0, 0};
