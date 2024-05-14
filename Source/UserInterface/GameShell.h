@@ -164,7 +164,6 @@ public:
 
 	void rememberPlayerCamera(terPlayer* player, const char* triggerName);
 
-	bool interfaceShowFlag() const { return interfaceShowFlag_; }
 	bool showKeysHelp() const { return showKeysHelp_; }
 
 	cFont* debugFont() const { return debugFont_; }
@@ -313,7 +312,6 @@ private:
     Vect2f mousePressControl_;
 
 	bool alwaysRun_;
-	bool interfaceShowFlag_;
 	bool showKeysHelp_;
 	bool showWireFrame_;
 	int activePlayerID_;

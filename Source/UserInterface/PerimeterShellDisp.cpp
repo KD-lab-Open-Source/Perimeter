@@ -862,6 +862,7 @@ CShellIconManager::CShellIconManager()
     initialMenu = SQSH_MM_START_SCR;
 
 	m_editMode = false;
+    interfaceShowFlag_ = true;
 
 	speechSound = 0;
 	resultMusicStarted = false;
@@ -946,10 +947,10 @@ CShellIconManager::~CShellIconManager()
 
 void CShellIconManager::addChatString(const LocalizedText* newChatString) {
 	CChatInfoWindow* wnd;
-	if (cutSceneModeOn) {
-		wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
+    if (interfaceShowFlag()) {
+        wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
 	} else {
-		wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
+        wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
 	}
 	xassert(wnd);
 	if (wnd) {
@@ -961,10 +962,10 @@ void CShellIconManager::addChatString(const LocalizedText* newChatString) {
 
 void CShellIconManager::showHintChat(const LocalizedText* text, int showTime) {
 	CChatInfoWindow* wnd;
-	if (cutSceneModeOn) {
-		wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
+    if (interfaceShowFlag()) {
+        wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
 	} else {
-		wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
+        wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
 	}
 	if (wnd) {
 		wnd->AddString(text);
@@ -978,10 +979,10 @@ void CShellIconManager::showHint(const char* text, int showTime, ActionTask::Typ
 	}
 
 	CHintWindow* wnd;
-	if (cutSceneModeOn) {
-		wnd = (CHintWindow*)controls[SQSH_HINT_ID];
+    if (interfaceShowFlag()) {
+        wnd = (CHintWindow*)GetWnd(SQSH_HINT_ID);
 	} else {
-		wnd = (CHintWindow*)GetWnd(SQSH_HINT_ID);
+        wnd = (CHintWindow*)controls[SQSH_HINT_ID];
 	}
 	xassert(wnd);
 	if (wnd) {
@@ -1080,10 +1081,10 @@ void CShellIconManager::fillTaskWnd() {
 	}
 
 	CTextWindow* wnd;
-	if (cutSceneModeOn) {
-		wnd = (CTextWindow*)controls[SQSH_MM_MISSION_TASK_TXT];
+	if (interfaceShowFlag()) {
+        wnd = (CTextWindow*)GetWnd(SQSH_MM_MISSION_TASK_TXT);
 	} else {
-		wnd = (CTextWindow*)GetWnd(SQSH_MM_MISSION_TASK_TXT);
+        wnd = (CTextWindow*)controls[SQSH_MM_MISSION_TASK_TXT];
 	}
 	xassert(wnd);
 	if (wnd) {
@@ -1479,10 +1480,11 @@ CShellWindow* CShellIconManager::GetWnd(int id)
 //		return 0;
 
 
-	if(getDesktop() && m_pDesktop->ID == id)
-		return m_pDesktop;
-	else
-		return controls[id];
+    if (getDesktop() && m_pDesktop->ID == id) {
+        return m_pDesktop;
+    } else {
+        return controls[id];
+    }
 
 //	return FindWnd(m_pDesktop, id);
 }
@@ -2408,9 +2410,9 @@ void CShellIconManager::draw()
 		return;
 	}
 
-	if(!mt_interface_quant)
-		return;
-
+	if (!mt_interface_quant || !interfaceShowFlag()) {
+        return;
+    }
 
 	if(getDesktop())
 	{
@@ -2937,7 +2939,7 @@ void CShellIconManager::UpdateIcons()
 	if(_bDebugDisplayAllIcons)
 		return;
 
-	if(!getDesktop() || _bMenuMode)
+	if (!getDesktop() || _bMenuMode || !interfaceShowFlag())
 		return;
 
 //	if(!universe()->activePlayer())
@@ -3857,10 +3859,12 @@ void CShellIconManager::ClearSquadIconTable()
 }
 
 bool CtrlAction::actionPerformed() {
-	CShellWindow* wnd = _shellIconManager.GetWnd(controlID);
-	if (wnd) {
-		return wnd->actionPerformed( action.code, action.param );
-	}
+    if (_shellIconManager.IsInterface()) {
+        CShellWindow* wnd = _shellIconManager.GetWnd(controlID);
+        if (wnd) {
+            return wnd->actionPerformed(action.code, action.param);
+        }
+    }
 	return false;
 }
 

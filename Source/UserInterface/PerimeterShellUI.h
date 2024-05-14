@@ -1711,6 +1711,8 @@ class CShellIconManager
 
 	CutSceneCommand cutSceneCommand;
 
+    bool interfaceShowFlag_;
+
 public:
 	std::string hold;
 	std::string units;
@@ -1772,6 +1774,8 @@ public:
     CShellWindow* GetModalWnd();
 	int  IsFocusControl();
 	bool isInEditMode() const;
+    void toggleInterfaceShowFlag() { interfaceShowFlag_ = !interfaceShowFlag_; }
+    bool interfaceShowFlag() const { return interfaceShowFlag_; }
 
 	int OnLButtonDown(float x, float y);
 	int OnLButtonUp(float x, float y);
@@ -1801,7 +1805,7 @@ public:
 		m_dyn_queue.clear();
 	}
 	inline int IsEffect()	{ return m_fEffectTime>=0; }
-	inline int IsInterface(){ return getDesktop() != 0;}
+	inline int IsInterface(){ return getDesktop() != nullptr;}
 
 	void ShowControls(int bShow, const ShellControlID ids[], int numIds);
 

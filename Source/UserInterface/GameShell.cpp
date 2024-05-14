@@ -138,7 +138,6 @@ windowClientSize_(1024, 768)
 	GameActive = false;
 	GameContinue = true;
 	showKeysHelp_ = false;
-	interfaceShowFlag_ = true;
 
 	autoSwitchAITimer = 0;
 
@@ -893,7 +892,7 @@ void GameShell::Show()
 		if(showWireFrame_)
 			terRenderDevice->SetRenderState(RS_WIREFRAME,0);
 
-		if(interfaceShowFlag_)
+		if(_shellIconManager.interfaceShowFlag())
 			universe()->ShowInfo();
 
 		showWays();		
@@ -1471,13 +1470,20 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case VK_SPACE:
 		showWireFrame_ = !showWireFrame_;
 		break;
-	case VK_F8:
-		_shellIconManager.Toggle(GameActive);
-		interfaceShowFlag_ ^= 1;
-		break;
+    case VK_F8 | KBD_SHIFT:
+        if (!_shellIconManager.isCutSceneMode()) {
+            _shellIconManager.Toggle(GameActive);
+            _shellIconManager.toggleInterfaceShowFlag();
+        }
+        break;
+    case VK_F8:
+        if (!_shellIconManager.isCutSceneMode()) {
+            _shellIconManager.toggleInterfaceShowFlag();
+        }
+        break;
 	case VK_F7:
-		interfaceShowFlag_ ^= 1;
-		_shellIconManager.setCutSceneMode(!interfaceShowFlag_);
+		_shellIconManager.toggleInterfaceShowFlag();
+		_shellIconManager.setCutSceneMode(!_shellIconManager.interfaceShowFlag());
 		break;
 	case 'D':
 		universe()->select.explodeUnit();
@@ -1610,7 +1616,7 @@ void GameShell::KeyPressed(sKey& Key)
 		return;
 	}
 
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
+	if (_shellIconManager.IsInterface() && gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
 		if (Key.fullkey == VK_INSERT) {
@@ -1706,7 +1712,7 @@ void GameShell::ControlPressed(int key)
 	int ctrl = g_controls_converter.control(key);
 	if (ctrl == CTRL_ESCAPE) {
 		//temp
-		if(_shellIconManager.IsInterface() && interfaceShowFlag_)
+		if(_shellIconManager.IsInterface() && _shellIconManager.interfaceShowFlag())
 		{
 			//if(MainMenuEnable)
 				EnterInMissionMenu();
@@ -2062,7 +2068,7 @@ void GameShell::MouseRightUnpressed(const Vect2f& pos)
 
 void GameShell::MouseWheel(int delta)
 {
-	if(!_bMenuMode && GameActive && !isScriptReelEnabled() && !(cameraMouseShift && mouseLeftPressed_)) {
+	if(!_bMenuMode && GameActive && _shellIconManager.IsInterface() && !isScriptReelEnabled() && !(cameraMouseShift && mouseLeftPressed_)) {
         CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
         if (!chatInfo || !chatInfo->isVisible() || !chatInfo->HitTest(mousePosition().x+0.5f, mousePosition().y+0.5f)) {
             terCamera->mouseWheel(delta);

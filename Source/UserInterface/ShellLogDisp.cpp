@@ -120,7 +120,7 @@ void CShellLogicDispatcher::quant(bool game_active)
 
 	if(game_active)
 	{
-		if ((isAltPressed() || alwaysShowLifeBars) && !_bMenuMode && !gameShell->isScriptReelEnabled() && !gameShell->isCutSceneMode()) {
+		if ((isAltPressed() || alwaysShowLifeBars) && !_bMenuMode && !gameShell->isScriptReelEnabled() && _shellIconManager.interfaceShowFlag()) {
 			for (int i = 0; i < universe()->Players.size(); i++) {
 				universe()->Players[i]->mark();
 			}
@@ -295,10 +295,8 @@ void CShellLogicDispatcher::draw()
 	}
 #endif // PERIMETER_DEBUG
 
-	if(_shellIconManager.IsInterface())
-	{
-		if(!_bMenuMode)
-			m_hScene->Draw(m_hCamera);
+	if (_shellIconManager.IsInterface() && !_bMenuMode && _shellIconManager.interfaceShowFlag()) {
+        m_hScene->Draw(m_hCamera);
 	}
 }
 
@@ -568,7 +566,8 @@ int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 	if (_pUnitHover()) {
 		terPlayer* pPlayer = universe()->activePlayer();
 		terFrame* fr = dynamic_cast<terFrame*>(_pUnitHover());
-		if (fr && pPlayer && _pUnitHover->playerID() == pPlayer->playerID() && _shellIconManager.GetWnd(SQSH_SELPANEL_FRAME_INSTALL_ID)->isEnabled()) {
+		if (fr && pPlayer && _pUnitHover->playerID() == pPlayer->playerID()
+        && _shellIconManager.IsInterface() && _shellIconManager.GetWnd(SQSH_SELPANEL_FRAME_INSTALL_ID)->isEnabled()) {
 			if (!fr->attached() && fr->basementReady()) {
 				universe()->makeCommand(COMMAND_ID_FRAME_ATTACH,0);
 			}
