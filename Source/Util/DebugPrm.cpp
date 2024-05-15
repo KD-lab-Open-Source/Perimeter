@@ -54,7 +54,7 @@ ShowDebugRigidBody::ShowDebugRigidBody()
 }
 
 template<class Archive>	
-void ShowDebugRigidBody::serialize(Archive& ar)
+void ShowDebugRigidBody::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(boundingBox);
 	ar & WRAP_OBJECT(radius);
@@ -84,7 +84,7 @@ ShowDebugUnitReal::ShowDebugUnitReal()
 }
 
 template<class Archive>	
-void ShowDebugUnitReal::serialize(Archive& ar)
+void ShowDebugUnitReal::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(docking);
 	ar & WRAP_OBJECT(chaosCollidingFactor);
@@ -106,7 +106,7 @@ ShowDebugLegionary::ShowDebugLegionary()
 	invisibility = 0;
 }
 template<class Archive>	
-void ShowDebugLegionary::serialize(Archive& ar)
+void ShowDebugLegionary::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(way_point);
 	ar & WRAP_OBJECT(attack_point);
@@ -132,7 +132,7 @@ ShowDebugSquad::ShowDebugSquad()
 }
 
 template<class Archive>	
-void ShowDebugSquad::serialize(Archive& ar)
+void ShowDebugSquad::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(position);
 	ar & WRAP_OBJECT(wayPoints);
@@ -164,7 +164,7 @@ ShowDebugPlayer::ShowDebugPlayer()
 }
 
 template<class Archive>	
-void ShowDebugPlayer::serialize(Archive& ar)
+void ShowDebugPlayer::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(field_regions);
 	ar & WRAP_OBJECT(field_region_border);
@@ -185,7 +185,7 @@ ShowDebugFrame::ShowDebugFrame()
 }
 
 template<class Archive>	
-void ShowDebugFrame::serialize(Archive& ar)
+void ShowDebugFrame::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(status);
 	ar & WRAP_OBJECT(inputPosition);
@@ -223,7 +223,7 @@ DebugPrm::DebugPrm()
 }
 
 template<class Archive>	
-void DebugPrm::serialize(Archive& ar)
+void DebugPrm::serialize_ref(Archive& ar)
 {
 	ar & WRAP_OBJECT(showDebugRigidBody);
 	ar & WRAP_OBJECT(showDebugUnitReal);

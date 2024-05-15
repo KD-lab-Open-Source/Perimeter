@@ -3,6 +3,8 @@
 #include "tweaks.h"
 
 #include "StdAfxTriggerEditor.h"
+#include "EditArchive.h"
+#include "BinaryArchive.h"
 #include "XPrmArchive.h"
 #include "codepages/codepages.h"
 #include "TriggerExport.h"

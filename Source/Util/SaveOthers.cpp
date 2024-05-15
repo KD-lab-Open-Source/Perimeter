@@ -1,4 +1,6 @@
 #include "StdAfx.h"
+#include "EditArchive.h"
+#include "BinaryArchive.h"
 #include "XPrmArchive.h"
 #include "Save.h"
 

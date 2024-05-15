@@ -1,7 +1,7 @@
 #ifndef __RIGID_BODY_PRM_H__
 #define __RIGID_BODY_PRM_H__
 
-#include "../Util/SerializationMacro.h"
+#include "SerializationMacro.h"
 
 ////////////////////////////////////////
 struct RigidBodyPrm : ShareHandleBase

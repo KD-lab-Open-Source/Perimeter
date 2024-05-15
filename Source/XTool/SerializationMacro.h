@@ -13,6 +13,13 @@
 #define SERIALIZATION_TYPE_NAME_OVERRIDE \
     SERIALIZATION_TYPE_NAME override
 
+//Wraps pointer accepting serialize() into ref arg based
+#define SERIALIZE_REF(VAR_AR) \
+    template<class TA> \
+    void serialize(TA* ar) { this->serialize_ref<TA>(*ar); } \
+    template<class TA> \
+    void serialize_ref(TA& VAR_AR)
+
 /////////////////////////////////////////////////////////////////////////////
 
 #define SERIALIZATION_TYPE_NAME_IMPL(className) \
@@ -22,7 +29,6 @@
 #define SERIALIZE(VAR_AR) \
     SERIALIZATION_TYPE_NAME; \
     SERIALIZATION_TYPE_CLASS_NAME; \
-    template<class Archive> \
-    void serialize(Archive& VAR_AR)
+    SERIALIZE_REF(VAR_AR)
 
 #endif //PERIMETER_SERIALIZATIONMACRO_H

@@ -9,6 +9,7 @@
 #ifndef __XMATH_H__
 #define __XMATH_H__
 
+#include "SerializationMacro.h"
 #include "tweaks.h"
 
 //#define _XMATH_USE_IOSTREAM
@@ -323,8 +324,7 @@ public:
 	friend XBuffer& operator< (XBuffer& b,const Vect2f& v);
 	friend XBuffer& operator> (XBuffer& b,Vect2f& v);
 
-    template<class Archive>
-    void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 
 	static const Vect2f ZERO;
 	static const Vect2f ID;
@@ -405,8 +405,7 @@ public:
 	friend XBuffer& operator< (XBuffer& b,const Vect2i& v);
 	friend XBuffer& operator> (XBuffer& b,Vect2i& v);
 
-    template<class Archive>
-    void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 
 	static const Vect2i ZERO;
 	static const Vect2i ID;
@@ -473,8 +472,7 @@ public:
 	friend XBuffer& operator< (XBuffer& b,const Vect2s& v);
 	friend XBuffer& operator> (XBuffer& b,Vect2s& v);
 
-    template<class Archive>
-	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 
@@ -702,8 +700,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Vect3f& v);
   friend XBuffer& operator> (XBuffer& b,Vect3f& v);
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   //  Swap  /////////////////////////
   xm_inline void swap(Vect3f& other);
@@ -864,8 +861,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Vect3d& v);
   friend XBuffer& operator> (XBuffer& b,Vect3d& v);
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   //  Swap  /////////////////////////
   xm_inline void swap(Vect3d& other);
@@ -1100,8 +1096,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Mat3f& M);
   friend XBuffer& operator> (XBuffer& b,Mat3f& M);
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // Mat3f constants ////////////////////////////////////////////////////////////
 
@@ -1321,8 +1316,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Mat3d& M);
   friend XBuffer& operator> (XBuffer& b,Mat3d& M);
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
  
   // Mat3d constants ////////////////////////////////////////////////////////////
 
@@ -1430,8 +1424,7 @@ public:
   friend istream& operator>>(istream& is, MatXf& M);
 #endif
   
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // MatXf constants ////////////////////////////////////////////////////////////
 
@@ -1537,8 +1530,7 @@ public:
   friend istream& operator>>(istream& is, MatXd& M);
 #endif
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // MatXd constants ////////////////////////////////////////////////////////////
 
@@ -1681,8 +1673,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const QuatF& q);
   friend XBuffer& operator> (XBuffer& b,QuatF& q);
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // miscellaneous /////////////////////////////////////////////////////////////
   xm_inline void slerp(const QuatF &a,const QuatF &b,float t);
@@ -1829,8 +1820,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const QuatD& q);
   friend XBuffer& operator> (XBuffer& b,QuatD& q);
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // miscellaneous /////////////////////////////////////////////////////////////
   xm_inline void slerp(const QuatD &a,const QuatD &b, double t);
@@ -1927,8 +1917,7 @@ public:
   friend XBuffer& operator> (XBuffer& b,Se3f& v);
 */
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // Se3f constants /////////////////////////////////////////////////////////////
 
@@ -2021,8 +2010,7 @@ public:
   friend XBuffer& operator> (XBuffer& b,Se3d& v);
 */
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   // Se3d constants /////////////////////////////////////////////////////////////
 
@@ -2121,8 +2109,7 @@ public:
   friend XBuffer& operator> (XBuffer& b,Vect4f& v);
 */
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
 
   //  Swap  /////////////////////////
   xm_inline void swap(Vect4f& other);
@@ -2277,8 +2264,7 @@ public:
   friend XBuffer& operator> (XBuffer& b,Mat4f& M);
 */
 
-  template<class Archive>
-  void serialize(Archive& ar);
+  SERIALIZE_REF(ar);
   
   // Mat4f constants ////////////////////////////////////////////////////////////
 

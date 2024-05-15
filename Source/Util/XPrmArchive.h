@@ -120,7 +120,7 @@ private:
         static void invoke(XPrmOArchive & ar, const T & t){
 			if(!SuppressBracket<T>::value)
 				ar.openBracket();
-            const_cast<T&>(t).serialize(ar);
+            const_cast<T&>(t).serialize(&ar);
 			if(!SuppressBracket<T>::value)
 				ar.closeBracket();
         }
@@ -452,7 +452,7 @@ private:
         static void invoke(XPrmIArchive& ar, T& t){
 			if(!SuppressBracket<T>::value)
 				ar.openStructure();
-            t.serialize(ar);
+            t.serialize(&ar);
 			if(!SuppressBracket<T>::value)
 				ar.closeStructure();
         }

@@ -21,7 +21,7 @@ struct ShowDebugRigidBody {
 	int velocityValue;
 	
 	ShowDebugRigidBody();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 struct ShowDebugUnitReal {
@@ -36,7 +36,7 @@ struct ShowDebugUnitReal {
 	int unitID;
 	
 	ShowDebugUnitReal();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 struct ShowDebugLegionary {
@@ -46,7 +46,7 @@ struct ShowDebugLegionary {
 	int invisibility;
 	
 	ShowDebugLegionary();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 struct ShowDebugSquad {
@@ -65,7 +65,7 @@ struct ShowDebugSquad {
 	int order;
 	
 	ShowDebugSquad();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 struct ShowDebugFrame {
@@ -73,7 +73,7 @@ struct ShowDebugFrame {
 	int inputPosition;
 	
 	ShowDebugFrame();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 struct ShowDebugPlayer {
@@ -89,7 +89,7 @@ struct ShowDebugPlayer {
 	int enemyPlayer;
 	
 	ShowDebugPlayer();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 
@@ -132,7 +132,7 @@ struct DebugPrm {
     void load();
 	void save();
 	void edit();
-	template<class Archive>	void serialize(Archive& ar);
+    SERIALIZE_REF(ar);
 };
 
 

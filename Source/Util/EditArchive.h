@@ -163,7 +163,7 @@ private:
     template<class T>
     struct save_non_primitive_impl {
         static void invoke(EditOArchive & ar, const T& t){
-            const_cast<T&>(t).serialize(ar);
+            const_cast<T&>(t).serialize(&ar);
         }
     };
 
@@ -440,7 +440,7 @@ private:
     template<class T>
     struct load_non_primitive_impl {
         static void invoke(EditIArchive & ar, T & t){
-            t.serialize(ar);
+            t.serialize(&ar);
         }
     };
 
