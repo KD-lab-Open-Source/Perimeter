@@ -2541,11 +2541,7 @@ void GameShell::rememberPlayerCamera(terPlayer* player, const char* triggerName)
 	if(universe()->activePlayer()->isWorld())
 		return;
 
-	SavePrm data;
-	if(!CurrentMission.loadMission(data))
-		return;
-	data.manualData.saveCamera(player->playerStrategyIndex(), triggerName);
-	CurrentMission.saveMission(data, false);
+    savePrm().manualData.saveCamera(player->playerStrategyIndex(), triggerName);
 }
 
 void GameShell::setCountDownTime(int timeLeft) {
