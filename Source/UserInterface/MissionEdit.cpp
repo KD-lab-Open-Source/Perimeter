@@ -166,6 +166,10 @@ bool MissionEditor::keyPressed(const sKey& Key)
 			terMapPoint->UpdateMap(Vect2i::ZERO, Vect2i((int)vMap.H_SIZE, (int)vMap.V_SIZE));
 		}
 		return true; 
+        
+    case 'M' | KBD_CTRL:
+        gameShell->rememberPlayerCamera(universe()->activePlayer(), "Camera");
+        break;
 
 	case VK_RETURN: 
 	case VK_RETURN | KBD_SHIFT: 

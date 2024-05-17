@@ -1360,10 +1360,6 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		debug_variation = 1 - debug_variation;
 		break;
 
-	case 'M' | KBD_CTRL:
-		rememberPlayerCamera(universe()->activePlayer(), "Camera");
-		break;
-
 	case 'M':
 		terCamera->setRestriction(!terCamera->restricted());
 		break;
@@ -1384,7 +1380,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		terVisGeneric->SetNearDistanceLOD(terNearDistanceLOD );
 		break;
 
-	case 'S':
+	case 'S' | KBD_CTRL | KBD_SHIFT:
 		if(!missionEditor()){
 			std::string name = CurrentMission.savePathContent();
 			size_t pos = name.rfind(PATH_SEP);
@@ -1406,7 +1402,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		}
 		break;
 		}
-    case 'S' | KBD_CTRL | KBD_SHIFT: {
+    case 'S' | KBD_CTRL | KBD_ALT: {
         std::string saveName = CurrentMission.savePathContent();
         universalSave(saveName.c_str(), false);
     } break;
