@@ -1,3 +1,4 @@
+#include <unordered_set>
 #include "StdAfx.h"
 #include "files/files.h"
 #include "Localization.h"
@@ -20,13 +21,38 @@ void saveLocale(const std::string& locale) {
     putStringSettings("Locale", locale);
 }
 
-void initLocale() {
+void addLocaleEntry(std::unordered_set<std::string>& locales, filesystem_entry* entry) {
+    if (entry && entry->is_directory) {
+        std::filesystem::path path = std::filesystem::u8path(entry->path_content);
+        locales.emplace(path.filename().u8string());
+    }
+}
+
+void scanLocales() {
+    std::unordered_set<std::string> locales;
+
+    //NOTE: when this is run the mods might not be loaded thus may only return folders in real Resource/LocData
+    //and not those from mods when scanning it, so we scan mod manually too
+    
+    //Scan game folder
     for (filesystem_entry* entry : get_content_entries_directory("Resource/LocData")) {
-        if (entry->is_directory) {
-            std::filesystem::path path = std::filesystem::u8path(entry->path_content);
-            localesAvailable.emplace_back(path.filename().u8string());
+        addLocaleEntry(locales, entry);
+    }
+    
+    //Scan mods LocData
+    for (filesystem_entry* mod_entry : get_content_entries_directory("Mods")) {
+        for (filesystem_entry* entry : get_content_entries_directory(mod_entry->path_content + PATH_SEP + "Resource/LocData")) {
+            addLocaleEntry(locales, entry);
         }
     }
+    
+    for (auto& locale : locales) {
+        localesAvailable.emplace_back(locale);
+    }
+}
+
+void initLocale() {
+    scanLocales();
 
 #ifndef GPX
     const char* cmdlineLocale = check_command_line("locale");
@@ -68,6 +94,7 @@ void initLocale() {
             localeCurrent = "";
         }
     }
+
     //Show selector if there is more than 1 locales available and none is currently active
     if (check_command_line("chooselocale") || (localeCurrent.empty() && 1 < localesAvailable.size())) {
         int choice = MessageBoxChoice("Perimeter", "Select language:", localesAvailable);
@@ -104,7 +131,7 @@ void initLocale() {
 
     fprintf(stdout, "Current locale: %s\n", localeCurrent.c_str());
     
-    //Find the folder name that might not be lowercase
+    //Find the folder of locale, the locale name in filesystem might not be lowercase
     localePath.clear();
     for (auto& locale : localesAvailable) {
         if (stricmp(locale.c_str(), localeCurrent.c_str()) == 0) {
@@ -118,7 +145,7 @@ void initLocale() {
         fprintf(stdout, "Current locale path: %s\n", localePath.c_str());
     }
     
-    //TODO workaround to fix multiplayer games with mixed russian locale and non russian locale players
+    //TODO workaround to fix multiplayer games with mixed russian locale and non russian locale players, remove when UTF8 is supported
     localeDefaultFont.clear();
     if (localeCurrent == "english") {
         for (auto& locale : localesAvailable) {
