@@ -1152,9 +1152,10 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 		gameShell->setSkipCutScene(false);
 		terCamera->SetCameraFollow(0);
 		std::string camera = cameraSplineName.value();
-		if ((startsWith(camera, "Camera") && camera.length() == 7)
-         || (startsWith(camera, "UserCamera") && camera.length() == 11)) {
-			camera = camera.substr(0, camera.length() - 1) + std::to_string(aiPlayer.playerStrategyIndex());
+        if (startsWith(camera, "UserCamera") && camera.length() > 10) {
+            camera = "UserCamera" + std::to_string(aiPlayer.playerStrategyIndex());
+        } else if (startsWith(camera, "Camera") && camera.length() > 6) {
+            camera = "Camera" + std::to_string(aiPlayer.playerStrategyIndex());
         }
 		const SaveCameraSplineData* spline = gameShell->manualData().findCameraSpline(camera.c_str());
 		if(spline){
