@@ -644,12 +644,9 @@ void terFilthSpot::MoveQuant()
 {
 	terUnitBase::MoveQuant();
 
-#ifndef _FINAL_VERSION_
-	if(check_command_line("noFilth") || gameShell->missionEditor())
-	{
-		return;
-	}
-#endif
+    if (gameShell && gameShell->missionEditor()) {
+        return;
+    }
 
 	FilthSwarmListType::iterator i_swarm;
 	FOR_EACH(swarm_list,i_swarm){
