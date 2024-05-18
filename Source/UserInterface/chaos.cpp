@@ -7,7 +7,7 @@
 
 CChaos::CChaos(int hsize,int vsize,bool bump)
 {
-	int tile = 5;//Пусть будет нечётная
+	int tile = 7;//Пусть будет нечётная
 
 	ZPlane=NULL;
 	ZPlane = terScene->CreateChaos(Vect2f(hsize,vsize),
