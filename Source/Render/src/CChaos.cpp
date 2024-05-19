@@ -8,8 +8,6 @@
 
 typedef sVertexXYZDT2 VTYPE;
 
-const float CHAOS_HEIGHT = 1.0f;
-
 cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enablebump_)
 :cIUnkObj(KIND_NULL)
 {
@@ -323,21 +321,45 @@ void cChaos::SetupDB() {
 	float du,dv;
 	du=dv=1.0f/sub_div;
 
-    float v1uvmul = enablebump == BUMP_RENDERTARGET ? uvmul : 1.0f;
-    for(int iy=0;iy<=size;iy++) {
-        VTYPE* vout=pVertex+iy*(size+1);
+#ifdef PERIMETER_D3D9
+	if(enablebump==BUMP_RENDERTARGET)
+	{
+		for(int iy=0;iy<=size;iy++)
+		{
+			VTYPE* vout=pVertex+iy*(size+1);
 
-        for(int ix=0;ix<=size;ix++,vout++) {
-            vout->x=ix*deltax+xmin;
-            vout->y=iy*deltay+ymin;
-            vout->z=CHAOS_HEIGHT;
-            vout->diffuse=0xFFFFFFFF;
-            vout->u1()=ix*du*v1uvmul;
-            vout->v1()=iy*dv*v1uvmul;
-            vout->u2()=ix*du*uvmul;
-            vout->v2()=iy*dv*uvmul;
-        }
-    }
+			for(int ix=0;ix<=size;ix++,vout++)
+			{
+				vout->x=ix*deltax+xmin;
+				vout->y=iy*deltay+ymin;
+				vout->z=0;
+                vout->diffuse=0xFFFFFFFF;
+				vout->u1()=ix*du;
+				vout->v1()=iy*dv;
+				vout->u2()=ix*du*uvmul;
+				vout->v2()=iy*dv*uvmul;
+			}
+		}
+	} else
+#endif
+	{
+		for(int iy=0;iy<=size;iy++)
+		{
+			VTYPE* vout=pVertex+iy*(size+1);
+
+			for(int ix=0;ix<=size;ix++,vout++)
+			{
+				vout->x=ix*deltax+xmin;
+				vout->y=iy*deltay+ymin;
+				vout->z=0;
+                vout->diffuse=0xFFFFFFFF;
+				vout->u1()=ix*du*uvmul;
+				vout->v1()=iy*dv*uvmul;
+				vout->u2()=ix*du*uvmul;
+				vout->v2()=iy*dv*uvmul;
+			}
+		}
+	}
 
     int vbwidth=size+1;
     for (int y = 0; y < size; y++) {
