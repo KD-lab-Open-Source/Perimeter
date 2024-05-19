@@ -166,8 +166,10 @@ void copyToUI() {
                 //Setup first slot with AI choices
                 setupFirstSlot(combo, false);
             }
-
-            if (battleColors.getPosition(i) != -1) {
+            
+            bool playerValid = i < missionToExec.playersAmountScenarioMax();
+            combo->Show(playerValid);
+            if (playerValid && battleColors.getPosition(i) != -1) {
                 combo->pos = missionToExec.playersData[i].difficulty + 1;
                 if (0 >= combo->pos || (combo->pos - 1) >= DIFFICULTY_MAX) combo->pos = 1;
                 setSlotVisible(u, true);
