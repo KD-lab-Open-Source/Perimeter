@@ -21,10 +21,11 @@ struct SokolCommand {
     void ClearShaderParams();
     void SetTexture(size_t index, SokolResource<sg_image>* sokol_texture);
     void ClearTextures();
-    NO_COPY_CONSTRUCTOR(SokolCommand)
+    NO_COPY_CONSTRUCTOR(SokolCommand);
     
     pipeline_id_t pipeline_id = 0;
     SOKOL_SHADER_ID shader_id = SOKOL_SHADER_ID_NONE;
+    sg_pass_action* pass_action = nullptr;
     size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
@@ -73,7 +74,8 @@ private:
     std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
     
     //For swapchain pass that renders into final device
-    sg_pass swapchain_pass;
+    sg_swapchain swapchain = {};
+    sg_color fill_color = {};
     
     //Renderer state
     bool ActiveScene = false;
@@ -117,8 +119,10 @@ private:
     Mat4f activeTextureTransform[PERIMETER_SOKOL_TEXTURES];
 
     //Commands handling
+    void ClearActiveBufferAndPassAction();
     void ClearCommands();
     void FinishActiveDrawBuffer();
+    void CreateCommandEmpty();
     void CreateCommand(class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices);
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
