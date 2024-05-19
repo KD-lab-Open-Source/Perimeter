@@ -35,6 +35,9 @@ void sokol_metal_render_callback() {
 }
 #endif
 
+//How many frames to store the resources until freed
+const uint32_t MAX_POOLED_RESOURCES_LIFE = 10000; 
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -253,6 +256,7 @@ int cSokolRender::Flush(bool wnd) {
     sokol_metal_draw();
 #endif
 
+    ClearPooledResources(MAX_POOLED_RESOURCES_LIFE);
     ClearCommands();
 
     xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
@@ -316,7 +320,7 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
                 sg_buffer
             );
         } else {
-            buffer = nh.mapped();
+            buffer = nh.mapped().resource;
         }
 
         resource->dirty = true;

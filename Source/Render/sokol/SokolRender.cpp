@@ -62,6 +62,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
         return res;
     }
 
+    ClearPooledResources(0);
     ClearCommands();
     ClearPipelines();
     
@@ -356,6 +357,7 @@ int cSokolRender::Done() {
     bool do_sg_shutdown = sdl_window != nullptr;
     int ret = cInterfaceRenderDevice::Done();
     activeCommand.Clear();
+    ClearPooledResources(0);
     ClearCommands();
     ClearPipelines();
     shaders.clear();
@@ -419,6 +421,33 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
     ib.FreeData();
 }
 
+#define ClearPooledResources_Debug 0
+void cSokolRender::ClearPooledResources(uint32_t max_life) {
+    if (bufferPool.empty()) {
+        return;
+    }
+#if defined(PERIMETER_DEBUG) && ClearPooledResources_Debug
+    size_t count = bufferPool.size();
+#endif
+    auto it = bufferPool.begin();
+    while (it != bufferPool.end()) {
+        auto& res = it->second;
+        res.last_used++;
+        if (res.last_used >= max_life) {
+            res.resource->DecRef();
+            res.resource = nullptr;
+            it = bufferPool.erase(it);
+        } else {
+            it++;
+        }
+    }
+#if defined(PERIMETER_DEBUG) && ClearPooledResources_Debug
+    if (count != bufferPool.size()) {
+        printf("ClearPooledResources %" PRIsize " -> %" PRIsize "\n", count, bufferPool.size());
+    }
+#endif
+}
+
 void cSokolRender::ClearCommands() {
     std::unordered_set<SokolResourceBuffer*> pooled;
     for (SokolCommand* command : commands) {
@@ -428,7 +457,10 @@ void cSokolRender::ClearCommands() {
         && (vertex_buffer->RefCount() == 1 || pooled.count(vertex_buffer) == 0)) {
             command->vertex_buffer = nullptr;
             xassert(0 < vertex_buffer->RefCount() && vertex_buffer->RefCount() <= 50);
-            bufferPool.emplace(vertex_buffer->key, vertex_buffer);
+            bufferPool.emplace(
+                    vertex_buffer->key,
+                    SokolResourcePooled(vertex_buffer)
+            );
             pooled.emplace(vertex_buffer);
         }
         SokolResourceBuffer* index_buffer = command->index_buffer;
@@ -436,7 +468,10 @@ void cSokolRender::ClearCommands() {
         && (index_buffer->RefCount() == 1 || pooled.count(index_buffer) == 0)) {
             command->index_buffer = nullptr;
             xassert(0 < index_buffer->RefCount() && index_buffer->RefCount() <= 50);
-            bufferPool.emplace(index_buffer->key, index_buffer);
+            bufferPool.emplace(
+                    index_buffer->key, 
+                    SokolResourcePooled(index_buffer)
+            );
             pooled.emplace(index_buffer);
         }
         

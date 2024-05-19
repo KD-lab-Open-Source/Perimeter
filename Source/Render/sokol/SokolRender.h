@@ -39,6 +39,15 @@ struct SokolCommand {
     Vect2i clip[2]; //0 Pos 1 Size
 };
 
+template<typename T>
+struct SokolResourcePooled {
+    uint32_t last_used = 0;
+    SokolResource<T>* resource = nullptr;
+
+    explicit SokolResourcePooled(SokolResource<T>* res) : resource(res) {
+    }
+};
+
 class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
@@ -60,7 +69,8 @@ private:
 #endif
     
     //Stores resources for reusing
-    std::unordered_multimap<uint64_t, SokolResourceBuffer*> bufferPool;
+    void ClearPooledResources(uint32_t max_life);
+    std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
     
     //For swapchain pass that renders into final device
     sg_pass swapchain_pass;
