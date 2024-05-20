@@ -367,9 +367,9 @@ char const* MISSIONS_PATH = "RESOURCE\\Missions";
 int RESOLUTION_COUNT = 4;
 _V2i RESOLUTIONS[] = { { 800 
  , 600 }, { 1024, 768 }, { 1280, 960 }, { 1600, 1200 } };
-int LOD_COUNT = 3;
+int LOD_COUNT = 4;
 int LODS[] = { 50 
- , 100, 10000 };
+ , 100, 200, 300 };
 #ifndef __XScript_struct_Reel__
 #define __XScript_struct_Reel__
 #pragma pack( push, __XScript_struct_pack__, 4 )
@@ -454,7 +454,7 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\GameShellSq.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 281150917;
+	description = 3763440746;
 	reserve(285);
 	add(&_sqsh_cursor_count, "_sqsh_cursor_count", 1356362679);
 	add(&_sqsh_cursors, "_sqsh_cursors", 2573016843);
@@ -690,7 +690,7 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add(&RESOLUTION_COUNT, "RESOLUTION_COUNT", 4071838562);
 	add(&RESOLUTIONS, "RESOLUTIONS", 3181893157);
 	add(&LOD_COUNT, "LOD_COUNT", 2701994995);
-	add(&LODS, "LODS", 1214535828);
+	add(&LODS, "LODS", 1222938808);
 	add(&REEL_COUNT, "REEL_COUNT", 2369747542);
 	add(&reels, "reels", 154282128);
 	add(&lastReel, "lastReel", 1974528893);

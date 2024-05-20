@@ -27,14 +27,12 @@ GraphOptionsManager* GraphOptionsManager::instance = 0;
 void CustomGraphOptions::load(const char* sectionName, const char* iniFileName) {
 	IniManager iniManager(iniFileName);
 
-	landscapeDetails = iniManager.getInt(sectionName, "MapLevelLOD");
-	if (landscapeDetails <= LODS[0]) {
-		landscapeDetails = 0;
-	} else if (landscapeDetails > LODS[0] && landscapeDetails <= LODS[1]) {
-		landscapeDetails = 1;
-	} else {
-		landscapeDetails = 2;
-	}
+	int maxLevelLOD = iniManager.getInt(sectionName, "MapLevelLOD");
+    for (landscapeDetails = 0; landscapeDetails < LOD_COUNT; ++landscapeDetails) {
+        if (maxLevelLOD <= LODS[landscapeDetails]) {
+            break;
+        }
+    }
 
 	mapReflections = iniManager.getInt(sectionName, "MapReflection");
 	objReflections = iniManager.getInt(sectionName,"ObjectReflection");

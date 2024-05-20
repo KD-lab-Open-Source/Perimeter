@@ -257,8 +257,10 @@ void onLODCombo(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		if (param != -1) {
 			pCombo->Array.push_back( getItemTextFromBase("Low").c_str() );
 			pCombo->Array.push_back( getItemTextFromBase("Medium").c_str() );
-			pCombo->Array.push_back( getItemTextFromBase("High").c_str() );
-			pCombo->size = 3;
+            pCombo->Array.push_back( getItemTextFromBase("High").c_str() );
+            pCombo->Array.push_back( getItemTextFromBase("Extreme").c_str() );
+			pCombo->size = LOD_COUNT;
+            xassert(pCombo->Array.size() == pCombo->size);
 		}
 		pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().customOptions.landscapeDetails;
 	} else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
