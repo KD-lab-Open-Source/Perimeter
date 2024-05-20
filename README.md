@@ -11,6 +11,8 @@
 
 Discord: https://discord.com/invite/jg9G7cp
 
+Community in telegram: https://t.me/PerimeterGame
+
 ## About
 
 Perimeter is a real-time strategy video game with unique gameplay elements such as terraforming deformable terrain,
@@ -22,6 +24,11 @@ purchased games in physical copies or digital stores.
 Some parts may still need fixing or be experimental, expect some unexpected behavior, artifacts, bugs or crashes.
 
 Issues for feature requests, suggestions, propositions, bugs, pull requests and other contributions are welcomed.
+
+## Where to play
+
+* Windows/Linux/MacOS [Steam](https://store.steampowered.com/app/289440/Perimeter/)
+* Web [GamePix](https://www.gamepix.com/play/perimeter)
 
 ## Лицензией | License
 
