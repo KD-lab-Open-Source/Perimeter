@@ -36,7 +36,11 @@ void sokol_metal_render_callback() {
 #endif
 
 //How many frames to store the resources until freed
-const uint32_t MAX_POOLED_RESOURCES_LIFE = 10000; 
+#ifndef GPX
+const uint32_t MAX_POOLED_RESOURCES_LIFE = 10000;
+#else
+const uint32_t MAX_POOLED_RESOURCES_LIFE = 32000;
+#endif
 
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
