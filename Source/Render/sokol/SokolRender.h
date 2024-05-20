@@ -42,7 +42,8 @@ struct SokolCommand {
 
 template<typename T>
 struct SokolResourcePooled {
-    uint32_t last_used = 0;
+    ///How many frames passed since last time it was used
+    uint32_t unused_since = 0;
     SokolResource<T>* resource = nullptr;
 
     explicit SokolResourcePooled(SokolResource<T>* res) : resource(res) {

@@ -424,8 +424,8 @@ void cSokolRender::ClearPooledResources(uint32_t max_life) {
     auto it = bufferPool.begin();
     while (it != bufferPool.end()) {
         auto& res = it->second;
-        res.last_used++;
-        if (res.last_used >= max_life) {
+        res.unused_since++;
+        if (res.unused_since >= max_life) {
             res.resource->DecRef();
             res.resource = nullptr;
             it = bufferPool.erase(it);
