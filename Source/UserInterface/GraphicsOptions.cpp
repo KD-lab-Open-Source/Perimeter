@@ -28,8 +28,10 @@ void CustomGraphOptions::load(const char* sectionName, const char* iniFileName) 
 	IniManager iniManager(iniFileName);
 
 	int maxLevelLOD = iniManager.getInt(sectionName, "MapLevelLOD");
-    for (landscapeDetails = 0; landscapeDetails < LOD_COUNT; ++landscapeDetails) {
-        if (maxLevelLOD <= LODS[landscapeDetails]) {
+    landscapeDetails = LOD_COUNT - 1;
+    for (int i = 0; i < LOD_COUNT; ++i) {
+        if (maxLevelLOD <= LODS[i]) {
+            landscapeDetails = i;
             break;
         }
     }
