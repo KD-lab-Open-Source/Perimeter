@@ -45,6 +45,11 @@ std::string GenerateInfoText(ModMetadata* mod, bool add_description) {
         popupTxt += qdTextDB::instance().getText("Interface.Menu.Mods.MetadataAuthors");
         popupTxt += " &FFFFFF" + mod->mod_authors;
     }
+    if (!mod->mod_license.empty()) {
+        popupTxt += "\n&AAAAAA";
+        popupTxt += qdTextDB::instance().getText("Interface.Menu.Mods.MetadataLicense");
+        popupTxt += " &FFFFFF" + mod->mod_license;
+    }
     if (!mod->mod_url.empty()) {
         popupTxt += "\n&AAAAAA";
         popupTxt += qdTextDB::instance().getText("Interface.Menu.Mods.MetadataSite");

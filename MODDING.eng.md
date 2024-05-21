@@ -43,6 +43,7 @@ description_english=&00FF00My first mod!\n&FFFFFFThis is a example of how to wri
 description_russian=&00FF00Мой первый мод!\n&FFFFFFЭто пример написания цветного многострочного\nописания мода.
 description_spanish=&00FF00¡Mi primer mod!\n&FFFFFFEste es un ejemplo de cómo escribir una descripción de mod\nmultilínea coloreada.
 authors=First author name\nAnother author name\n3rd Author name
+license=GPLv3
 url=https://kdlab.com
 
 [Content]

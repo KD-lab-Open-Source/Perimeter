@@ -638,6 +638,7 @@ void detectGameContent() {
                     string_replace_all(data.mod_description, "\\\\", "\\");
                 }
                 data.mod_authors = mod_ini.get("Mod", "authors");
+                data.mod_license = mod_ini.get("Mod", "license");
                 data.mod_url = mod_ini.get("Mod", "url");
                 
                 //Check version

@@ -46,6 +46,11 @@ public:
     /// Example: AuthorA, AuthorB
     std::string mod_authors = {};
 
+    /// License for mod
+    /// Optional
+    /// Example: GPLv3
+    std::string mod_license = {};
+
     /// URL link for mod
     /// Optional
     /// Example: URL
