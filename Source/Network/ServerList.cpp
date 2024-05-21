@@ -140,7 +140,7 @@ void ServerList::fetchRelayHostInfoList() {
                 info.gameStarted = room.game_started;
                 info.gameClosed = room.room_closed;
                 info.ping = room.ping;
-                info.scenario = getMapName(room.extra_data.scenario.c_str());
+                info.scenario = room.extra_data.scenario;
                 uint32_t game_content = strtoul(room.extra_data.game_content.c_str(), nullptr, 0);
                 info.gameContent = static_cast<GAME_CONTENT>(game_content);
                 gameList.emplace_back(info);

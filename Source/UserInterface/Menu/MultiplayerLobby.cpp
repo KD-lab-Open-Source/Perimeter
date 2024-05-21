@@ -466,7 +466,12 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 			_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP)->Show(0);
             CShowMapWindow* mapWindow = ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP));
             mapWindow->setWorldID( missingContent.empty() ? currMission.worldID() : -2 );
-			int pos = getMultiplayerMapNumber(currMission.missionName());
+			int pos = -1;
+            for (uint32_t i = 0, s = multiplayerMaps.size(); i < s; i++) {
+                if (currMission.missionName() == multiplayerMaps[i].missionName()) {
+                    pos = static_cast<int>(i);
+                }
+            }
 			if (pos != -1) {
 				((CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST))->SetCurSelPassive(pos);
 			}

@@ -162,7 +162,9 @@ std::string formatGameInfoWindow(const GameInfo& info) {
     //Show map
     text += "&FFFFFF";
     text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.Map");
-    text += ": " + info.scenario + "\n";
+    text += ": ";
+    text += getMapName(info.scenario.c_str());
+    text += "\n";
     
     //Show players
     if (info.currentPlayers < info.maximumPlayers) {
@@ -194,8 +196,15 @@ void updateMultiplayerListUI() {
     bool hasSelection = hasGameListSelection();
     
     //Set map window
-    int mapPos = hasSelection ? getMultiplayerMapNumber(selectedGame.scenario) : -1;
-    if (0 <= mapPos && mapPos < multiplayerMaps.size()) {
+    int mapPos = -1;
+    if (hasSelection) {
+        for (uint32_t i = 0, s = multiplayerMaps.size(); i < s; i++) {
+            if (selectedGame.scenario == multiplayerMaps[i].worldName()) {
+                mapPos = static_cast<int>(i);
+            }
+        }
+    }
+    if (0 <= mapPos) {
         setupMapDescWnd(mapPos, multiplayerMaps, SQSH_MM_MULTIPLAYER_LIST_MAP, -1, -1, GT_MULTI_PLAYER_CREATE);
     } else {
         ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_MAP))->setWorldID( hasSelection ? -2 : -1 );

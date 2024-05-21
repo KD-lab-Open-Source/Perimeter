@@ -29,19 +29,13 @@ void clearMultiplayerVars() {
 void loadMultiplayerList() {
     if (multiplayerMaps.empty()) {
         loadMapVector(multiplayerMaps, "RESOURCE/MULTIPLAYER", ".spg");
+        for (int i = 0; i < multiplayerMaps.size(); ++i) {
+            checkMissionDescription(i, multiplayerMaps, GT_MULTI_PLAYER_CREATE);
+        }
     }
     if (multiplayerSaves.empty()) {
         loadMapVector(multiplayerSaves, "RESOURCE/SAVES/MULTIPLAYER", ".spg");
     }
-}
-
-int getMultiplayerMapNumber(const std::string& missionName) {
-    for (uint32_t i = 0, s = multiplayerMaps.size(); i < s; i++) {
-        if (missionName == multiplayerMaps[i].missionName()) {
-            return static_cast<int>(i);
-        }
-    }
-    return -1;
 }
 
 int SwitchMultiplayerToLoadQuant(float, float ) {

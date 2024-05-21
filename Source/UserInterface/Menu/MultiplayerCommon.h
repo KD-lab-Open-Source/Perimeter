@@ -9,4 +9,3 @@ extern std::vector<MissionDescription> multiplayerSaves;
 void loadMultiplayerList();
 int exitToMultiplayerScreenAction(float, float);
 
-int getMultiplayerMapNumber(const std::string& missionName);
