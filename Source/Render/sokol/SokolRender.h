@@ -2,7 +2,7 @@
 #define PERIMETER_SOKOLRENDER_H
 
 #if defined(SOKOL_GLCORE) || defined(SOKOL_GLES3)
-#define SOKOL_GL (1)
+#define PERIMETER_SOKOL_GL (1)
 #endif
 
 #include <sokol_gfx.h>
@@ -53,7 +53,7 @@ struct SokolResourcePooled {
 class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     SDL_GLContext sdl_gl_context = nullptr;
 #endif
 #ifdef SOKOL_METAL

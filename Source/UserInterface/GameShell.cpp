@@ -2623,13 +2623,18 @@ void GameShell::updateResolution(bool change_depth, bool change_size, bool chang
         PerimeterSetupDisplayMode();
     }
     
-	int mode=RENDERDEVICE_MODE_RETURNERROR;
-	if(!isTrueFullscreen())
-		mode|=RENDERDEVICE_MODE_WINDOW;
-	if(terBitPerPixel==16)
-		mode|=RENDERDEVICE_MODE_RGB16;
-	else
-		mode|=RENDERDEVICE_MODE_RGB32;
+	int mode = RENDERDEVICE_MODE_RETURNERROR;
+	if (!isTrueFullscreen()) {
+        mode |= RENDERDEVICE_MODE_WINDOW;
+    }
+	if (terBitPerPixel==16) {
+        mode |= RENDERDEVICE_MODE_RGB16;
+    } else {
+        mode |= RENDERDEVICE_MODE_RGB32;
+    }
+    if (terVSyncEnable) {
+        mode |= RENDERDEVICE_MODE_VSYNC;
+    }
 
 	if(!terRenderDevice->ChangeSize(
 		terScreenSizeX,

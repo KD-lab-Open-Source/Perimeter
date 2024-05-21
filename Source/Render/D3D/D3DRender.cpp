@@ -232,7 +232,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
     d3dpp.SwapEffect				= D3DSWAPEFFECT_COPY;
     d3dpp.EnableAutoDepthStencil	= TRUE;
     d3dpp.Flags						= D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
-    d3dpp.PresentationInterval		= D3DPRESENT_INTERVAL_IMMEDIATE;
 	UpdateRenderMode();
 
 	bSupportVertexShaderHardware=bSupportVertexShader=(D3DSHADER_VERSION_MAJOR(DeviceCaps.VertexShaderVersion)>=1);
@@ -409,6 +408,11 @@ void cD3DRender::UpdateRenderMode()
     d3dpp.Windowed					= (RenderMode&RENDERDEVICE_MODE_WINDOW)?TRUE:FALSE;
     d3dpp.FullScreen_RefreshRateInHz= d3dpp.Windowed ? 0 : ScreenHZ;
 	d3dpp.BackBufferCount			= (d3dpp.Windowed | (RenderMode&RENDERDEVICE_MODE_ONEBACKBUFFER)) ? 1 : 2;
+    if (RenderMode & RENDERDEVICE_MODE_VSYNC) {
+        d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+    } else {
+        d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    }
 
     //Set biggest size the window can have so we don't have to reinit render device each time user resizes the window
     d3dpp.BackBufferWidth = MaxScreenSize.x;
@@ -523,7 +527,8 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 	MTTexObjAutoLock lock;
     
     int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW
-                 |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
+                 |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32
+                 |RENDERDEVICE_MODE_VSYNC;
 
     bool same_size = ScreenSize.x == xscr && ScreenSize.y == yscr;
     ScreenSize.x = xscr;

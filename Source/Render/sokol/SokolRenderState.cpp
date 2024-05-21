@@ -272,11 +272,12 @@ int cSokolRender::Flush(bool wnd) {
     }
 
     //Swap the window
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     SDL_GL_SwapWindow(sdl_window);
 #endif
 #ifdef SOKOL_D3D11
-    d3d_context->swap_chain->Present(1, 0);
+    uint32_t sync_interval = RenderMode & RENDERDEVICE_MODE_VSYNC ? 1 : 0;
+    d3d_context->swap_chain->Present(sync_interval, 0);
 #endif
 #ifdef SOKOL_METAL
     sokol_metal_draw();

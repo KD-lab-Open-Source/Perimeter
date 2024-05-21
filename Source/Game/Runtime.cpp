@@ -103,6 +103,7 @@ int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
 int terGrabInput = 0;
+int terVSyncEnable = 1;
 int applicationRunBackground = 1;
 
 int terDrawMeshShadow = 2;
@@ -621,6 +622,10 @@ cInterfaceRenderDevice* SetGraph()
 //	if(HTManager::instance()->IsUseHT()) 		
         ModeRender |= RENDERDEVICE_MODE_MULTITHREAD;
 
+    if (terVSyncEnable) {
+        ModeRender |= RENDERDEVICE_MODE_VSYNC;
+    }
+
     if (deviceSelection != DEVICE_HEADLESS) {
         PerimeterCreateWindow(IRenderDevice->GetWindowCreationFlags());
     }
@@ -903,6 +908,7 @@ void show_help() {
             "    resx=1280 resy=720 - Allows setting resolution to use\n"
             "    uianchor=0/1/2/3 - Controls UI anchoring when aspect ratio is wider than 4:3\n"
             "    GrabInput=0/1 - Controls window input grabbing\n"
+            "    VSync=0/1 - Enable or disables VSync"
             "    RunBackground=0/1 - Enables or disables running game while not focused\n"
             "    disable_sound=1 - Disables sound in this launch\n"
             "    initial_menu= - Tells game to load this menu screen as initial menu, examples can be SINGLE, MULTIPLAYER_LIST, BATTLE...\n"

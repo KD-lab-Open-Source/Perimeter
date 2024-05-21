@@ -122,6 +122,9 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
     int fogEnableVal = 1;
     iniManager.getInt("Graphics", "FogEnable", fogEnableVal);
     fogEnable = fogEnableVal != 0;
+    int vsyncEnableVal = 1;
+    iniManager.getInt("Graphics", "VSync", vsyncEnableVal);
+    vsyncEnable = vsyncEnableVal != 0;
     
     std::set<DisplayMode> resSet;
 	resolutions.clear();
@@ -181,10 +184,12 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
 
 void GraphOptions::apply() {
 #ifndef GPX
-	bool change_depth=terBitPerPixel!=colorDepth;
-    bool change_display_mode = (terFullScreen != 0) != resolution.fullscreen;
+	bool change_depth = terBitPerPixel != colorDepth;
+    bool change_display_mode = (terFullScreen != 0) != resolution.fullscreen
+            || terVSyncEnable != vsyncEnable;
     if (resolution.fullscreen) {
-        change_display_mode |= terScreenRefresh != resolution.refresh || terScreenIndex != resolution.display;
+        change_display_mode |= terScreenRefresh != resolution.refresh
+                            || terScreenIndex != resolution.display;
     } else {
         //If window then check if user moved it to another display first
         int windowScreenIndex = SDL_GetWindowDisplayIndex(sdlWindow);
@@ -196,6 +201,7 @@ void GraphOptions::apply() {
 	bool change_size = terScreenSizeX != resolution.x || terScreenSizeY != resolution.y;
 	if (change_display_mode || change_size || change_depth) {
 		terBitPerPixel = colorDepth;
+        terVSyncEnable = vsyncEnable;
         terFullScreen = resolution.fullscreen;
         if (terFullScreen) {
             terScreenIndex = resolution.display;
@@ -239,6 +245,7 @@ void GraphOptions::save(const char* iniFileName) {
     iniManager.putInt("Graphics", "ScreenRefresh", terScreenRefresh);
 	iniManager.putInt("Graphics", "BPP", colorDepth);
     iniManager.putInt("Graphics", "UIAnchor", uiAnchor);
+    iniManager.putInt("Graphics", "VSync", vsyncEnable ? 1 : 0);
     iniManager.putInt("Graphics", "GrabInput", grabInput ? 1 : 0);
     iniManager.putInt("Graphics", "FogEnable", fogEnable ? 1 : 0);
 }

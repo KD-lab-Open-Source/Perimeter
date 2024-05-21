@@ -80,6 +80,8 @@ void PerimeterDataChannelLoad()
 	terShowTips = ini.getInt("Game","ShowTips");
     ini_no_check.getInt("Graphics","GrabInput", terGrabInput);
     check_command_line_parameter("GrabInput", terGrabInput);
+    ini_no_check.getInt("Graphics","VSync", terVSyncEnable);
+    check_command_line_parameter("VSync", terVSyncEnable);
     ini_no_check.getInt("Game","RunBackground", applicationRunBackground);
     check_command_line_parameter("RunBackground", applicationRunBackground);
 

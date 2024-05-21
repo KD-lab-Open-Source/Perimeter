@@ -14,7 +14,7 @@
 #include "RenderTracker.h"
 #include <SDL_hints.h>
 
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
 #include <SDL_opengl.h>
 #endif
 
@@ -41,7 +41,7 @@ eRenderDeviceSelection cSokolRender::GetRenderSelection() const {
 
 uint32_t cSokolRender::GetWindowCreationFlags() const {
     uint32_t flags = cInterfaceRenderDevice::GetWindowCreationFlags();
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     flags |= SDL_WINDOW_OPENGL;
 #endif
 #ifdef SOKOL_METAL
@@ -89,7 +89,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     fill_color = sg_color { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //OpenGL / OpenGLES
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     //Setup some attributes before context creation
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -131,7 +131,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
     
     swapchain.gl.framebuffer = 0;
-#endif //SOKOL_GL
+#endif //PERIMETER_SOKOL_GL
 
     //Direct3D
 #ifdef SOKOL_D3D11
@@ -222,10 +222,10 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     swap_chain_desc->BufferDesc.RefreshRate = { static_cast<uint32_t>(RefreshRateInHz), 1 };
     swap_chain_desc->OutputWindow = d3d_context->hwnd;
     swap_chain_desc->Windowed = (mode & RENDERDEVICE_MODE_WINDOW) != 0;
-    swap_chain_desc->SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    swap_chain_desc->BufferCount = 1;
-    swap_chain_desc->SampleDesc.Count = sample_count;
-    swap_chain_desc->SampleDesc.Quality = 1 < sample_count ? static_cast<uint32_t>(D3D11_STANDARD_MULTISAMPLE_PATTERN) : 0;
+    swap_chain_desc->SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    swap_chain_desc->BufferCount = 2;
+    swap_chain_desc->SampleDesc.Count = 1;
+    swap_chain_desc->SampleDesc.Quality = 0;
     swap_chain_desc->BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swap_chain_desc->Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
     hr = dxgiFactory->CreateSwapChain(d3d_context->device, swap_chain_desc, &d3d_context->swap_chain);
@@ -303,7 +303,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
 }
 
 bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
-    int mode_mask = RENDERDEVICE_MODE_WINDOW;
+    int mode_mask = RENDERDEVICE_MODE_WINDOW | RENDERDEVICE_MODE_VSYNC;
 
     bool need_resize = xScr != ScreenSize.x || yScr != ScreenSize.y;
 
@@ -315,6 +315,11 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
     ScreenSize.y = yScr;
     RenderMode &= ~mode_mask;
     RenderMode |= mode;
+    
+    //Set vsync
+#ifdef PERIMETER_SOKOL_GL
+    SDL_GL_SetSwapInterval(RenderMode & RENDERDEVICE_MODE_VSYNC ? 1 : 0);
+#endif
     
     //Update swapchain
     swapchain.width = ScreenSize.x;
@@ -378,7 +383,7 @@ int cSokolRender::Done() {
         sokol_metal_destroy(&swapchain);
     }
 #endif
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     if (sdl_gl_context != nullptr) {
         RenderSubmitEvent(RenderEvent::DONE, "Sokol GL shutdown");
         SDL_GL_DeleteContext(sdl_gl_context);

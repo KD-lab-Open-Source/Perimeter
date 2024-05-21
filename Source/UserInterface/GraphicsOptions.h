@@ -116,6 +116,7 @@ class GraphOptions : public Options {
         int uiAnchor;
         bool grabInput;
         bool fogEnable;
+        bool vsyncEnable;
 
 		bool operator == (const GraphOptions &cgo) const {
 			return (
@@ -123,6 +124,7 @@ class GraphOptions : public Options {
 					&&	resolution == cgo.resolution
                     &&	colorDepth == cgo.colorDepth
                     &&	uiAnchor == cgo.uiAnchor
+                    &&	vsyncEnable == cgo.vsyncEnable
                     &&	grabInput == cgo.grabInput
                     &&	fogEnable == cgo.fogEnable
 				);

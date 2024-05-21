@@ -2097,13 +2097,14 @@ void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 //graphics
 void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGraphicsVSync(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsInputGrab(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsFog(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsSettings(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnGraphicsApplyBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderGraphicsGamma(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void OnComboGraphicsColorDepth(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//void OnComboGraphicsColorDepth(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //custom

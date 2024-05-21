@@ -37,6 +37,7 @@ extern int terScreenSizeY;
 extern int terBitPerPixel;
 extern int terScreenRefresh;
 extern int terScreenIndex;
+extern int terVSyncEnable;
 extern int terGrabInput;
 
 extern int terMapReflection;
