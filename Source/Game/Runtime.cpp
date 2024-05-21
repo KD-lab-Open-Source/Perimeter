@@ -1074,6 +1074,9 @@ int SDL_main(int argc, char *argv[])
     if (sdlresult < 0) {
         ErrH.Abort("Error initializing SDLNet", XERR_CRITICAL, sdlresult, SDLNet_GetError());
     }
+    
+    //Init keys
+    initKeyboardMapping();
 
     //Do game content detection
     detectGameContent();

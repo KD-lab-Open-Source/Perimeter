@@ -49,7 +49,7 @@ void ControlsConverter::LoadCtrlTable(const char *strMain)
 		int nkey = IniManager("RESOURCE\\controls.ini").getInt(strMain, str);
 		if( nkey<0 || nkey>=2048 ) continue;
 		KeyToCtrl[ nkey ] = i;
-		CtrlToKey[i] = nkey;
+		CtrlToKey[i] = sKey(nkey);
 	}
 }
 

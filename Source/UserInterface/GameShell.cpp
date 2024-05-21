@@ -1035,7 +1035,7 @@ void GameShell::EventHandler(SDL_Event& event) {
         if (reelAbortEnabled) {
             switch (event.type) {
                 case SDL_KEYUP: {
-                    int key = sKey(event.key.keysym, true).fullkey;
+                    int key = sKey(event.key.keysym).fullkey;
                     if (key == VK_SPACE || key == VK_ESCAPE || key == VK_END) {
                         reelManager.hide();
                     }
@@ -1142,7 +1142,7 @@ void GameShell::EventHandler(SDL_Event& event) {
         case SDL_KEYUP: {
             bool editMode = _shellIconManager.isInEditMode();
             SDL_KeyboardEvent key = event.key;
-            s = sKey(key.keysym, true);
+            s = sKey(key.keysym);
             if (editMode && s.fullkey == ('V' | KBD_CTRL)) {
                 //Pasting keycombo, discard normal keydown/up
                 if (key.state == SDL_PRESSED && SDL_HasClipboardText()) {
@@ -1903,19 +1903,19 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 
 void GameShell::MouseMidPressed(const Vect2f& pos) {
 	if(!_bMenuMode){
-		ControlPressed(sKey(VK_MBUTTON, true).fullkey);
+		ControlPressed(sKey(VK_MBUTTON).fullkey);
 	}
 }
 void GameShell::MouseMidUnpressed(const Vect2f& pos) {
 	if(!_bMenuMode){
-		ControlUnpressed(sKey(VK_MBUTTON, true).fullkey);
+		ControlUnpressed(sKey(VK_MBUTTON).fullkey);
 	}
 }
 
 void GameShell::MouseLeftPressed(const Vect2f& pos)
 {
 	if (!_bMenuMode && isPressed(VK_RBUTTON)) {
-		ControlPressed(sKey(VK_MBUTTON, true).fullkey);
+		ControlPressed(sKey(VK_MBUTTON).fullkey);
 	}
 
 	if(missionEditor_ && missionEditor_->mouseLeftPressed(pos))
@@ -1930,7 +1930,7 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		setActivePlayerAIOff();
 	}
 
-	ControlPressed(sKey(VK_LBUTTON, true).fullkey);
+	ControlPressed(sKey(VK_LBUTTON).fullkey);
 
 	if(!mouseLeftPressed())
 	{
@@ -1975,7 +1975,7 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
 {
 
 	if (!_bMenuMode && isPressed(VK_LBUTTON)) {
-		ControlPressed(sKey(VK_MBUTTON, true).fullkey);
+		ControlPressed(sKey(VK_MBUTTON).fullkey);
 	}
 
 	if(missionEditor_ && missionEditor_->mouseRightPressed(pos))
@@ -1985,7 +1985,7 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
 		setActivePlayerAIOff();
 	}
 
-	ControlPressed(sKey(VK_RBUTTON, true).fullkey);
+	ControlPressed(sKey(VK_RBUTTON).fullkey);
 
 	if(!mouseRightPressed())
 	{
@@ -2013,10 +2013,10 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
 void GameShell::MouseLeftUnpressed(const Vect2f& pos)
 {
 	if (!_bMenuMode && cameraMouseTrack) {
-		ControlUnpressed(sKey(VK_MBUTTON, true).fullkey);
+		ControlUnpressed(sKey(VK_MBUTTON).fullkey);
 	}
 
-	ControlUnpressed(sKey(VK_LBUTTON, true).fullkey);
+	ControlUnpressed(sKey(VK_LBUTTON).fullkey);
 
 	if(mouseLeftPressed()){
 		mouseLeftPressed_ = false;
@@ -2041,10 +2041,10 @@ void GameShell::MouseLeftUnpressed(const Vect2f& pos)
 void GameShell::MouseRightUnpressed(const Vect2f& pos)
 {
 	if (!_bMenuMode && cameraMouseTrack) {
-		ControlUnpressed(sKey(VK_MBUTTON, true).fullkey);
+		ControlUnpressed(sKey(VK_MBUTTON).fullkey);
 	}
 
-	ControlUnpressed(sKey(VK_RBUTTON, true).fullkey);
+	ControlUnpressed(sKey(VK_RBUTTON).fullkey);
 
 	if(mouseRightPressed())
 	{

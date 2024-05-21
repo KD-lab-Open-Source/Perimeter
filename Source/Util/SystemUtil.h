@@ -32,6 +32,7 @@ bool create_directories(const std::string& path, std::error_code* error = nullpt
 bool applicationHasFocus();
 bool applicationIsGo();
 
+void initKeyboardMapping();
 bool isPressed(uint32_t key);
 inline bool isShiftPressed() { return isPressed(VK_SHIFT); }
 inline bool isControlPressed() { return isPressed(VK_CONTROL); }
@@ -54,12 +55,18 @@ struct sKey {
         int fullkey;
     };
 
-    explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false);
+    explicit sKey(SDL_Keysym keysym);
 
-	sKey(int key_ = 0, bool set_by_async_funcs = false);
+    explicit sKey(int key_);
+
+    sKey();
 	
 	bool pressed() const {
-		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(alt ^ isAltPressed());
+		return key != 0
+        && isPressed(key)
+        && !(ctrl ^ isControlPressed())
+        && !(shift ^ isShiftPressed())
+        && !(alt ^ isAltPressed());
 	}
 };
 

@@ -1,3 +1,4 @@
+#include <cinttypes>
 #include "StdAfx.h"
 #include <SDL.h>
 #include "Config.h"
@@ -22,15 +23,285 @@
 //		Keys
 /////////////////////////////////////////////////////////////////////////////////
 
-//If you wonder why we are converting SDL2 keys into VK_*, mostly to keep compatibility with controls.init and
+//If you wonder why we are converting SDL2 keys into VK_*, mostly to keep compatibility with controls.ini and
 //existing code
+
+std::vector<std::vector<SDL_Scancode>> vk_to_scancodes = {};
+
+int16_t GetVKFromScanCode(SDL_Scancode scancode) {
+    switch (scancode) {
+        default:
+        case SDL_SCANCODE_UNKNOWN:           break;
+        case SDL_SCANCODE_A:                 return 'A';
+        case SDL_SCANCODE_B:                 return 'B';
+        case SDL_SCANCODE_C:                 return 'C';
+        case SDL_SCANCODE_D:                 return 'D';
+        case SDL_SCANCODE_E:                 return 'E';
+        case SDL_SCANCODE_F:                 return 'F';
+        case SDL_SCANCODE_G:                 return 'G';
+        case SDL_SCANCODE_H:                 return 'H';
+        case SDL_SCANCODE_I:                 return 'I';
+        case SDL_SCANCODE_J:                 return 'J';
+        case SDL_SCANCODE_K:                 return 'K';
+        case SDL_SCANCODE_L:                 return 'L';
+        case SDL_SCANCODE_M:                 return 'M';
+        case SDL_SCANCODE_N:                 return 'N';
+        case SDL_SCANCODE_O:                 return 'O';
+        case SDL_SCANCODE_P:                 return 'P';
+        case SDL_SCANCODE_Q:                 return 'Q';
+        case SDL_SCANCODE_R:                 return 'R';
+        case SDL_SCANCODE_S:                 return 'S';
+        case SDL_SCANCODE_T:                 return 'T';
+        case SDL_SCANCODE_U:                 return 'U';
+        case SDL_SCANCODE_V:                 return 'V';
+        case SDL_SCANCODE_W:                 return 'W';
+        case SDL_SCANCODE_X:                 return 'X';
+        case SDL_SCANCODE_Y:                 return 'Y';
+        case SDL_SCANCODE_Z:                 return 'Z';
+        case SDL_SCANCODE_1:                 return '1';
+        case SDL_SCANCODE_2:                 return '2';
+        case SDL_SCANCODE_3:                 return '3';
+        case SDL_SCANCODE_4:                 return '4';
+        case SDL_SCANCODE_5:                 return '5';
+        case SDL_SCANCODE_6:                 return '6';
+        case SDL_SCANCODE_7:                 return '7';
+        case SDL_SCANCODE_8:                 return '8';
+        case SDL_SCANCODE_9:                 return '9';
+        case SDL_SCANCODE_0:                 return '0';
+        case SDL_SCANCODE_RETURN:            return VK_RETURN;
+        case SDL_SCANCODE_ESCAPE:            return VK_ESCAPE;
+        case SDL_SCANCODE_BACKSPACE:         return VK_BACK;
+        case SDL_SCANCODE_TAB:               return VK_TAB;
+        case SDL_SCANCODE_SPACE:             return VK_SPACE;
+        case SDL_SCANCODE_MINUS:             return VK_MINUS;
+        case SDL_SCANCODE_EQUALS:            return VK_EQUALS;
+        case SDL_SCANCODE_LEFTBRACKET:       return VK_LEFTBRACKET;
+        case SDL_SCANCODE_RIGHTBRACKET:      return VK_RIGHTBRACKET;
+        case SDL_SCANCODE_NONUSHASH:
+        case SDL_SCANCODE_BACKSLASH:         return VK_BACKSLASH;
+        case SDL_SCANCODE_SEMICOLON:         return VK_SEMICOLON;
+        case SDL_SCANCODE_APOSTROPHE:        return VK_QUOTE;
+        case SDL_SCANCODE_GRAVE:             return VK_TILDE;
+        case SDL_SCANCODE_COMMA:             return VK_COMMA;
+        case SDL_SCANCODE_PERIOD:            return VK_PERIOD;
+        case SDL_SCANCODE_SLASH:             return VK_SLASH;
+        case SDL_SCANCODE_CAPSLOCK:          return VK_CAPITAL;
+        case SDL_SCANCODE_F1:                return VK_F1;
+        case SDL_SCANCODE_F2:                return VK_F2;
+        case SDL_SCANCODE_F3:                return VK_F3;
+        case SDL_SCANCODE_F4:                return VK_F4;
+        case SDL_SCANCODE_F5:                return VK_F5;
+        case SDL_SCANCODE_F6:                return VK_F6;
+        case SDL_SCANCODE_F7:                return VK_F7;
+        case SDL_SCANCODE_F8:                return VK_F8;
+        case SDL_SCANCODE_F9:                return VK_F9;
+        case SDL_SCANCODE_F10:               return VK_F10;
+        case SDL_SCANCODE_F11:               return VK_F11;
+        case SDL_SCANCODE_F12:               return VK_F12;
+        case SDL_SCANCODE_PRINTSCREEN:       return 0;
+        case SDL_SCANCODE_SCROLLLOCK:        return VK_SCROLL;
+        case SDL_SCANCODE_PAUSE:             return VK_PAUSE;
+        case SDL_SCANCODE_INSERT:            return VK_INSERT;
+        case SDL_SCANCODE_HOME:              return VK_HOME;
+        case SDL_SCANCODE_PAGEUP:            return VK_PRIOR;
+        case SDL_SCANCODE_DELETE:            return VK_DELETE;
+        case SDL_SCANCODE_END:               return VK_END;
+        case SDL_SCANCODE_PAGEDOWN:          return VK_NEXT;
+        case SDL_SCANCODE_RIGHT:             return VK_RIGHT;
+        case SDL_SCANCODE_LEFT:              return VK_LEFT;
+        case SDL_SCANCODE_DOWN:              return VK_DOWN;
+        case SDL_SCANCODE_UP:                return VK_UP;
+        case SDL_SCANCODE_NUMLOCKCLEAR:      return VK_NUMLOCK;
+        case SDL_SCANCODE_KP_DIVIDE:         return VK_DIVIDE;
+        case SDL_SCANCODE_KP_MULTIPLY:       return VK_MULTIPLY;
+        case SDL_SCANCODE_KP_MINUS:          return VK_SUBTRACT;
+        case SDL_SCANCODE_KP_PLUS:           return VK_ADD;
+        case SDL_SCANCODE_KP_ENTER:          return VK_RETURN;
+        case SDL_SCANCODE_KP_0:              return VK_NUMPAD0;
+        case SDL_SCANCODE_KP_1:              return VK_NUMPAD1;
+        case SDL_SCANCODE_KP_2:              return VK_NUMPAD2;
+        case SDL_SCANCODE_KP_3:              return VK_NUMPAD3;
+        case SDL_SCANCODE_KP_4:              return VK_NUMPAD4;
+        case SDL_SCANCODE_KP_5:              return VK_NUMPAD5;
+        case SDL_SCANCODE_KP_6:              return VK_NUMPAD6;
+        case SDL_SCANCODE_KP_7:              return VK_NUMPAD7;
+        case SDL_SCANCODE_KP_8:              return VK_NUMPAD8;
+        case SDL_SCANCODE_KP_9:              return VK_NUMPAD9;
+        case SDL_SCANCODE_KP_PERIOD:         return VK_PERIOD;
+        case SDL_SCANCODE_NONUSBACKSLASH:    return VK_LESS;
+        case SDL_SCANCODE_APPLICATION:
+        case SDL_SCANCODE_POWER:             return 0;
+        case SDL_SCANCODE_KP_EQUALS:         return VK_EQUALS;
+        case SDL_SCANCODE_F13:               return VK_F13;
+        case SDL_SCANCODE_F14:               return VK_F14;
+        case SDL_SCANCODE_F15:               return VK_F15;
+        case SDL_SCANCODE_F16:               return VK_F16;
+        case SDL_SCANCODE_F17:               return VK_F17;
+        case SDL_SCANCODE_F18:               return VK_F18;
+        case SDL_SCANCODE_F19:               return VK_F19;
+        case SDL_SCANCODE_F20:               return VK_F20;
+        case SDL_SCANCODE_F21:               return VK_F21;
+        case SDL_SCANCODE_F22:               return VK_F22;
+        case SDL_SCANCODE_F23:               return VK_F23;
+        case SDL_SCANCODE_F24:               return VK_F24;
+        case SDL_SCANCODE_EXECUTE:
+        case SDL_SCANCODE_HELP:
+        case SDL_SCANCODE_MENU:
+        case SDL_SCANCODE_SELECT:
+        case SDL_SCANCODE_STOP:
+        case SDL_SCANCODE_AGAIN:
+        case SDL_SCANCODE_UNDO:
+        case SDL_SCANCODE_CUT:
+        case SDL_SCANCODE_COPY:
+        case SDL_SCANCODE_PASTE:
+        case SDL_SCANCODE_FIND:
+        case SDL_SCANCODE_MUTE:
+        case SDL_SCANCODE_VOLUMEUP:
+        case SDL_SCANCODE_VOLUMEDOWN:        return 0;
+        case SDL_SCANCODE_KP_COMMA:          return VK_COMMA;
+        case SDL_SCANCODE_KP_EQUALSAS400:
+        case SDL_SCANCODE_INTERNATIONAL1:
+        case SDL_SCANCODE_INTERNATIONAL2:
+        case SDL_SCANCODE_INTERNATIONAL3:
+        case SDL_SCANCODE_INTERNATIONAL4:
+        case SDL_SCANCODE_INTERNATIONAL5:
+        case SDL_SCANCODE_INTERNATIONAL6:
+        case SDL_SCANCODE_INTERNATIONAL7:
+        case SDL_SCANCODE_INTERNATIONAL8:
+        case SDL_SCANCODE_INTERNATIONAL9:
+        case SDL_SCANCODE_LANG1:
+        case SDL_SCANCODE_LANG2:
+        case SDL_SCANCODE_LANG3:
+        case SDL_SCANCODE_LANG4:
+        case SDL_SCANCODE_LANG5:
+        case SDL_SCANCODE_LANG6:
+        case SDL_SCANCODE_LANG7:
+        case SDL_SCANCODE_LANG8:
+        case SDL_SCANCODE_LANG9:
+        case SDL_SCANCODE_ALTERASE:
+        case SDL_SCANCODE_SYSREQ:
+        case SDL_SCANCODE_CANCEL:
+        case SDL_SCANCODE_CLEAR:
+        case SDL_SCANCODE_PRIOR:
+        case SDL_SCANCODE_RETURN2:           return 0;
+        case SDL_SCANCODE_SEPARATOR:         return VK_SEPARATOR;
+        case SDL_SCANCODE_OUT:
+        case SDL_SCANCODE_OPER:
+        case SDL_SCANCODE_CLEARAGAIN:
+        case SDL_SCANCODE_CRSEL:
+        case SDL_SCANCODE_EXSEL:
+        case SDL_SCANCODE_KP_00:
+        case SDL_SCANCODE_KP_000:
+        case SDL_SCANCODE_THOUSANDSSEPARATOR:
+        case SDL_SCANCODE_DECIMALSEPARATOR:
+        case SDL_SCANCODE_CURRENCYUNIT:
+        case SDL_SCANCODE_CURRENCYSUBUNIT:
+        case SDL_SCANCODE_KP_LEFTPAREN:
+        case SDL_SCANCODE_KP_RIGHTPAREN:
+        case SDL_SCANCODE_KP_LEFTBRACE:
+        case SDL_SCANCODE_KP_RIGHTBRACE:     return 0;
+        case SDL_SCANCODE_KP_TAB:            return VK_TAB;
+        case SDL_SCANCODE_KP_BACKSPACE:      return VK_BACK;
+        case SDL_SCANCODE_KP_A:
+        case SDL_SCANCODE_KP_B:
+        case SDL_SCANCODE_KP_C:
+        case SDL_SCANCODE_KP_D:
+        case SDL_SCANCODE_KP_E:
+        case SDL_SCANCODE_KP_F:
+        case SDL_SCANCODE_KP_XOR:
+        case SDL_SCANCODE_KP_POWER:
+        case SDL_SCANCODE_KP_PERCENT:        return 0;
+        case SDL_SCANCODE_KP_LESS:           return VK_LESS;
+        case SDL_SCANCODE_KP_GREATER:
+        case SDL_SCANCODE_KP_AMPERSAND:
+        case SDL_SCANCODE_KP_DBLAMPERSAND:
+        case SDL_SCANCODE_KP_VERTICALBAR:
+        case SDL_SCANCODE_KP_DBLVERTICALBAR:
+        case SDL_SCANCODE_KP_COLON:
+        case SDL_SCANCODE_KP_HASH:           return 0;
+        case SDL_SCANCODE_KP_SPACE:          return VK_SPACE;
+        case SDL_SCANCODE_KP_AT:
+        case SDL_SCANCODE_KP_EXCLAM:
+        case SDL_SCANCODE_KP_MEMSTORE:
+        case SDL_SCANCODE_KP_MEMRECALL:
+        case SDL_SCANCODE_KP_MEMCLEAR:
+        case SDL_SCANCODE_KP_MEMADD:
+        case SDL_SCANCODE_KP_MEMSUBTRACT:
+        case SDL_SCANCODE_KP_MEMMULTIPLY:
+        case SDL_SCANCODE_KP_MEMDIVIDE:
+        case SDL_SCANCODE_KP_PLUSMINUS:
+        case SDL_SCANCODE_KP_CLEAR:
+        case SDL_SCANCODE_KP_CLEARENTRY:
+        case SDL_SCANCODE_KP_BINARY:
+        case SDL_SCANCODE_KP_OCTAL:
+        case SDL_SCANCODE_KP_DECIMAL:
+        case SDL_SCANCODE_KP_HEXADECIMAL:    return 0;
+        case SDL_SCANCODE_LCTRL:             return VK_CONTROL;
+        case SDL_SCANCODE_LSHIFT:            return VK_SHIFT;
+        case SDL_SCANCODE_LALT:              return VK_ALT;
+        case SDL_SCANCODE_LGUI:              return 0;
+        case SDL_SCANCODE_RCTRL:             return VK_CONTROL;
+        case SDL_SCANCODE_RSHIFT:            return VK_SHIFT;
+        case SDL_SCANCODE_RALT:              return VK_ALT;
+        case SDL_SCANCODE_RGUI:
+        case SDL_SCANCODE_MODE:
+        case SDL_SCANCODE_AUDIONEXT:
+        case SDL_SCANCODE_AUDIOPREV:
+        case SDL_SCANCODE_AUDIOSTOP:
+        case SDL_SCANCODE_AUDIOPLAY:
+        case SDL_SCANCODE_AUDIOMUTE:
+        case SDL_SCANCODE_MEDIASELECT:
+        case SDL_SCANCODE_WWW:
+        case SDL_SCANCODE_MAIL:
+        case SDL_SCANCODE_CALCULATOR:
+        case SDL_SCANCODE_COMPUTER:
+        case SDL_SCANCODE_AC_SEARCH:
+        case SDL_SCANCODE_AC_HOME:
+        case SDL_SCANCODE_AC_BACK:
+        case SDL_SCANCODE_AC_FORWARD:
+        case SDL_SCANCODE_AC_STOP:
+        case SDL_SCANCODE_AC_REFRESH:
+        case SDL_SCANCODE_AC_BOOKMARKS:
+        case SDL_SCANCODE_BRIGHTNESSDOWN:
+        case SDL_SCANCODE_BRIGHTNESSUP:
+        case SDL_SCANCODE_DISPLAYSWITCH:
+        case SDL_SCANCODE_KBDILLUMTOGGLE:
+        case SDL_SCANCODE_KBDILLUMDOWN:
+        case SDL_SCANCODE_KBDILLUMUP:
+        case SDL_SCANCODE_EJECT:
+        case SDL_SCANCODE_SLEEP:
+        case SDL_SCANCODE_APP1:
+        case SDL_SCANCODE_APP2:
+        case SDL_SCANCODE_AUDIOREWIND:
+        case SDL_SCANCODE_AUDIOFASTFORWARD:  return 0;
+    }
+    return -1;
+}
+
+void initKeyboardMapping() {
+    vk_to_scancodes.clear();
+    for (int i = 0; i < 0xFF; ++i) {
+        vk_to_scancodes.emplace_back();
+    }
+    for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
+        SDL_Scancode scancode = static_cast<SDL_Scancode>(i);
+        int16_t vk = GetVKFromScanCode(scancode);
+        if (vk <= 0) continue;
+        vk_to_scancodes[vk].emplace_back(scancode);
+    }
+}
 
 bool isPressed(uint32_t key) {
     if (!applicationHasFocus()) return false;
-
-    //According to key type, use diff SDL2 methods
-    SDL_Keycode keycode = 0;
-    std::vector<SDL_Keycode> keycodes;
+    if (key >= vk_to_scancodes.size()) {
+        xassert(0);
+#ifdef PERIMETER_DEBUG
+        fprintf(stderr, "VK key out of bounds requested %" PRIu32 "\n", key);
+#endif
+        return false;
+    }
+    
+    //Handle special keys
     switch (key) {
         case VK_LBUTTON:
         case VK_MBUTTON:
@@ -42,189 +313,59 @@ bool isPressed(uint32_t key) {
             return SDL_GetModState() & KMOD_CTRL;
         case VK_ALT:
             return SDL_GetModState() & KMOD_ALT;
-        case VK_BACK:           keycode = SDLK_BACKSPACE; break;
-        case VK_TAB:            keycode = SDLK_TAB; break;
-        case VK_RETURN:
-            keycodes.emplace_back(SDLK_RETURN);
-            keycodes.emplace_back(SDLK_KP_ENTER);
-            break;
-        case VK_PAUSE:          keycode = SDLK_PAUSE; break;
-        case VK_CAPITAL:        keycode = SDLK_CAPSLOCK; break;
-        case VK_ESCAPE:         keycode = SDLK_ESCAPE; break;
-        case VK_SPACE:          keycode = SDLK_SPACE; break;
-        case VK_PRIOR:          keycode = SDLK_PAGEUP; break;
-        case VK_NEXT:           keycode = SDLK_PAGEDOWN; break;
-        case VK_END:            keycode = SDLK_END; break;
-        case VK_HOME:           keycode = SDLK_HOME; break;
-        case VK_LEFT:           keycode = SDLK_LEFT; break;
-        case VK_UP:             keycode = SDLK_UP; break;
-        case VK_RIGHT:          keycode = SDLK_RIGHT; break;
-        case VK_DOWN:           keycode = SDLK_DOWN; break;
-        case VK_INSERT:         keycode = SDLK_INSERT; break;
-        case VK_DELETE:         keycode = SDLK_DELETE; break;
-        case VK_F1:             keycode = SDLK_F1; break;
-        case VK_F2:             keycode = SDLK_F2; break;
-        case VK_F3:             keycode = SDLK_F3; break;
-        case VK_F4:             keycode = SDLK_F4; break;
-        case VK_F5:             keycode = SDLK_F5; break;
-        case VK_F6:             keycode = SDLK_F6; break;
-        case VK_F7:             keycode = SDLK_F7; break;
-        case VK_F8:             keycode = SDLK_F8; break;
-        case VK_F9:             keycode = SDLK_F9; break;
-        case VK_F10:            keycode = SDLK_F10; break;
-        case VK_F11:            keycode = SDLK_F11; break;
-        case VK_F12:            keycode = SDLK_F12; break;
-        case VK_TILDE:          keycode = SDLK_BACKQUOTE; break;
-        case VK_SLASH:          keycode = SDLK_SLASH; break;
-        case VK_BKSLASH:        keycode = SDLK_BACKSLASH; break;
-        case VK_SEMICOLON:      keycode = SDLK_SEMICOLON; break;
-        case VK_QUOTE:          keycode = SDLK_QUOTE; break;
-        case VK_LEFTBRACKET:    keycode = SDLK_LEFTBRACKET; break;
-        case VK_RIGHTBRACKET:   keycode = SDLK_RIGHTBRACKET; break;
-        case VK_PLUS:           keycode = SDLK_PLUS; break;
-        case VK_COMMA:          keycode = SDLK_COMMA; break;
-        case VK_PERIOD:         keycode = SDLK_PERIOD; break;
-        case VK_MINUS:          keycode = SDLK_MINUS; break;
-        case VK_LESS:           keycode = SDLK_LESS; break;
-        case VK_EQUALS:         keycode = SDLK_EQUALS; break;
-        case VK_NUMPAD0:        keycode = SDLK_KP_0; break;
-        case VK_NUMPAD1:        keycode = SDLK_KP_1; break;
-        case VK_NUMPAD2:        keycode = SDLK_KP_2; break;
-        case VK_NUMPAD3:        keycode = SDLK_KP_3; break;
-        case VK_NUMPAD4:        keycode = SDLK_KP_4; break;
-        case VK_NUMPAD5:        keycode = SDLK_KP_5; break;
-        case VK_NUMPAD6:        keycode = SDLK_KP_6; break;
-        case VK_NUMPAD7:        keycode = SDLK_KP_7; break;
-        case VK_NUMPAD8:        keycode = SDLK_KP_8; break;
-        case VK_NUMPAD9:        keycode = SDLK_KP_9; break;
-        case VK_MULTIPLY:       keycode = SDLK_KP_MULTIPLY; break;
-        case VK_DIVIDE:         keycode = SDLK_KP_DIVIDE; break;
-        case VK_NUMLOCK:        keycode = SDLK_NUMLOCKCLEAR; break;
-        case VK_SCROLL:         keycode = SDLK_SCROLLLOCK; break;
-        case VK_ADD:            keycode = SDLK_KP_PLUS; break;
-        case VK_SEPARATOR:      keycode = SDLK_SEPARATOR; break;
-        case VK_SUBTRACT:       keycode = SDLK_KP_MINUS; break;
         default:
-#if defined(PERIMETER_DEBUG) && 0
-            printf("Unknown VK keycode requested %u\n", key);
-#endif
-            return false;
+            break;
     }
-
+    
+    //Check normal keys
+    const std::vector<SDL_Scancode>& scancodes = vk_to_scancodes[key];
+    if (scancodes.empty()) {
+#ifdef PERIMETER_DEBUG
+        fprintf(stderr, "Unmmaped VK key requested %" PRIu32 "\n", key);
+#endif
+        return false;
+    }
+    
     //Get state of keys
     int numkeys;
-    const Uint8 *state = SDL_GetKeyboardState(&numkeys);
+    const Uint8* state = SDL_GetKeyboardState(&numkeys);
 
-    do {
-        //If we have more keycodes put them
-        if (!keycodes.empty()) {
-            keycode = keycodes.back();
-            keycodes.pop_back();
+    //Check the scancodes associated to this key if one is pressed
+    for (const SDL_Scancode& scancode : scancodes) {
+        if (scancode >= numkeys) {
+            xassert(0);
+#ifdef PERIMETER_DEBUG
+            fprintf(stderr,
+                    "VK key %" PRIu32 " has a scancode out of bounds %" PRIu32 "\n",
+                    key, static_cast<uint32_t>(scancode));
+#endif
+            continue;
         }
-        
-        //Convert VK to scancode and return state
-        SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
-        if (scancode >= numkeys) continue;
         if (state[scancode]) return true;
-    } while (!keycodes.empty());
+    }
     return false;
 }
 
-sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
-    key = 0;
-    if (keysym.scancode == SDL_SCANCODE_GRAVE) {
-        keysym.sym = SDLK_BACKQUOTE;
-    }
-    switch (keysym.sym) {
-        case SDLK_LGUI:
-        case SDLK_RGUI:
-        case SDLK_PRINTSCREEN:
-            //Ignore these
-            break;
-        case SDLK_BACKSPACE:    key = VK_BACK; break;
-        case SDLK_TAB:          key = VK_TAB; break;
-        case SDLK_KP_ENTER:
-        case SDLK_RETURN:       key = VK_RETURN; break;
-        case SDLK_LSHIFT:
-        case SDLK_RSHIFT:       key = VK_SHIFT; break;
-        case SDLK_LCTRL:
-        case SDLK_RCTRL:        key = VK_CONTROL; break;
-        case SDLK_LALT:
-        case SDLK_RALT:         key = VK_ALT; break;
-        case SDLK_PAUSE:        key = VK_PAUSE; break;
-        case SDLK_CAPSLOCK:     key = VK_CAPITAL; break;
-        case SDLK_ESCAPE:       key = VK_ESCAPE; break;
-        case SDLK_SPACE:        key = VK_SPACE; break;
-        case SDLK_PAGEUP:       key = VK_PRIOR; break;
-        case SDLK_PAGEDOWN:     key = VK_NEXT; break;
-        case SDLK_END:          key = VK_END; break;
-        case SDLK_HOME:         key = VK_HOME; break;
-        case SDLK_LEFT:         key = VK_LEFT; break;
-        case SDLK_UP:           key = VK_UP; break;
-        case SDLK_RIGHT:        key = VK_RIGHT; break;
-        case SDLK_DOWN:         key = VK_DOWN; break;
-        case SDLK_INSERT:       key = VK_INSERT; break;
-        case SDLK_DELETE:       key = VK_DELETE; break;
-        case SDLK_F1:           key = VK_F1; break;
-        case SDLK_F2:           key = VK_F2; break;
-        case SDLK_F3:           key = VK_F3; break;
-        case SDLK_F4:           key = VK_F4; break;
-        case SDLK_F5:           key = VK_F5; break;
-        case SDLK_F6:           key = VK_F6; break;
-        case SDLK_F7:           key = VK_F7; break;
-        case SDLK_F8:           key = VK_F8; break;
-        case SDLK_F9:           key = VK_F9; break;
-        case SDLK_F10:          key = VK_F10; break;
-        case SDLK_F11:          key = VK_F11; break;
-        case SDLK_F12:          key = VK_F12; break;
-        case SDLK_BACKQUOTE:    key = VK_TILDE; break;
-        case SDLK_SLASH:        key = VK_SLASH; break;
-        case SDLK_BACKSLASH:    key = VK_BKSLASH; break;
-        case SDLK_SEMICOLON:    key = VK_SEMICOLON; break;
-        case SDLK_QUOTE:        key = VK_QUOTE; break;
-        case SDLK_LEFTBRACKET:  key = VK_LEFTBRACKET; break;
-        case SDLK_RIGHTBRACKET: key = VK_RIGHTBRACKET; break;
-        case SDLK_PLUS:         key = VK_PLUS; break;
-        case SDLK_COMMA:        key = VK_COMMA; break;
-        case SDLK_PERIOD:       key = VK_PERIOD; break;
-        case SDLK_MINUS:        key = VK_MINUS; break;
-        case SDLK_LESS:         key = VK_LESS; break;
-        case SDLK_EQUALS:       key = VK_EQUALS; break;
-        case SDLK_KP_0:         key = VK_NUMPAD0; break;
-        case SDLK_KP_1:         key = VK_NUMPAD1; break;
-        case SDLK_KP_2:         key = VK_NUMPAD2; break;
-        case SDLK_KP_3:         key = VK_NUMPAD3; break;
-        case SDLK_KP_4:         key = VK_NUMPAD4; break;
-        case SDLK_KP_5:         key = VK_NUMPAD5; break;
-        case SDLK_KP_6:         key = VK_NUMPAD6; break;
-        case SDLK_KP_7:         key = VK_NUMPAD7; break;
-        case SDLK_KP_8:         key = VK_NUMPAD8; break;
-        case SDLK_KP_9:         key = VK_NUMPAD9; break;
-        case SDLK_KP_MULTIPLY:  key = VK_MULTIPLY; break;
-        case SDLK_KP_DIVIDE:    key = VK_DIVIDE; break;
-        case SDLK_NUMLOCKCLEAR: key = VK_NUMLOCK; break;
-        case SDLK_SCROLLLOCK:   key = VK_SCROLL; break;
-        case SDLK_KP_PLUS:      key = VK_ADD; break;
-        case SDLK_SEPARATOR:    key = VK_SEPARATOR; break;
-        case SDLK_KP_MINUS:     key = VK_SUBTRACT; break;
-        default:
-            //Apparently game uses uppercase ASCII codes for keys
-            uint8_t byte = keysym.sym & 0xFF;
-            if (byte >= 'a' && byte <= 'z') {
-                key = toupper(byte);
-            } else if (byte >= '0' && byte <= '9') {
-                key = byte;
-            } else {
+sKey::sKey(SDL_Keysym keysym) {
+    int16_t vk = GetVKFromScanCode(keysym.scancode);
+    if (vk <= 0) {
+        key = 0;
 #ifdef PERIMETER_DEBUG
-                printf("Unknown SDL key requested scan %d sym %d\n", keysym.scancode, keysym.sym);
+        if (vk < 0) {
+            fprintf(stderr, "Unknown SDL key requested scan %d sym %d\n", keysym.scancode, keysym.sym);
+        }
 #endif
-            }
+    } else {
+        key = vk;
     }
-    
     //store base key at fullkey before applying extras
     fullkey = key;
     
     //Add modifiers
+    ctrl = 0;
+    shift = 0;
+    alt = 0;
+
     auto mod = keysym.mod;
     if ((mod & KMOD_SHIFT) != 0) {
         fullkey |= KBD_SHIFT;
@@ -238,37 +379,38 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         fullkey |= KBD_ALT;
         alt |= 1;
     }
-    
-    // Same as normal sKey constructor
-    if(set_by_async_funcs){
-        ctrl = isControlPressed();
-        shift = isShiftPressed();
-        alt = isAltPressed();
-    }
 
     // добавляем расширенные коды для командных кодов
-    if(key == VK_CONTROL)
+    if (key == VK_CONTROL) {
         ctrl |= 1;
-    if(key == VK_SHIFT)
+    }
+    if (key == VK_SHIFT) {
         shift |= 1;
-    if(key == VK_ALT)
+    }
+    if (key == VK_ALT) {
         alt |= 1;
+    }
 }
 
-sKey::sKey(int key_, bool set_by_async_funcs) {
+sKey::sKey(int key_) {
     fullkey = key = key_;
-    if(set_by_async_funcs){
-        ctrl = isControlPressed();
-        shift = isShiftPressed();
-        alt = isAltPressed();
-    }
+    ctrl = isControlPressed();
+    shift = isShiftPressed();
+    alt = isAltPressed();
     // добавляем расширенные коды для командных кодов
-    if(key == VK_CONTROL)
+    if (key == VK_CONTROL) {
         ctrl |= 1;
-    if(key == VK_SHIFT)
+    }
+    if (key == VK_SHIFT) {
         shift |= 1;
-    if(key == VK_ALT)
+    }
+    if (key == VK_ALT) {
         alt |= 1;
+    }
+}
+
+sKey::sKey() {
+    fullkey = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
