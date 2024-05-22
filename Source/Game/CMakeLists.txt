@@ -141,19 +141,19 @@ SET(perimeter_LINK_LIBS
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
         ${EXE_LINK_LIBS_POST}
-		"-framework Foundation"
-		"-framework AppKit"
-		"-framework QuartzCore"
-		"-framework CoreAudio"
-		"-framework AudioToolbox"
-		"-framework CoreHaptics"
-		"-framework CoreGraphics"
-		"-framework GameController"
-		"-framework Metal"
-		"-framework CoreBluetooth"
-		"-framework CoreMotion"
-		"-framework CoreMedia"
-		"-framework Security"
+        "-framework Foundation"
+        "-framework AppKit"
+        "-framework QuartzCore"
+        "-framework CoreAudio"
+        "-framework AudioToolbox"
+        "-framework CoreHaptics"
+        "-framework CoreGraphics"
+        "-framework GameController"
+        "-framework Metal"
+        "-framework CoreBluetooth"
+        "-framework CoreMotion"
+        "-framework CoreMedia"
+        "-framework Security"
         "-framework Carbon"
         "-framework Cocoa"
         "-framework IOKit"
@@ -175,4 +175,4 @@ ENDIF()
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 #Install rules
-# install (TARGETS perimeter RUNTIME DESTINATION . BUNDLE DESTINATION ${CMAKE_SOURCE_DIR})
+install (TARGETS perimeter RUNTIME)

@@ -42,14 +42,14 @@ const static int MAX_LOGS = 3;
 XErrorHandler ErrH;
 
 void setSignalHandler(sighandler signalHandler) {
-//     signal(SIGSEGV, signalHandler);
-//     signal(SIGABRT, signalHandler);
-//     signal(SIGFPE, signalHandler);
-//     signal(SIGILL, signalHandler);
-//     signal(SIGTERM, signalHandler);
-// #ifdef SIGBUS //UNIX specific
-//     signal(SIGBUS, signalHandler);
-// #endif
+    signal(SIGSEGV, signalHandler);
+    signal(SIGABRT, signalHandler);
+    signal(SIGFPE, signalHandler);
+    signal(SIGILL, signalHandler);
+    signal(SIGTERM, signalHandler);
+#ifdef SIGBUS //UNIX specific
+    signal(SIGBUS, signalHandler);
+#endif
 }
 
 void setTerminateHandler(std::terminate_handler terminateHandler) {

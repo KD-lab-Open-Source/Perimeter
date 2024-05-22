@@ -24,7 +24,5 @@
   <integer>1</integer>
   <key>LSMinimumSystemVersion</key>
   <string>10.15.0</string>
-  <key>MetalCaptureEnabled</key>
-  <true/>
 </dict>
 </plist>
