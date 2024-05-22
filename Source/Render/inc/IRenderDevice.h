@@ -379,15 +379,3 @@ enum eMaterialMode
     MAT_RENDER_SPHEREMAP	=1<<22,
     MAT_LIGHT				=1<<31
 };
-
-class RenderLogger final
-{
-public:
-    void enable();
-    void disable();
-    void log(const char *format, ...);
-private:
-    bool _is_enabled = false;;
-};
-
-extern RenderLogger gb_renderLogger;

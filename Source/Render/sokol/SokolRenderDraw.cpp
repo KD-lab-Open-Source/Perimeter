@@ -12,8 +12,6 @@
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
-    gb_renderLogger.log("cSokolRender::SetNoMaterial");
-
     if (Texture0) {
         if (blend == ALPHA_NONE && Texture0->IsAlphaTest()) {
             blend = ALPHA_TEST;
@@ -84,8 +82,6 @@ void cSokolRender::EndDrawMesh() {
 }
 
 void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
-    gb_renderLogger.log("cSokolRender::SetSimplyMaterialMesh mesh=%p, name=%s, data=%p", mesh, mesh->GetName(), data);
-
     bool specular=data->Specular.r>=1/256.0f ||
                   data->Specular.g>=1/256.0f ||
                   data->Specular.b>=1/256.0f;
@@ -147,8 +143,6 @@ void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* da
 }
 
 void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
-    gb_renderLogger.log("cSokolRender::DrawNoMaterialMesh mesh=%p, name=%s, data=%p", mesh, mesh->GetName(), data);
-
     //TODO SetPointLight(mesh->GetRootNode()->GetLight());
 
     SetWorldMatXf(mesh->GetGlobalMatrix());
@@ -187,8 +181,6 @@ void cSokolRender::EndDrawShadow() {
 }
 
 void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
-    gb_renderLogger.log("cSokolRender::SetSimplyMaterialShadow mesh=%p, name=%s, texture=%p", mesh, mesh->GetName(), texture);
-
     sDataRenderMaterial mat;
     float f = 0.5f * kShadow;
     mat.Ambient = sColor4f(0 ,0, 0, 1);
@@ -228,8 +220,6 @@ void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
 }
 
 void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
-    gb_renderLogger.log("cSokolRender::DrawNoMaterialShadow mesh=%p name=%s", mesh, mesh->GetName());
-
 	SetWorldMatXf(mesh->GetGlobalMatrix());
 	// DrawPrimitive(Mesh);
     cMeshTri *Tri = mesh->GetTri();
@@ -237,8 +227,6 @@ void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
 }
 
 void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
-    gb_renderLogger.log("cSokolRender::SetMaterialTilemap TileMap=%p", TileMap);
-
     float fOffsetX = 0.5f + (0.0f / pShadowMap->GetWidth());
     float fOffsetY = 0.5f + (0.0f / pShadowMap->GetWidth());
     float range = 1;
@@ -264,8 +252,6 @@ void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
 }
 
 void cSokolRender::SetMaterialTilemapShadow() {
-    gb_renderLogger.log("cSokolRender::SetMaterialTilemapShadow");
-
     if (activePipelineType != PIPELINE_TYPE_OBJECT_SHADOW) {
         FinishActiveDrawBuffer();
     }

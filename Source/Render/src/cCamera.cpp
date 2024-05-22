@@ -109,26 +109,6 @@ void cCamera::DrawScene()
   		RenderDevice->SetRenderState(RS_BILINEAR,true);
 	}
 
-	if (!child.empty()) {
-		gb_renderLogger.enable();
-	}
-
-	struct LoggerGuard final
-	{
-		cCamera* _camera = nullptr;
-
-		LoggerGuard(cCamera* camera) : _camera(camera)
-		{
-			gb_renderLogger.log("cCamera::DrawScene enter this=%p, render target=%p", camera, camera->RenderTarget);
-		}
-
-		~LoggerGuard()
-		{
-			gb_renderLogger.log("cCamera::DrawScene leave this=%p, render target=%p", _camera, _camera->RenderTarget);
-		}
-	};
-	LoggerGuard cCamera_DrawScene{this};
-
 	std::vector<cCamera*>::iterator it_c;
 	FOR_EACH(child,it_c)
 	if(!(*it_c)->GetAttribute(ATTRCAMERA_SHADOW_STRENCIL))
