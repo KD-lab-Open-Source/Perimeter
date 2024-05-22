@@ -16,6 +16,8 @@ static MTKView* mtk_view;
 static id mtk_view_controller;
 #endif
 
+static bool is_capturing_frame = false;
+
 void sokol_metal_setup(SDL_Window* sdl_window, sg_desc* desc, sg_swapchain* swapchain, uint32_t ScreenHZ) {
     //Get window from SDL which we will use to associate Metal stuff
     SDL_SysWMinfo wm_info;
@@ -82,6 +84,33 @@ void sokol_metal_destroy(sg_swapchain* swapchain) {
 #endif
     mtk_view = nullptr;
     mtl_device = nullptr;
+}
+
+void sokol_metal_start_frame_capture() {
+    if (is_capturing_frame) {
+        MTLCaptureManager* capture_manager = [MTLCaptureManager sharedCaptureManager];
+        [capture_manager stopCapture];
+        exit(1);
+    }
+
+    MTLCaptureManager* capture_manager = [MTLCaptureManager sharedCaptureManager];
+    if (![capture_manager supportsDestination:MTLCaptureDestinationGPUTraceDocument]) {
+        printf("sokol_metal_start_frame_capture: unsupported destination\n");
+        return;
+    }
+
+    MTLCaptureDescriptor* capture_descriptor = [MTLCaptureDescriptor new];
+    capture_descriptor.captureObject = mtl_device;
+    capture_descriptor.destination = MTLCaptureDestinationGPUTraceDocument;
+    capture_descriptor.outputURL = [NSURL fileURLWithPath:@"/tmp/Perimeter.gputrace"];
+
+    NSError* error;
+    BOOL result = [capture_manager startCaptureWithDescriptor:capture_descriptor error:&error];
+    if (!result) {
+        printf("sokol_metal_start_frame_capture: start capture error: %s\n", error.localizedDescription.UTF8String);
+    }
+
+    is_capturing_frame = true;
 }
 
 #endif

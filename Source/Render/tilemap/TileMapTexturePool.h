@@ -8,6 +8,7 @@ class cTilemapTexturePool
     int tileRealWidth, tileRealHeight;
     int freePages;
     int *freePagesList;
+    void *drawNode = nullptr;
 
     std::vector<Vect2i> Pages;//x-xmin, y-ymin
     float ustep,vstep;
@@ -16,7 +17,7 @@ public:
     
     std::vector<struct sBumpTile*> tileRenderList;
 
-    cTilemapTexturePool(int w, int h, size_t texture_size);
+    cTilemapTexturePool(int w, int h, size_t texture_size, void *drawNode);
     ~cTilemapTexturePool();
     int allocPage();
     void freePage(int page);
@@ -28,6 +29,7 @@ public:
 
     inline int GetTileWidth(){return tileWidth;}
     inline int GetTileHeight(){return tileHeight;}
+    inline void* GetDrawNode(){return drawNode;};
     inline bool IsFree(){return 0 < freePages;}
     inline cTexture* GetTexture() { return texture; }
 

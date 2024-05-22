@@ -1,3 +1,5 @@
+#include <string>
+#include <sstream>
 #include <SDL.h>
 #include "StdAfxRD.h"
 #include "xutil.h"
@@ -649,3 +651,29 @@ cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection) {
     }
     return device;
 }
+
+void RenderLogger::enable()
+{
+    _is_enabled = true;
+}
+
+void RenderLogger::disable()
+{
+    _is_enabled = false;
+}
+
+void RenderLogger::log(const char *format, ...)
+{
+    if (!_is_enabled)
+    {
+        return;
+    }
+
+    va_list argptr;
+    va_start(argptr, format);
+    vfprintf(stdout, format, argptr);
+    printf("\n");
+    va_end(argptr);
+}
+
+RenderLogger gb_renderLogger;

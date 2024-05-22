@@ -16,7 +16,9 @@ struct shader_funcs {
 #include "sokol/shaders/color_tex1.h"
 #include "sokol/shaders/color_tex2.h"
 #include "sokol/shaders/normal.h"
-#include "sokol/shaders/terrain.h"
+#include "sokol/shaders/object_shadow.h"
+#include "sokol/shaders/only_texture.h"
+#include "sokol/shaders/tile_map.h"
 
 #define SOKOL_SHADER(MODULE_NAME) \
 extern shader_funcs shader_##MODULE_NAME;
@@ -35,17 +37,22 @@ shader_funcs shader_##MODULE_NAME = { \
     MODULE_NAME##_program_uniformblock_size, \
 };
 
+SOKOL_SHADER(tex1);
 SOKOL_SHADER(color_tex1);
 SOKOL_SHADER(color_tex2);
 SOKOL_SHADER(normal);
-SOKOL_SHADER(terrain);
+SOKOL_SHADER(tile_map);
+SOKOL_SHADER(object_shadow);
+SOKOL_SHADER(only_texture);
 
 using normal_texture_vs_params_t = normal_normal_texture_vs_params_t;
 using normal_texture_fs_params_t = normal_normal_texture_fs_params_t;
 //color_tex1 and color_tex2 share the params struct, so we pick tex2
 using color_texture_vs_params_t = color_tex2_color_texture_vs_params_t;
 using color_texture_fs_params_t = color_tex2_color_texture_fs_params_t;
-using terrain_vs_params_t = terrain_terrain_vs_params_t;
-using terrain_fs_params_t = terrain_terrain_fs_params_t;
+using tile_map_vs_params_t = tile_map_tile_map_vs_params_t;
+using tile_map_fs_params_t = tile_map_tile_map_fs_params_t;
+using object_shadow_vs_params_t = object_shadow_object_shadow_vs_params_t;
+using only_texture_vs_params_t = only_texture_only_texture_vs_params_t;
 
 #endif //PERIMETER_SOKOLSHADERS_H

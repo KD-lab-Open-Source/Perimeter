@@ -2,10 +2,11 @@
 #include "StdAfxRD.h"
 #include "TileMapTexturePool.h"
 
-cTilemapTexturePool::cTilemapTexturePool(int w, int h, size_t texture_size)
+cTilemapTexturePool::cTilemapTexturePool(int w, int h, size_t texture_size, void *drawNode)
 {
     tileWidth = w;
     tileHeight = h;
+    this->drawNode = drawNode;
 
     tileRealWidth= tileWidth + TEXTURE_BORDER * 2;
     tileRealHeight= tileHeight + TEXTURE_BORDER * 2;

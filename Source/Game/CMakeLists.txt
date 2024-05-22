@@ -141,13 +141,38 @@ SET(perimeter_LINK_LIBS
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
         ${EXE_LINK_LIBS_POST}
+		"-framework Foundation"
+		"-framework AppKit"
+		"-framework QuartzCore"
+		"-framework CoreAudio"
+		"-framework AudioToolbox"
+		"-framework CoreHaptics"
+		"-framework CoreGraphics"
+		"-framework GameController"
+		"-framework Metal"
+		"-framework CoreBluetooth"
+		"-framework CoreMotion"
+		"-framework CoreMedia"
+		"-framework Security"
+        "-framework Carbon"
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework ForceFeedback"
 )
 
 IF(PERIMETER_WINDOWS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
 ENDIF()
+
+IF(APPLE)
+    SET_TARGET_PROPERTIES(perimeter PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/Perimeter.app.template/Contents/Info.plist"
+    )
+ENDIF()
+
 #message("Link Libs: ${perimeter_LINK_LIBS}")
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 #Install rules
-install (TARGETS perimeter RUNTIME)
+# install (TARGETS perimeter RUNTIME DESTINATION . BUNDLE DESTINATION ${CMAKE_SOURCE_DIR})

@@ -329,13 +329,11 @@ public:
     virtual void SetMaterialTilemapShadow() = 0;
     virtual void SetTileColor(sColor4f color) = 0;
 
-    /*
     virtual bool CreateShadowTexture(int xysize);
     virtual void DeleteShadowTexture();
 
     virtual cTexture* GetShadowMap();
     virtual cTexture* GetLightMap();
-    */
 };
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection);
@@ -381,3 +379,15 @@ enum eMaterialMode
     MAT_RENDER_SPHEREMAP	=1<<22,
     MAT_LIGHT				=1<<31
 };
+
+class RenderLogger final
+{
+public:
+    void enable();
+    void disable();
+    void log(const char *format, ...);
+private:
+    bool _is_enabled = false;;
+};
+
+extern RenderLogger gb_renderLogger;

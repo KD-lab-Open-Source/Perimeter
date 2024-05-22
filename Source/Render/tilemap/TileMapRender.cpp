@@ -188,12 +188,13 @@ int cTileMapRender::bumpTileValid(int id)
     return ((id >= 0) && (id < bumpTiles.size()) && (bumpTiles[id]));
 }
 
-cTilemapTexturePool* cTileMapRender::FindFreeTexturePool(int tex_width, int tex_height) {
+cTilemapTexturePool* cTileMapRender::FindFreeTexturePool(int tex_width, int tex_height, void *drawNode) {
     int i;
     for (i = 0; i < bumpTexPools.size(); i++) {
         if (bumpTexPools[i] && bumpTexPools[i]->IsFree()
             && bumpTexPools[i]->GetTileWidth() == tex_width
-            && bumpTexPools[i]->GetTileHeight() == tex_height) {
+            && bumpTexPools[i]->GetTileHeight() == tex_height
+            && bumpTexPools[i]->GetDrawNode() == drawNode) {
             break;
         }
     }
@@ -206,18 +207,18 @@ cTilemapTexturePool* cTileMapRender::FindFreeTexturePool(int tex_width, int tex_
             i = bumpTexPools.size();
             bumpTexPools.push_back(nullptr);
         }
-        bumpTexPools[i] = new cTilemapTexturePool(tex_width, tex_height, tilemap->GetTexturePoolSize());
+        bumpTexPools[i] = new cTilemapTexturePool(tex_width, tex_height, tilemap->GetTexturePoolSize(), drawNode);
     }
 
     return bumpTexPools[i];
 }
 
-int cTileMapRender::bumpTileAlloc(int lod,int xpos,int ypos)
+int cTileMapRender::bumpTileAlloc(int lod,int xpos,int ypos, void *drawNode)
 {
 
     int w = tilemap->GetTileSize().x >> bumpTexScale[lod];
     int h = tilemap->GetTileSize().y >> bumpTexScale[lod];
-    cTilemapTexturePool* pool = FindFreeTexturePool(w, h);
+    cTilemapTexturePool* pool = FindFreeTexturePool(w, h, drawNode);
     sBumpTile* tile = new sBumpTile(tilemap, pool, lod, xpos, ypos);
     int i;
     for (i = 0; i < bumpTiles.size(); i++) {
@@ -317,6 +318,11 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     if (shadow || reflection) {
 #ifdef PERIMETER_D3D9
         if (!gb_RenderDevice3D) {
+            return;
+        }
+#endif
+#ifdef PERIMETER_SOKOL
+        if (!gb_RenderDevice) {
             return;
         }
 #else
@@ -477,11 +483,11 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                 {
                     // LOD changed, free old tile and allocate new
                     bumpTileFree(bumpTileID);
-                    bumpTileID = bumpTileAlloc(iLod,k,n);
+                    bumpTileID = bumpTileAlloc(iLod,k,n,DrawNode);
                 } else if (!bumpTileValid(bumpTileID))
                 {
                     // no tile assigned, allocate one
-                    bumpTileID = bumpTileAlloc(iLod,k,n);
+                    bumpTileID = bumpTileAlloc(iLod,k,n,DrawNode);
                 }
 
                 sBumpTile *bumpTile = bumpTiles[bumpTileID];
@@ -591,6 +597,11 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
         }
     }
 #endif
+#ifdef PERIMETER_SOKOL
+        if (use_shadow_map) {
+            first_texture_number = 1;
+        }
+#endif
 
 #ifdef DEBUG_TILES
     int st_VBSw = 0, st_Poly = 0;
@@ -608,6 +619,9 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 #ifdef PERIMETER_D3D9
             TextureImage teximg(gb_RenderDevice3D->dtAdvance->GetTilemapShadow0());
             gb_RenderDevice3D->SetTextureImage(0, &teximg);
+#endif
+#ifdef PERIMETER_SOKOL
+            gb_RenderDevice->SetTextureImage(0, nullptr);
 #endif
         } else {
             gb_RenderDevice->SetTextureImage(first_texture_number, curpool->GetTexture()->GetFrameImage(0));
