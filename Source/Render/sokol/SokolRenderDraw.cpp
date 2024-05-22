@@ -3,13 +3,17 @@
 #include "VertexFormat.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
+#include "SokolResources.h"
 #include "DrawBuffer.h"
 #include "Font.h"
 #include "MeshTri.h"
 #include "ObjMesh.h"
+#include "TileMap.h"
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
+    gb_renderLogger.log("cSokolRender::SetNoMaterial");
+
     if (Texture0) {
         if (blend == ALPHA_NONE && Texture0->IsAlphaTest()) {
             blend = ALPHA_TEST;
@@ -23,6 +27,11 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
     SetBlendState(blend);
     SetTexture(0, Texture0, Phase);
     SetTexture(1, Texture1, Phase);
+
+    if (activePipelineType != PIPELINE_TYPE_MESH) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_MESH;
 }
 
 // Sprites / 2d textures
@@ -65,13 +74,18 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
 
 // Mesh draw
 
-void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow) {
+void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow_) {
+	use_shadow = use_shadow_;
+	pShadow = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
 }
 
 void cSokolRender::EndDrawMesh() {
+    //TODO
 }
 
 void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+    gb_renderLogger.log("cSokolRender::SetSimplyMaterialMesh mesh=%p, name=%s, data=%p", mesh, mesh->GetName(), data);
+
     bool specular=data->Specular.r>=1/256.0f ||
                   data->Specular.g>=1/256.0f ||
                   data->Specular.b>=1/256.0f;
@@ -125,9 +139,16 @@ void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* da
     SetBlendState(blend);
     SetTexture(0, Texture0, data->MaterialAnimPhase);
     SetTexture(1, bump ? nullptr: data->Tex[1], data->MaterialAnimPhase);
+
+    if (activePipelineType != PIPELINE_TYPE_MESH) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_MESH;
 }
 
 void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
+    gb_renderLogger.log("cSokolRender::DrawNoMaterialMesh mesh=%p, name=%s, data=%p", mesh, mesh->GetName(), data);
+
     //TODO SetPointLight(mesh->GetRootNode()->GetLight());
 
     SetWorldMatXf(mesh->GetGlobalMatrix());
@@ -158,7 +179,7 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {
-    //TODO
+    pShadow = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
 }
 
 void cSokolRender::EndDrawShadow() {
@@ -166,19 +187,89 @@ void cSokolRender::EndDrawShadow() {
 }
 
 void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
-    //TODO
+    gb_renderLogger.log("cSokolRender::SetSimplyMaterialShadow mesh=%p, name=%s, texture=%p", mesh, mesh->GetName(), texture);
+
+    sDataRenderMaterial mat;
+    float f = 0.5f * kShadow;
+    mat.Ambient = sColor4f(0 ,0, 0, 1);
+    mat.Diffuse = sColor4f(f, f, f, 1);
+    mat.Specular = sColor4f(0, 0, 0, 1);
+    mat.Emissive = sColor4f(0, 0, 0, 1);
+    mat.Power = 0;
+    mat.mat = 0;
+    mat.MaterialAnimPhase = 0;
+
+    // SetMaterial(0, texture, NULL, &mat);
+	SetTexture(0, texture, 0);
+
+	eBlendMode blend=ALPHA_NONE;
+	if(texture && texture->IsAlphaTest())
+		blend=ALPHA_TEST;
+
+	if((texture && texture->IsAlpha()) || mat.Diffuse.a<0.99f)
+		blend=ALPHA_BLEND;
+
+		 if(mat.mat&MAT_ALPHA_SUBBLEND)
+			blend=ALPHA_SUBBLEND;
+	else if(mat.mat&MAT_ALPHA_ADDBLENDALPHA)
+			blend=ALPHA_ADDBLENDALPHA;
+	else if(mat.mat&MAT_ALPHA_ADDBLEND)
+			blend=ALPHA_ADDBLEND;
+
+	SetBlendState(blend);
+    
+    // gb_RenderDevice3D->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG2 );
+    // SetStream(Mesh);
+
+    if (activePipelineType != PIPELINE_TYPE_OBJECT_SHADOW) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_OBJECT_SHADOW;
 }
 
 void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
-    //TODO
+    gb_renderLogger.log("cSokolRender::DrawNoMaterialShadow mesh=%p name=%s", mesh, mesh->GetName());
+
+	SetWorldMatXf(mesh->GetGlobalMatrix());
+	// DrawPrimitive(Mesh);
+    cMeshTri *Tri = mesh->GetTri();
+    SubmitDrawBuffer(Tri->db, &Tri->dbr);
 }
 
 void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
-    //TODO
+    gb_renderLogger.log("cSokolRender::SetMaterialTilemap TileMap=%p", TileMap);
+
+    float fOffsetX = 0.5f + (0.0f / pShadowMap->GetWidth());
+    float fOffsetY = 0.5f + (0.0f / pShadowMap->GetWidth());
+    float range = 1;
+    float fBias = -0.005f * range;
+    Mat4f matTexAdj( 0.5f,     0.0f,     0.0f,  0.0f,
+                    0.0f,    -0.5f,     0.0f,  0.0f,
+                    0.0f,     0.0f,     range, 0.0f,
+                    fOffsetX, fOffsetY, fBias, 1.0f );
+
+    Mat4f matlight = pShadow->matViewProj;
+    activeShadowMatrix = matlight * matTexAdj;
+
+    activeCommand.SetTexture(0, pShadowMap->GetFrameImage(0)->sg->image);
+    activeCommand.SetTexture(2, pLightMap->GetFrameImage(0)->sg->image);
+
+	TerraInterface* terra = TileMap->GetTerra();
+    activeWorldSize = Vect2f(terra->SizeX(), terra->SizeY());
+
+    if (activePipelineType != PIPELINE_TYPE_TILE_MAP) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_TILE_MAP;
 }
 
 void cSokolRender::SetMaterialTilemapShadow() {
-    //TODO
+    gb_renderLogger.log("cSokolRender::SetMaterialTilemapShadow");
+
+    if (activePipelineType != PIPELINE_TYPE_OBJECT_SHADOW) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_OBJECT_SHADOW;
 }
 
 void cSokolRender::SetTileColor(sColor4f color) {
@@ -186,4 +277,49 @@ void cSokolRender::SetTileColor(sColor4f color) {
         FinishActiveDrawBuffer();
         activeCommandTileColor = color;
     }
+}
+
+bool cSokolRender::CreateShadowTexture(int xysize) {
+	DeleteShadowTexture();
+
+    auto SetupTexture = [](SokolTexture2D *texture, sg_pixel_format pixel_format) {
+        auto description = texture->desc;
+        description->render_target = true;
+        description->usage = SG_USAGE_IMMUTABLE;
+        description->pixel_format = pixel_format;
+        SokolResourceKey resource_key = get_sokol_resource_key_texture(
+            description->width, description->height, description->pixel_format);
+        texture->image = new SokolResourceTexture(resource_key, sg_make_image(description));
+        texture->resource_key = texture->image->key;
+        texture->dirty = false;
+    };
+
+	pShadowMap=GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER16, false);
+	if (!pShadowMap) {
+		DeleteShadowTexture();
+		return false;
+	}
+    SetupTexture(pShadowMap->GetFrameImage(0)->sg, SG_PIXELFORMAT_DEPTH);
+
+	pLightMap = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
+	if (!pLightMap) {
+		DeleteShadowTexture();
+		return false;
+	}
+    SetupTexture(pLightMap->GetFrameImage(0)->sg, SG_PIXELFORMAT_BGRA8);
+
+	return true;
+}
+
+void cSokolRender::DeleteShadowTexture() {
+	RELEASE(pShadowMap);
+	RELEASE(pLightMap);
+}
+
+cTexture* cSokolRender::GetShadowMap() {
+    return pShadowMap;
+}
+
+cTexture* cSokolRender::GetLightMap() {
+    return pLightMap;
 }

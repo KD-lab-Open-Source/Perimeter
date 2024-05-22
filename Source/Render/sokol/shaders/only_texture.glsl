@@ -1,9 +1,8 @@
 @ctype mat4 Mat4f
-@ctype vec4 Vect4f
 
 @vs vs
 //Uniforms
-uniform terrain_vs_params {
+uniform only_texture_vs_params {
     mat4 un_mvp;
 };
 
@@ -21,11 +20,6 @@ void main() {
 @end
 
 @fs fs
-//Uniforms
-uniform terrain_fs_params {
-    vec4 un_tile_color;
-    float un_alpha_test;
-};
 uniform sampler un_sampler0;
 uniform texture2D un_tex0;
 
@@ -36,8 +30,7 @@ layout(location=0) in vec2 fs_uv0;
 out vec4 frag_color;
 
 void main() {
-    frag_color = un_tile_color * texture(sampler2D(un_tex0, un_sampler0), fs_uv0);
-    if (un_alpha_test >= frag_color.a) discard;
+    frag_color = texture(sampler2D(un_tex0, un_sampler0), fs_uv0);
 }
 @end
 

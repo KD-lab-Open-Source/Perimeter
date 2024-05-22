@@ -29,7 +29,7 @@ private:
     VectDelta* delta_buffer;
     std::vector<std::vector<sPolygon>> index_buffer;
     
-    cTilemapTexturePool* FindFreeTexturePool(int tex_width, int tex_height);
+    cTilemapTexturePool* FindFreeTexturePool(int tex_width, int tex_height, void *drawNode);
 public:
     void IncUpdate(sBumpTile* pbump);
 
@@ -48,7 +48,7 @@ public:
     int bumpNumVertices(int lod);
     void bumpCreateIB(sPolygon* ib, int lod);
     int bumpTileValid(int id);
-    int bumpTileAlloc(int lod,int xpos,int ypos);
+    int bumpTileAlloc(int lod,int xpos,int ypos, void *drawNode);
     void bumpTileFree(int id);
     void bumpTilesDeath();
 

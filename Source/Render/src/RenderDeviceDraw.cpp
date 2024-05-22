@@ -720,3 +720,18 @@ void cInterfaceRenderDevice::DrawElasticSphere(ElasticSphere *es) {
 
     SetRenderState(RS_CULLMODE,cull);
 }
+
+bool cInterfaceRenderDevice::CreateShadowTexture(int xysize) {
+    return false;
+}
+
+void cInterfaceRenderDevice::DeleteShadowTexture() {
+}
+
+cTexture* cInterfaceRenderDevice::GetShadowMap() {
+    return nullptr;
+}
+
+cTexture* cInterfaceRenderDevice::GetLightMap() {
+    return nullptr;
+}

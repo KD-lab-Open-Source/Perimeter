@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 #include "xmath.h"
 #include "Umath.h"
@@ -7,14 +8,6 @@
 #include "SokolRender.h"
 #include "SokolRenderPipeline.h"
 #include "SokolShaders.h"
-
-struct SokolPipelineContext {
-    pipeline_id_t id;
-    PIPELINE_TYPE pipeline_type;
-    vertex_fmt_t vertex_fmt;
-    sg_pipeline_desc* desc;
-    struct shader_funcs* shader_funcs;
-};
 
 sg_compare_func GetSokolCompareFunc(eCMPFUNC cmpfunc) {
     switch (cmpfunc) {
@@ -45,25 +38,12 @@ void PIPELINE_MODE::FromValue(pipeline_mode_value_t value) {
     cull = static_cast<eCullMode>((value >> 6) & 0b11);
 }
 
-pipeline_id_t cSokolRender::GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, const PIPELINE_MODE& mode) {
-    pipeline_id_t id = (mode.GetValue() & PIPELINE_ID_MODE_MASK) << PIPELINE_ID_MODE_SHIFT;
-    id |= (vertex_fmt & PIPELINE_ID_VERTEX_FMT_MASK) << PIPELINE_ID_VERTEX_FMT_SHIFT;
-    id |= (type & PIPELINE_ID_TYPE_MASK) << PIPELINE_ID_TYPE_SHIFT;
-    return id;
-}
-
-void cSokolRender::GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, PIPELINE_MODE* mode) {
-    mode->FromValue((id >> PIPELINE_ID_MODE_SHIFT) & PIPELINE_ID_MODE_MASK);
-    if (vertex_fmt) *vertex_fmt = static_cast<vertex_fmt_t>((id >> PIPELINE_ID_VERTEX_FMT_SHIFT) & PIPELINE_ID_VERTEX_FMT_MASK);
-    if (type) *type = static_cast<PIPELINE_TYPE>((id >> PIPELINE_ID_TYPE_SHIFT) & PIPELINE_ID_TYPE_MASK);
-}
-
 void bind_attr_slot(SokolPipelineContext& ctx, const char* attr_name, sg_vertex_format sokol_format) {
     int attr_slot = ctx.shader_funcs->attr_slot(attr_name);
     if (attr_slot < 0) {
-        fprintf(stderr, "bind_attr_slot: '%s' slot not found at pipeline '%s'\n", attr_name, ctx.desc->label);
+        fprintf(stderr, "bind_attr_slot: '%s' slot not found at pipeline '%s'\n", attr_name, ctx.desc.label);
     } else {
-        ctx.desc->layout.attrs[attr_slot].format = sokol_format;
+        ctx.desc.layout.attrs[attr_slot].format = sokol_format;
     }
 }
 
@@ -90,76 +70,72 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, uint32_t fmt_flag) {
     }
 }
 
-void cSokolRender::RegisterPipeline(pipeline_id_t id) {
-    //Create sokol desc and context struct
-    sg_pipeline_desc desc = {};
-    SokolPipelineContext ctx = {id, PIPELINE_TYPE_DEFAULT, 0, &desc, nullptr };
+void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
+    auto& desc = context.desc;
 
-    //Extract info about this pipeline
-    PIPELINE_MODE mode;
-    GetPipelineIDParts(id, &ctx.pipeline_type, &ctx.vertex_fmt, &mode);
-    
     //Choose shader
-    switch (ctx.pipeline_type) {
+    switch (context.pipeline_type) {
 #ifdef PERIMETER_DEBUG
         case PIPELINE_TYPE_LINE_STRIP:
 #endif
-        case PIPELINE_TYPE_TRIANGLE:
-        case PIPELINE_TYPE_TRIANGLESTRIP:
-            switch (ctx.vertex_fmt) {
+        case PIPELINE_TYPE_MESH:
+            switch (context.vertex_fmt) {
                 case sVertexXYZT1::fmt:
-                    ctx.shader_funcs = &shader_terrain;
+                    context.shader_funcs = &shader_only_texture;
                     break;
                 case sVertexXYZDT1::fmt:
-                    ctx.shader_funcs = &shader_color_tex1;
+                    context.shader_funcs = &shader_color_tex1;
                     break;
                 case sVertexXYZDT2::fmt:
-                    ctx.shader_funcs = &shader_color_tex2;
+                    context.shader_funcs = &shader_color_tex2;
                     break;
                 case sVertexXYZNT1::fmt:
-                    ctx.shader_funcs = &shader_normal;
+                    context.shader_funcs = &shader_normal;
                     break;
                 default:
-                    fprintf(stderr, "RegisterPipeline: unknown pipeline format '%d'\n", ctx.vertex_fmt);
+                    fprintf(stderr, "RegisterPipeline: unknown pipeline format '%d'\n", context.vertex_fmt);
                     break;
             }
             break;
+        case PIPELINE_TYPE_TILE_MAP:
+            context.shader_funcs = &shader_tile_map;
+            break;
+        case PIPELINE_TYPE_OBJECT_SHADOW:
+            context.shader_funcs = &shader_object_shadow;
+            break;
         default:
-            fprintf(stderr, "RegisterPipeline: unknown pipeline type '%d'\n", ctx.pipeline_type);
+            fprintf(stderr, "RegisterPipeline: unknown pipeline type '%d'\n", context.pipeline_type);
             break;
     }
-    if (ctx.shader_funcs == nullptr) {
-        fprintf(stderr, "RegisterPipeline: no shader assigned to pipeline '%d'\n", id);
+    if (context.shader_funcs == nullptr) {
+        fprintf(stderr, "RegisterPipeline: no shader assigned to pipeline\n");
         xassert(0);
         return;
     }
 
     //Common part of pipeline desc
-    desc.depth.compare = GetSokolCompareFunc(mode.depth_cmp);
-    desc.depth.write_enabled = mode.depth_write;
-    switch (ctx.pipeline_type) {
-        default:
-        case PIPELINE_TYPE_TRIANGLE:
+    desc.depth.compare = GetSokolCompareFunc(context.pipeline_mode.depth_cmp);
+    desc.depth.write_enabled = context.pipeline_mode.depth_write;
+    switch (context.primitive_type) {
+        case PT_TRIANGLES:
             desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
             break;
-        case PIPELINE_TYPE_TRIANGLESTRIP:
+        case PT_TRIANGLESTRIP:
             desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
             break;
-#ifdef PERIMETER_DEBUG
-        case PIPELINE_TYPE_LINE_STRIP:
-            desc.primitive_type = SG_PRIMITIVETYPE_LINE_STRIP;
+        default:
+            xxassert(false, "Unknown primitive mode");
             break;
-#endif
     }
     desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32;
-    desc.cull_mode = CULL_NONE == mode.cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
-    desc.face_winding = CULL_CCW == mode.cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
+    desc.cull_mode = CULL_NONE == context.pipeline_mode.cull ? SG_CULLMODE_NONE : SG_CULLMODE_BACK;
+    desc.face_winding = CULL_CCW == context.pipeline_mode.cull ? SG_FACEWINDING_CW : SG_FACEWINDING_CCW;
 
     auto& blend0 = desc.colors[0].blend;
-    blend0.enabled = ALPHA_NONE < mode.blend;
+    blend0.enabled = ALPHA_NONE < context.pipeline_mode.blend;
     if (blend0.enabled) {
         blend0.op_rgb = blend0.op_alpha = SG_BLENDOP_ADD;
-        switch (mode.blend) {
+        switch (context.pipeline_mode.blend) {
             case ALPHA_SUBBLEND:
                 //Probably unused
                 blend0.op_rgb = blend0.op_alpha = SG_BLENDOP_REVERSE_SUBTRACT;
@@ -198,9 +174,9 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
     }
 
     //Get shader desc and make if not cached already
-    const sg_shader_desc* shader_desc = ctx.shader_funcs->shader_desc(sg_query_backend());
+    const sg_shader_desc* shader_desc = context.shader_funcs->shader_desc(sg_query_backend());
     if (shader_desc == nullptr) {
-        fprintf(stderr, "RegisterPipeline: no shader desc for pipeline '%d'\n", id);
+        fprintf(stderr, "RegisterPipeline: no shader desc for pipeline\n");
         xassert(0);
         return;
     }
@@ -217,54 +193,76 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         fprintf(stderr, "RegisterPipeline: invalid shader ID pipeline '%s'\n", desc.label);
         return;
     }
-    SOKOL_SHADER_ID shader_id = ctx.shader_funcs->get_id();
+    SOKOL_SHADER_ID shader_id = context.shader_funcs->get_id();
     switch (shader_id) {
         case SOKOL_SHADER_ID_color_tex1:
         case SOKOL_SHADER_ID_color_tex2:
-            if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params")) {
+            if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "color_texture_vs_params")) {
                 fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "color_texture_vs_params") != sizeof(color_texture_vs_params_t)) {
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "color_texture_vs_params") != sizeof(color_texture_vs_params_t)) {
                 fprintf(stderr, "RegisterPipeline: 'color_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params"))  {
+            } else if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "color_texture_fs_params"))  {
                 fprintf(stderr, "RegisterPipeline: 'color_texture_fs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "color_texture_fs_params") != sizeof(color_texture_fs_params_t)) {
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "color_texture_fs_params") != sizeof(color_texture_fs_params_t)) {
                 fprintf(stderr, "RegisterPipeline: 'color_texture_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
             }
             break;
         case SOKOL_SHADER_ID_normal:
-            if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params")) {
+            if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "normal_texture_vs_params")) {
                 fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "normal_texture_vs_params") != sizeof(normal_texture_vs_params_t)) {
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "normal_texture_vs_params") != sizeof(normal_texture_vs_params_t)) {
                 fprintf(stderr, "RegisterPipeline: 'normal_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
             }
             break;
-        case SOKOL_SHADER_ID_terrain:
-            if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "terrain_vs_params")) {
-                fprintf(stderr, "RegisterPipeline: 'terrain_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+        case SOKOL_SHADER_ID_object_shadow:
+            if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "object_shadow_vs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'object_shadow_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "terrain_vs_params") != sizeof(terrain_vs_params_t)) {
-                fprintf(stderr, "RegisterPipeline: 'terrain_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "object_shadow_vs_params") != sizeof(object_shadow_vs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'object_shadow_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (0 > ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "terrain_fs_params")) {
-                fprintf(stderr, "RegisterPipeline: 'terrain_fs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+            }
+            break;
+        case SOKOL_SHADER_ID_only_texture:
+            if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "only_texture_vs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'only_texture_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
-            } else if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "terrain_fs_params") != sizeof(terrain_fs_params_t)) {
-                fprintf(stderr, "RegisterPipeline: 'terrain_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "only_texture_vs_params") != sizeof(only_texture_vs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'only_texture_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            }
+            break;
+        case SOKOL_SHADER_ID_tile_map:
+            if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "tile_map_vs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'tile_map_vs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "tile_map_vs_params") != sizeof(tile_map_vs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'tile_map_vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (0 > context.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_FS, "tile_map_fs_params")) {
+                fprintf(stderr, "RegisterPipeline: 'tile_map_fs_params' uniform slot not found at pipeline '%s'\n", desc.label);
+                xassert(0);
+                return;
+            } else if (context.shader_funcs->uniformblock_size(SG_SHADERSTAGE_FS, "tile_map_fs_params") != sizeof(tile_map_fs_params_t)) {
+                fprintf(stderr, "RegisterPipeline: 'tile_map_fs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
                 xassert(0);
                 return;
             }
@@ -273,35 +271,62 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
             fprintf(stderr, "RegisterPipeline: Unknown shader id '%d' at pipeline '%s'\n", shader_id, desc.label);
             return;
     }
-    if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
+    if (context.vertex_fmt & VERTEX_FMT_TEX1 && context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
         fprintf(stderr, "RegisterPipeline: 'un_tex0' image slot not found at pipeline '%s'\n", desc.label);
     }
-    if (ctx.vertex_fmt & VERTEX_FMT_TEX2) {
-        if (ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
+    if (context.vertex_fmt & VERTEX_FMT_TEX2) {
+        if (context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
             fprintf(stderr, "RegisterPipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
         }
     }
-    if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0") < 0) {
+    if (context.vertex_fmt & VERTEX_FMT_TEX1 && context.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0") < 0) {
         fprintf(stderr, "RegisterPipeline: 'un_sampler0' sampler slot not found at pipeline '%s'\n", desc.label);
     }
     
     //Common attributes
-    bind_attr_slot(ctx, "vs_position", SG_VERTEXFORMAT_FLOAT3);
+    bind_attr_slot(context, "vs_position", SG_VERTEXFORMAT_FLOAT3);
 
     //We bind required attributes into layout of pipeline if provided fmt needs so
-    bind_vertex_fmt(ctx, VERTEX_FMT_DIFFUSE);
-    bind_vertex_fmt(ctx, VERTEX_FMT_TEX1);
-    bind_vertex_fmt(ctx, VERTEX_FMT_TEX2);
-    bind_vertex_fmt(ctx, VERTEX_FMT_NORMAL);
+    bind_vertex_fmt(context, VERTEX_FMT_DIFFUSE);
+    bind_vertex_fmt(context, VERTEX_FMT_TEX1);
+    bind_vertex_fmt(context, VERTEX_FMT_TEX2);
+    bind_vertex_fmt(context, VERTEX_FMT_NORMAL);
+
+    if (shader_id == SOKOL_SHADER_ID_object_shadow) {
+        switch (context.vertex_fmt) {
+            case sVertexXYZT1::fmt:
+                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT2;
+                break;
+            case sVertexXYZDT1::fmt:
+                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT4;
+                context.desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+                break;
+            case sVertexXYZDT2::fmt:
+                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT4;
+                context.desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+                context.desc.layout.attrs[3].format = SG_VERTEXFORMAT_FLOAT2;
+                break;
+            case sVertexXYZNT1::fmt:
+                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT3;
+                context.desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+                break;
+            default:
+                fprintf(stderr, "RegisterPipeline: unknown pipeline format '%d'\n", context.vertex_fmt);
+                break;
+        }
+
+        desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
+        desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
+        desc.depth.write_enabled = true;
+
+        desc.colors[0].pixel_format = SG_PIXELFORMAT_NONE;
+    }
 
     //Created, store on our pipelines
     //printf("RegisterPipeline: '%s' at '%d'\n", desc.label, id);
     SokolPipeline* pipeline = new SokolPipeline {
-        ctx.id,
-        ctx.pipeline_type,
-        ctx.vertex_fmt,
+        context,
         sg_make_pipeline(desc),
-        ctx.shader_funcs,
         shader_id,
         {}
     };
@@ -309,33 +334,34 @@ void cSokolRender::RegisterPipeline(pipeline_id_t id) {
         xxassert(0, "RegisterPipeline: invalid sg_pipeline ID pipeline " + std::string(desc.label));
         return;
     }
-    if (pipeline->vertex_fmt == 0) {
+    if (pipeline->context.vertex_fmt == 0) {
         xxassert(0, "RegisterPipeline: invalid pipeline vertex format " + std::string(desc.label));
         return;
     }
-    if (0 != pipelines.count(pipeline->id)) {
-        fprintf(stderr, "RegisterPipeline: '%s' pipeline already registered with '%d'\n", desc.label, pipeline->id);
-        xassert(0);
-    }
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
         std::string name = "un_tex" + std::to_string(i);
-        pipeline->shader_fs_texture_slot[i] = ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, name.c_str());
+        pipeline->shader_fs_texture_slot[i] = context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, name.c_str());
     }
-    pipeline->shader_fs_sampler_slot = ctx.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0");
+    pipeline->shader_fs_sampler_slot = context.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0");
+    pipeline->shader_fs_shadow_sampler_slot = context.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler1");
     if (pipelines.size() + 1 > PERIMETER_SOKOL_PIPELINES_MAX) {
-        fprintf(stderr, "RegisterPipeline: reached maximum amount of registered pipelines '%d'\n", pipeline->id);
+        fprintf(stderr, "RegisterPipeline: reached maximum amount of registered pipelines\n");
         xassert(0);
-        while (pipelines.size() + 10 > PERIMETER_SOKOL_PIPELINES_MAX) {
-            auto it = pipelines.cbegin();
-            SokolPipeline* pipeline_delete = it->second;
-            pipelines.erase(it);
-            delete pipeline_delete;
-        }
     }
-    pipelines.insert(std::make_pair(pipeline->id, pipeline));
+    pipelines.push_back(pipeline);
 #ifdef PERIMETER_DEBUG
-    printf("RegisterPipeline: '%s' registered with '%d'\n", desc.label, pipeline->id);
+    printf("RegisterPipeline: '%s' registered\n", desc.label);
 #endif
+}
+
+struct SokolPipeline* cSokolRender::GetPipeline(const SokolPipelineContext& context) {
+    auto p = std::find_if(pipelines.begin(), pipelines.end(), [&context](const auto& pipeline) -> bool { return pipeline->context == context; });
+    if (p != pipelines.end()) {
+        return *p;
+    }
+
+    RegisterPipeline(context);
+    return pipelines.back();
 }
 
 SokolPipeline::~SokolPipeline() {

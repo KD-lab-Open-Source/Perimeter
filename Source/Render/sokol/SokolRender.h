@@ -1,9 +1,11 @@
 #ifndef PERIMETER_SOKOLRENDER_H
 #define PERIMETER_SOKOLRENDER_H
 
-#if defined(SOKOL_GLCORE) || defined(SOKOL_GLES3)
-#define PERIMETER_SOKOL_GL (1)
+#if defined(SOKOL_GLCORE33) || defined(SOKOL_GLES3)
+#define SOKOL_GL (1)
 #endif
+
+#include <tuple>
 
 #include <sokol_gfx.h>
 #include <SDL_video.h>
@@ -21,11 +23,9 @@ struct SokolCommand {
     void ClearShaderParams();
     void SetTexture(size_t index, SokolResource<sg_image>* sokol_texture);
     void ClearTextures();
-    NO_COPY_CONSTRUCTOR(SokolCommand);
+    NO_COPY_CONSTRUCTOR(SokolCommand)
     
-    pipeline_id_t pipeline_id = 0;
-    SOKOL_SHADER_ID shader_id = SOKOL_SHADER_ID_NONE;
-    sg_pass_action* pass_action = nullptr;
+    struct SokolPipeline* pipeline = nullptr;
     size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
@@ -40,20 +40,24 @@ struct SokolCommand {
     Vect2i clip[2]; //0 Pos 1 Size
 };
 
-template<typename T>
-struct SokolResourcePooled {
-    ///How many frames passed since last time it was used
-    uint32_t unused_since = 0;
-    SokolResource<T>* resource = nullptr;
+struct SokolPipelineContext {
+    PIPELINE_TYPE pipeline_type;
+    PIPELINE_MODE pipeline_mode;
+    ePrimitiveType primitive_type;
+    vertex_fmt_t vertex_fmt;
+    sg_pipeline_desc desc{};
+    struct shader_funcs* shader_funcs;
 
-    explicit SokolResourcePooled(SokolResource<T>* res) : resource(res) {
+    bool operator==(const SokolPipelineContext& other) const {
+        return std::tie(pipeline_type, pipeline_mode, primitive_type, vertex_fmt) 
+            == std::tie(other.pipeline_type, other.pipeline_mode, other.primitive_type, other.vertex_fmt);
     }
 };
 
 class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
-#ifdef PERIMETER_SOKOL_GL
+#ifdef SOKOL_GL
     SDL_GLContext sdl_gl_context = nullptr;
 #endif
 #ifdef SOKOL_METAL
@@ -69,32 +73,40 @@ private:
     friend const void* sokol_d3d_render_target_view_cb();
     friend const void* sokol_d3d_depth_stencil_view_cb();
 #endif
-    
+
+    cTexture* pShadowMap = nullptr;
+    cTexture* pLightMap = nullptr;
+    bool use_shadow = false;
+    cCamera* pShadow = nullptr;
+    float kShadow = 0.25f;
+
     //Stores resources for reusing
-    void ClearPooledResources(uint32_t max_life);
-    std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
-    
-    //For swapchain pass that renders into final device
-    sg_swapchain swapchain = {};
-    sg_color fill_color = {};
+    std::unordered_multimap<uint64_t, SokolResourceBuffer*> bufferPool;
     
     //Renderer state
     bool ActiveScene = false;
     bool isOrthographicProjSet = false;
-    std::vector<SokolCommand*> commands;
     sg_sampler sampler;
-    
+    sg_sampler shadow_sampler;
+
+    struct RenderTarget final {
+        cTexture* target_texture = nullptr;
+        SokolTexture2D* depth_image = nullptr;
+        sg_pass render_pass{};
+        std::vector<SokolCommand*> commands;
+    };
+    std::vector<RenderTarget> render_targets;
+
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;
 
     //Pipelines
     std::unordered_map<std::string, sg_shader> shaders;
-    std::unordered_map<pipeline_id_t, struct SokolPipeline*> pipelines;
-    static pipeline_id_t GetPipelineID(PIPELINE_TYPE type, vertex_fmt_t vertex_fmt, const PIPELINE_MODE& mode);
-    static void GetPipelineIDParts(pipeline_id_t id, PIPELINE_TYPE* type, vertex_fmt_t* vertex_fmt, PIPELINE_MODE* mode);
+    std::vector<struct SokolPipeline*> pipelines;
     void ClearPipelines();
     void ResetViewport();
-    void RegisterPipeline(pipeline_id_t id);
+    void RegisterPipeline(SokolPipelineContext context);
+    struct SokolPipeline* GetPipeline(const SokolPipelineContext& context);
     
     //Active pipeline/command state
     SokolCommand activeCommand;
@@ -119,11 +131,14 @@ private:
     sColor4f activeLightSpecular;
     Mat4f activeTextureTransform[PERIMETER_SOKOL_TEXTURES];
 
+    //Shadow and Light map rendering
+    size_t activeRenderTarget = 0;
+    Mat4f activeShadowMatrix{};
+    Vect2f activeWorldSize{};
+
     //Commands handling
-    void ClearActiveBufferAndPassAction();
     void ClearCommands();
     void FinishActiveDrawBuffer();
-    void CreateCommandEmpty();
     void CreateCommand(class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices);
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
@@ -139,6 +154,7 @@ private:
     
     //Does actual drawing using sokol API
     void DoSokolRendering();
+    void DoSokolRendering(sg_pass& render_pass, const std::vector<SokolCommand*>& commands);
 
     //Set common VS/FS parameters
     template<typename T_VS, typename T_FS>
@@ -245,6 +261,12 @@ public:
     void SetMaterialTilemap(cTileMap *TileMap) override;
     void SetMaterialTilemapShadow() override;
     void SetTileColor(sColor4f color) override;
+
+    bool CreateShadowTexture(int xysize) override;
+    void DeleteShadowTexture() override;
+
+    cTexture* GetShadowMap() override;
+    cTexture* GetLightMap() override;
 
     // //// cInterfaceRenderDevice impls end ////
 };

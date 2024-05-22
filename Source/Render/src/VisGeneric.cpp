@@ -236,6 +236,8 @@ void cVisGeneric::SetDebugShowShadowVolume(int p)
 
 void cVisGeneric::SetShadowType(eShadowType p,int shadow_size)
 {
+	printf("cVisGeneric::SetShadowType p=%d, shadow_size=%d\n", p, shadow_size);
+
 	Option_ShadowType=p;
 	Option_DrawMeshShadow=shadow_size;
 	CalcIsShadowMap();

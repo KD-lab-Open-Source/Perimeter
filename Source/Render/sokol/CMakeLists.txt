@@ -20,7 +20,7 @@ IF (OPTION_PROCESS_SHADERS)
 
     if(NOT DEFINED ENV{PERIMETER_SHADER_LANG})
         #Use all GLSL dialects, HLSL for D3d and WebGPU
-        set(PERIMETER_SHADER_LANG "glsl410:glsl300es:hlsl5:wgsl")
+        set(PERIMETER_SHADER_LANG "glsl410:glsl300es:hlsl5")
         #Metal for Apple platforms
         set(PERIMETER_SHADER_LANG "${PERIMETER_SHADER_LANG}:metal_macos:metal_ios:metal_sim")
     endif()
@@ -57,10 +57,12 @@ IF (OPTION_PROCESS_SHADERS)
         )
     ENDMACRO(PERIMETER_SOKOL_SHDC)
 
-    PERIMETER_SOKOL_SHDC(color_texture      color_tex1   "")
-    PERIMETER_SOKOL_SHDC(color_texture      color_tex2   "SHADER_TEX_2")
-    PERIMETER_SOKOL_SHDC(normal_texture     normal       "")
-    PERIMETER_SOKOL_SHDC(terrain            terrain      "")
+    PERIMETER_SOKOL_SHDC(color_texture      color_tex1     "")
+    PERIMETER_SOKOL_SHDC(color_texture      color_tex2     "SHADER_TEX_2")
+    PERIMETER_SOKOL_SHDC(normal_texture     normal         "")
+    PERIMETER_SOKOL_SHDC(tile_map           tile_map       "")
+    PERIMETER_SOKOL_SHDC(object_shadow      object_shadow  "")
+    PERIMETER_SOKOL_SHDC(only_texture       only_texture   "")
 ENDIF()
 
 #Select Sokol API per platform and options
@@ -166,6 +168,7 @@ target_include_directories(RenderSokol PRIVATE
         "${PROJECT_SOURCE_DIR}/Source/Render/src"
         "${PROJECT_SOURCE_DIR}/Source/Render/client"
         "${PROJECT_SOURCE_DIR}/Source/Render/tracker"
+        "${PROJECT_SOURCE_DIR}/Source/Render/tilemap"
         "${sokol_SOURCE_DIR}/"
 )
 

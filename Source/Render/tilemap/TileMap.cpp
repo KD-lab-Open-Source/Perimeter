@@ -218,6 +218,11 @@ cTexture* cTileMap::GetShadowMap()
         }
     }
 #endif
+#ifdef PERIMETER_SOKOL
+	if (gb_RenderDevice) {
+		return gb_RenderDevice->GetShadowMap();
+	}
+#endif
     return nullptr;
 }
 
@@ -231,6 +236,11 @@ cTexture* cTileMap::GetLightMap()
             return gb_RenderDevice3D->dtFixed->GetLightMap();
         }
     }
+#endif
+#ifdef PERIMETER_SOKOL
+	if (gb_RenderDevice) {
+		return gb_RenderDevice->GetLightMap();
+	}
 #endif
     return nullptr;
 }
@@ -255,6 +265,23 @@ void cTileMap::CreateLightmap()
         }
 
 		if(!draw->CreateShadowTexture(width))
+		{
+			gb_VisGeneric->SetShadowType((eShadowType)(int)Option_ShadowType,0);
+		}
+	}
+#endif
+#ifdef PERIMETER_SOKOL
+	if (gb_RenderDevice) {
+		gb_RenderDevice->DeleteShadowTexture();
+	}
+
+	int width=256<<(Option_DrawMeshShadow-1);
+
+	LightMapType=CheckLightMapType();
+
+	if(Option_DrawMeshShadow>0 && gb_RenderDevice)
+	{
+		if(!gb_RenderDevice->CreateShadowTexture(width))
 		{
 			gb_VisGeneric->SetShadowType((eShadowType)(int)Option_ShadowType,0);
 		}
@@ -420,6 +447,9 @@ void cTileMap::DrawLightmapShadow(cCamera *DrawNode)
 {
 #ifdef PERIMETER_D3D9
     if (!gb_RenderDevice3D) return;
+#endif
+#ifdef PERIMETER_SOKOL
+	if (!gb_RenderDevice) return;
 #else
     return;
 #endif
@@ -454,6 +484,9 @@ void cTileMap::AddLightCamera(cCamera *DrawNode)
 {
 #ifdef PERIMETER_D3D9
     if (!gb_RenderDevice3D) return;
+#endif
+#ifdef PERIMETER_SOKOL
+	if (!gb_RenderDevice) return;
 #else
     return;
 #endif
