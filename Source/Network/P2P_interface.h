@@ -139,7 +139,7 @@
 extern const int PNC_DESYNC_RESTORE_ATTEMPTS;
 extern const int PNC_DESYNC_RESTORE_MODE_FULL;
 
-#ifdef PERIMETER_DEBUG
+#if defined(PERIMETER_DEBUG) || 1
 #define LogMsg(...) fprintf(stdout, __VA_ARGS__)
 #else
 #define LogMsg(...)
