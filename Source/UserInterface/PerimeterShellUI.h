@@ -1569,29 +1569,34 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
-enum
-{
+enum DynQueueCode {
 	CBCODE_QUANT = 1, //задержка по времени в delay(ms)
 	CBCODE_MOUSEMOVE,
 	CBCODE_LBDOWN,
 	CBCODE_LBUP,
 	CBCODE_RBDOWN,
-	CBCODE_RBUP,
+    CBCODE_RBUP,
+    NUM_CBCODE_MAX,
 };
 
-struct DYN_QUEUE_ITEM
-{
-	DYNCALLBACK cbproc;
-	int         code;
-	int         time_delay;
-	char        bDelete;
+class DynQueue {
+    friend class CShellIconManager;
+    
+    struct DynQueueItem {
+        DYNCALLBACK cbproc = nullptr;
+        int time_delay = 0;
+        bool bDelete = false;
 
-
-	DYN_QUEUE_ITEM(DYNCALLBACK _p, int _c, int delay){
-		cbproc = _p; code = _c;
-		bDelete = 0;
-		time_delay = delay;
-	}
+        DynQueueItem(DYNCALLBACK _p, int delay) {
+            cbproc = _p;
+            bDelete = false;
+            time_delay = delay;
+        }
+    };
+    
+    MTSection lock;
+    bool empty = true;
+    std::list<DynQueueItem> items = {};
 };
 
 struct FRAME_TERRAIN_BUILD_DATA
@@ -1652,8 +1657,8 @@ class CShellIconManager
 	void ClearSquadIconTable();
 
 	//dynamic handlers
-	std::list<DYN_QUEUE_ITEM> m_dyn_queue;
-	int ProcessDynQueue(int code, float x=0, float y=0);
+	DynQueue m_dyn_queues[NUM_CBCODE_MAX];
+	int ProcessDynQueue(DynQueueCode code, float x=0, float y=0);
 	void QuantDynQueue(int dt);
 
 	CShellWindow* HitTest(CShellWindow* pTop, float x, float y);
@@ -1765,9 +1770,8 @@ public:
 	void FormatUnitPopup(const AttributeBase* attr, std::string& cbBuffer, bool onControl, terUnitBase* unit);
 	void FormatMessageText(const char* cbTag, std::string* cb, ...);
 
-	void AddDynamicHandler(DYNCALLBACK _p, int code, int delay = 0);
-	void DelDynamicHandler(DYNCALLBACK _p, int code);
-	bool HasDynamicHandler(DYNCALLBACK _p, int code);
+	void AddDynamicHandler(DYNCALLBACK _p, DynQueueCode code, int delay = 0);
+	void DelDynamicHandler(DYNCALLBACK _p, DynQueueCode code);
 
 	void SetFocus(int id);
     void SetModalWnd(int id);
@@ -1800,10 +1804,6 @@ public:
 	void quant(float dTime);
 	void draw();
 
-	void ClearQueue(){
-		MTAuto dynQueue_autolock(&dynQueue_lock);
-		m_dyn_queue.clear();
-	}
 	inline int IsEffect()	{ return m_fEffectTime>=0; }
 	inline int IsInterface(){ return getDesktop() != nullptr;}
 
@@ -1879,8 +1879,6 @@ public:
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) controls[SQSH_CHAT_INFO_ID];
 		chatInfo->setTime(CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT);
 	}
-
-	MTSection dynQueue_lock;
 };
 
 extern CShellIconManager   _shellIconManager;

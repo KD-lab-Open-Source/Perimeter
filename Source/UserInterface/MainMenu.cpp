@@ -50,7 +50,8 @@ MissionDescription missionToExec;
 
 
 bool intfCanHandleInput() {
-	return !bgScene.isPlaying() && _shellIconManager.isDynQueueEmpty();
+	return !bgScene.isPlaying()
+        && _shellIconManager.isDynQueueEmpty();
 }
 
 std::string getOriginalMissionName(const std::string& originalSaveName) {

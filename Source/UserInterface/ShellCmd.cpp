@@ -370,7 +370,7 @@ void CShellLogicDispatcher::OnOverFriend(terUnitBase* p)
 				_shellCursorManager.SetActiveCursor(CShellCursorManager::arrow);
 			}
 //			_shellCursorManager.SetActiveCursor(CShellCursorManager::select);
-			_shellIconManager.DelDynamicHandler(0, CBCODE_LBDOWN);
+			_shellIconManager.DelDynamicHandler(nullptr, CBCODE_LBDOWN);
 		}
 }
 
@@ -420,7 +420,7 @@ void CShellLogicDispatcher::OnMouseIdle()
 	if(!_shellCursorManager.m_bCursorPermanent)
 	{
 		_shellCursorManager.SetActiveCursor(CShellCursorManager::arrow);
-		_shellIconManager.DelDynamicHandler(0, CBCODE_LBDOWN);
+		_shellIconManager.DelDynamicHandler(nullptr, CBCODE_LBDOWN);
 	}
 }
 

@@ -1687,45 +1687,55 @@ CShellWindow* CShellIconManager::CreateWnd(int id, ShellControlType type, CShell
 	return pWnd;
 }
 
-void CShellIconManager::AddDynamicHandler(DYNCALLBACK _p, int code, int delay)
+void CShellIconManager::AddDynamicHandler(DYNCALLBACK _p, DynQueueCode code, int delay)
 {
-	MTAuto dynQueue_autolock(&dynQueue_lock);
+    xassert(0 <= code && code < NUM_CBCODE_MAX);
 
 //	fout < "AddDynamicHandler\n";
+    
+    DynQueue& dynqueue = m_dyn_queues[code];
+	MTAuto dynQueue_autolock(&dynqueue.lock);
+    dynqueue.empty = false;
 
-	for (auto& i : m_dyn_queue) {
-        if ((i.cbproc == _p) && (i.code == code)) {
-            i.bDelete = 0;
+	for (auto& i : dynqueue.items) {
+        if (i.cbproc == _p) {
+            i.bDelete = false;
             i.time_delay = delay;
             return;
         }
     }
 
-	m_dyn_queue.emplace_back(_p, code, delay);
+    dynqueue.items.emplace_back(_p, delay);
 }
-void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
+void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, DynQueueCode code)
 {
-	MTAuto dynQueue_autolock(&dynQueue_lock);
-
+    xassert(0 <= code && code < NUM_CBCODE_MAX);
+    
 //	fout < "DelDynamicHandler\n";
 
-    for (auto& i : m_dyn_queue) {
-        if (((i.cbproc == _p) || (_p == 0)) && ((i.code == code) || (code == 0))) {
-            i.bDelete = 1;
+    DynQueue& dynqueue = m_dyn_queues[code];
+    if (dynqueue.empty) return;
+    MTAuto dynQueue_autolock(&dynqueue.lock);
+    auto& items = dynqueue.items;
+    
+    bool found = false;
+    for (auto& i : items) {
+        if (_p == nullptr || i.cbproc == _p) {
+            i.bDelete = true;
+            found = true;
             break;
         }
     }
-}
-
-bool CShellIconManager::HasDynamicHandler(DYNCALLBACK _p, int code) {
-	MTAuto dynQueue_autolock(&dynQueue_lock);
-
-    for (auto const& i : m_dyn_queue) {
-		if (( (i.cbproc == _p) || (_p == 0) ) && ( (i.code == code) || (code == 0) )) {
-			return true;
-		}
-	}
-	return false;
+    
+    if (found) {
+        dynqueue.empty = true;
+        for (auto& item : items) {
+            if (!item.bDelete) {
+                dynqueue.empty = false;
+                break;
+            }
+        }
+    }
 }
 
 CShellWindow* CShellIconManager::HitTest(float x, float y)
@@ -2032,46 +2042,64 @@ void CShellIconManager::DrawControls(CShellWindow* pTop)
 		terRenderDevice->FlushPrimitive2D();		
 	}
 }
-int CShellIconManager::ProcessDynQueue(int code, float x, float y)
+
+int CShellIconManager::ProcessDynQueue(DynQueueCode code, float x, float y)
 {
-	MTAuto dynQueue_autolock(&dynQueue_lock);
+    xassert(0 <= code && code < NUM_CBCODE_MAX);
 
 //	fout < "ProcessDynQueue " < code < "\n";
 
-	int r = 0;
+    DynQueue& dynqueue = m_dyn_queues[code];
+    MTAuto dynQueue_autolock(&dynqueue.lock);
+    auto& items = dynqueue.items;
 
-	auto i = m_dyn_queue.begin();
-	while (i != m_dyn_queue.end()) {
+    int r = 0;
+	auto i = items.begin();
+	while (i != items.end()) {
 //		fout < "	 DYN_QUEUE_ITEM=" < ((DWORD)i->cbproc) < "\n";
 		if (i->bDelete) {
 //			fout < "	 delete\n";
-			i = m_dyn_queue.erase(i);
+			i = items.erase(i);
 		} else {
-			if ((i->code == code) && (i->time_delay <= 0)) {
+			if (i->time_delay <= 0) {
+                r = 1;
 //				fout < "	 process\n";
-				if ( !(*i->cbproc)(x,y) ) {
-					i->bDelete = 1;
-					return 1;
-				}
-				r = 1;
+				if ( (*i->cbproc)(x,y) == 0 ) {
+					i->bDelete = true;
+                    break;
+                }
 			}
 			i++;
 		}
 	}
 
+    dynqueue.empty = true;
+    for (auto& item : items) {
+        if (!item.bDelete) {
+            dynqueue.empty = false;
+            break;
+        }
+    }
+
 	return r;
 }
 void CShellIconManager::QuantDynQueue(int dt)
 {
-	MTAuto dynQueue_autolock(&dynQueue_lock);
-    for (auto& i : m_dyn_queue) {
-        i.time_delay -= dt;
+    for (auto& dynqueue : m_dyn_queues) {
+        MTAuto dynQueue_autolock(&dynqueue.lock);
+        for (auto& i: dynqueue.items) {
+            i.time_delay -= dt;
+        }
     }
 }
 
 bool CShellIconManager::isDynQueueEmpty() {
-	MTAuto dynQueue_autolock(&dynQueue_lock);
-	return m_dyn_queue.empty();
+    for (auto& queue : m_dyn_queues) {
+        if (!queue.empty) {
+            return false;
+        }
+    }
+	return true;
 }
 
 void CShellIconManager::quant(float dTime)
