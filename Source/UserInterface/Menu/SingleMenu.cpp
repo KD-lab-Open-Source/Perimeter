@@ -296,7 +296,8 @@ void onMMStartMissionButton(CShellWindow* pWnd, InterfaceEventCode code, int par
         //NOTE: should be removed when difficulty will be implemented for each separate player
         if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
             missionToExec.setSinglePlayerDifficulty(profile->difficulty);
-            missionToExec.getActivePlayerData().setName(profile->name);
+            auto player = missionToExec.getActivePlayerData();
+            if (player) player->setName(profile->name);
         }
         //NOTE: Setup all names
 
@@ -362,7 +363,8 @@ void launchCurrentMission(CShellWindow* pWnd) {
         //NOTE: should be removed when difficulty will be implemented for each separate player
         if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
             missionToExec.setSinglePlayerDifficulty(profile->difficulty);
-            missionToExec.getActivePlayerData().setName(profile->name);
+            auto player = missionToExec.getActivePlayerData();
+            if (player) player->setName(profile->name);
         }
         //NOTE: Setup all names
 

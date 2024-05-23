@@ -1103,12 +1103,12 @@ int SwitchMenuScreenQuant1( float, float ) {
 
 						Frame* frame = historyScene.getNomadFrame();
                         auto player = missionToExec.getActivePlayerData();
-						if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO && frame) {
+						if (frame && gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
 							txtWnd->setText(HistoryScene::getFrameNameFromBase(frame->getName()));
 							txtWnd->colorIndex = frame->getColorIndex();
 							logoWnd->setRace(frame->getRace());
-						} else {
-						    BELLIGERENT_FACTION faction = getBelligerentFaction(player.belligerent);
+						} else if (player) {
+						    BELLIGERENT_FACTION faction = getBelligerentFaction(player->belligerent);
 							switch (faction) {
 								case EXODUS:
 									logoWnd->setRace(1);
@@ -1120,9 +1120,15 @@ int SwitchMenuScreenQuant1( float, float ) {
 								default:
 									logoWnd->setRace(0);
 							}
-							txtWnd->setText(player.name());
-							txtWnd->colorIndex = player.colorIndex;
-						}
+							txtWnd->setText(player->name());
+							txtWnd->colorIndex = player->colorIndex;
+						} else {
+                            fprintf(stderr, "No players in mission?\n");
+                            xassert(0);
+                            logoWnd->setRace(0);
+                            txtWnd->setText("???");
+                            txtWnd->colorIndex = 0;
+                        }
                         bgScene.setSkinColor(sColor4f(playerColors[txtWnd->colorIndex].unitColor));
 					}
 					break;

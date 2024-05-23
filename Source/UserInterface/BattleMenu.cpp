@@ -329,7 +329,8 @@ void startBattle(int pos, CShellWindow* pWnd) {
 	}
 
     if (const Profile* profile = gameShell->currentSingleProfile.getCurrentProfile()) {
-        missionToExec.getActivePlayerData().setName(profile->name);
+        auto player = missionToExec.getActivePlayerData();
+        if (player) player->setName(profile->name);
     }
     
     //Write current page UI settings into MD

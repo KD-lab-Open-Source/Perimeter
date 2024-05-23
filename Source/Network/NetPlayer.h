@@ -171,7 +171,9 @@ public:
 
     void fitPlayerArrays();
 
-	PlayerData& getActivePlayerData();
+    const PlayerData* getPlayerData(int playerID) const;
+
+	PlayerData* getActivePlayerData();
 
     void clearData();
 

@@ -669,14 +669,17 @@ bool MissionDescription::changePlayerHandicap(int playerIdx, int handicap)
     return false;
 }
 
-PlayerData& MissionDescription::getActivePlayerData() 
-{
-	for (int i = 0; i < playerAmountScenarioMax; i++) {
-		if (playersData[i].playerID == activePlayerID) {
-			return playersData[i];
-		}
-	}
-	return playersData[0];
+const PlayerData* MissionDescription::getPlayerData(int playerID) const {
+    for (int i = 0; i < playerAmountScenarioMax; i++) {
+        if (playersData[i].playerID == playerID) {
+            return &(playersData[i]);
+        }
+    }
+    return nullptr;
+}
+
+PlayerData* MissionDescription::getActivePlayerData() {
+	return const_cast<PlayerData*>(getPlayerData(activePlayerID));
 }
 
 void MissionDescription::packPlayerIDs()
