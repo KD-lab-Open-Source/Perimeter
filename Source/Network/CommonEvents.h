@@ -769,7 +769,6 @@ struct netCommandC_PlayerReady : netCommandGeneral
 	}
 };
 
-
 struct NetLatencyInfo {
     //Timestamp when this info was sent, also to return for the next latency status round
     uint64_t timestamp = 0;

@@ -240,6 +240,8 @@ public:
         return false;
     }
 
+    void PrintInfo() const;
+
 private:
     std::string resolve_mission_path(const std::string& path);
     

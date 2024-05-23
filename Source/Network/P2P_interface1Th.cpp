@@ -413,6 +413,8 @@ void PNetCenter::HandlerInputNetCommand()
 			break;
         case NETCOM_4C_ID_DESYNC_NOTIFY: {
             netCommand4C_DesyncNotify nc(in_ClientBuf);
+            fprintf(stderr, "NETCOM_4C_ID_DESYNC_NOTIFY\n");
+            
             
             if (nc.desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
                 ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);
@@ -444,6 +446,7 @@ void PNetCenter::HandlerInputNetCommand()
                 gameShell->savePrm().manualData.clearSoundTracks(); //Avoid host overriding client soundtracks
                 std::unique_ptr<MissionDescription> md = std::make_unique<MissionDescription>();
                 gameShell->universalSave((crash_dir + "save").c_str(), true, md.get());
+                md->PrintInfo();
 
                 //Attempt to save reel
                 universe()->savePlayReel((crash_dir + "reel").c_str());
@@ -585,10 +588,12 @@ void PNetCenter::P2PIQuant()
 		break;
     case PNC_INTERFACE_COMMAND_DESYNC:
         gameShell->generalErrorOccured(GameShell::DESYNC);
+        gameShell->CurrentMission.PrintInfo();
         break;
 	case PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED:
 		xassert(0&& "Host stoping, game ending");
 		gameShell->generalErrorOccured(GameShell::GENERAL_CONNECTION_FAILED);
+        gameShell->CurrentMission.PrintInfo();
         end_game = true;
         break;
 	}

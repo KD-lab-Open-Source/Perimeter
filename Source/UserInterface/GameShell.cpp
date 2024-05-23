@@ -451,6 +451,8 @@ void GameShell::destroyNetClient() {
 
 void GameShell::GameStart(const MissionDescription& mission)
 {
+    mission.PrintInfo();
+    
 	_WaitCursor();
 
 	setScriptReelEnabled(false);

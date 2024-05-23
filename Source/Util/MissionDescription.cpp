@@ -1,4 +1,5 @@
 #include <set>
+#include <cinttypes>
 #include "StdAfx.h"
 #include "NetConnection.h"
 #include "NetPlayer.h"
@@ -731,4 +732,44 @@ void MissionDescription::fitPlayerArrays() {
             playersShufflingIndices.pop_back();
         }
     }
+}
+
+void MissionDescription::PrintInfo() const {
+    printf("==== MissionDescription ====\n");
+    printf(
+            "Path '%s' world '%s' save '%s' mission '%s' (%" PRIi32 ")\n",
+            originalSaveName.value().c_str(),
+            worldName().c_str(),
+            savePathKey().c_str(),
+            missionName().c_str(),
+            missionNumber
+    );
+    printf(
+            "GameType: %" PRIi32 "\n"
+            "Players: %" PRIi32 " max %" PRIi32 " active %" PRIi32
+            "\n",
+            gameType_,
+            playersAmount(),
+            playerAmountScenarioMax,
+            activePlayerID
+    );
+    for (auto& player : playersData) {
+        printf(
+                "-> ID %" PRIi32 " Type %" PRIu32 " NETID 0x%" PRIX64
+                " Faction %" PRIu32 " Color %" PRIi32 " Clan %" PRIi32
+                " Difficulty %" PRIu32 " HC %" PRIi32 " StartReady %" PRIi32 " GameReady %" PRIi32 " "
+                "\n",
+                player.playerID,
+                static_cast<uint32_t>(player.realPlayerType.value()),
+                player.netid,
+                static_cast<uint32_t>(player.belligerent.value()),
+                player.colorIndex,
+                player.clan,
+                static_cast<uint32_t>(player.difficulty.value()),
+                player.handicap,
+                player.flag_playerStartReady,
+                player.flag_playerGameReady
+        );
+    }
+    printf("==== ==== ==== ====\n");
 }
