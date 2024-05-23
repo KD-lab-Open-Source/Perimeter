@@ -232,7 +232,7 @@ int rejectResolutionAction(float, float) {
 			GraphOptionsManager::getInstance().reject();
 			OnComboGraphicsSettings(_shellIconManager.GetWnd(SQSH_MM_SETTINGS_COMBO), EVENT_CREATEWND, -1);
 			OnComboGraphicsResolution(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_RESOLUTION_COMBO), EVENT_CREATEWND, -1);
-            OnComboGraphicsVSync(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_COLORDEPTH_COMBO), EVENT_CREATEWND, -1);
+            OnComboGraphicsVSync(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_VSYNC_COMBO), EVENT_CREATEWND, -1);
 			hideMessageBox();
 		}
 		return 0;
@@ -601,7 +601,7 @@ void onMMGraphicsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
 		OnComboGraphicsSettings(_shellIconManager.GetWnd(SQSH_MM_SETTINGS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsResolution(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_RESOLUTION_COMBO), EVENT_CREATEWND, -1);
-		OnComboGraphicsVSync(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_COLORDEPTH_COMBO), EVENT_CREATEWND, -1);
+		OnComboGraphicsVSync(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_VSYNC_COMBO), EVENT_CREATEWND, -1);
 		_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_GRAPHICS_SCR);
 	}
 }
