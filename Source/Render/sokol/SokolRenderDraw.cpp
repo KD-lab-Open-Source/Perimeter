@@ -73,8 +73,8 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
 // Mesh draw
 
 void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow_) {
-	use_shadow = use_shadow_;
-	pShadow = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
+    use_shadow = use_shadow_;
+    pShadow = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
 }
 
 void cSokolRender::EndDrawMesh() {
@@ -192,23 +192,23 @@ void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
     mat.MaterialAnimPhase = 0;
 
     // SetMaterial(0, texture, NULL, &mat);
-	SetTexture(0, texture, 0);
+    SetTexture(0, texture, 0);
 
-	eBlendMode blend=ALPHA_NONE;
-	if(texture && texture->IsAlphaTest())
-		blend=ALPHA_TEST;
+    eBlendMode blend=ALPHA_NONE;
+    if(texture && texture->IsAlphaTest())
+        blend=ALPHA_TEST;
 
-	if((texture && texture->IsAlpha()) || mat.Diffuse.a<0.99f)
-		blend=ALPHA_BLEND;
+    if((texture && texture->IsAlpha()) || mat.Diffuse.a<0.99f)
+        blend=ALPHA_BLEND;
 
-		 if(mat.mat&MAT_ALPHA_SUBBLEND)
-			blend=ALPHA_SUBBLEND;
-	else if(mat.mat&MAT_ALPHA_ADDBLENDALPHA)
-			blend=ALPHA_ADDBLENDALPHA;
-	else if(mat.mat&MAT_ALPHA_ADDBLEND)
-			blend=ALPHA_ADDBLEND;
+    if(mat.mat&MAT_ALPHA_SUBBLEND)
+        blend=ALPHA_SUBBLEND;
+    else if(mat.mat&MAT_ALPHA_ADDBLENDALPHA)
+        blend=ALPHA_ADDBLENDALPHA;
+    else if(mat.mat&MAT_ALPHA_ADDBLEND)
+        blend=ALPHA_ADDBLEND;
 
-	SetBlendState(blend);
+    SetBlendState(blend);
     
     // gb_RenderDevice3D->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG2 );
     // SetStream(Mesh);
@@ -220,8 +220,7 @@ void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
 }
 
 void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
-	SetWorldMatXf(mesh->GetGlobalMatrix());
-	// DrawPrimitive(Mesh);
+    SetWorldMatXf(mesh->GetGlobalMatrix());
     cMeshTri *Tri = mesh->GetTri();
     SubmitDrawBuffer(Tri->db, &Tri->dbr);
 }
@@ -242,7 +241,7 @@ void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
     activeCommand.SetTexture(0, pShadowMap->GetFrameImage(0)->sg->image);
     activeCommand.SetTexture(2, pLightMap->GetFrameImage(0)->sg->image);
 
-	TerraInterface* terra = TileMap->GetTerra();
+    TerraInterface* terra = TileMap->GetTerra();
     activeWorldSize = Vect2f(terra->SizeX(), terra->SizeY());
 
     if (activePipelineType != PIPELINE_TYPE_TILE_MAP) {
@@ -266,7 +265,7 @@ void cSokolRender::SetTileColor(sColor4f color) {
 }
 
 bool cSokolRender::CreateShadowTexture(int xysize) {
-	DeleteShadowTexture();
+    DeleteShadowTexture();
 
     auto SetupTexture = [](SokolTexture2D *texture, sg_pixel_format pixel_format) {
         auto description = texture->desc;
@@ -280,26 +279,26 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
         texture->dirty = false;
     };
 
-	pShadowMap=GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER16, false);
-	if (!pShadowMap) {
-		DeleteShadowTexture();
-		return false;
-	}
+    pShadowMap=GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER16, false);
+    if (!pShadowMap) {
+        DeleteShadowTexture();
+        return false;
+    }
     SetupTexture(pShadowMap->GetFrameImage(0)->sg, SG_PIXELFORMAT_DEPTH);
 
-	pLightMap = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
-	if (!pLightMap) {
-		DeleteShadowTexture();
-		return false;
-	}
+    pLightMap = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
+    if (!pLightMap) {
+        DeleteShadowTexture();
+        return false;
+    }
     SetupTexture(pLightMap->GetFrameImage(0)->sg, SG_PIXELFORMAT_BGRA8);
 
-	return true;
+    return true;
 }
 
 void cSokolRender::DeleteShadowTexture() {
-	RELEASE(pShadowMap);
-	RELEASE(pLightMap);
+    RELEASE(pShadowMap);
+    RELEASE(pLightMap);
 }
 
 cTexture* cSokolRender::GetShadowMap() {
