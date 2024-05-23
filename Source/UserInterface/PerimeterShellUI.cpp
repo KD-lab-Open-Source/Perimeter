@@ -1718,8 +1718,8 @@ void FormatLegionPopup(const sqshControl* pAttr, std::string& cbBuffer, int nBtn
 
 	xassert(!sRequired.empty());
 
-	static std::string cbTemp;
-	PopupFormatAttack(attrUnit, cbTemp, false);
+	static std::string extraText;
+	PopupFormatAttack(attrUnit, extraText, false);
 	if(pSquad){
 		//наличие базовых юнитов
 		DamageMolecula damage_molecula(player->unitAttribute(nAttrID)->damageMolecula);
@@ -1737,16 +1737,27 @@ void FormatLegionPopup(const sqshControl* pAttr, std::string& cbBuffer, int nBtn
 			xassert(0);
 			//pSquad->countPossibleUnits(nAttrID)
 		}
+        extraText += qdTextDB::instance().getText("Interface.Tips.PopupUnitDerived");
 
-		_shellIconManager.FormatMessageText(pAttr->popup, &cbBuffer, 
+		_shellIconManager.FormatMessageText(
+            pAttr->popup,
+            &cbBuffer, 
 			attrUnit->interfaceName(), sRequired.c_str(),
 			bSold ? "&00FF00" : "&FF0000", damage_molecula[0],
 			bOff  ? "&00FF00" : "&FF0000", damage_molecula[1],
-			bTech ? "&00FF00" : "&FF0000", damage_molecula[2], count_possible, attrUnit->interfaceName(),
-			cbTemp.c_str());
+			bTech ? "&00FF00" : "&FF0000", damage_molecula[2],
+            count_possible,
+            attrUnit->interfaceName(),
+            extraText.c_str());
 	} else {
-		_shellIconManager.FormatMessageText(pAttr->popup, &cbBuffer, 
-			attrUnit->interfaceName(), sRequired.c_str(), attrUnit->buildEnergy(), cbTemp.c_str());
+		_shellIconManager.FormatMessageText(
+            pAttr->popup,
+            &cbBuffer, 
+			attrUnit->interfaceName(),
+            sRequired.c_str(),
+            attrUnit->buildEnergy(),
+            extraText.c_str()
+        );
 	}
 }
 void CShellComplexPushButton::OnFormatPopupMessage(std::string& cbBuffer)
