@@ -397,7 +397,7 @@ void PNetCenter::HandlerInputNetCommand()
                 rsp.timestamp = nc.info.timestamp;
                 SendEventSync(&rsp);
                 
-                gameShell->updateLatencyInfo(nc.info);
+                gameShell->updateLatencyInfo(nc.info, clientMissionDescription);
 			}
 			break;
 		case NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE:

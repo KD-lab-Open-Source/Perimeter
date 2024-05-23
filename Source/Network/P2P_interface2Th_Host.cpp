@@ -173,6 +173,7 @@ void PNetCenter::ExitClient(NETID netid) {
 
 void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
     LogMsg("DeleteClient NID 0x%" PRIX64 " normal %d\n", netid, normalExit);
+    CAutoLock _lock(m_GeneralLock);
     if (netid == NETID_ALL || netid == NETID_NONE) {
         xassert(0);
         return;

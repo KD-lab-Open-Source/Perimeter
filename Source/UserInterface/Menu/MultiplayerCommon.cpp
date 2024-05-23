@@ -15,12 +15,20 @@ extern LogStream fout;
 extern MissionDescription missionToExec;
 extern MusicPlayer gb_Music;
 
+struct NetLatencyInfoShell {
+    std::string name = {};
+    int colorIndex = 0;
+    size_t quant = 0;
+    size_t ping = 0;
+    bool activePlayer = false;
+};
+
 std::vector<MissionDescription> multiplayerMaps;
 std::vector<MissionDescription> multiplayerSaves;
 
 ///Used to pass from logic to render thread
 std::vector<LocalizedText> toChatText = {};
-NetLatencyInfo toNetInfo;
+std::vector<NetLatencyInfoShell> toNetInfo = {};
 
 void clearMultiplayerVars() {
     toChatText.clear();
@@ -313,15 +321,25 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 }
 
 int addStringToChatWindowQuant( float, float ) {
+    if (!gameShell) {
+        return 0;
+    }
     ChatWindow* chatWnd = (ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT);
-    for (auto& t : toChatText) {
-        chatWnd->AddString(&t);
+    MTAuto lock(&gameShell->netDataLock);
+    if (chatWnd) {
+        for (auto& t: toChatText) {
+            chatWnd->AddString(&t);
+        }
     }
     toChatText.clear();
     return 0;
 }
 
 int addStringToChatHintWindowQuant( float, float ) {
+    if (!gameShell) {
+        return 0;
+    }
+    MTAuto lock(&gameShell->netDataLock);
     for (auto& t : toChatText) {
         _shellIconManager.addChatString(&t);
     }
@@ -331,7 +349,10 @@ int addStringToChatHintWindowQuant( float, float ) {
 
 void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale) {
     if (_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT)) {
-        toChatText.emplace_back(newString, locale);
+        {
+            MTAuto lock(&netDataLock);
+            toChatText.emplace_back(newString, locale);
+        }
         _shellIconManager.AddDynamicHandler( addStringToChatWindowQuant, CBCODE_QUANT );
     } else {
         //We add postfix on client side so the text can have local language
@@ -353,85 +374,93 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
             .insert(0, postfix)
             .insert(0, "&FFFFFF");
         }
-        toChatText.emplace_back(text, locale);
+        {
+            MTAuto lock(&netDataLock);
+            toChatText.emplace_back(text, locale);
+        }
         _shellIconManager.AddDynamicHandler( addStringToChatHintWindowQuant, CBCODE_QUANT );
     }
 }
 
 ////////// Latency info ////////////
 
-int updateLatencyInfoWindowQuant( float, float ) {
-    if (!_shellIconManager.IsInterface()) {
-        return 0;
-    }
-    CNetLatencyInfoWindow* wnd = safe_cast<CNetLatencyInfoWindow*>(_shellIconManager.GetWnd(SQSH_NET_LATENCY_INFO_ID));
-    terUniverse* uni = universe();
-    if (!wnd || !uni || !wnd->isVisible()) {
-        return 0;
-    }
+void CNetLatencyInfoWindow::updateLatencyInfo() {
+    briefData.clear();
+    fullData.clear();
 
-    std::string briefData, fullData;
+    if (!_shellIconManager.IsInterface()) {
+        return;
+    }
     
     std::string mslabel = startsWith(getLocale(), "russian") ? convertToCodepage("мс", "russian") : "ms";
 
-    for (int i = 0; i < toNetInfo.player_ids.size(); ++i) {
-        int playerID = toNetInfo.player_ids[i];
-        terPlayer* player = uni->findPlayer(playerID);
+    {
+        MTAuto lock(&gameShell->netDataLock);
+        for (auto& info : toNetInfo) {
+            //Get player name
+            if (!fullData.empty()) fullData += "\n";
+            std::string name = info.name;
+            while (name.length() < PLAYER_MAX_NAME_LEN) {
+                name += " ";
+            }
+            auto& uc = playerColors[info.colorIndex].unitColor;
+            fullData += "&" + toColorCode(uc) + name;
+
+            //Get quant text
+            std::string quantText = std::to_string(info.quant);
+            while (quantText.length() < 2) {
+                quantText = " " + quantText;
+            }
+            sColor4f quantColor = sColor4f(
+                    50 < info.quant ? 1 : 0,
+                    info.quant < 100 ? 1 : 0,
+                    0, 1
+            );
+            quantText = " &" + toColorCode(quantColor) + quantText;
+
+            //Get ping text
+            size_t ping = info.ping;
+            ping = static_cast<size_t>(xm::ceil(static_cast<double>(ping) / 1000.0));
+            sColor4f pingColor = sColor4f(
+                    1000 < ping ? 1 : 0,
+                    ping < 2000 ? 1 : 0,
+                    0, 1
+            );
+            std::string pingText = std::to_string(ping);
+            while (pingText.length() < 4) {
+                pingText = " " + pingText;
+            }
+            pingText = " &" + toColorCode(pingColor) + pingText + mslabel;
+
+            fullData += quantText + pingText;
+
+            if (info.activePlayer) {
+                briefData = qdTextDB::instance().getText("Interface.Menu.ButtonLabels.Network");
+                briefData += quantText + pingText;
+            }
+        }
+    }
+}
+
+void GameShell::updateLatencyInfo(const NetLatencyInfo& info, const MissionDescription* md) {
+    std::vector<NetLatencyInfoShell> newInfo;
+    for (int i = 0; i < info.player_ids.size(); ++i) {
+        int playerID = info.player_ids[i];
+        auto player = md->getPlayerData(playerID);
         if (!player) {
             xassert(0);
             continue;
         }
 
-        //Get player name
-        if (!fullData.empty()) fullData += "\n";
-        std::string name = player->name();
-        while (name.length() < PLAYER_MAX_NAME_LEN) {
-            name += " ";
-        }
-        fullData += "&" + toColorCode(player->unitColor()) + name;
-
-        //Get quant text
-        uint64_t quant = toNetInfo.quant - toNetInfo.player_quants[i];
-        std::string quantText = std::to_string(quant);
-        while (quantText.length() < 2) {
-            quantText = " " + quantText;
-        }
-        sColor4f quantColor = sColor4f(
-                50 < quant ? 1 : 0,
-                quant < 100 ? 1 : 0,
-                0, 1
-        );
-        quantText = " &" + toColorCode(quantColor) + quantText;
-        
-        //Get ping text
-        size_t ping = toNetInfo.player_pings[i]; // toNetInfo.timestamp - toNetInfo.player_last_seen[i];
-        ping = static_cast<size_t>(xm::ceil(static_cast<double>(ping) / 1000.0));
-        sColor4f pingColor = sColor4f(
-                1000 < ping ? 1 : 0,
-                ping < 2000 ? 1 : 0,
-                0, 1
-        );
-        std::string pingText = std::to_string(ping);
-        while (pingText.length() < 4) {
-            pingText = " " + pingText;
-        }
-        pingText = " &" + toColorCode(pingColor) + pingText + mslabel;
-
-        fullData += quantText + pingText;
-        
-        if (playerID == gameShell->CurrentMission.activePlayerID) {
-            briefData = qdTextDB::instance().getText("Interface.Menu.ButtonLabels.Network");
-            briefData += quantText + pingText;
-        }
+        auto& shellInfo = newInfo.emplace_back();
+        shellInfo.name = player->name();
+        shellInfo.colorIndex = player->colorIndex;
+        shellInfo.quant = info.quant - info.player_quants[i];
+        shellInfo.ping = info.player_pings[i]; // info.timestamp - info.player_last_seen[i];
+        shellInfo.activePlayer = playerID == md->activePlayerID;
     }
-    
-    wnd->SetText(briefData, fullData);
-    
-    return 0;
-}
-
-
-void GameShell::updateLatencyInfo(const NetLatencyInfo& info) {    
-    toNetInfo = info;
-    _shellIconManager.AddDynamicHandler( updateLatencyInfoWindowQuant, CBCODE_QUANT );
+    {
+        MTAuto lock(&netDataLock);
+        toNetInfo = newInfo;
+    }
 }

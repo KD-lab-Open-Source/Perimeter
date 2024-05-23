@@ -233,6 +233,10 @@ public:
     bool isDebugKeyHandlerEnabled() { return EnableDebugKeyHandlers; }
 
 	//-----Network function-----
+    
+    ///Mutex to ensure data that will be sent between threads isnt modified at same time
+    MTSection netDataLock;
+    
 	void NetQuant();
 	enum e_CreateGameReturnCode {
 		CG_RC_OK,
@@ -268,7 +272,7 @@ public:
 
 	void abnormalNetCenterTermination();
     
-    void updateLatencyInfo(const NetLatencyInfo& info);
+    void updateLatencyInfo(const NetLatencyInfo& info, const MissionDescription* md);
 
 	void addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale);
 

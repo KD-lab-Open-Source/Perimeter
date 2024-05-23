@@ -6135,11 +6135,6 @@ void CNetLatencyInfoWindow::Load(const sqshControl* attr) {
     CShellWindow::Load(attr);
 }
 
-void CNetLatencyInfoWindow::SetText(const std::string& brief, const std::string& full) {
-    briefData = brief;
-    fullData = full;
-}
-
 void CNetLatencyInfoWindow::OnWindow(int enable) {
     CShellWindow::OnWindow(enable);
     on_window = enable;
@@ -6147,6 +6142,8 @@ void CNetLatencyInfoWindow::OnWindow(int enable) {
 
 void CNetLatencyInfoWindow::draw(int bFocus) {
     if(state & SQSH_VISIBLE) {
+        updateLatencyInfo();
+
         terRenderDevice->SetFont(m_hFont);
         const float margin = 3;
 

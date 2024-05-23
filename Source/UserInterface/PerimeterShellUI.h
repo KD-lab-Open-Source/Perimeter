@@ -1465,13 +1465,13 @@ class CNetLatencyInfoWindow : public CShellWindow
     std::string fullData;
     std::string briefData;
     bool on_window = false;
+    void updateLatencyInfo();
 
 public:
     CNetLatencyInfoWindow(int id, CShellWindow* pParent, EVENTPROC p);
     ~CNetLatencyInfoWindow() override;
 
     void Load(const sqshControl* attr) override;
-    void SetText(const std::string& brief, const std::string& full);
     void OnWindow(int enable) override;
     void draw(int bFocus) override;
 };
