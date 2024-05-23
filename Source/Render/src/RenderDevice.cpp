@@ -1,5 +1,3 @@
-#include <string>
-#include <sstream>
 #include <SDL.h>
 #include "StdAfxRD.h"
 #include "xutil.h"

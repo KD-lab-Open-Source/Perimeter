@@ -37,6 +37,13 @@ void sokol_metal_render_callback() {
 }
 #endif
 
+//How many frames to store the resources until freed
+#ifndef GPX
+const uint32_t MAX_POOLED_RESOURCES_LIFE = 10000;
+#else
+const uint32_t MAX_POOLED_RESOURCES_LIFE = 32000;
+#endif
+
 int cSokolRender::BeginScene() {
     RenderSubmitEvent(RenderEvent::BEGIN_SCENE, ActiveScene ? "ActiveScene" : "");
     MTG();
@@ -60,9 +67,10 @@ int cSokolRender::EndScene() {
     }
 
     //Make sure there is nothing left to send as command
-    FinishActiveDrawBuffer();
-
+    ClearActiveBufferAndPassAction();
     xassert(activeDrawBuffer == nullptr);
+    xassert(activeCommand.pass_action == nullptr);
+
     ActiveScene = false;
 
 #ifdef SOKOL_METAL
@@ -81,7 +89,21 @@ void cSokolRender::DoSokolRendering() {
         DoSokolRendering(render_target.render_pass, render_target.commands);
     }
 
-    DoSokolRendering(render_targets[0].render_pass, render_targets[0].commands);
+    //Create the pass, clear all buffers
+    sg_pass swapchain_pass = {};
+    swapchain_pass.label = "PassSwapchain";
+    swapchain_pass.swapchain = render_targets[0].render_pass.swapchain;
+    swapchain_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+    swapchain_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+    swapchain_pass.action.colors[0].clear_value = fill_color;
+    swapchain_pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+    swapchain_pass.action.depth.store_action = SG_STOREACTION_DONTCARE;
+    swapchain_pass.action.depth.clear_value = 1.0f;
+    swapchain_pass.action.stencil.load_action = SG_LOADACTION_CLEAR;
+    swapchain_pass.action.stencil.store_action = SG_STOREACTION_DONTCARE;
+    swapchain_pass.action.stencil.clear_value = 0;
+
+    DoSokolRendering(swapchain_pass, render_targets[0].commands);
 }
 
 void cSokolRender::DoSokolRendering(sg_pass& render_pass, const std::vector<SokolCommand*>& commands) {
@@ -92,9 +114,15 @@ void cSokolRender::DoSokolRendering(sg_pass& render_pass, const std::vector<Soko
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
         RenderSubmitEvent(RenderEvent::PROCESS_COMMAND, "", command);
 #endif
+        //Change pass if set
+        if (command->pass_action) {
+            sg_end_pass();
+            memcpy(&render_pass.action, command->pass_action, sizeof(sg_pass_action));
+            sg_begin_pass(&render_pass);
+        }
+
         //Nothing to draw
         if (3 > command->vertices) {
-            xassert(0);
             continue;
         }
 
@@ -256,16 +284,18 @@ int cSokolRender::Flush(bool wnd) {
     }
 
     //Swap the window
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     SDL_GL_SwapWindow(sdl_window);
 #endif
 #ifdef SOKOL_D3D11
-    d3d_context->swap_chain->Present(1, 0);
+    uint32_t sync_interval = RenderMode & RENDERDEVICE_MODE_VSYNC ? 1 : 0;
+    d3d_context->swap_chain->Present(sync_interval, 0);
 #endif
 #ifdef SOKOL_METAL
     sokol_metal_draw();
 #endif
 
+    ClearPooledResources(MAX_POOLED_RESOURCES_LIFE);
     ClearCommands();
 
     xassert(!activeDrawBuffer || !activeDrawBuffer->written_vertices);
@@ -275,6 +305,38 @@ int cSokolRender::Flush(bool wnd) {
 #endif
 
     return 0;
+}
+
+void cSokolRender::ClearActiveBufferAndPassAction() {
+    if (activeDrawBuffer) {
+        //Send out any active DB before we set a pass action
+        //otherwise it might be renderer after setting new pass
+        FinishActiveDrawBuffer();
+    }
+    if (activeCommand.pass_action) {
+        //Active command has a pass action already and there was no active DB
+        //Create a empty command
+        CreateCommandEmpty();
+        if (activeCommand.pass_action) {
+            xassert(0);
+            delete activeCommand.pass_action;
+            activeCommand.pass_action = nullptr;
+        }
+    }
+}
+
+void cSokolRender::ClearZBuffer() {
+    //Keep color and stencil buffers, clear depth buffer
+    ClearActiveBufferAndPassAction();
+    sg_pass_action* action = new sg_pass_action();
+    action->colors[0].load_action = SG_LOADACTION_LOAD;
+    action->colors[0].store_action = SG_STOREACTION_STORE;
+    action->depth.load_action = SG_LOADACTION_CLEAR;
+    action->depth.store_action = SG_STOREACTION_DONTCARE;
+    action->depth.clear_value = 1.0f;
+    action->stencil.load_action = SG_LOADACTION_LOAD;
+    action->stencil.store_action = SG_STOREACTION_DONTCARE;
+    activeCommand.pass_action = action;
 }
 
 int cSokolRender::Fill(int r, int g, int b, int a) {
@@ -293,13 +355,10 @@ int cSokolRender::Fill(int r, int g, int b, int a) {
     }
 #endif
 
-    sg_color fill_color;
     fill_color.r = static_cast<float>(r) / 255.f;
     fill_color.g = static_cast<float>(g) / 255.f;
     fill_color.b = static_cast<float>(b) / 255.f;
     fill_color.a = static_cast<float>(a) / 255.f;
-    auto& swapchain_pass = render_targets[0].render_pass;
-    swapchain_pass.action.colors[0].clear_value = fill_color;
 
     return 0;
 }
@@ -311,12 +370,6 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
 
     SokolResourceBuffer* buffer;
     if (dynamic) {
-        //Get power of 2 to hold len
-        size_t i = 1;
-        while (i < len) {
-            i = i << 1;
-        }
-        len = i;
         SokolResourceKey resource_key = get_sokol_resource_key_buffer(len, type);
         auto nh = bufferPool.extract(resource_key);
         if (nh.empty()) {
@@ -336,7 +389,7 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
                 sg_buffer
             );
         } else {
-            buffer = nh.mapped();
+            buffer = nh.mapped().resource;
         }
 
         resource->dirty = true;
@@ -399,8 +452,42 @@ void cSokolRender::FinishActiveDrawBuffer() {
     activeDrawBuffer = nullptr;
 }
 
+void cSokolRender::CreateCommandEmpty() {
+    xassert(ActiveScene);
+    MT_IS_GRAPH();
+    
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
+    std::string label = "Pipeline: Empty";
+    RenderSubmitEvent(RenderEvent::CREATE_COMMAND, label.c_str());
+#endif
+
+    //Create command to be send
+    SokolCommand* cmd = new SokolCommand();
+    memcpy(cmd->viewport, activeCommand.viewport, sizeof(Vect2i) * 2);
+    memcpy(cmd->clip, activeCommand.clip, sizeof(Vect2i) * 2);
+
+    //Pass the pass action
+    if (activeCommand.pass_action) {
+        cmd->pass_action = activeCommand.pass_action;
+        activeCommand.pass_action = nullptr;
+    }
+
+    //Submit command
+    render_targets[0].commands.emplace_back(cmd);
+
+#ifdef PERIMETER_RENDER_TRACKER_COMMANDS
+    label = "Submit - Pipeline: " + std::to_string(pipeline_id)
+            + " Vtxs: " + std::to_string(cmd->vertices)
+            + " Idxs: " + std::to_string(cmd->indices)
+            + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))
+            + " Tex1: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[1]));
+    RenderSubmitEvent(RenderEvent::CREATE_COMMAND, label.c_str(), cmd);
+#endif
+}
+
 void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer* ib, size_t indices) {
     xassert(ActiveScene);
+    xassert(vb);
     MT_IS_GRAPH();
     if (0 == vertices) vertices = activeCommand.vertices;
     if (0 == indices) indices = activeCommand.indices;
@@ -530,16 +617,19 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
-    
+
+    //Pass the pass action
+    if (activeCommand.pass_action) {
+        cmd->pass_action = activeCommand.pass_action;
+        activeCommand.pass_action = nullptr;
+    }
+
     //Submit command
     assert(activeRenderTarget < render_targets.size());
     render_targets[activeRenderTarget].commands.emplace_back(cmd);
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
     label = "Submit - Pipeline: " + std::to_string(pipeline_id)
-            + " ColM: " + std::to_string(activeCommand.fs_color_mode)
-            + " OwVB: " + std::to_string(cmd->owned_vertex_buffer)
-            + " OwIB: " + std::to_string(cmd->owned_index_buffer)
             + " Vtxs: " + std::to_string(cmd->vertices)
             + " Idxs: " + std::to_string(cmd->indices)
             + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))
@@ -729,7 +819,9 @@ void cSokolRender::SetTextureImage(uint32_t slot, TextureImage* texture_image) {
             if (desc->usage == SG_USAGE_STREAM) {
                 resource_key = get_sokol_resource_key_texture(
                         desc->width,
-                        desc->height, desc->pixel_format);
+                        desc->height,
+                        desc->pixel_format
+                );
             }
             tex->image = new SokolResourceTexture(
                     resource_key,
@@ -976,7 +1068,4 @@ void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *D
         activeLightAmbient = *Ambient;
         activeLightSpecular = *Specular;
     }
-}
-
-void cSokolRender::ClearZBuffer() {
 }

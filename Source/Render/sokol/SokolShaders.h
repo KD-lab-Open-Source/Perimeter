@@ -37,7 +37,6 @@ shader_funcs shader_##MODULE_NAME = { \
     MODULE_NAME##_program_uniformblock_size, \
 };
 
-SOKOL_SHADER(tex1);
 SOKOL_SHADER(color_tex1);
 SOKOL_SHADER(color_tex2);
 SOKOL_SHADER(normal);

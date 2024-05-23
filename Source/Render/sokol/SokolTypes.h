@@ -7,7 +7,6 @@
 
 enum SOKOL_SHADER_ID {
     SOKOL_SHADER_ID_NONE,
-    SOKOL_SHADER_ID_tex1,
     SOKOL_SHADER_ID_color_tex1,
     SOKOL_SHADER_ID_color_tex2,
     SOKOL_SHADER_ID_normal,

@@ -141,23 +141,23 @@ SET(perimeter_LINK_LIBS
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
         ${EXE_LINK_LIBS_POST}
-        "-framework Foundation"
         "-framework AppKit"
-        "-framework QuartzCore"
-        "-framework CoreAudio"
         "-framework AudioToolbox"
-        "-framework CoreHaptics"
-        "-framework CoreGraphics"
-        "-framework GameController"
-        "-framework Metal"
-        "-framework CoreBluetooth"
-        "-framework CoreMotion"
-        "-framework CoreMedia"
-        "-framework Security"
         "-framework Carbon"
         "-framework Cocoa"
-        "-framework IOKit"
+        "-framework CoreAudio"
+        "-framework CoreBluetooth"
+        "-framework CoreGraphics"
+        "-framework CoreHaptics"
+        "-framework CoreMedia"
+        "-framework CoreMotion"
         "-framework ForceFeedback"
+        "-framework Foundation"
+        "-framework GameController"
+        "-framework IOKit"
+        "-framework Metal"
+        "-framework QuartzCore"
+        "-framework Security"
 )
 
 IF(PERIMETER_WINDOWS)

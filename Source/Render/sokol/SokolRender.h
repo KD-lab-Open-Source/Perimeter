@@ -1,8 +1,8 @@
 #ifndef PERIMETER_SOKOLRENDER_H
 #define PERIMETER_SOKOLRENDER_H
 
-#if defined(SOKOL_GLCORE33) || defined(SOKOL_GLES3)
-#define SOKOL_GL (1)
+#if defined(SOKOL_GLCORE) || defined(SOKOL_GLES3)
+#define PERIMETER_SOKOL_GL (1)
 #endif
 
 #include <tuple>
@@ -23,9 +23,10 @@ struct SokolCommand {
     void ClearShaderParams();
     void SetTexture(size_t index, SokolResource<sg_image>* sokol_texture);
     void ClearTextures();
-    NO_COPY_CONSTRUCTOR(SokolCommand)
+    NO_COPY_CONSTRUCTOR(SokolCommand);
     
     struct SokolPipeline* pipeline = nullptr;
+    sg_pass_action* pass_action = nullptr;
     size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
@@ -54,10 +55,20 @@ struct SokolPipelineContext {
     }
 };
 
+template<typename T>
+struct SokolResourcePooled {
+    ///How many frames passed since last time it was used
+    uint32_t unused_since = 0;
+    SokolResource<T>* resource = nullptr;
+
+    explicit SokolResourcePooled(SokolResource<T>* res) : resource(res) {
+    }
+};
+
 class cSokolRender: public cInterfaceRenderDevice {
 private:
     //SDL context
-#ifdef SOKOL_GL
+#ifdef PERIMETER_SOKOL_GL
     SDL_GLContext sdl_gl_context = nullptr;
 #endif
 #ifdef SOKOL_METAL
@@ -81,8 +92,11 @@ private:
     float kShadow = 0.25f;
 
     //Stores resources for reusing
-    std::unordered_multimap<uint64_t, SokolResourceBuffer*> bufferPool;
-    
+    void ClearPooledResources(uint32_t max_life);
+    std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
+
+    sg_color fill_color = {};
+
     //Renderer state
     bool ActiveScene = false;
     bool isOrthographicProjSet = false;
@@ -137,8 +151,10 @@ private:
     Vect2f activeWorldSize{};
 
     //Commands handling
+    void ClearActiveBufferAndPassAction();
     void ClearCommands();
     void FinishActiveDrawBuffer();
+    void CreateCommandEmpty();
     void CreateCommand(class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices);
     void SetVPMatrix(const Mat4f* matrix);
     void SetTex2Lerp(float lerp);
