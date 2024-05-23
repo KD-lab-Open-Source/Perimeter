@@ -14,7 +14,7 @@ else
   DOCKCROSS_ARCH=${ARCH}
 fi
 echo "Building under windows ${DOCKCROSS_ARCH}"
-DOCKCROSS_SCRIPT=$DOCKER_ROOT/dockcross-x86-perimeter
+DOCKCROSS_SCRIPT=$DOCKER_ROOT/dockcross-${DOCKCROSS_ARCH}-perimeter
 
 if [[ -n $BUILD ]] || [[ ! -f ${DOCKCROSS_SCRIPT} ]]; then
   docker build -t dockcross-${DOCKCROSS_ARCH}-perimeter -f $DOCKER_ROOT/${DOCKCROSS_ARCH}_Dockerfile .
