@@ -33,6 +33,7 @@
 #include "codepages/codepages.h"
 
 #include <SDL.h>
+#include <SDL_hints.h>
 #include <SDL_image.h>
 #include <SDL_vulkan.h>
 
@@ -1054,6 +1055,15 @@ int SDL_main(int argc, char *argv[])
 
     //Parse version string
     decode_version(currentShortVersion, currentVersionNumbers);
+
+    //Set DPI awareness, must be done before initializing SDL video subsystem
+    //Some old versions of SDL2 may not have this hint defined
+#ifdef SDL_HINT_WINDOWS_DPI_AWARENESS
+    SDL_SetHintWithPriority(SDL_HINT_WINDOWS_DPI_AWARENESS, "system", SDL_HINT_OVERRIDE);
+#endif
+#ifdef SDL_HINT_WINDOWS_DPI_SCALING
+    SDL_SetHintWithPriority(SDL_HINT_WINDOWS_DPI_SCALING, "0", SDL_HINT_OVERRIDE);
+#endif
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
