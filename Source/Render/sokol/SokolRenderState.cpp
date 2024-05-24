@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <sstream>
 #include <string>
 #include <vector>
 #include "xmath.h"
@@ -35,6 +34,11 @@ void sokol_metal_render_callback() {
     cSokolRender* sokolRender = reinterpret_cast<cSokolRender*>(gb_RenderDevice);
     sokolRender->DoSokolRendering();
 }
+
+#ifdef PERIMETER_DEBUG
+void sokol_metal_capture_frame();
+#endif
+
 #endif
 
 //How many frames to store the resources until freed
@@ -84,6 +88,15 @@ int cSokolRender::EndScene() {
 }
 
 void cSokolRender::DoSokolRendering() {
+#ifdef PERIMETER_DEBUG
+    if (is_capturing_frame) {
+        is_capturing_frame = false;
+#ifdef SOKOL_METAL
+        sokol_metal_capture_frame();
+#endif
+    }
+#endif
+
     for (size_t i = 1 ; i < render_targets.size(); i++) {
         auto& render_target = render_targets[i];
         DoSokolRendering(render_target.render_pass, render_target.commands);
@@ -306,6 +319,12 @@ int cSokolRender::Flush(bool wnd) {
 
     return 0;
 }
+
+#ifdef PERIMETER_DEBUG
+void cSokolRender::StartCaptureFrame() {
+    is_capturing_frame = true;
+}
+#endif
 
 void cSokolRender::ClearActiveBufferAndPassAction() {
     if (activeDrawBuffer) {

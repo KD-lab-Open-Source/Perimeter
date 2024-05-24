@@ -330,7 +330,7 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
     ScreenSize.y = yScr;
     RenderMode &= ~mode_mask;
     RenderMode |= mode;
-
+    
     //Set vsync
 #ifdef PERIMETER_SOKOL_GL
     SDL_GL_SetSwapInterval(RenderMode & RENDERDEVICE_MODE_VSYNC ? 1 : 0);
