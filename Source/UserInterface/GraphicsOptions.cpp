@@ -186,7 +186,7 @@ void GraphOptions::apply() {
 #ifndef GPX
 	bool change_depth = terBitPerPixel != colorDepth;
     bool change_display_mode = (terFullScreen != 0) != resolution.fullscreen
-            || terVSyncEnable != vsyncEnable;
+            || (terVSyncEnable != 0) != vsyncEnable;
     if (resolution.fullscreen) {
         change_display_mode |= terScreenRefresh != resolution.refresh
                             || terScreenIndex != resolution.display;
