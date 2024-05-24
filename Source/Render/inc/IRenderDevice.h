@@ -333,6 +333,10 @@ public:
 
     virtual cTexture* GetShadowMap();
     virtual cTexture* GetLightMap();
+
+#ifdef PERIMETER_DEBUG
+    virtual void StartCaptureFrame();
+#endif
 };
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection);

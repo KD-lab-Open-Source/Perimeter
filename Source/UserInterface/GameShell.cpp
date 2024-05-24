@@ -1355,6 +1355,12 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 
 	case VK_F6:
+#ifdef PERIMETER_DEBUG
+		if (isShiftPressed()) {
+			terRenderDevice->StartCaptureFrame();
+			break;
+		}
+#endif
 		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		profiler_start_stop();
@@ -1680,6 +1686,12 @@ void GameShell::KeyPressed(sKey& Key)
 		case VK_F12 | KBD_CTRL:
 			MakeShot();
 			break;
+
+		case VK_F6 | KBD_SHIFT:
+#ifdef PERIMETER_DEBUG
+			terRenderDevice->StartCaptureFrame();
+			break;
+#endif
 	}
 
 	ControlPressed(Key.fullkey);

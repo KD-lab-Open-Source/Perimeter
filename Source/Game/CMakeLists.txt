@@ -165,10 +165,17 @@ IF(PERIMETER_WINDOWS)
 ENDIF()
 
 IF(APPLE)
-    SET_TARGET_PROPERTIES(perimeter PROPERTIES
-        MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/Perimeter.app.template/Contents/Info.plist"
-    )
+    IF(PERIMETER_DEBUG)
+        SET_TARGET_PROPERTIES(perimeter PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/DebugInfo.plist"
+        )
+    ELSE()
+        SET_TARGET_PROPERTIES(perimeter PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/Perimeter.app.template/Contents/Info.plist"
+        )
+    ENDIF()
 ENDIF()
 
 #message("Link Libs: ${perimeter_LINK_LIBS}")

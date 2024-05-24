@@ -94,7 +94,7 @@ private:
     //Stores resources for reusing
     void ClearPooledResources(uint32_t max_life);
     std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
-
+    
     sg_color fill_color = {};
 
     //Renderer state
@@ -102,6 +102,10 @@ private:
     bool isOrthographicProjSet = false;
     sg_sampler sampler;
     sg_sampler shadow_sampler;
+
+#ifdef PERIMETER_DEBUG
+    bool is_capturing_frame = false;
+#endif
 
     struct RenderTarget final {
         cTexture* target_texture = nullptr;
@@ -222,7 +226,11 @@ public:
     int Fill(int r,int g,int b,int a=255) override;
     void ClearZBuffer() override;
     int Flush(bool wnd=false) override;
-    
+
+#ifdef PERIMETER_DEBUG
+    void StartCaptureFrame() override;
+#endif
+
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 
     void DeleteVertexBuffer(class VertexBuffer &vb) override;

@@ -735,3 +735,8 @@ cTexture* cInterfaceRenderDevice::GetShadowMap() {
 cTexture* cInterfaceRenderDevice::GetLightMap() {
     return nullptr;
 }
+
+#ifdef PERIMETER_DEBUG
+void cInterfaceRenderDevice::StartCaptureFrame() {
+}
+#endif

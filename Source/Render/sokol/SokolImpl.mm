@@ -16,6 +16,64 @@ static MTKView* mtk_view;
 static id mtk_view_controller;
 #endif
 
+#ifdef PERIMETER_DEBUG
+class FrameCaptureManager final {
+public:
+    void StartCapture() {
+        if (_is_capturing_frame) {
+            return;
+        }
+
+        MTLCaptureManager* capture_manager = [MTLCaptureManager sharedCaptureManager];
+        if (![capture_manager supportsDestination:MTLCaptureDestinationGPUTraceDocument]) {
+            fprintf(stderr, "FrameCaptureManager: unsupported destination\n");
+            return;
+        }
+
+        MTLCaptureDescriptor* capture_descriptor = [MTLCaptureDescriptor new];
+        capture_descriptor.captureObject = mtl_device;
+        capture_descriptor.destination = MTLCaptureDestinationGPUTraceDocument;
+        const auto current_time = static_cast<unsigned long>([NSDate date].timeIntervalSince1970);
+        _path = [[NSString stringWithFormat:@"/tmp/Perimeter_%lu.gputrace", current_time] copy];
+        capture_descriptor.outputURL = [NSURL fileURLWithPath:_path];
+
+        NSError* error;
+        BOOL result = [capture_manager startCaptureWithDescriptor:capture_descriptor error:&error];
+        if (!result) {
+            fprintf(stderr, "FrameCaptureManager: start capture error: %s\n", error.localizedDescription.UTF8String);
+            return;
+        }
+
+        _is_capturing_frame = true;
+    }
+
+    void StopCapture() {
+        if (!_is_capturing_frame) {
+            return;
+        }
+
+        MTLCaptureManager* capture_manager = [MTLCaptureManager sharedCaptureManager];
+        [capture_manager stopCapture];
+
+        fprintf(stderr, "FrameCaptureManager: frame saved to file: %s\n", _path.UTF8String);
+        _is_capturing_frame = false;
+
+        [_path release];
+        _path = nil;
+    }
+
+private:
+    bool _is_capturing_frame = false;
+    NSString* _path = nil;
+};
+
+FrameCaptureManager gb_frame_capture_manager;
+
+void sokol_metal_capture_frame() {
+    gb_frame_capture_manager.StartCapture();
+}
+#endif
+
 void sokol_metal_setup(SDL_Window* sdl_window, sg_desc* desc, sg_swapchain* swapchain, uint32_t ScreenHZ) {
     //Get window from SDL which we will use to associate Metal stuff
     SDL_SysWMinfo wm_info;
@@ -71,6 +129,9 @@ void sokol_metal_render(sg_swapchain* swapchain, void (*callback)()) {
 
 void sokol_metal_draw() {
     [mtk_view draw];
+#ifdef PERIMETER_DEBUG
+    gb_frame_capture_manager.StopCapture();
+#endif
 }
 
 void sokol_metal_destroy(sg_swapchain* swapchain) {
