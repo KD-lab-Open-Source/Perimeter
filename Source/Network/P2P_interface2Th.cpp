@@ -626,7 +626,7 @@ void PNetCenter::LLogicQuant()
                                             client->desync_state = PNC_DESYNC_RESTORE_FAILED;
                                             std::string gameID = std::to_string(time(nullptr)) + "_failed";
                                             netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
-                                            ev_notify.desync_amount = client->desync_amount;
+                                            ev_notify.data.desync_amount = client->desync_amount;
                                             SendEvent(ev_notify, client->netidPlayer);
                                             fprintf(stderr, "Failed to recover network synchronization with 0x%" PRIX64 " after %d times\n", client->netidPlayer, client->desync_amount);
                                         } else {
@@ -882,9 +882,9 @@ end_while_01:;
             netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
             for (auto& client : to_notify) {
                 if (client->netidPlayer == m_hostNETID) {
-                    ev_notify.desync_amount = highest_amount;
+                    ev_notify.data.desync_amount = highest_amount;
                 } else {
-                    ev_notify.desync_amount = client->desync_amount;
+                    ev_notify.data.desync_amount = client->desync_amount;
                 }
                 SendEvent(ev_notify, client->netidPlayer);
                 

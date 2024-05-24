@@ -2667,7 +2667,7 @@ void GameShell::updateResolution(bool change_depth, bool change_size, bool chang
 	}
 }
 
-void GameShell::serverMessage(LocalizedText* text) {
+void GameShell::serverMessage(const LocalizedText* text) {
     _shellIconManager.showHintChat(text, 5000);
 }
 

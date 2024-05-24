@@ -466,7 +466,6 @@ void PNetCenter::HostReceiveQuant()
                 */
                 {
                     fprintf(stderr, "Invalid netCommand %d to host from non-client NETID 0x%" PRIX64 "\n", currentCMD, netid);
-                    xassert(0);
                     in_HostBuf.ignoreNetCommand();
                 }
 

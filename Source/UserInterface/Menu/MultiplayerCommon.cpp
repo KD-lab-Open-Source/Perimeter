@@ -162,6 +162,73 @@ void GameShell::MultiplayerGameRestore(const MissionDescription& mission) {
     _shellIconManager.AddDynamicHandler(SwitchMultiplayerToRestoreQuant, CBCODE_QUANT);
 }
 
+DesyncNotify lastDesyncNotify;
+
+int multiplayerGameDesyncNotifyQuant(float,float) {
+    MTAutoSingleThread auto_single;
+    PNetCenter* net = gameShell->getNetClient();
+    if (lastDesyncNotify.gameID.empty()) {
+        return 0;
+    }
+    
+    LocalizedText text(
+            qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization"),
+            getLocale()
+    );
+    text.text += " " + std::to_string(lastDesyncNotify.desync_amount);
+    gameShell->serverMessage(&text);
+
+    std::string crash_dir = CRASH_DIR;
+    terminate_with_char(crash_dir, PATH_SEP);
+    crash_dir += "desync_" + lastDesyncNotify.gameID + "_" + std::to_string(net->m_localNETID) + PATH_SEP;
+    create_directories(crash_dir);
+
+    //Write net log
+    XBuffer netlog(2048, true);
+    netlog < currentVersion < "\r\n";
+    netlog < "ArchFlags: " <= computeArchFlags();
+    netlog < " HostNETID: " <= net->m_hostNETID;
+    netlog < " LocalNETID: " <= net->m_localNETID;
+    netlog < " Amount: " <= lastDesyncNotify.desync_amount;
+    netlog < "\r\n";
+    universe()->writeLogList2Buffer(netlog);
+    XStream f(crash_dir + "netlog.txt", XS_OUT);
+    f.write(netlog.address(), netlog.tell());
+    f.close();
+    universe()->clearLogList();
+
+    //Attempt to save state
+    gameShell->savePrm().manualData.clearSoundTracks(); //Avoid host overriding client soundtracks
+    std::unique_ptr<MissionDescription> md = std::make_unique<MissionDescription>();
+    gameShell->universalSave((crash_dir + "save").c_str(), true, md.get());
+    md->PrintInfo();
+
+    //Attempt to save reel
+    universe()->savePlayReel((crash_dir + "reel").c_str());
+
+    fprintf(stderr, "%d Error network synchronization, dumped at: %s\n", clocki(), crash_dir.c_str());
+
+    //Do not send binary and script data to host except host itself
+    //Also trim some data in partial mode
+    if (net->m_localNETID != net->m_hostNETID || lastDesyncNotify.desync_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
+        md->binaryData.alloc(0);
+        md->scriptsData.alloc(0);
+    }
+
+    md->setSaveName("");
+
+    //Send the ack
+    netCommand4H_DesyncAcknowledge ack(std::move(md));
+    std::swap(ack.netlog, netlog);
+    net->SendEventSync(&ack);
+    return 0;
+}
+
+void GameShell::MultiplayerGameDesyncNotify(DesyncNotify& nc) {
+    lastDesyncNotify = nc;
+    _shellIconManager.AddDynamicHandler(multiplayerGameDesyncNotifyQuant, CBCODE_QUANT);
+}
+
 //////////show/hide message ingame////////////////////
 
 std::string messageBoxText;

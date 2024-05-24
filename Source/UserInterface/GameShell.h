@@ -44,10 +44,6 @@ public:
 	void startCmdline(const CommandLineData& data);
 	void switchToInitialMenu();
 
-    void MultiplayerGameStarting();
-	void MultiplayerGameStart(const MissionDescription& mission);
-    void MultiplayerGameRestore(const MissionDescription& mission);
-
 	bool universalSave(const char* name, bool userSave, MissionDescription* missionOutput = nullptr);
 	SavePrm& savePrm() { return savePrm_; }
 	const SaveManualData& manualData() { return savePrm_.manualData; }
@@ -260,7 +256,7 @@ public:
 	void showConnectFailedInGame(const std::string& playerList);
 	void hideConnectFailedInGame(bool connectionRestored = true);
 
-    void serverMessage(LocalizedText* message);
+    void serverMessage(const LocalizedText* message);
 
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,
@@ -275,6 +271,11 @@ public:
     void updateLatencyInfo(const NetLatencyInfo& info, const MissionDescription* md);
 
 	void addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale);
+    
+    void MultiplayerGameStarting();
+    void MultiplayerGameStart(const MissionDescription& mission);
+    void MultiplayerGameRestore(const MissionDescription& mission);
+    void MultiplayerGameDesyncNotify(DesyncNotify& nc);
 
 	//-----end of network function----
 

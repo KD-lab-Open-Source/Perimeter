@@ -490,25 +490,29 @@ public:
 	unsigned char* pDAData_;
 };
 
+struct DesyncNotify {
+    int desync_amount = 0;
+    std::string gameID = {};
+};
+
 ///Sent from server when client is detected to be desynced
 struct netCommand4C_DesyncNotify : public netCommandGeneral {
 public:
-    int desync_amount;
-    std::string gameID;
+    DesyncNotify data = {};
 
     netCommand4C_DesyncNotify(const std::string& gameID_) : netCommandGeneral(NETCOM_4C_ID_DESYNC_NOTIFY) {
-        desync_amount = 0;
-        gameID = gameID_;
+        data.desync_amount = 0;
+        data.gameID = gameID_;
     }
 
     netCommand4C_DesyncNotify(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_DESYNC_NOTIFY) {
-        in > desync_amount;
-        in > StringInWrapper(gameID);
+        in > data.desync_amount;
+        in > StringInWrapper(data.gameID);
     }
 
     void Write(XBuffer& out) const override {
-        out < desync_amount;
-        out < StringOutWrapper(gameID);
+        out < data.desync_amount;
+        out < StringOutWrapper(data.gameID);
     };
 };
 
