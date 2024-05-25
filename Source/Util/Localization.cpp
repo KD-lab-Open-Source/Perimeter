@@ -97,13 +97,35 @@ void initLocale() {
 
     //Show selector if there is more than 1 locales available and none is currently active
     if (check_command_line("chooselocale") || (localeCurrent.empty() && 1 < localesAvailable.size())) {
-        int choice = MessageBoxChoice("Perimeter", "Select language:", localesAvailable);
-        if (0 < choice && choice <= localesAvailable.size()) {
-            localeCurrent = string_to_lower(localesAvailable[choice - 1].c_str());
-            
-            //Save user selection
-            saveLocale(localeCurrent);
-            fprintf(stdout, "User selected locale: %s\n", localeCurrent.c_str());
+        int choice = 0;
+        if (2 < localesAvailable.size()) {
+            choice = MessageBoxChoice("Perimeter", "Select language:", localesAvailable);
+            if (0 < choice && choice <= localesAvailable.size()) {
+                localeCurrent = string_to_lower(localesAvailable[choice - 1].c_str());
+
+                //Save user selection
+                saveLocale(localeCurrent);
+                fprintf(stdout, "User selected locale: %s\n", localeCurrent.c_str());
+            }
+        }
+        //If failed go to next choice
+        if (choice == 0 && !localeCurrent.empty()) {
+            for (int i = 0; i < localesAvailable.size(); ++i) {\
+                if (stricmp(localesAvailable[i].c_str(), localeCurrent.c_str()) == 0) {
+                    if (i < (localesAvailable.size() - 1)) {
+                        localeCurrent = string_to_lower(localesAvailable[i + 1].c_str());
+                    } else {
+                        localeCurrent = string_to_lower(localesAvailable[0].c_str());
+                    }
+
+                    //Save auto selection
+                    if (!localeCurrent.empty()) {
+                        saveLocale(localeCurrent);
+                        fprintf(stdout, "Selected next locale: %s\n", localeCurrent.c_str());
+                        break;
+                    }
+                }
+            }
         }
     }  
     if (localeCurrent.empty()) {
