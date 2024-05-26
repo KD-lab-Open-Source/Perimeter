@@ -67,7 +67,7 @@ void main() {
     frag_color = frag_color * un_tile_color;
 
     // light map
-    frag_color = frag_color * texture(sampler2D(un_tex2, un_sampler0), fs_uv2) * 4;
+    frag_color = frag_color * texture(sampler2D(un_tex2, un_sampler0), fs_uv2);
 
     frag_color.a = un_tile_color.a;
 }

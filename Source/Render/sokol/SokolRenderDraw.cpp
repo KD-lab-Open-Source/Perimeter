@@ -226,6 +226,9 @@ void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
 }
 
 void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
+    auto pShadowMap = shadowMapRenderTarget->texture;
+    auto pLightMap = lightMapRenderTarget->texture;
+
     float fOffsetX = 0.5f + (0.0f / pShadowMap->GetWidth());
     float fOffsetY = 0.5f + (0.0f / pShadowMap->GetWidth());
     float range = 1;
@@ -279,32 +282,56 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
         texture->dirty = false;
     };
 
-    pShadowMap=GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER16, false);
-    if (!pShadowMap) {
+    shadowMapRenderTarget = new SokolRenderTarget{};
+    shadowMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER16, false);
+    if (!shadowMapRenderTarget->texture) {
         DeleteShadowTexture();
         return false;
     }
-    SetupTexture(pShadowMap->GetFrameImage(0)->sg, SG_PIXELFORMAT_DEPTH);
+    SetupTexture(shadowMapRenderTarget->texture->GetFrameImage(0)->sg, SG_PIXELFORMAT_DEPTH);
 
-    pLightMap = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
-    if (!pLightMap) {
+    {
+        auto& render_pass = shadowMapRenderTarget->render_pass;
+        render_pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+        render_pass.action.depth.store_action = SG_STOREACTION_STORE;
+        render_pass.action.depth.clear_value = 1.0f;
+
+        sg_attachments_desc description{};
+        description.depth_stencil.image = shadowMapRenderTarget->texture->GetFrameImage(0)->sg->image->res;
+        render_pass.attachments = sg_make_attachments(&description);
+    }
+
+    lightMapRenderTarget = new SokolRenderTarget{};
+    lightMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
+    if (!lightMapRenderTarget->texture) {
         DeleteShadowTexture();
         return false;
     }
-    SetupTexture(pLightMap->GetFrameImage(0)->sg, SG_PIXELFORMAT_BGRA8);
+    SetupTexture(lightMapRenderTarget->texture->GetFrameImage(0)->sg, SG_PIXELFORMAT_BGRA8);
+
+    {
+        auto& render_pass = lightMapRenderTarget->render_pass;
+        render_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+        render_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+        render_pass.action.colors[0].clear_value = { 1.0f, 1.0f, 1.0f, 1.0f};
+
+        sg_attachments_desc description{};
+        description.colors[0].image = lightMapRenderTarget->texture->GetFrameImage(0)->sg->image->res;
+        render_pass.attachments = sg_make_attachments(&description);
+    }
 
     return true;
 }
 
 void cSokolRender::DeleteShadowTexture() {
-    RELEASE(pShadowMap);
-    RELEASE(pLightMap);
+    delete shadowMapRenderTarget;
+    delete lightMapRenderTarget;
 }
 
 cTexture* cSokolRender::GetShadowMap() {
-    return pShadowMap;
+    return shadowMapRenderTarget != nullptr ? shadowMapRenderTarget->texture : nullptr;
 }
 
 cTexture* cSokolRender::GetLightMap() {
-    return pLightMap;
+    return lightMapRenderTarget != nullptr ? lightMapRenderTarget->texture : nullptr;
 }

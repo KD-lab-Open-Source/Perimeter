@@ -1,3 +1,4 @@
+#include <array>
 #include <unordered_set>
 #include "StdAfxRD.h"
 #include "xmath.h"
@@ -85,11 +86,10 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     desc.logger.func = slog_func;
     
     //Setup swapchain and fill color
-    render_targets.emplace_back();
-    auto& swapchain_pass = render_targets[0].render_pass;
-    swapchain_pass.swapchain.width = ScreenSize.x;
-    swapchain_pass.swapchain.height = ScreenSize.y;
-    swapchain_pass.swapchain.sample_count = 1;
+    swapchain = {};
+    swapchain.width = ScreenSize.x;
+    swapchain.height = ScreenSize.y;
+    swapchain.sample_count = 1;
     fill_color = sg_color { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //OpenGL / OpenGLES
@@ -134,8 +134,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     }
     printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
     
-    auto& swapchain_pass = render_targets[0].render_pass;
-    swapchain_pass.swapchain.gl.framebuffer = 0;
+    swapchain.gl.framebuffer = 0;
 #endif //PERIMETER_SOKOL_GL
 
     //Direct3D
@@ -218,8 +217,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     dxgiAdapter->Release();
 
     //Create swap chain
-    auto& swapchain_pass = render_targets[0].render_pass;
-    uint32_t sample_count = swapchain_pass.swapchain.sample_count;
+    uint32_t sample_count = swapchain.sample_count;
     DXGI_SWAP_CHAIN_DESC* swap_chain_desc = &d3d_context->swap_chain_desc;
     memset(&d3d_context->swap_chain_desc, 0, sizeof(DXGI_SWAP_CHAIN_DESC));
     swap_chain_desc->BufferDesc.Width = static_cast<uint32_t>(xScr);
@@ -256,7 +254,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "metal", SDL_HINT_OVERRIDE);
 
     //Setup metal sokol context
-    sokol_metal_setup(sdl_window, &desc, &swapchain_pass.swapchain, ScreenHZ);
+    sokol_metal_setup(sdl_window, &desc, &swapchain, ScreenHZ);
 #endif
 
     const char* render_driver = SDL_GetHint(SDL_HINT_RENDER_DRIVER);
@@ -337,9 +335,8 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
 #endif
     
     //Update swapchain
-    auto& swapchain_pass = render_targets[0].render_pass;
-    swapchain_pass.swapchain.width = ScreenSize.x;
-    swapchain_pass.swapchain.height = ScreenSize.y;
+    swapchain.width = ScreenSize.x;
+    swapchain.height = ScreenSize.y;
 
 #ifdef SOKOL_D3D11
     if (d3d_context->swap_chain && need_resize) {
@@ -394,10 +391,9 @@ int cSokolRender::Done() {
     }
 #endif
 #ifdef SOKOL_METAL
-    auto& swapchain_pass = render_targets[0].render_pass;
-    if (swapchain_pass.swapchain.metal.current_drawable != nullptr) {
+    if (swapchain.metal.current_drawable != nullptr) {
         RenderSubmitEvent(RenderEvent::DONE, "Sokol Metal shutdown");
-        sokol_metal_destroy(&swapchain_pass.swapchain);
+        sokol_metal_destroy(&swapchain);
     }
 #endif
 #ifdef PERIMETER_SOKOL_GL
@@ -464,8 +460,8 @@ void cSokolRender::ClearPooledResources(uint32_t max_life) {
 
 void cSokolRender::ClearCommands() {
     std::unordered_set<SokolResourceBuffer*> pooled;
-    for (auto& render_target : render_targets) {
-        for (SokolCommand* command : render_target.commands) {
+    auto ClearCommands = [&pooled, this](std::vector<SokolCommand*>& commands) {
+        for (SokolCommand* command : commands) {
             //Reclaim resources that can be reused
             SokolResourceBuffer* vertex_buffer = command->vertex_buffer;
             if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone && pooled.count(vertex_buffer) == 0) {
@@ -490,8 +486,17 @@ void cSokolRender::ClearCommands() {
             
             delete command;
         }
-        render_target.commands.clear();
+    };
+
+    for (auto& target : std::array<SokolRenderTarget*, 2>{shadowMapRenderTarget, lightMapRenderTarget}) {
+        if (target != nullptr) {
+            ClearCommands(target->commands);
+            target->commands.clear();
+        }
     }
+
+    ClearCommands(commands);
+    commands.clear();
 
 #ifdef PERIMETER_DEBUG
     //printf("%ld %ld\n", reclaimed.size(), bufferPool.size());
@@ -596,17 +601,15 @@ void cSokolRender::d3d_CreateDefaultRenderTarget() {
     assert(SUCCEEDED(hr) && d3d_context->depth_stencil_view);
     
     //Apply into swapchain pass
-    auto& swapchain_pass = render_targets[0].render_pass;
-    swapchain_pass.swapchain.d3d11.render_view = 1 < sample_count ? d3d_context->msaa_view : d3d_context->render_target_view;
-    swapchain_pass.swapchain.d3d11.resolve_view = 1 < sample_count ? d3d_context->render_target_view : nullptr;
-    swapchain_pass.swapchain.d3d11.depth_stencil_view = d3d_context->depth_stencil_view;
+    swapchain.d3d11.render_view = 1 < sample_count ? d3d_context->msaa_view : d3d_context->render_target_view;
+    swapchain.d3d11.resolve_view = 1 < sample_count ? d3d_context->render_target_view : nullptr;
+    swapchain.d3d11.depth_stencil_view = d3d_context->depth_stencil_view;
 }
 
 void cSokolRender::d3d_DestroyDefaultRenderTarget() {
-    auto& swapchain_pass = render_targets[0].render_pass;
-    swapchain_pass.swapchain.d3d11.render_view = nullptr;
-    swapchain_pass.swapchain.d3d11.resolve_view = nullptr;
-    swapchain_pass.swapchain.d3d11.depth_stencil_view = nullptr;
+    swapchain.d3d11.render_view = nullptr;
+    swapchain.d3d11.resolve_view = nullptr;
+    swapchain.d3d11.depth_stencil_view = nullptr;
     RELEASE(d3d_context->render_target_texture);
     RELEASE(d3d_context->render_target_view);
     RELEASE(d3d_context->depth_stencil_texture);

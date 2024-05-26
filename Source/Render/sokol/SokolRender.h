@@ -41,13 +41,23 @@ struct SokolCommand {
     Vect2i clip[2]; //0 Pos 1 Size
 };
 
+struct SokolRenderTarget final {
+    cTexture* texture = nullptr;
+    sg_pass render_pass{};
+    std::vector<SokolCommand*> commands;
+
+    ~SokolRenderTarget() {
+        RELEASE(texture);
+    }
+};
+
 struct SokolPipelineContext {
     PIPELINE_TYPE pipeline_type;
     PIPELINE_MODE pipeline_mode;
     ePrimitiveType primitive_type;
     vertex_fmt_t vertex_fmt;
     sg_pipeline_desc desc{};
-    struct shader_funcs* shader_funcs;
+    struct shader_funcs* shader_funcs = nullptr;
 
     bool operator==(const SokolPipelineContext& other) const {
         return std::tie(pipeline_type, pipeline_mode, primitive_type, vertex_fmt) 
@@ -84,22 +94,19 @@ private:
     friend const void* sokol_d3d_render_target_view_cb();
     friend const void* sokol_d3d_depth_stencil_view_cb();
 #endif
-
-    cTexture* pShadowMap = nullptr;
-    cTexture* pLightMap = nullptr;
-    bool use_shadow = false;
-    cCamera* pShadow = nullptr;
-    float kShadow = 0.25f;
-
+    
     //Stores resources for reusing
     void ClearPooledResources(uint32_t max_life);
     std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
     
+    //For swapchain pass that renders into final device
+    sg_swapchain swapchain = {};
     sg_color fill_color = {};
-
+    
     //Renderer state
     bool ActiveScene = false;
     bool isOrthographicProjSet = false;
+    std::vector<SokolCommand*> commands;
     sg_sampler sampler;
     sg_sampler shadow_sampler;
 
@@ -107,13 +114,11 @@ private:
     bool is_capturing_frame = false;
 #endif
 
-    struct RenderTarget final {
-        cTexture* target_texture = nullptr;
-        SokolTexture2D* depth_image = nullptr;
-        sg_pass render_pass{};
-        std::vector<SokolCommand*> commands;
-    };
-    std::vector<RenderTarget> render_targets;
+    SokolRenderTarget* shadowMapRenderTarget = nullptr;
+    SokolRenderTarget* lightMapRenderTarget = nullptr;
+    bool use_shadow = false;
+    cCamera* pShadow = nullptr;
+    float kShadow = 0.25f;
 
     //Empty texture when texture slot is unused
     SokolTexture2D* emptyTexture = nullptr;
@@ -150,7 +155,7 @@ private:
     Mat4f activeTextureTransform[PERIMETER_SOKOL_TEXTURES];
 
     //Shadow and Light map rendering
-    size_t activeRenderTarget = 0;
+    SokolRenderTarget* activeRenderTarget = nullptr;
     Mat4f activeShadowMatrix{};
     Vect2f activeWorldSize{};
 

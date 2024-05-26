@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <string>
 #include <vector>
 #include "xmath.h"
@@ -78,8 +79,7 @@ int cSokolRender::EndScene() {
     ActiveScene = false;
 
 #ifdef SOKOL_METAL
-    auto& swapchain_pass = render_targets[0].render_pass;
-    sokol_metal_render(&swapchain_pass.swapchain, &sokol_metal_render_callback);
+    sokol_metal_render(&swapchain, &sokol_metal_render_callback);
 #else
     DoSokolRendering();
 #endif
@@ -97,15 +97,16 @@ void cSokolRender::DoSokolRendering() {
     }
 #endif
 
-    for (size_t i = 1 ; i < render_targets.size(); i++) {
-        auto& render_target = render_targets[i];
-        DoSokolRendering(render_target.render_pass, render_target.commands);
+    for (auto& target : std::array<SokolRenderTarget*, 2>{shadowMapRenderTarget, lightMapRenderTarget}) {
+        if (target != nullptr) {
+            DoSokolRendering(target->render_pass, target->commands);
+        }
     }
 
     //Create the pass, clear all buffers
     sg_pass swapchain_pass = {};
     swapchain_pass.label = "PassSwapchain";
-    swapchain_pass.swapchain = render_targets[0].render_pass.swapchain;
+    swapchain_pass.swapchain = swapchain;
     swapchain_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
     swapchain_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
     swapchain_pass.action.colors[0].clear_value = fill_color;
@@ -116,7 +117,7 @@ void cSokolRender::DoSokolRendering() {
     swapchain_pass.action.stencil.store_action = SG_STOREACTION_DONTCARE;
     swapchain_pass.action.stencil.clear_value = 0;
 
-    DoSokolRendering(swapchain_pass, render_targets[0].commands);
+    DoSokolRendering(swapchain_pass, commands);
 }
 
 void cSokolRender::DoSokolRendering(sg_pass& render_pass, const std::vector<SokolCommand*>& commands) {
@@ -492,7 +493,7 @@ void cSokolRender::CreateCommandEmpty() {
     }
 
     //Submit command
-    render_targets[0].commands.emplace_back(cmd);
+    commands.emplace_back(cmd);
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
     label = "Submit - Pipeline: " + std::to_string(pipeline_id)
@@ -515,7 +516,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     if (WireframeMode) pipelineType = PIPELINE_TYPE_LINE_STRIP;
 #endif
 
-    SokolPipelineContext pipeline_context{pipelineType, activePipelineMode, activeDrawBuffer->primitive, vb->fmt, {}, nullptr};
+    SokolPipelineContext pipeline_context{pipelineType, activePipelineMode, activeDrawBuffer->primitive, vb->fmt};
     SokolPipeline* pipeline = GetPipeline(pipeline_context);
     if (!pipeline) {
         xxassert(0, "CreateCommand: No pipeline found");
@@ -642,10 +643,13 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
         cmd->pass_action = activeCommand.pass_action;
         activeCommand.pass_action = nullptr;
     }
-
+    
     //Submit command
-    assert(activeRenderTarget < render_targets.size());
-    render_targets[activeRenderTarget].commands.emplace_back(cmd);
+    if (activeRenderTarget != nullptr) {
+        activeRenderTarget->commands.emplace_back(cmd);
+    } else {
+        commands.emplace_back(cmd);
+    }
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
     label = "Submit - Pipeline: " + std::to_string(pipeline_id)
@@ -871,52 +875,21 @@ uint32_t cSokolRender::GetMaxTextureSlots() {
 }
 
 void cSokolRender::SetRenderTarget(cTexture* target, SurfaceImage zbuffer) {
-    auto p = [&target](const RenderTarget& e) -> bool { return e.target_texture == target; };
-    auto result = std::find_if(render_targets.begin(), render_targets.end(), p);
-    if (result != render_targets.end()) {
-        activeRenderTarget = result - render_targets.begin();
+    if (target == shadowMapRenderTarget->texture) {
+        activeRenderTarget = shadowMapRenderTarget;
         return;
     }
 
-    render_targets.emplace_back();
-    auto& render_target = render_targets.back();
-    render_target.target_texture = target;
-
-    sg_attachments_desc description{};
-    if (target == pShadowMap) {
-        render_target.render_pass.action.depth.load_action = SG_LOADACTION_CLEAR;
-        render_target.render_pass.action.depth.store_action = SG_STOREACTION_STORE;
-        render_target.render_pass.action.depth.clear_value = 1.0f;
-
-        description.depth_stencil.image = pShadowMap->GetFrameImage(0)->sg->image->res;
-    } else {
-        sg_image_desc image_description{};
-        image_description.width = target->GetWidth();
-        image_description.height = target->GetHeight();
-        image_description.num_slices = 1;
-        image_description.num_mipmaps = 1;
-        image_description.sample_count = 1;
-        render_target.depth_image = new SokolTexture2D(&image_description);
-
-        image_description.render_target = true;
-        image_description.usage = SG_USAGE_IMMUTABLE;
-        image_description.pixel_format = SG_PIXELFORMAT_DEPTH_STENCIL;
-        SokolResourceKey resource_key = get_sokol_resource_key_texture(
-            image_description.width, image_description.height, image_description.pixel_format);
-        render_target.depth_image->image = new SokolResourceTexture(resource_key, sg_make_image(&image_description));
-        render_target.depth_image->resource_key = render_target.depth_image->image->key;
-        render_target.depth_image->dirty = false;
-
-        description.colors[0].image = target->GetFrameImage(0)->sg->image->res;
-        description.depth_stencil.image = render_target.depth_image->image->res;
+    if (target == lightMapRenderTarget->texture) {
+        activeRenderTarget = lightMapRenderTarget;
+        return;
     }
-    render_target.render_pass.attachments = sg_make_attachments(&description);
 
-    activeRenderTarget = render_targets.size() - 1;
+    xxassert(false, "Unexpected render target");
 }
 
 void cSokolRender::RestoreRenderTarget() {
-    activeRenderTarget = 0;
+    activeRenderTarget = nullptr;
 }
 
 void cSokolRender::SetDrawNode(cCamera *pDrawNode)

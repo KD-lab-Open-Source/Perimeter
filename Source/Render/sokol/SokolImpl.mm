@@ -24,27 +24,29 @@ public:
             return;
         }
 
-        MTLCaptureManager* capture_manager = [MTLCaptureManager sharedCaptureManager];
-        if (![capture_manager supportsDestination:MTLCaptureDestinationGPUTraceDocument]) {
-            fprintf(stderr, "FrameCaptureManager: unsupported destination\n");
-            return;
+        @autoreleasepool {
+            MTLCaptureManager* capture_manager = [MTLCaptureManager sharedCaptureManager];
+            if (![capture_manager supportsDestination:MTLCaptureDestinationGPUTraceDocument]) {
+                fprintf(stderr, "FrameCaptureManager: unsupported destination\n");
+                return;
+            }
+
+            MTLCaptureDescriptor* capture_descriptor = [MTLCaptureDescriptor new];
+            capture_descriptor.captureObject = mtl_device;
+            capture_descriptor.destination = MTLCaptureDestinationGPUTraceDocument;
+            const auto current_time = static_cast<unsigned long>([NSDate date].timeIntervalSince1970);
+            _path = [[NSString stringWithFormat:@"/tmp/Perimeter_%lu.gputrace", current_time] copy];
+            capture_descriptor.outputURL = [NSURL fileURLWithPath:_path];
+
+            NSError* error;
+            BOOL result = [capture_manager startCaptureWithDescriptor:capture_descriptor error:&error];
+            if (!result) {
+                fprintf(stderr, "FrameCaptureManager: start capture error: %s\n", error.localizedDescription.UTF8String);
+                return;
+            }
+
+            _is_capturing_frame = true;
         }
-
-        MTLCaptureDescriptor* capture_descriptor = [MTLCaptureDescriptor new];
-        capture_descriptor.captureObject = mtl_device;
-        capture_descriptor.destination = MTLCaptureDestinationGPUTraceDocument;
-        const auto current_time = static_cast<unsigned long>([NSDate date].timeIntervalSince1970);
-        _path = [[NSString stringWithFormat:@"/tmp/Perimeter_%lu.gputrace", current_time] copy];
-        capture_descriptor.outputURL = [NSURL fileURLWithPath:_path];
-
-        NSError* error;
-        BOOL result = [capture_manager startCaptureWithDescriptor:capture_descriptor error:&error];
-        if (!result) {
-            fprintf(stderr, "FrameCaptureManager: start capture error: %s\n", error.localizedDescription.UTF8String);
-            return;
-        }
-
-        _is_capturing_frame = true;
     }
 
     void StopCapture() {
@@ -59,7 +61,6 @@ public:
         _is_capturing_frame = false;
 
         [_path release];
-        _path = nil;
     }
 
 private:
