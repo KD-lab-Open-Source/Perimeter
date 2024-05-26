@@ -1135,6 +1135,10 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
                 case SQSH_MM_MULTIPLAYER_LIST_SCR:
                     {
+                        printf("Loading multiplayer map descriptions\n");
+                        for (int i = 0; i < multiplayerMaps.size(); ++i) {
+                            checkMissionDescription(i, multiplayerMaps, GT_MULTI_PLAYER_CREATE);
+                        }
                         _shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN)->Enable(0);
                         std::string name = getStringSettings(regLanName);
                         if (name.empty() && gameShell->currentSingleProfile.isValidProfile()) {

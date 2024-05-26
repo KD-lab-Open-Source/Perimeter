@@ -37,9 +37,6 @@ void clearMultiplayerVars() {
 void loadMultiplayerList() {
     if (multiplayerMaps.empty()) {
         loadMapVector(multiplayerMaps, "RESOURCE/MULTIPLAYER", ".spg");
-        for (int i = 0; i < multiplayerMaps.size(); ++i) {
-            checkMissionDescription(i, multiplayerMaps, GT_MULTI_PLAYER_CREATE);
-        }
     }
     if (multiplayerSaves.empty()) {
         loadMapVector(multiplayerSaves, "RESOURCE/SAVES/MULTIPLAYER", ".spg");
