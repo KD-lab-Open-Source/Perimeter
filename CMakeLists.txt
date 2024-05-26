@@ -30,6 +30,7 @@ OPTION(OPTION_LINK_LIBS_POST "Link executables with provided libraries, placed a
 OPTION(OPTION_SOKOL "Enable Sokol GFX based renderer" ON)
 OPTION(OPTION_FFMPEG_MOVIES "Use FFMPEG to decode ingame movies" ON)
 OPTION(OPTION_ASAN "Enable AddressSanitizer" OFF)
+OPTION(OPTION_SANITIZE "Pass -fsanitizer" OFF)
 OPTION(OPTION_O0 "Disable optimizations" OFF)
 
 # Compiler detections
@@ -313,9 +314,13 @@ IF(NOT MSVC_CL_BUILD)
         SET(CMAKE_BUILD_RPATH "$ORIGIN") #let binary find libs on own dir
     ENDIF()
 
-    IF (OPTION_ASAN)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
-        set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+    IF (NOT OPTION_SANITIZE AND OPTION_ASAN)
+        set(OPTION_SANITIZE "sanitize")
+    ENDIF()
+
+    IF (OPTION_SANITIZE)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=${OPTION_SANITIZE}")
+        set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=${OPTION_SANITIZE}")
     ENDIF()
 
     #Codebase assumes char is signed, some compilers set char as unsigned
