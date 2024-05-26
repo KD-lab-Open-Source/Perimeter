@@ -292,34 +292,40 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
     bind_vertex_fmt(context, VERTEX_FMT_TEX2);
     bind_vertex_fmt(context, VERTEX_FMT_NORMAL);
 
-    if (shader_id == SOKOL_SHADER_ID_object_shadow) {
-        switch (context.vertex_fmt) {
-            case sVertexXYZT1::fmt:
-                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT2;
-                break;
-            case sVertexXYZDT1::fmt:
-                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT4;
-                context.desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
-                break;
-            case sVertexXYZDT2::fmt:
-                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT4;
-                context.desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
-                context.desc.layout.attrs[3].format = SG_VERTEXFORMAT_FLOAT2;
-                break;
-            case sVertexXYZNT1::fmt:
-                context.desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT3;
-                context.desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
-                break;
-            default:
-                fprintf(stderr, "RegisterPipeline: unknown pipeline format '%d'\n", context.vertex_fmt);
-                break;
+    if (activeRenderTarget != nullptr) {
+        if (activeRenderTarget == shadowMapRenderTarget) {
+            switch (context.vertex_fmt) {
+                case sVertexXYZT1::fmt:
+                    desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT2;
+                    break;
+                case sVertexXYZDT1::fmt:
+                    desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT4;
+                    desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+                    break;
+                case sVertexXYZDT2::fmt:
+                    desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT4;
+                    desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+                    desc.layout.attrs[3].format = SG_VERTEXFORMAT_FLOAT2;
+                    break;
+                case sVertexXYZNT1::fmt:
+                    desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT3;
+                    desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+                    break;
+                default:
+                    fprintf(stderr, "RegisterPipeline: unknown pipeline format '%d'\n", context.vertex_fmt);
+                    break;
+            }
+
+            desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
+            desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
+            desc.depth.write_enabled = true;
+
+            desc.colors[0].pixel_format = SG_PIXELFORMAT_NONE;
+        } else if (activeRenderTarget == lightMapRenderTarget) {
+            desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+            desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+            desc.depth.write_enabled = false;
         }
-
-        desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
-        desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
-        desc.depth.write_enabled = true;
-
-        desc.colors[0].pixel_format = SG_PIXELFORMAT_NONE;
     }
 
     //Created, store on our pipelines
