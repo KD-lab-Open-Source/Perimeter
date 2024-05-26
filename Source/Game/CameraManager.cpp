@@ -26,7 +26,7 @@ const float CAMERA_MAX_HEIGHT = 2000.0f;
 const float CAMERA_THETA_MIN = static_cast<float>(XM_PI/10.0);
 const float CAMERA_THETA_MAX = static_cast<float>(XM_PI/3.0);
 #else
-const float CAMERA_MAX_HEIGHT = 5000.0f;
+const float CAMERA_MAX_HEIGHT = 10000.0f;
 const float CAMERA_THETA_MIN = static_cast<float>(XM_PI/5.0);
 const float CAMERA_THETA_MAX = static_cast<float>(XM_PI/2.85);
 #endif
