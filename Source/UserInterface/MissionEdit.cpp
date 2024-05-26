@@ -101,7 +101,6 @@ bool MissionEditor::keyPressed(const sKey& Key)
 	case 'Q':
 		setPlayer(0);
 		return true;
-	case VK_TILDE:
 	case 'W':
 		setPlayer(-1);
 		return true;
