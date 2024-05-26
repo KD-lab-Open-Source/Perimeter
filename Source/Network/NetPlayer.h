@@ -182,7 +182,7 @@ public:
             //Always output current version which is serialized with
             extern const char* currentShortVersion;
             PrmString versionOutput = currentShortVersion;
-            ar & WRAP_OBJECT(versionOutput);
+            ar & WRAP_NAME(versionOutput, "version");
         } else if (ar.isInput()) {
             ar & WRAP_OBJECT(version);
         }
