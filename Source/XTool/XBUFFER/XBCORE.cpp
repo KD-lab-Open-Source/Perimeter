@@ -26,7 +26,12 @@ void XBuffer::alloc(size_t sz)
 void XBuffer::realloc(size_t sz) {
     if (buf && sz) {
         size = sz;
+        char* oldbuf = buf;
         buf = static_cast<char*>(std::realloc(buf, size));
+        if (!buf) {
+            buf = oldbuf;
+            free();
+        }
     } else {
         alloc(sz);
     }

@@ -277,9 +277,12 @@ void check_determinacy_quant(bool start)
 			recorder_logging.write((const char*)log_buffer, log_buffer.tell());
 			}
 		else{
-			static char* buf = (char*)malloc(buffer_size);
-			if(buffer_size < log_buffer.tell())
-				buf = (char*)realloc(buf, buffer_size = log_buffer.tell());
+			static char* buf = static_cast<char*>(malloc(buffer_size));
+			if (buffer_size < log_buffer.tell()) {
+                buffer_size = log_buffer.tell();
+                free(buf);
+                buf = static_cast<char*>(malloc(buffer_size));
+            }
 			int len = recorder_logging.read(buf, log_buffer.tell());
 			if(memcmp(buf, (const char*)log_buffer, len)){
 				XStream f0("lst0", XS_OUT);
