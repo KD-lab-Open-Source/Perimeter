@@ -105,13 +105,13 @@ private:
     eColorMode activeCommandColorMode = COLOR_MOD;
     float activeCommandTex2Lerp = -1;
     eAlphaTestMode activeCommandAlphaTest = ALPHATEST_NONE;
-    SOKOL_MATERIAL_TYPE activeMaterial;
+    SOKOL_MATERIAL_TYPE activeMaterial = SOKOL_MATERIAL_TYPE::SOKOL_MAT_NONE;
     sColor4f activeCommandTileColor;
     sColor4f activeDiffuse;
     sColor4f activeAmbient;
     sColor4f activeSpecular;
     sColor4f activeEmissive;
-    float activePower;
+    float activePower = 0.0f;
     bool activeGlobalLight = false;
     Vect3f activeLightDir;
     sColor4f activeLightDiffuse;

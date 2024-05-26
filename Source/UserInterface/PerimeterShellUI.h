@@ -92,8 +92,10 @@ public:
     SHELL_ANCHOR anchor;
     SHELL_ANCHOR anchor_children;
 
-	float x, y;
-	float sx, sy;
+	float x = 0.0f;
+    float y = 0.0f;
+	float sx = 0.0f;
+    float sy = 0.0f;
 
 	int    ID;
 	int    state;
@@ -895,26 +897,26 @@ struct sItem
 
 class CListBoxWindow : public CShellWindow
 {
-    cFont*          m_hFont1250;
-    cFont*          m_hFont1251;
-	sItem			*m_pItem;
-	int				m_nNumberItem;
-	int				m_nCurSel;
-	int				m_bScroller;
-	int				m_nTopItem;
-	float			m_fStringHeight;
-	float			m_fScrollerThumbPos;
-	float			txtdx;
-	float			txtdy;
-	cTexture*		thumbTexture;
+    cFont*          m_hFont1250 = nullptr;
+    cFont*          m_hFont1251 = nullptr;
+	sItem			*m_pItem = nullptr;
+	int				m_nNumberItem = 0;
+	int				m_nCurSel = 0;
+	int				m_bScroller = 0;
+	int				m_nTopItem = 0;
+	float			m_fStringHeight = 8.0f;
+	float			m_fScrollerThumbPos = 0.0f;
+	float			txtdx = 0.0f;
+	float			txtdy = 0.0f;
+	cTexture*		thumbTexture = nullptr;
 	Vect2f			thumbUV;
 	Vect2f			thumbDUDV;
-	float			vScrollSX;
-	float			vScrollSY;
-	float			vScrollThmbSX;
-	float			vScrollThmbSY;
+	float			vScrollSX = 0.0f;
+	float			vScrollSY = 0.0f;
+	float			vScrollThmbSX = 0.0f;
+	float			vScrollThmbSY = 0.0f;
 
-	cTexture*		m_hTextureBG;
+	cTexture*		m_hTextureBG = nullptr;
 	Vect2f			m_vTexBGPos;
 	Vect2f			m_vTexBGSize;
 	Vect2f			uv;

@@ -2840,7 +2840,7 @@ void GameShell::recreateChaos() {
 void GameShell::createChaos() {
 	if (chaos) {
 		delete chaos;
-		chaos=0;
+		chaos= nullptr;
 	}
 
 	chaos = new CChaos(vMap.H_SIZE,vMap.V_SIZE,terEnableBumpChaos);

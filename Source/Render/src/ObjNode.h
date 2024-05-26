@@ -238,7 +238,7 @@ protected:
 	Observer observer;
 public:
 	cObjectNodeRoot();
-	~cObjectNodeRoot();
+	~cObjectNodeRoot() override;
 	
 	virtual void SetPosition(const MatXf& Matrix);
 	virtual void Animate(float dt);

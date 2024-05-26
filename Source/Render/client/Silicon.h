@@ -66,20 +66,23 @@ class ElasticLink : public cIUnkObj
 {
 public:
 
-	ElasticSphere *sphere1, *sphere2;
-	int psi1, theta1;
-	int psi2, theta2;
-	float initial_length;
+	ElasticSphere* sphere1 = nullptr;
+    ElasticSphere* sphere2 = nullptr;
+	int psi1 = 0;
+    int theta1 = 0;
+	int psi2 = 0;
+    int theta2 = 0;
+	float initial_length = 0.0f;
 
-	int line_size;
-	float* x_height;
-	float* x_velocity;
+	int line_size = 0;
+	float* x_height = nullptr;
+	float* x_velocity = nullptr;
 
 	Vect3f x_axis;
 	Vect3f z_axis;
 
-	float length;
-	float thickness_factor;
+	float length = 0.0f;
+	float thickness_factor = 0.0f;
 	Vect3f point1, point2;
 
 	eBlendMode blendMode;

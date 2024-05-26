@@ -94,22 +94,18 @@ template <class cBase,const int MF_ID_BLOCK_BASEMESH,const int MF_TYPE_BASEMESH>
 class cBaseFileMeshArray: public cBaseDynArray <cBase>
 {
 public:
-	cBaseFileMeshArray()					{ }
-	~cBaseFileMeshArray()					{ Release(); }
+	cBaseFileMeshArray()					= default;
 	void Release()							{ this->Delete(); }
-	void New(int NewSize)					{ cBaseDynArray<cBase>::New(NewSize); }
-	int Read(cMeshFile &f)					
-	{
-		int CurrentSize=0,NewSize=0;
+	int Read(cMeshFile &f) {
+		int NewSize=0;
 		while(!f.eof())
 			switch(f.ReadFieldType())
 			{
 				case MF_TYPE_NUMBER:
 					f.ReadField(&NewSize);
-					New(NewSize);
+                    cBaseDynArray<cBase>::New(NewSize);
 					break;
 				case MF_TYPE_BASEMESH:
-					assert(CurrentSize<this->length());
 					f.ReadField(this->Base,this->length());
 					break;
 				case MF_TYPE_BLOCK:
@@ -143,7 +139,7 @@ template <class cBaseMesh>
 class cBaseMeshPointerLibrary: public cBaseDynArrayPointer <cBaseMesh>
 {
 public:
-	cBaseMeshPointerLibrary()								{ }
+	cBaseMeshPointerLibrary()								= default;
 	~cBaseMeshPointerLibrary()								{ Release(); }
 	void Release()											{ this->Delete(); }
 	cBaseMesh* New(cBaseMesh *BaseMesh)

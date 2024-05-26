@@ -212,17 +212,30 @@ public:
 template <class cBase> class cBaseDynArray
 {
 public: 
-	cBase	*Base;
-	int		size;
+	cBase	*Base = nullptr;
+	int		size = 0;
 
-	cBaseDynArray()									{ Base=0; size=0; }
-	cBaseDynArray(cBaseDynArray *Array)				{ Base=0; size=0; *this=*Array; }
-	cBaseDynArray(int MaxLength)					{ Base=0; size=0; New(MaxLength); }
-	~cBaseDynArray()								{ Delete(); }
+	cBaseDynArray()	= default;
+	//cBaseDynArray(cBaseDynArray *Array)				{ *this=*Array; }
+	cBaseDynArray(int MaxLength)					{ New(MaxLength); }
+	virtual ~cBaseDynArray()						{ Delete(); }
 
-	inline void New(int NewSize)					{ Delete(); if((size=NewSize)!=0) Base=new cBase[size]; }
-	inline void New(cBase *NewBase,int NewSize)		{ Delete(); Base=NewBase; size=NewSize;	}
-	inline void Delete()							{ if(Base) delete [] Base; Base=0; size=0; }
+    void New(int NewSize) { 
+        Delete(); 
+        if ((size=NewSize)!=0) {
+            Base=new cBase[size];
+        }
+    }
+	void New(cBase *NewBase,int NewSize)	{
+        Delete();
+        Base=NewBase;
+        size=NewSize;
+    }
+	inline void Delete() {
+        delete[] Base;
+        Base=0;
+        size=0;
+    }
 	inline int& length()							{ return size; }
 	inline void Pack(int NewSize)					{ Resize(NewSize); }
 	inline cBase& operator [] (int number)			{ assert(number<size); return Base[number]; }
@@ -275,26 +288,29 @@ public:
 template <class cBase> class cBaseDynArrayPointer
 {
 public: 
-	cBase	**Base;
-	int		size;
+	cBase	**Base = nullptr;
+	int		size = 0;
 
-	cBaseDynArrayPointer()							{ Base=0; size=0; }
-	cBaseDynArrayPointer(cBaseDynArrayPointer *Array){ Base=0; size=0; *this=*Array; }
-	cBaseDynArrayPointer(int MaxLength)				{ Base=0; size=0; New(MaxLength); }
+	cBaseDynArrayPointer() = default;
 	~cBaseDynArrayPointer()							{ Delete(); }
 
 	inline void New(int NewSize)					
 	{ 
 		Delete(); 
-		if((size=NewSize)!=0) Base=new cBase*[size]; 
+		if ((size=NewSize)!=0) {
+            Base=new cBase*[size]; 
+        }
 	}
 	inline void Delete()							
 	{ 
-		for(int i=0;i<length();i++)
-			if(Base[i]) 
-				delete Base[i];
+		for(int i=0;i<length();i++) {
+            if (Base[i]) {
+                delete Base[i];
+            }
+        }
 		delete[] Base; 
-		Base = nullptr; size=0;
+		Base = nullptr;
+        size=0;
 //		memset(this,0,sizeof(cBaseDynArrayPointer)); 
 	}
 	inline int& length()							{ return size; }

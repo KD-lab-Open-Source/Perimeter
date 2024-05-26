@@ -120,7 +120,7 @@ private:
 	MatXf matrix_;
 	float focus_;
 
-	bool restricted_;
+	bool restricted_ = false;
 
 	CameraCoordinate coordinate_;
 	

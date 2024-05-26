@@ -67,7 +67,7 @@ void PlayMusic(const char *str = 0)
 	}
 	gb_Music.Stop();
 	if( !terMusicEnable || strMusic.empty() ) return;
-	int ret = gb_Music.OpenToPlay(strMusic.c_str(),1);
+	int ret = gb_Music.OpenToPlay(strMusic.c_str(),true);
 	gb_Music.SetVolume(terMusicVolume);
 }
 
@@ -3537,8 +3537,11 @@ void CListBoxWindow::updateScroller() {
 		m_nTopItem = max(size - int(sy/m_fStringHeight), 0);
 	}
 	m_bScroller = int(sy/m_fStringHeight) < m_pItem[0].m_data.size();
-	if(m_bScroller)
-		m_fScrollerThumbPos = y + vScrollSY + 1 + float(m_nTopItem)/(m_pItem[0].m_data.size() - int(sy/m_fStringHeight))*(sy - 2*vScrollSY - vScrollThmbSY);
+	if (m_bScroller) {
+        m_fScrollerThumbPos = y + vScrollSY + 1 +
+                              float(m_nTopItem) / (m_pItem[0].m_data.size() - int(sy / m_fStringHeight)) *
+                              (sy - 2 * vScrollSY - vScrollThmbSY);
+    }
 }
 
 void CListBoxWindow::Load(const sqshControl* attr)

@@ -74,6 +74,8 @@ const Vect3f Vect3f::I_  (-1,  0,  0);
 const Vect3f Vect3f::J_  ( 0, -1,  0);
 const Vect3f Vect3f::K_  ( 0,  0, -1);
 const Vect3f Vect3f::ID  ( 1,  1, 1);
+const Vect4f Vect4f::ZERO(0, 0, 0, 0);
+const Vect4f Vect4f::ID  (1, 1, 1, 1);
 
 const Mat3d Mat3d::ZERO (Vect3d::ZERO, Vect3d::ZERO);
 const Mat3d Mat3d::ID   (Vect3d(1, 1, 1), Vect3d::ZERO);

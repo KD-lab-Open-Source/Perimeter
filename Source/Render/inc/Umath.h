@@ -12,7 +12,7 @@ struct sColor4f
         struct {
             float r, g, b, a;
         };
-        Vect4f v;
+        Vect4f v = Vect4f::ZERO;
     };
 	
 	sColor4f() 											{ }

@@ -14,7 +14,7 @@ class MixChunkWrapper {
 public:
     const std::string fileName;
     Mix_Chunk* chunk = nullptr;
-    explicit MixChunkWrapper(Mix_Chunk* chunk_, const std::string& fileName) : chunk(chunk_), fileName(fileName) {}
+    explicit MixChunkWrapper(Mix_Chunk* chunk_, const std::string& fileName_) : fileName(fileName_), chunk(chunk_) {}
     ~MixChunkWrapper();
 };
 

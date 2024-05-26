@@ -229,11 +229,10 @@ struct sCameraObject : public sNodeObject
 
 struct sSubTexmap
 {
-	unsigned int		ID;							// идентификатор текстуры 
+	unsigned int		ID = 0;						// идентификатор текстуры 
 	std::string			name;						// имя текстуры 
-	int					ChannelNumber;				// номер канала текстурной генерации
-	sAnimationMatrix	MatrixAnim;
-	sSubTexmap()									{ Release(); }
+	int					ChannelNumber = 0;			// номер канала текстурной генерации
+	sAnimationMatrix	MatrixAnim = {};
 	~sSubTexmap()									{ Release(); }
 	void Release();
 	int Read(cMeshFile &f);

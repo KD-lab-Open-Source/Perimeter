@@ -122,15 +122,15 @@ struct sDataRenderMaterial
     sColor4f	Diffuse;
     sColor4f	Specular;
     sColor4f	Emissive;
-    float		Power;
+    float		Power = 0.0f;
 
-    float       Phase;
-    uint32_t    mat;//eMaterialMode
-    cTexture	*Tex[2];
+    float       Phase = 0.0f;
+    uint32_t    mat = 0;
+    cTexture*   Tex[2] = {};
     MatXf		TexMatrix;
-    float		MaterialAnimPhase;
+    float		MaterialAnimPhase = 0.0f;
 
-    sDataRenderMaterial()			{ Phase=0; MaterialAnimPhase=0; }
+    sDataRenderMaterial() = default;
 };
 
 using ColorConversionFunc = uint32_t (*)(const sColor4c&);
