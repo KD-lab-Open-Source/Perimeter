@@ -24,6 +24,7 @@ SNDScript::SNDScript(bool _b2d)
 
 SNDScript::~SNDScript()
 {
+    RemoveAll();
 }
 
 

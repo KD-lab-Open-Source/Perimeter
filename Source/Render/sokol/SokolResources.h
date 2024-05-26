@@ -91,6 +91,7 @@ struct SokolTexture2D : MemoryResource {
     NO_COPY_CONSTRUCTOR(SokolTexture2D)
     ~SokolTexture2D();
 
+    void FreeImages();
     void update();
 };
 

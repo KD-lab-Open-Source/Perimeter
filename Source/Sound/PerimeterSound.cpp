@@ -223,8 +223,6 @@ void SNDReleaseSound()
 {
 	if (!has_sound_init) return;
 
-    has_sound_init = false;
-
     SNDSetupChannelCallback(false);
 
 	script3d.RemoveAll();
@@ -239,6 +237,9 @@ void SNDReleaseSound()
 		fclose(snd_error);
 		snd_error=NULL;
 	}
+
+    //Do at the end so Mix_FreeChunk is called
+    has_sound_init = false;
 }
 
 bool SNDEnableErrorLog(const char* file)

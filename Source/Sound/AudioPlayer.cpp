@@ -88,22 +88,11 @@ float SpeechPlayer::GetLen() {
 static Mix_Music* music = nullptr;
 
 MusicPlayer::~MusicPlayer() {
-    destroyMusic();
+    Stop();
 }
-
-void MusicPlayer::destroyMusic() {
-    if (music) {
-        Stop();
-        if (SND::has_sound_init) {
-            Mix_FreeMusic(music);
-        }
-        music = nullptr;
-    }
-}
-
 
 bool MusicPlayer::OpenToPlay(const char* fname, bool cycled) {
-    this->destroyMusic();
+    this->Stop();
     
     //Library not initialized
     if(!SND::has_sound_init) {
@@ -126,7 +115,7 @@ bool MusicPlayer::OpenToPlay(const char* fname, bool cycled) {
     if (ok) {
         music_start_time = clockf();
     } else {
-        destroyMusic();
+        Stop();
         fprintf(stderr, "Mix_PlayMusic error: %s\n", Mix_GetError());
     }
     return ok;
@@ -137,10 +126,12 @@ void MusicPlayer::Stop() {
     music_pause_time = 0;
     music_faded_out_pos = 0;
     loop = false;
-    if (SND::has_sound_init && music) {
+    if (music) {
         if (Mix_PlayingMusic()) {
             Mix_HaltMusic();
         }
+        Mix_FreeMusic(music);
+        music = nullptr;
     }
 }
 

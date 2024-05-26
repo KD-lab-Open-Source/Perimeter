@@ -40,7 +40,9 @@ void Pool::SetTotal(size_t total_pages_) {
 
 PoolManager::PoolManager() = default;
 
-PoolManager::~PoolManager() = default;
+PoolManager::~PoolManager() {
+    Clear();
+}
 
 void PoolManager::CreatePage(PoolPage& page,const PoolParameter& param) {
 	int i;

@@ -14,8 +14,15 @@ MTSection* GetRenderEventsLock() {
 }
 
 const std::list<RenderEvent*>& GetRenderEvents() {
-    MTAuto mtenter(&log_lock);
     return events;
+}
+
+void ClearRenderEvents() {
+    MTAuto mtenter(&log_lock);
+    for (auto& ev : events) {
+        delete ev;
+    }
+    events.clear();
 }
 
 #ifdef PERIMETER_RENDER_TRACKER_PRINT

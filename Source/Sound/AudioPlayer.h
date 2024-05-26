@@ -62,8 +62,6 @@ private:
 
     //TODO workaround to not play music after fading out in SDL_mixer, remove once we use linear volume fading
     double music_faded_out_pos = 0;
-
-    void destroyMusic();
 public:
     MusicPlayer() = default;
 

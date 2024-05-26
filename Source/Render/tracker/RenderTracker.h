@@ -189,7 +189,7 @@ static int getRenderEventTypeDepth(RenderEvent::RenderEventType type) {
 }
 
 bool isRenderEventTypeVerbose(RenderEvent::RenderEventType type);
-//const std::list<RenderEvent*>& GetRenderEvents();
+void ClearRenderEvents();
 void RenderSubmitEventImpl(const char *file, unsigned int line, RenderEvent::RenderEventType type, const char* label = nullptr, void* ptr = nullptr);
 #define RenderSubmitEvent(...) RenderSubmitEventImpl(__FILE__, __LINE__, __VA_ARGS__)
 

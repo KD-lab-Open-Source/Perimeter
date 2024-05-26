@@ -79,7 +79,7 @@ cChaos::~cChaos()
 	delete pVS;
 	delete pPS;
 #endif
-	db->Destroy();
+    delete db;
 	RELEASE(pTex0);
 	RELEASE(pTexRender);
 	RELEASE(pTexBump);

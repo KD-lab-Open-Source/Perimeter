@@ -24,9 +24,11 @@ void SNDSetupChannelCallback(bool init) {
 
 MixChunkWrapper::~MixChunkWrapper() {
     if (chunk) {
-        //Only free if sound is inited
-        if (SND::has_sound_init) {
+        //Only free with Mix if sound is inited, check Mix_Init just in case
+        if (SND::has_sound_init || (Mix_Init(0) != 0)) {
             Mix_FreeChunk(chunk);
+        } else {
+            SDL_free(chunk);
         }
         chunk = nullptr;
     }

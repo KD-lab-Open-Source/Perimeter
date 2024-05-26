@@ -93,11 +93,30 @@ SokolTexture2D::SokolTexture2D(sg_image_desc* _desc)
 }
 
 SokolTexture2D::~SokolTexture2D() {
+    FreeImages();
     if (image) {
         image->DecRef();
         image = nullptr;
     }
     delete desc;
+}
+
+void SokolTexture2D::FreeImages() {
+    if (!desc) {
+        return;
+    }
+    //Cleanup subimages
+    for (int ci = 0; ci < SG_CUBEFACE_NUM; ++ci) {
+        for (int i = 0; i < SG_MAX_MIPMAPS; ++i) {
+            sg_range& range = desc->data.subimage[ci][i];
+            if (!range.ptr) {
+                break;
+            }
+            const uint8_t* buf = reinterpret_cast<const uint8_t*>(range.ptr);
+            delete[] buf;
+            range.ptr = nullptr;
+        }
+    }
 }
 
 void SokolTexture2D::update() {
@@ -111,7 +130,7 @@ void SokolTexture2D::update() {
     }
     if (data) {
         xassert(image->res.id != SG_INVALID_ID);
-        sg_image_data imageData;
+        sg_image_data imageData = {};
         imageData.subimage[0][0] = {data, data_len};
         sg_update_image(image->res, &imageData);
     }

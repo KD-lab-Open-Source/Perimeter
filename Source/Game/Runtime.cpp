@@ -745,6 +745,8 @@ void HTManager::finitGraphics()
 #ifdef _WIN32
         hWndVisGeneric = nullptr;
 #endif
+        SDL_GL_UnloadLibrary();
+        SDL_Vulkan_UnloadLibrary();
     }
 }
 

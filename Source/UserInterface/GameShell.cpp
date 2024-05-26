@@ -386,13 +386,15 @@ GameShell::~GameShell()
 
 	HTManager::instance()->GameClose();
 
-	if(missionEditor_)
-		delete missionEditor_;
+	if (missionEditor_) {
+        delete missionEditor_;
+    }
 
-	_shellCursorManager.Done();
+	done();
 
-	if(NetClient)
-		delete NetClient;
+	if (NetClient) {
+        delete NetClient;
+    }
 
 	debugFont_->Release();
 	if (hotKeyManager) {
@@ -409,6 +411,10 @@ void GameShell::done() {
     if (mapMoveStartCamera_) {
         mapMoveStartCamera_->Release();
         mapMoveStartCamera_ = nullptr;
+    }
+    if (chaos) {
+        delete chaos;
+        chaos = nullptr;
     }
 }
 

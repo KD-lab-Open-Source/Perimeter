@@ -5,7 +5,7 @@ void sSubTexmap::Release()
 	name.clear(); 
 	ID=0;
 	ChannelNumber=0;
-	memset(&MatrixAnim,0,sizeof(MatrixAnim));
+	MatrixAnim.Release();
 }
 
 int cMeshScene::Read(cMeshFile &f)

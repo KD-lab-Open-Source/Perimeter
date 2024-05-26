@@ -72,6 +72,10 @@ cInterfaceRenderDevice::~cInterfaceRenderDevice() {
         gb_RenderDevice = nullptr;
         Done();
     }
+
+#ifdef PERIMETER_RENDER_TRACKER
+    ClearRenderEvents();
+#endif
 }
 
 int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int RefreshRateInHz) {

@@ -211,7 +211,7 @@ int AVIFile::load(const char *fname) {
     //Parse the chunks
     size_t frame_length_expected = main_header.width * main_header.height
                                  * (stream_format.bpp == 32 ? 4 : stream_format.bpp == 24 ? 3 : 0);
-    char* chunk_name = new char[5];
+    char chunk_name[5];
     chunk_name[4] = '\0';
     uint32_t chunk_size = 0;
     bool done = false;
