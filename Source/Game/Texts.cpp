@@ -904,7 +904,7 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Tips.Multiplayer.Map=Map",
            "Interface.Tips.Multiplayer.CurrentPlayers=Current players",
            "Interface.Tips.Multiplayer.Ping=Ping",
-           "Interface.Tips.PopupUnitDerived=\n&00FFFF\"Right mouse button\"&FFFFFF ordering basic robots\nfor one unit, with &00FFFF\"Shift\"&FFFFFF for five units.",
+           "Interface.Tips.PopupUnitDerived=\n&00FFFF\"Right mouse button\"&FFFFFF to order basic robots\nfor one unit, with &00FFFF\"Shift\"&FFFFFF for five units.",
            "Interface.Menu.Messages.WrongIPPort=IP port is wrong",
            "Interface.Menu.Messages.Multiplayer.IncorrectContent=Server has different game content",
            "Interface.Menu.Messages.Multiplayer.IncorrectArch=Server has different bits or CPU architecture, different build type (Debug/Release), Operating System or used a different compiler (MSVC/Clang/GCC), please ensure they match",
