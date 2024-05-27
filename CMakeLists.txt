@@ -315,7 +315,7 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
 
     IF (NOT OPTION_SANITIZE AND OPTION_ASAN)
-        set(OPTION_SANITIZE "sanitize")
+        set(OPTION_SANITIZE "address")
     ENDIF()
 
     IF (OPTION_SANITIZE)
