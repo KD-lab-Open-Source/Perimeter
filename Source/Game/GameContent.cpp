@@ -513,8 +513,8 @@ void loadMod(const ModMetadata& mod) {
     loadLocalizedResources(mod.path + PATH_SEP);
 
     //Load scripts
-    if (get_content_entry(mod.path + "Scripts") != nullptr) {
-        mapContentPath(mod.path + "Scripts", "Scripts");
+    if (get_content_entry(mod.path + PATH_SEP + "Scripts") != nullptr) {
+        mapContentPath(mod.path + PATH_SEP + "Scripts", "Scripts");
     }
 }
 
