@@ -683,23 +683,19 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
         XBuffer buffer(128, true);
         switch (msg_header.msg_type) {
             default: {
-#ifdef PERIMETER_DEBUG
                 xassert(0);
                 fprintf(stderr, "[Relay] connection sent unknown msg type: 0x%" PRIX32 "\n", msg_header.msg_type);
-#endif
                 break;
             }
             case RELAY_MSG_CLOSE: {
                 terminate = true;
                 static NetRelayMessage_Close message;
                 message.read(*msg);
-                printf("[Relay] connection sent close msg: 0x%" PRIX32 "\n", message.code);
+                LogMsg("[Relay] connection sent close msg: 0x%" PRIX32 "\n", message.code);
                 break;
             }
             case RELAY_MSG_RELAY_LIST_LOBBIES: {
-#ifdef PERIMETER_DEBUG
-                printf("[Relay] connection sent result msg, discarding\n");
-#endif
+                LogMsg("[Relay] connection sent result msg, discarding\n");
                 break;
             }
             case RELAY_MSG_RELAY_PING: {
@@ -728,6 +724,11 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
                 
                 //Register any peer that isn't already present
                 for (auto& netid : message.peers) {
+                    if (localNETID == netid) {
+                        xassert(0);
+                        LogMsg("Got local NETID as peer? 0x%" PRIX64 "\n", netid);
+                        continue;
+                    }
                     if (0 == relayPeers.count(netid)) {
                         NetRelayPeerInfo info;
                         info.relay_netid = msg->source;
@@ -736,34 +737,33 @@ void NetConnectionHandler::receivedRelayMessage(NetConnection* connection, NetCo
                     }
                 }
 
-#ifdef PERIMETER_DEBUG
-                printf("[Relay] room list destination 0x%" PRIX64 " peers: %" PRIsize " [",
+                LogMsg("[Relay] room list destination 0x%" PRIX64 " peers: %" PRIsize " [",
                        msg->destination, message.peers.size());
                 for (NETID netid : message.peers) {
-                    printf(" 0x%" PRIX64, netid);
+                    LogMsg(" 0x%" PRIX64, netid);
                 }
-                printf(" ]\nNETIDs local: 0x%" PRIX64 " host: 0x%" PRIX64 "\n", net_center->m_localNETID, net_center->m_hostNETID);
-#endif
+                LogMsg(" ]\nNETIDs local: 0x%" PRIX64 " host: 0x%" PRIX64 "\n", net_center->m_localNETID, net_center->m_hostNETID);
                 break;
             }
             case RELAY_MSG_RELAY_ADD_PEER: {
                 static NetRelayMessage_RelayAddPeer message;
                 message.read(*msg);
-#ifdef PERIMETER_DEBUG
-                printf("[Relay] room add peer 0x%" PRIX64 "\n", message.netid);
-#endif
-                NetRelayPeerInfo info;
-                info.relay_netid = msg->source;
-                info.time_contact = clock_us();
-                relayPeers.try_emplace(message.netid, info);
+                LogMsg("[Relay] room add peer 0x%" PRIX64 "\n", message.netid);
+                if (localNETID == message.netid) {
+                    xassert(0);
+                    LogMsg("Got local NETID as peer? 0x%" PRIX64 "\n", message.netid);
+                } else {
+                    NetRelayPeerInfo info;
+                    info.relay_netid = msg->source;
+                    info.time_contact = clock_us();
+                    relayPeers.try_emplace(message.netid, info);
+                }
                 break;
             }
             case RELAY_MSG_RELAY_REMOVE_PEER: {
                 static NetRelayMessage_RelayRemovePeer message;
                 message.read(*msg);
-#ifdef PERIMETER_DEBUG
-                printf("[Relay] room remove peer 0x%" PRIX64 "\n", message.netid);
-#endif
+                LogMsg("[Relay] room remove peer 0x%" PRIX64 "\n", message.netid);
                 auto it = relayPeers.begin();
                 auto end = relayPeers.end();
                 for (; it != end; ++it) {

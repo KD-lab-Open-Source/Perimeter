@@ -247,6 +247,7 @@ void NetRelayMessage_RelayListPeers::read(XBuffer& in) {
     uint32_t len = 0; 
     NETID netid = 0;
     in > len;
+    this->peers.clear();
     for (uint32_t i = 0; i < len; ++i) {
         in > netid;
         this->peers.push_back(netid);
