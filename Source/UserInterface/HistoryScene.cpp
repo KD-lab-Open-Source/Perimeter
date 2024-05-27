@@ -555,6 +555,7 @@ void HistoryScene::startAudio(const string& name) {
                 fprintf(stderr, "startAudio %s error\n", name.c_str());
             }
 			voice.SetVolume(terSoundVolume);
+            resetAudioPosition();
 		}
 	}
 

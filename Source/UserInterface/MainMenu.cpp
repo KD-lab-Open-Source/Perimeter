@@ -2555,7 +2555,7 @@ void HistoryScene::showPaused() {
 	}
 }
 void HistoryScene::showText(const std::string& text, const std::string& icon) {
-	CTextWindow* wnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_BRIEFING_TXT);
+	CTextWindow* wnd = dynamic_cast<CTextWindow*>(_shellIconManager.GetWnd(SQSH_MM_BRIEFING_TXT));
 	if (wnd) {
 		wnd->setText( qdTextDB::instance().getText(text.c_str()) );
 	}
@@ -2565,6 +2565,10 @@ void HistoryScene::showText(const std::string& text, const std::string& icon) {
 	}
 }
 void HistoryScene::hideText() {
+    CShellWindow* bg = _shellIconManager.GetWnd(SQSH_MM_BRIEFING_SCROLLBG);
+    if (bg) {
+        bg->Show(0);
+    }
 	CTextWindow* wnd = dynamic_cast<CTextWindow*>(_shellIconManager.GetWnd(SQSH_MM_BRIEFING_TXT));
 	if (wnd) {
 		wnd->setText("");

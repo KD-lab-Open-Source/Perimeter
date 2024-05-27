@@ -54,13 +54,29 @@ class HistoryScene : public Commander {
 		void stopAudio() {
 			interpreter->eventOccured(Controller::END_OF_AUDIO_EVENT);
 			voice.Stop();
+            resetAudioPosition();
 		}
 
 		void audioStopped();
 
 		bool isAudioPlaying() {
 			return voice.IsPlay();
+        }
+
+        void resetAudioPosition() {
+            if (voice.IsPlay()) {
+                started_at = clock_us();
+            } else {
+                started_at = 0;
+            }
 		}
+
+        float getAudioPosition() {
+            if (started_at == 0 || !voice.IsPlay()) return 0.0f;
+            float pos = static_cast<float>(static_cast<double>(clock_us() - started_at) / 1000000.0);
+            pos /= voice.GetLen();
+            return pos;
+        }
 
 		void onResolutionChanged();
 
@@ -155,6 +171,7 @@ class HistoryScene : public Commander {
 
 		bool bwMode;
 
+        uint64_t started_at = 0;
 		SpeechPlayer voice;
 		bool playingVoice;
 

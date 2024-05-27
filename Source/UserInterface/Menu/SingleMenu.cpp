@@ -212,6 +212,25 @@ extern bool menuChangingDone;
 double lastClockSound = 0;
 int currYear = -1;
 
+void onMMBriefingText(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if ( code == EVENT_DRAWWND ) {
+        CTextScrollableWindow* txtWnd = safe_cast<CTextScrollableWindow*>(pWnd);
+        CShellWindow* bg = _shellIconManager.GetWnd(SQSH_MM_BRIEFING_SCROLLBG);
+        if (bg && bg->isVisible() != txtWnd->m_bScroller) {
+            bg->Show(txtWnd->m_bScroller);
+        }
+        if (!txtWnd->m_bScroller) return;
+        const float STEP = 0.25;
+        float pos = historyScene.getAudioPosition();
+        float lines = txtWnd->textHeight / txtWnd->m_hFont->GetHeight();
+        if (STEP <= pos) {
+            historyScene.resetAudioPosition();
+            int h = max(1, static_cast<int>(xm::floor(lines * STEP)));
+            txtWnd->OnMouseWheel(h);
+        }
+    }
+}
+
 void onMMYearBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_DRAWWND ) {
         CTextWindow* txtWnd = (CTextWindow*) pWnd;
@@ -283,6 +302,7 @@ void onMMContinueBriefingButton(CShellWindow* pWnd, InterfaceEventCode code, int
     }
 }
 void HistoryScene::audioStopped() {
+    resetAudioPosition();
     if( menuChangingDone && intfCanHandleInput() && _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN)->isVisible()) {
         _shellIconManager.SwitchMenuScreens( CONTINUE_BRIEFING, CONTINUE_BRIEFING );
     }

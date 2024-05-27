@@ -832,7 +832,6 @@ public:
 class CTextScrollableWindow : public CTextWindow
 {
     std::vector<LocalizedText>	m_data;
-    int				m_bScroller;
     float			m_fScrollerThumbPos;
     cTexture*		thumbTexture;
     Vect2f			thumbUV;
@@ -842,7 +841,6 @@ class CTextScrollableWindow : public CTextWindow
     float			vScrollThmbSX;
     float			vScrollThmbSY;
     float			vScrollMarginX;
-    float           textHeight = 0;
 
     cTexture*		m_hTextureBG;
     Vect2f			m_vTexBGPos;
@@ -862,6 +860,9 @@ class CTextScrollableWindow : public CTextWindow
     int CheckClick(float fx,float  fy);
  
 public:
+    bool			m_bScroller = false;
+    float           textHeight = 0;
+
     CTextScrollableWindow(int id, CShellWindow* pParent, EVENTPROC p = nullptr);
     ~CTextScrollableWindow() override;
 
@@ -1949,6 +1950,7 @@ void onMMContinueBriefingButton(CShellWindow* pWnd, InterfaceEventCode code, int
 void onMMStartMissionButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSkipMissionButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSkipBriefingButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBriefingText(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMYearBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //single

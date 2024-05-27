@@ -3125,6 +3125,9 @@ void CTextWindow::Load(const sqshControl* attr)
 	_RELEASE(m_hFont);
 	switch(m_attr->font_group)
 	{
+        case 6:
+            m_hFont = terVisGeneric->CreateGameFont(sqshShellMainFont1, shell_main_menu_font_size2);
+            break;
         case 5:
 		case 4:
 			m_hFont = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1_5);
@@ -3321,8 +3324,9 @@ CTextScrollableWindow::~CTextScrollableWindow()
 
 int CTextScrollableWindow::CheckClick(float fx,float  fy)
 {
-    if(!m_bScroller || vScrollSY <= 0)
+    if(!m_bScroller || vScrollSY <= 0) {
         return thumb_none;
+    }
 
     float _x = fx * terRenderDevice->GetSizeX();
     float _y = fy * terRenderDevice->GetSizeY();

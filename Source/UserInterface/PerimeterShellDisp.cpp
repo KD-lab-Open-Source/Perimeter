@@ -137,7 +137,8 @@ _handlertbl[] = {
 	{SQSH_MM_START_MISSION_BTN, onMMStartMissionButton},
 	{SQSH_MM_SKIP_MISSION_BTN, onMMSkipMissionButton},
 	{SQSH_MM_SKIP_BRIEFING_BTN, onMMSkipBriefingButton},
-	{SQSH_MM_BRIEFING_YEAR_TXT, onMMYearBriefing},
+    {SQSH_MM_BRIEFING_TXT, onMMBriefingText},
+    {SQSH_MM_BRIEFING_YEAR_TXT, onMMYearBriefing},
 	
 	//end mission
 	{SQSH_MM_RESUME_BTN, onMMResumeButton},
@@ -167,7 +168,7 @@ _handlertbl[] = {
 	//credits
     {SQSH_MM_CREDITS_COMMUNITY_BTN, onMMCommunityButton},
 	{SQSH_MM_BACK_CREDITS_BTN, onMMBackButton},
-
+    
 
 	{SQSH_MM_BATTLE_PLAYER1_FRM_BTN, onMMBattleFrmButton},
 	{SQSH_MM_BATTLE_PLAYER2_FRM_BTN, onMMBattleFrmButton},
