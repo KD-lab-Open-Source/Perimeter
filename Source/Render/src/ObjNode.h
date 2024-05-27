@@ -240,27 +240,27 @@ public:
 	cObjectNodeRoot();
 	~cObjectNodeRoot() override;
 	
-	virtual void SetPosition(const MatXf& Matrix);
-	virtual void Animate(float dt);
-	virtual void PreDraw(cCamera *DrawNode);
-	virtual void GetLocalBorder(int *nVertex,Vect3f **Vertex,int *nIndex,short **Index);
+	void SetPosition(const MatXf& Matrix) override;
+	void Animate(float dt) override;
+	void PreDraw(cCamera *DrawNode) override;
+	void GetLocalBorder(int *nVertex,Vect3f **Vertex,int *nIndex,short **Index) override;
 	
 	virtual const Vect3f& GetScale() const		{ return Scale; }
 	virtual void SetScale(const Vect3f& scale);
-	virtual cIUnkObj* BuildCopy();
+	cIUnkObj* BuildCopy() override;
 
-	void SetTexture(cTexture *Tex1,cTexture *Tex2);
+	void SetTexture(cTexture *Tex1,cTexture *Tex2) override;
 
 	void SetBase(sBound *Base);
 	inline sBound* GetBase(){return Base;}
 
-	inline double GetMaterialAnimTime(){return MaterialAnimTime;}
+	inline double GetMaterialAnimTime() const {return MaterialAnimTime;}
 
 	inline const sColor4f& GetDiffuse(){return Diffuse;};
 	inline const sColor4f& GetSpecular(){return Specular;};
 	inline const sColor4f& GetAmbient(){return Ambient;};
 	inline const sColor4f& GetSkinColor(){return SkinColor;}
-	virtual void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
+	void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0) override;
 	
 	void SetSkinColor(const sColor4f& color);
 	const sColor4f& GetSkinColor() const { return SkinColor; }
@@ -271,24 +271,24 @@ public:
 	int GetMaterialNum();
 	int GetObjectNum();
 
-	virtual void ClearAttr(int attribute);
-	virtual void SetAttr(int attribute);
+	void ClearAttr(int attribute) override;
+	void SetAttr(int attribute) override;
 
-	virtual void Update();
+	void Update() override;
 
 	inline std::vector<cObjMesh*>& GetMeshChild(){return mesh_child;}
 
 	void RootLodRelease(){RELEASE(RootLod);}
 
 	//Функции упрощённого доступа к геометрии объекта
-	void GetAllPoints(std::vector<Vect3f>& point);
-	void GetAllNormals(std::vector<Vect3f>& point);
+	void GetAllPoints(std::vector<Vect3f>& point) override;
+	void GetAllNormals(std::vector<Vect3f>& point) override;
 	void GetAllTriangle(std::vector<Vect3f>& point, std::vector<indices_t>& indices);
 
-	void GetEmitterMaterial(cObjMaterial& material);
+	void GetEmitterMaterial(cObjMaterial& material) override;
 
 	/////////////////////////////////
-	virtual void DrawShadow(cCamera *DrawNode);
+	void DrawShadow(cCamera *DrawNode) override;
 	virtual void DrawBadUV(cCamera *DrawNode);
 
 	inline const sColor4f& GetLightIntensity(){return LightIntensity;}
@@ -299,14 +299,14 @@ public:
 	void AddLink(ObserverLink* link){observer.AddLink(link);}
 	void BreakLink(ObserverLink* link){observer.BreakLink(link);}
 
-	void ChangeBank(cAllMeshBank* new_root);
+	void ChangeBank(cAllMeshBank* new_root) override;
 
 protected:
-	virtual void SetCopy(cIUnkObj* UObj);
+	void SetCopy(cIUnkObj* UObj) override;
 	void BuildChild();
 	void BuildGroup();
 	void PreDrawSort(cCamera *DrawNode);
 	void ClearDrawSort();
-	void BuildShadow();
+	void BuildShadow() override;
 	void SynchronizeGroupLod();
 };

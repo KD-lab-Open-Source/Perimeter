@@ -371,7 +371,8 @@ struct sAttribute
 protected:
 	int		Attribute;	
 public:
-	sAttribute()													{ Attribute=0; }
+	sAttribute()										{ Attribute=0; }
+    virtual ~sAttribute() = default;
 	
 	inline int GetAttribute(int attribute=0xFFFFFFFF)	const		{ return Attribute&attribute; }
 	inline void ClearAttribute(int attribute)						{ Attribute&=~attribute; }
