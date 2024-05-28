@@ -27,7 +27,7 @@ cd $BUILD_DIR
 cmake -S $WORK_DIR -B $BUILD_DIR -G Ninja \
   -DFFMPEG_ROOT="$LIBS_ROOT/ffmpeg" \
   -DOPTION_LINKER=lld \
-  -DOPTION_LINK_LIBS="stdc++fs;pthread" \
+  -DOPTION_LINK_LIBS="stdc++fs;pthread;dl" \
   -DOPTION_STATIC_LIB_STD=ON \
   -DOPTION_DEBUG_ASSERT=OFF \
   -DOPTION_DXVK_1=ON \
