@@ -7,6 +7,8 @@
 
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
 #include <functional> // bind
+#include <unordered_set>
+
 #endif
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -804,9 +806,9 @@ CellLine& Region::cell_line(int y)
 	return dispatcher()->rasterize_column[y];
 }
 
-void Region::append(Region* multi_region)
+void Region::append(ShareHandle<Region> multi_region)
 {
-	push_back(multi_region);
+	emplace_back(multi_region);
 	multi_region->parent = this;
 }
 
@@ -839,7 +841,7 @@ Region* Region::find_parent_to_append(Column& column)
 //	}
   	
 //	xassert(0);
-	return 0;
+	return nullptr;
 }
 
 void Region::save(XBuffer& buf) const
@@ -1047,9 +1049,8 @@ void RegionDispatcher::vectorize(int minimalRegionSize, bool initSpline)
 	statistics_add(analyze_cnt, STATISTICS_GROUP_NUMERIC, analyze_cnt);
 #endif
 
-	typedef std::vector<Region*> RegionList;
-	RegionList regions;
-	std::list<ShareHandle<Region> > bad_regions;
+    std::vector<ShareHandle<Region>> regions;
+	std::vector<ShareHandle<Region>> bad_regions;
 	
 	SeedList::iterator si;
 	FOR_EACH(seeds, si)
@@ -1066,28 +1067,27 @@ void RegionDispatcher::vectorize(int minimalRegionSize, bool initSpline)
 		FOR_EACH(seeds, si){
 			Cell* seed = *si;
 			if(!seed->l_region && (pass || seed->l_cw == seed)){ // Positive first
-				Region* region = new Region();
+                ShareHandle<Region> region = ShareHandle(new Region());
 				region->parent = this;
 				region->set(seed);
 				if(region->numCells() >= minimalRegionSize && (!initSpline || region->initSpline())){
 					regions.push_back(region);
-				}
-				else{
+				} else {
 					region->positive_ = false; // not to be chosen in find_parent_to_append
-					bad_regions.push_back(region);
+					bad_regions.emplace_back(region);
 				}
 			}
 		}
 	}
 
-	RegionList::iterator ri;
-	FOR_EACH(regions, ri){
-		if((*ri)->positive())
-			append(*ri);
-		else{
-			Region* region = (*ri)->find_parent_to_append(edit_column);
-			if(region)
-				region->append(*ri);
+	for (auto& region : regions) {
+		if (region->positive()) {
+            append(region);
+        } else {
+			Region* parent_region = region->find_parent_to_append(edit_column);
+			if (parent_region) {
+                parent_region->append(region);
+            }
 		}
 	}
 
