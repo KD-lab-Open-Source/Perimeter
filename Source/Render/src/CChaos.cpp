@@ -321,7 +321,12 @@ void cChaos::SetupDB() {
 	float du,dv;
 	du=dv=1.0f/sub_div;
 
+#ifdef PERIMETER_D3D9
     float v1uvmul = enablebump == BUMP_RENDERTARGET ? uvmul : 1.0f;
+#else
+    float v1uvmul = 1.0f;
+#endif
+
     for(int iy=0;iy<=size;iy++) {
         VTYPE* vout=pVertex+iy*(size+1);
 
