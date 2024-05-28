@@ -19,9 +19,6 @@
 
 static uint32_t ColorConvertABGR(const sColor4c& c) { return CONVERT_COLOR_TO_ABGR(c.v); };
 
-const size_t PERIMETER_RENDER_VERTEXBUF_LEN = 40960;
-const size_t PERIMETER_RENDER_INDEXBUF_LEN = PERIMETER_RENDER_VERTEXBUF_LEN * 2;
-
 void MemoryResource::AllocData(size_t _data_len) {
     if (data) {
         FreeData();
@@ -89,6 +86,7 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, SDL_Window* wnd, 
         TexLibrary = new cTexLibrary();
     }
     drawBuffers.resize(0xFF);
+    DrawBufferVertexCount = 4096;
 
     //Get the biggest resolution we might need
     MaxScreenSize.set(0, 0);
@@ -294,7 +292,7 @@ void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
 }
 
 DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive) {
-    uint16_t key = (fmt & VERTEX_FMT_MAX) | ((primitive & 0x3) << VERTEX_FMT_BITS);
+    uint16_t key = (fmt << 1) | (primitive & 0x1);
     DrawBuffer* db = nullptr;
     if (key < drawBuffers.size()) {
         db = drawBuffers[key];
@@ -304,7 +302,7 @@ DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveTy
     if (!db) {
         //No drawbuffer exists for this key, create new one
         db = new DrawBuffer();
-        db->Create(PERIMETER_RENDER_VERTEXBUF_LEN, true, PERIMETER_RENDER_INDEXBUF_LEN, true, fmt, primitive);
+        db->Create(DrawBufferVertexCount, true, DrawBufferVertexCount * 3, true, fmt, primitive);
         drawBuffers[key] = db;
     }
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE

@@ -152,6 +152,7 @@ protected:
     Mat4f orthoVP;
     eCullMode CameraCullMode = CULL_NONE;
     bool WireframeMode = false;
+    size_t DrawBufferVertexCount = 0;
 
     virtual void DrawFieldDispatcher(class FieldDispatcher* ffd, uint8_t transparent);
 
