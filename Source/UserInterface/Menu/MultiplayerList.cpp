@@ -107,16 +107,18 @@ void selectGameInfo(const GameInfo* game) {
 
 LocalizedText formatGameInfoList(const GameInfo& info) {
     //TODO No localized text allowed here since the text must be in info.gameName's locale, remove this when UTF8
-    std::string locale = info.gameName.locale;
-    std::string text;
+    const std::string& locale = info.gameName.locale;
+    const char* textColor;
     if (info.gameClosed || info.gameStarted || info.gameVersion != currentShortVersion) {
-        text += "&FF2222";
+        textColor = "&FF2222";
     } else if (info.hasPassword) {
-        text += "&66DDFF";
+        textColor = "&66DDFF";
     } else {
-        text += "&FFFFFF";
+        textColor = "&FFFFFF";
     }
+    std::string text = textColor;
     text += convertToCodepage(info.gameName.text.c_str(), locale);
+    text += textColor;
     text += " (" + std::to_string(info.currentPlayers);
     text += "/" + std::to_string(info.maximumPlayers);
     text += " - " + std::to_string(info.ping) + " ms)";

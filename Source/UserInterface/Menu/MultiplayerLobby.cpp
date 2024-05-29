@@ -411,7 +411,7 @@ void setName(CShellPushButton* btn, int number) {
         std::string text = pd.name();
         if (isSave) {
             if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-                text = pd.nameInitial() + std::string(" &FFFFFF(") + pd.name() + ")";
+                text = pd.nameInitial() + std::string(" &FFFFFF(") + pd.name() + "&FFFFFF)";
             }
         } else {
             text = std::string("&FFFFFF") + text;

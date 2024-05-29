@@ -509,11 +509,12 @@ void PNetCenter::P2PIQuant()
 	case PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED:
     case PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT: {
         bool disconnected = curInterfaceCommand.icID == PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED;
-        std::string res = qdTextDB::instance().getText(disconnected ? "Interface.Menu.Messages.PlayersDisconnected"
+        const char* res = qdTextDB::instance().getText(disconnected ? "Interface.Menu.Messages.PlayersDisconnected"
                                                                     : "Interface.Menu.Messages.PlayersExited");
         const int bufferSize = 500;
         static char tempBuffer[bufferSize];
-        snprintf(tempBuffer, bufferSize, res.c_str(), curInterfaceCommand.text->text.c_str());
+        std::string name = curInterfaceCommand.text->text + "&FFFFFF";
+        snprintf(tempBuffer, bufferSize, res, name.c_str());
         curInterfaceCommand.text->text = tempBuffer;
         gameShell->serverMessage(curInterfaceCommand.text.get());
         break;

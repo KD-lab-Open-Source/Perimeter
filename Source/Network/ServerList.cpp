@@ -128,11 +128,16 @@ void ServerList::fetchRelayHostInfoList() {
         ia >> lobbies;
         for (auto& lobby : lobbies) {
             for (auto& room : lobby.rooms) {
+                std::string gameName;
+                for (char c : room.room_name) {
+                    if (c < ' ') continue;
+                    gameName += c;
+                }
                 std::string locale = room.extra_data.locale;
                 GameInfo info;
                 info.gameHost = lobby.host.getAddress();
                 info.gameRoomID = room.room_id;
-                info.gameName = LocalizedText(room.room_name.c_str(), locale);
+                info.gameName = LocalizedText(gameName, locale);
                 info.gameVersion = room.game_version;
                 info.maximumPlayers = room.players_max;
                 info.currentPlayers = room.players_count;
