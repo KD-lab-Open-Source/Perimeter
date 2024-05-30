@@ -322,7 +322,10 @@ void PNetCenter::HandlerInputNetCommand()
                     //Transfer mission from packet
                     clientMissionDescription = nc4c_sl.missionDescription_;
                     nc4c_sl.missionDescription_ = nullptr;
-
+                    
+                    //Set active player as ourselves
+                    clientMissionDescription->activePlayerID = clientMissionDescription->findPlayer(m_localNETID);
+                    
                     m_bStarted = true;
 
                     if (!isHost()) {

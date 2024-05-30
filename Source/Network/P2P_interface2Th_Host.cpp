@@ -261,7 +261,7 @@ void PNetCenter::UpdateBattleData() {
     }
     mission->packPlayerIDs();
 
-    LogMsg("Battle info ready\n");
+    LogMsg("Mission info ready\n");
 }
 
 void PNetCenter::SendBattleData() {
@@ -287,19 +287,10 @@ void PNetCenter::SendBattleData() {
     }
 
     //Send data
-    //Don't change player data here or prev players will have outdated info about next players 
-    for (int i=0; i<mission->playerAmountScenarioMax; i++) {
-        const PlayerData& pd = mission->playersData[i];
-        if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-            mission->activePlayerID = pd.playerID;
-            netCommand4C_StartLoadGame nccsl(mission);
-            printf("Sending mission to idx %d id %d netid 0x%" PRIX64 "\n", i, pd.playerID, pd.netid);
-            SendEvent(nccsl, pd.netid);
-        }
-    }
-    mission->activePlayerID = mission->findPlayer(m_localNETID);
-
-    LogMsg("Sent battle info\n");
+    printf("Sending mission\n");
+    netCommand4C_StartLoadGame nccsl(mission);
+    SendEvent(nccsl, NETID_ALL);
+    LogMsg("Sent mission\n");
 }
 
 void PNetCenter::UpdateCurrentMissionOnRelayRoom() {
