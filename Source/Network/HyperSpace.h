@@ -86,6 +86,8 @@ private:
 	float MinCorrection;
 
 	float ServerSpeedScale;
+    
+    bool chatTipDisplayed = false;
 
 //--------------------------
 private:

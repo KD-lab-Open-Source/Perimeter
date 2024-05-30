@@ -1151,7 +1151,7 @@ protected:
 
 class CChatInGameEditWindow : public CEditWindow
 {
-	cTexture* m_hPopupTexture;
+	cTexture* m_hPopupTexture = nullptr;
 
 public:
 	CChatInGameEditWindow(int id, CShellWindow* pParent, EVENTPROC p = nullptr);
@@ -1162,7 +1162,7 @@ public:
 	void draw(int bFocus) override;
 	void OnChar(char key) override;
 
-	bool alliesOnlyMode;
+	bool alliesOnlyMode = false;
 
     static const char* getModePostfix(bool clanOnly) {
 		return qdTextDB::instance().getText(clanOnly ? "Interface.Tips.ToClanPostfix" : "Interface.Tips.ToAllPostfix");

@@ -11,13 +11,14 @@
 #include "files/files.h"
 #include "GameContent.h"
 #include "codepages/codepages.h"
+#include "qd_textdb.h"
 
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
 
 //XStream quantTimeLog("quantTime.log",XS_OUT);
 const char* autoSavePlayReelDir = "RESOURCE\\Replay\\Autosave";
-
+const size_t CHAT_TIP_QUANT = 10;
 
 const char * KEY_REPLAY_REEL="replay";
 
@@ -834,6 +835,15 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 					confirmQuant=nc.quantConfirmation_;
 					//clear list 
 					eraseLogListUntil(nc.quantConfirmation_);
+
+                    if (!chatTipDisplayed && CHAT_TIP_QUANT <= confirmQuant) {
+                        chatTipDisplayed = true;
+                        LocalizedText text = LocalizedText(
+                                qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.ChatTip"),
+                                getLocale()
+                        );
+                        gameShell->serverMessage(&text);
+                    }
 				}
 	#ifdef NETCOM_DBG_LOG
 				netCommandLog < "Quant=" <=nc.numberQuant_ <"\n";

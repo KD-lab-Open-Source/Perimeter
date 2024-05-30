@@ -5339,9 +5339,8 @@ bool CEditWindow::isValidFilename() const {
 }
 
 CChatInGameEditWindow::CChatInGameEditWindow(int id, CShellWindow* pParent, EVENTPROC p) : CEditWindow(id, pParent, p) {
-	alliesOnlyMode = false;
-	m_hPopupTexture = nullptr;
 }
+
 CChatInGameEditWindow::~CChatInGameEditWindow() {
 	_RELEASE(m_hPopupTexture);
 }
