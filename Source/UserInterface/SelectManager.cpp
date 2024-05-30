@@ -9,15 +9,9 @@
 
 extern GameShell* gameShell;
 
-cSelectManager::cSelectManager()
-:selectedGroupPriority(0)
-{
-	player=NULL;
-}
+cSelectManager::cSelectManager() = default;
 
-cSelectManager::~cSelectManager()
-{
-}
+cSelectManager::~cSelectManager() = default;
 
 void cSelectManager::clear(unsigned int group)
 {
@@ -54,31 +48,30 @@ void cSelectManager::Quant()
 	}
 }
 
-int cSelectManager::getUnitSelectionPriority(terUnitBase* p) 
+cSelectManager::SelectionPriority cSelectManager::getUnitSelectionPriority(terUnitBase* p) 
 {
-	if (p->GetSquadPoint() && (p->attr()->MilitaryUnit || p->GetSquadPoint() == p)){
+    if (p->attr()->ID == UNIT_ATTRIBUTE_CORE) {
+        //ядро
+        return SelectionPriority::CORES;
+    } else if (p->attr()->MilitaryUnit && p->attr()->isBuilding()){
+        //стац. орудие
+        return SelectionPriority::GUNS;
+    } else if (p->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER){
+        //прорабы, бригадиры
+        return SelectionPriority::MMP;
+    } else if (p->GetSquadPoint() && (p->attr()->MilitaryUnit || p->GetSquadPoint() == p)){
 		//сквад
-		return 1;
-	} else if (p->attr()->ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr()->ID == UNIT_ATTRIBUTE_BUILD_MASTER){
-		//прорабы, бригадиры
-		return 2;
-	} else if (p->attr()->ID == UNIT_ATTRIBUTE_CORE){
-		//ядро
-		return 3;
-	} else if (p->attr()->MilitaryUnit && p->attr()->isBuilding()){
-		//стац. орудие
-		return 4;
-	} else {
+		return SelectionPriority::SQUAD;
+    } else {
 		//остальные
-		return 5;
+		return SelectionPriority::REST;
 	}
 }
 
-int cSelectManager::calcGroupPriority(UnitList& unit_list) {
-	int res = 5;
-	UnitList::iterator i_unit1;
-	FOR_EACH (unit_list, i_unit1) {
-		res = min(getUnitSelectionPriority(*i_unit1), res);
+cSelectManager::SelectionPriority cSelectManager::calcGroupPriority(UnitList& unit_list) {
+    SelectionPriority res = SelectionPriority::REST;
+	for (terUnitBase* unit: unit_list) {
+		res = static_cast<SelectionPriority>(min(getUnitSelectionPriority(unit), res));
 	}
 	return res;
 }
@@ -136,7 +129,7 @@ void cSelectManager::unitToSelection(terUnitBase* p, int mode, bool passSquad) {
 		//deselect and clear temp
 		clear(TEMP_SELECTION_GROUP_NUMBER);
         if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
-            int unitPriority = getUnitSelectionPriority(p);
+            SelectionPriority unitPriority = getUnitSelectionPriority(p);
             if (p->GetSquadPoint() && p->attr()->MilitaryUnit) {
                 p = p->GetSquadPoint();
             }
@@ -511,8 +504,8 @@ void cSelectManager::filterSelectionList(UnitList& unit_list) {
 	filterSelectionList(unit_list, calcGroupPriority(unit_list));
 }
 
-void cSelectManager::filterSelectionList(UnitList& unit_list, int priority) {
-	if (priority == 1) {
+void cSelectManager::filterSelectionList(UnitList& unit_list, SelectionPriority priority) {
+	if (priority == SelectionPriority::SQUAD) {
 		UnitList squad_list;
 
 		UnitList::iterator i_unit1 = unit_list.begin();

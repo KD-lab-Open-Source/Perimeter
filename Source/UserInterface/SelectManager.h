@@ -51,6 +51,13 @@ public:
 	};
 
 protected:
+    enum SelectionPriority {
+        CORES = 1,
+        GUNS,
+        MMP,
+        SQUAD,
+        REST,
+    };
 
 	UnitList::iterator findInSelection(terUnitBase* p, unsigned int group = CURRENT_SELECTION_GROUP_NUMBER) {
 		UnitList::iterator ui;
@@ -72,7 +79,7 @@ protected:
 	}
 
 	void addToSelection(terUnitBase* p);
-	static int getUnitSelectionPriority(terUnitBase* p);
+	static SelectionPriority getUnitSelectionPriority(terUnitBase* p);
 
 	MTSection select_lock;
 	UnitList SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER + 1];	//При удалении из SelectList обязательно делать Deselect()
@@ -86,20 +93,20 @@ protected:
 	void clear(unsigned int group = CURRENT_SELECTION_GROUP_NUMBER);
 	void copyGroup(unsigned int groupSource, unsigned int groupDestination);
 
-	int selectedGroupPriority;
+	SelectionPriority selectedGroupPriority = SelectionPriority::REST;
 
 	void MakeSelectionList(float x0,float y0,float x1,float y1, UnitList& out_list);
 	void filterSelectionList(UnitList& unit_list);
 	void filterSelection();
-	void filterSelectionList(UnitList& unit_list, int priority);
+	void filterSelectionList(UnitList& unit_list, SelectionPriority priority);
 	void addUnitOrSquadToSelection(terUnitBase* p);
-	int calcGroupPriority(UnitList& unit_list);
+    SelectionPriority calcGroupPriority(UnitList& unit_list);
 
 	static bool CanAttackUnit(terUnitBase* pUnit, terUnitBase* pTarget);
 
 	void cancelActions();
 
-	terPlayer* player;
+	terPlayer* player = nullptr;
 
 };
 
