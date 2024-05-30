@@ -19,9 +19,9 @@
 
 const int PNC_MIN_SLEEP_TIME = 10; //millis
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
-const int PNC_DESYNC_RESTORE_ATTEMPTS = 3;
+const int PNC_DESYNC_RESTORE_ATTEMPTS = 4;
 const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
-const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 4 * 60 * 1000; //4 mins
+const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 2 * 60 * 1000; //2 mins
 const int PNC_DESYNC_RESTORE_MODE_FULL = PNC_DESYNC_RESTORE_MODE_PARTIAL + 1;
 const size_t PNC_LATENCY_UPDATE_INTERVAL = 50 * 1000; //us
 
@@ -765,8 +765,10 @@ end_while_01:;
 				SendEvent(ncp, NETID_ALL);
 				hostPause=true;
 			}
-			if(hostPause)
-				break;
+            
+			if (hostPause) {
+                break;
+            }
 
 			//перенесение всех команд удаления в список комманд на выполнение
 			for(auto p=m_QueuedGameCommands.begin(); p != m_QueuedGameCommands.end(); p++){
