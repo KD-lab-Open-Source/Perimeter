@@ -290,7 +290,7 @@ void terPlayer::Quant()
             ui->Quant();
             log_var(terLogicRNDfrnd());
             log_var(ui->position());
-#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
+#if defined(NET_LOG_WORLD)
             log_var(vMap.getChAreasInformationCRC());
 #endif
         }
@@ -397,7 +397,7 @@ void terPlayer::MoveQuant()
             ui->MoveQuant();
             log_var(terLogicRNDfrnd());
             log_var(ui->position());
-#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
+#if defined(NET_LOG_WORLD)
             log_var(vMap.getChAreasInformationCRC());
 #endif
         }

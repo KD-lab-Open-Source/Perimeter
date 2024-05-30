@@ -158,7 +158,8 @@ void show_watch();
 
 #if (!defined(_FINAL_VERSION_) || defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
 #define _DO_LOG_
-//#define NET_LOG_EXHAUSTIVE
+#define NET_LOG_EXHAUSTIVE
+//#define NET_LOG_WORLD
 #endif
 
 #ifdef _DO_LOG_

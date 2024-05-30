@@ -472,11 +472,8 @@ bool terHyperSpace::MultiQuant()
 		///vMap.generateChAreasInformation(vmapbuf);
 		///pNetCenter->SendEvent(&netCommand4H_BackGameInformation(currentQuant, vmapbuf, net_log_buffer));
 
-#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
-		log_var(vMap.getChAreasInformationCRC());
-#endif
-        
-#ifdef NET_LOG_EXHAUSTIVE
+#if defined(NET_LOG_WORLD)
+        log_var(vMap.getChAreasInformationCRC());
         log_var(vMap.getWorldCRC());
 #endif
 

@@ -70,7 +70,7 @@ struct terTerraformGeneral : GridElementType, SharedObject
 	terPlayer* Player;
 
 	terTerraformGeneral(int id,int x,int y,terPlayer* player);
-	virtual ~terTerraformGeneral();
+	~terTerraformGeneral() override;
 
 	virtual void Show(){}
 
