@@ -8,13 +8,13 @@ const uint32_t PERIMETER_MESSAGE_COMPRESSION_SIZE = 128 * 1024;
 ///Specifies this message contains compressed payload
 const uint16_t PERIMETER_MESSAGE_FLAG_COMPRESSED = 1 << 0;
 ///How many milliseconds extra to wait for the data part once getting header
-const int32_t RECV_DATA_AFTER_HEADER_TIMEOUT = 10000;
+const int32_t RECV_DATA_AFTER_HEADER_TIMEOUT = 60000;
 ///How many milliseconds to wait for handshake to be sent/recv
-const int32_t CONNECTION_HANDSHAKE_TIMEOUT = 10000;
+const int32_t CONNECTION_HANDSHAKE_TIMEOUT = 60000;
 ///How many milliseconds to wait for relay connection
-const int32_t CONNECTION_RELAY_TIMEOUT = 10000;
+const int32_t CONNECTION_RELAY_TIMEOUT = 60000;
 ///How many milliseconds to wait for active connection
-const int32_t CONNECTION_ACTIVE_TIMEOUT = 10000;
+const int32_t CONNECTION_ACTIVE_TIMEOUT = 60000;
 
 #include <SDL_net.h>
 
