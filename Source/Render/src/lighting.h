@@ -1,5 +1,7 @@
 #pragma once
 
+static RandomGenerator rnd;
+
 struct LightingParameters
 {
 	float generate_time;
@@ -25,8 +27,7 @@ public:
 	virtual void Draw(cCamera *UCamera);
 	virtual void Animate(float dt);
 
-	const MatXf& GetPosition(void) const
-	{ 
+	const MatXf& GetPosition() const {
 		return global_pos;
 	}
 protected:

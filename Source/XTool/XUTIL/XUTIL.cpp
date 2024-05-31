@@ -17,26 +17,6 @@ bool argcv_setup_done = false;
 int app_argc = 0;
 std::vector<std::string> app_argv;
 
-static unsigned int XRndValue = 83838383;
-
-unsigned int XRnd(unsigned int m)
-{ 
-	XRndValue = XRndValue*214013L + 2531011L;
-	if(!m)
-		return 0;
-	return ((XRndValue>> 16) & 0x7fff) % m; 
-}
-
-void XRndSet(unsigned int m)
-{
-	XRndValue = m;
-}
-
-unsigned int XRndGet()
-{
-	return XRndValue;
-}
-
 void setup_argcv(int argc, char *argv[]) {
     //Pick the args
     for(int i = 0; i < argc; i ++){

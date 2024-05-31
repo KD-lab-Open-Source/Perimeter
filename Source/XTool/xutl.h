@@ -13,10 +13,6 @@ typedef uint64_t arch_flags;
 
 struct XBuffer;
 
-unsigned int XRnd(unsigned int m);
-void XRndSet(unsigned int m);
-unsigned int XRndGet();
-
 ///Get high performance counter
 uint64_t getPerformanceCounter();
 

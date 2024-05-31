@@ -151,14 +151,14 @@ void show_watch();
 //	save_log [time_to_exit:seconds]
 //	verify_log [append_log] [time_to_exit:seconds]
 //
-//	_FORCE_NET_LOG_ - to force network log under _FINAL_VERSION_
+//	_FORCE_NET_LOG_ - to force network log under non debug
 /////////////////////////////////////////////////////////////////////////////////
 
 #define _FORCE_NET_LOG_
 
-#if (!defined(_FINAL_VERSION_) || defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
+#if (defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
 #define _DO_LOG_
-#define NET_LOG_EXHAUSTIVE
+//#define NET_LOG_EXHAUSTIVE
 //#define NET_LOG_WORLD
 #endif
 
@@ -225,44 +225,19 @@ inline Vect3f to3D(const Vect2f& pos, float z) { return Vect3f(pos.x, pos.y, z);
 extern RandomGenerator logicRND;
 extern RandomGenerator terEffectRND;
 
-inline int logicRNDi(int x, const char* file, int line)
-{
-#ifdef NET_LOG_EXHAUSTIVE
-    std::string filename = std::filesystem::u8path(file).filename().u8string();
-    log_var(filename);
-    log_var(line);
-    log_var(logicRND.get());
-#endif
-	return logicRND(x);
-}
-inline float logicRNDf(const char* file, int line)
-{
-#ifdef NET_LOG_EXHAUSTIVE
-    std::string filename = std::filesystem::u8path(file).filename().u8string();
-    log_var(filename);
-    log_var(line);
-    log_var(logicRND.get());
-#endif
-	return logicRND.frnd();
-}
-inline float logicRNDfa(const char* file, int line)
-{
-#ifdef NET_LOG_EXHAUSTIVE
-    std::string filename = std::filesystem::u8path(file).filename().u8string();
-    log_var(filename);
-	log_var(line);
-	log_var(logicRND.get());
-#endif
-	return logicRND.frand();
-}
+int logicRNDi_internal(int x, const char* file, int line);
+float logicRNDf_internal(const char* file, int line);
+float logicRNDfa_internal(const char* file, int line);
 
-#define terLogicRND(x) logicRNDi(x, __FILE__, __LINE__)
+#define terLogicRND(x) logicRNDi_internal(x, __FILE__, __LINE__)
+
+#define terLogicRNDGenerator() RandomGenerator(terLogicRND(0x7FFF), true)
 
 //-1..+1
-#define terLogicRNDfrnd() logicRNDf(__FILE__, __LINE__)
+#define terLogicRNDfrnd() logicRNDf_internal(__FILE__, __LINE__)
 
 //0..+1
-#define terLogicRNDfrand() logicRNDfa(__FILE__, __LINE__)
+#define terLogicRNDfrand() logicRNDfa_internal(__FILE__, __LINE__)
 
 //--------------------------------------
 

@@ -2776,14 +2776,10 @@ struct SavePrm {
 struct SavePrmBinary
 {
     std::vector<TriggerChainList> TriggerChains;
-    unsigned int X_RND;
     int logic_RND;
-    int xm_RND;
 
     SERIALIZE(ar) {
-        ar & WRAP_OBJECT(X_RND);
         ar & WRAP_OBJECT(logic_RND);
-        ar & WRAP_OBJECT(xm_RND);
         ar & WRAP_NAME(TriggerChains, "TriggerChains");
     }
 };

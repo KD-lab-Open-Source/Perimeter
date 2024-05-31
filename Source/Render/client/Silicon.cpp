@@ -8,6 +8,7 @@
 #include "Scripts/Silicon.cppi"
 #include "VertexFormat.h"
 
+RandomGenerator silicon_rnd;
 
 Vect3f ElasticSphere::unit_sphere[psi_size][theta_size];
 Vect3f ElasticSphere::points_map[psi_size][theta_size];
@@ -53,10 +54,10 @@ void ElasticSphere::SetPosition(const MatXf& Matrix)
 	initial_position = Matrix.trans(); 
 
 	Vect3f dir;
-	dir.x = frnd(1);
-	dir.y = frnd(1);
-	dir.z = frnd(1);
-	GlobalMatrix.rot().set(dir, frnd(XM_PI));
+	dir.x = silicon_rnd.frnd(1);
+	dir.y = silicon_rnd.frnd(1);
+	dir.z = silicon_rnd.frnd(1);
+	GlobalMatrix.rot().set(dir, silicon_rnd.frnd(XM_PI));
 }
 
 void ElasticSphere::PreDraw(cCamera *DrawNode)
@@ -90,11 +91,12 @@ void ElasticSphere::GetColor(sColor4f *ambient,sColor4f *diffuse_,sColor4f *spec
 void ElasticSphere::setRadius(float radius_, float relative_random_displacement)
 {
 	radius = radius_;
-	for(int psi = 0; psi < psi_size; psi++)
-		for(int theta = 0; theta < theta_size; theta++){
-			height_map[psi][theta] = radius*(1 + frnd(relative_random_displacement));
-			velocity_map[psi][theta] = 0;
-			}
+	for(int psi = 0; psi < psi_size; psi++) {
+        for (int theta = 0; theta < theta_size; theta++) {
+            height_map[psi][theta] = radius * (1 + silicon_rnd.frnd(relative_random_displacement));
+            velocity_map[psi][theta] = 0;
+        }
+    }
 	velocity.set(0, 0, 0);
 }
 

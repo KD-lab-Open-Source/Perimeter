@@ -510,8 +510,6 @@ void vrtMap::prepare(const char* name)
 //Для Периметра
 void vrtMap::selectUsedWorld(int nWorld)
 {
-	XRndSet(1);
-
 	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
 
 // reload
@@ -1147,7 +1145,7 @@ void vrtMap::generateChAreasInformation(XBuffer& out)
 
 unsigned int vrtMap::getChAreasInformationCRC() 
 { 
-	XBuffer buf(256, 1);
+	XBuffer buf(256, true);
 	generateChAreasInformation(buf);
 	return crc32((unsigned char*)buf.address(), buf.tell(), startCRC32); 
 }

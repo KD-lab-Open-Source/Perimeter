@@ -75,7 +75,6 @@
 
 const int REGION_DATA_FILE_VERSION = 8383;
 
-RandomGenerator logicRND;
 int terRealCollisionCount = 0;
 int terMapUpdatedCount = 0;
 
@@ -893,13 +892,9 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
         ia >> WRAP_NAME(savePrmBinary, "SavePrmBinary");
 
         //Restore random generators
-        XRndSet(savePrmBinary.X_RND);
         logicRND.set(savePrmBinary.logic_RND);
-        xm_random_generator.set(savePrmBinary.xm_RND);
     } else {
-        XRndSet(1);
-        logicRND.set(1);
-        xm_random_generator.set(1);
+        logicRND.set(123456);
     }
 
     //---------------------
@@ -1127,14 +1122,12 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     SavePrmBinary savePrmBinary;
     
     //Save RND generator states
-    savePrmBinary.X_RND = XRndGet();
     savePrmBinary.logic_RND = logicRND.get();
-    savePrmBinary.xm_RND = xm_random_generator.get();
 
-	for (auto& pi : playersToSave) {
+	for (auto& pls : playersToSave) {
 		SavePlayerData& savePlayer = data.players.emplace_back();
-		if (pi) {
-            pi->universalSave(savePlayer, userSave);
+		if (pls) {
+            pls->universalSave(savePlayer, userSave);
             if (!check_command_line("not_triggerchains_binary")) {
                 std::swap(savePlayer.currentTriggerChains, savePrmBinary.TriggerChains.emplace_back());
             }

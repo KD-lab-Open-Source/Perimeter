@@ -11,6 +11,7 @@
 #include "xmath.h"
 #include "xbuffer.h"
 #include "xstream.h"
+#include "xerrhand.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //Assert that types are IEEE compilant
@@ -105,8 +106,18 @@ const Se3f  Se3f::ID    (QuatF::ID, Vect3f::ZERO);
 const Mat2f Mat2f::ID   (1, 0, 0, 1);
 const MatX2f MatX2f::ID   (Mat2f::ID, Vect2f::ZERO);
 
-RandomGenerator xm_random_generator;
-int RandomGenerator::operator()(){ return ((value = value*214013L + 2531011L) >> 16) & 0x7fff; }
+int RandomGenerator::operator()() {
+#if defined(PERIMETER_DEBUG_ASSERT) && defined(_PERIMETER_)
+    extern bool MT_IS_GRAPH();
+    extern bool MT_IS_LOGIC();
+    if (logic) {
+        xassert(MT_IS_LOGIC());
+    } else {
+        xassert(MT_IS_GRAPH());
+    }
+#endif
+    return ((value = value*214013L + 2531011L) >> 16) & 0x7fff;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

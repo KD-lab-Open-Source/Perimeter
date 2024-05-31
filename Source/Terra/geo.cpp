@@ -54,12 +54,6 @@ static float gain(float a, float b)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Служебные функции
-float FRnd(void)
-{
-	return (float)XRnd(0xFFF)/(float)(0xFFF);//(float)(RAND_MAX+1);
-}
-
 static inline int GetAlt4G(int off){
 	int v;
 	if(vMap.VxDBuf[off]!=0) {
@@ -197,7 +191,7 @@ void geoInfluence(int x,int y)
 			for(j=0; j<XYGG_SIZE; j++){
 				float x=(float)(j-XYGG_SIZE05)/(float)XYGG_SIZE05; 
 				float f=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
-				GeoGrid[i][j]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
+				GeoGrid[i][j]= xm::round(f * (float) (1 << 16));//(1<<16)+terLogicRND(1<<14);
 			}
 		}
 		//float da=a90/(XYGG_SIZE05-(XYGG_SIZE05>>2));
@@ -207,7 +201,7 @@ void geoInfluence(int x,int y)
 			xx = xRad[i];
 			yy = yRad[i];
 			for(j = 0; j < max; j++) {
-				GeoGrid[(XYGG_SIZE05 + yy[j]) & clip_mask_GG][(XYGG_SIZE05 + xx[j]) & clip_mask_GG]=(XRnd(max)<<13)+(1<<15);//xm::round((float)MAX_H*((XRnd(XYGG_SIZE05-i)+1)/(i+1)) )//*xm::cos(a))>>15;
+				GeoGrid[(XYGG_SIZE05 + yy[j]) & clip_mask_GG][(XYGG_SIZE05 + xx[j]) & clip_mask_GG]=(terLogicRND(max)<<13)+(1<<15);//xm::round((float)MAX_H*((terLogicRND(XYGG_SIZE05-i)+1)/(i+1)) )//*xm::cos(a))>>15;
 			}
 			//a+=da;
 			//if(a>a90)a=a90;
@@ -217,32 +211,32 @@ void geoInfluence(int x,int y)
 		const int obD=16;
 		int jMax;
 extern double noise1(double arg);
-		static float count=XRnd(1000);
+		static float count=terLogicRND(1000);
 		static float last_cout=count;
 		count=last_cout+2;
 		for(i = 0; i < XYGG_SIZE; i++){
-			jMax=obD + noise1((float)(i+count)/modD)*modD;//XRnd(modD)
+			jMax=obD + noise1((float)(i+count)/modD)*modD;//terLogicRND(modD)
 			for(j = 0; j < jMax; j++) {
 				GeoGrid[i][j]=0;
 			}
 		}
 		count+=i;
 		for(i = 0; i < XYGG_SIZE; i++){
-			jMax=obD + noise1((float)(i+count)/modD)*modD;//XRnd(modD)
+			jMax=obD + noise1((float)(i+count)/modD)*modD;//terLogicRND(modD)
 			for(j = 0; j < jMax; j++) {
 				GeoGrid[j][i]=0;
 			}
 		}
 		count+=i;
 		for(i = 0; i < XYGG_SIZE; i++){
-			jMax=obD + noise1((float)(i+count)/modD)*modD;//XRnd(modD)
+			jMax=obD + noise1((float)(i+count)/modD)*modD;//terLogicRND(modD)
 			for(j = 0; j < jMax; j++) {
 				GeoGrid[i][XYGG_SIZE-j-1]=0;
 			}
 		}
 		count+=i;
 		for(i = 0; i < XYGG_SIZE; i++){
-			jMax=obD + noise1((float)(i+count)/modD)*modD;//XRnd(modD)
+			jMax=obD + noise1((float)(i+count)/modD)*modD;//terLogicRND(modD)
 			for(j = 0; j < jMax; j++) {
 				GeoGrid[XYGG_SIZE-j-1][i]=0;
 			}
@@ -414,7 +408,7 @@ CGeoInfluence::CGeoInfluence(int _x, int _y, int _sx, int _sy)
 			*(inVx+cnt)=v;
 			if( v < vmin) vmin=v;
 			if( v > vmax) vmax=v;
-			tmpltSur[cnt]=0;//vMap.GetGeoType(off,XRnd(128<<VX_FRACTION)+tmpltGeo[cnt]>>(11-VX_FRACTION))&(~0x1);//GetGeoType(off,tmpltGeo[cnt]>>8);
+			tmpltSur[cnt]=0;//vMap.GetGeoType(off,terLogicRND(128<<VX_FRACTION)+tmpltGeo[cnt]>>(11-VX_FRACTION))&(~0x1);//GetGeoType(off,tmpltGeo[cnt]>>8);
 			cnt++;
 		}
 	}
@@ -447,7 +441,7 @@ void CGeoInfluence::prepTmplt(void)
 		for(j=0; j<sx; j++){
 			float x=(float)(j-sx05)/(float)sx05; 
 			float f=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
-			tmpltGeo[cnt]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
+			tmpltGeo[cnt]= xm::round(f * (float) (1 << 16));//(1<<16)+terLogicRND(1<<14);
 			cnt++;
 		}
 	}
@@ -605,7 +599,7 @@ CWormOut::CWormOut(int _x, int _y)
 		for(j=0; j<sx_; j++){
 			float x=(float)(j-sx05)/(float)sx05; 
 			float f0=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
-			//tmpltVx[cnt]=xm::round(f0*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+			//tmpltVx[cnt]=xm::round(f0*(float)(1<<16));//(1<<16)+terLogicRND(1<<14);
 
 			float f=1.0f*(1.0f-xm::sqrt(x*x+y*y));
 			if(f<0)f=0;
@@ -826,7 +820,7 @@ struct CWormForm {
 			for(j=0; j<WSXSY; j++){
 				//float x=(float)(j-WSXSY05)/(float)WSXSY05; 
 				//float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
-				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+terLogicRND(1<<14);
 				int hh=VBitMap.getPreciseColor(j, i);
 				(*FormWormsNew)[i][j]=hh<<8;
 			}
@@ -844,7 +838,7 @@ struct CWormForm {
 			for(j=0; j<WSXSY; j++){
 				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
 				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
-				(*FormWormsNew)[i][j]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
+				(*FormWormsNew)[i][j]= xm::round(f * (float) (1 << 16));//(1<<16)+terLogicRND(1<<14);
 			}
 		}
 	};
@@ -889,7 +883,7 @@ void worms(int x, int y)
 //			for(j=0; j<WSXSY; j++){
 //				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
 //				float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
-//				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+//				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+terLogicRND(1<<14);
 //			}
 /*			for(j=WSXSY>>1; j<WSXSY; j++){
 				int t=(WSXSY-j)*FormWorms[WSXSY-1][j]/(WSXSY>>1);
@@ -1172,8 +1166,8 @@ CGeoWorm::CGeoWorm(int xBeg, int yBeg, int xTrgt, int yTrgt)
 	xOld=xBeg; yOld=yBeg;
 	counter=0;
 	cPosition=tPosition=Vect3f::ZERO;
-	cDirection=FRnd()* XM_PI * 2.0f;
-	cSpeed=MIN_SPEED + K_FRND*FRnd();
+	cDirection=terLogicRNDfrand() * XM_PI * 2.0f;
+	cSpeed=MIN_SPEED + K_FRND * terLogicRNDfrand();
 }
 
 static const int MIN_WORM_PERIOD=10;
@@ -1185,7 +1179,7 @@ int CGeoWorm::quant()
 	static int period=0;
 	period--;
 	if(period<=0){
-		period=MIN_WORM_PERIOD+XRnd(MAX_WORM_ADDPERIOD);
+		period=MIN_WORM_PERIOD+terLogicRND(MAX_WORM_ADDPERIOD);
 	}
 LGWQ_1:
 	cDirection=addAngle+noise1(counter/40.0)* XM_PI * 2.0f;
@@ -1243,7 +1237,7 @@ void CGeoWorm::step(int x, int y, float angle)
 //			for(j=0; j<WSXSY; j++){
 //				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
 //				float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
-//				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+//				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+terLogicRND(1<<14);
 //			}
 /*			for(j=WSXSY>>1; j<WSXSY; j++){
 				int t=(WSXSY-j)*FormWorms[WSXSY-1][j]/(WSXSY>>1);
@@ -1522,14 +1516,14 @@ int elementGeoBreak::unengagedID=0; //Инициализация уникаль�
 
 geoBreak1::geoBreak1(int x, int y, int rad, int beginNumBreaks){ //0-случайное кол-во
 	elGB.erase(elGB.begin(), elGB.end());//очистка списка элементов трещин
-	if(beginNumBreaks==0) beginNumBreaks=2+XRnd(MAX_BEGIN_BREAKS-2);//Диапазон от 2 до MAX_BEGIN_BREAKS
+	if(beginNumBreaks==0) beginNumBreaks=2+terLogicRND(MAX_BEGIN_BREAKS-2);//Диапазон от 2 до MAX_BEGIN_BREAKS
 
 	float range_corner=2*pi/((float)beginNumBreaks);
 	float begin_corner=0;
 	for(int i=0; i<beginNumBreaks; i++){
-		float alpha1=begin_corner+(FRnd()*range_corner);
+		float alpha1=begin_corner+(terLogicRNDfrand()*range_corner);
 		for(;alpha1>2*pi; alpha1-=2*pi);
-		float lenght=MAX_LENGHT_ELEMENTGEOBREAK+XRnd(MAX_LENGHT_ELEMENTGEOBREAK);
+		float lenght=MAX_LENGHT_ELEMENTGEOBREAK+terLogicRND(MAX_LENGHT_ELEMENTGEOBREAK);
 		elementGeoBreak* el=new elementGeoBreak(x, y, alpha1, lenght);
 		elGB.push_back(el);
 		begin_corner+=range_corner;
@@ -1560,11 +1554,11 @@ int geoBreak1::quant(void){
 		eReturnQuantResult result=(*pp)->quant();
 
 		if(result==HEAD_IN_FINAL_POINT) {
-			//int branhings=1+XRnd(MAX_BRANCHINGS_BREAKS);
+			//int branhings=1+terLogicRND(MAX_BRANCHINGS_BREAKS);
 			//for(int i=0; i<branhings; i++)
 			//выбор количества разломо(такой способ используется для того что-бы MAX_BRANCHINGS_BREAKS выбор был наименее вероятен)
 			int branchings;
-			for(branchings=0; branchings<MAX_BRANCHINGS_BREAKS; branchings++) if(XRnd(2)==0) break;
+			for(branchings=0; branchings<MAX_BRANCHINGS_BREAKS; branchings++) if(terLogicRND(2)==0) break;
 			if(branchings==0){
 				pp=delEementGeoBreak(pp);
 				continue;
@@ -1572,9 +1566,9 @@ int geoBreak1::quant(void){
 			float range_corner=CORNER_DISPERSION_BREAKS/((float)branchings);
 			float begin_corner=(*pp)->alpha-(CORNER_DISPERSION_BREAKS/2);
 			for(int i=0; i<branchings; i++){
-				float alpha1=begin_corner+(FRnd()*range_corner);
+				float alpha1=begin_corner+(terLogicRNDfrand()*range_corner);
 				for(;alpha1>2*pi; alpha1-=2*pi);
-				float lenght=MAX_LENGHT_ELEMENTGEOBREAK+XRnd(MAX_LENGHT_ELEMENTGEOBREAK);
+				float lenght=MAX_LENGHT_ELEMENTGEOBREAK+terLogicRND(MAX_LENGHT_ELEMENTGEOBREAK);
 				elementGeoBreak* el=new elementGeoBreak((*pp)->xend, (*pp)->yend, alpha1, lenght, (*pp)->ID);
 				elGB.push_back(el);
 				begin_corner+=range_corner;
@@ -1761,6 +1755,7 @@ eReturnQuantResult singleGeoBreak::quant(void)
 {
 	headSection+=1;
 	static int beg_offfsety=0;
+    RandomGenerator rnd = terLogicRNDGenerator();
 	if(headSection <= numSections){//Идет рост трещины
 		const float dispersionAngle=40.f*XM_PI/180.f;
 		const float dispersionAngle05=dispersionAngle/2.f;
@@ -1778,15 +1773,15 @@ eReturnQuantResult singleGeoBreak::quant(void)
 			float sinAlpha=(float)sy_real/ss;
 			//Noising
 			double alpha=xm::atan(sinAlpha/cosAlpha);//atan((double)sy_real/(double)sx_real);
-			alpha=alpha+(frnd(dispersionAngle05)-dispersionAngle05);
-			//int nx=(DENSITY_NOISE>>1) + XRnd(DENSITY_NOISE>>1); //DENSITY_NOISE;//
-			//int ny=XRnd(8)-4;
+			alpha=alpha+(rnd.frnd(dispersionAngle05)-dispersionAngle05);
+			//int nx=(DENSITY_NOISE>>1) + terLogicRND(DENSITY_NOISE>>1); //DENSITY_NOISE;//
+			//int ny=terLogicRND(8)-4;
 			//sx_real=(float)nx*cosAlpha+ (float)ny*sinAlpha;
 			//sy_real=-(-(float)nx*sinAlpha+ (float)ny*cosAlpha);
-			//sx_real=sx_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sx_real<0) sx_real=0;
-			//sy_real=sy_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sy_real<0) sy_real=0;
-			sx_real=sx_real/2 + xm::cos(alpha) * (XRnd(DENSITY_NOISE << 1) + (DENSITY_NOISE << 1)) / 2;// if(sx_real<0) sx_real=0;
-			sy_real=sy_real/2 + xm::sin(alpha) * (XRnd(DENSITY_NOISE << 1) + (DENSITY_NOISE << 1)) / 2;// if(sy_real<0) sy_real=0;
+			//sx_real=sx_real+ terLogicRND(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sx_real<0) sx_real=0;
+			//sy_real=sy_real+ terLogicRND(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sy_real<0) sy_real=0;
+			sx_real=sx_real/2 + xm::cos(alpha) * (terLogicRND(DENSITY_NOISE << 1) + (DENSITY_NOISE << 1)) / 2;// if(sx_real<0) sx_real=0;
+			sy_real=sy_real/2 + xm::sin(alpha) * (terLogicRND(DENSITY_NOISE << 1) + (DENSITY_NOISE << 1)) / 2;// if(sy_real<0) sy_real=0;
 		}
 		//DrawLine
 		geoLine(xp[headSection-1], yp[headSection-1]+beg_offfsety, sx_real, sy_real);
@@ -2149,7 +2144,7 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 				else *(deltaVx+cnt)=0;
 			}
 			else *(deltaVx+cnt)=0;
-//			deltaVx[cnt]=((20<<VX_FRACTION))*f;//+XRnd(1<<VX_FRACTION) //показ формы ковша
+//			deltaVx[cnt]=((20<<VX_FRACTION))*f;//+terLogicRND(1<<VX_FRACTION) //показ формы ковша
 			if( v < vmin) vmin=v;
 			if( v > vmax) vmax=v;
 			cnt++;
@@ -2184,7 +2179,7 @@ void CLandslip::prepTmplt(void)
 			if(j<sx/2) {
 				f=f+0.5f*(float)(sx/2-j)/(sx/2);
 			}
-			tmpltGeo[cnt]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
+			tmpltGeo[cnt]= xm::round(f * (float) (1 << 16));//(1<<16)+terLogicRND(1<<14);
 			cnt++;
 		}
 	}
@@ -2250,7 +2245,7 @@ int CLandslip::geoQuant(void)
 
 	int xoldPrec=xPrec, yoldPrec=yPrec;
 
-	srBmp rbmpT(direction , sx, sy);//+ (XM_PI/180)*(2-XRnd(4))
+	srBmp rbmpT(direction , sx, sy);//+ (XM_PI/180)*(2-terLogicRND(4))
 //расчет максимального битмапа
 	rbmpT.setStr(0);
 	int x1= xm::abs(rbmpT.getX(0));
@@ -2382,7 +2377,7 @@ int CLandslip::geoQuant(void)
 //				}
 //			}
 //			else {
-				int threshold=XRnd(1<<VX_FRACTION);//XRnd(2<<VX_FRACTION);//THRESHOLD;//XRnd(1<<VX_FRACTION);//THRESHOLD+
+				int threshold=terLogicRND(1<<VX_FRACTION);//terLogicRND(2<<VX_FRACTION);//THRESHOLD;//terLogicRND(1<<VX_FRACTION);//THRESHOLD+
 				int dv=oldV-newV;
 				if(dv>threshold ){
 					newV+=deltaVx[cnt];
@@ -2575,8 +2570,8 @@ sTVolcano::sTVolcano(int _x, int _y, int _sx, int _sy)
 //	if(h_begin > MAX_VX_HEIGHT/3) kScl=((MAX_VX_HEIGHT-MAX_VX_HEIGHT*2/3)<<16)/(MAX_VX_HEIGHT);
 //	else kScl=((MAX_VX_HEIGHT-h_begin)<<16)/(MAX_VX_HEIGHT);
 
-
-	const int kFirstScale = xm::round((0.55f + frnd(0.15f)) * (float) (1 << 16));
+    RandomGenerator rnd = terLogicRNDGenerator();
+	const int kFirstScale = xm::round((0.55f + rnd.frnd(0.15f)) * (float) (1 << 16));
 	max_template_volcano_height = 0;
 	XStream fo(0);
 	fo.open(convert_path_content(Path2TTerraResource + "volcano.dat"), XS_IN);
@@ -2860,7 +2855,7 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 	float C=-outOrientation.z;
 	float D=(float)h_begin/(float)(1<<VX_FRACTION);//position.z;
 
-	unsigned short* curPreImage=preImage+tb_arraySX*tb_arraySY*tb_keyPoints*XRnd(numPreImage);
+	unsigned short* curPreImage=preImage+tb_arraySX*tb_arraySY*tb_keyPoints*terLogicRND(numPreImage);
 	cnt=0;
 	////!int kScl=xm::round(1.8f*(float)(1<<16));
 	int kScl= xm::round(2.4f * (float) (1 << 16));
@@ -3032,7 +3027,7 @@ void bubble(int x, int y)
 			for(j=0; j<bubleWSXSY; j++){
 				float x=(float)(j-bubleWSXSY05)/(float)bubleWSXSY05; 
 				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
-				bubleWormForm[i][j]= xm::round(f * (float) (1 << 14)); //15 //(1<<16)+XRnd(1<<14);
+				bubleWormForm[i][j]= xm::round(f * (float) (1 << 14)); //15 //(1<<16)+terLogicRND(1<<14);
 			}
 		}
 		for(int m=0; m<256; m++){
@@ -3060,7 +3055,8 @@ void bubble(int x, int y)
 
 	const float averageSpeed=3.0;//4
 	const float deltaSpeed=2.0;
-	float SPEED=averageSpeed+frnd(deltaSpeed);
+    RandomGenerator rnd = terLogicRNDGenerator();
+	float SPEED=averageSpeed+rnd.frnd(deltaSpeed);
 	curX+=xm::cos(begAngle)*SPEED;
 	curY+=xm::sin(begAngle)*SPEED;
 	int i,j;
@@ -3082,8 +3078,8 @@ void bubble(int x, int y)
 	}
 
 	float K_FLUCTUATION=1.f;
-	////!int curKFluct=xm::round((1.5+frnd(K_FLUCTUATION))*(1<<16));
-	int curKFluct= xm::round((3.0 + frnd(K_FLUCTUATION)) * (1 << 16));
+	////!int curKFluct=xm::round((1.5+rnd.frnd(K_FLUCTUATION))*(1<<16));
+	int curKFluct= xm::round((3.0 + rnd.frnd(K_FLUCTUATION)) * (1 << 16));
 
 	int xx,yy;
 	for(i = curIY-bubleWSXSY05, yy=0; i < curIY+bubleWSXSY05; i++, yy++){
@@ -3119,18 +3115,18 @@ void bubble(int x, int y)
 //
 	const int MAX_QUANT_BUBBLE=10;//12//10//8
 	const int MIN_QUANT_BUBBLE=5;//8//5//3
-	int num_bubble=XRnd(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
+	int num_bubble=terLogicRND(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
 	for(i=0; i<num_bubble; i++){
 		if(num_el_arr>=MAX_EL_ARR-1) return;
-		float dirAngl=fabsRnd(2*XM_PI);
+		float dirAngl=rnd.fabsRnd(2*XM_PI);
 		float MAX_D=50.f;
-		float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1.f)*MAX_D);
+		float r=xm::abs((xm::sqrt(-xm::log(0.020f+rnd.fabsRnd(1.f-0.021f)))-1.f)*MAX_D);
 		float addx=xm::cos(dirAngl)*r;
 		float addy=xm::sin(dirAngl)*r;
 		float MAX_ADDON_R=12.f;
-		int addon=XRnd(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//XRnd(xm::round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
+		int addon=terLogicRND(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+rnd.fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//terLogicRND(xm::round(MAX_ADDON_R));//terLogicRND( round(MAX_ADDON_R*(r/MAX_D)) );
 		bool flag_occurrenceGeo=0;
-		if(r <= 0.5*MAX_D && XRnd(10)>0) flag_occurrenceGeo=1;
+		if(r <= 0.5*MAX_D && terLogicRND(10)>0) flag_occurrenceGeo=1;
 		bubArr[num_el_arr]=new sTBubble(xm::round(curX+addx),xm::round(curY+addy),6+addon,6+addon, flag_occurrenceGeo);
 		num_el_arr++;
 	}
@@ -3153,14 +3149,14 @@ void bubble(int x, int y)
 		num_bubble=xm::round(maxQuantTailBubble);
 		for(i=0; i<num_bubble; i++){
 			if(num_el_arr>=MAX_EL_ARR-1) return;
-			float dirAngl=fabsRnd(2*XM_PI);
+			float dirAngl=rnd.fabsRnd(2*XM_PI);
 			float MAX_D=tailR;
-			float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
+			float r=xm::abs((xm::sqrt(-xm::log(0.020f+rnd.fabsRnd(1.f-0.021f)))-1)*MAX_D);
 			float addx=xm::cos(dirAngl)*r;
 			float addy=xm::sin(dirAngl)*r;
-			int addon=XRnd( xm::round(MAX_ADDON_R*(1.0-r/MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*curAddonR); //XRnd(round(MAX_ADDON_R));//XRnd( xm::round(MAX_ADDON_R*(r/MAX_D)) );
+			int addon=terLogicRND( xm::round(MAX_ADDON_R*(1.0-r/MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+rnd.fabsRnd(1.-0.021)))-1)*curAddonR); //terLogicRND(round(MAX_ADDON_R));//terLogicRND( xm::round(MAX_ADDON_R*(r/MAX_D)) );
 			//bool flag_occurrenceGeo=0;
-			//if(r <= 0.5*BEGIN_TAIL_R && XRnd(10)>0) flag_occurrenceGeo=1;
+			//if(r <= 0.5*BEGIN_TAIL_R && terLogicRND(10)>0) flag_occurrenceGeo=1;
 			bubArr[num_el_arr]=new sTBubble(xm::round(curTX+addx), xm::round(curTY+addy),4+addon, 4+addon);
 			num_el_arr++;
 		}
@@ -3173,7 +3169,7 @@ void bubble(int x, int y)
 	std::list<sToolzDate>::iterator p;
 	individualToolzer<T2TE_CHANGING_TERRAIN_HEIGHT> toolzerChangeTerHeight ;
 	for(p = toolzDateLst.begin(); p != toolzDateLst.end(); p++){
-		if(XRnd(2)) toolzerChangeTerHeight.influenceDZ(p->x, p->y, p->r, 0, 0);
+		if(terLogicRND(2)) toolzerChangeTerHeight.influenceDZ(p->x, p->y, p->r, 0, 0);
 	};
 	toolzDateLst.erase(toolzDateLst.begin(), toolzDateLst.end());
 
@@ -3196,7 +3192,7 @@ void bubble(int x, int y)
 				}
 				if(k!=m) continue;
 			}
-			if(bubArr[m]->quant()==0 || XRnd(30)==1){
+			if(bubArr[m]->quant()==0 || terLogicRND(30)==1){
 				toolzDateLst.push_back(sToolzDate(bubArr[m]->x+bubArr[m]->sx/2, bubArr[m]->y+bubArr[m]->sy/2, bubArr[m]->sx/2+bubArr[m]->sx/4));
 				delete bubArr[m];
 				bubArr[m]=0;
@@ -3210,8 +3206,8 @@ void bubble(int x, int y)
 
 sTorpedo::sTorpedo(int x, int y)
 {
-
-	float angl=fabsRnd(XM_PI*2);
+    RandomGenerator rnd = terLogicRNDGenerator();
+	float angl=rnd.fabsRnd(XM_PI*2);
 	Vect2f tmp(xm::cos(angl), xm::sin(angl));
 	init(x, y, tmp);
 }
@@ -3245,8 +3241,8 @@ bool sTorpedo::quant(void)
 			for(j=0; j<bubleWSXSY; j++){
 				float x=(float)(j-bubleWSXSY05)/(float)bubleWSXSY05; 
 				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
-				//bubleWormForm[i][j]=xm::round((f*0.7f)*(float)(1<<14)); //15 //(1<<16)+XRnd(1<<14);
-				bubleWormForm[i][j]= xm::round(f * (float) (1 << 14)); //15 //(1<<16)+XRnd(1<<14);
+				//bubleWormForm[i][j]=xm::round((f*0.7f)*(float)(1<<14)); //15 //(1<<16)+terLogicRND(1<<14);
+				bubleWormForm[i][j]= xm::round(f * (float) (1 << 14)); //15 //(1<<16)+terLogicRND(1<<14);
 			}
 		}
 		for(int m=0; m<256; m++){
@@ -3259,7 +3255,8 @@ bool sTorpedo::quant(void)
 
 	const float averageSpeed=3.0;//4
 	const float deltaSpeed=2.0;
-	float SPEED=averageSpeed+frnd(deltaSpeed);
+    RandomGenerator rnd = terLogicRNDGenerator();
+	float SPEED=averageSpeed+rnd.frnd(deltaSpeed);
 	curX+=/*xm::cos(begAngle)*/direction.x*SPEED;
 	curY+=/*xm::sin(begAngle)*/direction.y*SPEED;
 	const int BORDER=bubleWSXSY;
@@ -3288,8 +3285,8 @@ bool sTorpedo::quant(void)
 	if(countZERO>Maximum_quantity_of_points_of_zero_height_for_permeability) return 0;
 
 	float K_FLUCTUATION=1.f;
-	////!int curKFluct=xm::round((1.5+frnd(K_FLUCTUATION))*(1<<16));
-	int curKFluct= xm::round((3.0 + frnd(K_FLUCTUATION)) * (1 << 16));
+	////!int curKFluct=xm::round((1.5+rnd.frnd(K_FLUCTUATION))*(1<<16));
+	int curKFluct= xm::round((3.0 + rnd.frnd(K_FLUCTUATION)) * (1 << 16));
 
 	int xx,yy;
 	for(i = curIY-bubleWSXSY05, yy=0; i < curIY+bubleWSXSY05; i++, yy++){
@@ -3336,18 +3333,18 @@ bool sTorpedo::quant(void)
 
 	const int MAX_QUANT_BUBBLE=10;//12//10//8
 	const int MIN_QUANT_BUBBLE=5;//5;//8//5//3
-	int num_bubble=XRnd(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
+	int num_bubble=terLogicRND(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
 	for(i=0; i<num_bubble; i++){
 		if(num_el_arr>=CTORPEDO_MAX_EL_ARR) break;
-		float dirAngl=fabsRnd(2*XM_PI);
+		float dirAngl=rnd.fabsRnd(2*XM_PI);
 		float MAX_D=50.f;
-		float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
+		float r=xm::abs((xm::sqrt(-xm::log(0.020f+rnd.fabsRnd(1.f-0.021f)))-1)*MAX_D);
 		float addx=xm::cos(dirAngl)*r;
 		float addy=xm::sin(dirAngl)*r;
 		float MAX_ADDON_R=12.f;
-		int addon=XRnd(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//XRnd(round(MAX_ADDON_R));//XRnd( xm::round(MAX_ADDON_R*(r/MAX_D)) );
+		int addon=terLogicRND(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+rnd.fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//terLogicRND(round(MAX_ADDON_R));//terLogicRND( xm::round(MAX_ADDON_R*(r/MAX_D)) );
 		bool flag_occurrenceGeo=0;
-		if(r <= 0.5*MAX_D && XRnd(10)>0) flag_occurrenceGeo=1;
+		if(r <= 0.5*MAX_D && terLogicRND(10)>0) flag_occurrenceGeo=1;
 		if(insert2Arr(xm::round(curX+addx),xm::round(curY+addy),6+addon,6+addon, flag_occurrenceGeo)==0) break;
 	}
 
@@ -3369,14 +3366,14 @@ bool sTorpedo::quant(void)
 		num_bubble=xm::round(maxQuantTailBubble);
 		for(i=0; i<num_bubble; i++){
 			if(num_el_arr>=CTORPEDO_MAX_EL_ARR) break;
-			float dirAngl=fabsRnd(2*XM_PI);
+			float dirAngl=rnd.fabsRnd(2*XM_PI);
 			float MAX_D=tailR;
-			float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
+			float r=xm::abs((xm::sqrt(-xm::log(0.020f+rnd.fabsRnd(1.f-0.021f)))-1)*MAX_D);
 			float addx=xm::cos(dirAngl)*r;
 			float addy=xm::sin(dirAngl)*r;
-			int addon=XRnd(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*curAddonR); //XRnd(xm::round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
+			int addon=terLogicRND(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+rnd.fabsRnd(1.-0.021)))-1)*curAddonR); //terLogicRND(xm::round(MAX_ADDON_R));//terLogicRND( round(MAX_ADDON_R*(r/MAX_D)) );
 			//bool flag_occurrenceGeo=0;
-			//if(r <= 0.5*BEGIN_TAIL_R && XRnd(10)>0) flag_occurrenceGeo=1;
+			//if(r <= 0.5*BEGIN_TAIL_R && terLogicRND(10)>0) flag_occurrenceGeo=1;
 			if(insert2Arr(xm::round(curTX+addx), xm::round(curTY+addy),4+addon, 4+addon)==0) break;
 		}
 		maxQuantTailBubble-=dQuantTailBubble;
@@ -3386,7 +3383,7 @@ bool sTorpedo::quant(void)
 
 	std::list<sToolzDate>::iterator p;
 	for(p = toolzDateLst.begin(); p != toolzDateLst.end(); p++){
-		if(XRnd(2)) toolzerChangeTerHeight.influenceDZ(p->x, p->y, p->r, 0, 0);
+		if(terLogicRND(2)) toolzerChangeTerHeight.influenceDZ(p->x, p->y, p->r, 0, 0);
 	};
 	toolzDateLst.erase(toolzDateLst.begin(), toolzDateLst.end());
 
@@ -3409,7 +3406,7 @@ bool sTorpedo::quant(void)
 				}
 				if(k!=m) continue;
 			}
-			if(bubArr[m]->quant()==0 || XRnd(30)==1){
+			if(bubArr[m]->quant()==0 || terLogicRND(30)==1){
 				toolzDateLst.push_back(sToolzDate(bubArr[m]->x+bubArr[m]->sx/2, bubArr[m]->y+bubArr[m]->sy/2, bubArr[m]->sx/2+bubArr[m]->sx/4));
 				deleteEl(m);
 			}
@@ -3436,7 +3433,7 @@ void bubbleOld(int x, int y)
 	if(num_el_arr==0){for(int m=0; m<MAX_EL_ARR; m++) bubArr[m]=0;}
 
 	if(num_el_arr>=MAX_EL_ARR-1) return;
-	int addon=XRnd(16);
+	int addon=terLogicRND(16);
 	bubArr[num_el_arr]=new sTBubble(x,y,8+addon,8+addon);
 	num_el_arr++;
 	int m;
@@ -3453,7 +3450,7 @@ void bubbleOld(int x, int y)
 /*
 	static sTBubble * buble=0;
 	if(buble==0) {
-		int addon=XRnd(32);
+		int addon=terLogicRND(32);
 		buble=new sTBubble(x,y,16+addon,16+addon);
 	}
 	if(buble->quant()==0){
@@ -4047,6 +4044,7 @@ bool poiligonUP(int _x, int _y)
 	static bool flag_init=0;
 	static std::vector<Vect2f> pointArr;
 	static std::list<sUPoligon*> poligonArr;
+    RandomGenerator rnd = terLogicRNDGenerator();
 	//vector<Vect2f>::iterator p;
 	if(flag_init==0) {
 		pointArr.reserve(MAX_CROSS_POINT);
@@ -4059,7 +4057,7 @@ bool poiligonUP(int _x, int _y)
 		const float MAX_ANGLE_NORMAL=50.f*(XM_PI/180.f);
 		Vect2f curPoint(_x,_y);
 		for(i=0; i<=MAX_CROSS_POINT; i++){
-			float angleNorm=MIN_ANGLE_NORMAL+fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
+			float angleNorm=MIN_ANGLE_NORMAL+rnd.fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
 			if(!flag_right)angleNorm=-angleNorm;
 			float angl=begAngle+angleNorm;
 			Vect2f normal;
@@ -4078,7 +4076,7 @@ bool poiligonUP(int _x, int _y)
 			prevABC=curABC;
 			prevPoint=curPoint;
 			flag_right^=1;
-			float SPEED=AVERAGE_SPEED+frnd(DELTA_SPEED);
+			float SPEED=AVERAGE_SPEED+rnd.frnd(DELTA_SPEED);
  			curPoint.x+=xm::cos(begAngle)*SPEED;
 			curPoint.y+=xm::sin(begAngle)*SPEED;
 		}
@@ -4093,13 +4091,13 @@ bool poiligonUP(int _x, int _y)
 			float distance1=pointArr[step-1].distance(pointArr[step]);
 			Vect2f v1=pointArr[step-1] - pointArr[step];
 			v1.normalize(1.f);
-			v1*=distance1*(1.f/2.f)+fabsRnd(distance1*(1.f/2.f)); // 1/2   2/3
+			v1*=distance1*(1.f/2.f)+rnd.fabsRnd(distance1*(1.f/2.f)); // 1/2   2/3
 			v1+=pointArr[step];
 
 			float distance2=pointArr[step+1].distance(pointArr[step]);
 			Vect2f v2=pointArr[step+1] - pointArr[step];
 			v2.normalize(1.f);
-			v2*=distance1/2.f+fabsRnd(distance2*(1.f/2.f)); //  2/3  2/3
+			v2*=distance1/2.f+rnd.fabsRnd(distance2*(1.f/2.f)); //  2/3  2/3
 			v2+=pointArr[step];
 
 
@@ -4136,7 +4134,8 @@ bool poiligonUP(int _x, int _y)
 
 sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int _x, int _y
 {
-	//const float begAngle=fabsRnd(2*XM_PI);//-XM_PI/10.;
+    RandomGenerator rnd = terLogicRNDGenerator();
+	//const float begAngle=rnd.fabsRnd(2*XM_PI);//-XM_PI/10.;
 
 	const int MAX_CROSS_POINT=20;
 	const int MAX_EARTH_POLIGON=MAX_CROSS_POINT-2;
@@ -4151,7 +4150,7 @@ sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int
 	const float MAX_ANGLE_NORMAL=40.f*(XM_PI/180.f);
 	Vect2f curPoint(begPoint);
 	for(int i=0; i<=MAX_CROSS_POINT; i++){
-		float angleNorm=MIN_ANGLE_NORMAL+fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
+		float angleNorm=MIN_ANGLE_NORMAL+rnd.fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
 		if(!flag_right)angleNorm=-angleNorm;
 		float angl=begAngle+angleNorm;
 		Vect2f normal;
@@ -4170,7 +4169,7 @@ sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int
 		prevABC=curABC;
 		prevPoint=curPoint;
 		flag_right^=1;
-		float SPEED=AVERAGE_SPEED+frnd(DELTA_SPEED);
+		float SPEED=AVERAGE_SPEED+rnd.frnd(DELTA_SPEED);
  		curPoint.x+=xm::cos(begAngle)*SPEED;
 		curPoint.y+=xm::sin(begAngle)*SPEED;
 		if(curPoint.distance(begPoint) > aLenght) break;
@@ -4182,6 +4181,7 @@ sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int
 
 bool sGeoFault::quant()
 {
+    RandomGenerator rnd = terLogicRNDGenerator();
 	if(pointArr.size()>=3){
 		//for(; i<pointArr.size()-1; step++) 
 		if(step != xm::round(fstep) ){
@@ -4192,7 +4192,7 @@ bool sGeoFault::quant()
 				float distance1=pointArr[step-1].distance(pointArr[step]);
 				Vect2f v1=pointArr[step-1] - pointArr[step];
 				v1.normalize(1.f);
-				v1*=distance1*(4.f/6.f)+fabsRnd(distance1*(2.f/6.f)); // 1/2   2/3
+				v1*=distance1*(4.f/6.f)+rnd.fabsRnd(distance1*(2.f/6.f)); // 1/2   2/3
 				v1+=pointArr[step];
 
 				const float MAX_DISTANCE=100.f;
@@ -4200,20 +4200,20 @@ bool sGeoFault::quant()
 				if(distance1>MAX_DISTANCE)distance1=MAX_DISTANCE;
 				Vect2f v11=pointArr[step-1] - pointArr[step];
 				v11.normalize(1.f);
-				v11*=distance1*(0.f/3.f)+fabsRnd(distance1*(3.f/5.f)); // 1/2   2/3
+				v11*=distance1*(0.f/3.f)+rnd.fabsRnd(distance1*(3.f/5.f)); // 1/2   2/3
 				v11+=pointArr[step];
 
 
 				float distance2=pointArr[step+1].distance(pointArr[step]);
 				Vect2f v2=pointArr[step+1] - pointArr[step];
 				v2.normalize(1.f);
-				v2*=distance2*4.f/6.f+fabsRnd(distance2*(2.f/6.f)); //  2/3  2/3
+				v2*=distance2*4.f/6.f+rnd.fabsRnd(distance2*(2.f/6.f)); //  2/3  2/3
 				v2+=pointArr[step];
 
 				if(distance2>MAX_DISTANCE)distance2=MAX_DISTANCE;
 				Vect2f v22=pointArr[step+1] - pointArr[step];
 				v22.normalize(1.f);
-				v22*=distance2*(0.f/3.f)+fabsRnd(distance2*(3.f/5.f)); //  2/3  2/3
+				v22*=distance2*(0.f/3.f)+rnd.fabsRnd(distance2*(3.f/5.f)); //  2/3  2/3
 				v22+=pointArr[step];
 
 				point4UP addArr[2];
@@ -4243,7 +4243,7 @@ bool sGeoFault::quant()
 		}
 	}
 //	step++;
-	fstep+=0.33f + frnd(0.17f);
+	fstep+=0.33f + rnd.frnd(0.17f);
 
 	std::list<sUPoligonN*>::iterator p;
 	for(p=poligonArr.begin(); p!=poligonArr.end(); /*p++*/){
@@ -4300,7 +4300,7 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 
 	//const float MAX_ANGLE_GEO_POLIGON=70.f*(XM_PI/180.f);
 
-	int numPoligons=MIN_GEO_POLIGONS + XRnd(MAX_GEO_POLIGONS-MIN_GEO_POLIGONS);
+	int numPoligons=MIN_GEO_POLIGONS + terLogicRND(MAX_GEO_POLIGONS-MIN_GEO_POLIGONS);
 
 	int i;
 	float angleArr[MAX_GEO_POLIGONS];
@@ -4308,8 +4308,9 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 
 	const float MIN_ANGLE_GEO_POLIGON=0.4f;
 	const float DELTA_ANGLE_GEO_POLIGON=1.f;
+    RandomGenerator rnd = terLogicRNDGenerator();
 	for(i=0; i<numPoligons; i++){
-		angleArr[i]=MIN_ANGLE_GEO_POLIGON+fabsRnd(DELTA_ANGLE_GEO_POLIGON);
+		angleArr[i]=MIN_ANGLE_GEO_POLIGON+rnd.fabsRnd(DELTA_ANGLE_GEO_POLIGON);
 		sumNorm+=angleArr[i];
 	}
 	sumNorm=2.f*XM_PI/sumNorm;
@@ -4317,7 +4318,7 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 		angleArr[i]*=sumNorm;
 	}
 
-	float begAngle=(float)XRnd(360)*XM_PI/180.f;
+	float begAngle=(float)terLogicRND(360)*XM_PI/180.f;
 
 	Vect2f pnt1, pnt2, pnt3, pnt4;
 	point4UP arr[3];
@@ -4329,22 +4330,22 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 	int curYC=yCentre;
 	for(i=0; i<numPoligons; i++){
 
-		curRad=MIN_BEG_RADIUS_GEO_POLIGONS+XRnd(MAX_BEG_RADIUS_GEO_POLIGONS-MIN_BEG_RADIUS_GEO_POLIGONS);
+		curRad=MIN_BEG_RADIUS_GEO_POLIGONS+terLogicRND(MAX_BEG_RADIUS_GEO_POLIGONS-MIN_BEG_RADIUS_GEO_POLIGONS);
 		addArr[0].x= curXC + xm::round(curRad*xm::cos(curAngle));
 		addArr[0].y= curYC + xm::round(curRad*xm::sin(curAngle));
 
-		curRad=MIN_BEG_RADIUS_GEO_POLIGONS+XRnd(MAX_BEG_RADIUS_GEO_POLIGONS-MIN_BEG_RADIUS_GEO_POLIGONS);
+		curRad=MIN_BEG_RADIUS_GEO_POLIGONS+terLogicRND(MAX_BEG_RADIUS_GEO_POLIGONS-MIN_BEG_RADIUS_GEO_POLIGONS);
 		addArr[1].x= curXC + xm::round(curRad*xm::cos(curAngle+angleArr[i]));
 		addArr[1].y= curYC + xm::round(curRad*xm::sin(curAngle+angleArr[i]));
 
-		curRad=MIN_END_RADIUS_GEO_POLIGONS+XRnd(MAX_END_RADIUS_GEO_POLIGONS-MIN_END_RADIUS_GEO_POLIGONS);
+		curRad=MIN_END_RADIUS_GEO_POLIGONS+terLogicRND(MAX_END_RADIUS_GEO_POLIGONS-MIN_END_RADIUS_GEO_POLIGONS);
 		arr[0].x= curXC + xm::round(curRad*xm::cos(curAngle));
 		arr[0].y= curYC + xm::round(curRad*xm::sin(curAngle));
 
 		arr[1].x= curXC;
 		arr[1].y= curYC;
 
-		curRad=MIN_END_RADIUS_GEO_POLIGONS+XRnd(MAX_END_RADIUS_GEO_POLIGONS-MIN_END_RADIUS_GEO_POLIGONS);
+		curRad=MIN_END_RADIUS_GEO_POLIGONS+terLogicRND(MAX_END_RADIUS_GEO_POLIGONS-MIN_END_RADIUS_GEO_POLIGONS);
 		arr[2].x= curXC + xm::round(curRad*xm::cos(curAngle+angleArr[i]));
 		arr[2].y= curYC + xm::round(curRad*xm::sin(curAngle+angleArr[i]));
 
@@ -4365,8 +4366,9 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 bool sGeoSwelling::quant()
 {
 	std::list<sUPoligonNSpec*>::iterator p;
+    RandomGenerator rnd = terLogicRNDGenerator();
 	for(p=poligonArr.begin(); p!=poligonArr.end(); /*p++*/){
-		if(fabsRnd(1.f)>0.4f){
+		if(rnd.fabsRnd(1.f)>0.4f){
 			(*p)->flagBegin |=true;
 		}
 		if( (*p)->flagBegin) {
@@ -6600,7 +6602,7 @@ bool sGeoWave::quant(void)
 		for(j = 0;j < max;j++) {
 			int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
             int32_t V=vMap.SGetAlt(offB);
-			V+=curAmp+XRnd(1<<4);
+			V+=curAmp+terLogicRND(1<<4);
 			//vMap.SPutAlt(offB, V);
 			if(V<0)V=0;
 			vMap.SPutAltAndClearZL(offB, V);

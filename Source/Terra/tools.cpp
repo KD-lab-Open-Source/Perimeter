@@ -301,7 +301,7 @@ void S3Danalyze(int S3Dmode, int S3Dlevel, int S3DnoiseLevel, int S3DnoiseAmp, i
 				v = S3Dinverse ? -*p : *p;
 				v += S3Dlevel;
 				if(S3DnoiseLevel && S3DnoiseAmp)
-					if((int)XRnd(100) < S3DnoiseLevel) v += S3DnoiseAmp - XRnd((S3DnoiseAmp << 1) + 1);
+					if((int)terLogicRND(100) < S3DnoiseLevel) v += S3DnoiseAmp - terLogicRND((S3DnoiseAmp << 1) + 1);
 				//pv = pv0 + (xx = vMap.XCYCL(x + i));
 				xx = vMap.XCYCL(x + i);
 				switch(S3Dmode){
@@ -357,7 +357,7 @@ void sVBitMap::put(int VBMmode, int VBMlevel, int VBMnoiseLevel, int VBMnoiseAmp
 				v=VBMinverse ? -v : v;
 				v+=VBMlevel;
 				if(VBMnoiseLevel && VBMnoiseAmp){
-					if((int)XRnd(100) < VBMnoiseLevel) v += VBMnoiseAmp - XRnd((VBMnoiseAmp << 1) + 1);
+					if((int)terLogicRND(100) < VBMnoiseLevel) v += VBMnoiseAmp - terLogicRND((VBMnoiseAmp << 1) + 1);
 				}
 				switch(VBMmode){
 				case 0:
@@ -394,7 +394,7 @@ void sTerrainMetod::put(int xx, int yy, int v)
 	//v=inverse ? -v : v;
 	v+=level;
 	if(noiseLevel && noiseAmp){
-		if((int)XRnd(100) < noiseLevel) v += noiseAmp - XRnd((noiseAmp << 1) + 1);
+		if((int)terLogicRND(100) < noiseLevel) v += noiseAmp - terLogicRND((noiseAmp << 1) + 1);
 	}
 	switch(mode){
     default:

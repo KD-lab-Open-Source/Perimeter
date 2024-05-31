@@ -521,9 +521,7 @@ void GameShell::GameStart(const MissionDescription& mission)
     universe()->universalLoad(CurrentMission, this->savePrm(), LoadProgressUpdate);
     
 #ifdef PERIMETER_DEBUG
-    log_var(XRndGet());
     log_var(logicRND.get());
-    log_var(xm_random_generator.get());
     /*
     uint32_t attrcrc = startCRC32;
     attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);

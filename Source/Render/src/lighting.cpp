@@ -147,7 +147,7 @@ void cLighting::Animate(float dt)
 		time-=param.generate_time;
 		PreGenerate g;
 		g.pos_begin=pos_begin;
-		g.pos_end=pos_end[xm_random_generator()%pos_end.size()];
+		g.pos_end=pos_end[rnd() % pos_end.size()];
 		pre_generate.push_back(g);
 	}
 
@@ -174,10 +174,10 @@ void cLighting::Init(Vect3f pos_begin_, std::vector<Vect3f>& pos_end_, float sca
 	xassert(!pos_end.empty());
 }
 
-void cLighting::Generate(Vect3f pos_begin,Vect3f pos_end,cCamera *pCamera)
+void cLighting::Generate(Vect3f pos_begin_,Vect3f pos_end_,cCamera *pCamera)
 {
 	OneLight* p=new OneLight;
-	p->Generate(pos_begin,pos_end,pCamera,this);
+	p->Generate(pos_begin_,pos_end_,pCamera,this);
 	lights.push_back(p);
 }
 
@@ -237,14 +237,12 @@ void cLighting::OneLight::Generate(Vect3f pos_begin_,Vect3f pos_end_,cCamera *pC
 	BuildStrip(pCamera,parent);
 }
 
-void cLighting::OneLight::GenerateInterpolate(std::vector<float>& pos,int size,float min_amp, float max_amp)
-{
-
-	RandomGenerator& r=xm_random_generator;
-	std::vector<float> p(size);\
-	int i;
+void cLighting::OneLight::GenerateInterpolate(std::vector<float>& pos,int size, float min_amp, float max_amp) {
+	std::vector<float> p(size);
+    int i;
+    
 	for (i=0;i<size;i++) {
-        float a = r.frnd(max_amp);
+        float a = rnd.frnd(max_amp);
         if (a < 0) {
             p[i] = min(-min_amp, a);
         } else {

@@ -310,7 +310,7 @@ public:
 					case 1:
 						v = (int)(dd*1000000.0);
 						for(j = 0;j < max;j++)
-							if((int)XRnd(1000000) < v) {
+							if((int)terLogicRND(1000000) < v) {
 								//tVoxSet( vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j])), dh, hZeroPlast, heap);
 								tVoxSet( vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j])), dh);
 							}

@@ -14,7 +14,7 @@ public:
 		theta_size = 1 << theta_size_len,
 		psi_mask = psi_size - 1,
 		theta_mask = theta_size - 1
-		};
+    };
 
 	ElasticSphere();
 	~ElasticSphere();

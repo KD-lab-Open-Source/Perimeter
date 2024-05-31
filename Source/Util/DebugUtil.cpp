@@ -16,6 +16,43 @@ sColor4c BLUE(0, 0, 255);
 sColor4c YELLOW(255, 255, 0);
 sColor4c MAGENTA(255, 0, 255);
 sColor4c CYAN(0, 255, 255);
+
+RandomGenerator logicRND(12345678, true);
+
+int logicRNDi_internal(int x, const char* file, int line) {
+    MTL();
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
+    log_var(filename);
+    log_var(line);
+    log_var(logicRND.get());
+    log_var(x);
+#endif
+    return logicRND(x);
+}
+
+float logicRNDf_internal(const char* file, int line) {
+    MTL();
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
+    log_var(filename);
+    log_var(line);
+    log_var(logicRND.get());
+#endif
+    return logicRND.frnd();
+}
+
+float logicRNDfa_internal(const char* file, int line) {
+    MTL();
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
+    log_var(filename);
+	log_var(line);
+	log_var(logicRND.get());
+#endif
+    return logicRND.frand();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 //		Converter
 ////////////////////////////////////////////////////////////////////////////////////////////

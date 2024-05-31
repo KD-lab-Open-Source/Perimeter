@@ -165,11 +165,13 @@ xm_inline float SIGNF(float a, float b) { return b >= 0.0f ? xm::abs(a) : -xm::a
 class RandomGenerator 
 {
 	enum { max_value = 0x7fff };
-	int value;
+	int value = 1;
+    bool logic = false;
 public:
-	RandomGenerator(int val = 1) { set(val); }
+	explicit RandomGenerator(int val = 1, bool logic_ = false): logic(logic_) { set(val); }
 	void set(int val) { value = val; }
-	int get() const { return value; }
+    int get() const { return value; }
+    bool isLogic() const { return logic; }
 	int operator()(); // Generates random value [0..max_value), non-inline due to some bugs with optimization
 	xm_inline int operator()(int m) { return m ? (*this)() % m : 0; } // May by used in random_shuffle
 	xm_inline int operator()(int min, int max) { return min + (*this)() % (max - min); }
@@ -180,12 +182,8 @@ public:
 };
 
 #undef random
-extern RandomGenerator xm_random_generator;
-xm_inline unsigned xm_random(unsigned m){ return xm_random_generator(m); }
-xm_inline float frnd(float x){ return xm_random_generator.frnd(x); }
-xm_inline float fabsRnd(float x){ return xm_random_generator.fabsRnd(x); }
-xm_inline float xm_frand(){ return xm_random_generator.frand(); }
-
+#undef srandom
+#undef rand
 
 #ifndef NOMINMAX
 #define NOMINMAX

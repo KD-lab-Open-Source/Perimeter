@@ -79,23 +79,23 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 	for(yNet=0; yNet<netSizeY; yNet++){
 		float y=(float)(yNet-sy05)/(float)sy05;
 		for(xNet=0; xNet<netSizeX; xNet++){
-			//ROUGH_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT);
-			//WORK_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT);
+			//ROUGH_GRID(xNet, yNet)=MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT);
+			//WORK_GRID(xNet, yNet)=MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT);
 			if(BorderForm!=0){
 				float x=(float)(xNet-sx05)/(float)sx05; 
 				float f=xm::exp(-(xm::abs(x * x * x * x) + xm::abs(y * y * y * y)) / (0.4 * 0.4));
-				WORK_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
+				WORK_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT))*f);
 			}
-			else{ WORK_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT); }
+			else{ WORK_GRID(xNet, yNet)=MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT); }
 
-			//ROUGH_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
+			//ROUGH_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT))*f);
 			//f=1;
-			//WORK_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
+			//WORK_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT))*f);
 /*			if(WORK_GRID(xNet, yNet)==0){
-				int dx=1+XRnd(4);
-				int dy=1+XRnd(4);
+				int dx=1+terLogicRND(4);
+				int dy=1+terLogicRND(4);
 				int xx,yy;
-				int h=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT);
+				int h=MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT);
 				for(yy=0; yy<dy; yy++){
 					for(xx=0; xx<dx; xx++){
 						int nx=xNet+xx; if(nx>netSizeX)continue;
@@ -125,15 +125,15 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 /////////
 	for(yNet=0; yNet<netRSizeY; yNet++){
 		for(xNet=0; xNet<netRSizeX; xNet++){
-			ROUGH_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT);
-			//WORK_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT);
+			ROUGH_GRID(xNet, yNet)=MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT);
+			//WORK_GRID(xNet, yNet)=MIN_GG_ALT+terLogicRND(MAX_GG_ALT-MIN_GG_ALT);
 		}
 	}
 
 	int xMap, yMap, i;
 	for(i=0; i<sizeMap; i++){
-		map1[i]=XRnd(NOISELEVEL_GG);
-		map2[i]=XRnd(NOISELEVEL_GG);
+		map1[i]=terLogicRND(NOISELEVEL_GG);
+		map2[i]=terLogicRND(NOISELEVEL_GG);
 	}
 	//подготовка R карты
 	for(yNet=0, yMap=0; yNet<netRSizeY; yNet++, yMap+=cellSizeR){
@@ -142,7 +142,7 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 		}
 	}
 
-
+    RandomGenerator rnd = terLogicRNDGenerator();
 	int which = 0;
 	int square_size,x1,y1,x2,y2;
 	int p1,p2,p3,p4;
@@ -156,13 +156,12 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 			for(x1 = 0; x1< (sizeX-cellSizeR); x1+=square_size){
 				x2 = (x1 + square_size);
 				y2 = y1 + square_size;
-				if(!which){
+				if (!which) {
 					i1 = MAP_1(x1, y1);
 					i2 = MAP_1(x2, y1);
 					i3 = MAP_1(x1, y2);
 					i4 = MAP_1(x2, y2);
-				}
-				else {
+				} else {
 					i1 = MAP_2(x1, y1);
 					i2 = MAP_2(x2, y1);
 					i3 = MAP_2(x1, y2);
@@ -180,10 +179,10 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				random_center = square_size<<(VX_FRACTION); ///?
 				random_range = random_center << 1;
 
-				p1 += xm_random(random_range) - random_center;
-				p2 += xm_random(random_range) - random_center;
-				p3 += xm_random(random_range) - random_center;
-				p4 += xm_random(random_range) - random_center;
+				p1 += rnd(random_range) - random_center;
+				p2 += rnd(random_range) - random_center;
+				p3 += rnd(random_range) - random_center;
+				p4 += rnd(random_range) - random_center;
 
 				if(p1 < Cmin_alt) p1 = Cmin_alt; else if(p1 > Cmax_alt) p1 = Cmax_alt;
 				if(p2 < Cmin_alt) p2 = Cmin_alt; else if(p2 > Cmax_alt) p2 = Cmax_alt;
@@ -252,10 +251,10 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				random_center = square_size*MAP_T(x1,y1)/GeonetMESH;
 				random_range = random_center << 1;
 
-				p1 += (xm_random(random_range) - random_center);
-				p2 += (xm_random(random_range) - random_center);
-				p3 += (xm_random(random_range) - random_center);
-				p4 += (xm_random(random_range) - random_center);
+				p1 += (rnd(random_range) - random_center);
+				p2 += (rnd(random_range) - random_center);
+				p3 += (rnd(random_range) - random_center);
+				p4 += (rnd(random_range) - random_center);
 
 				if(p1 < Cmin_alt) p1 = Cmin_alt; else if(p1 > Cmax_alt) p1 = Cmax_alt;
 				if(p2 < Cmin_alt) p2 = Cmin_alt; else if(p2 > Cmax_alt) p2 = Cmax_alt;

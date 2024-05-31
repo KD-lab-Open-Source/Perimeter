@@ -93,7 +93,7 @@ struct CWormFormLib {
 			for(j=0; j<WSXSY; j++){
 				//float x=(float)(j-WSXSY05)/(float)WSXSY05; 
 				//float f=exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
-				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+terLogicRND(1<<14);
 				int hh=VBitMap1.getPreciseColor(j, i);
 				(*FormWormsNew)[i][j]=hh<<8;
 			}
@@ -111,7 +111,7 @@ struct CWormFormLib {
 			for(j=0; j<WSXSY; j++){
 				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
 				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4f * 0.4f));
-				(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+terLogicRND(1<<14);
 			}
 		}
 	};
@@ -213,7 +213,7 @@ struct elementGeoBreak {
 				vMap.voxSet(vMap.XCYCL(x_cur>>16), vMap.YCYCL(y_cur>>16), -6);
 
 				if(fl_new_width){
-					for(int k=10+XRnd(30);k >0; k--){
+					for(int k=10+terLogicRND(30);k >0; k--){
 						vMap.SetTer(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-(k+1)), vMap.GetTer(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-k)) );
 						vMap.VxGBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-(k+1)))] = vMap.VxGBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-k))] ;
 						vMap.AtrBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-(k+1)))] = vMap.AtrBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-k))] ;
@@ -285,12 +285,12 @@ struct elementGeoBreak {
 			float ss= xm::sqrt(float(sy_real * sy_real + sx_real * sx_real));
 			float cosAlpha=(float)sx_real/ss;
 			float sinAlpha=(float)sy_real/ss;
-			int nx=(DENSITY_NOISE>>1) + XRnd(DENSITY_NOISE>>1); //DENSITY_NOISE;//
-			int ny=XRnd(8)-4;
+			int nx=(DENSITY_NOISE>>1) + terLogicRND(DENSITY_NOISE>>1); //DENSITY_NOISE;//
+			int ny=terLogicRND(8)-4;
 			sx_real=xm::round((float)nx*cosAlpha+ (float)ny*sinAlpha);
 			sy_real=xm::round(-(-(float)nx*sinAlpha+ (float)ny*cosAlpha));
-			//sx_real=sx_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sx_real<0) sx_real=0;
-			//sy_real=sy_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sy_real<0) sy_real=0;
+			//sx_real=sx_real+ terLogicRND(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sx_real<0) sx_real=0;
+			//sy_real=sy_real+ terLogicRND(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sy_real<0) sy_real=0;
 			//DrawLine
 			geoLine(xp[headSection-1], yp[headSection-1], sx_real, sy_real);
 			vMap.pointDamagingBuildings(xp[headSection-1], yp[headSection-1]);
@@ -392,7 +392,7 @@ struct singleGeoBreak {
 					vMap.voxSet(vMap.XCYCL(x_cur>>16), vMap.YCYCL(y_cur>>16), -6);
 
 					if(fl_new_width){
-						for(int k=10+XRnd(30);k >0; k--){
+						for(int k=10+terLogicRND(30);k >0; k--){
 							vMap.SetTer(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-(k+1)), vMap.GetTer(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-k)) );
 							vMap.VxGBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-(k+1)))] = vMap.VxGBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-k))] ;
 							vMap.AtrBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-(k+1)))] = vMap.AtrBuf[vMap.offsetBuf(vMap.XCYCL(x_cur>>16), vMap.YCYCL((y_cur>>16)-k))] ;

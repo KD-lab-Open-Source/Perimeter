@@ -162,7 +162,7 @@ void vrtMap::deltaZone(sToolzerPMO& var) //(int x,int y,int rad,int smth,int dh,
 				case 1:
 					v = (int)(dd*1000000.0);
 					for(j = 0;j < max;j++)
-						if((int)XRnd(1000000) < v) voxSet((x + xx[j]) & clip_mask_x,(y + yy[j]) & clip_mask_y,h);
+						if((int)terLogicRND(1000000) < v) voxSet((x + xx[j]) & clip_mask_x,(y + yy[j]) & clip_mask_y,h);
 					break;
 				case 2:
 					v = (int)(dd*max);
@@ -359,15 +359,15 @@ void vrtMap::squareDeltaZone(sSquareToolzerPMO& var)//(int x,int y,int rad,int s
 			if(!h) h = dh > 0 ? 1 : -1;
 			v = (int)(dd*1000000.0);
 			//for(j = 0;j < max;j++) {
-			//	if((int)XRnd(1000000) < v) voxSet((x + xx[j]) & clip_mask_x,(y + yy[j]) & clip_mask_y,h);
+			//	if((int)terLogicRND(1000000) < v) voxSet((x + xx[j]) & clip_mask_x,(y + yy[j]) & clip_mask_y,h);
 			//}
 			for(j=-i; j<=i; j++){
-				if((int)XRnd(1000000) < v) voxSet((x + j) & clip_mask_x,(y + -i) & clip_mask_y, h);
-				if((int)XRnd(1000000) < v) voxSet((x + j) & clip_mask_x,(y + +i) & clip_mask_y, h);
+				if((int)terLogicRND(1000000) < v) voxSet((x + j) & clip_mask_x,(y + -i) & clip_mask_y, h);
+				if((int)terLogicRND(1000000) < v) voxSet((x + j) & clip_mask_x,(y + +i) & clip_mask_y, h);
 			}
 			for(j=-i+1; j<i; j++){
-				if((int)XRnd(1000000) < v) voxSet((x + +i) & clip_mask_x,(y + j) & clip_mask_y, h);
-				if((int)XRnd(1000000) < v) voxSet((x + -i) & clip_mask_x,(y + j) & clip_mask_y, h);
+				if((int)terLogicRND(1000000) < v) voxSet((x + +i) & clip_mask_x,(y + j) & clip_mask_y, h);
+				if((int)terLogicRND(1000000) < v) voxSet((x + -i) & clip_mask_x,(y + j) & clip_mask_y, h);
 			}
 
 		}

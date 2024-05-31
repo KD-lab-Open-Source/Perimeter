@@ -115,10 +115,10 @@ void vrtMap::r_net_init(void)
 //	if(Verbose) cout << "RoughNetInit..."<<endl;
 	unsigned int x,y;
 
-	for(x = 0;x < GEONET_POWER; x++) r_preRNDVAL[x] = XRnd(0xFFFFFFFF);
+	for(x = 0;x < GEONET_POWER; x++) r_preRNDVAL[x] = terLogicRND(0xFFFFFFFF);
 	for(y = 0;y < PART_MAX;y++)
 		for(x = 0;x < GEONET_POWER; x++)
-			r_cycleRNDVAL[y][x] = XRnd(0xFFFFFFFF);
+			r_cycleRNDVAL[y][x] = terLogicRND(0xFFFFFFFF);
 
 	PartParameters* p;
 	for(y = 0;y < V_SIZE/QUANT;y++){
@@ -126,22 +126,22 @@ void vrtMap::r_net_init(void)
 		for(x = 0;x < H_SIZE/QUANT;x++)
 			switch(WORLD_TYPE){
 				case 0:
-					if(!XRnd(10))
+					if(!terLogicRND(10))
 						R_NET_MAP(y,x) = (max_alt - 1);
 					else
 						R_NET_MAP(y,x) = (unsigned short)((max_alt - 1)*(x + y)/(H_SIZE + V_SIZE));
 					break;
 				case 1:
 //					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*(x + y)/(H_SIZE + V_SIZE));
-					R_NET_MAP(y,x) = (unsigned short)XRnd(max_alt - 1);
+					R_NET_MAP(y,x) = (unsigned short)terLogicRND(max_alt - 1);
 					break;
 				case 2:
 //					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*((x + y)*QUANT)/xm::abs(x*QUANT - H_SIZE/2 - 1));
-					R_NET_MAP(y,x) = (unsigned short)XRnd(max_alt - 1);
+					R_NET_MAP(y,x) = (unsigned short)terLogicRND(max_alt - 1);
 					break;
 				case 3:
 //					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*((x + y)*QUANT)/xm::abs(x*QUANT - H_SIZE/2 - 1));
-					R_NET_MAP(y,x) = p -> minAlt + (unsigned short)XRnd(p -> maxAlt - p -> minAlt);
+					R_NET_MAP(y,x) = p -> minAlt + (unsigned short)terLogicRND(p -> maxAlt - p -> minAlt);
 					break;
 				}
 		}
@@ -152,16 +152,16 @@ void vrtMap::m_net_init(void)
 //	if(Verbose) cout << "MapNetInit..."<<endl;
 	unsigned int x,y;
 
-	for(x = 0;x < GEONET_POWER; x++) m_preRNDVAL[x] = XRnd(0xFFFFFFFF);
+	for(x = 0;x < GEONET_POWER; x++) m_preRNDVAL[x] = terLogicRND(0xFFFFFFFF);
 	for(y = 0;y < PART_MAX; y++)
 		for(x = 0;x < GEONET_POWER; x++)
-			m_cycleRNDVAL[y][x] = XRnd(0xFFFFFFFF);
+			m_cycleRNDVAL[y][x] = terLogicRND(0xFFFFFFFF);
 
 	PartParameters* p;
 	for(y = 0;y < V_SIZE/QUANT;y++){
 		p = &PartPrm[y*QUANT/part_map_size_y];
 		for(x = 0;x < H_SIZE/QUANT;x++)
-			M_NET_MAP(y,x) = p -> minAlt + (unsigned short)XRnd(p -> maxAlt - p -> minAlt);
+			M_NET_MAP(y,x) = p -> minAlt + (unsigned short)terLogicRND(p -> maxAlt - p -> minAlt);
 		}
 }
 
@@ -424,7 +424,7 @@ void vrtMap::calc_Flood(int x0,int y0,int level,int ttype,int ti)
 				pf += (x);
 				na = level;
 				h = GetAlt(x,y);//*pv;
-				if(ti) na += (level - h)*DriftPower/16 + XRnd(DriftNoise);
+				if(ti) na += (level - h)*DriftPower/16 + terLogicRND(DriftNoise);
 				t = *pf;
 				if(h < level && t != ttype && j < N - 4 ){ //&& ActiveTerrain[t]
 					*pf = ttype; log=1;
@@ -538,7 +538,7 @@ void vrtMap::generate_noise(void)
 	int i,j;
 	for(i = 0;i < (int)part_map_size_y;i++)
 		for(j = 0;j < H_SIZE;j++,pa++)
-			*pa += XRnd(NOISE_AMPL);
+			*pa += terLogicRND(NOISE_AMPL);
 }
 
 void vrtMap::head_vmpWrite(XStream& fmap)

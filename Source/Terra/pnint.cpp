@@ -185,32 +185,30 @@ static void normalize3(int vv[3])
 	vv[1] = xm::round((v[1] / s) * (1 << NOISE_FRACTION));
 	vv[2] = xm::round((v[2] / s) * (1 << NOISE_FRACTION));
 }
-//#include "_xtool.h"
-//#define rand() XRnd(B + B)
-//	XRndVal=0x8000cc00;
+
 void pnintInit(void)
 {
-	xm_random_generator.set(0x1000d580);
+    RandomGenerator rnd(0x1000d580, true);
 
 	int i, j, k;
 
 	for (i = 0 ; i < B ; i++) {
 		p[i] = i;
 
-		g1[i] = xm::round((float) ((xm_frand() * (B + B)) - B) / B);
+		g1[i] = xm::round((float) ((rnd.frand() * (B + B)) - B) / B);
 
 		for (j = 0 ; j < 2 ; j++)
-			g2[i][j] = xm::round((float) ((xm_frand() * (B + B)) - B) / B);
+			g2[i][j] = xm::round((float) ((rnd.frand() * (B + B)) - B) / B);
 //		normalize2(g2[i]);
 
 		for (j = 0 ; j < 3 ; j++)
-			g3[i][j] = (int)(((float)((xm_frand() * (B + B)) - B) / B)*(1<<NOISE_FRACTION));
+			g3[i][j] = (int)(((float)((rnd.frand() * (B + B)) - B) / B)*(1<<NOISE_FRACTION));
 		normalize3(g3[i]);
 	}
 
 	while (--i) {
 		k = p[i];
-		p[i] = p[j = xm_frand() * B];
+		p[i] = p[j = rnd.frand() * B];
 		p[j] = k;
 	}
 
