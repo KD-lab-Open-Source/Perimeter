@@ -861,10 +861,10 @@ void PNetCenter::hostProcessPlayerClientPackets(PClientData* client) {
                 netCommand4G_ChatMessage nc_ChatMessage(in_HostBuf);
 
                 //Get player data that send this
-                int playerID = hostMissionDescription->findPlayer(netid);
-                if (playerID != -1) {
-                    nc_ChatMessage.playerID = playerID;
-                    const auto& playerData = hostMissionDescription->playersData[playerID];
+                int playerIndex = hostMissionDescription->findPlayer(netid);
+                if (playerIndex != -1) {
+                    const auto& playerData = hostMissionDescription->playersData[playerIndex];
+                    nc_ChatMessage.playerID = playerData.playerID;
                     const auto& pc = playerColors[playerData.colorIndex].unitColor;
 
                     //Add color and name of player to text

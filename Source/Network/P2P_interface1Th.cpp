@@ -324,7 +324,10 @@ void PNetCenter::HandlerInputNetCommand()
                     nc4c_sl.missionDescription_ = nullptr;
                     
                     //Set active player as ourselves
-                    clientMissionDescription->activePlayerID = clientMissionDescription->findPlayer(m_localNETID);
+                    int playerIndex = clientMissionDescription->findPlayer(m_localNETID);
+                    if (0 <= playerIndex) {
+                        clientMissionDescription->activePlayerID = clientMissionDescription->playersData[playerIndex].playerID;
+                    }
                     
                     m_bStarted = true;
 
