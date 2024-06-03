@@ -7,8 +7,18 @@
 #include "ServerList.h"
 
 void PNetCenter::SetConnectionTimeout(int _ms) {
-    //Unused since SDL_net doesn't have any way to set connect or send timeouts 
+    //Unused since SDL_net doesn't have any way to set connect or send timeouts
+    //TODO we do have timeout now but is hardcoded as constant, remove it and use this
     //connectionHandler->connection_timeout = ms;
+}
+
+void PNetCenter::KickPlayer(NETID netid) {
+    fprintf(stdout, "KickPlayer: 0x%" PRIX64 "\n", netid);
+
+    netCommand4G_Exit ex(netid);
+    SendEvent(ex, netid);
+    
+    RemovePlayer(netid);
 }
 
 void PNetCenter::RemovePlayer(NETID netid)

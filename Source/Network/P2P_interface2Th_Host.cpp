@@ -329,7 +329,7 @@ void PNetCenter::CheckClients()
         {
             LogMsg("Client NID 0x%" PRIX64 " is not ready. removing.\n", (*i)->netidPlayer);
 
-            RemovePlayer((*i)->netidPlayer);
+            KickPlayer((*i)->netidPlayer);
 
             delete *i;
             m_clients.erase(i++);
@@ -523,7 +523,7 @@ void PNetCenter::hostProcessPlayerClientPackets(PClientData* client) {
                                     pd.realPlayerType = ncChRT.newRealPlayerType_;
                                 }
                             }
-                            RemovePlayer(delPlayerNETID);
+                            KickPlayer(delPlayerNETID);
                         } else if (pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER_AI) {
                             if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN) {
                                 mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
@@ -679,7 +679,7 @@ void PNetCenter::hostProcessPlayerClientPackets(PClientData* client) {
                             NETID delPlayerNETID=hostMissionDescription->playersData[i].netid;
                             hostMissionDescription->disconnect2PlayerData(i);
                             //hostMissionDescription->playersData[i].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
-                            RemovePlayer(delPlayerNETID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
+                            KickPlayer(delPlayerNETID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
                         }
                     }
                     *hostMissionDescription = nc_changeMap.missionDescription_;

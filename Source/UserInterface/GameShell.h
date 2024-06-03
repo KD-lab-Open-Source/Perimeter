@@ -260,7 +260,7 @@ public:
 
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,
-        CLIENT_DROPPED,
+        KICKED,
 		HOST_TERMINATED,
         DESYNC
 	};

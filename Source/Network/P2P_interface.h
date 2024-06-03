@@ -214,7 +214,7 @@ struct PClientData
 enum e_PNCInterfaceCommands {
 	PNC_INTERFACE_COMMAND_NONE,
 	PNC_INTERFACE_COMMAND_CONNECTION_FAILED,
-	PNC_INTERFACE_COMMAND_CONNECTION_DROPPED,
+    PNC_INTERFACE_COMMAND_KICKED,
 	PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT,
 	PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED,
     PNC_INTERFACE_COMMAND_INFO_MESSAGE,
@@ -531,6 +531,7 @@ public:
 
 	bool Init();
 	void SetConnectionTimeout(int ms);
+    void KickPlayer(NETID netid);
 	void RemovePlayer(NETID netid);
 
 	bool isConnected() const;

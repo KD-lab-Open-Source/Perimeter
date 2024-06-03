@@ -325,8 +325,8 @@ int showGeneralErrorMessageQuant(float, float ) {
             case GameShell::GENERAL_CONNECTION_FAILED:
                 textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";
                 break;
-            case GameShell::CLIENT_DROPPED:
-                textID = "Interface.Menu.Messages.Multiplayer.ClientDropped";
+            case GameShell::KICKED:
+                textID = "Interface.Menu.Messages.Multiplayer.Kicked";
                 break;
             case GameShell::HOST_TERMINATED:
                 textID = "Interface.Menu.Messages.Multiplayer.HostTerminated";

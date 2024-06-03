@@ -343,7 +343,12 @@ void PNetCenter::HandlerInputNetCommand()
             netCommand4G_Exit nc4g_exit(in_ClientBuf);
             //Host already does this before relaying to itself
             if (!isHost()) {
-                ExitClient(nc4g_exit.netid);
+                if (nc4g_exit.netid == m_localNETID) {
+                    ExecuteInternalCommand(PNC_COMMAND__RESET, false);
+                    ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_KICKED);
+                } else {
+                    ExitClient(nc4g_exit.netid);
+                }
             }
             break;
         }
@@ -533,8 +538,8 @@ void PNetCenter::P2PIQuant()
 		gameShell->generalErrorOccured(GameShell::GENERAL_CONNECTION_FAILED);
         end_game = true;
 		break;
-	case PNC_INTERFACE_COMMAND_CONNECTION_DROPPED:
-		gameShell->generalErrorOccured(GameShell::CLIENT_DROPPED);
+	case PNC_INTERFACE_COMMAND_KICKED:
+		gameShell->generalErrorOccured(GameShell::KICKED);
         end_game = true;
 		break;
 	case PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME:
