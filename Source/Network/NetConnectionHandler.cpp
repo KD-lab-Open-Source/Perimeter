@@ -6,6 +6,7 @@
 #include "NetRelay.h"
 #include "codepages/codepages.h"
 #include "NetRelaySerialization.h"
+#include "ServerList.h"
 
 NetConnectionHandler::NetConnectionHandler(PNetCenter* center): net_center(center) {
     stopConnections();
@@ -336,13 +337,12 @@ void NetConnectionHandler::stopListening() {
 
 bool NetConnectionHandler::startRelayRoom() {
     //Create relay connection
-    NetAddress address;
-    std::string primary_relay;
-    getPrimaryNetRelayAddress(primary_relay);
-    if (primary_relay.empty() || !NetAddress::resolve(address, primary_relay, NET_RELAY_DEFAULT_PORT)) {
+    ServerListRelay relay;
+    if (!net_center->pickBestPrimaryRelay(&relay)) {
         return false;
     }
-    NetTransport* transport = NetTransport::create(address);
+    LogMsg("Current primary relay selected is '%s'\n", relay.address.c_str());
+    NetTransport* transport = NetTransport::create(relay.net_address);
     if (!transport) {
         return false;
     }
@@ -375,10 +375,11 @@ bool NetConnectionHandler::startRelayRoom() {
 
     //Pick a host if necessary
     bool use_current_relay = false;
+    std::string host_address_str;
     NetAddress host_address;
     for (NetRelay_LobbyHost& host: hosts) {
-        std::string host_address_str = host.getAddress();
-        if (host_address_str == primary_relay) {
+        host_address_str = host.getAddress();
+        if (host_address_str == relay.address) {
             LogMsg("Current primary relay selected based on host string address\n");
             use_current_relay = true;                
             break;
@@ -390,7 +391,7 @@ bool NetConnectionHandler::startRelayRoom() {
         )) {
             continue;
         }
-        if (host_address == address) {
+        if (host_address == relay.net_address) {
             LogMsg("Current primary relay selected based on host resolved address\n");
             use_current_relay = true;
             break;
@@ -400,10 +401,9 @@ bool NetConnectionHandler::startRelayRoom() {
     //Use last host we got from list and establish connection        
     if (!use_current_relay) {
         connection->close();
-        LogMsg("Connecting to secondary relay for room creation\n");
+        LogMsg("Connecting to secondary relay '%s' for room creation\n", host_address_str.c_str());
 
-        address = host_address;
-        transport = NetTransport::create(address);
+        transport = NetTransport::create(host_address);
         if (!transport) {
             return false;
         } else {

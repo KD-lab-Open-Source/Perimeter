@@ -238,6 +238,31 @@ bool PNetCenter::isConnected() const {
 	return flag_connected;
 }
 
+bool PNetCenter::pickBestPrimaryRelay(ServerListRelay* relay_out) const {
+    auto& relays = serverList->getRelays();
+    if (relays.empty()) {
+        return false;
+    }
+    
+    int lowest = -1;
+    for (int i = 0; i < relays.size(); ++i) {
+        const ServerListRelay& relay = relays[i];
+        if (!relay.operational || !relay.connection || !relay.connection->hasTransport()) {
+            continue;
+        }
+        if (lowest < 0 || relays[lowest].ping > relay.ping) {
+            lowest = i;
+        }
+    }
+    
+    if (lowest < 0) {
+        return false;
+    } else {
+        *relay_out = relays[lowest];
+        return true;
+    }
+}
+
 //Out
 size_t PNetCenter::SendNetBuffer(InOutNetComBuffer* netbuffer, NETID destination) {
     size_t sent = 0;

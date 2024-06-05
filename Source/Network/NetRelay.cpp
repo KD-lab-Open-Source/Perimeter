@@ -3,15 +3,30 @@
 #include "NetConnectionAux.h"
 #include "NetRelay.h"
 
-void getPrimaryNetRelayAddress(std::string& relay) {
+void getPrimaryNetRelayAddresses(std::vector<std::string>& relays) {
     const char* cmdline_relay = check_command_line("netrelay");
+    std::string relay_str;
     if (cmdline_relay) {
-        relay = cmdline_relay;
-        return;
+        relay_str = cmdline_relay; 
+    } else {
+        relay_str = IniManager("Perimeter.ini", false).get("Network", "NetRelay");
     }
-    relay = IniManager("Perimeter.ini", false).get("Network","NetRelay");
-    if (relay.empty()) {
-        relay = NET_RELAY_DEFAULT_ADDRESS;
+    if (relay_str.empty()) {
+        relay_str = NET_RELAY_DEFAULT_ADDRESSES;
+    }
+    std::string tmp;
+    for (char c : relay_str) {
+        if (c == ';') {
+            if (!tmp.empty()) {
+                relays.push_back(tmp);
+                tmp.clear();
+            }
+        } else {
+            tmp += c;
+        }
+    }
+    if (!tmp.empty()) {
+        relays.push_back(tmp);
     }
 }
 

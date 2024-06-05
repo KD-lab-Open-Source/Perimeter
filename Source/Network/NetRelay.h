@@ -1,7 +1,7 @@
 #ifndef PERIMETER_NETRELAY_H
 #define PERIMETER_NETRELAY_H
 
-static const char* NET_RELAY_DEFAULT_ADDRESS = "cloud.kdlab.com";
+static const char* NET_RELAY_DEFAULT_ADDRESSES = "cloud.kdlab.com;europe.cloud.kdlab.com";
 #ifdef EMSCRIPTEN
 static const uint16_t NET_RELAY_DEFAULT_PORT = 8443;
 #else
@@ -29,6 +29,7 @@ enum NetRelayMessageType {
     RELAY_MSG_PEER_PING_RESPONSE,
     RELAY_MSG_PEER_CLOSE_PEER,
     RELAY_MSG_PEER_LIST_LOBBY_HOSTS,
+    RELAY_MSG_PEER_BRIDGE_ROOM [[maybe_unused]],
 
     //Sent by relay to peer
     RELAY_MSG_RELAY_START [[maybe_unused]] = 0x20000,
@@ -218,7 +219,7 @@ struct NetRelayMessage_RelayRemovePeer : NetRelayMessage {
     void read(XBuffer& in) override;
 };
 
-void getPrimaryNetRelayAddress(std::string& relay);
+void getPrimaryNetRelayAddresses(std::vector<std::string>& relays);
 
 bool receiveNetRelayMessage(
         NetConnection* relay,

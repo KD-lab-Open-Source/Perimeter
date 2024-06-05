@@ -23,7 +23,11 @@ int startCmdlineQuant(float, float ) {
         
         NetAddress conn;
         if (cmdLineData.address.empty() && cmdLineData.roomID != 0) {
-            getPrimaryNetRelayAddress(cmdLineData.address);
+            std::vector<std::string> addresses;
+            getPrimaryNetRelayAddresses(addresses);
+            if (!addresses.empty()) {
+                cmdLineData.address = addresses[0];
+            }
         }
         if (cmdLineData.address.empty()
         || !NetAddress::resolve(conn, cmdLineData.address, cmdLineData.addressDefaultPort)) {
@@ -121,7 +125,7 @@ LocalizedText formatGameInfoList(const GameInfo& info) {
     text += textColor;
     text += " (" + std::to_string(info.currentPlayers);
     text += "/" + std::to_string(info.maximumPlayers);
-    text += " - " + std::to_string(info.ping) + " ms)";
+    text += " - " + std::to_string(info.ping + info.gameRelayPing) + " ms)";
     return LocalizedText(text, locale);
 }
 
@@ -181,7 +185,16 @@ std::string formatGameInfoWindow(const GameInfo& info) {
     //Show ping
     text += "\n&FFFFFF";
     text += qdTextDB::instance().getText("Interface.Tips.Multiplayer.Ping");
-    text += ": " + std::to_string(info.ping) + "\n";
+    text += ": " + std::to_string(info.ping + info.gameRelayPing);
+
+#ifdef PERIMETER_DEBUG
+    //Show host
+    text += "\n&FFFFFF";
+    text += info.gameHost;
+    if (0 < info.gameRelayPing) {
+        text += " (" + std::to_string(info.gameRelayPing) + "ms)";
+    }
+#endif
     
     return text;
 }

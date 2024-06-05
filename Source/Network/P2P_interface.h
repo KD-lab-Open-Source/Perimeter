@@ -438,7 +438,7 @@ public:
 	bool ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution);
 	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text = nullptr);
 
-    static const char* getRelayHost();
+    bool pickBestPrimaryRelay(struct ServerListRelay* relay_out) const;
 	void CreateGame(bool isPublicGame, const NetAddress& connection,
                     const std::string& gameName, MissionDescription* mission,
                     const std::string& playerName, const std::string& password);
