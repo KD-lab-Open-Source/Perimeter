@@ -51,6 +51,7 @@ struct sBumpTile
     int age, LOD;
 
     class cTileMap *tilemap;
+    cTileMapRender* render;
     class cTilemapTexturePool* texPool;
     int texPage = 0;
 
@@ -70,7 +71,7 @@ struct sBumpTile
 protected:
     float vStart, vStep, uStart, uStep;
 public:
-    sBumpTile(cTileMap* TileMap, cTilemapTexturePool* pool, int lod, int xpos, int ypos);
+    sBumpTile(cTileMap* TileMap, cTileMapRender* render, cTilemapTexturePool* pool, int lod, int xpos, int ypos);
     ~sBumpTile();
     uint8_t* LockTex(int& Pitch);
     uint8_t* LockVB();
