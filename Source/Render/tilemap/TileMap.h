@@ -1,6 +1,8 @@
 #ifndef PERIMETER_TILEMAP_H
 #define PERIMETER_TILEMAP_H
 
+#include <array>
+
 class cScene;
 
 typedef std::vector<Vect2s> Vect2sVect;
@@ -30,12 +32,7 @@ struct sTile : public sAttribute
 		zmin=255;zmax=0;
 	}
 
-	inline int GetDraw()			{ return GetAttribute(ATTRTILE_DRAWLOD); }
 	inline int GetUpdate()			{ return GetAttribute(ATTRTILE_UPDATELOD); }
-	inline void SetDraw()			{ SetAttribute(ATTRTILE_DRAWLOD); }
-
-	inline void ClearDraw()			{ ClearAttribute(ATTRTILE_DRAWLOD); }
-	inline void ClearUpdate()		{ ClearAttribute(ATTRTILE_UPDATELOD); }
 };
 
 typedef std::vector<std::vector<Vect2s>* > CurrentRegion;
@@ -45,6 +42,18 @@ class cTileMapRender;
 class Column;
 class cTileMap : public cUnkObj
 {
+public:
+	enum class RenderType
+	{
+		REFLECTION, SHADOW, DIRECT
+	};
+    static inline const std::array<RenderType, 3> RenderTypes{
+        RenderType::REFLECTION,
+        RenderType::SHADOW,
+        RenderType::DIRECT
+    };
+
+private:
 	friend class cScene;
 
 	sTile*			Tile;
@@ -54,7 +63,7 @@ class cTileMap : public cUnkObj
 
 	Vect3d			tilesize;
 
-	cTileMapRender* pTileMapRender = nullptr;
+	std::array<cTileMapRender*, RenderTypes.size()> pTileMapRender{};
 	
 	cCamera*		ShadowDrawNode;
 	cCamera*		LightDrawNode;
@@ -119,11 +128,19 @@ public:
 		zeroplast_color[player]=color;
 	}
 
-	void SetTilemapRender(cTileMapRender* p) {
-        VISASSERT(p == nullptr || pTileMapRender == nullptr);
-        pTileMapRender=p;
+	void SetTilemapRender(RenderType type, cTileMapRender* p)
+	{
+		const auto index = static_cast<size_t>(type);
+		VISASSERT(index < pTileMapRender.size());
+        VISASSERT(p == nullptr || pTileMapRender[index] == nullptr);
+        pTileMapRender[index] = p;
     };
-	cTileMapRender* GetTilemapRender(){return pTileMapRender;}
+	cTileMapRender* GetTilemapRender(RenderType type)
+	{
+		const auto index = static_cast<size_t>(type);
+		VISASSERT(index < pTileMapRender.size());
+		return pTileMapRender[index];
+	}
 
 	TerraInterface* GetTerra(){return terra;}
 

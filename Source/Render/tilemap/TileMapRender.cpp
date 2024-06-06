@@ -1,3 +1,4 @@
+#include <array>
 #include "StdAfxRD.h"
 #include "PoolManager.h"
 #include "TileMap.h"
@@ -12,20 +13,27 @@
 
 int cInterfaceRenderDevice::CreateTilemap(cTileMap *TileMap)
 {
-    cTileMapRender* p = new cTileMapRender(TileMap);
-    TileMap->SetTilemapRender(p);
-    p->RestoreTilemapPool();
+    for (auto type : cTileMap::RenderTypes)
+    {
+        cTileMapRender* p = new cTileMapRender(TileMap);
+        TileMap->SetTilemapRender(type, p);
+        p->RestoreTilemapPool();
+    }
+
     return 0;
 }
 
 int cInterfaceRenderDevice::DeleteTilemap(cTileMap *TileMap)
 {
-    cTileMapRender* p = TileMap->GetTilemapRender();
+    for (auto type : cTileMap::RenderTypes)
+    {
+        cTileMapRender* p = TileMap->GetTilemapRender(type);
 
-    if (p) {
-        p->ClearTilemapPool();
-        TileMap->SetTilemapRender(nullptr);
-        delete p;
+        if (p) {
+            p->ClearTilemapPool();
+            TileMap->SetTilemapRender(type, nullptr);
+            delete p;
+        }
     }
 
     return true;
@@ -40,6 +48,8 @@ cTileMapRender::cTileMapRender(cTileMap *pTileMap)
     vis_lod=new char[dxy];
     for(int i=0;i<dxy;i++)
         vis_lod[i]=-1;
+
+    renderTiles.resize(dxy);
 
     update_stat=NULL;
 //	update_stat=new char[dxy*TILEMAP_LOD];
@@ -64,9 +74,8 @@ void cTileMapRender::ClearTilemapPool()
 {
     for (int y=0; y < tilemap->GetTileNumber().y; y++) {
         for (int x = 0; x < tilemap->GetTileNumber().x; x++) {
-            sTile& Tile = tilemap->GetTile(x, y);
-            int& bumpTileID = Tile.bumpTileID;
-            bumpTileID = -1;
+            auto& Tile = GetRenderTile(x, y);
+            Tile.bumpTileID = -1;
         }
     }
 
@@ -153,7 +162,7 @@ void cTileMapRender::PreDraw(cCamera* DrawNode)
     for(int y=0; y < tilemap->GetTileNumber().y; y++)
         for(int x=0; x < tilemap->GetTileNumber().x; x++)
         {
-            sTile &Tile = tilemap->GetTile(x, y);
+            sRenderTile &Tile = GetRenderTile(x, y);
             int &bumpTileID = Tile.bumpTileID;
             if(!Tile.GetAttribute(ATTRTILE_DRAWLOD))
             {
@@ -162,6 +171,10 @@ void cTileMapRender::PreDraw(cCamera* DrawNode)
             }
 
             Tile.ClearAttribute(ATTRTILE_DRAWLOD);
+
+            if (tilemap->GetTile(x, y).GetAttribute(ATTRTILE_UPDATELOD)) {
+                Tile.SetAttribute(ATTRTILE_UPDATELOD);
+            }
         }
 
     if(update_stat)
@@ -218,7 +231,7 @@ int cTileMapRender::bumpTileAlloc(int lod,int xpos,int ypos)
     int w = tilemap->GetTileSize().x >> bumpTexScale[lod];
     int h = tilemap->GetTileSize().y >> bumpTexScale[lod];
     cTilemapTexturePool* pool = FindFreeTexturePool(w, h);
-    sBumpTile* tile = new sBumpTile(tilemap, pool, lod, xpos, ypos);
+    sBumpTile* tile = new sBumpTile(tilemap, this, pool, lod, xpos, ypos);
     int i;
     for (i = 0; i < bumpTiles.size(); i++) {
         if (!bumpTiles[i]) {
@@ -310,7 +323,6 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     cCamera* pShadowMapCamera=DrawNode->FindCildCamera(ATTRCAMERA_SHADOWMAP);
     int reflection = DrawNode->GetAttribute(ATTRCAMERA_REFLECTION);
     cCamera* pNormalCamera=DrawNode->GetRoot();
-    cTileMapRender* render=tilemap->GetTilemapRender();
     bool use_shadow_map=false;
     
     //TODO remove this once D3D9 specifics are removed
@@ -464,7 +476,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 /**/
             {
                 // process visible tile
-                sTile &Tile = tilemap->GetTile(k, n);
+                sRenderTile &Tile = GetRenderTile(k, n);
                 int &bumpTileID = Tile.bumpTileID;
 
                 // calc LOD считается всегда по отгошению к прямой камере для 
@@ -477,8 +489,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                 vis_lod[k+n*dk]=iLod;
 
                 // create/update render tile
-                if (render->bumpTileValid(bumpTileID)
-                    && render->bumpTiles[bumpTileID]->LOD != iLod && !shadow)
+                if (bumpTileValid(bumpTileID) && bumpTiles[bumpTileID]->LOD != iLod && !shadow)
                 {
                     // LOD changed, free old tile and allocate new
                     bumpTileFree(bumpTileID);
@@ -520,7 +531,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     for (n = 0; n < dn; n++)
         for (k = 0; k < dk; k++)
         {
-            sTile &Tile = tilemap->GetTile(k, n);
+            sRenderTile &Tile = GetRenderTile(k, n);
             int bumpTileID = Tile.bumpTileID;
             if(bumpTileID<0)continue;
             sBumpTile *bumpTile = bumpTiles[bumpTileID];
@@ -607,8 +618,8 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     int nTiles = 0;
     VertexBuffer* lastVB = nullptr;
 #endif
-    VertexPoolManager* vtxPoolMan = render->GetVertexPool();
-    IndexPoolManager* idxPoolMan = render->GetIndexPool();
+    VertexPoolManager* vtxPoolMan = GetVertexPool();
+    IndexPoolManager* idxPoolMan = GetIndexPool();
     for (cTilemapTexturePool* curpool : bumpTexPools) {
         if (curpool->tileRenderList.empty()) {
             continue;

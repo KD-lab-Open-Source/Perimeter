@@ -24,12 +24,26 @@ private:
     char* update_stat;
     bool update_in_frame;
 
+    struct sRenderTile final : public sAttribute
+    {
+        int bumpTileID = -1;
+
+        inline int GetDraw()			{ return GetAttribute(ATTRTILE_DRAWLOD); }
+        inline int GetUpdate()			{ return GetAttribute(ATTRTILE_UPDATELOD); }
+        inline void SetDraw()			{ SetAttribute(ATTRTILE_DRAWLOD); }
+
+        inline void ClearDraw()			{ ClearAttribute(ATTRTILE_DRAWLOD); }
+        inline void ClearUpdate()		{ ClearAttribute(ATTRTILE_UPDATELOD); }
+    };
+    std::vector<sRenderTile> renderTiles;
+
     void SaveUpdateStat();
 
     VectDelta* delta_buffer;
     std::vector<std::vector<sPolygon>> index_buffer;
     
     cTilemapTexturePool* FindFreeTexturePool(int tex_width, int tex_height);
+    sRenderTile& GetRenderTile(int i, int j) { return renderTiles[i + j*tilemap->GetTileNumber().x]; }
 public:
     void IncUpdate(sBumpTile* pbump);
 
