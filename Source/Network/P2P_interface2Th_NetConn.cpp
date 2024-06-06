@@ -61,7 +61,7 @@ void PNetCenter::ReceivedNetConnectionMessage(NetConnection* connection, NetConn
 
     uint32_t head = *(reinterpret_cast<uint32_t*>(msg->address()));
     if (head == NETCOM_BUFFER_PACKET_ID) {
-        if (msg->destination != m_localNETID) {
+        if (msg->destination != m_localNETID && msg->destination != NETID_ALL) {
             fprintf(stderr, "Received msg for someone else! from 0x%" PRIX64 " for 0x%" PRIX64 "\n",
                     msg->source, msg->destination);
             xassert(0);
