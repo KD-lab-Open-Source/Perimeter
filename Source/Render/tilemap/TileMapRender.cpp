@@ -583,7 +583,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
             if((!bumpTile->init) || Tile.GetUpdate() || update_line)
             {
-                bumpTile->Calc(!bumpTile->init || Tile.GetUpdate());
+                bumpTile->Calc(!shadow && (!bumpTile->init || Tile.GetUpdate()));
                 Tile.ClearUpdate();
             }
 
