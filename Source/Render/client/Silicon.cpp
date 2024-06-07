@@ -333,7 +333,6 @@ void ElasticLink::Draw(cCamera *DrawNode)
 	gb_RenderDevice->SetNoMaterial(blendMode,GetFrame()->GetPhase(),GetTexture(),GetTexture2(),COLOR_MOD);
 
     gb_RenderDevice->SetWorldMatXf(MatXf(Mat3f::ID,point1));
-    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP);
 
 	uint32_t Diffuse = gb_RenderDevice->ConvertColor(sColor4c(diffuse));
 	Vect3f Weight = 10*x_axis;
@@ -341,6 +340,7 @@ void ElasticLink::Draw(cCamera *DrawNode)
 	float u2=2*GetFrame()->GetPhase(), du2=0.02f;
 	float v2=0, dv2=0.01f;
 
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP, (line_size + 1) * 2);
     sVertexXYZDT2* vb = db->LockTriangleStripSteps<sVertexXYZDT2>(line_size);
 	for(int i = 0; i < line_size; i++) {
 		float z = dz*i;

@@ -53,12 +53,12 @@ void cUnkLight::Draw(cCamera *DrawNode)
 	float dr=2*GetRadius()/(NumberPlane+1);
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
-    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
     
 	float tex=0;
 	Vect3f WorldK=DrawNode->GetPos()-GetPos();
 	FastNormalize(WorldK);
 
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP, (NumberPlane + 1) * 2);
 	sVertexXYZDT1* vb = db->LockTriangleStripSteps<sVertexXYZDT1>(NumberPlane);
     
 	for(int i=0;i<NumberPlane;i++,tex+=1) {

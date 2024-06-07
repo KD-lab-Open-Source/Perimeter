@@ -153,7 +153,8 @@ public:
     void WriteTriangleStripStep(size_t steps, TVERTEX*& vertex_buf, indices_t*& indices_buf) {
         xassert(TVERTEX::fmt == vb.fmt);
         xassert(primitive == PT_TRIANGLESTRIP);
-        if (!steps) return;
+        xassert(indices_buf);
+        if (!steps || !indices_buf) return;
         xassert(lock_written_vertices + steps * 2 <= locked_vertices);
         xassert(lock_written_indices + steps * 2 <= locked_indices);
         size_t b = written_vertices + lock_written_vertices;

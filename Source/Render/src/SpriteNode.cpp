@@ -40,7 +40,8 @@ void cSpriteManager::Draw(cCamera *camera)
     
     if (sprites.empty()) return;
 
-    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    size_t db_vertices = std::min(sprites.size() + 1, static_cast<size_t>(100)) * 4;
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES, db_vertices);
     indices_t* ib = nullptr;
     sVertexXYZDT1 *v = nullptr;
     

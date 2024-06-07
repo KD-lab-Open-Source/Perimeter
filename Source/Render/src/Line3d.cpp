@@ -40,12 +40,13 @@ void cLine3d::Draw(cCamera *DrawNode)
 //	float width=(DrawNode->GetCameraPass()==SCENENODE_OBJECTSORT_NOZ)?0.5f:1.0f;
 
     gb_RenderDevice->SetWorldMat4f(nullptr);
-    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
 	Vect3f Orientation;
 
-	sVertexXYZDT1* vb = db->LockTriangleStripSteps<sVertexXYZDT1>(Vertex.size());
+    int steps = static_cast<int>(Vertex.size());
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP, (steps + 1) * 2);
+	sVertexXYZDT1* vb = db->LockTriangleStripSteps<sVertexXYZDT1>(steps);
     size_t i = 0;
-	for( int nVertex=Vertex.size()-1; nVertex>=0; nVertex-- )
+	for( int nVertex=steps-1; nVertex>=0; nVertex-- )
 	{
 		if(nVertex>0)
 		{

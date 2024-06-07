@@ -156,7 +156,7 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
 
     indices_t* i = nullptr;
     sVertexXYZDT1* v = nullptr;
-    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    auto db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES, 10 * 4 * 10);
     for (const char* str = string; 0 != *str; str++, yOfs += ySize) {
         xOfs = static_cast<float>(x);
         size_t chars;
@@ -220,7 +220,7 @@ void cInterfaceRenderDevice::OutText(int x,int y,const char *string,const sColor
 
     indices_t* i = nullptr;
     sVertexXYZDT2* v = nullptr;
-    auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES);
+    auto db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLES, 10 * 4 * 10);
     for (const char* str=string; 0 != *str; str++) {
         if ((yOfs + ySize) < y_min) {
             yOfs += ySize;
@@ -618,7 +618,7 @@ void cInterfaceRenderDevice::DrawScene(class cScene *Scene) {
         return;
     }
 
-    DrawBuffer* db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
+    DrawBuffer* db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES, 50 * 4 * 20);
 
     for (auto& pair : lightsByTex) {
         SetNoMaterial(ALPHA_ADDBLEND, 0, pair.first);
@@ -657,7 +657,7 @@ void cInterfaceRenderDevice::DrawElasticSphere(ElasticSphere *es) {
     int cull=GetRenderState(RS_CULLMODE);
     SetRenderState(RS_CULLMODE,CULL_CW);
 
-    DrawBuffer* db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP);
+    DrawBuffer* db = GetDrawBuffer(sVertexXYZDT2::fmt, PT_TRIANGLESTRIP, points);
     indices_t* ib = nullptr;
     sVertexXYZDT2* vb = nullptr;
     db->Lock(points, points, vb, ib, false);

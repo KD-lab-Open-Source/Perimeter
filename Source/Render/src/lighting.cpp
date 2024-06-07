@@ -117,13 +117,14 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
     uint32_t diffuse = gb_RenderDevice->ConvertColor(sColor4c(255,255*a,255,a*255));
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLENDALPHA,0,parent->pTexture);
     gb_RenderDevice->SetWorldMat4f(nullptr);
-    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP);
     
     float scale = max(1.0f, parent->scaler * 0.5f);
 	float size = parent->param.strip_width_begin * scale;
     size += time * parent->param.strip_width_time * scale;
-    sVertexXYZDT1 *vb = db->LockTriangleStripSteps<sVertexXYZDT1>(strip_list.size());
-    for (size_t i = 0; i < strip_list.size(); ++i) {
+    size_t steps = strip_list.size();
+    DrawBuffer* db = gb_RenderDevice->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLESTRIP, (steps + 1) * 2);
+    sVertexXYZDT1 *vb = db->LockTriangleStripSteps<sVertexXYZDT1>(steps);
+    for (size_t i = 0; i < steps; ++i) {
         const OneStrip& p = strip_list[i];
         sVertexXYZDT1& v1 = vb[i*2];
         sVertexXYZDT1& v2 = vb[i*2+1];

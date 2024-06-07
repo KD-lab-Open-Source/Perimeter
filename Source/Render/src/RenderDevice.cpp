@@ -18,6 +18,7 @@
 #endif
 
 static uint32_t ColorConvertABGR(const sColor4c& c) { return CONVERT_COLOR_TO_ABGR(c.v); };
+static size_t DRAW_BUFFER_DEFAULT_SIZE = 2048;
 
 void MemoryResource::AllocData(size_t _data_len) {
     if (data) {
@@ -85,8 +86,6 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, SDL_Window* wnd, 
     if (!TexLibrary) {
         TexLibrary = new cTexLibrary();
     }
-    drawBuffers.resize(0xFF);
-    DrawBufferVertexCount = 4096;
 
     //Get the biggest resolution we might need
     MaxScreenSize.set(0, 0);
@@ -113,8 +112,8 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, SDL_Window* wnd, 
 
 int cInterfaceRenderDevice::Done() {
     VISASSERT(CurrentFont == nullptr || CurrentFont == DefaultFont);
-    for (auto db : drawBuffers) {
-        delete db;
+    for (auto pair : drawBuffers) {
+        delete pair.second;
     }
     drawBuffers.clear();
     if (TexLibrary) {
@@ -291,18 +290,22 @@ void cInterfaceRenderDevice::SetWorldMatXf(const MatXf& matrix) {
     SetWorldMat4f(&mat);
 }
 
-DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive) {
-    uint16_t key = (fmt << 1) | (primitive & 0x1);
-    DrawBuffer* db = nullptr;
-    if (key < drawBuffers.size()) {
-        db = drawBuffers[key];
+DrawBuffer* cInterfaceRenderDevice::GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive, size_t vertices) {
+    //Use DRAW_BUFFER_DEFAULT_SIZE if lower so a DrawBuffer is only created when is bigger than usual
+    uint64_t len = vertices < DRAW_BUFFER_DEFAULT_SIZE ? DRAW_BUFFER_DEFAULT_SIZE : vertices;
+    static const uint32_t LEN_SHIFT = 9; //512 bytes
+    size_t chunks = (len >> LEN_SHIFT) + 1; //Divide by LEN_SHIFT and add one extra chunk
+    len = chunks * (1 << LEN_SHIFT);
+    uint64_t key = len << 8;
+    //7 bits for fmt, 1 for primitive type, rest for length
+    key |= ((fmt & 0x7F) << 1) | (primitive & 0x1);
+    DrawBuffer* db;
+    if (drawBuffers.count(key)) {
+        db = drawBuffers.at(key);
     } else {
-        drawBuffers.resize(key + 1);
-    }
-    if (!db) {
         //No drawbuffer exists for this key, create new one
         db = new DrawBuffer();
-        db->Create(DrawBufferVertexCount, true, DrawBufferVertexCount * 3, true, fmt, primitive);
+        db->Create(len, true, len * sPolygon::PN, true, fmt, primitive);
         drawBuffers[key] = db;
     }
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE

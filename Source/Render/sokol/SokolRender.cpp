@@ -61,9 +61,6 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     if (res != 0) {
         return res;
     }
-    
-    //TODO remove this once we dont need put submitted buffers into this
-    DrawBufferVertexCount = 40960;
 
     ClearPooledResources(0);
     ClearCommands();

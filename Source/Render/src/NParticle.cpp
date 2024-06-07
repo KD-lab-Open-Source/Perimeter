@@ -12,7 +12,7 @@
 #include "files/files.h"
 #include "DrawBuffer.h"
 
-const int PARTICLE_BUF_LOCK_LEN = 50;
+const size_t PARTICLE_BUF_LOCK_LEN = 50;
 
 static RandomGenerator rnd;
 static std::vector<Vect2f> rotate_angle;
@@ -696,8 +696,8 @@ void cEmitterInt::Draw(cCamera *pCamera)
 
     indices_t* ib = nullptr;
     sVertexXYZDT1 *v = nullptr;
-    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     size_t size=Particle.size();
+    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES, PARTICLE_BUF_LOCK_LEN * 4 * 10);
     for (int i=size-1;i>=0;i--) {
 /*		nParticle& p=Particle[i];
         if(p.key<0)continue;
@@ -1272,8 +1272,8 @@ void cEmitterSpl::Draw(cCamera *pCamera)
     }
     indices_t* ib = nullptr;
     sVertexXYZDT1 *v = nullptr;
-    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     size_t size=Particle.size();
+    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES, PARTICLE_BUF_LOCK_LEN * 4 * 10);
     for(int i=size-1;i>=0;i--)
     {
 /*		nParticle& p=Particle[i];
@@ -3419,10 +3419,6 @@ void cEmitterZ::Draw(cCamera *pCamera)
     
     if (GetTexture(0) && GetTexture(0)->IsAviScaleTexture())
         texture = (cTextureAviScale*)GetTexture(0);
-
-    indices_t* ib = nullptr;
-    sVertexXYZDT1 *v = nullptr;
-    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     
     MatXf GM = {};
     MatXf iGM = {};
@@ -3443,6 +3439,9 @@ void cEmitterZ::Draw(cCamera *pCamera)
         rd->SetWorldMat4f(nullptr);
     }
     int size=Particle.size();
+    indices_t* ib = nullptr;
+    sVertexXYZDT1 *v = nullptr;
+    DrawBuffer* db = rd->GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES, PARTICLE_BUF_LOCK_LEN * 4 * 10);
     for(int i=size-1;i>=0;i--)
     {
         nParticle& p=Particle[i];

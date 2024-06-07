@@ -679,7 +679,7 @@ void cSokolRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, siz
 #ifdef PERIMETER_RENDER_TRACKER_DRAW_BUFFER_STATE
     RenderSubmitEvent(RenderEvent::SUBMIT_DRAW_BUFFER, "", db);
 #endif
-    DrawBuffer* db = GetDrawBuffer(vb->fmt, primitive);
+    DrawBuffer* db = GetDrawBuffer(vb->fmt, primitive, 1024 * 20);
     size_t indices_count = range ? range->len : indices;
 
     void* vb_dst = nullptr;

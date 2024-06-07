@@ -148,11 +148,10 @@ protected:
     uint32_t ScreenHZ = 0;
     uint32_t RenderMode = 0;
     class DrawBuffer* activeDrawBuffer = nullptr;
-    std::vector<class DrawBuffer*> drawBuffers;
+    std::unordered_map<uint64_t, class DrawBuffer*> drawBuffers;
     Mat4f orthoVP;
     eCullMode CameraCullMode = CULL_NONE;
     bool WireframeMode = false;
-    size_t DrawBufferVertexCount = 0;
 
     virtual void DrawFieldDispatcher(class FieldDispatcher* ffd, uint8_t transparent);
 
@@ -224,7 +223,7 @@ public:
     virtual indices_t* LockIndexBufferRange(class IndexBuffer &ib, uint32_t Start, uint32_t Amount);
     virtual void UnlockIndexBuffer(class IndexBuffer &ib);
 
-    virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive);
+    virtual class DrawBuffer* GetDrawBuffer(vertex_fmt_t fmt, ePrimitiveType primitive, size_t vertices = 0);
     virtual void SetActiveDrawBuffer(class DrawBuffer*);
 
     /*Внутренний мтод. Использовать с крайней осторожностью.
