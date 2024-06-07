@@ -105,9 +105,7 @@ void terFrame::setRealModel(int modelIndex, float scale)
 	inputPositionOffset_ = DockList.front().position().trans() - position();
 }
 
-terFrame::~terFrame()
-{
-}
+terFrame::~terFrame() = default;
 
 void terFrame::setPose(const Se3f& pose, bool initPose)
 {

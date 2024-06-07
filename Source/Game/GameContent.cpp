@@ -691,7 +691,7 @@ void detectGameContent() {
 
             //Avoid possible duplicates of ET
             if (data.available && is_content_ET && (terGameContentAvailable & PERIMETER_ET)) {
-                fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading", data.path.c_str());
+                fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading\n", data.path.c_str());
                 data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorDuplicateContent");
                 data.available = false;
             }
@@ -720,7 +720,7 @@ void detectGameContent() {
     //Load mods
     for (ModMetadata& mod : foundMods) {
         if (0 < gameMods.count(mod.mod_name)) {
-            fprintf(stderr, "Mod %s at %s was already loaded, not loading", mod.mod_name.c_str(), mod.path.c_str());
+            fprintf(stderr, "Mod %s at %s was already loaded, not loading\n", mod.mod_name.c_str(), mod.path.c_str());
             continue;
         }
         

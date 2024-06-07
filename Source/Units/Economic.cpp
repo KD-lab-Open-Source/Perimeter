@@ -169,8 +169,9 @@ terBuilding* terPlayer::BuildStructure(terUnitAttributeID build_index, const Vec
 	terBuildingInstaller installer;
 	installer.InitObject(unitAttribute(build_index));
 	installer.SetBuildPosition(To3D(pos), pos.z, 0);
-	if(!installer.valid())
-		return 0;
+	if(!installer.valid()) {
+        return nullptr;
+    }
 	installer.Clear();
 
 	terBuilding* n = safe_cast<terBuilding*>(buildUnit(build_index));
