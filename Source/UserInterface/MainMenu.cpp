@@ -216,23 +216,19 @@ int resultWNDID = -1;
 terUniverseInterfaceMessage resultID = UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED;
 
 int goToResultQuant( float, float ) {
-	if (!gameShell->GameActive) {
-		return 0;
-	} else if (menuChangingDone) {
-		processInterfaceMessage(resultID, resultWNDID);
-		return 0;
-	}
-	return 1;
+    if (!gameShell->GameActive) {
+        return 0;
+    } else if (menuChangingDone || gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+        processInterfaceMessage(resultID, resultWNDID);
+        return 0;
+    }
+    return 1;
 }
 
 void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
-		resultID = id;
-        resultWNDID = wndIDToHide;
-		_shellIconManager.AddDynamicHandler( goToResultQuant, CBCODE_QUANT );
-	} else {
-		processInterfaceMessage(id, wndIDToHide);
-	}
+    resultID = id;
+    resultWNDID = wndIDToHide;
+    _shellIconManager.AddDynamicHandler( goToResultQuant, CBCODE_QUANT );
 }
 
 void loadMapVector(
