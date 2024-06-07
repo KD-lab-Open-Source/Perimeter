@@ -151,6 +151,8 @@ void initLocale() {
         }
     }
 
+    ErrH.SetLocale(localeCurrent);
+
     fprintf(stdout, "Current locale: %s\n", localeCurrent.c_str());
     
     //Find the folder of locale, the locale name in filesystem might not be lowercase

@@ -1104,6 +1104,8 @@ int SDL_main(int argc, char *argv[])
         bool ok = create_directories(path);
         xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
     }
+    std::string crash_path = get_content_root_path_str() + CRASH_DIR;
+    printf("CrashData path: '%s'\n", crash_path.c_str());
 
     //Load perimeter parameters
     int xprmcompiler = IniManager("Perimeter.ini", false).getInt("Game", "XPrmCompiler");

@@ -282,15 +282,20 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
     }
     stream << "Clock: " << clocki() << std::endl;
 
-    std::string crash_path = get_content_root_path_str() + CRASH_DIR;
     std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
-    stream << std::endl << "Please send:" << std::endl <<
-           " - This message" << std::endl <<
-           " - Log file from " << log_path.c_str() << std::endl <<
-           " - Crash files from " << crash_path << std::endl <<
-            "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
+    if (startsWith(locale, "russian")) {
+        stream << std::endl << "Пожалуйста отправьте:" << std::endl <<
+               " - Это сообщение" << std::endl <<
+               " - Лог файл '" << log_path.c_str() << "'" << std::endl <<
+               "В https://t.me/PerimeterGame или https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
+    } else {
+        stream << std::endl << "Please send:" << std::endl <<
+               " - This message" << std::endl <<
+               " - Log file '" << log_path.c_str() << "'" << std::endl <<
+               "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
+    }
     std::string str =  stream.str();
 
     fprintf(stderr, "%s\n", str.c_str());

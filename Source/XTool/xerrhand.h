@@ -33,7 +33,7 @@ struct XErrorHandler
 	unsigned state;
 
 	std::string prefix;
-
+    std::string locale;
     std::string log_path;
 
 	void (*restore_func)();
@@ -47,6 +47,7 @@ struct XErrorHandler
 	void	 SetRestore(void (*rf)());
     void	 SetCrash(void (*cf)());
 	void	 SetState(int s){state=s;}
+    void     SetLocale(std::string locale_) { locale = std::move(locale_); };
     [[noreturn]] void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
     [[noreturn]] void	 Abort(const std::string& message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
     bool     ShowErrorMessage(const char* message);
