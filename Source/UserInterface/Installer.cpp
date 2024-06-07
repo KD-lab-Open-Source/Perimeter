@@ -35,6 +35,7 @@ terBuildingInstaller::~terBuildingInstaller()
 
 void terBuildingInstaller::Clear()
 {
+    MTAuto auto_lock(&lock);
 	CancelObject();
 
     delete[] BaseBuff;
@@ -73,24 +74,33 @@ void terBuildingInstaller::InitObject(const AttributeBase* attr)
 
 void terBuildingInstaller::ConstructObject(terPlayer* player)
 {
-	if(player && valid() && Attribute->ID != UNIT_ATTRIBUTE_FRAME){
-		if(player->frame())
-			player->frame()->commandOutcoming(UnitCommand(COMMAND_ID_BUILDING_START, Vect3f(Position.x,Position.y,Angle), Attribute->ID, COMMAND_SELECTED_MODE_NEGATIVE));
-		Clear();
-	}
+	if (player && valid()) {
+        MTAuto auto_lock(&lock);
+        if (Attribute && Attribute->ID != UNIT_ATTRIBUTE_FRAME) {
+            if(player->frame()) {
+                player->frame()->commandOutcoming(UnitCommand(
+                        COMMAND_ID_BUILDING_START,
+                        Vect3f(Position.x, Position.y, Angle), Attribute->ID,
+                        COMMAND_SELECTED_MODE_NEGATIVE
+                ));
+            }
+            Clear();
+        }
+    }
 }
 
 void terBuildingInstaller::CancelObject()
 {
-	Attribute = 0;
+    MTAuto auto_lock(&lock);
+	Attribute = nullptr;
 
-	if(ObjectPoint){
+	if (ObjectPoint) {
 		ObjectPoint->Release();
-		ObjectPoint = 0;
+		ObjectPoint = nullptr;
 	}
 
-	valid_ = 0;
-	visible_ = 0;
+	valid_ = false;
+	visible_ = false;
 
 	connection_icon_->quant();
 }
@@ -144,13 +154,14 @@ public:
 
 void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, terPlayer* player)
 {
-	valid_ = 1;
-	visible_ = 0;
+    MTAuto auto_lock(&lock);
+	valid_ = true;
+	visible_ = false;
 	old_build_position=position;
 	old_build_angle=angle;
 	old_build_player=player;
-	if(ObjectPoint){
-		visible_ = 1;
+    if (ObjectPoint && Attribute) {
+		visible_ = true;
 
 		Position = to3D(position, vMap.hZeroPlast - Attribute->logicObjectBound.min.z);
 		Angle = angle;
@@ -195,17 +206,16 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 		
 		connection_icon_->quant();
 
-		if(Attribute->ID != UNIT_ATTRIBUTE_FRAME && player){
+		if (Attribute->ID != UNIT_ATTRIBUTE_FRAME && player) {
 			bool connected = false;
-			if(!Attribute->ConnectionRadius){
-				MTAuto lock(universe()->EnergyRegionLocker());
+			if(Attribute->ConnectionRadius <= 0){
+				MTAuto elock(universe()->EnergyRegionLocker());
 				GenShapeLineOp op;
 				scanPolyByLineOp(&points[0], points.size(), op);
 				connected = player->energyColumn().intersected(op.shape());
 				//if(!connected)
 				//	valid_ = 0;
-			}
-			else{
+			} else {
 				CUNITS_LOCK(player);
 				const UnitList& unit_list=player->units();
 				UnitList::const_iterator ui;
@@ -216,15 +226,15 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 			}
 
 			if(!connected){
-				valid_ = 0;
+				valid_ = false;
 				Vect3f pos = position;
 				pos.z += Attribute->boundRadius*Attribute->iconDistanceFactor;
 				connection_icon_->show(pos);
 			}
 		}
-	}
-	else
-		valid_ = 0;
+	} else {
+        valid_ = false;
+    }
 }
 
 void terBuildingInstaller::InitTexture()
@@ -252,9 +262,10 @@ void terBuildingInstaller::InitTexture()
 
 void terBuildingInstaller::SetBuildPosition(const Vect2f& mousePos, terPlayer* player)
 {
+    MTAuto auto_lock(&lock);
 	valid_ = 1;
 	visible_ = 0;
-	if(ObjectPoint){
+	if (ObjectPoint && Attribute) {
 		Vect3f v;
 		Vect3f pos,dir;
 		terCamera->GetCamera()->GetWorldRay(pos_set = mousePos, pos, dir);
@@ -287,7 +298,8 @@ void terBuildingInstaller::ChangeBuildAngle(float dA, terPlayer* player)
 
 void terBuildingInstaller::ShowCircle()
 {
-	if(ObjectPoint){
+    MTAuto auto_lock(&lock);
+	if (ObjectPoint && Attribute) {
 		if(Attribute->ZeroLayerRadius)
 			terCircleShowGraph(Position, Attribute->ZeroLayerRadius, circleColors.zeroLayerRadius);
 		if(Attribute->ConnectionRadius){

@@ -26,13 +26,12 @@ public:
 	//For AI
 	void SetBuildPosition(const Vect3f& position, float angle, terPlayer* player);
 
-	terUnitAttributeID attributeID() const { return Attribute ? static_cast<terUnitAttributeID>(Attribute->ID) : UNIT_ATTRIBUTE_NONE; }
-
 	bool inited() const { return ObjectPoint != 0; }
 	bool valid() const { return valid_; }
 	bool buildingInArea() const { return buildingInArea_; }
 
 private:
+    MTSection lock;
 	const AttributeBase* Attribute = nullptr;
 	Vect3f Position;
 	float Angle = 0.0f;
