@@ -152,7 +152,7 @@ void cSokolRender::DoSokolRendering(sg_pass& render_pass, const std::vector<Soko
         const SokolPipeline* pipeline = command->pipeline;
         if (pipeline == nullptr) {
             //Not implemented vertex format
-            xxassert(0, "cSokolRender::EndScene missing pipeline for " + std::to_string(command->pipeline_id));
+            xxassert(0, "cSokolRender::EndScene missing pipeline");
             continue;
         }
 #if defined(PERIMETER_DEBUG) && 0
@@ -496,7 +496,7 @@ void cSokolRender::CreateCommandEmpty() {
     commands.emplace_back(cmd);
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-    label = "Submit - Pipeline: " + std::to_string(pipeline_id)
+    label = "Submit"
             + " Vtxs: " + std::to_string(cmd->vertices)
             + " Idxs: " + std::to_string(cmd->indices)
             + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))
@@ -524,8 +524,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     }
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-    std::string label = "Pipeline: " + std::to_string(pipeline_id);
-    RenderSubmitEvent(RenderEvent::CREATE_COMMAND, label.c_str());
+    RenderSubmitEvent(RenderEvent::CREATE_COMMAND, "Start");
 #endif
 
 #ifdef PERIMETER_DEBUG
@@ -652,7 +651,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     }
 
 #ifdef PERIMETER_RENDER_TRACKER_COMMANDS
-    label = "Submit - Pipeline: " + std::to_string(pipeline_id)
+    label = "Submit"
             + " Vtxs: " + std::to_string(cmd->vertices)
             + " Idxs: " + std::to_string(cmd->indices)
             + " Tex0: " + std::to_string(reinterpret_cast<size_t>(cmd->sokol_textures[0]))

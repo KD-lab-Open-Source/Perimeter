@@ -1687,8 +1687,8 @@ void GameShell::KeyPressed(sKey& Key)
 			MakeShot();
 			break;
 
-		case VK_F6 | KBD_SHIFT:
 #ifdef PERIMETER_DEBUG
+		case VK_F6 | KBD_SHIFT:
 			terRenderDevice->StartCaptureFrame();
 			break;
 #endif

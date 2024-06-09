@@ -307,13 +307,14 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
         DeleteShadowTexture();
         return false;
     }
-    SetupTexture(lightMapRenderTarget->texture->GetFrameImage(0)->sg, SG_PIXELFORMAT_BGRA8);
+    SetupTexture(lightMapRenderTarget->texture->GetFrameImage(0)->sg,
+        sg_query_desc().environment.defaults.color_format);
 
     {
         auto& render_pass = lightMapRenderTarget->render_pass;
         render_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
         render_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-        render_pass.action.colors[0].clear_value = { 1.0f, 1.0f, 1.0f, 1.0f};
+        render_pass.action.colors[0].clear_value = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         sg_attachments_desc description{};
         description.colors[0].image = lightMapRenderTarget->texture->GetFrameImage(0)->sg->image->res;
