@@ -229,8 +229,8 @@ XErrorHandler::XErrorHandler() {
             //Oldest log, remove it
             std::filesystem::remove(src_path, error);
             if (error) {
-                fprintf(stderr, "Error deleting oldest log file: %d %s at %s\n",
-                        error.value(), error.message().c_str(), src_path.c_str());
+                fprintf(stderr, "Error deleting oldest log file: %d %s at %d\n",
+                        error.value(), error.message().c_str(), i);
             }
             continue;
         }
@@ -240,14 +240,14 @@ XErrorHandler::XErrorHandler() {
         if (std::filesystem::exists(dst_path)) {
             std::filesystem::remove(dst_path, error);
             if (error) {
-                fprintf(stderr, "Error deleting log file: %d %s at %s\n",
-                        error.value(), error.message().c_str(), dst_path.c_str());
+                fprintf(stderr, "Error deleting log file: %d %s at %d\n",
+                        error.value(), error.message().c_str(), i);
             }
         }
         std::filesystem::rename(src_path, dst_path, error);
         if (error) {
-            fprintf(stderr, "Error renaming log file: %d %s at %s\n",
-                    error.value(), error.message().c_str(), src_path.c_str());
+            fprintf(stderr, "Error renaming log file: %d %s at %d\n",
+                    error.value(), error.message().c_str(), i);
         }
     }
 
