@@ -37,6 +37,8 @@ static const char *defprefix 	= "XHANDLER INFORM";
 static const char *exceptMSG 	= "EXCEPTION OCCURED";
 static const char *rterrorMSG	= "RUN-TIME ERROR";
 
+const static int MAX_LOGS = 3;
+
 XErrorHandler ErrH;
 
 void setSignalHandler(sighandler signalHandler) {
@@ -206,18 +208,46 @@ XErrorHandler::XErrorHandler() {
     crash_func = nullptr;
     restore_func = nullptr;
     state = 0;
+    std::string pref_path;
     log_path.clear();
-    const char* lop_path_ptr = GET_PREF_PATH();
-    if (lop_path_ptr) {
-        log_path = lop_path_ptr;
-        SDL_free((void*) lop_path_ptr);
+    const char* pref_path_ptr = GET_PREF_PATH();
+    if (pref_path_ptr) {
+        pref_path = pref_path_ptr;
+        SDL_free((void*) pref_path_ptr);
     }
-    log_path += "logfile.txt";
-	if (std::filesystem::exists(std::filesystem::u8path(log_path))) {
+    log_path = pref_path + "logfile.txt";
+    //Do log rotation from oldest to current
+    for (int i = MAX_LOGS; 0 <= i; --i) {
         std::error_code error;
-        std::filesystem::remove(std::filesystem::u8path(log_path), error);
+        std::filesystem::path src_path = std::filesystem::u8path(
+                i == 0 ? log_path : pref_path + "logfile_" + std::to_string(i) + ".txt"
+        );
+        if (!std::filesystem::exists(src_path)) {
+            continue;
+        }
+        if (i == MAX_LOGS) {
+            //Oldest log, remove it
+            std::filesystem::remove(src_path, error);
+            if (error) {
+                fprintf(stderr, "Error deleting oldest log file: %d %s at %s\n",
+                        error.value(), error.message().c_str(), src_path.c_str());
+            }
+            continue;
+        }
+        std::filesystem::path dst_path = std::filesystem::u8path(
+                pref_path + "logfile_" + std::to_string(i + 1) + ".txt"
+        );
+        if (std::filesystem::exists(dst_path)) {
+            std::filesystem::remove(dst_path, error);
+            if (error) {
+                fprintf(stderr, "Error deleting log file: %d %s at %s\n",
+                        error.value(), error.message().c_str(), dst_path.c_str());
+            }
+        }
+        std::filesystem::rename(src_path, dst_path, error);
         if (error) {
-           fprintf(stderr, "Error deleting log file: %d %s at %s\n",  error.value(), error.message().c_str(), log_path.c_str());
+            fprintf(stderr, "Error renaming log file: %d %s at %s\n",
+                    error.value(), error.message().c_str(), src_path.c_str());
         }
     }
 
