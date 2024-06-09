@@ -15,6 +15,8 @@
 #include "GameShell.h"
 #include "CameraManager.h"
 
+#include "Sample.h"
+#include "AudioPlayer.h"
 #include "PerimeterShellUI.h"
 #include "MissionEdit.h"
 #include "HotKey.h"
@@ -23,7 +25,7 @@
 #include "GenericFilth.h"
 #include "IronPort.h"
 #include "qd_textdb.h"
-#include <stdarg.h>     // for va_start
+#include <cstdarg>     // for va_start
 #include "GameContent.h"
 #include "Localization.h"
 #include "MainMenu.h"
@@ -338,11 +340,9 @@ _handlertbl[] = {
 	{SQSH_MM_OPTIONS_GRAPHICS,OnButtonOptionGraphics},
 	{SQSH_MM_OPTIONS_SOUND,OnButtonOptionSound},
 	{SQSH_MM_GRAPHICS_GAMMA_SLIDER, OnSliderGraphicsGamma},
-	{SQSH_MM_SOUND_MUSIC_COMBO,OnComboSoundMusic},
-	{SQSH_MM_SOUND_SOUNDEFFECTS_COMBO,OnComboSoundEffects},
-	{SQSH_MM_SOUND_SOUNDEFFECTS_COMBO,OnComboSoundEffects},
 	{SQSH_MM_SOUND_SOUNDVOLUME_SLIDER,OnSliderSoundVolume},
-	{SQSH_MM_SOUND_MUSICVOLUME_SLIDER,OnSliderMusicVolume},
+    {SQSH_MM_SOUND_MUSICVOLUME_SLIDER,OnSliderMusicVolume},
+    {SQSH_MM_SOUND_VOICEVOLUME_SLIDER,OnSliderVoiceVolume},
 
 	{SQSH_MM_GRAPHICS_FURROWS_COMBO,OnComboGraphicsFurrows},
 	{SQSH_MM_GAME_TOOLTIPS_COMBO,OnComboGameTooltips},
@@ -908,7 +908,7 @@ void CShellIconManager::Done()
 	}
 
 	if (speechSound) {
-		SNDEnableVoices(true);
+		SNDEnableVoices(0 < terVoiceVolume);
 		speechSound->Stop();
 		delete speechSound;
 		speechSound = 0;
@@ -1428,38 +1428,42 @@ void CShellIconManager::speedChanged(float speed) {
 
 float CShellIconManager::playSpeech(const char* id) {
 	std::string sound = qdTextDB::instance().getSound(id);
-	if (terSoundEnable && speechSound && !sound.empty()) {
+	if (0 < terVoiceVolume && speechSound && !sound.empty()) {
 		size_t pos = sound.find("Voice");
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
 		std::string soundName = getLocDataPath() + sound;
         speechSound->requestPlay(true); //Avoid SNDEnableVoices being enabled again too soon
 		SNDEnableVoices(false);
-		speechSound->SetVolume(terSoundVolume);
+        speechSound->Stop();
+        speechSound->SetVolumeSelection(GLOBAL_VOLUME_VOICE);
 		int ret = speechSound->OpenToPlay(soundName.c_str(), false);
 		xassert(ret);
 		return speechSound->GetLen();
 	}
 	return 0;
 }
+
 void CShellIconManager::playGameOverSound(const char* path) {
-	if (terSoundEnable && speechSound) {
+	if (0 < terSoundVolume && speechSound) {
 		gb_Music.FadeVolume(0.5f, 0.0f);
         speechSound->Stop();
-		speechSound->SetVolume(terSoundVolume);
+        speechSound->SetVolumeSelection(GLOBAL_VOLUME_EFFECTS);
 		resultMusicStarted = true;
-		bool ret = speechSound->OpenToPlay(path, false);
+        bool ret = speechSound->OpenToPlay(path, false);
         if (!ret) {
             fprintf(stderr, "playGameOverSound %s error\n", path);
+            xassert(0);
         }
 	}
 }
+
 void CShellIconManager::setupAudio() {
 	if (speechSound) {
-		if (!terSoundEnable) {
+		if (terVoiceVolume == 0) {
 			speechSound->Stop();
 		}
-		speechSound->SetVolume(terSoundVolume);
+		//speechSound->SetVolume(terVoiceVolume);
 	}
 }
 
@@ -2119,7 +2123,7 @@ void CShellIconManager::quant(float dTime)
 	}
 
 	if (!SNDIsVoicesEnabled() && speechSound && !speechSound->IsPlay() && !cutSceneModeOn) {
-		SNDEnableVoices(true);
+        SNDEnableVoices(0 < terVoiceVolume);
 	}
 
     //Start music again after victory/defeat sound

@@ -9,7 +9,8 @@ class SND_Sample;
 SND_Sample* SNDLoadSound(const std::string& fname);
 
 namespace SND {
-extern float global_volume;
+extern float sound_volume;
+extern float voice_volume;
 extern bool has_sound_init;
 extern int deviceFrequency;
 extern int deviceChannels;

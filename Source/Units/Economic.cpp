@@ -887,7 +887,7 @@ void Cluster::stopField(bool restartAfterStop)
 	started_ = false;
 	startedTimer_.start(fade_duration);
 	fieldCluster_->switchOFF();
-	SND2DPlaySound("perimeter_broken");
+	//SND2DPlaySound("perimeter_broken");
 	
 	ProtectorList::iterator gi;
 	FOR_EACH(generators_, gi){

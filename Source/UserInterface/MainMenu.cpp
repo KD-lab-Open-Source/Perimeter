@@ -7,6 +7,7 @@
 #include "Universe.h"
 #include "UniverseInterface.h"
 #include "GameShell.h"
+#include "AudioPlayer.h"
 #include "PerimeterShellUI.h"
 #include "Controls.h"
 #include "../Sound/PerimeterSound.h"

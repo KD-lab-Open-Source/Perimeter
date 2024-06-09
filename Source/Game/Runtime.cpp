@@ -299,9 +299,14 @@ void HTManager::init()
 
 	allocation_tracking("PerimeterGraphicsInit");
 	
-	InitSound(IniManager("Perimeter.ini").getInt("Sound","SoundEnable"), IniManager("Perimeter.ini").getInt("Sound","MusicEnable"));
+	InitSound();
 
 	gameShell = new GameShell(terMissionEdit);
+
+    SetVolumeMusic(terMusicVolume);
+    SNDSetVoiceVolume(terVoiceVolume);
+    SNDSetSoundVolume(terSoundVolume);
+    
     refresh_window_size(false);
 
 	allocation_tracking("PerimeterLogicInit");
@@ -752,64 +757,59 @@ void HTManager::finitGraphics()
 
 //--------------------------------
 
-void InitSound(bool sound, bool music, bool firstTime)
+void InitSound()
 {
-	terSoundEnable = sound;
-	terMusicEnable = music;
-    
     int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
     int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
+    terAudioEnable = true;
+    terSoundVolume = 0.75f;
+    terVoiceVolume = 0.75f;
+    terMusicVolume = 0.25f;
 
-    IniManager ini("Perimeter.ini");
-	if (firstTime) {
-		terSoundVolume = ini.getFloat("Sound","SoundVolume");
-		terMusicVolume = ini.getFloat("Sound","MusicVolume");
-        IniManager ini_no("Perimeter.ini", false);
-        ini_no.getInt("Sound","MixChannels", mixChannels);
-        ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
-	} else {
-        ini.putInt("Sound","SoundEnable", terSoundEnable);
-        ini.putInt("Sound","MusicEnable", terMusicEnable);
-    }
+    IniManager ini_no("Perimeter.ini", false);
+    ini_no.getInt("Sound","MixChannels", mixChannels);
+    ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
+    ini_no.getFloat("Sound","SoundVolume", terSoundVolume);
+    ini_no.getFloat("Sound","VoiceVolume", terVoiceVolume);
+    ini_no.getFloat("Sound","MusicVolume", terMusicVolume);
+
     if (terRenderDevice->GetRenderSelection() == DEVICE_HEADLESS
     || check_command_line("disable_sound") != nullptr) {
-        terSoundEnable = terMusicEnable = false;
+        terAudioEnable = false;
     }
 
-	if(terSoundEnable  || terMusicEnable){
-		static int inited = 0;
+    SNDSetLocDataDirectory(getLocDataPath().c_str());
+    SNDSetSoundDirectory("RESOURCE\\SOUNDS\\EFF\\");
 
-		SNDSetLocDataDirectory(getLocDataPath().c_str());
+    if (terAudioEnable) {
+#ifdef PERIMETER_DEBUG_ASSERT
+        terEnableSoundLog = 1;
+#endif
+        SNDEnableErrorLog(terEnableSoundLog != 0);
 
-		if(!inited){
-			inited = 1;
+        if (!SNDInitSound(mixChannels, chunkSizeFactor)) {
+            terAudioEnable = false;
+        }
+    }
 
-			SNDSetSoundDirectory("RESOURCE\\SOUNDS\\EFF\\");
-
-			if(terEnableSoundLog)
-				SNDEnableErrorLog("sound.txt");
-
-			if(SNDInitSound(mixChannels, chunkSizeFactor)){
-				SNDScriptPrmEnableAll();
-			} else {
-                terMusicEnable = false;
-                terSoundEnable = false;
-            }
-		}
-	
-		SetVolumeMusic( terMusicVolume );
-		SNDSetVolume( terSoundVolume );
-
-		SND2DPanByX(1, fSoundWidthPower);
-		snd_listener.SetZMultiple(fSoundZMultiple);
-	}
-
-	SNDEnableSound(terSoundEnable);
+    if (terAudioEnable) {
+        SNDEnableSound(0 < terSoundVolume);
+        SNDEnableVoices(0 < terVoiceVolume);
+        SNDScriptPrmEnableAll();
+        SND2DPanByX(1, fSoundWidthPower);
+        snd_listener.SetZMultiple(fSoundZMultiple);
+    } else {
+        terMusicVolume = 0.0f;
+        terVoiceVolume = 0.0f;
+        terSoundVolume = 0.0f;
+        SNDEnableSound(false);
+        SNDEnableVoices(false);
+    }
 }
 
 void SoundQuant()
 {
-	if(!terSoundEnable)
+	if(!terAudioEnable)
 		return;
 
 	snd_listener.SetPos(terCamera->matrix());
@@ -822,12 +822,14 @@ void SoundQuant()
 
 void FinitSound()
 {
+    if(!terAudioEnable) {
+        return;
+    }
+
 	IniManager ini("Perimeter.ini");
 	ini.putFloat("Sound","SoundVolume", terSoundVolume);
-	ini.putFloat("Sound","MusicVolume", terMusicVolume);
-
-	if(!terSoundEnable && !terMusicEnable)
-		return;
+    ini.putFloat("Sound","MusicVolume", terMusicVolume);
+    ini.putFloat("Sound","VoiceVolume", terVoiceVolume);
 
 	SNDReleaseSound();
 }

@@ -146,7 +146,22 @@ bool SND_Sample::updateEffects(int channel) {
     if (channel != SND_NO_CHANNEL) {
         //Setup volume
         this->volume = std::max(0.0f, std::min(1.0f, this->volume));
-        Mix_Volume(channel, static_cast<int>(128.0f * this->volume * SND::global_volume));
+        float global_vol = 1.0f;
+        switch (global_volume_select) {
+            default:
+            case GLOBAL_VOLUME_IGNORE:
+                break;
+            case GLOBAL_VOLUME_CHANNEL:
+                global_vol = channel_group == SND_GROUP_SPEECH ? SND::voice_volume : SND::sound_volume;
+                break;
+            case GLOBAL_VOLUME_VOICE:
+                global_vol = SND::voice_volume;
+                break;
+            case GLOBAL_VOLUME_EFFECTS:
+                global_vol = SND::sound_volume;
+                break;
+        }
+        Mix_Volume(channel, static_cast<int>(128.0f * this->volume * global_vol));
 
         //Setup panning
         this->pan = std::max(0.0f, std::min(1.0f, this->pan));

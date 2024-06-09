@@ -327,10 +327,12 @@ bool SNDOneBuffer::SetFrequency(float frequency)
 
 void ScriptParam::LoadSound(const std::string& name)
 {
-    SND_Sample* sample=SNDLoadSound(name);
+    SND_Sample* sample = SNDLoadSound(name);
 
 	if (sample == nullptr) {
-        logs("Sound not loaded: %s\n", name.c_str());
+        if (0 < SND::has_sound_init) {
+            logs("Sound not loaded: %s\n", name.c_str());
+        }
     } else {
         sample->channel_group = SND_GROUP_EFFECTS;
         GetSounds().push_back(sample);

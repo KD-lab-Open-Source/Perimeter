@@ -13,6 +13,8 @@ void AudioPlayer::requestPlay(bool state) {
 
 ///////////////// SoundPlayer /////////////////////////////
 
+SpeechPlayer::SpeechPlayer() = default;
+
 SpeechPlayer::~SpeechPlayer() {
     this->destroySample();
 }
@@ -33,6 +35,7 @@ bool SpeechPlayer::OpenToPlay(const char* fname, bool cycled) {
     if (!sample) return false;
     sample->looped = cycled; //Tecnically not need for speeches but whatever
     sample->channel_group = SND_GROUP_SPEECH;
+    sample->global_volume_select = global_volume_select;
     sample->volume = volume;
     sample->steal_channel = true; //Just in case another speech is playing
     
@@ -75,6 +78,17 @@ void SpeechPlayer::SetVolume(float volume_) {
     if (!sample) return;
     sample->volume = this->volume;
     sample->updateEffects();
+}
+
+void SpeechPlayer::SetVolumeSelection(GLOBAL_VOLUME selection) {
+    this->global_volume_select = selection;
+    if (!sample) return;
+    sample->global_volume_select = this->global_volume_select;
+    sample->updateEffects();
+}
+
+GLOBAL_VOLUME SpeechPlayer::GetVolumeSelection() {
+    return this->global_volume_select;
 }
 
 float SpeechPlayer::GetLen() { 

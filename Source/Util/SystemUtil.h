@@ -103,7 +103,8 @@ public:
 	int getInt(const char* section, const char* key);
 	bool getInt(const char* section, const char* key, int& value);
 	void putInt(const char* section, const char* key, int val);
-	float getFloat(const char* section, const char* key);
+    float getFloat(const char* section, const char* key);
+    bool getFloat(const char* section, const char* key, float& value);
 	void putFloat(const char* section, const char* key, float val);
 	void getFloatArray(const char* section, const char* key, int size, float array[]);
 	void putFloatArray(const char* section, const char* key, int size, const float array[]);

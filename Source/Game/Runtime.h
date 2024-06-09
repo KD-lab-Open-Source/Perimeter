@@ -13,7 +13,7 @@ void setLogicFp();
 void PlayMusic(const char *str);
 void SetVolumeMusic(float f);
 void MusicEnable(int enable);
-void InitSound(bool sound, bool music, bool firstTime = true);
+void InitSound();
 void SoundQuant();
 void FinitSound();
 void request_application_restart(std::vector<std::string>* args = nullptr);
@@ -43,9 +43,9 @@ extern int terGrabInput;
 extern int terMapReflection;
 extern int terObjectReflection;
 
-extern int terSoundEnable;		// 0,1
-extern int terMusicEnable;		// 0,1
+extern int terAudioEnable;		// 0,1
 extern float terSoundVolume;	// 0..1
+extern float terVoiceVolume;	// 0..1
 extern float terMusicVolume;	// 0..1
 
 extern float terGraphicsGamma;	// 0.5..2.5

@@ -5334,16 +5334,12 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	controls = new sqshControl[] {
 		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(264 + 105 * 0)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
 		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(264 + 105 * 1)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(264 + 105 * 2)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+//		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(500 - 250)/1024; y=(264 + 105 * 2)/768; sx=500/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 500; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
 
 
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(180 + 105*0)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_SOUNDEFFECTS;	x=188/1024; y=(180 + 105*0)/768; sx=412/1024; sy=64/768; text="SOUND EFFECTS"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_SOUND_SOUNDEFFECTS_COMBO;image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
-		{type = SQSH_COMBO_TYPE; id = SQSH_MM_SOUND_SOUNDEFFECTS_COMBO;	x=635/1024; y=(180 + 105*0 + 18)/768; sx=(149+2*14)/1024; sy=32/768; image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; target=SQSH_MM_SOUND_SOUNDEFFECTS; },
-
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(180 + 105*1)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_SOUNDVOLUME;	x=188/1024; y=(180 + 105*1)/768; sx=412/1024; sy=64/768; text="SOUND VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
-		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_SOUNDVOLUME_SLIDER;	x=645/1024; y=(180 + 105*1 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_SOUNDVOLUME;	x=188/1024; y=(180 + 105*0)/768; sx=412/1024; sy=64/768; text="SOUND VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_SOUNDVOLUME_SLIDER;	x=645/1024; y=(180 + 105*0 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																			image2={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 8; iy = 8;hasResolutionVersion=0;};
 																			image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																			image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
@@ -5351,13 +5347,19 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 																			image_check={texture="";_ix = 478;_iy = 493; ix = 25; iy = 23;};
 																			target = SQSH_MM_SOUND_SOUNDVOLUME; },
 
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(180 + 105*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_MUSIC;		x=188/1024; y=(180 + 105*2)/768; sx=412/1024; sy=64/768; text="MUSIC"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_SOUND_MUSIC_COMBO;image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
-		{type = SQSH_COMBO_TYPE; id = SQSH_MM_SOUND_MUSIC_COMBO;		x=635/1024; y=(180 + 105*2 + 18)/768; sx=(149+2*14)/1024; sy=32/768; image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; target=SQSH_MM_SOUND_MUSIC; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(180 + 105*1)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_VOICEVOLUME;	x=188/1024; y=(180 + 105*1)/768; sx=412/1024; sy=64/768; text="VOICE VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_VOICEVOLUME_SLIDER;	x=645/1024; y=(180 + 105*1 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+																			image2={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 8; iy = 8;hasResolutionVersion=0;};
+																			image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
+																			image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
+																			image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};
+																			image_check={texture="";_ix = 478;_iy = 493; ix = 25; iy = 23;};
+																			target = SQSH_MM_SOUND_VOICEVOLUME; },
 
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(180 + 105*3)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_MUSICVOLUME;	x=188/1024; y=(180 + 105*3)/768; sx=412/1024; sy=64/768; text="MUSIC VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
-		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_MUSICVOLUME_SLIDER;	x=645/1024; y=(180 + 105*3 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=171/1024; y=(180 + 105*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_MUSICVOLUME;	x=188/1024; y=(180 + 105*2)/768; sx=412/1024; sy=64/768; text="MUSIC VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_MUSICVOLUME_SLIDER;	x=645/1024; y=(180 + 105*2 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																			image2={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 8; iy = 8;hasResolutionVersion=0;};
 																			image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																			image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
@@ -5800,26 +5802,26 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
 
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=191/1024; y=(225 + 70*0)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_SOUNDEFFECTS;	x=208/1024; y=(225 + 70*0)/768; sx=406/1024; sy=64/768; text="SOUND EFFECTS"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_SOUND_SOUNDEFFECTS_COMBO;},
-		{type = SQSH_COMBO_TYPE; id = SQSH_MM_SOUND_SOUNDEFFECTS_COMBO;	x=652/1024; y=(225 + 70*0 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_SOUND_SOUNDEFFECTS; },
-
-
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=191/1024; y=(225 + 70*1)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_SOUNDVOLUME;	x=208/1024; y=(225 + 70*1)/768; sx=406/1024; sy=64/768; text="SOUND VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; sound = "mainmenu_button";},
-		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_SOUND_SOUNDVOLUME_SLIDER;x=665/1024; y=(225 + 70*1 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_SOUNDVOLUME;	x=208/1024; y=(225 + 70*0)/768; sx=406/1024; sy=64/768; text="SOUND VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; sound = "mainmenu_button";},
+		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_SOUND_SOUNDVOLUME_SLIDER;x=665/1024; y=(225 + 70*0 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																		image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																		image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
 																		image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};
 																		image_check={texture="";_ix = 478;_iy = 493; ix = 25; iy = 23;};
 																		target = SQSH_MM_SOUND_SOUNDVOLUME; },
 
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			x=191/1024; y=(225 + 70*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_MUSIC;	x=208/1024; y=(225 + 70*2)/768; sx=406/1024; sy=64/768; text="MUSIC"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button"; target = SQSH_MM_SOUND_MUSIC_COMBO;},
-		{type = SQSH_COMBO_TYPE; id = SQSH_MM_SOUND_MUSIC_COMBO;	x=652/1024; y=(225 + 70*2 + 18)/768; sx=(149+2*14)/1024; sy=32/768; target=SQSH_MM_SOUND_MUSIC; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;				x=191/1024; y=(225 + 70*1)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_VOICEVOLUME;	x=208/1024; y=(225 + 70*1)/768; sx=406/1024; sy=64/768; text="VOICE VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; sound = "mainmenu_button";},
+		{type = SQSH_SLIDER_TYPE; id = SQSH_MM_SOUND_VOICEVOLUME_SLIDER;x=665/1024; y=(225 + 70*1 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+																		image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
+																		image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
+																		image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};
+																		image_check={texture="";_ix = 478;_iy = 493; ix = 25; iy = 23;};
+																		target = SQSH_MM_SOUND_VOICEVOLUME; },
 
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			  x=191/1024; y=(225 + 70*3)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_MUSICVOLUME;x=208/1024; y=(225 + 70*3)/768; sx=406/1024; sy=64/768; text="MUSIC VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";},
-		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_MUSICVOLUME_SLIDER;x=665/1024; y=(225 + 70*3 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;			  x=191/1024; y=(225 + 70*2)/768; sx=680/1024; sy=64/768;  ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_SOUND_MUSICVOLUME;x=208/1024; y=(225 + 70*2)/768; sx=406/1024; sy=64/768; text="MUSIC VOLUME"; font_group=2; txt_dy = 16/768; txt_align = SHELL_ALIGN_LEFT; state = SQSH_ENABLED; sound = "mainmenu_button";},
+		{type = SQSH_SLIDER_TYPE; id=SQSH_MM_SOUND_MUSICVOLUME_SLIDER;x=665/1024; y=(225 + 70*2 + 18)/768; sx=150/1024; sy=27/768;  xstart=25/1024; ystart=16/1024;
 																		image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328;_iy = 489;ix = 150;iy = 27;};
 																		image_disabled={texture="";_ix = 447;_iy = 456; ix = 16; iy = 27;};
 																		image_h={texture="";_ix = 303;_iy = 493; ix = 25; iy = 23;};

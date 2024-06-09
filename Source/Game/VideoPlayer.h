@@ -1,7 +1,5 @@
 #pragma once
 
-#include <AudioPlayer.h>
-
 #ifdef PERIMETER_FFMPEG_MOVIE
 class AVWrapper;
 class AVWrapperFrame;

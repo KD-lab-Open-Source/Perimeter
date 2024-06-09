@@ -16,9 +16,10 @@ void SNDSetLocDataDirectory(const char* dir);
 void SNDSetBelligerentIndex(int idx);
 
 //Работа с ошибками
-bool SNDEnableErrorLog(const char* file);
+void SNDEnableErrorLog(bool enable);
 
-void SNDSetVolume(float volume);//volume=0..1
+void SNDSetSoundVolume(float volume);//volume=0..1
+void SNDSetVoiceVolume(float volume);//volume=0..1
 
 //Грузит соответстивующую группу звуков в память 
 //и позволяет к ним обращаться с помощью 

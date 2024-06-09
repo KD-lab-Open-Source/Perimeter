@@ -6,11 +6,13 @@
 #include "qd_textdb.h"
 #include "tx3d.hpp"
 #include "Localization.h"
+#include "Sample.h"
+#include "AudioPlayer.h"
 
 extern GameShell* gameShell;
 extern cInterfaceRenderDevice* terRenderDevice;
 extern cVisGeneric* terVisGeneric;
-extern int terSoundEnable;
+extern int terAudioEnable;
 extern float terSoundVolume;
 extern float GlobalParticleRate;
 
@@ -42,6 +44,7 @@ HistoryScene::HistoryScene() {
 
 	lastEvent = Controller::CONTROL_SUBMIT_EVENT;
 
+    voice = new SpeechPlayer();
 	interpreter = new Interpreter(this);
 	historyCamera = new HistorySceneCamera(interpreter);
 
@@ -52,8 +55,9 @@ HistoryScene::HistoryScene() {
 
 HistoryScene::~HistoryScene() {
 	done();
-	delete historyCamera;
-	delete interpreter;
+    delete historyCamera;
+    delete interpreter;
+    delete voice;
 }
 
 void HistoryScene::loadProgram(const string& fileName) {
@@ -218,7 +222,7 @@ void HistoryScene::done() {
 }
 
 void HistoryScene::quant(const Vect2f& mousePos, float dt) {
-	if (!voice.IsPlay() && playingVoice) {
+	if (!voice->IsPlay() && playingVoice) {
 		playingVoice = false;
 		audioStopped();
 		interpreter->eventOccured(Controller::END_OF_AUDIO_EVENT);
@@ -538,23 +542,21 @@ void HistoryScene::postDraw() {
 }
 
 void HistoryScene::setupAudio() {
-	if (!terSoundEnable) {
+	if (terVoiceVolume == 0) {
 		stopAudio();
 	}
-	voice.SetVolume(terSoundVolume);
 }
 
 void HistoryScene::startAudio(const string& name) {
 	if (!name.empty()) {
 		stopAudio();
 		interpreter->eventOccured(Controller::END_OF_AUDIO_EVENT);
-		if (terSoundEnable) {
+		if (0 < terVoiceVolume) {
 			playingVoice = true;
-			int ret = voice.OpenToPlay((getLocDataPath() + name).c_str(), 0);
+			int ret = voice->OpenToPlay((getLocDataPath() + name).c_str(), 0);
 			if (!ret) {
                 fprintf(stderr, "startAudio %s error\n", name.c_str());
             }
-			voice.SetVolume(terSoundVolume);
             resetAudioPosition();
 		}
 	}
@@ -800,10 +802,36 @@ void HistoryScene::setNormalSpeedMode(bool normal) {
 	}
 	getController()->setNormalSpeedMode(normal);
 }
+
 void HistoryScene::playMusic() {
     if (musicNamePath.empty()) {
         gb_Music.Stop();
     } else {
         PlayMusic(("RESOURCE\\MUSIC\\" + musicNamePath).c_str());
     }
+}
+
+void HistoryScene::stopAudio() {
+    interpreter->eventOccured(Controller::END_OF_AUDIO_EVENT);
+    voice->Stop();
+    resetAudioPosition();
+}
+
+bool HistoryScene::isAudioPlaying() {
+    return voice->IsPlay();
+}
+
+void HistoryScene::resetAudioPosition() {
+    if (voice->IsPlay()) {
+        started_at = clock_us();
+    } else {
+        started_at = 0;
+    }
+}
+
+float HistoryScene::getAudioPosition() {
+    if (started_at == 0 || !voice->IsPlay()) return 0.0f;
+    float pos = static_cast<float>(static_cast<double>(clock_us() - started_at) / 1000000.0);
+    pos /= voice->GetLen();
+    return pos;
 }

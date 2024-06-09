@@ -577,19 +577,20 @@ void IniManager::put(const char* section, const char* key, const char* val)
 
 int IniManager::getInt(const char* section, const char* key) 
 { 
-	return atoi(get(section, key));
+	int val = 0;
+    getInt(section, key, val);
+    return val;
 }
 
-bool IniManager::getInt(const char* section, const char* key, int& value) 
-{
-	const char* str=get(section, key);
-	if(*str) {
-		value=atoi(str);
+bool IniManager::getInt(const char* section, const char* key, int& value) {
+	const char* str = get(section, key);
+	if (*str) {
+		value = static_cast<int>(strtol(str, nullptr, 0));
 		return true;
-	}
-	else return false;
-
+    }
+    return false;
 }
+
 void IniManager::putInt(const char* section, const char* key, int val) 
 {
 	std::string str = std::to_string(val);
@@ -597,9 +598,21 @@ void IniManager::putInt(const char* section, const char* key, int val)
 }
 
 float IniManager::getFloat(const char* section, const char* key) 
-{ 
-	return atof(get(section, key)); 
+{
+    float val = 0;
+    getFloat(section, key, val);
+    return val;
 }
+
+bool IniManager::getFloat(const char* section, const char* key, float& value) {
+    const char* str = get(section, key);
+    if (*str) {
+        value = static_cast<float>(strtof(str, nullptr));
+        return true;
+    }
+    return false;
+}
+
 void IniManager::putFloat(const char* section, const char* key, float val) 
 {
 	XBuffer buf;

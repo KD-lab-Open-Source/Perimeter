@@ -28,9 +28,9 @@ extern int terMipMapBlur;
 int terMapReflection = 0;
 int terObjectReflection = 0;
 
-int terSoundEnable = 1;
-int terMusicEnable = 1;
+int terAudioEnable = 1;
 float terSoundVolume = 1;
+float terVoiceVolume = 1;
 float terMusicVolume = 1;
 
 

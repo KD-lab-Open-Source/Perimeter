@@ -17,19 +17,19 @@
 
 static bool g_enable_sound = false;
 static bool g_enable_voices = true;
+static bool enable_sound_log = false;
 
 SND3DListener snd_listener;
 
 static std::string sound_directory="";
 
 namespace SND {
-float global_volume = 1.0f;
+float sound_volume = 1.0f;
+float voice_volume = 1.0f;
 int deviceFrequency = 0;
 int deviceChannels = 0;
 Uint16 deviceFormat = 0;
 bool has_sound_init = false;
-    
-FILE* snd_error=NULL;
 
 static float width2d=1,power2d_width=1;
 
@@ -45,16 +45,13 @@ float PanByX(float x)
 
 void logs(const char *format, ...)
 {
-	if(snd_error)
-	{
-	  va_list args;
-	  char    buffer[512];
-	  va_start(args,format);
-	  vsprintf(buffer,format,args);
-	  fprintf(snd_error,"%s",buffer);
-	}
+    if (!enable_sound_log) return;
+    va_list args;
+    char    buffer[512];
+    va_start(args,format);
+    vsnprintf(buffer,512,format,args);
+    fprintf(stderr, "%s", buffer);
 }
-
 
 int pause_level=0;
 };
@@ -79,16 +76,17 @@ void SNDSetBelligerentIndex(int idx)
 void SNDEnableSound(bool enable)
 {
 	g_enable_sound = enable && has_sound_init;
-	if(!enable && has_sound_init)
-		SNDStopAll();
+	if(!enable && has_sound_init) {
+        SNDStopAll();
+    }
 }
 
 void SNDEnableVoices(bool enable)
 {
 	g_enable_voices = enable && has_sound_init;
-
-	if(!enable && has_sound_init)
-		script2d.StopAllVoices();
+	if(!enable && has_sound_init) {
+        script2d.StopAllVoices();
+    }
 }
 
 bool SNDIsVoicesEnabled() {
@@ -214,8 +212,6 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
 
 	pause_level = 0;
 
-	SNDEnableSound(true);
-
 	return true;
 }
 
@@ -232,29 +228,27 @@ void SNDReleaseSound()
 
     Mix_Quit();
 
-	if(snd_error)
-	{
-		fclose(snd_error);
-		snd_error=NULL;
-	}
-
     //Do at the end so Mix_FreeChunk is called
     has_sound_init = false;
 }
 
-bool SNDEnableErrorLog(const char* file)
+void SNDEnableErrorLog(bool enable)
 {
-	if(snd_error)fclose(snd_error);
-	snd_error=fopen(file,"wt");
-	if(snd_error)fprintf(snd_error,"Log started\n");
-	return snd_error!=NULL;
+    enable_sound_log = enable; 
 }
 
-void SNDSetVolume(float volume)
+void SNDSetSoundVolume(float volume)
 {
-	global_volume = std::max(0.0f, std::min(1.0f, volume));
+    sound_volume = std::max(0.0f, std::min(1.0f, volume));
+    SNDEnableSound(0 < sound_volume);
+    SNDUpdateAllSoundVolume();
+}
 
-	SNDUpdateAllSoundVolume();
+void SNDSetVoiceVolume(float volume)
+{
+    voice_volume = std::max(0.0f, std::min(1.0f, volume));
+    SNDEnableVoices(0 < voice_volume);
+    SNDUpdateAllSoundVolume();
 }
 
 bool SNDScriptPrmEnable(const SoundScriptPrm& prm)
@@ -277,7 +271,7 @@ bool SNDScriptPrmEnableAll()
 
 SND_Sample* SNDLoadSound(const std::string& fxname)
 {
-	if(!SND::has_sound_init || !g_enable_sound) {
+	if(!SND::has_sound_init) {
         return nullptr;
     }
 
@@ -493,7 +487,9 @@ SND3DSound::~SND3DSound()
 bool SND3DSound::Init(const char* name)
 {
 	Destroy();
-	if(!g_enable_sound)return false;
+	if (!SND::has_sound_init) {
+        return false;
+    }
 	bool b=script3d.FindFree(name,script,cur_buffer);
 	if(!b)return false;
 
@@ -513,7 +509,10 @@ bool SND3DSound::Init(const char* name)
 
 void SND3DSound::SetRealVolume(float vol)
 {
-	if(!g_enable_sound || script==NULL)return;
+    if (script == nullptr) {
+        return;
+    }
+
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
@@ -525,7 +524,9 @@ void SND3DSound::SetRealVolume(float vol)
 
 void SND3DSound::SetVolume(float vol)
 {
-	if(!g_enable_sound || script==NULL)return;
+    if (script == nullptr) {
+        return;
+    }
 
 	float v=vol*(script->def_volume-script->min_volume)+script->min_volume;
 	SetRealVolume(v);
@@ -533,7 +534,9 @@ void SND3DSound::SetVolume(float vol)
 
 bool SND3DSound::SetFrequency(float frequency)
 {
-	if(!g_enable_sound || script==NULL)return false;
+	if (script == nullptr) {
+        return false;
+    }
 	MTAuto lock(script->GetLock());
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
 	return s.SetFrequency(frequency);
@@ -547,7 +550,9 @@ void SND3DSound::AssertValid()
 
 void SND3DSound::SetPos(const Vect3f& pos)
 {
-	if(script==NULL)return;
+    if (script == nullptr) {
+        return;
+    }
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	Vect3f& p=script->GetBuffer()[cur_buffer].pos;
@@ -556,7 +561,9 @@ void SND3DSound::SetPos(const Vect3f& pos)
 
 void SND3DSound::SetVelocity(const Vect3f& velocity)
 {
-	if(script==NULL)return;
+    if (script == nullptr) {
+        return;
+    }
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	script->GetBuffer()[cur_buffer].velocity=velocity;
@@ -564,8 +571,11 @@ void SND3DSound::SetVelocity(const Vect3f& velocity)
 
 bool SND3DSound::Play(bool cycled)
 {
-	if(script==NULL || !g_enable_sound)
-		return false;
+    if (script == nullptr
+    || (!g_enable_sound && !script->language_dependency)
+    || (!g_enable_voices && script->language_dependency)) {
+        return false;
+    }
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
@@ -582,7 +592,9 @@ bool SND3DSound::Play(bool cycled)
 
 bool SND3DSound::Stop()
 {
-	if(script==NULL || !g_enable_sound)return true;
+	if (script == nullptr) {
+        return true;
+    }
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	return script->GetBuffer()[cur_buffer].p3DBuffer->Stop();
@@ -590,7 +602,9 @@ bool SND3DSound::Stop()
 
 bool SND3DSound::IsPlayed()
 {
-	if(script==NULL)return false;
+	if (script == nullptr) {
+        return false;
+    }
 	MTAuto lock(script->GetLock());
 	return script->GetBuffer()[cur_buffer].p3DBuffer->IsPlaying();
 }
@@ -732,9 +746,12 @@ bool SND3DPlaySound(const char* name,
                     const Vect3f* velocity//По умолчанию объект считается неподвижным
 					)
 {
-	if(!g_enable_sound)
-		return true;
-	if(pos==NULL)return false;
+	if (!SND::has_sound_init) {
+        return true;
+    }
+	if (pos == nullptr) {
+        return false;
+    }
 	
 	ScriptParam* script;
 	int nfree;
@@ -778,8 +795,9 @@ bool SND3DPlaySound(const char* name,
 /////////////////////////2D//////////////////////////
 bool SND2DPlaySound(const char* name,float x)
 {
-	if(!g_enable_sound || !name)
-		return false;
+	if (!SND::has_sound_init || !name) {
+        return false;
+    }
     xassert(0 <= x && x <= 1.0f);
 	ScriptParam* script;
 	int nfree;
@@ -801,6 +819,9 @@ bool SND2DPlaySound(const char* name,float x)
 	s.PlayPreprocessing();
 
 	s.buffer->pan = PanByX(x);
+    s.buffer->global_volume_select = script->language_dependency
+                                     ? GLOBAL_VOLUME_VOICE
+                                     : GLOBAL_VOLUME_CHANNEL;
 
 	s.begin_play_time=clockf();
     s.played_cycled = false;
@@ -827,9 +848,11 @@ SND2DSound::~SND2DSound()
 bool SND2DSound::Init(const char* name)
 {
 	Destroy();
-	if(!g_enable_sound)return false;
+	if (!SND::has_sound_init) {
+        return false;
+    }
 	bool b=script2d.FindFree(name,script,cur_buffer);
-	if(!b)return false;
+	if (!b) return false;
 
 	MTAuto lock(script->GetLock());
 
@@ -844,7 +867,11 @@ bool SND2DSound::Init(const char* name)
 
 bool SND2DSound::Play(bool cycled)
 {
-	if(script==NULL || !g_enable_sound || (!g_enable_voices && script->language_dependency))return false;
+    if (script == nullptr
+	|| (!g_enable_sound && !script->language_dependency)
+    || (!g_enable_voices && script->language_dependency)) {
+        return false;
+    }
     
 	MTAuto lock(script->GetLock());
 	AssertValid();
@@ -853,6 +880,9 @@ bool SND2DSound::Play(bool cycled)
 
 	s.RecalculateVolume();
 
+    s.buffer->global_volume_select = script->language_dependency
+                                     ? GLOBAL_VOLUME_VOICE
+                                     : GLOBAL_VOLUME_CHANNEL;
     s.buffer->looped = cycled;
     int channel = s.buffer->play();
     if (channel == SND_NO_CHANNEL) {
@@ -865,7 +895,9 @@ bool SND2DSound::Play(bool cycled)
 
 bool SND2DSound::Stop()
 {
-	if(script==NULL || !g_enable_sound)return true;
+	if (script== nullptr) {
+        return true;
+    }
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	return script->GetBuffer()[cur_buffer].buffer->stop();
@@ -883,7 +915,9 @@ bool SND2DSound::IsPlayed() const
 
 bool SND2DSound::SetPos(float x)
 {
-	if(!g_enable_sound || script==NULL)return false;
+	if (script == nullptr) {
+        return false;
+    }
 	MTAuto lock(script->GetLock());
 
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
@@ -893,7 +927,9 @@ bool SND2DSound::SetPos(float x)
 
 bool SND2DSound::SetFrequency(float frequency)
 {
-	if(!g_enable_sound || script==NULL)return false;
+	if (script == nullptr) {
+        return false;
+    }
 	MTAuto lock(script->GetLock());
 
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
@@ -903,14 +939,18 @@ bool SND2DSound::SetFrequency(float frequency)
 
 void SND2DSound::SetVolume(float vol)
 {
-	if(!g_enable_sound || script==NULL)return;
+    if (script == nullptr) {
+        return;
+    }
 	float v=vol*(script->def_volume-script->min_volume)+script->min_volume;
 	SetRealVolume(v);
 }
 
 void SND2DSound::SetRealVolume(float vol)
 {
-	if(!g_enable_sound || script==NULL)return;
+    if (script == nullptr) {
+        return;
+    }
 	MTAuto lock(script->GetLock());
 
 	AssertValid();

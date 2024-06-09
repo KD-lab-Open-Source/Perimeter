@@ -1,6 +1,8 @@
 #ifndef PERIMETER_PLAYER_H
 #define PERIMETER_PLAYER_H
 
+#include "SampleParams.h"
+
 class AudioPlayer {
 protected:
     bool request_play = false;
@@ -28,6 +30,7 @@ public:
 class SpeechPlayer: public AudioPlayer {
 private:
     float volume = 1.0f;
+    GLOBAL_VOLUME global_volume_select = GLOBAL_VOLUME_CHANNEL;
     class SND_Sample* sample = nullptr;
 
 #ifdef GPX
@@ -37,7 +40,7 @@ private:
     void destroySample();
     
 public:
-    SpeechPlayer() = default;
+    SpeechPlayer();
     ~SpeechPlayer() override;
 
     bool OpenToPlay(const char* fname, bool cycled) override;
@@ -48,6 +51,8 @@ public:
     bool IsPause() override;
     void SetVolume(float volume) override;
     
+    void SetVolumeSelection(GLOBAL_VOLUME selection);
+    GLOBAL_VOLUME GetVolumeSelection();
     float GetLen();
 };
 

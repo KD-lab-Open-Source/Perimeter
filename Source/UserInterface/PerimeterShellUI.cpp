@@ -11,6 +11,7 @@
 
 #include "UniverseInterface.h"
 #include "GameShell.h"
+#include "AudioPlayer.h"
 #include "PerimeterShellUI.h"
 #include "BelligerentSelect.h"
 
@@ -66,14 +67,13 @@ void PlayMusic(const char *str = 0)
 		strMusic = str;
 	}
 	gb_Music.Stop();
-	if( !terMusicEnable || strMusic.empty() ) return;
+	if (terMusicVolume == 0 || strMusic.empty()) return;
 	int ret = gb_Music.OpenToPlay(strMusic.c_str(),true);
 	gb_Music.SetVolume(terMusicVolume);
 }
 
 void MusicEnable(int enable)
 {
-	terMusicEnable = enable;
 	if(enable) {
 		if (gameShell->GameActive) {
 			MusicOpenWorld();
@@ -136,9 +136,11 @@ std::string getImageFileName(const sqshImage* image, const char* fileName) {
     return fullname;
 }
 
-void SetVolumeMusic(float f)
+void SetVolumeMusic(float volume)
 {
+    terMusicVolume = std::max(0.0f, std::min(1.0f, volume));
 	gb_Music.SetVolume(terMusicVolume);
+    MusicEnable(0 < terMusicVolume);
 }
 
 inline void draw_progress(cTexture* texture, int x, int y, int sx, int sy, sColor4c& clr, float fPercent)

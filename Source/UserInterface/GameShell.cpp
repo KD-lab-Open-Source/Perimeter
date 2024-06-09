@@ -1780,13 +1780,7 @@ void GameShell::ControlPressed(int key)
 			}
 			break;
 		case CTRL_TOGGLE_MUSIC:
-			InitSound(terSoundEnable, !terMusicEnable, false);
-			MusicEnable( terMusicEnable );
-			break;
 		case CTRL_TOGGLE_SOUND:
-			InitSound(!terSoundEnable, terMusicEnable, false);
-			historyScene.setupAudio();
-			_shellIconManager.setupAudio();
 			break;
 		case CTRL_LOAD:
 			prepareForInGameMenu();

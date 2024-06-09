@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "GameShell.h"
+#include "AudioPlayer.h"
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
 #include "HistoryScene.h"

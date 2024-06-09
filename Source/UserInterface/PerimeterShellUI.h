@@ -7,7 +7,6 @@
 
 #include "tweaks.h"
 #include "GameShellSq.h"
-#include "AudioPlayer.h"
 #include "Universe.h"
 #include "qd_textdb.h"
 #include "SourceUIResolution.h"
@@ -1703,7 +1702,7 @@ class CShellIconManager
 	int cutSceneAnimStep;
 	int cutSceneAnimTimer;
 
-	SpeechPlayer* speechSound;
+	class SpeechPlayer* speechSound;
 	bool resultMusicStarted;
 
 	void onCutSceneStart();
@@ -2096,6 +2095,7 @@ void OnButtonOptionGraphics(CShellWindow* pWnd, InterfaceEventCode code, int par
 void OnButtonOptionSound(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnSliderVoiceVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //graphics
 void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2130,9 +2130,6 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 void OnIngameGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnComboGraphicsMode(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-void OnComboSoundMusic(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void OnComboSoundEffects(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param);

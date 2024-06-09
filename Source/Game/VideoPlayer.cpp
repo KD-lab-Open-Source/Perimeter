@@ -53,7 +53,7 @@ static void sleep_us(int64_t microseconds) {
 AudioBuffer::AudioBuffer(double seconds) : XBuffer(0, false) {
     size_t len = 1024;
     //Len might return 0 if audio device is not inited 
-    if (terMusicEnable | terSoundEnable) {
+    if (terAudioEnable) {
         while (SNDcomputeAudioLengthS(len) < seconds) {
             len *= 2;
         }
@@ -149,9 +149,10 @@ VideoPlayer::VideoPlayer() {
     audioBuffer = new AudioBuffer(AUDIO_BUFFER_SIZE);
     
     //Setup sample if audio is enabled
-    if (terMusicEnable | terSoundEnable) {
+    if (terAudioEnable) {
         sample = new SND_Sample(nullptr);
         sample->channel_group = SND_GROUP_SPEECH;
+        sample->global_volume_select = GLOBAL_VOLUME_IGNORE;
         sample->steal_channel = true; //Just in case another speech or audio is playing
     }    
 }
