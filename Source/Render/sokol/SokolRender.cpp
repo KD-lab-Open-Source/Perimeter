@@ -132,7 +132,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     if (sdl_gl_context == nullptr) {
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
-    printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
+    printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
     
     swapchain.gl.framebuffer = 0;
 #endif //PERIMETER_SOKOL_GL
@@ -280,13 +280,12 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     sampler_desc.mipmap_filter = SG_FILTER_LINEAR;
     sampler = sg_make_sampler(sampler_desc);
 
-    sg_sampler_desc shadow_sampler_desc{
-        .min_filter = SG_FILTER_LINEAR,
-        .mag_filter = SG_FILTER_LINEAR,
-        .wrap_u = SG_WRAP_CLAMP_TO_EDGE,
-        .wrap_v = SG_WRAP_CLAMP_TO_EDGE,
-        .compare = SG_COMPAREFUNC_LESS
-    };
+    sg_sampler_desc shadow_sampler_desc = {};
+    shadow_sampler_desc.min_filter = SG_FILTER_LINEAR;
+    shadow_sampler_desc.mag_filter = SG_FILTER_LINEAR;
+    shadow_sampler_desc.wrap_u = SG_WRAP_CLAMP_TO_EDGE;
+    shadow_sampler_desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
+    shadow_sampler_desc.compare = SG_COMPAREFUNC_LESS;
     shadow_sampler = sg_make_sampler(&shadow_sampler_desc);
     
     //Create empty texture

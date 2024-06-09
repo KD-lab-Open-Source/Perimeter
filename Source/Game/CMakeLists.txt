@@ -141,6 +141,15 @@ SET(perimeter_LINK_LIBS
         ${SDL2_MIXER_LIBRARY}
         ${SDL2_NET_LIBRARY}
         ${EXE_LINK_LIBS_POST}
+)
+
+IF(PERIMETER_WINDOWS)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
+ENDIF()
+
+IF(APPLE)
+    #TODO is this necessary?
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
         "-framework AppKit"
         "-framework AudioToolbox"
         "-framework Carbon"
@@ -158,22 +167,18 @@ SET(perimeter_LINK_LIBS
         "-framework Metal"
         "-framework QuartzCore"
         "-framework Security"
-)
-
-IF(PERIMETER_WINDOWS)
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
-ENDIF()
-
-IF(APPLE)
+    )
     IF(PERIMETER_DEBUG)
         SET_TARGET_PROPERTIES(perimeter PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/DebugInfo.plist"
+            BUNDLE DESTINATION ${CMAKE_SOURCE_DIR}
         )
     ELSE()
         SET_TARGET_PROPERTIES(perimeter PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/Perimeter.app.template/Contents/Info.plist"
+            BUNDLE DESTINATION ${CMAKE_SOURCE_DIR}
         )
     ENDIF()
 ENDIF()

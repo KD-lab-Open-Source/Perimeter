@@ -38,7 +38,7 @@ int cD3DRender::CreateTilemap(cTileMap *TileMap)
 {
     int err = cInterfaceRenderDevice::CreateTilemap(TileMap);
     if (err == 0) {
-        cTileMapRender* p = TileMap->GetTilemapRender();
+        cTileMapRender* p = TileMap->GetTilemapRender(cTileMap::RenderType::DIRECT);
         xassert(p);
         if (p) {
             tilemaps.push_back(p);
@@ -49,7 +49,7 @@ int cD3DRender::CreateTilemap(cTileMap *TileMap)
 
 int cD3DRender::DeleteTilemap(cTileMap *TileMap)
 {
-    cTileMapRender* p = TileMap->GetTilemapRender();
+    cTileMapRender* p = TileMap->GetTilemapRender(cTileMap::RenderType::DIRECT);
     if (p) {
         auto removed = std::remove(tilemaps.begin(), tilemaps.end(), p);
         tilemaps.erase(removed, tilemaps.end());
