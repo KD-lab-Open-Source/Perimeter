@@ -440,7 +440,7 @@ void GameShell::switchToInitialMenu() {
 }
 
 void GameShell::prepareNetClient() {
-    if (NetClient) {
+    if (NetClient && NetClient->m_state != PNC_STATE__CLIENT_FIND_HOST) {
         destroyNetClient();
     }
     if (!NetClient) {
