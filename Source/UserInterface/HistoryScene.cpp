@@ -541,12 +541,6 @@ void HistoryScene::postDraw() {
 	scene->PostDraw(historyCamera->getCamera());
 }
 
-void HistoryScene::setupAudio() {
-	if (terSpeechVolume == 0) {
-		stopAudio();
-	}
-}
-
 void HistoryScene::startAudio(const string& name) {
 	if (!name.empty()) {
 		stopAudio();

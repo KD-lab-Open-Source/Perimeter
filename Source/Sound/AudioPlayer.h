@@ -40,6 +40,8 @@ private:
     void destroySample();
     
 public:
+    int channel_group = SND_GROUP_SPEECH;
+    
     SpeechPlayer();
     ~SpeechPlayer() override;
 

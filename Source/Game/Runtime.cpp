@@ -832,7 +832,7 @@ void FinitSound()
 	IniManager ini("Perimeter.ini");
 	ini.putFloat("Sound","SoundVolume", terSoundVolume);
     ini.putFloat("Sound","MusicVolume", terMusicVolume);
-    ini.putFloat("Sound","SpeechVolume", terVoiceVolume);
+    ini.putFloat("Sound","SpeechVolume", terSpeechVolume);
     ini.putFloat("Sound","VoiceVolume", terVoiceVolume);
 
 	SNDReleaseSound();

@@ -16,7 +16,6 @@ class HistoryScene : public Commander {
 
 		void init(cVisGeneric* visGeneric, bool bw, bool addBlendAlpha = true);
 		void done();
-		void setupAudio();
 		void quant(const Vect2f& mousePos, float dt);
 		void preDraw();
 		void draw();

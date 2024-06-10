@@ -464,10 +464,15 @@ void OnComboGraphicsMode(CShellWindow* pWnd, InterfaceEventCode code, int param)
 }
 
 // sound
-static SpeechPlayer* OptionSamplePlayer = new SpeechPlayer();
+static SpeechPlayer* OptionSamplePlayer = nullptr;
 
 bool OptionPlaySample(GLOBAL_VOLUME global_volume, float volume, const char* path) {
     bool started = false;
+    if (!OptionSamplePlayer) {
+        OptionSamplePlayer = new SpeechPlayer();
+        //Avoid overlapping any running speech audios
+        OptionSamplePlayer->channel_group = SND_GROUP_EFFECTS;
+    }
     if (OptionSamplePlayer->GetVolumeSelection() != global_volume) {
         OptionSamplePlayer->Stop();
     }
@@ -502,16 +507,14 @@ void OnSliderSpeechVolume(CShellWindow* pWnd, InterfaceEventCode code, int param
     CSliderWindow *pSlider = (CSliderWindow*) pWnd;
     if ( code == EVENT_CREATEWND ) {
         pSlider->pos = terSpeechVolume;
-        historyScene.setupAudio();
-        _shellIconManager.setupAudio();
     } else if((code == EVENT_SLIDERUPDATE && pSlider->pos != terSpeechVolume) || code == EVENT_UNPRESSED) {
         terSpeechVolume = pSlider->pos;
         if (code == EVENT_UNPRESSED) {
-            historyScene.setupAudio();
             _shellIconManager.setupAudio();
         }
         std::string path = getLocDataPath();
         static int i = 0;
+        //Avoid using briefing audios in GW since different languages may have different filenames
         //Select ET audio if only ET is selected
         bool et = terGameContentSelect == PERIMETER_ET;
         if (1 < i) i = 0;

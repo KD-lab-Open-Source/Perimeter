@@ -34,7 +34,7 @@ bool SpeechPlayer::OpenToPlay(const char* fname, bool cycled) {
     sample = SNDLoadSound(fname);
     if (!sample) return false;
     sample->looped = cycled; //Tecnically not need for speeches but whatever
-    sample->channel_group = SND_GROUP_SPEECH;
+    sample->channel_group = channel_group;
     sample->global_volume_select = global_volume_select;
     sample->volume = volume;
     sample->steal_channel = true; //Just in case another speech is playing

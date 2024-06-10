@@ -912,7 +912,7 @@ void CShellIconManager::Done()
 		SNDEnableVoices(0 < terVoiceVolume);
 		speechSound->Stop();
 		delete speechSound;
-		speechSound = 0;
+		speechSound = nullptr;
 	}
 
 	cutSceneModeOn = false;
@@ -1462,12 +1462,9 @@ void CShellIconManager::playGameOverSound(const char* path) {
 }
 
 void CShellIconManager::setupAudio() {
-	if (speechSound) {
-		if (terSpeechVolume == 0) {
-			speechSound->Stop();
-		}
-        speechSound->SetVolumeSelection(GLOBAL_VOLUME_IGNORE); //We set volume here manually
-		speechSound->SetVolume(terVoiceVolume);
+	if (speechSound && speechSound->IsPlay()) {
+        //Set volume, a speech might be playing while user is adjusting
+		speechSound->SetVolume(terSpeechVolume);
 	}
 }
 
