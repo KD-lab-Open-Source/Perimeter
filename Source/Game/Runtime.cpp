@@ -1130,6 +1130,19 @@ int SDL_main(int argc, char *argv[])
     auto runtime_object = new HTManager();
     xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
+    const char* cmdline_testcrash = check_command_line("testcrash");
+    if (cmdline_testcrash) {
+        if (*cmdline_testcrash == '0') {
+            uint32_t* tmp = nullptr;
+            uint32_t val = *tmp;
+            printf("crash %d\n", val);
+        } else if (*cmdline_testcrash == '1') {
+            uint64_t val = 0xDEADBEEF;
+            auto ptrfunc = reinterpret_cast<void (*)(uint32_t)>(&val);
+            ptrfunc(0x12345678);
+        }
+    }
+
 #ifndef EMSCRIPTEN
     while (mainQuant())  {
         // pass
