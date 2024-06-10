@@ -1807,6 +1807,7 @@ void onMMQuitFromStatsButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 		HTManager::instance()->GameClose();
 //		bgScene.setEnabled(true);
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
+        gb_Music.Stop();
 		switch(gameShell->currentSingleProfile.getLastGameType()) {
 			case UserSingleProfile::SCENARIO:
 				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCENARIO_SCR);
