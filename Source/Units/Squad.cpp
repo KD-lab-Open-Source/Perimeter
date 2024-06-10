@@ -1290,10 +1290,13 @@ void terUnitSquad::calcCenter()
 		else if(!wayPoints_.empty())
 			recalcWayPoints();
 		else if(!Units.empty()){
-			if(!attack_points.empty() && currentAttribute()->dynamicAttack)
-				repositionToAttack(attack_points.front());
-			else if(Player->active())
-				SND3DPlaySound("squad_inposition", &position());
+			if (!attack_points.empty() && currentAttribute()->dynamicAttack) {
+                repositionToAttack(attack_points.front());
+            /*
+            } else if(Player->active()) {
+                SND3DPlaySound("squad_inposition", &position());
+            */
+            }
 		}
 
 		calcCenter();
