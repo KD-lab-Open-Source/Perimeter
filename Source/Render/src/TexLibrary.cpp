@@ -338,8 +338,11 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
         if (err) {
             Error(Texture);
             Texture->Release();
-            return false;
         }
+#ifdef PERIMETER_DEBUG
+        fprintf(stderr, "ReLoadDDS %s %d\n", path.c_str(), err);
+#endif
+        return err;
 	}
 	
 	if(FileImage->load(path.c_str()))
