@@ -542,7 +542,7 @@ void HistoryScene::postDraw() {
 }
 
 void HistoryScene::setupAudio() {
-	if (terVoiceVolume == 0) {
+	if (terSpeechVolume == 0) {
 		stopAudio();
 	}
 }
@@ -551,8 +551,9 @@ void HistoryScene::startAudio(const string& name) {
 	if (!name.empty()) {
 		stopAudio();
 		interpreter->eventOccured(Controller::END_OF_AUDIO_EVENT);
-		if (0 < terVoiceVolume) {
+		if (0 < terSpeechVolume) {
 			playingVoice = true;
+            voice->SetVolume(terSpeechVolume);
 			int ret = voice->OpenToPlay((getLocDataPath() + name).c_str(), 0);
 			if (!ret) {
                 fprintf(stderr, "startAudio %s error\n", name.c_str());

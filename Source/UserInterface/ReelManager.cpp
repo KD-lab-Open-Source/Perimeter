@@ -35,7 +35,7 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
 //	} else {
 //		player->SetVolume(0);
 	}
-    float vol = max(terMusicVolume, terSoundVolume, terVoiceVolume);
+    float vol = max(terMusicVolume, terVoiceVolume, terSpeechVolume);
 	player->SetVolume(vol);
 
 	std::string soundPath = soundFileName ? soundFileName : "";

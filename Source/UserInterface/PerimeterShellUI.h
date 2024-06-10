@@ -2096,6 +2096,7 @@ void OnButtonOptionSound(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderVoiceVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnSliderSpeechVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //graphics
 void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int param);

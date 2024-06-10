@@ -343,6 +343,7 @@ _handlertbl[] = {
 	{SQSH_MM_SOUND_SOUNDVOLUME_SLIDER,OnSliderSoundVolume},
     {SQSH_MM_SOUND_MUSICVOLUME_SLIDER,OnSliderMusicVolume},
     {SQSH_MM_SOUND_VOICEVOLUME_SLIDER,OnSliderVoiceVolume},
+    {SQSH_MM_SOUND_SPEECHVOLUME_SLIDER,OnSliderSpeechVolume},
 
 	{SQSH_MM_GRAPHICS_FURROWS_COMBO,OnComboGraphicsFurrows},
 	{SQSH_MM_GAME_TOOLTIPS_COMBO,OnComboGameTooltips},
@@ -1428,7 +1429,7 @@ void CShellIconManager::speedChanged(float speed) {
 
 float CShellIconManager::playSpeech(const char* id) {
 	std::string sound = qdTextDB::instance().getSound(id);
-	if (0 < terVoiceVolume && speechSound && !sound.empty()) {
+	if (0 < terSpeechVolume && speechSound && !sound.empty()) {
 		size_t pos = sound.find("Voice");
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
@@ -1436,7 +1437,8 @@ float CShellIconManager::playSpeech(const char* id) {
         speechSound->requestPlay(true); //Avoid SNDEnableVoices being enabled again too soon
 		SNDEnableVoices(false);
         speechSound->Stop();
-        speechSound->SetVolumeSelection(GLOBAL_VOLUME_VOICE);
+        speechSound->SetVolumeSelection(GLOBAL_VOLUME_IGNORE); //We set volume here manually
+        speechSound->SetVolume(terSpeechVolume);
 		int ret = speechSound->OpenToPlay(soundName.c_str(), false);
 		xassert(ret);
 		return speechSound->GetLen();
@@ -1449,6 +1451,7 @@ void CShellIconManager::playGameOverSound(const char* path) {
 		gb_Music.FadeVolume(0.5f, 0.0f);
         speechSound->Stop();
         speechSound->SetVolumeSelection(GLOBAL_VOLUME_EFFECTS);
+        speechSound->SetVolume(1.0f); //Use global volume of effects
 		resultMusicStarted = true;
         bool ret = speechSound->OpenToPlay(path, false);
         if (!ret) {
@@ -1460,10 +1463,11 @@ void CShellIconManager::playGameOverSound(const char* path) {
 
 void CShellIconManager::setupAudio() {
 	if (speechSound) {
-		if (terVoiceVolume == 0) {
+		if (terSpeechVolume == 0) {
 			speechSound->Stop();
 		}
-		//speechSound->SetVolume(terVoiceVolume);
+        speechSound->SetVolumeSelection(GLOBAL_VOLUME_IGNORE); //We set volume here manually
+		speechSound->SetVolume(terVoiceVolume);
 	}
 }
 

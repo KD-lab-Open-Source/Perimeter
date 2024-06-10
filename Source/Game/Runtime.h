@@ -45,6 +45,7 @@ extern int terObjectReflection;
 
 extern int terAudioEnable;		// 0,1
 extern float terSoundVolume;	// 0..1
+extern float terSpeechVolume;	// 0..1
 extern float terVoiceVolume;	// 0..1
 extern float terMusicVolume;	// 0..1
 

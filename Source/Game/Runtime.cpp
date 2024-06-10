@@ -763,13 +763,15 @@ void InitSound()
     int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
     terAudioEnable = true;
     terSoundVolume = 0.75f;
+    terSpeechVolume = 0.75f;
     terVoiceVolume = 0.75f;
-    terMusicVolume = 0.25f;
+    terMusicVolume = 0.75f;
 
     IniManager ini_no("Perimeter.ini", false);
     ini_no.getInt("Sound","MixChannels", mixChannels);
     ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
     ini_no.getFloat("Sound","SoundVolume", terSoundVolume);
+    ini_no.getFloat("Sound","SpeechVolume", terSpeechVolume);
     ini_no.getFloat("Sound","VoiceVolume", terVoiceVolume);
     ini_no.getFloat("Sound","MusicVolume", terMusicVolume);
 
@@ -800,6 +802,7 @@ void InitSound()
         snd_listener.SetZMultiple(fSoundZMultiple);
     } else {
         terMusicVolume = 0.0f;
+        terSpeechVolume = 0.0f;
         terVoiceVolume = 0.0f;
         terSoundVolume = 0.0f;
         SNDEnableSound(false);
@@ -829,6 +832,7 @@ void FinitSound()
 	IniManager ini("Perimeter.ini");
 	ini.putFloat("Sound","SoundVolume", terSoundVolume);
     ini.putFloat("Sound","MusicVolume", terMusicVolume);
+    ini.putFloat("Sound","SpeechVolume", terVoiceVolume);
     ini.putFloat("Sound","VoiceVolume", terVoiceVolume);
 
 	SNDReleaseSound();

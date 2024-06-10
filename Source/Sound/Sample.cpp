@@ -152,7 +152,7 @@ bool SND_Sample::updateEffects(int channel) {
             case GLOBAL_VOLUME_IGNORE:
                 break;
             case GLOBAL_VOLUME_CHANNEL:
-                global_vol = channel_group == SND_GROUP_SPEECH ? SND::voice_volume : SND::sound_volume;
+                global_vol = channel_group == SND_GROUP_SPEECH ? 1.0f : SND::sound_volume;
                 break;
             case GLOBAL_VOLUME_VOICE:
                 global_vol = SND::voice_volume;

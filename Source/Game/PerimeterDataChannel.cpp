@@ -30,6 +30,7 @@ int terObjectReflection = 0;
 
 int terAudioEnable = 1;
 float terSoundVolume = 1;
+float terSpeechVolume = 1;
 float terVoiceVolume = 1;
 float terMusicVolume = 1;
 

@@ -466,20 +466,23 @@ void OnComboGraphicsMode(CShellWindow* pWnd, InterfaceEventCode code, int param)
 // sound
 static SpeechPlayer* OptionSamplePlayer = new SpeechPlayer();
 
-void OptionPlaySample(GLOBAL_VOLUME global_volume, const char* path) {
+bool OptionPlaySample(GLOBAL_VOLUME global_volume, float volume, const char* path) {
+    bool started = false;
     if (OptionSamplePlayer->GetVolumeSelection() != global_volume) {
         OptionSamplePlayer->Stop();
     }
-    if (OptionSamplePlayer->IsPlay()) {
-        OptionSamplePlayer->SetVolume(1.0f); //update the effect
-    } else {
+    OptionSamplePlayer->SetVolume(volume); //Calls updateEffects() if playing
+    if (!OptionSamplePlayer->IsPlay()) {
         OptionSamplePlayer->SetVolumeSelection(global_volume);
         bool ret = OptionSamplePlayer->OpenToPlay(path, false);
-        if (!ret) {
+        if (ret) {
+            started = true;
+        } else {
             fprintf(stderr, "OptionPlaySample sample '%s' error\n", path);
             xassert(0);
         }
     }
+    return started;
 }
 
 void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
@@ -490,33 +493,62 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
     } else if((code == EVENT_SLIDERUPDATE && pSlider->pos != terSoundVolume) || code == EVENT_UNPRESSED) {
         terSoundVolume = pSlider->pos;
         SNDSetSoundVolume(terSoundVolume);
-        OptionPlaySample(GLOBAL_VOLUME_EFFECTS, "Resource/Sounds/EFF/Units/Unit_Shot_Wargon.wav");
+        OptionPlaySample(GLOBAL_VOLUME_EFFECTS, 1.0f, "Resource/Sounds/EFF/Units/Unit_Shot_Wargon.wav");
     }
 }
-void OnSliderVoiceVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
+
+void OnSliderSpeechVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
     CSliderWindow *pSlider = (CSliderWindow*) pWnd;
     if ( code == EVENT_CREATEWND ) {
-        pSlider->pos = terVoiceVolume;
+        pSlider->pos = terSpeechVolume;
         historyScene.setupAudio();
         _shellIconManager.setupAudio();
-    } else if((code == EVENT_SLIDERUPDATE && pSlider->pos != terVoiceVolume) || code == EVENT_UNPRESSED) {
-        terVoiceVolume = pSlider->pos;
-        SNDSetVoiceVolume(terVoiceVolume);
+    } else if((code == EVENT_SLIDERUPDATE && pSlider->pos != terSpeechVolume) || code == EVENT_UNPRESSED) {
+        terSpeechVolume = pSlider->pos;
         if (code == EVENT_UNPRESSED) {
             historyScene.setupAudio();
             _shellIconManager.setupAudio();
         }
         std::string path = getLocDataPath();
         static int i = 0;
+        //Select ET audio if only ET is selected
+        bool et = terGameContentSelect == PERIMETER_ET;
+        if (1 < i) i = 0;
+        switch (i) {
+            default:
+            case 0:
+                path += et ? "Voice/Briefings/Briefing_mission5_3.ogg"
+                           : "Voice/Tips/Mission1_5.ogg";
+                break;
+            case 1:
+                path += et ? "Voice/Tips/Mission26_1.ogg"
+                           : "Voice/Tips/Mission9_1.ogg";
+                break;
+
+        }
+        bool started = OptionPlaySample(GLOBAL_VOLUME_IGNORE, terSpeechVolume, path.c_str());
+        if (started) i++;
+    }
+}
+
+void OnSliderVoiceVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
+{
+    CSliderWindow *pSlider = (CSliderWindow*) pWnd;
+    if ( code == EVENT_CREATEWND ) {
+        pSlider->pos = terVoiceVolume;
+    } else if((code == EVENT_SLIDERUPDATE && pSlider->pos != terVoiceVolume) || code == EVENT_UNPRESSED) {
+        terVoiceVolume = pSlider->pos;
+        SNDSetVoiceVolume(terVoiceVolume);
+        std::string path = getLocDataPath();
+        static int i = 0;
         //Skip some audios if PERIMETER_ET
         if (terGameContentSelect == PERIMETER_ET && (i == 2 || i == 5)) {
             i++;
         }
-        switch (i++) {
+        if (5 < i) i = 0;
+        switch (i) {
             default:
-                i = 1;
-                [[fallthrough]];
             case 0:
                 path += "Voice/Exodus_Voice_Labor_Under_Attack.wav";
                 break;
@@ -537,7 +569,8 @@ void OnSliderVoiceVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
                 break;
                 
         }
-        OptionPlaySample(GLOBAL_VOLUME_VOICE, path.c_str());
+        bool started = OptionPlaySample(GLOBAL_VOLUME_VOICE, 1.0f, path.c_str());
+        if (started) i++;
     }
 }
 void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
@@ -671,6 +704,8 @@ void OnButtonOptionSound(CShellWindow* pWnd, InterfaceEventCode code, int param)
         pCombo->pos = terMusicVolume;
         pCombo = safe_cast<CSliderWindow*>(_shellIconManager.GetWnd(SQSH_MM_SOUND_VOICEVOLUME_SLIDER));
         pCombo->pos = terVoiceVolume;
+        pCombo = safe_cast<CSliderWindow*>(_shellIconManager.GetWnd(SQSH_MM_SOUND_SPEECHVOLUME_SLIDER));
+        pCombo->pos = terSpeechVolume;
 
 		_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_SCREEN_SOUND);
 	}
