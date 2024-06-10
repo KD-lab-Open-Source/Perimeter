@@ -263,7 +263,7 @@ void PNetCenter::SecondThreadQuant()
                     }
 
                     //Send exit event to everyone connected (host or clients)
-                    netCommand4G_Exit ex(m_localNETID);
+                    netCommand4G_Exit ex(m_localNETID, netCommand4G_Exit::EXITREASON_NORMAL);
                     SendEvent(ex, NETID_ALL);
                     LogMsg("Sent Exit packets to NETID_ALL\n");
                 }

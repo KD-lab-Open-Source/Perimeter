@@ -343,11 +343,12 @@ void PNetCenter::HandlerInputNetCommand()
             netCommand4G_Exit nc4g_exit(in_ClientBuf);
             //Host already does this before relaying to itself
             if (!isHost()) {
-                if (nc4g_exit.netid == m_localNETID) {
+                if (nc4g_exit.netid == m_localNETID && nc4g_exit.reason == netCommand4G_Exit::EXITREASON_KICKED) {
                     ExecuteInternalCommand(PNC_COMMAND__RESET, false);
                     ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_KICKED);
                 } else {
-                    ExitClient(nc4g_exit.netid);
+                    bool normal = nc4g_exit.reason == netCommand4G_Exit::EXITREASON_NORMAL;
+                    DeleteClient(nc4g_exit.netid, normal);
                 }
             }
             break;

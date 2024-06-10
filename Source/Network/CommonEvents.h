@@ -121,16 +121,28 @@ struct terEventPing : netCommandGeneral
 
 struct netCommand4G_Exit : netCommandGeneral
 {
+    enum ExitReason {
+        EXITREASON_NORMAL = 0,
+        EXITREASON_DROPPED,
+        EXITREASON_KICKED,
+    };
+
     NETID netid;
-    explicit netCommand4G_Exit(NETID netid_) : netCommandGeneral(NETCOM_4G_ID_EXIT), netid(netid_) {
+    ExitReason reason = EXITREASON_NORMAL;
+    
+    explicit netCommand4G_Exit(NETID netid_, ExitReason reason_) : netCommandGeneral(NETCOM_4G_ID_EXIT), netid(netid_), reason(reason_) {
     }
     
     explicit netCommand4G_Exit(XBuffer& in) : netCommandGeneral(NETCOM_4G_ID_EXIT) {
         in.read(&netid, sizeof(netid));
+        uint32_t tmp = 0;
+        in.read(&tmp, sizeof(tmp));
+        reason = static_cast<ExitReason>(tmp);
     }
 
     void Write(XBuffer& out) const override {
         out.write(&netid, sizeof(netid));
+        out.write(&reason, sizeof(uint32_t));
     }
 };
 

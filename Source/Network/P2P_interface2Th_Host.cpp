@@ -901,7 +901,8 @@ void PNetCenter::hostProcessPlayerClientPackets(PClientData* client) {
                 xassert(event.netid == netid);
                 if (event.netid == netid) {
                     SendEvent(event, NETID_ALL);
-                    ExitClient(netid);
+                    bool normal = event.reason == netCommand4G_Exit::EXITREASON_NORMAL;
+                    DeleteClient(netid, normal);
                 }
             }
                 break;

@@ -15,7 +15,7 @@ void PNetCenter::SetConnectionTimeout(int _ms) {
 void PNetCenter::KickPlayer(NETID netid) {
     fprintf(stdout, "KickPlayer: 0x%" PRIX64 "\n", netid);
 
-    netCommand4G_Exit ex(netid);
+    netCommand4G_Exit ex(netid, netCommand4G_Exit::EXITREASON_KICKED);
     SendEvent(ex, netid);
     
     RemovePlayer(netid);
