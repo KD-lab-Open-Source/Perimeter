@@ -1515,7 +1515,6 @@ loc_notOverlapped: ;
 int elementGeoBreak::unengagedID=0; //Инициализация уникального ида элемента трещины для поиска родителей при завершении
 
 geoBreak1::geoBreak1(int x, int y, int rad, int beginNumBreaks){ //0-случайное кол-во
-	elGB.erase(elGB.begin(), elGB.end());//очистка списка элементов трещин
 	if(beginNumBreaks==0) beginNumBreaks=2+terLogicRND(MAX_BEGIN_BREAKS-2);//Диапазон от 2 до MAX_BEGIN_BREAKS
 
 	float range_corner=2*pi/((float)beginNumBreaks);
@@ -1529,6 +1528,13 @@ geoBreak1::geoBreak1(int x, int y, int rad, int beginNumBreaks){ //0-случа�
 		begin_corner+=range_corner;
 	}
 };
+
+geoBreak1::~geoBreak1() {
+    for (auto el : elGB) {
+        delete el;
+    }
+    elGB.clear();
+}
 
 std::list<elementGeoBreak*>::iterator geoBreak1::delEementGeoBreak(std::list<elementGeoBreak*>::iterator pp)
 {

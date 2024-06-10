@@ -335,6 +335,7 @@ const float CORNER_DISPERSION_BREAKS=(float)(pi+pi/2);
 struct geoBreak1{ //точечный разлом
 	std::list<elementGeoBreak*> elGB;
 	geoBreak1(int x, int y, int rad=MAX_LENGHT_ELEMENTGEOBREAK, int beginNumBreaks=0); //0-случайное кол-во
+    ~geoBreak1();
 	std::list<elementGeoBreak*>::iterator delEementGeoBreak(std::list<elementGeoBreak*>::iterator pp);
 	int quant(void);
 };
@@ -1160,7 +1161,7 @@ struct s_WaspBirthGeoAction {
 		radiusCount=0;
 	};
 	~s_WaspBirthGeoAction(){
-		if(pGeoBrk1) delete pGeoBrk1;
+		delete pGeoBrk1;
 	}
 	bool quant(void){
 		quantCount++;
@@ -1168,7 +1169,7 @@ struct s_WaspBirthGeoAction {
 		if((radiusCount<r) && (pGeoBrk1)) {
 			if(pGeoBrk1->quant()==0){
 				delete pGeoBrk1;
-				pGeoBrk1=0;
+				pGeoBrk1= nullptr;
 			}
 		}
 		if(quantCount>=WASP_SHIFT_QUANT_FOR_GEOBREAK){
