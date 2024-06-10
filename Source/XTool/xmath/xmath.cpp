@@ -108,12 +108,9 @@ const MatX2f MatX2f::ID   (Mat2f::ID, Vect2f::ZERO);
 
 int RandomGenerator::operator()() {
 #if defined(PERIMETER_DEBUG_ASSERT) && defined(_PERIMETER_)
-    extern bool MT_IS_GRAPH();
     extern bool MT_IS_LOGIC();
     if (logic) {
         xassert(MT_IS_LOGIC());
-    } else {
-        xassert(MT_IS_GRAPH());
     }
 #endif
     return ((value = value*214013L + 2531011L) >> 16) & 0x7fff;
