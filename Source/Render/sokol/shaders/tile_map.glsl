@@ -23,6 +23,9 @@ void main() {
 
     float offset = 1.0f / 1024.0f;
     fs_uv0 = (un_shadow * vec4(vs_position, 1.0f) + vec4(-offset, +offset*0.5f, 0, 0)).xyz;
+#if SOKOL_GLSL
+    fs_uv0.y = 1.0f - fs_uv0.y;
+#endif
     fs_uv1 = vs_texcoord0;
     fs_uv2 = vs_position.xy * un_inv_world_size;
 }

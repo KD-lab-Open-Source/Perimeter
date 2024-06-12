@@ -245,7 +245,7 @@ void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
     activeCommand.SetTexture(2, pLightMap->GetFrameImage(0)->sg->image);
 
     TerraInterface* terra = TileMap->GetTerra();
-    activeWorldSize = Vect2f(terra->SizeX(), terra->SizeY());
+    activeWorldSize = Vect2f(1.0f / terra->SizeX(), 1.0f / terra->SizeY());
 
     if (activePipelineType != PIPELINE_TYPE_TILE_MAP) {
         FinishActiveDrawBuffer();
