@@ -316,6 +316,10 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
                     break;
             }
 
+            // render back-faces in shadow pass to prevent shadow acne on front-faces
+            desc.cull_mode = SG_CULLMODE_FRONT;
+            desc.sample_count = 1;
+
             desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
             desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
             desc.depth.write_enabled = true;

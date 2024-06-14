@@ -15,19 +15,31 @@ in vec2 vs_texcoord0;
 
 //Fragment shader outputs
 out vec3 fs_uv0;
-out vec2 fs_uv1;
-out vec2 fs_uv2;
+out vec3 fs_uv1;
+out vec3 fs_uv2;
+out vec3 fs_uv3;
+out vec2 fs_uv4;
+out vec2 fs_uv5;
+
+const float offset = 1.0f / 1024.0f;
 
 void main() {
     gl_Position = un_mvp * vec4(vs_position, 1.0f);
 
-    float offset = 1.0f / 1024.0f;
-    fs_uv0 = (un_shadow * vec4(vs_position, 1.0f) + vec4(-offset, +offset*0.5f, 0, 0)).xyz;
+    const vec4 p = un_shadow * vec4(vs_position, 1.0f);
+    fs_uv0 = (p + vec4(-offset, +offset*0.5f, 0, 0)).xyz;
+    fs_uv1 = (p + vec4(offset, -offset*0.5f, 0, 0)).xyz;
+    fs_uv2 = (p + vec4(0, -offset, 0, 0)).xyz;
+    fs_uv3 = (p + vec4(0, offset, 0, 0)).xyz;
 #if SOKOL_GLSL
     fs_uv0.y = 1.0f - fs_uv0.y;
+    fs_uv1.y = 1.0f - fs_uv1.y;
+    fs_uv2.y = 1.0f - fs_uv2.y;
+    fs_uv3.y = 1.0f - fs_uv3.y;
 #endif
-    fs_uv1 = vs_texcoord0;
-    fs_uv2 = vs_position.xy * un_inv_world_size;
+
+    fs_uv4 = vs_texcoord0;
+    fs_uv5 = vs_position.xy * un_inv_world_size;
 }
 @end
 
@@ -43,36 +55,44 @@ uniform texture2D un_tex1; // diffuse
 uniform texture2D un_tex2; // light map
 
 //Fragment shader inputs from Vertex shader
-in vec3 fs_uv0; // shadow map
-in vec2 fs_uv1; // diffuse
-in vec2 fs_uv2; // light map
+in vec3 fs_uv0; // shadow map 1
+in vec3 fs_uv1; // shadow map 2
+in vec3 fs_uv2; // shadow map 3
+in vec3 fs_uv3; // shadow map 4
+in vec2 fs_uv4; // diffuse
+in vec2 fs_uv5; // light map
 
 //Fragment shader outputs
 out vec4 frag_color;
 
-//SHADE - коэффициэнт, не который умножается цвет объекта в тени.
+//SHADE - коэффициент, на который умножается цвет объекта в тени.
 #define SHADE 0.5f
 
 //MSHADE=1-SHADE
 #define MSHADE 0.5f
 
-void main() {
-    frag_color = texture(sampler2DShadow(un_tex0, un_sampler1), fs_uv0).rrrr;
+// ambient color
+const vec3 c0 = vec3(SHADE, MSHADE, 0.25f);
+const vec3 c4 = vec3(0.25f, 0.25f, 0.25f);
 
-    // ambient color
-    vec4 c0 = vec4(SHADE, MSHADE, 0, 1.0f);
-    frag_color = frag_color * c0.y + c0.x;
+void main() {
+    // shadow
+    float shadow = texture(sampler2DShadow(un_tex0, un_sampler1), fs_uv0).r;
+    shadow += texture(sampler2DShadow(un_tex0, un_sampler1), fs_uv1).r;
+    shadow += texture(sampler2DShadow(un_tex0, un_sampler1), fs_uv2).r;
+    shadow += texture(sampler2DShadow(un_tex0, un_sampler1), fs_uv3).r;
+    vec3 result = c4 * shadow * c0.y + c0.x;
 
     // diffuse
-    frag_color = frag_color * texture(sampler2D(un_tex1, un_sampler0), fs_uv1);
+    result *= texture(sampler2D(un_tex1, un_sampler0), fs_uv4).rgb;
 
     // tile color
-    frag_color = frag_color * un_tile_color;
+    result *= un_tile_color.rgb;
 
     // light map
-    frag_color = frag_color * texture(sampler2D(un_tex2, un_sampler0), fs_uv2);
+    result *= texture(sampler2D(un_tex2, un_sampler0), fs_uv5).rgb;
 
-    frag_color.a = un_tile_color.a;
+    frag_color = vec4(result, un_tile_color.a);
 }
 @end
 
