@@ -41,25 +41,16 @@ class Column;
 class cTileMap : public cUnkObj
 {
 public:
-#ifdef PERIMETER_SOKOL
 	enum class RenderType
 	{
 		REFLECTION, SHADOW, DIRECT
 	};
+
 	static inline const std::array RenderTypes{
 		RenderType::REFLECTION,
 		RenderType::SHADOW,
 		RenderType::DIRECT
 	};
-#else
-	enum class RenderType
-	{
-		DIRECT
-	};
-	static inline const std::array RenderTypes{
-		RenderType::DIRECT
-	};
-#endif
 
 private:
 	friend class cScene;
@@ -145,13 +136,9 @@ public:
 	};
 	cTileMapRender* GetTilemapRender(RenderType type)
 	{
-#ifdef PERIMETER_SOKOL
 		const auto index = static_cast<size_t>(type);
 		VISASSERT(index < pTileMapRender.size());
 		return pTileMapRender[index];
-#else
-		return pTileMapRender[0];
-#endif
 	}
 
 	TerraInterface* GetTerra(){return terra;}

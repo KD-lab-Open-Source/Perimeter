@@ -203,10 +203,11 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,const char *pMode)
 	for(int i=0;i<GetNumberTexture();i++)
 	{
 		cTexture* cur=GetTexture(i);
-		xassert(cur->GetX()>=0 && cur->GetX()<=15);
-		xassert(cur->GetY()>=0 && cur->GetY()<=15);
+		xassert(cur);
 		if( cur && stricmp(cur->GetName(),path.c_str())==0)
 		{
+			xassert(cur->GetX() >= 0 && cur->GetX() <= 15);
+			xassert(cur->GetY() >= 0 && cur->GetY() <= 15);
 			cur->IncRef();
 			return cur;
 		}

@@ -166,6 +166,12 @@ public:
     void SetMaterialTilemapShadow() override;
     void SetTileColor(sColor4f color) override;
 
+    bool CreateShadowTexture(int xysize) override;
+    void DeleteShadowTexture() override;
+
+    cTexture* GetShadowMap() override;
+    cTexture* GetLightMap() override;
+
     // //// cInterfaceRenderDevice impls end ////
 
     ///Converts flag based vertex format to D3D9 FVF format
