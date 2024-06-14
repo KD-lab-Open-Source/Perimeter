@@ -324,22 +324,6 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     int reflection = DrawNode->GetAttribute(ATTRCAMERA_REFLECTION);
     cCamera* pNormalCamera=DrawNode->GetRoot();
     bool use_shadow_map=false;
-    
-    //TODO remove this once D3D9 specifics are removed
-    if (shadow || reflection) {
-#ifdef PERIMETER_D3D9
-        if (!gb_RenderDevice3D) {
-            return;
-        }
-#endif
-#ifdef PERIMETER_SOKOL
-        if (!gb_RenderDevice) {
-            return;
-        }
-#else
-        return;
-#endif
-    }
 
     Vect3f dcoord(
             tilemap->GetTileSize().x * tilemap->GetScale().x,

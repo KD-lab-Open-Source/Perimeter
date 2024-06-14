@@ -328,11 +328,11 @@ public:
     virtual void SetMaterialTilemapShadow() = 0;
     virtual void SetTileColor(sColor4f color) = 0;
 
-    virtual bool CreateShadowTexture(int xysize);
-    virtual void DeleteShadowTexture();
+    virtual bool CreateShadowTexture(int xysize) = 0;
+    virtual void DeleteShadowTexture() = 0;
 
-    virtual cTexture* GetShadowMap();
-    virtual cTexture* GetLightMap();
+    virtual cTexture* GetShadowMap() = 0;
+    virtual cTexture* GetLightMap() = 0;
 
 #ifdef PERIMETER_DEBUG
     virtual void StartCaptureFrame();

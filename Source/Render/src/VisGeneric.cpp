@@ -241,8 +241,9 @@ void cVisGeneric::SetShadowType(eShadowType p,int shadow_size)
 	CalcIsShadowMap();
 
 #ifdef PERIMETER_D3D9
-	if(gb_RenderDevice3D)
+	if (gb_RenderDevice3D) {
 		gb_RenderDevice3D->SetAdvance();
+	}
 #endif
 }
 
@@ -757,7 +758,9 @@ void cVisGeneric::SetShadowHint(int hint)
 {
 	Option_ShadowHint=hint;
 #ifdef PERIMETER_D3D9
-	gb_RenderDevice3D->RestoreShader();
+	if (gb_RenderDevice3D) {
+		gb_RenderDevice3D->RestoreShader();
+	}
 #endif
 }
 

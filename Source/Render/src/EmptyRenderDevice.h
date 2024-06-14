@@ -104,6 +104,12 @@ public:
     void SetMaterialTilemap(cTileMap *TileMap) override {};
     void SetMaterialTilemapShadow() override {};
     void SetTileColor(sColor4f color) override {};
+
+    bool CreateShadowTexture(int xysize) override { return false; };
+    void DeleteShadowTexture() override {};
+
+    cTexture* GetShadowMap() override { return nullptr; };
+    cTexture* GetLightMap() override { return nullptr; };
 };
 
 #endif //PERIMETER_EMPTYRENDERDEVICE_H

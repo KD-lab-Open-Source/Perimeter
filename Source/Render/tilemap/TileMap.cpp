@@ -212,84 +212,20 @@ int cTileMap::CheckLightMapType()
 
 cTexture* cTileMap::GetShadowMap()
 {
-#ifdef PERIMETER_D3D9
-    if (gb_RenderDevice3D) {
-        if (CheckLightMapType()) {
-            return gb_RenderDevice3D->dtAdvance->GetShadowMap();
-        } else {
-            return gb_RenderDevice3D->dtFixed->GetShadowMap();
-        }
-    }
-#endif
-#ifdef PERIMETER_SOKOL
-	if (gb_RenderDevice) {
-		return gb_RenderDevice->GetShadowMap();
-	}
-#endif
-    return nullptr;
-}
-
-cTexture* cTileMap::GetLightMap()
-{
-#ifdef PERIMETER_D3D9
-    if (gb_RenderDevice3D) {
-        if (CheckLightMapType()) {
-            return gb_RenderDevice3D->dtAdvance->GetLightMap();
-        } else {
-            return gb_RenderDevice3D->dtFixed->GetLightMap();
-        }
-    }
-#endif
-#ifdef PERIMETER_SOKOL
-	if (gb_RenderDevice) {
-		return gb_RenderDevice->GetLightMap();
-	}
-#endif
-    return nullptr;
+	return gb_RenderDevice->GetShadowMap();
 }
 
 void cTileMap::CreateLightmap()
 {
-#ifdef PERIMETER_D3D9
-    if (gb_RenderDevice3D) {
-        gb_RenderDevice3D->dtFixed->DeleteShadowTexture();
-        gb_RenderDevice3D->dtAdvance->DeleteShadowTexture();
-    }
+	gb_RenderDevice->DeleteShadowTexture();
 
-	int width=256<<(Option_DrawMeshShadow-1);
-
-	LightMapType=CheckLightMapType();
-
-	if(Option_DrawMeshShadow>0 && gb_RenderDevice3D)
-	{
-		DrawType* draw=gb_RenderDevice3D->dtFixed;
-		if(LightMapType) {
-            draw = gb_RenderDevice3D->dtAdvance;
-        }
-
-		if(!draw->CreateShadowTexture(width))
-		{
-			gb_VisGeneric->SetShadowType((eShadowType)(int)Option_ShadowType,0);
+	int width = 256 << (Option_DrawMeshShadow - 1);
+	LightMapType = CheckLightMapType();
+	if (0 < Option_DrawMeshShadow) {
+		if (!gb_RenderDevice->CreateShadowTexture(width)) {
+			gb_VisGeneric->SetShadowType((eShadowType)(int)Option_ShadowType, 0);
 		}
 	}
-#endif
-#ifdef PERIMETER_SOKOL
-	if (gb_RenderDevice) {
-		gb_RenderDevice->DeleteShadowTexture();
-	}
-
-	int width=256<<(Option_DrawMeshShadow-1);
-
-	LightMapType=CheckLightMapType();
-
-	if(Option_DrawMeshShadow>0 && gb_RenderDevice)
-	{
-		if(!gb_RenderDevice->CreateShadowTexture(width))
-		{
-			gb_VisGeneric->SetShadowType((eShadowType)(int)Option_ShadowType,0);
-		}
-	}
-#endif
 
 	float SizeLightMap=terra->SizeX();
 	float focus=1/SizeLightMap;
@@ -466,17 +402,9 @@ void cTileMap::SetBuffer(const Vect2i &size,int zeroplastnumber_)
 
 void cTileMap::DrawLightmapShadow(cCamera *DrawNode)
 {
-#ifdef PERIMETER_D3D9
-    if (!gb_RenderDevice3D) return;
-#endif
-#ifdef PERIMETER_SOKOL
-	if (!gb_RenderDevice) return;
-#else
-    return;
-#endif
 	if (Option_DrawMeshShadow && GetShadowMap()==nullptr
 #ifdef PERIMETER_D3D9
-    && gb_RenderDevice3D && gb_RenderDevice3D->nSupportTexture>1
+    && (!gb_RenderDevice3D || gb_RenderDevice3D->nSupportTexture>1)
 #endif
     ) {
 		CreateLightmap();
@@ -503,14 +431,6 @@ void cTileMap::DrawLightmapShadow(cCamera *DrawNode)
 
 void cTileMap::AddLightCamera(cCamera *DrawNode)
 {
-#ifdef PERIMETER_D3D9
-    if (!gb_RenderDevice3D) return;
-#endif
-#ifdef PERIMETER_SOKOL
-	if (!gb_RenderDevice) return;
-#else
-    return;
-#endif
 	DrawNode->SetAttribute(ATTRCAMERA_ZMINMAX);
 	DrawNode->SetCopy(ShadowDrawNode);
 	DrawNode->AttachChild(ShadowDrawNode);
@@ -807,7 +727,7 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
 	PlanarNode->SetAttribute(ATTRCAMERA_SHADOW|ATTRUNKOBJ_NOLIGHT);
 	PlanarNode->ClearAttribute(ATTRCAMERA_PERSPECTIVE);
 	PlanarNode->ClearAttribute(ATTRCAMERA_SHOWCLIP);
-	PlanarNode->SetRenderTarget(light?GetLightMap():GetShadowMap(),SurfaceImage::NONE);
+	PlanarNode->SetRenderTarget(light ? gb_RenderDevice->GetLightMap() : GetShadowMap(), SurfaceImage::NONE);
     Vect2f center(0.5f,0.5f);
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f zplane(10,1e7f);
