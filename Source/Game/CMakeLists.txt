@@ -184,5 +184,9 @@ ENDIF()
 #message("Link Libs: ${perimeter_LINK_LIBS}")
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
-#Install rules
-install(TARGETS perimeter RUNTIME BUNDLE DESTINATION ${CMAKE_SOURCE_DIR})
+#Install ruless
+install(TARGETS perimeter
+        RUNTIME
+        LIBRARY
+        BUNDLE DESTINATION bundle
+)
