@@ -172,13 +172,11 @@ IF(APPLE)
         SET_TARGET_PROPERTIES(perimeter PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/DebugInfo.plist"
-            BUNDLE DESTINATION ${CMAKE_SOURCE_DIR}
         )
     ELSE()
         SET_TARGET_PROPERTIES(perimeter PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/Perimeter.app.template/Contents/Info.plist"
-            BUNDLE DESTINATION ${CMAKE_SOURCE_DIR}
         )
     ENDIF()
 ENDIF()
@@ -187,4 +185,4 @@ ENDIF()
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
 #Install rules
-install (TARGETS perimeter RUNTIME)
+install(TARGETS perimeter RUNTIME BUNDLE DESTINATION ${CMAKE_SOURCE_DIR})
