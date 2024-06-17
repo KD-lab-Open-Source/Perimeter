@@ -230,12 +230,13 @@ private:
 	DurationTimer lifeTimer_;
 };
 
-class terBuildingEnvironment : public terBuildingPowered
+class terBuildingEnvironment : public terBuilding
 {
 public:
 	terBuildingEnvironment(const UnitTemplate& data);
 
 	ChainID chainRequest() const { return CHAIN_NONE; }
+    int repairRequest() const { return 0; }
 };
 
 #endif //__IRONBUILDING_H__

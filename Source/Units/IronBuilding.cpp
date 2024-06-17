@@ -695,7 +695,7 @@ int terBuildingPowered::repairRequest() const
 //-------------------------------------------
 
 terBuildingEnvironment::terBuildingEnvironment(const UnitTemplate& data) 
-: terBuildingPowered(data)
+: terBuilding(data)
 {
 }
 
