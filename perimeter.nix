@@ -51,7 +51,7 @@
   };
 in pkgs.stdenv.mkDerivation {
   pname = "perimeter";
-  version = "3.1.8";
+  version = "3.1.9";
   meta = with lib; {
     homepage = "https://github.com/KD-lab-Open-Source/Perimeter/";
     description = "Perimeter - A open-source RTS game from 2004 by K-D LAB";
