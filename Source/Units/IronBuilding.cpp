@@ -481,7 +481,7 @@ void terBuilding::ShowInfo()
 	connection_icon_.quant();
 	energy_icon_.quant();
 	
-	if(isConstructed() && attr()->iconDistanceFactor && visible_){
+	if(isConstructed() && 0 < attr()->iconDistanceFactor && visible_){
 		if(buildingStatus() & BUILDING_STATUS_CONNECTED){
 			int flag = BUILDING_STATUS_POWERED | BUILDING_STATUS_ENABLED;
 			if((buildingStatus() & flag) != flag){

@@ -343,7 +343,7 @@ void terCorridorOmega::ShowInfo()
 	terCorridor::ShowInfo();
 	
 	minedIcon_.quant();
-	if(mined()){
+	if (mined() && 0 < attr()->iconDistanceFactor) {
 		MatXf m = avatar()->matrix();
 		m.trans().z += radius()*attr()->iconDistanceFactor;
 		minedIcon_.show(m.trans());
