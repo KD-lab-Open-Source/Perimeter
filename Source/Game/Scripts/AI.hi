@@ -68,6 +68,7 @@ extern AiPrm aiPrm;
 struct ClusterFindPrm {
 	int clusterSize;
 	int rebuildQuants;
+	int rebuildQuantsRandom;
 	int enableSmoothing;
 	int levelOfDetail;
 	int maxColor;

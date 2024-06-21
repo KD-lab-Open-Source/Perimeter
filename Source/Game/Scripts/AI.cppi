@@ -86,6 +86,7 @@ AiPrm aiPrm = { 13
 struct ClusterFindPrm {
 	int clusterSize;
 	int rebuildQuants;
+	int rebuildQuantsRandom;
 	int enableSmoothing;
 	int levelOfDetail;
 	int maxColor;
@@ -99,9 +100,9 @@ struct ClusterFindPrm {
 #pragma pack( pop, __XScript_struct_pack__)
 #endif  // __XScript_struct_ClusterFindPrm__
 ClusterFindPrm terrainPathFind = { 10 
- , 12, 1, 8, 64, 2, 0, 0, 0, 6, 40000 };
-ClusterFindPrm defenceMapPathFind = { 10, 40 
- , 1, 8, 64, 2, 0, 100, 100, 6, 40000 };
+ , 10, 10, 1, 8, 64, 2, 0, 0, 0, 6, 40000 };
+ClusterFindPrm defenceMapPathFind = { 10 
+ , 50, 100, 1, 8, 64, 2, 0, 100, 100, 6, 40000 };
 float squad_described_radius_min = 16.f;
 float squad_described_radius_max = 100.f;
 float squad_speed_correction_relaxation_time_inv = 0.25f;
@@ -131,7 +132,7 @@ struct AIPrm_ParameterSection : ParameterSection
 {
 	add_dependency(".\\Scripts\\AI.prm");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 693628167;
+	description = 1648674577;
 	reserve(41);
 	add(&ai_frame_attach_time, "ai_frame_attach_time", 2526236219);
 	add(&ai_building_pause, "ai_building_pause", 2540219994);
@@ -151,8 +152,8 @@ struct AIPrm_ParameterSection : ParameterSection
 	add(&checkLevelingAreaFactor, "checkLevelingAreaFactor", 1812941677);
 	add(&checkLevelingAreaInitial, "checkLevelingAreaInitial", 3934390096);
 	add(&aiPrm, "aiPrm", 723548434);
-	add(&terrainPathFind, "terrainPathFind", 377360152);
-	add(&defenceMapPathFind, "defenceMapPathFind", 791336646);
+	add(&terrainPathFind, "terrainPathFind", 654388174);
+	add(&defenceMapPathFind, "defenceMapPathFind", 4290810901);
 	add(&squad_described_radius_min, "squad_described_radius_min", 181622881);
 	add(&squad_described_radius_max, "squad_described_radius_max", 3335739490);
 	add(&squad_speed_correction_relaxation_time_inv, "squad_speed_correction_relaxation_time_inv", 3713071572);

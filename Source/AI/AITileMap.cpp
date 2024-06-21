@@ -79,7 +79,7 @@ void AITileMap::InitialUpdate()
 	path_finder->Set(terrainPathFind.enableSmoothing);
 
 	memcpy(path_finder2->GetWalkMap(),path_finder->GetWalkMap(),sizeX()*sizeY()*sizeof(path_finder2->GetWalkMap()[0]));
-	path_finder2->SetLater(terrainPathFind.enableSmoothing, terrainPathFind.rebuildQuants);
+	path_finder2->SetLater(&terrainPathFind);
 
 	updateHardMap();
 }
@@ -363,7 +363,7 @@ void AITileMap::recalcPathFind()
 		std::swap(path_finder2,path_finder);
 
 		rebuildWalkMap(path_finder2->GetWalkMap());
-		path_finder2->SetLater(terrainPathFind.enableSmoothing,terrainPathFind.rebuildQuants);
+		path_finder2->SetLater(&terrainPathFind);
 	}
 }
 

@@ -50,7 +50,7 @@ public:
 	
 	//Так как Set очень длительная операция, то 
 	//разбить на несколько квантов
-	void SetLater(bool enable_smooting,int quant_of_build);
+	void SetLater(struct ClusterFindPrm* prm);
 	bool SetLaterQuant();//true - процесс завершён
 	bool ready() const { return cur_quant_build >= quant_of_build; }
 

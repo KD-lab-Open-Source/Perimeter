@@ -49,8 +49,14 @@ public:
 
 	// Map coords
 	bool inside(const Vect2i& v) const { return v.x >= 0 && v.x < sizeX() && v.y >= 0 && v.y < sizeY(); }
-	T& operator()(int x, int y) { xassert(x >= 0 && x < sizeX() && y >= 0 && y < sizeY()); return map_[y*sizeX_+x]; }
-	const T& operator()(int x, int y) const { xassert(x >= 0 && x < sizeX() && y >= 0 && y < sizeY()); return map_[y*sizeX_+x]; }
+	T& operator()(int x, int y) {
+        //xassert(x >= 0 && x < sizeX() && y >= 0 && y < sizeY());
+        return map_[y*sizeX_+x];
+    }
+	const T& operator()(int x, int y) const {
+        //xassert(x >= 0 && x < sizeX() && y >= 0 && y < sizeY());
+        return map_[y*sizeX_+x];
+    }
 	T& operator()(const Vect2i& v) { return (*this)(v.x, v.y); }
 	const T& operator()(const Vect2i& v) const { return (*this)(v.x, v.y); }
 

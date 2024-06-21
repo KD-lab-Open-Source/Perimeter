@@ -1,6 +1,7 @@
 //Balmer,K-D Lab
 #include "StdAfx.h"
 #include "terra.h"
+#include "AIPrm.h"
 #include "ClusterFind.h"
 
 ////////////////////////////////////////////////////////////
@@ -987,25 +988,30 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 
 }
 
-void ClusterFind::SetLater(bool enable_smooting,int _quant_of_build)
+void ClusterFind::SetLater(ClusterFindPrm* prm)
 {
-	quant_of_build=_quant_of_build;
+	quant_of_build=prm->rebuildQuants;
+    if (0 < prm->rebuildQuantsRandom) {
+        //Add some randomness to avoid running all in same quant
+        quant_of_build += terLogicRND(prm->rebuildQuantsRandom);
+    }
 
 	cur_quant_build=0;
 
-	if(enable_smooting)
-		Smooting();
+	if (prm->enableSmoothing) {
+        Smooting();
+    }
 
 	memset(pmap,0,dx*dy*sizeof(pmap[0]));
 
 	all_cluster.clear();
 	all_cluster.reserve(max_cluster_size);
 	all_cluster.resize(1);
-	Cluster* first_element=&all_cluster[0];
 	{
 		Cluster& c=all_cluster[0];
 		c.x=c.y=0;
-		c.xcenter=c.ycenter=0;
+		c.xcenter=0;
+        c.ycenter=0;
 		c.walk=0;
 		c.self_id=0;
 	}

@@ -16,7 +16,7 @@ DefenceMap::DefenceMap(int hsize,int vsize)
 	path_finder->Set(defenceMapPathFind.enableSmoothing);
 
 	memcpy(path_finder2->GetWalkMap(),path_finder->GetWalkMap(),sizeX()*sizeY()*sizeof(path_finder2->GetWalkMap()[0]));
-	path_finder2->SetLater(defenceMapPathFind.enableSmoothing, defenceMapPathFind.rebuildQuants);
+	path_finder2->SetLater(&defenceMapPathFind);
 }
 
 DefenceMap::~DefenceMap()
@@ -31,7 +31,7 @@ void DefenceMap::startRecalcMap()
 	std::swap(path_finder2,path_finder);
 
 	rebuildWalkMap(path_finder2->GetWalkMap());
-	path_finder2->SetLater(defenceMapPathFind.enableSmoothing,defenceMapPathFind.rebuildQuants);
+	path_finder2->SetLater(&defenceMapPathFind);
 }
 
 bool DefenceMap::recalcMapQuant()

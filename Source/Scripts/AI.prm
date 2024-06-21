@@ -175,7 +175,8 @@ AiPrm aiPrm = {};
 struct ClusterFindPrm
 {
 	int clusterSize = 10;
-	int rebuildQuants = 12;
+	int rebuildQuants = 10;
+	int rebuildQuantsRandom = 10;
 	int enableSmoothing = 1;
 
 	int levelOfDetail = 8;
@@ -196,7 +197,8 @@ ClusterFindPrm terrainPathFind = {};
 ClusterFindPrm defenceMapPathFind = 
 {
 	clusterSize = 10;
-	rebuildQuants = 40;
+	rebuildQuants = 50;
+	rebuildQuantsRandom = 100;
 	enableSmoothing = 1;
 	gunExtraRadius = 100;
 	fieldExtraRadius = 100;
