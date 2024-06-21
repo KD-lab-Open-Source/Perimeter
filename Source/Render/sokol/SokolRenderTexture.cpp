@@ -17,7 +17,6 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
 #endif
     bool is_alpha_test = false;
     bool is_alpha_blend = false;
-    bool is_skin=Texture->skin_color.a==255;
     int dx = Texture->GetWidth();
     int dy = Texture->GetHeight();
     size_t tex_len = dx * dy * 4;
@@ -69,10 +68,6 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
                 }
             }
 
-            if (is_skin) {
-                ApplySkinColor(buf, dx, dy, Texture->skin_color);
-            }
-
             //We need to convert grayscale bumpmap to normalmap
             if (Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL)) {
                 Texture->ConvertBumpToNormal(buf);
@@ -111,9 +106,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         Texture->GetFrameImage(i)->sg = img;
     }
 
-    if (is_skin) {
-        Texture->ClearAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST);
-    } else if(is_alpha_test && !is_alpha_blend) {
+    if (is_alpha_test && !is_alpha_blend) {
         Texture->ClearAttribute(TEXTURE_BLURWHITE|TEXTURE_MIPMAPBLUR|TEXTURE_ALPHA_BLEND);
         Texture->SetAttribute(TEXTURE_MIPMAP_POINT|TEXTURE_ALPHA_TEST);
     }

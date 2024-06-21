@@ -2070,6 +2070,7 @@ int CShellIconManager::ProcessDynQueue(DynQueueCode code, float x, float y)
 			if (i->time_delay <= 0) {
                 r = 1;
 //				fout < "	 process\n";
+                xassert(i->cbproc);
 				if ( (*i->cbproc)(x,y) == 0 ) {
 					i->bDelete = true;
                     break;

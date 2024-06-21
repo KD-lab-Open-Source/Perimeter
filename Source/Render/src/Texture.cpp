@@ -9,7 +9,6 @@ cTexture::cTexture(const char *TexName) : cUnknownClass(KIND_TEXTURE)
 	SetName(TexName);
 	_x=_y=_w=_h=TimePerFrame=0; 
 	number_mipmap=1;
-	skin_color.set(255,255,255,0);
 }
 cTexture::~cTexture()														
 { 
@@ -60,27 +59,6 @@ void cTexture::SetHeight(int yTex)
     _h = 1 << _y;
 	if (_h != yTex) {
         VisError << "Bad height in texture " << name << VERR_END;
-    }
-}
-
-inline uint8_t ByteInterpolate(uint8_t a, uint8_t b, uint8_t factor)
-{
-//	float f=factor/255.0f;
-//	return xm::round(a+(int(b-a))*f);
-    return a+(int(b-a))*int(factor)/255;
-}
-
-void ApplySkinColor(uint8_t* buffer,int dx,int dy,sColor4c skin_color)
-{
-    uint8_t* cur=buffer;
-    for (int y=0; y<dy; y++) {
-        for (int x=0; x<dx; x++, cur += 4) {
-            sColor4c& c = *reinterpret_cast<sColor4c*>(cur);
-            c.r=ByteInterpolate(c.r,skin_color.r,c.a);
-            c.g=ByteInterpolate(c.g,skin_color.g,c.a);
-            c.b=ByteInterpolate(c.b,skin_color.b,c.a);
-            c.a=255;
-        }
     }
 }
 

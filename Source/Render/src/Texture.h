@@ -133,5 +133,3 @@ public:
 	}
 	virtual bool IsAviScaleTexture(){return true;}
 };
-
-void ApplySkinColor(uint8_t* buffer,int dx,int dy,sColor4c skin_color);

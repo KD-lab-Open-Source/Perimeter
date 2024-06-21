@@ -58,7 +58,6 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 	uint32_t dither= (RenderMode & RENDERDEVICE_MODE_RGB16) ? D3DX_FILTER_DITHER : 0;
 	bool is_alpha_test=false;
 	bool is_alpha_blend=false;
-	bool is_skin=Texture->skin_color.a==255;
 
 	for(int i=0;i<Texture->GetNumberFrame();i++) {
         IDirect3DTexture9*& tex = Texture->GetFrameImage(i)->d3d;
@@ -101,11 +100,6 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
             }
 		}
 
-		if(is_skin)
-		{
-			ApplySkinColor(lpBuf,dx,dy,Texture->skin_color);
-		}
-
         //We need to convert grayscale bumpmap to normalmap
         if(Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL)) {
             Texture->ConvertBumpToNormal(lpBuf);
@@ -146,12 +140,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		delete[] lpBuf;
 	}
 
-	if(is_skin)
-	{
-		Texture->ClearAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST);
-	}else
-	if(is_alpha_test && !is_alpha_blend)
-	{
+	if (is_alpha_test && !is_alpha_blend) {
 		Texture->ClearAttribute(TEXTURE_BLURWHITE|TEXTURE_MIPMAPBLUR|TEXTURE_ALPHA_BLEND);
 		Texture->SetAttribute(TEXTURE_MIPMAP_POINT|TEXTURE_ALPHA_TEST);
 	}
