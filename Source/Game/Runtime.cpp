@@ -1138,7 +1138,14 @@ int SDL_main(int argc, char *argv[])
             printf("crash %d\n", val);
         } else if (*cmdline_testcrash == '1') {
             uint64_t val = 0xDEADBEEF;
+            printf("addr %p\n", &val);
             auto ptrfunc = reinterpret_cast<void (*)(uint32_t)>(&val);
+            ptrfunc(0x12345678);
+        } else if (*cmdline_testcrash == '2') {
+            void* ptr = malloc(102400);
+            memset(ptr, 0, 102400);
+            printf("addr %p\n", ptr);
+            auto ptrfunc = reinterpret_cast<void (*)(uint32_t)>(ptr);
             ptrfunc(0x12345678);
         }
     }
