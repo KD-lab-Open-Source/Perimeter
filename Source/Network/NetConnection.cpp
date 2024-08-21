@@ -430,9 +430,10 @@ int32_t NetConnection::send(const XBuffer* data, NETID source, NETID destination
     header |= (static_cast<uint64_t>(flags & 0xFFFF) << 8);
     header |= (static_cast<uint64_t>(body_len & 0xFFFFFFFF) << 24);
     XBuffer xbuf(msg_size);
-    xbuf < SDL_SwapBE64(header);
-    xbuf < SDL_SwapBE64(source);
-    xbuf < SDL_SwapBE64(destination);
+    //NOTE: Use write<> with explicit type to avoid type ambiguity from SDL_SwapBE64 in some archs
+    xbuf.write<uint64_t>(SDL_SwapBE64(header));
+    xbuf.write<uint64_t>(SDL_SwapBE64(source));
+    xbuf.write<uint64_t>(SDL_SwapBE64(destination));
     xbuf.write(sending_buffer, sending_buffer.tell());
 
 #ifdef PERIMETER_DEBUG
