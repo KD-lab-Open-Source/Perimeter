@@ -452,6 +452,9 @@ void loadAddonET(ModMetadata& mod) {
         }
 
         if (legacy) {
+            //On GW the survival1 doesn't seem to have much, ET maps use mostly the survival1 so we override it
+            paths["scripts/triggers/survival1.scr"] = {};
+            
             //Try to use ET interface so we can have icons at least, non legacy the base game has the icons already
             paths["Resource/Icons/intf"] = {};
         }
