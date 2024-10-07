@@ -39,6 +39,10 @@ jobs:
         run: |
           chmod a+x ./docker/linux/prepare_pkgs
           ./docker/linux/prepare_pkgs
+      - name: prepare boost
+        run: |
+          chmod a+x ./docker/prepare_boost
+          ./docker/prepare_boost
       - name: build ffmpeg
         run: |
           chmod a+x ./docker/linux/prepare_ffmpeg
@@ -84,10 +88,14 @@ jobs:
         run: sudo apt-get install cmake meson libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev zlib1g-dev libvulkan-dev glslang-tools lld
       - name: create build dir
         run: mkdir build
+      - name: prepare boost
+        run: |
+          chmod a+x ./docker/prepare_boost
+          sudo ./docker/prepare_boost
       - name: configure
-        run: cmake .. -G Ninja \
-          -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
-          -DOPTION_DEBUG_ASSERT=ON \
+        run: cmake .. -G Ninja
+          -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}}
+          -DOPTION_DEBUG_ASSERT=ON
           ${{matrix.env.cmake}}
         working-directory: build
       - name: Scripts check
