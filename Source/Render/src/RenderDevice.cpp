@@ -37,7 +37,6 @@ void MemoryResource::FreeData() {
         free(data);
         data = nullptr;
     }
-    burned = false;
     data_len = 0;
 }
 
@@ -168,7 +167,6 @@ void cInterfaceRenderDevice::CreateVertexBuffer(VertexBuffer& vb, uint32_t Numbe
     
     vb.dirty = true;
     vb.locked = false;
-    vb.burned = false;
     
     vb.AllocData(vb.NumberVertex * vb.VertexSize);
 }
@@ -189,7 +187,6 @@ void cInterfaceRenderDevice::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberI
 
     ib.dirty = true;
     ib.locked = false;
-    ib.burned = false;
     
     ib.AllocData(ib.NumberIndices * sizeof(indices_t));
 }
@@ -210,7 +207,6 @@ void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb) {
         xassert(0);
         return nullptr;
     }
-    xassert(!vb.burned);
     xassert(!vb.locked);
     vb.dirty = true;
     vb.locked = true;
@@ -230,7 +226,6 @@ void cInterfaceRenderDevice::UnlockVertexBuffer(VertexBuffer &vb) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
 #endif
-    xassert(!vb.burned);
     xassert(vb.locked);
     vb.locked = false;
 }
@@ -244,7 +239,6 @@ indices_t* cInterfaceRenderDevice::LockIndexBuffer(IndexBuffer &ib) {
         xassert(0);
         return nullptr;
     }
-    xassert(!ib.burned);
     xassert(!ib.locked);
     ib.dirty = true;
     ib.locked = true;
@@ -264,7 +258,6 @@ void cInterfaceRenderDevice::UnlockIndexBuffer(IndexBuffer &ib) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
 #endif
-    xassert(!ib.burned);
     xassert(ib.locked);
     ib.locked = false;
 }

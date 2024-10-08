@@ -38,6 +38,7 @@ private:
         }
     }
 public:
+    bool burned = false;
     SokolResourceKey key = SokolResourceKeyNone;
     T res;
 

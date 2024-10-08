@@ -425,15 +425,14 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
         }
         xassert(buffer_ptr == nullptr);
         xassert(resource->data);
-        xassert(!resource->burned);
         desc.data = {resource->data, len};
-        resource->burned = true;
         resource->dirty = false;
 
         buffer = new SokolResourceBuffer(
             SokolResourceKeyNone,
             sg_make_buffer(&desc)
         );
+        buffer->burned = true;
     }
     xassert(buffer != nullptr);
 
@@ -673,18 +672,12 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
-    //Those that are dynamic should have their buffer released and unburned since we wil recreate later 
-    if (db->vb.dynamic && db->vb.burned) {
-        db->vb.burned = false;
-        if (db->vb.sg) {
-            db->vb.sg->release_buffer();
-        }
+    //Those that are dynamic should have their buffer released since we wil recreate later 
+    if (db->vb.dynamic && db->vb.sg) {
+        db->vb.sg->release_buffer();
     }
-    if (db->ib.dynamic && db->ib.burned) {
-        db->ib.burned = false;
-        if (db->ib.sg) {
-            db->ib.sg->release_buffer();
-        }
+    if (db->ib.dynamic && db->ib.sg) {
+        db->ib.sg->release_buffer();
     }
 }
 

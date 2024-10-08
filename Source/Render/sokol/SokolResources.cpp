@@ -64,7 +64,6 @@ void SokolBuffer::release_buffer() {
 }
 
 void SokolBuffer::update(MemoryResource* resource, size_t len) const {
-    xassert(!resource->burned);
     xassert(!resource->locked);
     if (!resource->dirty) return;
     xassert(resource->data);
@@ -73,13 +72,15 @@ void SokolBuffer::update(MemoryResource* resource, size_t len) const {
     xassert(len <= resource->data_len);
     if (len == 0) return;
     if (len > resource->data_len) len = resource->data_len;
-
-    resource->burned = true;
-    resource->dirty = false;
     if (!buffer) {
         xassert(0);
         return;
     }
+    xassert(!buffer->burned);
+    buffer->burned = true;
+
+    resource->dirty = false;
+
     xassert(buffer->res.id != SG_INVALID_ID);
     sg_range range = {resource->data, len};
     sg_update_buffer(buffer->res, &range);
@@ -122,16 +123,18 @@ void SokolTexture2D::FreeImages() {
 void SokolTexture2D::update() {
     xassert(!locked);
     if (!dirty) return;
-    dirty = false;
+    if (!data) return;
 
     if (!image) {
         xassert(0);
         return;
     }
-    if (data) {
-        xassert(image->res.id != SG_INVALID_ID);
-        sg_image_data imageData = {};
-        imageData.subimage[0][0] = {data, data_len};
-        sg_update_image(image->res, &imageData);
-    }
+    xassert(!image->burned);
+    image->burned = true;
+    dirty = false;
+    
+    xassert(image->res.id != SG_INVALID_ID);
+    sg_image_data imageData = {};
+    imageData.subimage[0][0] = {data, data_len};
+    sg_update_image(image->res, &imageData);
 }
