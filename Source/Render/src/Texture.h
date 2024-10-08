@@ -42,7 +42,6 @@ class cTexture : public cUnknownClass, public sAttribute
 	int			number_mipmap;
 public:
     float       bump_scale = 1;
-	sColor4c	skin_color;
 	std::vector<TextureImage> frames;
 
 	cTexture(const char *TexName=0);

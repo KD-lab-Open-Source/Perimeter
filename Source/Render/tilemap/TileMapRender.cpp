@@ -565,7 +565,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
 //	if(pNormalCamera==DrawNode)
 //		gb_RenderDevice->SetRenderState(RS_WIREFRAME,1);
-    int first_texture_number = 0;
+    int first_texture_number = use_shadow_map ? 1 : 0;
 #ifdef PERIMETER_D3D9
     uint32_t tss_colorarg2 = 0;
     uint32_t tss_alphaarg2 = 0;
@@ -579,11 +579,6 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             first_texture_number = gb_RenderDevice3D->dtAdvance->GetOffsetTextureNumber(true);
         }
     }
-#endif
-#ifdef PERIMETER_SOKOL
-        if (use_shadow_map) {
-            first_texture_number = 1;
-        }
 #endif
 
 #ifdef DEBUG_TILES
