@@ -73,7 +73,7 @@ public:
     {
         VISASSERT(k>=0 && k < tilemap->GetTileNumber().x);
         VISASSERT(n>=0 && n < tilemap->GetTileNumber().y);
-        int bumpTileID = GetRenderTile(k, n).bumpTileID;
+        int bumpTileID = tilemap->GetTile(k, n).bumpTileID;
         if(bumpTileID>=0)
             return bumpTiles[bumpTileID];
         return NULL;

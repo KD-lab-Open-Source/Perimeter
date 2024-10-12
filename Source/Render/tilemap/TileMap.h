@@ -21,12 +21,14 @@ enum eAttributeTile
 
 struct sTile : public sAttribute
 {
+	int bumpTileID;
 	uint8_t zmin,zmax;
 
 	std::vector<std::vector<Vect2s> > region_point;//region_point[player][point]
 
 	sTile()								
 	{
+		bumpTileID = -1;
 		zmin=255;zmax=0;
 	}
 
@@ -46,11 +48,11 @@ public:
 		REFLECTION, SHADOW, DIRECT
 	};
 
-	static inline const std::array RenderTypes{
-		RenderType::REFLECTION,
-		RenderType::SHADOW,
-		RenderType::DIRECT
-	};
+    static inline const std::array<RenderType, 3> RenderTypes{
+        RenderType::REFLECTION,
+        RenderType::SHADOW,
+        RenderType::DIRECT
+    };
 
 private:
 	friend class cScene;
@@ -131,9 +133,9 @@ public:
 	{
 		const auto index = static_cast<size_t>(type);
 		VISASSERT(index < pTileMapRender.size());
-		VISASSERT(p == nullptr || pTileMapRender[index] == nullptr);
-		pTileMapRender[index] = p;
-	};
+        VISASSERT(p == nullptr || pTileMapRender[index] == nullptr);
+        pTileMapRender[index] = p;
+    };
 	cTileMapRender* GetTilemapRender(RenderType type)
 	{
 		const auto index = static_cast<size_t>(type);

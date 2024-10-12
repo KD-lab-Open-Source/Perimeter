@@ -636,7 +636,7 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
-    
+
     //Pass the pass action
     if (activeCommand.pass_action) {
         cmd->pass_action = activeCommand.pass_action;
