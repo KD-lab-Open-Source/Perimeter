@@ -17,11 +17,10 @@ float sBumpTile::SetVertexZ(TerraInterface* terra,int x,int y)
     return zi;
 }
 
-sBumpTile::sBumpTile(cTileMap* tilemap,  cTileMapRender* render, cTilemapTexturePool* pool, int lod, int xpos, int ypos)
+sBumpTile::sBumpTile(cTileMap* tilemap, cTilemapTexturePool* pool, int lod, int xpos, int ypos)
 {
     this->tilemap = tilemap;
-    this->render = render;
-
+    cTileMapRender* render = tilemap->GetTilemapRender();
     tile_pos.set(xpos,ypos);
     texPool = pool;
     texPage = texPool->allocPage();
@@ -46,7 +45,7 @@ sBumpTile::sBumpTile(cTileMap* tilemap,  cTileMapRender* render, cTilemapTexture
 
 sBumpTile::~sBumpTile()
 {
-    render->GetVertexPool()->DeletePage(vtx);
+    tilemap->GetTilemapRender()->GetVertexPool()->DeletePage(vtx);
     texPool->freePage(texPage);
 
     DeleteIndex();
@@ -56,7 +55,7 @@ void sBumpTile::DeleteIndex()
 {
     for (auto& i : index) {
         if (i.index.page >= 0) {
-            render->GetIndexPool()->DeletePage(i.index);
+            tilemap->GetTilemapRender()->GetIndexPool()->DeletePage(i.index);
         }
     }
     index.clear();
@@ -69,7 +68,7 @@ uint8_t* sBumpTile::LockTex(int& Pitch)
 
 uint8_t *sBumpTile::LockVB()
 {
-    return static_cast<uint8_t*>(render->GetVertexPool()->LockPage(vtx));
+    return static_cast<uint8_t*>(tilemap->GetTilemapRender()->GetVertexPool()->LockPage(vtx));
 }
 
 void sBumpTile::UnlockTex()
@@ -79,7 +78,7 @@ void sBumpTile::UnlockTex()
 
 void sBumpTile::UnlockVB()
 {
-    render->GetVertexPool()->UnlockPage(vtx);
+    tilemap->GetTilemapRender()->GetVertexPool()->UnlockPage(vtx);
 }
 
 inline int IUCLAMP(int val,int clamp)
@@ -128,6 +127,7 @@ void sBumpTile::CalcPoint()
     Column** columns = tilemap->GetColumn();
     Vect2i pos=tile_pos;
 
+    cTileMapRender* render = tilemap->GetTilemapRender();
     render->IncUpdate(this);
 
     int tilenumber = tilemap->GetZeroplastNumber();

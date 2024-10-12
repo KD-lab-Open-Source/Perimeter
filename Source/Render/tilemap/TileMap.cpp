@@ -179,6 +179,7 @@ cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP
     TexturePoolSize = 512;
 
 	tilesize.set(0,0,0);
+	pTileMapRender=NULL;
 
 	ShadowDrawNode=pScene->CreateCamera();
 	LightDrawNode=new cCameraPlanarLight(pScene);
@@ -198,11 +199,7 @@ cTileMap::~cTileMap()
     gb_RenderDevice->DeleteTilemap(this);
 	if(Tile) { delete [] Tile; Tile=nullptr; }
 	MTDONE(lock_update_rect);
-
-	for (auto& p : pTileMapRender)
-	{
-		xassert(p == nullptr);
-	}
+    xassert(pTileMapRender == nullptr);
 }
 
 int cTileMap::CheckLightMapType()
@@ -252,19 +249,10 @@ void cTileMap::PreDraw(cCamera *DrawNode)
 
 	DrawNode->Attach(SCENENODE_OBJECT_TILEMAP,this);
     
-	for (auto& render : pTileMapRender)
-	{
-		if (render) {
-        	render->PreDraw(DrawNode);
-    	}
-	}
-
-	for (int y=0; y < GetTileNumber().y; y++) {
-		for (int x = 0; x < GetTileNumber().x; x++) {
-			auto& Tile = GetTile(x, y);
-			Tile.ClearAttribute(ATTRTILE_UPDATELOD);
-		}
-	}
+    cTileMapRender* render = GetTilemapRender();
+    if (render) {
+        render->PreDraw(DrawNode);
+    }
 }
 
 void cTileMap::Draw(cCamera *DrawNode)
@@ -272,7 +260,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 	if(!Option_ShowType[SHOW_TILEMAP])
 		return;
 
-    cTileMapRender* render = GetTilemapRender(RenderType::DIRECT);
+    cTileMapRender* render = GetTilemapRender();
     if (!render) return;
 
 	if(DrawNode->GetAttribute(ATTRCAMERA_SHADOW))
@@ -282,23 +270,14 @@ void cTileMap::Draw(cCamera *DrawNode)
 	else if(DrawNode->GetAttribute(ATTRCAMERA_SHADOWMAP))
 	{
 		if(Option_ShadowType==SHADOW_MAP_SELF) {
-			cTileMapRender* shadowRender = GetTilemapRender(RenderType::SHADOW);
-			if (shadowRender)
-			{
-				shadowRender->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_ALL, true);
-			}
+            render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_ALL, true);
         }
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION))
-	{
-		// рисовать отражение
-		cTileMapRender* reflectionRender = GetTilemapRender(RenderType::REFLECTION);
-		if (reflectionRender)
-		{
-			gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_254/*GetRefSurface()*/);
-			reflectionRender->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
-			gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_0);
-		}
+	{ // рисовать отражение
+		gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_254/*GetRefSurface()*/);
+        render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
+		gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_0);
 	}else
 	{
 		if(GetAttribute(ATTRUNKOBJ_REFLECTION)) {
