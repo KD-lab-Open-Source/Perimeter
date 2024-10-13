@@ -1051,12 +1051,14 @@ void cSokolRender::SetGlobalLight(Vect3f *vLight, sColor4f *Ambient, sColor4f *D
         return;
     }
 
-    if (activeLightDir != *vLight ||
-        activeLightDiffuse != *Diffuse) {
+    if ((vLight && activeLightDir != *vLight) ||
+        (Diffuse && activeLightDiffuse != *Diffuse) ||
+        (Ambient && activeLightAmbient != *Ambient) ||
+        (Specular && activeLightSpecular != *Specular)) {
         FinishActiveDrawBuffer();
-        activeLightDir = *vLight;
-        activeLightDiffuse = *Diffuse;
-        activeLightAmbient = *Ambient;
-        activeLightSpecular = *Specular;
+        if (vLight) activeLightDir = *vLight;
+        if (Diffuse) activeLightDiffuse = *Diffuse;
+        if (Ambient) activeLightAmbient = *Ambient;
+        if (Specular) activeLightSpecular = *Specular;
     }
 }
