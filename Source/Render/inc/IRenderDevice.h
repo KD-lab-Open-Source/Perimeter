@@ -151,7 +151,6 @@ protected:
     std::unordered_map<uint64_t, class DrawBuffer*> drawBuffers;
     Mat4f orthoVP;
     eCullMode CameraCullMode = CULL_NONE;
-    bool WireframeMode = false;
 
     virtual void DrawFieldDispatcher(class FieldDispatcher* ffd, uint8_t transparent);
 

@@ -43,8 +43,8 @@ struct SokolCommand {
 
 struct SokolRenderTarget final {
     cTexture* texture = nullptr;
-    sg_pass render_pass{};
-    std::vector<SokolCommand*> commands;
+    sg_pass render_pass = {};
+    std::vector<SokolCommand*> commands = {};
 
     ~SokolRenderTarget() {
         RELEASE(texture);
@@ -53,10 +53,10 @@ struct SokolRenderTarget final {
 
 struct SokolPipelineContext {
     PIPELINE_TYPE pipeline_type;
-    PIPELINE_MODE pipeline_mode;
+    SokolPipelineMode pipeline_mode;
     ePrimitiveType primitive_type;
     vertex_fmt_t vertex_fmt;
-    sg_pipeline_desc desc{};
+    sg_pipeline_desc desc = {};
     struct shader_funcs* shader_funcs = nullptr;
 
     bool operator==(const SokolPipelineContext& other) const {

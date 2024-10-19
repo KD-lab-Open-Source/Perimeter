@@ -19,9 +19,6 @@ enum PIPELINE_TYPE {
     PIPELINE_TYPE_MESH,
     PIPELINE_TYPE_TILE_MAP,
     PIPELINE_TYPE_OBJECT_SHADOW,
-#ifdef PERIMETER_DEBUG
-    PIPELINE_TYPE_LINE_STRIP,
-#endif
     PIPELINE_TYPE_MAX,
 };
 const PIPELINE_TYPE PIPELINE_TYPE_DEFAULT = PIPELINE_TYPE_MESH;
@@ -33,18 +30,19 @@ enum SOKOL_MATERIAL_TYPE {
 };
 
 using pipeline_mode_value_t = uint16_t;
-struct PIPELINE_MODE {
+struct SokolPipelineMode {
     eBlendMode blend = ALPHA_NONE;
     eCullMode cull = CULL_NONE;
     eCMPFUNC depth_cmp = CMP_GREATER;
     bool depth_write = true;
+    bool wireframe_mode = false;
 
     pipeline_mode_value_t GetValue() const;
     void FromValue(pipeline_mode_value_t value);
 
-    bool operator==(const PIPELINE_MODE& other) const {
-        return std::tie(blend, cull, depth_cmp, depth_write) 
-            == std::tie(other.blend, other.cull, other.depth_cmp, other.depth_write);
+    bool operator==(const SokolPipelineMode& other) const {
+        return std::tie(blend, cull, depth_cmp, depth_write, wireframe_mode) 
+            == std::tie(other.blend, other.cull, other.depth_cmp, other.depth_write, other.wireframe_mode);
     }
 };
 

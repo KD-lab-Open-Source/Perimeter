@@ -511,11 +511,12 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     if (0 == vertices) vertices = activeCommand.vertices;
     if (0 == indices) indices = activeCommand.indices;
     PIPELINE_TYPE pipelineType = activePipelineType;
-#ifdef PERIMETER_DEBUG
-    if (WireframeMode) pipelineType = PIPELINE_TYPE_LINE_STRIP;
-#endif
 
-    SokolPipelineContext pipeline_context{pipelineType, activePipelineMode, activeDrawBuffer->primitive, vb->fmt};
+    SokolPipelineContext pipeline_context;
+    pipeline_context.pipeline_type = pipelineType;
+    pipeline_context.pipeline_mode = activePipelineMode;
+    pipeline_context.primitive_type = activeDrawBuffer->primitive;
+    pipeline_context.vertex_fmt = vb->fmt;
     SokolPipeline* pipeline = GetPipeline(pipeline_context);
     if (!pipeline) {
         xxassert(0, "CreateCommand: No pipeline found");
@@ -960,7 +961,7 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
 uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
     switch(option) {
         case RS_WIREFRAME:
-            return WireframeMode;
+            return activePipelineMode.wireframe_mode;
         case RS_ZWRITEENABLE:
             return activePipelineMode.depth_write;
         case RS_CULLMODE:
@@ -1000,9 +1001,9 @@ int cSokolRender::SetRenderState(eRenderStateOption option, uint32_t value) {
         }
         case RS_WIREFRAME: {
             bool state = value != 0;
-            if (state != WireframeMode) {
+            if (state != activePipelineMode.wireframe_mode) {
                 FinishActiveDrawBuffer();
-                WireframeMode = state;
+                activePipelineMode.wireframe_mode = state;
             }
             break;
         }

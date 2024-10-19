@@ -34,6 +34,7 @@ private:
     int                         xScrMin,yScrMin,xScrMax,yScrMax;
     
     bool isOrthographicProjSet = false;
+    bool WireframeMode = false;
 
     void UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len);
     void UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len);

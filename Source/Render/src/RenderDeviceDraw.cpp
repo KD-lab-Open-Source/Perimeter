@@ -504,6 +504,7 @@ void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, c
     
     uint32_t zwrite = GetRenderState(RS_ZWRITEENABLE);
     SetRenderState(RS_ZWRITEENABLE, 1);
+    bool WireframeMode = GetRenderState(RS_WIREFRAME);
     if (wireframe && !WireframeMode) SetRenderState(RS_WIREFRAME, 1);
     SetWorldMatXf(Matrix);
     SetNoMaterial(ALPHA_BLEND);

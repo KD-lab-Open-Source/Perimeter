@@ -6,7 +6,7 @@
 const uint32_t PERIMETER_SOKOL_PIPELINES_MAX = 128;
 
 struct SokolPipeline {
-    SokolPipelineContext context{};
+    SokolPipelineContext context = {};
     //Created pipeline for this
     sg_pipeline pipeline = {};
     //Shader ID

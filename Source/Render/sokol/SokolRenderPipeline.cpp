@@ -23,7 +23,7 @@ sg_compare_func GetSokolCompareFunc(eCMPFUNC cmpfunc) {
     }
 }
 
-pipeline_mode_value_t PIPELINE_MODE::GetValue() const {
+pipeline_mode_value_t SokolPipelineMode::GetValue() const {
     pipeline_mode_value_t value = blend & 0b111;
     value |= (depth_write & 0b1) << 3;
     value |= (depth_cmp & 0b11) << 4;
@@ -31,7 +31,7 @@ pipeline_mode_value_t PIPELINE_MODE::GetValue() const {
     return value;
 }
 
-void PIPELINE_MODE::FromValue(pipeline_mode_value_t value) {
+void SokolPipelineMode::FromValue(pipeline_mode_value_t value) {
     blend = static_cast<eBlendMode>(value & 0b111);
     depth_write = static_cast<bool>((value >> 3) & 0b1);
     depth_cmp = static_cast<eCMPFUNC>((value >> 4) & 0b11);
@@ -75,9 +75,6 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
 
     //Choose shader
     switch (context.pipeline_type) {
-#ifdef PERIMETER_DEBUG
-        case PIPELINE_TYPE_LINE_STRIP:
-#endif
         case PIPELINE_TYPE_MESH:
             switch (context.vertex_fmt) {
                 case sVertexXYZT1::fmt:
@@ -116,12 +113,21 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
     //Common part of pipeline desc
     desc.depth.compare = GetSokolCompareFunc(context.pipeline_mode.depth_cmp);
     desc.depth.write_enabled = context.pipeline_mode.depth_write;
+    bool lines = context.pipeline_mode.wireframe_mode;
     switch (context.primitive_type) {
         case PT_TRIANGLES:
-            desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+            if (lines) {
+                desc.primitive_type = SG_PRIMITIVETYPE_LINES;
+            } else {
+                desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+            }
             break;
         case PT_TRIANGLESTRIP:
-            desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+            if (lines) {
+                desc.primitive_type = SG_PRIMITIVETYPE_LINE_STRIP;
+            } else {
+                desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+            }
             break;
         default:
             xxassert(false, "Unknown primitive mode");
@@ -271,16 +277,21 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
             fprintf(stderr, "RegisterPipeline: Unknown shader id '%d' at pipeline '%s'\n", shader_id, desc.label);
             return;
     }
-    if (context.vertex_fmt & VERTEX_FMT_TEX1 && context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
-        fprintf(stderr, "RegisterPipeline: 'un_tex0' image slot not found at pipeline '%s'\n", desc.label);
-    }
-    if (context.vertex_fmt & VERTEX_FMT_TEX2) {
-        if (context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
-            fprintf(stderr, "RegisterPipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
+
+    if (shader_id != SOKOL_SHADER_ID_object_shadow) {
+        //Check for any missing slots
+        if (context.vertex_fmt & VERTEX_FMT_TEX1 &&
+            context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
+            fprintf(stderr, "RegisterPipeline: 'un_tex0' image slot not found at pipeline '%s'\n", desc.label);
         }
-    }
-    if (context.vertex_fmt & VERTEX_FMT_TEX1 && context.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0") < 0) {
-        fprintf(stderr, "RegisterPipeline: 'un_sampler0' sampler slot not found at pipeline '%s'\n", desc.label);
+        if (context.vertex_fmt & VERTEX_FMT_TEX2) {
+            if (context.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
+                fprintf(stderr, "RegisterPipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
+            }
+        }
+        if (context.vertex_fmt & VERTEX_FMT_TEX1 && context.shader_funcs->sampler_slot(SG_SHADERSTAGE_FS, "un_sampler0") < 0) {
+            fprintf(stderr, "RegisterPipeline: 'un_sampler0' sampler slot not found at pipeline '%s'\n", desc.label);
+        }
     }
     
     //Common attributes
@@ -288,9 +299,13 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
 
     //We bind required attributes into layout of pipeline if provided fmt needs so
     bind_vertex_fmt(context, VERTEX_FMT_DIFFUSE);
-    bind_vertex_fmt(context, VERTEX_FMT_TEX1);
+    if (shader_id != SOKOL_SHADER_ID_object_shadow) {
+        bind_vertex_fmt(context, VERTEX_FMT_TEX1);
+    }
     bind_vertex_fmt(context, VERTEX_FMT_TEX2);
-    bind_vertex_fmt(context, VERTEX_FMT_NORMAL);
+    if (shader_id != SOKOL_SHADER_ID_object_shadow) {
+        bind_vertex_fmt(context, VERTEX_FMT_NORMAL);
+    }
 
     if (activeRenderTarget != nullptr) {
         if (activeRenderTarget == shadowMapRenderTarget) {
@@ -365,7 +380,12 @@ void cSokolRender::RegisterPipeline(SokolPipelineContext context) {
 }
 
 struct SokolPipeline* cSokolRender::GetPipeline(const SokolPipelineContext& context) {
-    auto p = std::find_if(pipelines.begin(), pipelines.end(), [&context](const auto& pipeline) -> bool { return pipeline->context == context; });
+    auto p = std::find_if(
+        pipelines.begin(), pipelines.end(),
+        [&context](const auto& pipeline) -> bool {
+            return pipeline->context == context;
+        }
+    );
     if (p != pipelines.end()) {
         return *p;
     }
