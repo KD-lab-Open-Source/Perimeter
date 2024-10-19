@@ -38,7 +38,6 @@ public:
 	virtual void SetMaterialTilemapShadow()=0;
 
 	virtual IDirect3DTexture9* GetTZBuffer(){return NULL;}
-	virtual IDirect3DTexture9* GetTilemapShadow0(){return NULL;}
 
 	virtual void SetTileColor(sColor4f color)=0;//r,g,b=[0..2], a=ignored etc
 
@@ -197,9 +196,6 @@ public:
 	virtual bool CreateShadowTexture(int xysize);
 	virtual void SetMaterialTilemap(cTileMap *TileMap);
 	virtual void SetMaterialTilemapShadow();
-	virtual IDirect3DTexture9* GetTilemapShadow0() { 
-        return pLookupMap->GetFrameImage(0)->d3d;
-    }
 	virtual void SetTileColor(sColor4f color);
 protected:
 	void SetMaterial(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data);

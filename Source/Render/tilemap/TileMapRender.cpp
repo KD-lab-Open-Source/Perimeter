@@ -424,8 +424,9 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
     // clear render lists
     int i;
-    for (i = 0; i < bumpTexPools.size(); i++)
+    for (i = 0; i < bumpTexPools.size(); i++) {
         bumpTexPools[i]->tileRenderList.clear();
+    }
 
     // create/update tiles' vertices/textures
     int n,k;
@@ -594,13 +595,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
         }
 
         if (shadow) {
-#ifdef PERIMETER_D3D9
-            TextureImage teximg(gb_RenderDevice3D->dtAdvance->GetTilemapShadow0());
-            gb_RenderDevice3D->SetTextureImage(0, &teximg);
-#endif
-#ifdef PERIMETER_SOKOL
-            gb_RenderDevice->SetTextureImage(0, nullptr);
-#endif
+            gb_RenderDevice->SetTextureImage(first_texture_number, nullptr);
         } else {
             gb_RenderDevice->SetTextureImage(first_texture_number, curpool->GetTexture()->GetFrameImage(0));
         }
