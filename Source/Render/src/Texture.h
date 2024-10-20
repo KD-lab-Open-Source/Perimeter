@@ -47,7 +47,7 @@ public:
 	cTexture(const char *TexName=0);
 	~cTexture();
     void SetName(const char *Name);
-	inline const char* GetName()const{return name.c_str();};
+	inline const std::string& GetName() const { return name; };
 	int GetNumberMipMap();
 	void SetNumberMipMap(int number);
 

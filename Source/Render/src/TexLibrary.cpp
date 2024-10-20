@@ -77,7 +77,7 @@ void cTexLibrary::FreeOne(FILE* f)
 		}else
 		{
 //			VISASSERT(p->GetRef()==1);
-			if (f) fprintf(f,"%s - %" PRIi64 "\n",p->GetName(),p->GetRef());
+			if (f) fprintf(f,"%s - %" PRIi64 "\n",p->GetName().c_str(),p->GetRef());
 		}
 	}
 
@@ -166,7 +166,7 @@ cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,const char *pM
 		cTexture* cur=GetTexture(i);
 		xassert(cur->GetX()>=0 && cur->GetX()<=15);
 		xassert(cur->GetY()>=0 && cur->GetY()<=15);
-		if( cur && stricmp(cur->GetName(),TextureName)==0)
+		if( cur && stricmp(cur->GetName().c_str(),TextureName)==0)
 		{
 			cur->IncRef();
 			return cur;
@@ -204,7 +204,7 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,const char *pMode)
 	{
 		cTexture* cur=GetTexture(i);
 		xassert(cur);
-		if( cur && stricmp(cur->GetName(),path.c_str())==0)
+		if( cur && stricmp(cur->GetName().c_str(),path.c_str())==0)
 		{
 			xassert(cur->GetX() >= 0 && cur->GetX() <= 15);
 			xassert(cur->GetY() >= 0 && cur->GetY() <= 15);
@@ -377,7 +377,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 
 void cTexLibrary::Error(cTexture* Texture) {
 	if(enable_error) {
-        VisError << "Error: cTexLibrary::GetElement()\r\nTexture is bad: " << Texture->GetName() << "."
+        VisError << "Error: cTexLibrary::GetElement()\r\nTexture is bad: " << Texture->GetName().c_str() << "."
                  << VERR_END;
     }
 }
@@ -390,8 +390,7 @@ void cTexLibrary::ReloadAllTexture()
 	FOR_EACH(textures,it)
 	{
 		cTexture* p=*it;
-		if(p->GetName() && p->GetName()[0])
-		{
+		if (!p->GetName().empty() && p->GetName()[0]) {
 			ReLoadTexture(p);
 		}
 	}
@@ -406,7 +405,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 	char* buf = nullptr;
 	int size = 0;
 	//0 - alpha_none, 1- alpha_test, 2 - alpha_blend
-	int ret=ResourceFileRead(Texture->GetName(),buf,size);
+	int ret=ResourceFileRead(Texture->GetName().c_str(),buf,size);
 	if(ret)
 		return false;
 
