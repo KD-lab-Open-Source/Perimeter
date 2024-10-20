@@ -145,11 +145,9 @@ void cTileMapRender::bumpCreateIB(sPolygon *ib, int lod)
             ib++->set(base + ddv, base + ddv + 1, base + 1);
         }
     }
-
 }
 
-void cTileMapRender::PreDraw(cCamera* DrawNode)
-{
+void cTileMapRender::PreDraw(cCamera* DrawNode) {
     for(int y=0; y < tilemap->GetTileNumber().y; y++)
         for(int x=0; x < tilemap->GetTileNumber().x; x++)
         {
@@ -173,18 +171,154 @@ void cTileMapRender::PreDraw(cCamera* DrawNode)
     }
 
     bumpTilesDeath();
+
+    CalcTileMap(DrawNode);
 }
 
-int cTileMapRender::bumpNumVertices(int lod)
-{
+void cTileMapRender::CalcTileMap(cCamera* DrawNode) {
+    cTileMap::calcVisMap(DrawNode, tilemap->GetTileNumber(), tilemap->GetTileSize(), visMap, true);
+
+//start_timer(Calc_TileMap, 1);
+
+    // clear render lists
+    int i;
+    for (i = 0; i < bumpTexPools.size(); i++) {
+        bumpTexPools[i]->tileRenderList.clear();
+    }
+
+    // create/update tiles' vertices/textures
+    int n,k;
+    int dn=tilemap->GetTileNumber().y,dk=tilemap->GetTileNumber().x;
+    cCamera* pNormalCamera = DrawNode->GetRoot();
+    float lod_focus=Option_MapLevel * pNormalCamera->GetFocusViewPort().x;
+    float DistLevelDetail[TILEMAP_LOD] = { // was: 1,2,4,6
+            0.5f * lod_focus,
+            1.5f * lod_focus,
+            3.0f * lod_focus,
+            6.0f * lod_focus,
+            12.0f* lod_focus
+    };
+
+    Vect3f dcoord(
+            tilemap->GetTileSize().x * tilemap->GetScale().x,
+            tilemap->GetTileSize().y * tilemap->GetScale().y,
+            255 * tilemap->GetScale().z
+    );
+    Vect3f coord(0, 0, 0);
+
+    cTileMapRender* render=tilemap->GetTilemapRender();
+    for (n = 0; n < dn; n++, coord.x = 0, coord.y += dcoord.y) {
+        for (k = 0; k < dk; k++, coord.x += dcoord.x) {
+            //*
+            if (visMap[k + n * dk])
+                /*/
+                    if (DrawNode->TestVisible(coord, coord+dcoord))
+                /**/
+            {
+                // process visible tile
+                sTile& Tile = tilemap->GetTile(k, n);
+                int& bumpTileID = Tile.bumpTileID;
+
+                // calc LOD считается всегда по отгошению к прямой камере для 
+                // избежания случая 2 разных LOD в одно время 
+                float dist = pNormalCamera->GetPos().distance(coord + dcoord / 2);
+                int iLod;
+                for (iLod = 0; iLod < TILEMAP_LOD; iLod++)
+                    if (dist < DistLevelDetail[iLod]) break;
+                if (iLod >= TILEMAP_LOD) iLod = TILEMAP_LOD - 1;
+                vis_lod[k + n * dk] = iLod;
+
+                // create/update render tile
+                if (render->bumpTileValid(bumpTileID)
+                    && render->bumpTiles[bumpTileID]->LOD != iLod) {
+                    // LOD changed, free old tile and allocate new
+                    bumpTileFree(bumpTileID);
+                    bumpTileID = bumpTileAlloc(iLod, k, n);
+                } else if (!bumpTileValid(bumpTileID)) {
+                    // no tile assigned, allocate one
+                    bumpTileID = bumpTileAlloc(iLod, k, n);
+                }
+
+                sBumpTile* bumpTile = bumpTiles[bumpTileID];
+                if (!bumpTile) {
+                    xassert(bumpTile);
+                    continue;
+                }
+                // set flags, add tile to list
+                Tile.SetDraw();
+                bumpTile->ToList();
+            } else {
+                vis_lod[k + n * dk] = -1;
+            }
+        }
+    }
+
+//stop_timer(Calc_TileMap, 1);
+
+    tilemap->GetTerra()->LockColumn();
+    for (n = 0; n < dn; n++) {
+        for (k = 0; k < dk; k++) {
+            sTile& Tile = tilemap->GetTile(k, n);
+            int bumpTileID = Tile.bumpTileID;
+            if (bumpTileID < 0)continue;
+            sBumpTile* bumpTile = bumpTiles[bumpTileID];
+            int LOD = bumpTile->LOD;
+            bool update_line = false;
+            if (k > 0) {
+                char lod = vis_lod[k - 1 + n * dk];
+                char& cur_lod = bumpTile->border_lod[sBumpTile::U_LEFT];
+                if (lod >= LOD && cur_lod != lod) {
+                    cur_lod = lod;
+                    update_line = true;
+                }
+            }
+
+            if (k < dk - 1) {
+                char lod = vis_lod[k + 1 + n * dk];
+                char& cur_lod = bumpTile->border_lod[sBumpTile::U_RIGHT];
+                if (lod >= LOD && cur_lod != lod) {
+                    cur_lod = lod;
+                    update_line = true;
+                }
+            }
+
+            if (n > 0) {
+                char lod = vis_lod[k + (n - 1) * dk];
+                char& cur_lod = bumpTile->border_lod[sBumpTile::U_TOP];
+                if (lod >= LOD && cur_lod != lod) {
+                    cur_lod = lod;
+                    update_line = true;
+                }
+            }
+
+            if (n < dn - 1) {
+                char lod = vis_lod[k + (n + 1) * dk];
+                char& cur_lod = bumpTile->border_lod[sBumpTile::U_BOTTOM];
+                if (lod >= LOD && cur_lod != lod) {
+                    cur_lod = lod;
+                    update_line = true;
+                }
+            }
+
+            if ((!bumpTile->init) || Tile.GetUpdate() || update_line) {
+                bumpTile->Calc(!bumpTile->init || Tile.GetUpdate());
+                Tile.ClearUpdate();
+            }
+
+        }
+    }
+    
+    tilemap->GetTerra()->UnlockColumn();
+}
+
+int cTileMapRender::bumpNumVertices(int lod) {
     int xs = (tilemap->GetTileSize().x >> bumpGeoScale[lod]);
     int ys = (tilemap->GetTileSize().y >> bumpGeoScale[lod]);
 
     return (xs+1)*(ys+1);
 }
 
-int cTileMapRender::bumpTileValid(int id)
-{
+int cTileMapRender::bumpTileValid(int id) {
     return ((id >= 0) && (id < bumpTiles.size()) && (bumpTiles[id]));
 }
 
@@ -233,10 +367,10 @@ int cTileMapRender::bumpTileAlloc(int lod,int xpos,int ypos)
     return i;
 }
 
-void cTileMapRender::bumpTileFree(int id)
-{
-    if (bumpTileValid(id))
+void cTileMapRender::bumpTileFree(int id) {
+    if (bumpTileValid(id)) {
         bumpDyingTiles.push_back(id);
+    }
 }
 
 void cTileMapRender::bumpTilesDeath()
@@ -305,19 +439,12 @@ void cTileMapRender::SaveUpdateStat()
     SaveTGA(fname,dx,dy,buf,4);
     delete[] buf;
 }
+
 void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow)
 {
     cCamera* pShadowMapCamera=DrawNode->FindCildCamera(ATTRCAMERA_SHADOWMAP);
     int reflection = DrawNode->GetAttribute(ATTRCAMERA_REFLECTION);
-    cCamera* pNormalCamera=DrawNode->GetRoot();
-    cTileMapRender* render=tilemap->GetTilemapRender();
     bool use_shadow_map=false;
-
-    Vect3f dcoord(
-            tilemap->GetTileSize().x * tilemap->GetScale().x,
-            tilemap->GetTileSize().y * tilemap->GetScale().y,
-            255 * tilemap->GetScale().z),
-            coord(0, 0, 0);
 
     gb_RenderDevice->SetWorldMatXf(MatXf::ID);
 
@@ -326,12 +453,11 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
        //gb_RenderDevice3D->dtAdvance==gb_RenderDevice3D->dtFixed && 
        !reflection)
     {
-        gb_RenderDevice->SetNoMaterial(MatMode, 0, 0, tilemap->GetShadowMap(), COLOR_MOD);
+        gb_RenderDevice->SetNoMaterial(MatMode, 0, nullptr, tilemap->GetShadowMap(), COLOR_MOD);
 
 #ifdef PERIMETER_D3D9
         if (gb_RenderDevice3D) {
             cTexture* pShadowMap=pShadowMapCamera->GetRenderTarget();
-            int width=pShadowMap->GetWidth();
             float tOffs = 0;//(0.5f / width);
             Mat4f matTexAdj(0.5f,    0.0f,        0.0f,        0.0f,
                             0.0f,   -0.5f,        0.0f,        0.0f,
@@ -352,11 +478,10 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             gb_RenderDevice3D->SetSamplerState(1, D3DSAMP_MAGFILTER, gb_RenderDevice3D->texture_interpolation);
         }
 #endif
-    }else
-    if(tilemap->GetShadowMap() && !shadow && (Option_ShadowType != SHADOW_MAP && Option_ShadowType != SHADOW_MAP_PERSPECTIVE) && !reflection)
-    {
-
-        gb_RenderDevice->SetNoMaterial(MatMode, 0, 0, tilemap->GetShadowMap(), COLOR_MOD4);
+    } else if (tilemap->GetShadowMap() && !shadow && !reflection 
+           && (Option_ShadowType != SHADOW_MAP && Option_ShadowType != SHADOW_MAP_PERSPECTIVE)
+    ) {
+        gb_RenderDevice->SetNoMaterial(MatMode, 0, nullptr, tilemap->GetShadowMap(), COLOR_MOD4);
 
 #ifdef PERIMETER_D3D9
         if (gb_RenderDevice3D) {
@@ -376,6 +501,9 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     }
     
 #ifdef PERIMETER_D3D9
+    uint32_t minfilter1=0;
+    uint32_t magfilter1=0;
+    
     if (gb_RenderDevice3D) {
         gb_RenderDevice3D->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
         //gb_RenderDevice3D->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
@@ -385,15 +513,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
         gb_RenderDevice3D->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
         gb_RenderDevice3D->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         gb_RenderDevice3D->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-    }
-#endif
 
-    cTileMap::calcVisMap(DrawNode, tilemap->GetTileNumber(), tilemap->GetTileSize(), visMap, true);
-
-#ifdef PERIMETER_D3D9
-    uint32_t minfilter1=0;
-    uint32_t magfilter1=0;
-    if (gb_RenderDevice3D) {
         minfilter1 = gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MINFILTER);
         magfilter1 = gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MAGFILTER);
     }
@@ -403,8 +523,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     uint32_t cull=gb_RenderDevice->GetRenderState(RS_CULLMODE);
 //	gb_RenderDevice->SetRenderState( RS_CULLMODE, CULL_NONE );
 
-    if(shadow)
-    {
+    if (shadow) {
         if(DrawNode->GetAttribute(ATTRCAMERA_ZINVERT))
         {
             gb_RenderDevice->SetRenderState(RS_ZFUNC,CMP_GREATEREQUAL);
@@ -420,150 +539,9 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
         }
     }
 
-//start_timer(Calc_TileMap, 1);
-
-    // clear render lists
-    int i;
-    for (i = 0; i < bumpTexPools.size(); i++) {
-        bumpTexPools[i]->tileRenderList.clear();
-    }
-
-    // create/update tiles' vertices/textures
-    int n,k;
-    int dn=tilemap->GetTileNumber().y,dk=tilemap->GetTileNumber().x;
-    float lod_focus=Option_MapLevel * pNormalCamera->GetFocusViewPort().x;
-    float DistLevelDetail[TILEMAP_LOD] = { // was: 1,2,4,6
-            0.5f * lod_focus,
-            1.5f * lod_focus,
-            3.0f * lod_focus,
-            6.0f * lod_focus,
-            12.0f* lod_focus
-    };
-
-    for (n = 0; n < dn; n++, coord.x = 0, coord.y += dcoord.y)
-        for (k = 0; k < dk; k++, coord.x += dcoord.x)
-//*
-            if(visMap[k+n*dk])
-/*/
-	if (DrawNode->TestVisible(coord, coord+dcoord))
-/**/
-            {
-                // process visible tile
-                sTile &Tile = tilemap->GetTile(k, n);
-                int &bumpTileID = Tile.bumpTileID;
-
-                // calc LOD считается всегда по отгошению к прямой камере для 
-                // избежания случая 2 разных LOD в одно время 
-                float dist = pNormalCamera->GetPos().distance(coord + dcoord/2);
-                int iLod;
-                for (iLod = 0; iLod < TILEMAP_LOD; iLod++)
-                    if (dist < DistLevelDetail[iLod]) break;
-                if (iLod >= TILEMAP_LOD) iLod = TILEMAP_LOD-1;
-                vis_lod[k+n*dk]=iLod;
-
-                // create/update render tile
-                if (render->bumpTileValid(bumpTileID)
-                    && render->bumpTiles[bumpTileID]->LOD != iLod && !shadow)
-                {
-                    // LOD changed, free old tile and allocate new
-                    bumpTileFree(bumpTileID);
-                    bumpTileID = bumpTileAlloc(iLod,k,n);
-                } else if (!bumpTileValid(bumpTileID))
-                {
-                    // no tile assigned, allocate one
-                    bumpTileID = bumpTileAlloc(iLod,k,n);
-                }
-
-                sBumpTile *bumpTile = bumpTiles[bumpTileID];
-                xassert(bumpTile);
-                // set flags, add tile to list
-                Tile.SetDraw();
-
-                bool add=false;
-                switch(tile_draw)
-                {
-                    case TILEMAP_ALL:
-                        add=true;
-                        break;
-                    case TILEMAP_ZEROPLAST:
-                        add=bumpTile->IsZeroplast();
-                        break;
-                    case TILEMAP_NOZEROPLAST:
-                        add=!bumpTile->IsOnlyZeroplast();
-                        break;
-                }
-
-                if (add) {
-                    bumpTile->ToList();
-                }
-            }else
-                vis_lod[k+n*dk]=-1;
-
-//stop_timer(Calc_TileMap, 1);
-
-    tilemap->GetTerra()->LockColumn();
-    for (n = 0; n < dn; n++)
-        for (k = 0; k < dk; k++)
-        {
-            sTile &Tile = tilemap->GetTile(k, n);
-            int bumpTileID = Tile.bumpTileID;
-            if(bumpTileID<0)continue;
-            sBumpTile *bumpTile = bumpTiles[bumpTileID];
-            int LOD=bumpTile->LOD;
-            bool update_line=false;
-            if(k>0)
-            {
-                char lod=vis_lod[k-1+n*dk];
-                char& cur_lod=bumpTile->border_lod[sBumpTile::U_LEFT];
-                if(lod>=LOD && cur_lod!=lod)
-                {
-                    cur_lod=lod;
-                    update_line=true;
-                }
-            }
-
-            if(k<dk-1)
-            {
-                char lod=vis_lod[k+1+n*dk];
-                char& cur_lod=bumpTile->border_lod[sBumpTile::U_RIGHT];
-                if(lod>=LOD && cur_lod!=lod)
-                {
-                    cur_lod=lod;
-                    update_line=true;
-                }
-            }
-
-            if(n>0)
-            {
-                char lod=vis_lod[k+(n-1)*dk];
-                char& cur_lod=bumpTile->border_lod[sBumpTile::U_TOP];
-                if(lod>=LOD && cur_lod!=lod)
-                {
-                    cur_lod=lod;
-                    update_line=true;
-                }
-            }
-
-            if(n<dn-1)
-            {
-                char lod=vis_lod[k+(n+1)*dk];
-                char& cur_lod=bumpTile->border_lod[sBumpTile::U_BOTTOM];
-                if(lod>=LOD && cur_lod!=lod)
-                {
-                    cur_lod=lod;
-                    update_line=true;
-                }
-            }
-
-            if((!bumpTile->init) || Tile.GetUpdate() || update_line)
-            {
-                bumpTile->Calc(!bumpTile->init || Tile.GetUpdate());
-                Tile.ClearUpdate();
-            }
-
-        }
-    tilemap->GetTerra()->UnlockColumn();
-
+#ifdef DEBUG_TILES
+    cCamera* pNormalCamera = DrawNode->GetRoot();
+#endif
 //	if(pNormalCamera==DrawNode)
 //		gb_RenderDevice->SetRenderState(RS_WIREFRAME,1);
     int first_texture_number = use_shadow_map ? 1 : 0;
@@ -587,6 +565,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     int nTiles = 0;
     VertexBuffer* lastVB = nullptr;
 #endif
+    cTileMapRender* render=tilemap->GetTilemapRender();
     VertexPoolManager* vtxPoolMan = render->GetVertexPool();
     IndexPoolManager* idxPoolMan = render->GetIndexPool();
     for (cTilemapTexturePool* curpool : bumpTexPools) {
@@ -647,6 +626,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                 DrawRange range;
                 range.offset = nIndexOffset;
                 range.len = nIndex;
+
                 gb_RenderDevice->SubmitBuffers(PT_TRIANGLES, vb, nVertex, ib, ib_len, &range);
             }
 
@@ -657,9 +637,8 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
             }
             nTiles++;
             st_Poly += nPolygon;
-#endif
 
-            if(false)
+            if (false) {
                 if(pNormalCamera==DrawNode)
                 {
                     int x=bumpTile->tile_pos.x;
@@ -680,6 +659,8 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
                     gb_RenderDevice->DrawLine(v11,v10,color);
                     gb_RenderDevice->DrawLine(v10,v00,color);
                 }
+            }
+#endif
         }
     }
 
