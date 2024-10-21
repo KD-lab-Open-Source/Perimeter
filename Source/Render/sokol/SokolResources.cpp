@@ -1,6 +1,6 @@
 #include "xerrhand.h"
 #include "xmath.h"
-#include <sokol_gfx.h>
+#include "SokolIncludes.h"
 #include "SokolResources.h"
 #include "SokolTypes.h"
 

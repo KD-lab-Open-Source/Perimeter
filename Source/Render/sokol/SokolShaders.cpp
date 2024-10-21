@@ -1,6 +1,6 @@
 // This file implements shaders structs
 #include <cstring>
-#include <sokol_gfx.h>
+#include "SokolIncludes.h"
 #include "xmath.h"
 #include "SokolShaders.h"
 SOKOL_SHADER_IMPL(color_tex1);

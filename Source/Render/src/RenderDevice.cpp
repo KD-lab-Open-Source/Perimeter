@@ -14,6 +14,7 @@
 #include "D3DRender.h"
 #endif
 #ifdef PERIMETER_SOKOL
+#include "sokol/SokolIncludes.h"
 #include "sokol/SokolResources.h"
 #include "sokol/SokolRender.h"
 #endif
@@ -610,6 +611,26 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,const void *pSrc,int bplDst,void
 				}
 		delete[] rgba;
 	}
+}
+
+void cInterfaceRenderDevice::DebugUISetEnable(bool state) {
+    debugUIEnabled = state;
+}
+
+bool cInterfaceRenderDevice::DebugUIIsEnabled() {
+    return debugUIEnabled;
+}
+
+bool cInterfaceRenderDevice::DebugUIMouseMove(const Vect2f& pos) {
+    return false;
+}
+
+bool cInterfaceRenderDevice::DebugUIMousePress(const Vect2f& pos, uint8_t button, bool pressed) {
+    return false;
+}
+
+bool cInterfaceRenderDevice::DebugUIKeyPress(struct sKey* key, bool pressed) {
+    return false;
 }
 
 // Render device selection

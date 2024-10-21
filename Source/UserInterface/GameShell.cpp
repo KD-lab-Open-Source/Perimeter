@@ -1086,6 +1086,10 @@ void GameShell::EventHandler(SDL_Event& event) {
             }
             Vect2f where = convert(event.button.x, event.button.y);
             //printf("M %fx%f B %dn", where.x, where.y, event.button.button, pressed);
+            if (terRenderDevice->DebugUIIsEnabled()
+            && terRenderDevice->DebugUIMousePress(where, event.button.button, pressed)) {
+                break;
+            }
             switch (event.button.button) {
                 case SDL_BUTTON_LEFT:
                     if (doubleClick) {
@@ -1372,6 +1376,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		debug_variation = 1 - debug_variation;
 		break;
 
+    case 'R' | KBD_CTRL:
+        terRenderDevice->DebugUISetEnable(!terRenderDevice->DebugUIIsEnabled());
+        break;
+
 	case 'M':
 		terCamera->setRestriction(!terCamera->restricted());
 		break;
@@ -1577,9 +1585,15 @@ void GameShell::KeyPressed(sKey& Key)
         terminate();
         return;
     }
-    
-	if(missionEditor_ && missionEditor_->keyPressed(Key))
-		return;
+
+    if (terRenderDevice->DebugUIIsEnabled()
+    && terRenderDevice->DebugUIKeyPress(&Key, true)) {
+        return;
+    }
+
+    if (missionEditor_ && missionEditor_->keyPressed(Key)) {
+        return;
+    }
 
 	if (Key.fullkey == (VK_F1|KBD_SHIFT|KBD_CTRL)) {
 #ifndef PERIMETER_DEBUG
@@ -1813,8 +1827,14 @@ void GameShell::ControlPressed(int key)
 
 void GameShell::KeyUnpressed(sKey& Key)
 {
-	if(missionEditor_ && missionEditor_->keyUnpressed(Key))
-		return;
+    if (terRenderDevice->DebugUIIsEnabled()
+    && terRenderDevice->DebugUIKeyPress(&Key, false)) {
+        return;
+    }
+
+	if (missionEditor_ && missionEditor_->keyUnpressed(Key)) {
+        return;
+    }
 
 	if(_bMenuMode){
 		_shellIconManager.OnKeyUp(Key.fullkey);
@@ -1876,8 +1896,14 @@ void GameShell::updatePosition()
 
 void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 {
-	if(missionEditor_ && missionEditor_->mouseMove(pos))
-		return;
+    if (terRenderDevice->DebugUIIsEnabled()
+    && terRenderDevice->DebugUIMouseMove(pos)) {
+        return;
+    }
+
+	if (missionEditor_ && missionEditor_->mouseMove(pos)) {
+        return;
+    }
 
 	cameraCursorInWindow = true;
 

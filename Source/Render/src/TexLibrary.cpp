@@ -10,7 +10,7 @@
 #endif //PERIMETER_D3D9
 
 #ifdef PERIMETER_SOKOL
-#include <sokol_gfx.h>
+#include "sokol/SokolIncludes.h"
 #include "sokol/SokolResources.h"
 #endif //PERIMETER_SOKOL
 

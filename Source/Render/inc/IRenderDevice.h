@@ -151,6 +151,7 @@ protected:
     std::unordered_map<uint64_t, class DrawBuffer*> drawBuffers;
     Mat4f orthoVP;
     eCullMode CameraCullMode = CULL_NONE;
+    bool debugUIEnabled = false;
 
     virtual void DrawFieldDispatcher(class FieldDispatcher* ffd, uint8_t transparent);
 
@@ -268,6 +269,16 @@ public:
     virtual void DrawPoint(const Vect3f &v1, const sColor4c& color);
     virtual void FlushPrimitive3D();
 
+    virtual void DebugUISetEnable(bool enabled);
+    virtual bool DebugUIIsEnabled();
+    virtual bool DebugUIMouseMove(const Vect2f& pos);
+    virtual bool DebugUIMousePress(const Vect2f& pos, uint8_t button, bool pressed);
+    virtual bool DebugUIKeyPress(struct sKey* key, bool pressed);
+
+#ifdef PERIMETER_DEBUG
+    virtual void StartCaptureFrame();
+#endif
+
     // Decl only methods
 
     virtual eRenderDeviceSelection GetRenderSelection() const = 0;
@@ -333,9 +344,7 @@ public:
     virtual cTexture* GetShadowMap() = 0;
     virtual cTexture* GetLightMap() = 0;
 
-#ifdef PERIMETER_DEBUG
-    virtual void StartCaptureFrame();
-#endif
+    // Decl only methods end
 };
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection);

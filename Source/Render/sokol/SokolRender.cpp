@@ -3,8 +3,7 @@
 #include "StdAfxRD.h"
 #include "xmath.h"
 #include "Umath.h"
-#include <sokol_gfx.h>
-#include <sokol_log.h>
+#include "SokolIncludes.h"
 #include "SokolResources.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
@@ -260,9 +259,42 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     
     //Call sokol gfx setup
     sg_setup(&desc);
-#ifdef PERIMETER_DEBUG
     printf("cSokolRender::Init sg_setup done\n");
-#endif
+
+    debugUIEnabled = false;
+    const char* debugUIArg = check_command_line("render_debug");
+    if (debugUIArg != nullptr && debugUIArg[0]) {
+        DebugUISetEnable(true);
+        switch (debugUIArg[0]) {
+            case 'b':
+                imgui_state->buffer_window.open = true;
+                break;
+            case 'i':
+                imgui_state->image_window.open = true;
+                break;
+            case 's':
+                imgui_state->sampler_window.open = true;
+                break;
+            case 'r':
+                imgui_state->shader_window.open = true;
+                break;
+            case 'p':
+                imgui_state->pipeline_window.open = true;
+                break;
+            case 'a':
+                imgui_state->attachments_window.open = true;
+                break;
+            case 'u':
+                imgui_state->capture_window.open = true;
+                break;
+            case 'c':
+                imgui_state->caps_window.open = true;
+                break;
+            case 'f':
+                imgui_state->frame_stats_window.open = true;
+                break;
+        }
+    }
 
     //Create sampler
     sg_sampler_desc sampler_desc = {};
@@ -398,6 +430,11 @@ int cSokolRender::Done() {
         sdl_gl_context = nullptr;
     }
 #endif
+    if (imgui_state) {
+        sgimgui_discard(imgui_state);
+        delete imgui_state;
+        imgui_state = nullptr;
+    }
     RenderSubmitEvent(RenderEvent::DONE, "Sokol done");
     return ret;
 }

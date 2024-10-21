@@ -4,7 +4,7 @@
 #include "Umath.h"
 #include "StdAfxRD.h"
 #include "VertexFormat.h"
-#include <sokol_gfx.h>
+#include "SokolIncludes.h"
 #include "IRenderDevice.h"
 #include "SokolResources.h"
 #include "SokolRender.h"

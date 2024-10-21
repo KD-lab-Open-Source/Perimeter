@@ -4,18 +4,26 @@ OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
 #Include Sokol
 FetchContent_Declare(sokol
         GIT_REPOSITORY    https://github.com/floooh/sokol
-        GIT_TAG           "67339198b75a7d04da3676db2b56514bf363d4b1"
+        GIT_TAG           "4bda1469d3b311af03a34dd956460776c920dc2e"
         GIT_SHALLOW       OFF
-        )
+)
 FetchContent_MakeAvailable(sokol)
+
+#Include ImGui
+FetchContent_Declare(imgui
+        GIT_REPOSITORY    https://github.com/ocornut/imgui
+        GIT_TAG           "cb16568fca5297512ff6a8f3b877f461c4323fbe"
+        GIT_SHALLOW       OFF
+)
+FetchContent_MakeAvailable(imgui)
 
 IF (OPTION_PROCESS_SHADERS)
     #Download precompiled sokol-shdc
     FetchContent_Declare(sokol-tools-bin
             GIT_REPOSITORY    https://github.com/floooh/sokol-tools-bin
-            GIT_TAG           "9a54e8ea68807733d82f4b169a8752a8fcad2040"
+            GIT_TAG           "f1af4529746b804d6c79d5a36c333aec489fab27"
             GIT_SHALLOW       OFF
-            )
+    )
     FetchContent_MakeAvailable(sokol-tools-bin)
 
     if(NOT DEFINED ENV{PERIMETER_SHADER_LANG})
@@ -74,64 +82,58 @@ if (MACOS)
     #Required for compiling some glue as Obj-C
     set(RenderSokol_SokolImpl sokol/SokolImpl.mm)
     if(OPTION_SOKOL_API MATCHES "GLCORE")
-        message("Sokol API: OpenGL Core")
-        add_definitions(-DSOKOL_GLCORE)
-        set(SOKOL_GL ON)
         set(RenderSokol_LINK_LIBS "-framework OpenGL")
     elseif(OPTION_SOKOL_API MATCHES "METAL")
-        message("Sokol API: Metal")
-        add_definitions(-DSOKOL_METAL)
         set(RenderSokol_LINK_LIBS "-framework Foundation -framework QuartzCore -framework Metal -framework MetalKit")
         #set(RenderSokol_LINK_LIBS "${RenderSokol_LINK_LIBS} -fobjc-arc -framework AudioToolbox")
         #You may wanna use UIKit here instead when porting to iOS in far far future
         set(RenderSokol_LINK_LIBS "${RenderSokol_LINK_LIBS} -framework Cocoa")
-    else()
-        message(SEND_ERROR "Unknown Sokol API selected: ${OPTION_SOKOL_API}")
     endif()
 elseif(PERIMETER_WINDOWS)
     if(NOT OPTION_SOKOL_API)
         set(OPTION_SOKOL_API "D3D11")
     endif ()
     if(OPTION_SOKOL_API MATCHES "D3D11")
-        message("Sokol API: DirectX 11")
-        add_definitions(-DSOKOL_D3D11)
         set(RenderSokol_LINK_LIBS d3d11)
     elseif(OPTION_SOKOL_API MATCHES "GLCORE")
-        message("Sokol API: OpenGL Core")
-        add_definitions(-DSOKOL_GLCORE)
-        set(SOKOL_GL ON)
         set(RenderSokol_LINK_LIBS opengl32)
-    else()
-        message(SEND_ERROR "Unknown Sokol API selected: ${OPTION_SOKOL_API}")
     endif()
 else()
     if(NOT OPTION_SOKOL_API)
         set(OPTION_SOKOL_API "GLCORE")
     endif ()
     if(OPTION_SOKOL_API MATCHES "GLES3")
-        message("Sokol API: OpenGLES 3.0")
-        add_definitions(-DSOKOL_GLES3)
-        set(SOKOL_GL ON)
-    elseif(OPTION_SOKOL_API MATCHES "GLCORE")
-        message("Sokol API: OpenGL Core")
-        add_definitions(-DSOKOL_GLCORE)
-        set(SOKOL_GL ON)
-    elseif(OPTION_SOKOL_API MATCHES "D3D11")
-        message("Sokol API: D3D11")
-        add_definitions(-DSOKOL_D3D11)
-        #The rest done after add_library()
-    else()
-        message(SEND_ERROR "Unknown Sokol API selected: ${OPTION_SOKOL_API}")
-    endif()
-    if (SOKOL_GL)
         set(RenderSokol_LINK_LIBS GL)
-    endif ()
+    elseif(OPTION_SOKOL_API MATCHES "GLCORE")
+        set(RenderSokol_LINK_LIBS GL)
+    endif()
+endif()
+message(${OPTION_SOKOL_API})
+if(OPTION_SOKOL_API MATCHES "GLES3")
+    message("Sokol API: OpenGLES 3.0")
+    add_definitions(-DSOKOL_GLES3)
+    set(SOKOL_GL ON)
+    set(RenderSokol_ImguiBackend ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
+elseif(OPTION_SOKOL_API MATCHES "GLCORE")
+    message("Sokol API: OpenGL Core")
+    add_definitions(-DSOKOL_GLCORE)
+    set(RenderSokol_ImguiBackend ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
+elseif(OPTION_SOKOL_API MATCHES "D3D11")
+    message("Sokol API: D3D11")
+    add_definitions(-DSOKOL_D3D11)
+    set(RenderSokol_ImguiBackend ${imgui_SOURCE_DIR}/backends/imgui_impl_dx11.cpp)
+elseif(OPTION_SOKOL_API MATCHES "METAL")
+    message("Sokol API: Metal")
+    add_definitions(-DSOKOL_METAL)
+    set(RenderSokol_ImguiBackend ${imgui_SOURCE_DIR}/backends/imgui_impl_metal.mm)
+else()
+    message(SEND_ERROR "Unknown Sokol API selected: ${OPTION_SOKOL_API}")
 endif()
 
 #Required for SDL_GL_* and SDL_SetHint/SDL_GetHint funcs called during render init
 set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY})
 
-add_library(RenderSokol STATIC
+set(RenderSokol_SRCS
     ${RenderSokol_SokolImpl}
     sokol/SokolResources.cpp
     sokol/SokolRender.cpp
@@ -140,7 +142,14 @@ add_library(RenderSokol STATIC
     sokol/SokolRenderDraw.cpp
     sokol/SokolRenderPipeline.cpp
     sokol/SokolShaders.cpp
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${RenderSokol_ImguiBackend}
 )
+
+add_library(RenderSokol STATIC ${RenderSokol_SRCS})
 
 if(NOT PERIMETER_WINDOWS AND OPTION_SOKOL_API MATCHES "D3D11")
     #This way dxvk will be fetched and compiled before RenderSokol
@@ -170,6 +179,7 @@ target_include_directories(RenderSokol PRIVATE
         "${PROJECT_SOURCE_DIR}/Source/Render/tracker"
         "${PROJECT_SOURCE_DIR}/Source/Render/tilemap"
         "${sokol_SOURCE_DIR}/"
+        "${imgui_SOURCE_DIR}/"
 )
 
 #Render also needs headers

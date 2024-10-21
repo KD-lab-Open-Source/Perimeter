@@ -5,7 +5,6 @@
 #define PERIMETER_SOKOL_GL (1)
 #endif
 
-#include <sokol_gfx.h>
 #include <SDL_video.h>
 
 #include "SokolTypes.h"
@@ -92,6 +91,8 @@ private:
     friend const void* sokol_d3d_render_target_view_cb();
     friend const void* sokol_d3d_depth_stencil_view_cb();
 #endif
+
+    struct sgimgui_t* imgui_state = nullptr;
     
     //Stores resources for reusing
     void ClearPooledResources(uint32_t max_life);
@@ -255,6 +256,10 @@ public:
 #ifdef PERIMETER_DEBUG
     void StartCaptureFrame() override;
 #endif
+
+    void DebugUISetEnable(bool state) override;
+    bool DebugUIMouseMove(const Vect2f& pos) override;
+    bool DebugUIMousePress(const Vect2f& pos, uint8_t button, bool pressed) override;
 
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 
