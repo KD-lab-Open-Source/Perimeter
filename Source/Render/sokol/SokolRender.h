@@ -34,8 +34,8 @@ struct SokolCommand {
     void* fs_params = nullptr;
     size_t vs_params_len = 0;
     size_t fs_params_len = 0;
-    Vect2i viewport[2]; //0 Pos 1 Size
-    Vect2i clip[2]; //0 Pos 1 Size
+    Vect2i* viewport = nullptr; //0 Pos 1 Size
+    Vect2i* clip = nullptr; //0 Pos 1 Size
 };
 
 struct SokolRenderTarget final {
@@ -106,7 +106,7 @@ private:
     //Renderer state
     bool ActiveScene = false;
     bool isOrthographicProjSet = false;
-    std::vector<SokolCommand*> commands;
+    std::vector<SokolCommand*> swapchainCommands;
     sg_sampler sampler;
     sg_sampler shadow_sampler;
 
@@ -154,6 +154,8 @@ private:
     sColor4f activeLightAmbient;
     sColor4f activeLightSpecular;
     Mat4f activeTextureTransform[PERIMETER_SOKOL_TEXTURES];
+    Vect2i activeViewport[2]; //0 Pos 1 Size
+    Vect2i activeClip[2]; //0 Pos 1 Size
 
     //Shadow and Light map rendering
     SokolRenderTarget* activeRenderTarget = nullptr;
@@ -172,6 +174,8 @@ private:
     void SetColorMode(eColorMode color_mode);
     void SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
                      const sColor4f& specular, const sColor4f& emissive, float power);
+    void SetCommandViewportClip(bool replace = true);
+    std::vector<SokolCommand*>& getActiveCommands();
     template<typename T>
     void StorePooledResource(
             std::unordered_multimap<uint64_t, SokolResourcePooled<T>>& res_pool,

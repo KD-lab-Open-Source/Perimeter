@@ -535,7 +535,7 @@ void cSokolRender::ClearAllCommands() {
         }
     }
 
-    ClearCommands(commands);
+    ClearCommands(swapchainCommands);
 }
 
 void cSokolRender::ClearPipelines() {
@@ -545,41 +545,66 @@ void cSokolRender::ClearPipelines() {
     pipelines.clear();
 }
 
+void cSokolRender::SetCommandViewportClip(bool replace) {
+    if (activeCommand.viewport && replace) {
+        free(activeCommand.viewport);
+        activeCommand.viewport = nullptr;
+    }
+    if (activeCommand.clip && replace) {
+        free(activeCommand.clip);
+        activeCommand.clip = nullptr;
+    }
+    if (!activeCommand.viewport) {
+        activeCommand.viewport = new Vect2i[2]{
+                activeViewport[0],
+                activeViewport[1]
+        };
+    }
+    if (!activeCommand.clip) {
+        activeCommand.clip = new Vect2i[2]{
+                activeClip[0],
+                activeClip[1]
+        };
+    }
+}
+
 int cSokolRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) {
-    *xmin = activeCommand.clip[0].x;
-    *ymin = activeCommand.clip[0].y;
-    *xmax = activeCommand.clip[1].x + activeCommand.clip[0].x;
-    *ymax = activeCommand.clip[1].y + activeCommand.clip[0].y;
+    *xmin = activeClip[0].x;
+    *ymin = activeClip[0].y;
+    *xmax = activeClip[1].x + activeClip[0].x;
+    *ymax = activeClip[1].y + activeClip[0].y;
     return 0;
 }
 
 int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
     int w = xmax-xmin;
     int h = ymax-ymin;
-    if (activeCommand.clip[0].x == xmin && activeCommand.clip[0].y == ymin
-        && activeCommand.clip[1].x == w && activeCommand.clip[1].y == h) {
+    if (activeClip[0].x == xmin && activeClip[0].y == ymin
+     && activeClip[1].x == w && activeClip[1].y == h) {
         //Nothing to do
         return 0;
     }
     FinishActiveDrawBuffer();
-    activeCommand.clip[0].x = xmin;
-    activeCommand.clip[0].y = ymin;
-    activeCommand.clip[1].x = w;
-    activeCommand.clip[1].y = h;
+    activeClip[0].x = xmin;
+    activeClip[0].y = ymin;
+    activeClip[1].x = w;
+    activeClip[1].y = h;
+    SetCommandViewportClip();
     return 0;
 }
 
 void cSokolRender::ResetViewport() {
-    if (activeCommand.viewport[0].x == 0
-    && activeCommand.viewport[0].y == 0
-    && activeCommand.viewport[1] == ScreenSize) {
+    if (activeViewport[0].x == 0
+    && activeViewport[0].y == 0
+    && activeViewport[1] == ScreenSize) {
         //Nothing to do
         return;
     }
     FinishActiveDrawBuffer();
-    activeCommand.viewport[0].x = 0;
-    activeCommand.viewport[0].y = 0;
-    activeCommand.viewport[1] = ScreenSize;;
+    activeViewport[0].x = 0;
+    activeViewport[0].y = 0;
+    activeViewport[1] = ScreenSize;
+    SetCommandViewportClip();
 }
 
 bool cSokolRender::SetScreenShot(const char *fname) {
@@ -700,6 +725,14 @@ void SokolCommand::CreateShaderParams() {
 }
 
 void SokolCommand::ClearDrawData() {
+    if (viewport) {
+        delete viewport;
+        viewport = nullptr;
+    }
+    if (clip) {
+        delete clip;
+        clip = nullptr;
+    }
     if (pass_action) {
         delete pass_action;
         pass_action = nullptr;
