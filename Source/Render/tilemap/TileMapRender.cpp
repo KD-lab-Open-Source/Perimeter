@@ -340,7 +340,7 @@ cTilemapTexturePool* cTileMapRender::FindFreeTexturePool(int tex_width, int tex_
             i = bumpTexPools.size();
             bumpTexPools.push_back(nullptr);
         }
-        bumpTexPools[i] = new cTilemapTexturePool(tex_width, tex_height, tilemap->GetTexturePoolSize());
+        bumpTexPools[i] = new cTilemapTexturePool(tex_width, tex_height, tilemap->GetTexturePoolSize(), i);
     }
 
     return bumpTexPools[i];

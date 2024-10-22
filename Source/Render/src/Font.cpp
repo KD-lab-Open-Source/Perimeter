@@ -271,6 +271,7 @@ bool cFontInternal::CreateTexture(const char* fontname, const char* filename, in
 	pTexture->SetTimePerFrame(0);
 	pTexture->SetWidth(FontImage.GetX());
 	pTexture->SetHeight(FontImage.GetY());
+    pTexture->label = std::string(fontname) + "_h" + std::to_string(height);
 
 	bool err=false;
 	err=err || gb_VisGeneric->GetRenderDevice()->CreateTexture(pTexture,&FontImage)!=0;

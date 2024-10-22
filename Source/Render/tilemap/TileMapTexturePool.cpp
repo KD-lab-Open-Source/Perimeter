@@ -2,7 +2,7 @@
 #include "StdAfxRD.h"
 #include "TileMapTexturePool.h"
 
-cTilemapTexturePool::cTilemapTexturePool(int w, int h, size_t texture_size)
+cTilemapTexturePool::cTilemapTexturePool(int w, int h, size_t texture_size, size_t index)
 {
     tileWidth = w;
     tileHeight = h;
@@ -19,6 +19,7 @@ cTilemapTexturePool::cTilemapTexturePool(int w, int h, size_t texture_size)
     texture->SetTimePerFrame(0);
     texture->SetWidth(static_cast<int>(texture_size));
     texture->SetHeight(static_cast<int>(texture_size));
+    texture->label = "TilemapTex_" + std::to_string(index);
     gb_RenderDevice->CreateTexture(texture, nullptr);
 
     xassert(tileRealWidth < texture->GetWidth() && tileRealHeight < texture->GetHeight());

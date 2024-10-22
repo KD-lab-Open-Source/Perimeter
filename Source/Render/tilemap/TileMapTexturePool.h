@@ -16,7 +16,7 @@ public:
     
     std::vector<struct sBumpTile*> tileRenderList;
 
-    cTilemapTexturePool(int w, int h, size_t texture_size);
+    cTilemapTexturePool(int w, int h, size_t texture_size, size_t index);
     ~cTilemapTexturePool();
     int allocPage();
     void freePage(int page);
