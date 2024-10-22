@@ -123,6 +123,10 @@ windowClientSize_(1024, 768)
 {
 	gameShell = this;
 
+#ifdef PERIMETER_DEBUG
+    debugPrm_.load();
+#endif
+
 	scriptReelEnabled = false;
 
 	startedWithMainmenu = false;
@@ -228,7 +232,6 @@ windowClientSize_(1024, 768)
 	_shellCursorManager.Load();
 
 #ifdef PERIMETER_DEBUG
-    debugPrm_.load();
     if(check_command_line("explore")){
         debugPrm_.edit();
         ErrH.Exit();
