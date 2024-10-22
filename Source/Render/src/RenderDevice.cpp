@@ -14,6 +14,7 @@
 #include "D3DRender.h"
 #endif
 #ifdef PERIMETER_SOKOL
+#include "sokol/SokolResources.h"
 #include "sokol/SokolRender.h"
 #endif
 

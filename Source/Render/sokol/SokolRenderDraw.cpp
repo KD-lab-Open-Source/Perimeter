@@ -2,8 +2,8 @@
 #include "xmath.h"
 #include "VertexFormat.h"
 #include "IRenderDevice.h"
-#include "SokolRender.h"
 #include "SokolResources.h"
+#include "SokolRender.h"
 #include "DrawBuffer.h"
 #include "Font.h"
 #include "MeshTri.h"
@@ -241,8 +241,8 @@ void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
     Mat4f matlight = pShadow->matViewProj;
     activeShadowMatrix = matlight * matTexAdj;
 
-    activeCommand.SetTexture(0, pShadowMap->GetFrameImage(0)->sg->image);
-    activeCommand.SetTexture(2, pLightMap->GetFrameImage(0)->sg->image);
+    SetTextureImage(0, pShadowMap->GetFrameImage(0));
+    SetTextureImage(2, pLightMap->GetFrameImage(0));
 
     TerraInterface* terra = TileMap->GetTerra();
     activeWorldSize = Vect2f(1.0f / terra->SizeX(), 1.0f / terra->SizeY());
@@ -270,34 +270,26 @@ void cSokolRender::SetTileColor(sColor4f color) {
 bool cSokolRender::CreateShadowTexture(int xysize) {
     DeleteShadowTexture();
 
-    auto SetupTexture = [](SokolTexture2D *texture, sg_pixel_format pixel_format) {
-        auto description = texture->desc;
-        description->render_target = true;
-        description->usage = SG_USAGE_IMMUTABLE;
-        description->pixel_format = pixel_format;
-        SokolResourceKey resource_key = get_sokol_resource_key_texture(
-            description->width, description->height, description->pixel_format);
-        texture->image = new SokolResourceTexture(resource_key, sg_make_image(description));
-        texture->resource_key = texture->image->key;
-        texture->dirty = false;
-    };
-
     shadowMapRenderTarget = new SokolRenderTarget{};
-    shadowMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER16, false);
+    shadowMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER_DEPTH, false);
     if (!shadowMapRenderTarget->texture) {
         DeleteShadowTexture();
         return false;
     }
-    SetupTexture(shadowMapRenderTarget->texture->GetFrameImage(0)->sg, SG_PIXELFORMAT_DEPTH);
-
     {
+        SokolTexture2D*& shadowMapRenderTargetTexture = shadowMapRenderTarget->texture->GetFrameImage(0)->sg;
+        shadowMapRenderTargetTexture->label = "ShadowMapTexture";
+        PrepareSokolTexture(shadowMapRenderTargetTexture);
+
         auto& render_pass = shadowMapRenderTarget->render_pass;
+        render_pass.label = "ShadowMapPass";
         render_pass.action.depth.load_action = SG_LOADACTION_CLEAR;
         render_pass.action.depth.store_action = SG_STOREACTION_STORE;
         render_pass.action.depth.clear_value = 1.0f;
 
-        sg_attachments_desc description{};
-        description.depth_stencil.image = shadowMapRenderTarget->texture->GetFrameImage(0)->sg->image->res;
+        sg_attachments_desc description = {};
+        description.label = "ShadowMapAttachement";
+        description.depth_stencil.image = shadowMapRenderTargetTexture->image->res;
         render_pass.attachments = sg_make_attachments(&description);
     }
 
@@ -307,17 +299,21 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
         DeleteShadowTexture();
         return false;
     }
-    SetupTexture(lightMapRenderTarget->texture->GetFrameImage(0)->sg,
-        sg_query_desc().environment.defaults.color_format);
 
     {
+        SokolTexture2D*& lightMapRenderTargetTexture = lightMapRenderTarget->texture->GetFrameImage(0)->sg;
+        lightMapRenderTargetTexture->label = "LightMapTexture";
+        PrepareSokolTexture(lightMapRenderTargetTexture);
+
         auto& render_pass = lightMapRenderTarget->render_pass;
+        render_pass.label = "LightMapPass";
         render_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
         render_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
         render_pass.action.colors[0].clear_value = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-        sg_attachments_desc description{};
-        description.colors[0].image = lightMapRenderTarget->texture->GetFrameImage(0)->sg->image->res;
+        sg_attachments_desc description = {};
+        description.label = "LightMapAttachement";
+        description.colors[0].image = lightMapRenderTargetTexture->image->res;
         render_pass.attachments = sg_make_attachments(&description);
     }
 

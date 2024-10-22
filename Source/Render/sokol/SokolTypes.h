@@ -47,7 +47,7 @@ struct SokolPipelineMode {
 };
 
 template<typename T> class SokolResource;
-using SokolResourceTexture = SokolResource<sg_image>;
+using SokolResourceImage = SokolResource<sg_image>;
 using SokolResourceBuffer = SokolResource<sg_buffer>;
 
 #endif //PERIMETER_SOKOLTYPES_H

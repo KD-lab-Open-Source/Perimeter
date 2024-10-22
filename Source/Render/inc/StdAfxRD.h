@@ -10,6 +10,7 @@
 #include <list>
 #include <stack>
 #include <map>
+#include <unordered_set>
 #include <unordered_map>
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)

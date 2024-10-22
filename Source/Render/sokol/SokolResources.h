@@ -38,6 +38,7 @@ private:
         }
     }
 public:
+    bool pooled = false;
     bool burned = false;
     SokolResourceKey key = SokolResourceKeyNone;
     T res;
@@ -80,9 +81,7 @@ struct SokolBuffer {
 };
 
 struct SokolTexture2D : MemoryResource {
-#ifdef PERIMETER_DEBUG
     std::string label;
-#endif
     sg_pixel_format pixel_format;
     sg_image_desc* desc = nullptr;
     SokolResourceKey resource_key = SokolResourceKeyNone;

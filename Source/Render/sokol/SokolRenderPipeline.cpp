@@ -5,6 +5,7 @@
 #include "StdAfxRD.h"
 #include "VertexFormat.h"
 #include <sokol_gfx.h>
+#include "SokolResources.h"
 #include "SokolRender.h"
 #include "SokolRenderPipeline.h"
 #include "SokolShaders.h"

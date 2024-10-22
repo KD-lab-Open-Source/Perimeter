@@ -5,14 +5,12 @@
 #define PERIMETER_SOKOL_GL (1)
 #endif
 
-#include <tuple>
-
 #include <sokol_gfx.h>
 #include <SDL_video.h>
 
 #include "SokolTypes.h"
 
-const int PERIMETER_SOKOL_TEXTURES = 8;
+const int PERIMETER_SOKOL_TEXTURES = 4;
 
 struct SokolCommand {
     SokolCommand();
@@ -21,8 +19,8 @@ struct SokolCommand {
     void Clear();
     void ClearDrawData();
     void ClearShaderParams();
-    void SetTexture(size_t index, SokolResource<sg_image>* sokol_texture);
-    void ClearTextures();
+    void SetImage(size_t index, SokolResourceImage* image);
+    void ClearImages();
     NO_COPY_CONSTRUCTOR(SokolCommand);
     
     struct SokolPipeline* pipeline = nullptr;
@@ -30,7 +28,7 @@ struct SokolCommand {
     size_t base_elements = 0;
     size_t vertices = 0;
     size_t indices = 0;
-    SokolResourceTexture* sokol_textures[PERIMETER_SOKOL_TEXTURES] = {};
+    SokolResourceImage* sokol_images[PERIMETER_SOKOL_TEXTURES] = {};
     SokolResourceBuffer* vertex_buffer = nullptr;
     SokolResourceBuffer* index_buffer = nullptr;
     void* vs_params = nullptr;
@@ -98,6 +96,7 @@ private:
     //Stores resources for reusing
     void ClearPooledResources(uint32_t max_life);
     std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
+    std::unordered_multimap<uint64_t, SokolResourcePooled<sg_image>> imagePool;
     
     //For swapchain pass that renders into final device
     sg_swapchain swapchain = {};
@@ -133,8 +132,9 @@ private:
     
     //Active pipeline/command state
     SokolCommand activeCommand;
+    SokolTexture2D* activeCommandTextures[PERIMETER_SOKOL_TEXTURES] = {};
     PIPELINE_TYPE activePipelineType = PIPELINE_TYPE_DEFAULT;
-    PIPELINE_MODE activePipelineMode;
+    SokolPipelineMode activePipelineMode;
     Mat4f activeCommandVP;
     Mat4f activeCommandW;
     eColorMode activeCommandColorMode = COLOR_MOD;
@@ -161,7 +161,8 @@ private:
 
     //Commands handling
     void ClearActiveBufferAndPassAction();
-    void ClearCommands();
+    void ClearCommands(std::vector<SokolCommand*>& commands);
+    void ClearAllCommands();
     void FinishActiveDrawBuffer();
     void CreateCommandEmpty();
     void CreateCommand(class VertexBuffer* vb, size_t vertices, class IndexBuffer* ib, size_t indices);
@@ -170,16 +171,35 @@ private:
     void SetColorMode(eColorMode color_mode);
     void SetMaterial(SOKOL_MATERIAL_TYPE material, const sColor4f& diffuse, const sColor4f& ambient,
                      const sColor4f& specular, const sColor4f& emissive, float power);
+    template<typename T>
+    void StorePooledResource(
+            std::unordered_multimap<uint64_t, SokolResourcePooled<T>>& res_pool,
+            SokolResource<T>*& res
+    ) {
+        if (!res || res->pooled || res->key == SokolResourceKeyNone
+            || 1 != res->RefCount()) {
+            return;
+        }
+        res->IncRef();
+        res->pooled = true;
+        res_pool.emplace(
+                res->key,
+                SokolResourcePooled<T>(res)
+        );
+    }
 
     ///Assigns unused sokol buffer to buffer_ptr with requested 
     void PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* resource, size_t len, bool dynamic, sg_buffer_type type);
+    
+    ///Prepares internal sokol image
+    void PrepareSokolTexture(SokolTexture2D* tex);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
     
     //Does actual drawing using sokol API
     void DoSokolRendering();
-    void DoSokolRendering(sg_pass& render_pass, const std::vector<SokolCommand*>& commands);
+    void ProcessRenderPass(sg_pass& render_pass, const std::vector<SokolCommand*>& commands);
 
     //Set common VS/FS parameters
     template<typename T_VS, typename T_FS>

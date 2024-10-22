@@ -43,6 +43,7 @@ class cTexture : public cUnknownClass, public sAttribute
 public:
     float       bump_scale = 1;
 	std::vector<TextureImage> frames;
+    std::string		label = {};
 
 	cTexture(const char *TexName=0);
 	~cTexture();

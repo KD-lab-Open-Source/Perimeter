@@ -4,32 +4,54 @@
 #include "SokolResources.h"
 #include "SokolTypes.h"
 
+static const uint32_t CHUNK_LEN_SHIFT = 6; //64 bytes
+
+template<typename T>
+uint16_t get_chunk_amount(T& len) {
+    if (len < 0) {
+        xassert(0);
+        return 0;
+    }
+    size_t chunks = (len >> CHUNK_LEN_SHIFT) + 1; //Divide by LEN_SHIFT and add one extra chunk
+    len = chunks * (1 << CHUNK_LEN_SHIFT);
+    xassert(chunks <= 0xFFFF);
+    return static_cast<uint16_t>(chunks);
+}
+
 SokolResourceKey get_sokol_resource_key_buffer(size_t& len, sg_buffer_type type) {
-    static const uint32_t LEN_SHIFT = 6; //64 bytes
-    size_t chunks = (len >> LEN_SHIFT) + 1; //Divide by LEN_SHIFT and add one extra chunk
-    len = chunks * (1 << LEN_SHIFT);
-    SokolResourceKey key = len;
+    SokolResourceKey key = get_chunk_amount(len);
     key <<= 16;
     key |= static_cast<uint16_t>(type & 0xFFFF);
     return key;
 }
 
 SokolResourceKey get_sokol_resource_key_texture(int& w, int& h, sg_pixel_format format) {
-    SokolResourceKey len = static_cast<uint32_t>(w);
-    len <<= 32;
-    len |= static_cast<uint32_t>(h);
-    len <<= 8;
-    len |= static_cast<uint8_t>(sokol_pixelformat_bytesize(format) & 0xFF);
-    return len;
+    xassert(0 < w && w <= 0xFFFF);
+    xassert(0 < h && h <= 0xFFFF);
+    SokolResourceKey key = static_cast<uint16_t>(w);
+    key <<= 16;
+    key |= static_cast<uint16_t>(h);
+    key <<= 16;
+    key |= static_cast<uint16_t>(format & 0xFFFF);
+    return key;
 }
 
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
-    //Probably the only pixel format used, so we cache it
-    if (fmt == SG_PIXELFORMAT_RGBA8) {
-        static int rgba8 = sg_query_pixelformat(fmt).bytes_per_pixel;
-        return rgba8;
+    //Probably the only pixel formats used, so we cache it
+    switch (fmt) {
+        case SG_PIXELFORMAT_RGBA8: {
+            static int bpp_rgba8 = sg_query_pixelformat(fmt).bytes_per_pixel;
+            return bpp_rgba8;
+        }
+        case SG_PIXELFORMAT_DEPTH: {
+            static int bpp_depth = sg_query_pixelformat(fmt).bytes_per_pixel;
+            return bpp_depth;
+        }
+        default: {
+            xassert(0);
+            return sg_query_pixelformat(fmt).bytes_per_pixel;
+        }
     }
-    return sg_query_pixelformat(fmt).bytes_per_pixel;
 }
 
 template<>
@@ -41,7 +63,7 @@ void SokolResourceBuffer::destroy_res() {
 }
 
 template<>
-void SokolResourceTexture::destroy_res() {
+void SokolResourceImage::destroy_res() {
     if (res.id != SG_INVALID_ID) {
         sg_destroy_image(res);
         res.id = SG_INVALID_ID;
@@ -123,8 +145,10 @@ void SokolTexture2D::FreeImages() {
 void SokolTexture2D::update() {
     xassert(!locked);
     if (!dirty) return;
-    if (!data) return;
-
+    if (!data) {
+        xassert(0);
+        return;
+    }
     if (!image) {
         xassert(0);
         return;
