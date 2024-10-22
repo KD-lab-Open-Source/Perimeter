@@ -277,6 +277,14 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
         DeleteShadowTexture();
         return false;
     }
+
+    lightMapRenderTarget = new SokolRenderTarget{};
+    lightMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
+    if (!lightMapRenderTarget->texture) {
+        DeleteShadowTexture();
+        return false;
+    }
+
     {
         SokolTexture2D*& shadowMapRenderTargetTexture = shadowMapRenderTarget->texture->GetFrameImage(0)->sg;
         shadowMapRenderTargetTexture->label = "ShadowMapTexture";
@@ -292,13 +300,6 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
         description.label = "ShadowMapAttachement";
         description.depth_stencil.image = shadowMapRenderTargetTexture->image->res;
         render_pass.attachments = sg_make_attachments(&description);
-    }
-
-    lightMapRenderTarget = new SokolRenderTarget{};
-    lightMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
-    if (!lightMapRenderTarget->texture) {
-        DeleteShadowTexture();
-        return false;
     }
 
     {
@@ -322,8 +323,22 @@ bool cSokolRender::CreateShadowTexture(int xysize) {
 }
 
 void cSokolRender::DeleteShadowTexture() {
+    if (shadowMapRenderTarget == nullptr
+    && lightMapRenderTarget == nullptr) {
+        return;
+    }
+    //Remove all active texture images if one of them is shadow/light map
+    for (size_t i = 0; i < GetMaxTextureSlots(); ++i) {
+        SetTextureImage(i, nullptr);
+    }
+    if (shadowMapRenderTarget == activeRenderTarget
+    && lightMapRenderTarget == activeRenderTarget) {
+        activeRenderTarget = nullptr;
+    }
     delete shadowMapRenderTarget;
+    shadowMapRenderTarget = nullptr;
     delete lightMapRenderTarget;
+    lightMapRenderTarget = nullptr;
 }
 
 cTexture* cSokolRender::GetShadowMap() {
