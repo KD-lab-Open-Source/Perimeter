@@ -447,6 +447,13 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
     bool use_shadow_map=false;
 
     gb_RenderDevice->SetWorldMatXf(MatXf::ID);
+    
+    //TODO remove this ifdef once tile reflections stop clipping in soklo
+#ifdef PERIMETER_D3D9
+    if (!gb_RenderDevice3D && reflection) return;
+#else
+    if (reflection) return;
+#endif
 
     // setup rendering
     if(tilemap->GetShadowMap() && !shadow && Option_ShadowType == SHADOW_MAP &&
