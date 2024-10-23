@@ -304,20 +304,22 @@ void cSokolRender::ProcessRenderPass(sg_pass& render_pass, const std::vector<Sok
             const char* vs_params_name = nullptr;
             const char* fs_params_name = nullptr;
             switch (shader_id) {
-                case SOKOL_SHADER_ID_color_tex1:
-                case SOKOL_SHADER_ID_color_tex2:
-                    vs_params_name = "color_texture_vs_params";
-                    fs_params_name = "color_texture_fs_params";
+                case SOKOL_SHADER_ID_mesh_color_tex1:
+                case SOKOL_SHADER_ID_mesh_color_tex2:
+                    vs_params_name = "mesh_color_texture_vs_params";
+                    fs_params_name = "mesh_color_texture_fs_params";
                     break;
-                case SOKOL_SHADER_ID_normal:
-                    vs_params_name = "normal_texture_vs_params";
-                    fs_params_name = "normal_texture_fs_params";
+                case SOKOL_SHADER_ID_mesh_normal_tex1:
+                    vs_params_name = "mesh_normal_texture_vs_params";
+                    fs_params_name = "mesh_normal_texture_fs_params";
                     break;
-                case SOKOL_SHADER_ID_object_shadow:
-                    vs_params_name = "object_shadow_vs_params";
+                case SOKOL_SHADER_ID_shadow_tex1:
+                case SOKOL_SHADER_ID_shadow_normal_tex1:
+                    vs_params_name = "shadow_texture_vs_params";
+                    fs_params_name = "shadow_texture_fs_params";
                     break;
-                case SOKOL_SHADER_ID_only_texture:
-                    vs_params_name = "only_texture_vs_params";
+                case SOKOL_SHADER_ID_mesh_tex1:
+                    vs_params_name = "mesh_texture_vs_params";
                     break;
                 case SOKOL_SHADER_ID_tile_map:
                     vs_params_name = "tile_map_vs_params";
@@ -496,6 +498,11 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
 
     SokolResourceBuffer* buffer;
     if (dynamic) {
+        //Remove current burned buffer if resource is dirty
+        if (resource->dirty && buffer_ptr && buffer_ptr->buffer->burned) {
+            StorePooledResource(bufferPool, buffer_ptr->buffer);
+            buffer_ptr->release_buffer();
+        }
         SokolResourceKey resource_key = get_sokol_resource_key_buffer(len, type);
         auto nh = bufferPool.extract(resource_key);
         if (nh.empty()) {
@@ -708,9 +715,21 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
 
     SokolPipelineContext pipeline_context;
     pipeline_context.pipeline_type = pipelineType;
+    pipeline_context.pipeline_target = SOKOL_PIPELINE_TARGET_SWAPCHAIN;
     pipeline_context.pipeline_mode = activePipelineMode;
     pipeline_context.primitive_type = activeDrawBuffer->primitive;
     pipeline_context.vertex_fmt = vb->fmt;
+    if (activeRenderTarget == shadowMapRenderTarget) {
+        pipeline_context.pipeline_target = SOKOL_PIPELINE_TARGET_SHADOWMAP;
+        // render back-faces in shadow pass to prevent shadow acne on front-faces
+        pipeline_context.pipeline_mode.cull = CULL_CCW;
+        pipeline_context.pipeline_mode.depth_cmp = CMP_LESSEQUAL;
+        pipeline_context.pipeline_mode.depth_write = true;
+    } else if (activeRenderTarget == lightMapRenderTarget) {
+        pipeline_context.pipeline_target = SOKOL_PIPELINE_TARGET_LIGHTMAP;
+        pipeline_context.pipeline_mode.depth_cmp = CMP_ALWAYS;
+        pipeline_context.pipeline_mode.depth_write = false;
+    }
     SokolPipeline* pipeline = GetPipeline(pipeline_context);
     if (!pipeline) {
         xxassert(0, "CreateCommand: No pipeline found");
@@ -732,19 +751,19 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
     //Update buffers
     if (vb->data && (vb->sg == nullptr || vb->dirty)) {
         size_t len = vertices * vb->VertexSize;
-        if (vb->sg == nullptr || vb->sg->buffer == nullptr) {
+        if (vb->sg == nullptr || vb->sg->buffer == nullptr || vb->dirty) {
             PrepareSokolBuffer(vb->sg, vb, len, vb->dynamic, SG_BUFFERTYPE_VERTEXBUFFER);
         }
-        if (vb->dynamic) {
+        if (vb->dynamic && vb->dirty) {
             vb->sg->update(vb, len);
         }
     }
     if (ib->data && (!ib->sg || ib->dirty)) {
         size_t len = indices * sizeof(indices_t);
-        if (ib->sg == nullptr || ib->sg->buffer == nullptr) {
+        if (ib->sg == nullptr || ib->sg->buffer == nullptr || ib->dirty) {
             PrepareSokolBuffer(ib->sg, ib, len, ib->dynamic, SG_BUFFERTYPE_INDEXBUFFER);
         }
-        if (ib->dynamic) {
+        if (ib->dynamic && ib->dirty) {
             ib->sg->update(ib, len);
         }
     }
@@ -783,10 +802,10 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
         case SOKOL_SHADER_ID_NONE:
             xassert(0);
             break;
-        case SOKOL_SHADER_ID_color_tex1:
-        case SOKOL_SHADER_ID_color_tex2: {
-            auto vs_params = reinterpret_cast<color_texture_vs_params_t*>(cmd->vs_params);
-            auto fs_params = reinterpret_cast<color_texture_fs_params_t*>(cmd->fs_params);
+        case SOKOL_SHADER_ID_mesh_color_tex1:
+        case SOKOL_SHADER_ID_mesh_color_tex2: {
+            auto vs_params = reinterpret_cast<mesh_color_texture_vs_params_t*>(cmd->vs_params);
+            auto fs_params = reinterpret_cast<mesh_color_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
             vs_params->tex0_mat = activeTextureTransform[0];
             vs_params->tex1_mat = activeTextureTransform[1];
@@ -794,9 +813,9 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             fs_params->un_tex2_lerp = activeCommandTex2Lerp;
             break;
         }
-        case SOKOL_SHADER_ID_normal: {
-            auto vs_params = reinterpret_cast<normal_texture_vs_params_t*>(cmd->vs_params);
-            auto fs_params = reinterpret_cast<normal_texture_fs_params_t*>(cmd->fs_params);
+        case SOKOL_SHADER_ID_mesh_normal_tex1: {
+            auto vs_params = reinterpret_cast<mesh_normal_texture_vs_params_t*>(cmd->vs_params);
+            auto fs_params = reinterpret_cast<mesh_normal_texture_fs_params_t*>(cmd->fs_params);
             shader_set_common_params(vs_params, fs_params);
             vs_params->model = isOrthographicProjSet ? Mat4f::ID : activeCommandW;
             vs_params->tex0_mat = activeTextureTransform[0];
@@ -812,13 +831,16 @@ void cSokolRender::CreateCommand(VertexBuffer* vb, size_t vertices, IndexBuffer*
             memcpy(fs_params->light_dir, &activeLightDir, sizeof(float) * 3);
             break;
         }
-        case SOKOL_SHADER_ID_object_shadow: {
-            auto vs_params = reinterpret_cast<object_shadow_vs_params_t*>(cmd->vs_params);
+        case SOKOL_SHADER_ID_shadow_tex1:
+        case SOKOL_SHADER_ID_shadow_normal_tex1: {
+            auto vs_params = reinterpret_cast<shadow_texture_vs_params_t*>(cmd->vs_params);
+            auto fs_params = reinterpret_cast<shadow_texture_fs_params_t*>(cmd->fs_params);
             vs_params->un_mvp = isOrthographicProjSet ? orthoVP : (activeCommandW * activeCommandVP);
+            shader_set_common_params(vs_params, fs_params);
             break;
         }
-        case SOKOL_SHADER_ID_only_texture: {
-            auto vs_params = reinterpret_cast<only_texture_vs_params_t*>(cmd->vs_params);
+        case SOKOL_SHADER_ID_mesh_tex1: {
+            auto vs_params = reinterpret_cast<mesh_texture_vs_params_t*>(cmd->vs_params);
             vs_params->un_mvp = isOrthographicProjSet ? orthoVP : (activeCommandW * activeCommandVP);
             break;
         }
@@ -875,13 +897,6 @@ void cSokolRender::SetActiveDrawBuffer(DrawBuffer* db) {
     activeCommand.base_elements = 0;
     activeCommand.vertices = 0;
     activeCommand.indices = 0;
-    //Those that are dynamic should have their buffer released since we wil recreate later 
-    if (db->vb.dynamic && db->vb.sg) {
-        db->vb.sg->release_buffer();
-    }
-    if (db->ib.dynamic && db->ib.sg) {
-        db->ib.sg->release_buffer();
-    }
 }
 
 void cSokolRender::SubmitDrawBuffer(DrawBuffer* db, DrawRange* range) {

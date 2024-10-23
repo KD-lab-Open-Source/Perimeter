@@ -2,7 +2,7 @@
 
 @vs vs
 //Uniforms
-uniform only_texture_vs_params {
+uniform mesh_texture_vs_params {
     mat4 un_mvp;
 };
 

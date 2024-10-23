@@ -334,8 +334,9 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     emptyTexture->label = "EmptySlotTexture";
     PrepareSokolTexture(emptyTexture);
 
-    for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+    for (int i = 0; i < GetMaxTextureSlots(); ++i) {
         activeTextureTransform[i] = Mat4f::ID;
+        SetTextureImage(i, nullptr);
     }
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
@@ -694,26 +695,29 @@ void SokolCommand::CreateShaderParams() {
         case SOKOL_SHADER_ID_NONE:
             xassert(0);
             break;
-        case SOKOL_SHADER_ID_color_tex1:
-        case SOKOL_SHADER_ID_color_tex2:
-            vs_params = new color_texture_vs_params_t();
-            fs_params = new color_texture_fs_params_t();
-            vs_params_len = sizeof(color_texture_vs_params_t);
-            fs_params_len = sizeof(color_texture_fs_params_t);
+        case SOKOL_SHADER_ID_mesh_color_tex1:
+        case SOKOL_SHADER_ID_mesh_color_tex2:
+            vs_params = new mesh_color_texture_vs_params_t();
+            fs_params = new mesh_color_texture_fs_params_t();
+            vs_params_len = sizeof(mesh_color_texture_vs_params_t);
+            fs_params_len = sizeof(mesh_color_texture_fs_params_t);
             break;
-        case SOKOL_SHADER_ID_normal:
-            vs_params = new normal_texture_vs_params_t();
-            fs_params = new normal_texture_fs_params_t();
-            vs_params_len = sizeof(normal_texture_vs_params_t);            
-            fs_params_len = sizeof(normal_texture_fs_params_t);
+        case SOKOL_SHADER_ID_mesh_normal_tex1:
+            vs_params = new mesh_normal_texture_vs_params_t();
+            fs_params = new mesh_normal_texture_fs_params_t();
+            vs_params_len = sizeof(mesh_normal_texture_vs_params_t);            
+            fs_params_len = sizeof(mesh_normal_texture_fs_params_t);
             break;
-        case SOKOL_SHADER_ID_object_shadow:
-            vs_params = new object_shadow_vs_params_t();
-            vs_params_len = sizeof(object_shadow_vs_params_t);
+        case SOKOL_SHADER_ID_shadow_tex1:
+        case SOKOL_SHADER_ID_shadow_normal_tex1:
+            vs_params = new shadow_texture_vs_params_t();
+            vs_params_len = sizeof(shadow_texture_vs_params_t);
+            fs_params = new shadow_texture_fs_params_t();
+            fs_params_len = sizeof(shadow_texture_fs_params_t);
             break;
-        case SOKOL_SHADER_ID_only_texture:
-            vs_params = new only_texture_vs_params_t();
-            vs_params_len = sizeof(only_texture_vs_params_t);
+        case SOKOL_SHADER_ID_mesh_tex1:
+            vs_params = new mesh_texture_vs_params_t();
+            vs_params_len = sizeof(mesh_texture_vs_params_t);
             break;
         case SOKOL_SHADER_ID_tile_map:
             vs_params = new tile_map_vs_params_t();
@@ -758,20 +762,22 @@ void SokolCommand::ClearShaderParams() {
         default:
         case SOKOL_SHADER_ID_NONE:
             break;
-        case SOKOL_SHADER_ID_color_tex1:
-        case SOKOL_SHADER_ID_color_tex2:
-            delete reinterpret_cast<color_texture_vs_params_t*>(vs_params);
-            delete reinterpret_cast<color_texture_fs_params_t*>(fs_params);
+        case SOKOL_SHADER_ID_mesh_color_tex1:
+        case SOKOL_SHADER_ID_mesh_color_tex2:
+            delete reinterpret_cast<mesh_color_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<mesh_color_texture_fs_params_t*>(fs_params);
             break;
-        case SOKOL_SHADER_ID_normal:
-            delete reinterpret_cast<normal_texture_vs_params_t*>(vs_params);
-            delete reinterpret_cast<normal_texture_fs_params_t*>(fs_params);
+        case SOKOL_SHADER_ID_mesh_normal_tex1:
+            delete reinterpret_cast<mesh_normal_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<mesh_normal_texture_fs_params_t*>(fs_params);
             break;
-        case SOKOL_SHADER_ID_object_shadow:
-            delete reinterpret_cast<object_shadow_vs_params_t*>(vs_params);
+        case SOKOL_SHADER_ID_shadow_tex1:
+        case SOKOL_SHADER_ID_shadow_normal_tex1:
+            delete reinterpret_cast<shadow_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<shadow_texture_fs_params_t*>(fs_params);
             break;
-        case SOKOL_SHADER_ID_only_texture:
-            delete reinterpret_cast<only_texture_vs_params_t*>(vs_params);
+        case SOKOL_SHADER_ID_mesh_tex1:
+            delete reinterpret_cast<mesh_texture_vs_params_t*>(vs_params);
             break;
         case SOKOL_SHADER_ID_tile_map:
             delete reinterpret_cast<tile_map_vs_params_t*>(vs_params);

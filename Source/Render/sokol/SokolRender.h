@@ -49,16 +49,28 @@ struct SokolRenderTarget final {
 };
 
 struct SokolPipelineContext {
-    PIPELINE_TYPE pipeline_type;
-    SokolPipelineMode pipeline_mode;
-    ePrimitiveType primitive_type;
-    vertex_fmt_t vertex_fmt;
+    PIPELINE_TYPE pipeline_type = PIPELINE_TYPE_DEFAULT;
+    SOKOL_PIPELINE_TARGET pipeline_target = SOKOL_PIPELINE_TARGET_SWAPCHAIN;
+    SokolPipelineMode pipeline_mode = {};
+    ePrimitiveType primitive_type = ePrimitiveType::PT_TRIANGLES;
+    vertex_fmt_t vertex_fmt = 0;
     sg_pipeline_desc desc = {};
     struct shader_funcs* shader_funcs = nullptr;
 
     bool operator==(const SokolPipelineContext& other) const {
-        return std::tie(pipeline_type, pipeline_mode, primitive_type, vertex_fmt) 
-            == std::tie(other.pipeline_type, other.pipeline_mode, other.primitive_type, other.vertex_fmt);
+        return std::tie(
+            pipeline_type,
+            pipeline_target, 
+            pipeline_mode,
+            primitive_type,
+            vertex_fmt
+        ) == std::tie(
+            other.pipeline_type,
+            other.pipeline_target, 
+            other.pipeline_mode,
+            other.primitive_type,
+            other.vertex_fmt
+        );
     }
 };
 
@@ -159,8 +171,8 @@ private:
 
     //Shadow and Light map rendering
     SokolRenderTarget* activeRenderTarget = nullptr;
-    Mat4f activeShadowMatrix{};
-    Vect2f activeWorldSize{};
+    Mat4f activeShadowMatrix = {};
+    Vect2f activeWorldSize = {};
 
     //Commands handling
     void ClearActiveBufferAndPassAction();

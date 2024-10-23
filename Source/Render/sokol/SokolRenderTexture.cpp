@@ -229,6 +229,8 @@ void cSokolRender::UnlockTexture(cTexture* Texture) {
 }
 
 SurfaceImage cSokolRender::GetShadowZBuffer() {
-    //TODO
-    return SurfaceImage::NONE;
+    if (!shadowMapRenderTarget) {
+        return SurfaceImage::NONE;
+    }
+    return SurfaceImage { shadowMapRenderTarget->texture->GetFrameImage(0)->sg };
 }

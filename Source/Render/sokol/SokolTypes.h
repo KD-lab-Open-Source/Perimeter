@@ -7,11 +7,12 @@
 
 enum SOKOL_SHADER_ID {
     SOKOL_SHADER_ID_NONE,
-    SOKOL_SHADER_ID_color_tex1,
-    SOKOL_SHADER_ID_color_tex2,
-    SOKOL_SHADER_ID_normal,
-    SOKOL_SHADER_ID_object_shadow,
-    SOKOL_SHADER_ID_only_texture,
+    SOKOL_SHADER_ID_mesh_color_tex1,
+    SOKOL_SHADER_ID_mesh_color_tex2,
+    SOKOL_SHADER_ID_mesh_normal_tex1,
+    SOKOL_SHADER_ID_mesh_tex1,
+    SOKOL_SHADER_ID_shadow_tex1,
+    SOKOL_SHADER_ID_shadow_normal_tex1,
     SOKOL_SHADER_ID_tile_map,
 };
 
@@ -23,6 +24,11 @@ enum PIPELINE_TYPE {
 };
 const PIPELINE_TYPE PIPELINE_TYPE_DEFAULT = PIPELINE_TYPE_MESH;
 
+enum SOKOL_PIPELINE_TARGET {
+    SOKOL_PIPELINE_TARGET_SHADOWMAP,
+    SOKOL_PIPELINE_TARGET_LIGHTMAP,
+    SOKOL_PIPELINE_TARGET_SWAPCHAIN
+};
 
 enum SOKOL_MATERIAL_TYPE {
     SOKOL_MAT_NONE = 0,

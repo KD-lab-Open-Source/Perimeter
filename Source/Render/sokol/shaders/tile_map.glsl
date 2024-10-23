@@ -10,16 +10,16 @@ uniform tile_map_vs_params {
 };
 
 //Vertex Buffer inputs
-in vec3 vs_position;
-in vec2 vs_texcoord0;
+layout(location=0) in vec3 vs_position;
+layout(location=1) in vec2 vs_texcoord0;
 
 //Fragment shader outputs
-out vec3 fs_uv0;
-out vec3 fs_uv1;
-out vec3 fs_uv2;
-out vec3 fs_uv3;
-out vec2 fs_uv4;
-out vec2 fs_uv5;
+layout(location=0) out vec3 fs_uv0;
+layout(location=1) out vec3 fs_uv1;
+layout(location=2) out vec3 fs_uv2;
+layout(location=3) out vec3 fs_uv3;
+layout(location=4) out vec2 fs_uv4;
+layout(location=5) out vec2 fs_uv5;
 
 const float offset = 1.0f / 1024.0f;
 
@@ -49,18 +49,18 @@ uniform tile_map_fs_params {
     vec4 un_tile_color;
 };
 uniform sampler un_sampler0;
-uniform sampler un_sampler1;
+uniform sampler un_sampler1; //shadow sampler
 uniform texture2D un_tex0; // shadow map
 uniform texture2D un_tex1; // diffuse
 uniform texture2D un_tex2; // light map
 
 //Fragment shader inputs from Vertex shader
-in vec3 fs_uv0; // shadow map 1
-in vec3 fs_uv1; // shadow map 2
-in vec3 fs_uv2; // shadow map 3
-in vec3 fs_uv3; // shadow map 4
-in vec2 fs_uv4; // diffuse
-in vec2 fs_uv5; // light map
+layout(location=0) in vec3 fs_uv0; // shadow map 1
+layout(location=1) in vec3 fs_uv1; // shadow map 2
+layout(location=2) in vec3 fs_uv2; // shadow map 3
+layout(location=3) in vec3 fs_uv3; // shadow map 4
+layout(location=4) in vec2 fs_uv4; // diffuse
+layout(location=5) in vec2 fs_uv5; // light map
 
 //Fragment shader outputs
 out vec4 frag_color;

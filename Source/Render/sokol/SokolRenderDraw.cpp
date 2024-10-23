@@ -174,11 +174,18 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {
-    pShadow = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
+    cCamera* camera = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
+    if (pShadow != camera) {
+        FinishActiveDrawBuffer();
+        pShadow = camera;
+    }
 }
 
 void cSokolRender::EndDrawShadow() {
-    //TODO
+    if (pShadow != nullptr) {
+        FinishActiveDrawBuffer();
+        pShadow = nullptr;
+    }
 }
 
 void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
@@ -196,18 +203,21 @@ void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
     SetTexture(0, texture, 0);
 
     eBlendMode blend=ALPHA_NONE;
-    if(texture && texture->IsAlphaTest())
-        blend=ALPHA_TEST;
+    if (texture && texture->IsAlphaTest()) {
+        blend = ALPHA_TEST;
+    }
 
-    if((texture && texture->IsAlpha()) || mat.Diffuse.a<0.99f)
-        blend=ALPHA_BLEND;
+    if ((texture && texture->IsAlpha()) || mat.Diffuse.a<0.99f) {
+        blend = ALPHA_BLEND;
+    }
 
-    if(mat.mat&MAT_ALPHA_SUBBLEND)
-        blend=ALPHA_SUBBLEND;
-    else if(mat.mat&MAT_ALPHA_ADDBLENDALPHA)
-        blend=ALPHA_ADDBLENDALPHA;
-    else if(mat.mat&MAT_ALPHA_ADDBLEND)
-        blend=ALPHA_ADDBLEND;
+    if (mat.mat & MAT_ALPHA_SUBBLEND) {
+        blend = ALPHA_SUBBLEND;
+    } else if (mat.mat & MAT_ALPHA_ADDBLENDALPHA) {
+        blend = ALPHA_ADDBLENDALPHA;
+    } else if (mat.mat & MAT_ALPHA_ADDBLEND) {
+        blend = ALPHA_ADDBLEND;
+    }
 
     SetBlendState(blend);
     
@@ -227,13 +237,19 @@ void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
 }
 
 void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
+    if (activePipelineType == PIPELINE_TYPE_TILE_MAP) {
+        return;
+    }
+    FinishActiveDrawBuffer();
+    activePipelineType = PIPELINE_TYPE_TILE_MAP;
+    
     auto pShadowMap = shadowMapRenderTarget->texture;
     auto pLightMap = lightMapRenderTarget->texture;
 
     float fOffsetX = 0.5f + (0.0f / pShadowMap->GetWidth());
     float fOffsetY = 0.5f + (0.0f / pShadowMap->GetWidth());
     float range = 1;
-    float fBias = -0.005f * range;
+    float fBias = -0.0001f * range;
     Mat4f matTexAdj( 0.5f,     0.0f,     0.0f,  0.0f,
                     0.0f,    -0.5f,     0.0f,  0.0f,
                     0.0f,     0.0f,     range, 0.0f,
@@ -247,11 +263,6 @@ void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
 
     TerraInterface* terra = TileMap->GetTerra();
     activeWorldSize = Vect2f(1.0f / terra->SizeX(), 1.0f / terra->SizeY());
-
-    if (activePipelineType != PIPELINE_TYPE_TILE_MAP) {
-        FinishActiveDrawBuffer();
-    }
-    activePipelineType = PIPELINE_TYPE_TILE_MAP;
 }
 
 void cSokolRender::SetMaterialTilemapShadow() {
