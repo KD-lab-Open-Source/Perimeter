@@ -2,18 +2,18 @@
 
 @vs vs
 //Uniforms
-uniform color_texture_vs_params {
+uniform mesh_color_texture_vs_params {
     mat4 un_mvp;
     mat4 tex0_mat;
     mat4 tex1_mat;
 };
 
 //Vertex Buffer inputs
-in vec3 vs_position;
-in vec4 vs_color;
-in vec2 vs_texcoord0;
+layout(location=0) in vec3 vs_position;
+layout(location=1) in vec4 vs_color;
+layout(location=2) in vec2 vs_texcoord0;
 #if defined(SHADER_TEX_2)
-in vec2 vs_texcoord1;
+layout(location=3) in vec2 vs_texcoord1;
 #endif
 
 //Fragment shader outputs
@@ -35,7 +35,7 @@ void main() {
 
 @fs fs
 //Uniforms
-uniform color_texture_fs_params {
+uniform mesh_color_texture_fs_params {
     int un_color_mode;
     float un_tex2_lerp;
     float un_alpha_test;

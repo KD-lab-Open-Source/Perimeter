@@ -51,6 +51,7 @@ public:
     int bumpTileAlloc(int lod,int xpos,int ypos);
     void bumpTileFree(int id);
     void bumpTilesDeath();
+    void CalcTileMap(cCamera* DrawNode);
 
     void PreDraw(cCamera* DrawNode);
     void DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow);

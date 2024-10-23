@@ -204,7 +204,7 @@ void DrawTypeRadeon9700::DrawNoMaterialShadow(cObjMesh *Mesh)
 bool DrawTypeRadeon9700::CreateShadowTexture(int xysize)
 {
 	DeleteShadowTexture();
-	pShadowMap=GetTexLibrary()->CreateRenderTexture(xysize,xysize,TEXTURE_RENDER_SHADOW_9700,false);
+	pShadowMap=GetTexLibrary()->CreateRenderTexture(xysize,xysize,TEXTURE_RENDER_DEPTH,false);
 	if(!pShadowMap)
 	{
 		DeleteShadowTexture();

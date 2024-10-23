@@ -190,7 +190,7 @@ void DrawTypeRadeon8500::SetSimplyMaterialShadow(cObjMesh *Mesh,cTexture *Textur
 	mat.MaterialAnimPhase=0;
 
 	SetMaterialSimply(0,Texture,pShadowMap,&mat,GetOffsetTextureNumber());
-    TextureImage teximg(GetTilemapShadow0());
+    TextureImage teximg(pLookupMap->GetFrameImage(0)->d3d);
 	gb_RenderDevice3D->SetTextureImage(1, &teximg);
 
 	pPSObjectShadow->Select();

@@ -486,9 +486,9 @@ void cD3DRender::UpdateRenderMode()
 	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,5,5,5,1,10,5,0,15,D3DFMT_X1R5G5B5);
 
-	TexFmtData[SURFMT_RENDERMAP_FLOAT].Set(0,0,0,0,0,0,0,0,0,0);
+	TexFmtData[SURFMT_RENDERMAP_DEPTH].Set(0,0,0,0,0,0,0,0,0,0);
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_R32F)==0)
-		TexFmtData[SURFMT_RENDERMAP_FLOAT].Set(0,0,0,0,0,0,0,0,0,D3DFMT_R32F);
+		TexFmtData[SURFMT_RENDERMAP_DEPTH].Set(0,0,0,0,0,0,0,0,0,D3DFMT_R32F);
 
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8)==0) {
@@ -1242,8 +1242,6 @@ const uint32_t D3D_LOCK_FLAGS_STATIC = D3DLOCK_NOSYSLOCK | D3DLOCK_NO_DIRTY_UPDA
 const uint32_t D3D_LOCK_FLAGS_DYNAMIC = D3D_LOCK_FLAGS_STATIC | D3DLOCK_DISCARD;
 
 void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
-    xassert(!vb->burned);
-    vb->burned = true;
     xassert(len <= vb->data_len);
     if (!vb->d3d) {
         MTG();
@@ -1284,8 +1282,6 @@ void cD3DRender::UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len) {
 }
 
 void cD3DRender::UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len) {
-    xassert(!ib->burned);
-    ib->burned = true;
     xassert(len <= ib->data_len);
     if (!ib->d3d) {
         MTG();
@@ -1444,8 +1440,6 @@ void cD3DRender::SubmitBuffers(ePrimitiveType primitive, VertexBuffer* vb, size_
         xassert(0);
         RDCALL(gb_RenderDevice3D->lpD3DDevice->DrawPrimitive(d3dType, offset, vertices));
     }
-    if (vb->dynamic) vb->burned = false;
-    if (ib->dynamic) ib->burned = false;
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)

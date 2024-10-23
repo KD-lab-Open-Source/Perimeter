@@ -2,11 +2,14 @@
 #include "xmath.h"
 #include "VertexFormat.h"
 #include "IRenderDevice.h"
+#include "SokolIncludes.h"
+#include "SokolResources.h"
 #include "SokolRender.h"
 #include "DrawBuffer.h"
 #include "Font.h"
 #include "MeshTri.h"
 #include "ObjMesh.h"
+#include "TileMap.h"
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
@@ -23,6 +26,11 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
     SetBlendState(blend);
     SetTexture(0, Texture0, Phase);
     SetTexture(1, Texture1, Phase);
+
+    if (activePipelineType != PIPELINE_TYPE_MESH) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_MESH;
 }
 
 // Sprites / 2d textures
@@ -65,10 +73,13 @@ void cSokolRender::OutText(int x,int y,const char *string,const sColor4f& color,
 
 // Mesh draw
 
-void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow) {
+void cSokolRender::BeginDrawMesh(bool obj_mesh, bool use_shadow_) {
+    use_shadow = use_shadow_;
+    pShadow = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
 }
 
 void cSokolRender::EndDrawMesh() {
+    //TODO
 }
 
 void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
@@ -125,6 +136,11 @@ void cSokolRender::SetSimplyMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* da
     SetBlendState(blend);
     SetTexture(0, Texture0, data->MaterialAnimPhase);
     SetTexture(1, bump ? nullptr: data->Tex[1], data->MaterialAnimPhase);
+
+    if (activePipelineType != PIPELINE_TYPE_MESH) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_MESH;
 }
 
 void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data) {
@@ -158,27 +174,102 @@ void cSokolRender::DrawNoMaterialMesh(cObjMesh* mesh, sDataRenderMaterial* data)
 }
 
 void cSokolRender::BeginDrawShadow(bool shadow_map) {
-    //TODO
+    cCamera* camera = GetDrawNode()->FindCildCamera(ATTRCAMERA_SHADOWMAP);
+    if (pShadow != camera) {
+        FinishActiveDrawBuffer();
+        pShadow = camera;
+    }
 }
 
 void cSokolRender::EndDrawShadow() {
-    //TODO
+    if (pShadow != nullptr) {
+        FinishActiveDrawBuffer();
+        pShadow = nullptr;
+    }
 }
 
 void cSokolRender::SetSimplyMaterialShadow(cObjMesh* mesh, cTexture* texture) {
-    //TODO
+    sDataRenderMaterial mat;
+    float f = 0.5f * kShadow;
+    mat.Ambient = sColor4f(0 ,0, 0, 1);
+    mat.Diffuse = sColor4f(f, f, f, 1);
+    mat.Specular = sColor4f(0, 0, 0, 1);
+    mat.Emissive = sColor4f(0, 0, 0, 1);
+    mat.Power = 0;
+    mat.mat = 0;
+    mat.MaterialAnimPhase = 0;
+
+    // SetMaterial(0, texture, NULL, &mat);
+    SetTexture(0, texture, 0);
+
+    eBlendMode blend=ALPHA_NONE;
+    if (texture && texture->IsAlphaTest()) {
+        blend = ALPHA_TEST;
+    }
+
+    if ((texture && texture->IsAlpha()) || mat.Diffuse.a<0.99f) {
+        blend = ALPHA_BLEND;
+    }
+
+    if (mat.mat & MAT_ALPHA_SUBBLEND) {
+        blend = ALPHA_SUBBLEND;
+    } else if (mat.mat & MAT_ALPHA_ADDBLENDALPHA) {
+        blend = ALPHA_ADDBLENDALPHA;
+    } else if (mat.mat & MAT_ALPHA_ADDBLEND) {
+        blend = ALPHA_ADDBLEND;
+    }
+
+    SetBlendState(blend);
+    
+    // gb_RenderDevice3D->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG2 );
+    // SetStream(Mesh);
+
+    if (activePipelineType != PIPELINE_TYPE_OBJECT_SHADOW) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_OBJECT_SHADOW;
 }
 
 void cSokolRender::DrawNoMaterialShadow(cObjMesh* mesh) {
-    //TODO
+    SetWorldMatXf(mesh->GetGlobalMatrix());
+    cMeshTri *Tri = mesh->GetTri();
+    SubmitDrawBuffer(Tri->db, &Tri->dbr);
 }
 
 void cSokolRender::SetMaterialTilemap(cTileMap *TileMap) {
-    //TODO
+    if (activePipelineType == PIPELINE_TYPE_TILE_MAP) {
+        return;
+    }
+    FinishActiveDrawBuffer();
+    activePipelineType = PIPELINE_TYPE_TILE_MAP;
+    
+    auto pShadowMap = shadowMapRenderTarget->texture;
+    auto pLightMap = lightMapRenderTarget->texture;
+
+    float fOffsetX = 0.5f + (0.0f / pShadowMap->GetWidth());
+    float fOffsetY = 0.5f + (0.0f / pShadowMap->GetWidth());
+    float range = 1;
+    float fBias = -0.0001f * range;
+    Mat4f matTexAdj( 0.5f,     0.0f,     0.0f,  0.0f,
+                    0.0f,    -0.5f,     0.0f,  0.0f,
+                    0.0f,     0.0f,     range, 0.0f,
+                    fOffsetX, fOffsetY, fBias, 1.0f );
+
+    Mat4f matlight = pShadow->matViewProj;
+    activeShadowMatrix = matlight * matTexAdj;
+
+    SetTextureImage(0, pShadowMap->GetFrameImage(0));
+    SetTextureImage(2, pLightMap->GetFrameImage(0));
+
+    TerraInterface* terra = TileMap->GetTerra();
+    activeWorldSize = Vect2f(1.0f / terra->SizeX(), 1.0f / terra->SizeY());
 }
 
 void cSokolRender::SetMaterialTilemapShadow() {
-    //TODO
+    if (activePipelineType != PIPELINE_TYPE_OBJECT_SHADOW) {
+        FinishActiveDrawBuffer();
+    }
+    activePipelineType = PIPELINE_TYPE_OBJECT_SHADOW;
 }
 
 void cSokolRender::SetTileColor(sColor4f color) {
@@ -186,4 +277,85 @@ void cSokolRender::SetTileColor(sColor4f color) {
         FinishActiveDrawBuffer();
         activeCommandTileColor = color;
     }
+}
+
+bool cSokolRender::CreateShadowTexture(int xysize) {
+    DeleteShadowTexture();
+
+    shadowMapRenderTarget = new SokolRenderTarget{};
+    shadowMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(xysize, xysize, TEXTURE_RENDER_DEPTH, false);
+    if (!shadowMapRenderTarget->texture) {
+        DeleteShadowTexture();
+        return false;
+    }
+
+    lightMapRenderTarget = new SokolRenderTarget{};
+    lightMapRenderTarget->texture = GetTexLibrary()->CreateRenderTexture(256, 256, TEXTURE_RENDER32, false);
+    if (!lightMapRenderTarget->texture) {
+        DeleteShadowTexture();
+        return false;
+    }
+
+    {
+        SokolTexture2D*& shadowMapRenderTargetTexture = shadowMapRenderTarget->texture->GetFrameImage(0)->sg;
+        shadowMapRenderTargetTexture->label = "ShadowMapTexture";
+        PrepareSokolTexture(shadowMapRenderTargetTexture);
+
+        auto& render_pass = shadowMapRenderTarget->render_pass;
+        render_pass.label = "ShadowMapPass";
+        render_pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+        render_pass.action.depth.store_action = SG_STOREACTION_STORE;
+        render_pass.action.depth.clear_value = 1.0f;
+
+        sg_attachments_desc description = {};
+        description.label = "ShadowMapAttachement";
+        description.depth_stencil.image = shadowMapRenderTargetTexture->image->res;
+        render_pass.attachments = sg_make_attachments(&description);
+    }
+
+    {
+        SokolTexture2D*& lightMapRenderTargetTexture = lightMapRenderTarget->texture->GetFrameImage(0)->sg;
+        lightMapRenderTargetTexture->label = "LightMapTexture";
+        PrepareSokolTexture(lightMapRenderTargetTexture);
+
+        auto& render_pass = lightMapRenderTarget->render_pass;
+        render_pass.label = "LightMapPass";
+        render_pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+        render_pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+        render_pass.action.colors[0].clear_value = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+        sg_attachments_desc description = {};
+        description.label = "LightMapAttachement";
+        description.colors[0].image = lightMapRenderTargetTexture->image->res;
+        render_pass.attachments = sg_make_attachments(&description);
+    }
+
+    return true;
+}
+
+void cSokolRender::DeleteShadowTexture() {
+    if (shadowMapRenderTarget == nullptr
+    && lightMapRenderTarget == nullptr) {
+        return;
+    }
+    //Remove all active texture images if one of them is shadow/light map
+    for (size_t i = 0; i < GetMaxTextureSlots(); ++i) {
+        SetTextureImage(i, nullptr);
+    }
+    if (shadowMapRenderTarget == activeRenderTarget
+    && lightMapRenderTarget == activeRenderTarget) {
+        activeRenderTarget = nullptr;
+    }
+    delete shadowMapRenderTarget;
+    shadowMapRenderTarget = nullptr;
+    delete lightMapRenderTarget;
+    lightMapRenderTarget = nullptr;
+}
+
+cTexture* cSokolRender::GetShadowMap() {
+    return shadowMapRenderTarget != nullptr ? shadowMapRenderTarget->texture : nullptr;
+}
+
+cTexture* cSokolRender::GetLightMap() {
+    return lightMapRenderTarget != nullptr ? lightMapRenderTarget->texture : nullptr;
 }

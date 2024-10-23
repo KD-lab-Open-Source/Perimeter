@@ -146,8 +146,47 @@ SET(perimeter_LINK_LIBS
 IF(PERIMETER_WINDOWS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
 ENDIF()
+
+IF(APPLE)
+    #TODO is this necessary?
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+        "-framework AppKit"
+        "-framework AudioToolbox"
+        "-framework Carbon"
+        "-framework Cocoa"
+        "-framework CoreAudio"
+        "-framework CoreBluetooth"
+        "-framework CoreGraphics"
+        "-framework CoreHaptics"
+        "-framework CoreMedia"
+        "-framework CoreMotion"
+        "-framework ForceFeedback"
+        "-framework Foundation"
+        "-framework GameController"
+        "-framework IOKit"
+        "-framework Metal"
+        "-framework QuartzCore"
+        "-framework Security"
+    )
+    IF(PERIMETER_DEBUG)
+        SET_TARGET_PROPERTIES(perimeter PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/DebugInfo.plist"
+        )
+    ELSE()
+        SET_TARGET_PROPERTIES(perimeter PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/macos/Perimeter.app.template/Contents/Info.plist"
+        )
+    ENDIF()
+ENDIF()
+
 #message("Link Libs: ${perimeter_LINK_LIBS}")
 target_link_libraries(perimeter PRIVATE ${perimeter_LINK_LIBS})
 
-#Install rules
-install (TARGETS perimeter RUNTIME)
+#Install ruless
+install(TARGETS perimeter
+        RUNTIME
+        LIBRARY
+        BUNDLE DESTINATION bundle
+)

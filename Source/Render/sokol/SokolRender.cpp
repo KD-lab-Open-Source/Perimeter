@@ -1,9 +1,9 @@
+#include <array>
 #include <unordered_set>
 #include "StdAfxRD.h"
 #include "xmath.h"
 #include "Umath.h"
-#include <sokol_gfx.h>
-#include <sokol_log.h>
+#include "SokolIncludes.h"
 #include "SokolResources.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
@@ -63,19 +63,19 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     }
 
     ClearPooledResources(0);
-    ClearCommands();
+    ClearAllCommands();
     ClearPipelines();
     
     const char* sokol_backend = "Unknown";
     
     //Init some state
-    activePipelineType = PIPELINE_TYPE_TRIANGLE;
+    activePipelineType = PIPELINE_TYPE_DEFAULT;
     activePipelineMode.cull = CameraCullMode = CULL_CCW;
     
     //Prepare sokol gfx desc
     sg_desc desc = {};
     desc.pipeline_pool_size = PERIMETER_SOKOL_PIPELINES_MAX,
-    desc.shader_pool_size = 8,
+    desc.shader_pool_size = 64,
     desc.buffer_pool_size = 1024 * 32;
     desc.uniform_buffer_size = 1024 * 1024 * 32;
     desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
@@ -128,7 +128,7 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     if (sdl_gl_context == nullptr) {
         ErrH.Abort("Error creating SDL GL Context", XERR_CRITICAL, 0, SDL_GetError());
     }
-    printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDER));
+    printf("GPU vendor: %s, renderer: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
     
     swapchain.gl.framebuffer = 0;
 #endif //PERIMETER_SOKOL_GL
@@ -259,9 +259,42 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     
     //Call sokol gfx setup
     sg_setup(&desc);
-#ifdef PERIMETER_DEBUG
     printf("cSokolRender::Init sg_setup done\n");
-#endif
+
+    debugUIEnabled = false;
+    const char* debugUIArg = check_command_line("render_debug");
+    if (debugUIArg != nullptr && debugUIArg[0]) {
+        DebugUISetEnable(true);
+        switch (debugUIArg[0]) {
+            case 'b':
+                imgui_state->buffer_window.open = true;
+                break;
+            case 'i':
+                imgui_state->image_window.open = true;
+                break;
+            case 's':
+                imgui_state->sampler_window.open = true;
+                break;
+            case 'r':
+                imgui_state->shader_window.open = true;
+                break;
+            case 'p':
+                imgui_state->pipeline_window.open = true;
+                break;
+            case 'a':
+                imgui_state->attachments_window.open = true;
+                break;
+            case 'u':
+                imgui_state->capture_window.open = true;
+                break;
+            case 'c':
+                imgui_state->caps_window.open = true;
+                break;
+            case 'f':
+                imgui_state->frame_stats_window.open = true;
+                break;
+        }
+    }
 
     //Create sampler
     sg_sampler_desc sampler_desc = {};
@@ -275,6 +308,15 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     sampler_desc.mag_filter = SG_FILTER_LINEAR;
     sampler_desc.mipmap_filter = SG_FILTER_LINEAR;
     sampler = sg_make_sampler(sampler_desc);
+
+    sg_sampler_desc shadow_sampler_desc = {};
+    sampler_desc.label = "SamplerShadow";
+    shadow_sampler_desc.min_filter = SG_FILTER_LINEAR;
+    shadow_sampler_desc.mag_filter = SG_FILTER_LINEAR;
+    shadow_sampler_desc.wrap_u = SG_WRAP_CLAMP_TO_EDGE;
+    shadow_sampler_desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
+    shadow_sampler_desc.compare = SG_COMPAREFUNC_LESS;
+    shadow_sampler = sg_make_sampler(&shadow_sampler_desc);
     
     //Create empty texture
     sg_image_desc* imgdesc = new sg_image_desc();
@@ -289,13 +331,12 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     memset(buf, 0xFF, buf_len);
     imgdesc->data.subimage[0][0] = { buf, buf_len };
     emptyTexture = new SokolTexture2D(imgdesc);
-
-#ifdef PERIMETER_DEBUG
     emptyTexture->label = "EmptySlotTexture";
-#endif
+    PrepareSokolTexture(emptyTexture);
 
-    for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
+    for (int i = 0; i < GetMaxTextureSlots(); ++i) {
         activeTextureTransform[i] = Mat4f::ID;
+        SetTextureImage(i, nullptr);
     }
 
     RenderSubmitEvent(RenderEvent::INIT, "Sokol done");
@@ -355,7 +396,7 @@ int cSokolRender::Done() {
     int ret = cInterfaceRenderDevice::Done();
     activeCommand.Clear();
     ClearPooledResources(0);
-    ClearCommands();
+    ClearAllCommands();
     ClearPipelines();
     shaders.clear();
     delete emptyTexture;
@@ -390,6 +431,11 @@ int cSokolRender::Done() {
         sdl_gl_context = nullptr;
     }
 #endif
+    if (imgui_state) {
+        sgimgui_discard(imgui_state);
+        delete imgui_state;
+        imgui_state = nullptr;
+    }
     RenderSubmitEvent(RenderEvent::DONE, "Sokol done");
     return ret;
 }
@@ -420,108 +466,146 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
 
 #define ClearPooledResources_Debug 0
 void cSokolRender::ClearPooledResources(uint32_t max_life) {
-    if (bufferPool.empty()) {
+    if (bufferPool.empty() && imagePool.empty()) {
         return;
     }
 #if defined(PERIMETER_DEBUG) && ClearPooledResources_Debug
-    size_t count = bufferPool.size();
+    size_t bufferCount = bufferPool.size();
+    size_t imageCount = imagePool.size();
 #endif
-    auto it = bufferPool.begin();
-    while (it != bufferPool.end()) {
-        auto& res = it->second;
-        res.unused_since++;
-        if (res.unused_since >= max_life) {
-            res.resource->DecRef();
-            res.resource = nullptr;
-            it = bufferPool.erase(it);
-        } else {
-            it++;
+    {
+        auto it = bufferPool.begin();
+        while (it != bufferPool.end()) {
+            auto& res = it->second;
+            res.unused_since++;
+            if (res.unused_since >= max_life) {
+                res.resource->DecRef();
+                res.resource = nullptr;
+                it = bufferPool.erase(it);
+            } else {
+                it++;
+            }
+        }
+    }
+    {
+        auto it = imagePool.begin();
+        while (it != imagePool.end()) {
+            auto& res = it->second;
+            res.unused_since++;
+            if (res.unused_since >= max_life) {
+                res.resource->DecRef();
+                res.resource = nullptr;
+                it = imagePool.erase(it);
+            } else {
+                it++;
+            }
         }
     }
 #if defined(PERIMETER_DEBUG) && ClearPooledResources_Debug
-    if (count != bufferPool.size()) {
-        printf("ClearPooledResources %" PRIsize " -> %" PRIsize "\n", count, bufferPool.size());
+    if (bufferCount != bufferPool.size()) {
+        printf("ClearPooledResources buffers %" PRIsize " -> %" PRIsize "\n", bufferCount, bufferPool.size());
+    }
+    if (imageCount != imagePool.size()) {
+        printf("ClearPooledResources images %" PRIsize " -> %" PRIsize "\n", imageCount, imagePool.size());
     }
 #endif
 }
 
-void cSokolRender::ClearCommands() {
-    std::unordered_set<SokolResourceBuffer*> pooled;
-    for (SokolCommand* command : commands) {
+void cSokolRender::ClearCommands(std::vector<SokolCommand*>& commands_to_clear) {    
+    for (SokolCommand* command : commands_to_clear) {
         //Reclaim resources that can be reused
-        SokolResourceBuffer* vertex_buffer = command->vertex_buffer;
-        if (vertex_buffer && vertex_buffer->key != SokolResourceKeyNone
-        && (vertex_buffer->RefCount() == 1 || pooled.count(vertex_buffer) == 0)) {
-            command->vertex_buffer = nullptr;
-            xassert(0 < vertex_buffer->RefCount() && vertex_buffer->RefCount() <= 50);
-            bufferPool.emplace(
-                    vertex_buffer->key,
-                    SokolResourcePooled(vertex_buffer)
-            );
-            pooled.emplace(vertex_buffer);
+        StorePooledResource(bufferPool, command->vertex_buffer);
+        StorePooledResource(bufferPool, command->index_buffer);
+        for (SokolResourceImage* image : command->sokol_images) {
+            StorePooledResource(imagePool, image);
         }
-        SokolResourceBuffer* index_buffer = command->index_buffer;
-        if (index_buffer && index_buffer->key != SokolResourceKeyNone
-        && (index_buffer->RefCount() == 1 || pooled.count(index_buffer) == 0)) {
-            command->index_buffer = nullptr;
-            xassert(0 < index_buffer->RefCount() && index_buffer->RefCount() <= 50);
-            bufferPool.emplace(
-                    index_buffer->key, 
-                    SokolResourcePooled(index_buffer)
-            );
-            pooled.emplace(index_buffer);
-        }
-        
+
         delete command;
     }
-    commands.clear();
-#ifdef PERIMETER_DEBUG
-    //printf("%ld %ld\n", reclaimed.size(), bufferPool.size());
-#endif
+
+    commands_to_clear.clear();
+}
+
+void cSokolRender::ClearAllCommands() {
+    for (auto& target : {
+        shadowMapRenderTarget,
+        lightMapRenderTarget
+    }) {
+        if (target != nullptr) {
+            ClearCommands(target->commands);
+        }
+    }
+
+    ClearCommands(swapchainCommands);
 }
 
 void cSokolRender::ClearPipelines() {
     for (auto pipeline : pipelines) {
-        delete pipeline.second;
+        delete pipeline;
     }
     pipelines.clear();
 }
 
+void cSokolRender::SetCommandViewportClip(bool replace) {
+    if (activeCommand.viewport && replace) {
+        free(activeCommand.viewport);
+        activeCommand.viewport = nullptr;
+    }
+    if (activeCommand.clip && replace) {
+        free(activeCommand.clip);
+        activeCommand.clip = nullptr;
+    }
+    if (!activeCommand.viewport) {
+        activeCommand.viewport = new Vect2i[2]{
+                activeViewport[0],
+                activeViewport[1]
+        };
+    }
+    if (!activeCommand.clip) {
+        activeCommand.clip = new Vect2i[2]{
+                activeClip[0],
+                activeClip[1]
+        };
+    }
+}
+
 int cSokolRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) {
-    *xmin = activeCommand.clip[0].x;
-    *ymin = activeCommand.clip[0].y;
-    *xmax = activeCommand.clip[1].x + activeCommand.clip[0].x;
-    *ymax = activeCommand.clip[1].y + activeCommand.clip[0].y;
+    *xmin = activeClip[0].x;
+    *ymin = activeClip[0].y;
+    *xmax = activeClip[1].x + activeClip[0].x;
+    *ymax = activeClip[1].y + activeClip[0].y;
     return 0;
 }
 
 int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
     int w = xmax-xmin;
     int h = ymax-ymin;
-    if (activeCommand.clip[0].x == xmin && activeCommand.clip[0].y == ymin
-        && activeCommand.clip[1].x == w && activeCommand.clip[1].y == h) {
+    if (activeClip[0].x == xmin && activeClip[0].y == ymin
+     && activeClip[1].x == w && activeClip[1].y == h) {
         //Nothing to do
         return 0;
     }
     FinishActiveDrawBuffer();
-    activeCommand.clip[0].x = xmin;
-    activeCommand.clip[0].y = ymin;
-    activeCommand.clip[1].x = w;
-    activeCommand.clip[1].y = h;
+    activeClip[0].x = xmin;
+    activeClip[0].y = ymin;
+    activeClip[1].x = w;
+    activeClip[1].y = h;
+    SetCommandViewportClip();
     return 0;
 }
 
 void cSokolRender::ResetViewport() {
-    if (activeCommand.viewport[0].x == 0
-    && activeCommand.viewport[0].y == 0
-    && activeCommand.viewport[1] == ScreenSize) {
+    if (activeViewport[0].x == 0
+    && activeViewport[0].y == 0
+    && activeViewport[1] == ScreenSize) {
         //Nothing to do
         return;
     }
     FinishActiveDrawBuffer();
-    activeCommand.viewport[0].x = 0;
-    activeCommand.viewport[0].y = 0;
-    activeCommand.viewport[1] = ScreenSize;;
+    activeViewport[0].x = 0;
+    activeViewport[0].y = 0;
+    activeViewport[1] = ScreenSize;
+    SetCommandViewportClip();
 }
 
 bool cSokolRender::SetScreenShot(const char *fname) {
@@ -531,8 +615,7 @@ bool cSokolRender::SetScreenShot(const char *fname) {
 }
 
 bool cSokolRender::IsEnableSelfShadow() {
-    //TODO
-    return false;
+    return true;
 }
 
 #ifdef SOKOL_D3D11
@@ -607,34 +690,53 @@ SokolCommand::~SokolCommand() {
 }
 
 void SokolCommand::CreateShaderParams() {
-    switch (shader_id) {
+    switch (pipeline->shader_id) {
         default:
         case SOKOL_SHADER_ID_NONE:
             xassert(0);
             break;
-        case SOKOL_SHADER_ID_color_tex1:
-        case SOKOL_SHADER_ID_color_tex2:
-            vs_params = new color_texture_vs_params_t();
-            fs_params = new color_texture_fs_params_t();
-            vs_params_len = sizeof(color_texture_vs_params_t);            
-            fs_params_len = sizeof(color_texture_fs_params_t);
+        case SOKOL_SHADER_ID_mesh_color_tex1:
+        case SOKOL_SHADER_ID_mesh_color_tex2:
+            vs_params = new mesh_color_texture_vs_params_t();
+            fs_params = new mesh_color_texture_fs_params_t();
+            vs_params_len = sizeof(mesh_color_texture_vs_params_t);
+            fs_params_len = sizeof(mesh_color_texture_fs_params_t);
             break;
-        case SOKOL_SHADER_ID_normal:
-            vs_params = new normal_texture_vs_params_t();
-            fs_params = new normal_texture_fs_params_t();
-            vs_params_len = sizeof(normal_texture_vs_params_t);            
-            fs_params_len = sizeof(normal_texture_fs_params_t);
+        case SOKOL_SHADER_ID_mesh_normal_tex1:
+            vs_params = new mesh_normal_texture_vs_params_t();
+            fs_params = new mesh_normal_texture_fs_params_t();
+            vs_params_len = sizeof(mesh_normal_texture_vs_params_t);            
+            fs_params_len = sizeof(mesh_normal_texture_fs_params_t);
             break;
-        case SOKOL_SHADER_ID_terrain:
-            vs_params = new terrain_vs_params_t();
-            fs_params = new terrain_fs_params_t();
-            vs_params_len = sizeof(terrain_vs_params_t);            
-            fs_params_len = sizeof(terrain_fs_params_t);
+        case SOKOL_SHADER_ID_shadow_tex1:
+        case SOKOL_SHADER_ID_shadow_normal_tex1:
+            vs_params = new shadow_texture_vs_params_t();
+            vs_params_len = sizeof(shadow_texture_vs_params_t);
+            fs_params = new shadow_texture_fs_params_t();
+            fs_params_len = sizeof(shadow_texture_fs_params_t);
+            break;
+        case SOKOL_SHADER_ID_mesh_tex1:
+            vs_params = new mesh_texture_vs_params_t();
+            vs_params_len = sizeof(mesh_texture_vs_params_t);
+            break;
+        case SOKOL_SHADER_ID_tile_map:
+            vs_params = new tile_map_vs_params_t();
+            fs_params = new tile_map_fs_params_t();
+            vs_params_len = sizeof(tile_map_vs_params_t);
+            fs_params_len = sizeof(tile_map_fs_params_t);
             break;
     }
 }
 
 void SokolCommand::ClearDrawData() {
+    if (viewport) {
+        delete viewport;
+        viewport = nullptr;
+    }
+    if (clip) {
+        delete clip;
+        clip = nullptr;
+    }
     if (pass_action) {
         delete pass_action;
         pass_action = nullptr;
@@ -652,22 +754,34 @@ void SokolCommand::ClearDrawData() {
 }
 
 void SokolCommand::ClearShaderParams() {
-    switch (shader_id) {
+    if (pipeline == nullptr) {
+        return;
+    }
+
+    switch (pipeline->shader_id) {
         default:
         case SOKOL_SHADER_ID_NONE:
             break;
-        case SOKOL_SHADER_ID_color_tex1:
-        case SOKOL_SHADER_ID_color_tex2:
-            delete reinterpret_cast<color_texture_vs_params_t*>(vs_params);
-            delete reinterpret_cast<color_texture_fs_params_t*>(fs_params);
+        case SOKOL_SHADER_ID_mesh_color_tex1:
+        case SOKOL_SHADER_ID_mesh_color_tex2:
+            delete reinterpret_cast<mesh_color_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<mesh_color_texture_fs_params_t*>(fs_params);
             break;
-        case SOKOL_SHADER_ID_normal:
-            delete reinterpret_cast<normal_texture_vs_params_t*>(vs_params);
-            delete reinterpret_cast<normal_texture_fs_params_t*>(fs_params);
+        case SOKOL_SHADER_ID_mesh_normal_tex1:
+            delete reinterpret_cast<mesh_normal_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<mesh_normal_texture_fs_params_t*>(fs_params);
             break;
-        case SOKOL_SHADER_ID_terrain:
-            delete reinterpret_cast<terrain_vs_params_t*>(vs_params);
-            delete reinterpret_cast<terrain_fs_params_t*>(fs_params);
+        case SOKOL_SHADER_ID_shadow_tex1:
+        case SOKOL_SHADER_ID_shadow_normal_tex1:
+            delete reinterpret_cast<shadow_texture_vs_params_t*>(vs_params);
+            delete reinterpret_cast<shadow_texture_fs_params_t*>(fs_params);
+            break;
+        case SOKOL_SHADER_ID_mesh_tex1:
+            delete reinterpret_cast<mesh_texture_vs_params_t*>(vs_params);
+            break;
+        case SOKOL_SHADER_ID_tile_map:
+            delete reinterpret_cast<tile_map_vs_params_t*>(vs_params);
+            delete reinterpret_cast<tile_map_fs_params_t*>(fs_params);
             break;
     }
     vs_params = nullptr;
@@ -676,25 +790,25 @@ void SokolCommand::ClearShaderParams() {
     fs_params_len = 0;
 }
 
-void SokolCommand::ClearTextures() {
+void SokolCommand::ClearImages() {
     for (int i = 0; i < PERIMETER_SOKOL_TEXTURES; ++i) {
-        SetTexture(i, nullptr);
+        SetImage(i, nullptr);
     }
 }
 
 void SokolCommand::Clear() {
     ClearDrawData();
     ClearShaderParams();
-    ClearTextures();
+    ClearImages();
 }
 
-void SokolCommand::SetTexture(size_t index, SokolResourceTexture* texture) {
+void SokolCommand::SetImage(size_t index, SokolResourceImage* image) {
     xassert(index<PERIMETER_SOKOL_TEXTURES);
-    if (texture) {
-        texture->IncRef();
+    if (image) {
+        image->IncRef();
     }
-    if (sokol_textures[index]) {
-        sokol_textures[index]->DecRef();
+    if (sokol_images[index]) {
+        sokol_images[index]->DecRef();
     }
-    sokol_textures[index] = texture;
+    sokol_images[index] = image;
 }

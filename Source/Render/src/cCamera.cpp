@@ -912,32 +912,36 @@ void cCamera::DrawSortMaterialShadowStrencil()
     RenderDevice->SetRenderState( RS_STENCILENABLE, true );
 
 #ifdef PERIMETER_D3D9
-    // Dont bother with interpolating color
-    rd->SetRenderState( D3DRS_SHADEMODE,     D3DSHADE_FLAT );
+	if (rd) {
+		// Dont bother with interpolating color
+		rd->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);
 
-    // Set up stencil compare fuction, reference value, and masks.
-    // Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
-    // Note: since we set up the stencil-test to always pass, the STENCILFAIL
-    // renderstate is really not needed.
-    rd->SetRenderState( D3DRS_STENCILFUNC,  D3DCMP_ALWAYS );
-    rd->SetRenderState( D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP );
-    rd->SetRenderState( D3DRS_STENCILFAIL,  D3DSTENCILOP_KEEP );
+		// Set up stencil compare fuction, reference value, and masks.
+		// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
+		// Note: since we set up the stencil-test to always pass, the STENCILFAIL
+		// renderstate is really not needed.
+		rd->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+		rd->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+		rd->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
 
-    // If ztest passes, inc/decrement stencil buffer value
-    rd->SetRenderState( D3DRS_STENCILREF,       0x1 );
-    rd->SetRenderState( D3DRS_STENCILMASK,      0xffffffff );
-    rd->SetRenderState( D3DRS_STENCILWRITEMASK, 0xffffffff );
+		// If ztest passes, inc/decrement stencil buffer value
+		rd->SetRenderState(D3DRS_STENCILREF, 0x1);
+		rd->SetRenderState(D3DRS_STENCILMASK, 0xffffffff);
+		rd->SetRenderState(D3DRS_STENCILWRITEMASK, 0xffffffff);
 
-    // Make sure that no pixels get drawn to the frame buffer
-    rd->SetRenderState( D3DRS_ALPHABLENDENABLE, true );
-    rd->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
-    rd->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+		// Make sure that no pixels get drawn to the frame buffer
+		rd->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+		rd->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+		rd->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	}
 #endif
 
     // Draw front-side of shadow volume in stencil/z only
     RenderDevice->SetRenderState( RS_CULLMODE, CULL_CW );
 #ifdef PERIMETER_D3D9
-    rd->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_INCR );
+	if (rd) {
+		rd->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_INCR);
+	}
 #endif
 	DrawSortMaterialShadowStrencilOneSide();
     // Now reverse cull order so back sides of shadow volume are written.
@@ -945,13 +949,17 @@ void cCamera::DrawSortMaterialShadowStrencil()
     // Decrement stencil buffer value
 	RenderDevice->SetRenderState( RS_CULLMODE, CULL_CCW );
 #ifdef PERIMETER_D3D9
-    rd->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_DECR );
+	if (rd) {
+		rd->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_DECR);
+	}
 #endif
 	DrawSortMaterialShadowStrencilOneSide();
 
     // Restore render states
 #ifdef PERIMETER_D3D9
-    rd->SetRenderState( D3DRS_SHADEMODE, D3DSHADE_GOURAUD );
+	if (rd) {
+		rd->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+	}
 #endif
     RenderDevice->SetRenderState( RS_CULLMODE, CULL_CCW );
     RenderDevice->SetRenderState( RS_ZWRITEENABLE,     true );

@@ -246,6 +246,7 @@ void terBuildingInstaller::InitTexture()
 	dx = dy = max(dx,dy);
 	pTexture = terVisGeneric->CreateTexture(dx,dy,true);
 	if (!pTexture) return;
+    pTexture->label = "BuildingInstaller";
 
 	int Pitch;
 	uint8_t* buf = pTexture->LockTexture(Pitch);

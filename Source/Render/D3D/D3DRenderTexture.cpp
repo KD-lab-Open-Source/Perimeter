@@ -13,7 +13,7 @@ IDirect3DTexture9* cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 	int Usage=0;
 	D3DPOOL Pool=D3DPOOL_MANAGED;
 
-	if(TextureFormat==SURFMT_RENDERMAP16 || TextureFormat==SURFMT_RENDERMAP32 || TextureFormat==SURFMT_RENDERMAP_FLOAT)
+	if(TextureFormat==SURFMT_RENDERMAP16 || TextureFormat==SURFMT_RENDERMAP32 || TextureFormat==SURFMT_RENDERMAP_DEPTH)
 	{
 		Usage=D3DUSAGE_RENDERTARGET;
 		Pool=D3DPOOL_DEFAULT;

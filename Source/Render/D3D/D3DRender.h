@@ -34,6 +34,7 @@ private:
     int                         xScrMin,yScrMin,xScrMax,yScrMax;
     
     bool isOrthographicProjSet = false;
+    bool WireframeMode = false;
 
     void UpdateD3DVertexBuffer(VertexBuffer* vb, size_t len);
     void UpdateD3DIndexBuffer(IndexBuffer* ib, size_t len);
@@ -165,6 +166,12 @@ public:
     void SetMaterialTilemap(cTileMap *TileMap) override;
     void SetMaterialTilemapShadow() override;
     void SetTileColor(sColor4f color) override;
+
+    bool CreateShadowTexture(int xysize) override;
+    void DeleteShadowTexture() override;
+
+    cTexture* GetShadowMap() override;
+    cTexture* GetLightMap() override;
 
     // //// cInterfaceRenderDevice impls end ////
 

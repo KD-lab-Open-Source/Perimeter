@@ -42,13 +42,13 @@ class cTexture : public cUnknownClass, public sAttribute
 	int			number_mipmap;
 public:
     float       bump_scale = 1;
-	sColor4c	skin_color;
 	std::vector<TextureImage> frames;
+    std::string		label = {};
 
 	cTexture(const char *TexName=0);
 	~cTexture();
     void SetName(const char *Name);
-	inline const char* GetName()const{return name.c_str();};
+	inline const std::string& GetName() const { return name; };
 	int GetNumberMipMap();
 	void SetNumberMipMap(int number);
 

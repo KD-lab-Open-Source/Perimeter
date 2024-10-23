@@ -4,11 +4,11 @@
 #include "Umath.h"
 #include "StdAfxRD.h"
 #include "VertexFormat.h"
-#include <sokol_gfx.h>
+#include "SokolIncludes.h"
 #include "IRenderDevice.h"
+#include "SokolResources.h"
 #include "SokolRender.h"
 #include "FileImage.h"
-#include "SokolResources.h"
 #include "RenderTracker.h"
 
 int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool enable_assert) {
@@ -29,17 +29,51 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         }
         sg_image_desc* desc = new sg_image_desc();
         desc->label = nullptr; //Added later
+        desc->render_target = false;
         desc->width = dx;
         desc->height = dy;
-        desc->pixel_format = SG_PIXELFORMAT_RGBA8;
         desc->num_slices = 1;
         desc->num_mipmaps = std::min(static_cast<int>(SG_MAX_MIPMAPS), Texture->GetNumberMipMap());
 
-        if (!FileImage) {
+        switch (Texture->GetFmt()) {
+            case SURFMT_NUMBER:
+            default:
+                fprintf(stderr,
+                        "cSokolRender::CreateTexture Unknown texture format: %" PRIu32 "\n",
+                        static_cast<uint32_t>(Texture->GetFmt())
+                );
+                desc->pixel_format = SG_PIXELFORMAT_RGBA8;
+                break;
+            case SURFMT_COLOR:
+            case SURFMT_COLORALPHA:
+            case SURFMT_COLOR32:
+            case SURFMT_COLORALPHA32:
+            case SURFMT_BUMP:
+            case SURFMT_GRAYALPHA:
+            case SURFMT_UV:
+            case SURFMT_U16V16:
+                desc->pixel_format = SG_PIXELFORMAT_RGBA8;
+                break;
+            case SURFMT_RENDERMAP16:
+            case SURFMT_RENDERMAP32:
+                desc->render_target = true;
+                desc->pixel_format = SG_PIXELFORMAT_RGBA8;
+                break;
+            case SURFMT_RENDERMAP_DEPTH:
+                desc->render_target = true;
+                desc->pixel_format = SG_PIXELFORMAT_DEPTH;
+                break;
+        }
+
+        if (desc->render_target || FileImage) {
+            desc->usage = SG_USAGE_IMMUTABLE;
+        } else {
             desc->usage = SG_USAGE_STREAM;
+        }
+        
+        if (!FileImage) {
             img = new SokolTexture2D(desc);
         } else {
-            desc->usage = SG_USAGE_IMMUTABLE;
             uint8_t* buf = new uint8_t[tex_len];
             memset(buf, 0xFF, tex_len);
             //Load in RGBA
@@ -97,10 +131,14 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             }
 
             img = new SokolTexture2D(desc);
+        }
 
-#ifdef PERIMETER_DEBUG
-            img->label = Texture->GetName() + std::to_string(i);
-#endif
+        img->label = std::to_string(i);
+        if (!Texture->label.empty()) {
+            img->label = Texture->label + '_' + img->label;
+        }
+        if (!Texture->GetName().empty()) {
+            img->label = Texture->GetName() + '_' + img->label;
         }
 
         Texture->GetFrameImage(i)->sg = img;
@@ -191,5 +229,8 @@ void cSokolRender::UnlockTexture(cTexture* Texture) {
 }
 
 SurfaceImage cSokolRender::GetShadowZBuffer() {
-    return SurfaceImage::NONE;
+    if (!shadowMapRenderTarget) {
+        return SurfaceImage::NONE;
+    }
+    return SurfaceImage { shadowMapRenderTarget->texture->GetFrameImage(0)->sg };
 }

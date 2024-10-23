@@ -8,7 +8,7 @@ enum eAttributeTexture
 	TEXTURE_RENDER16		=	1<<21,		// в текстуру происходит рендер
 	TEXTURE_RENDER32		=	1<<22,
 	TEXTURE_32				=	1<<24,		//Только 32 битный формат
-	TEXTURE_RENDER_SHADOW_9700 =1<<25,
+	TEXTURE_RENDER_DEPTH    =   1<<25,
     TEXTURE_POOL_DEFAULT    =	1<<26,
 	TEXTURE_GRAY			=   1<<27,
 	TEXTURE_UVBUMP			=	1<<28,
@@ -51,8 +51,8 @@ inline eSurfaceFormat cTexture::GetFmt()
 { 
 	if(GetAttribute(TEXTURE_GRAY) && GetAttribute(TEXTURE_ALPHA_BLEND))
 		return SURFMT_GRAYALPHA;
-	if(GetAttribute(TEXTURE_RENDER_SHADOW_9700))
-		return SURFMT_RENDERMAP_FLOAT;
+	if(GetAttribute(TEXTURE_RENDER_DEPTH))
+		return SURFMT_RENDERMAP_DEPTH;
 	if(GetAttribute(TEXTURE_RENDER16))
 		return SURFMT_RENDERMAP16;
 	if(GetAttribute(TEXTURE_RENDER32))

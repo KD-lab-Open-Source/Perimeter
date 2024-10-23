@@ -10,7 +10,6 @@ public:
     size_t data_len = 0;
     bool dirty = true;
     bool locked = false;
-    bool burned = false;
 
     explicit MemoryResource(size_t _data_len) {
         AllocData(_data_len);

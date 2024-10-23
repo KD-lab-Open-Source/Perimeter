@@ -368,3 +368,49 @@ void cD3DRender::DrawElasticSphere(class ElasticSphere *es) {
     NumberPolygon += (is+1) * (js+1) + (is+2) * (js-1) - 2;
 	NumDrawObject++;
 }
+
+bool cD3DRender::CreateShadowTexture(int xysize) {
+    if (!gb_RenderDevice3D) {
+        return false;
+    }
+    DrawType* draw;
+    if (cTileMap::CheckLightMapType()) {
+        draw = gb_RenderDevice3D->dtAdvance;
+    }
+    else {
+        draw = gb_RenderDevice3D->dtFixed;
+    }
+    return draw->CreateShadowTexture(xysize);
+}
+
+void cD3DRender::DeleteShadowTexture() {
+    if (!gb_RenderDevice3D) {
+        return;
+    }
+    dtFixed->DeleteShadowTexture();
+    dtAdvance->DeleteShadowTexture();
+}
+
+cTexture* cD3DRender::GetShadowMap() {
+    if (!gb_RenderDevice3D) {
+        return nullptr;
+    }
+    if (cTileMap::CheckLightMapType()) {
+        return gb_RenderDevice3D->dtAdvance->GetShadowMap();
+    }
+    else {
+        return gb_RenderDevice3D->dtFixed->GetShadowMap();
+    }
+}
+
+cTexture* cD3DRender::GetLightMap() {
+    if (!gb_RenderDevice3D) {
+        return nullptr;
+    }
+    if (cTileMap::CheckLightMapType()) {
+        return gb_RenderDevice3D->dtAdvance->GetLightMap();
+    }
+    else {
+        return gb_RenderDevice3D->dtFixed->GetLightMap();
+    }
+}

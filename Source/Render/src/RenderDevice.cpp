@@ -14,6 +14,8 @@
 #include "D3DRender.h"
 #endif
 #ifdef PERIMETER_SOKOL
+#include "sokol/SokolIncludes.h"
+#include "sokol/SokolResources.h"
 #include "sokol/SokolRender.h"
 #endif
 
@@ -37,7 +39,6 @@ void MemoryResource::FreeData() {
         free(data);
         data = nullptr;
     }
-    burned = false;
     data_len = 0;
 }
 
@@ -135,11 +136,9 @@ int cInterfaceRenderDevice::BeginScene() {
     SetNoMaterial(ALPHA_TEST);
     SetRenderState(RS_ZWRITEENABLE, 1);
     SetRenderState(RS_ZENABLE, 1);
-    SetRenderState(RS_WIREFRAME, WireframeMode);
     SetRenderState(RS_ZFUNC, CMP_LESSEQUAL);
     SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_NONE);
     SetRenderState(RS_CULLMODE, CameraCullMode=CULL_CW);
-    SetRenderState(RS_WIREFRAME, WireframeMode);
     return 0;
 }
 
@@ -168,7 +167,6 @@ void cInterfaceRenderDevice::CreateVertexBuffer(VertexBuffer& vb, uint32_t Numbe
     
     vb.dirty = true;
     vb.locked = false;
-    vb.burned = false;
     
     vb.AllocData(vb.NumberVertex * vb.VertexSize);
 }
@@ -189,7 +187,6 @@ void cInterfaceRenderDevice::CreateIndexBuffer(IndexBuffer& ib, uint32_t NumberI
 
     ib.dirty = true;
     ib.locked = false;
-    ib.burned = false;
     
     ib.AllocData(ib.NumberIndices * sizeof(indices_t));
 }
@@ -210,7 +207,6 @@ void* cInterfaceRenderDevice::LockVertexBuffer(VertexBuffer &vb) {
         xassert(0);
         return nullptr;
     }
-    xassert(!vb.burned);
     xassert(!vb.locked);
     vb.dirty = true;
     vb.locked = true;
@@ -230,7 +226,6 @@ void cInterfaceRenderDevice::UnlockVertexBuffer(VertexBuffer &vb) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_VERTEXBUF, "", &vb);
 #endif
-    xassert(!vb.burned);
     xassert(vb.locked);
     vb.locked = false;
 }
@@ -244,7 +239,6 @@ indices_t* cInterfaceRenderDevice::LockIndexBuffer(IndexBuffer &ib) {
         xassert(0);
         return nullptr;
     }
-    xassert(!ib.burned);
     xassert(!ib.locked);
     ib.dirty = true;
     ib.locked = true;
@@ -264,7 +258,6 @@ void cInterfaceRenderDevice::UnlockIndexBuffer(IndexBuffer &ib) {
 #ifdef PERIMETER_RENDER_TRACKER_LOCKS
     RenderSubmitEvent(RenderEvent::UNLOCK_INDEXBUF, "", &ib);
 #endif
-    xassert(!ib.burned);
     xassert(ib.locked);
     ib.locked = false;
 }
@@ -618,6 +611,26 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,const void *pSrc,int bplDst,void
 				}
 		delete[] rgba;
 	}
+}
+
+void cInterfaceRenderDevice::DebugUISetEnable(bool state) {
+    debugUIEnabled = state;
+}
+
+bool cInterfaceRenderDevice::DebugUIIsEnabled() {
+    return debugUIEnabled;
+}
+
+bool cInterfaceRenderDevice::DebugUIMouseMove(const Vect2f& pos) {
+    return false;
+}
+
+bool cInterfaceRenderDevice::DebugUIMousePress(const Vect2f& pos, uint8_t button, bool pressed) {
+    return false;
+}
+
+bool cInterfaceRenderDevice::DebugUIKeyPress(struct sKey* key, bool pressed) {
+    return false;
 }
 
 // Render device selection

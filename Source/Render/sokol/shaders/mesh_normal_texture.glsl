@@ -2,16 +2,16 @@
 
 @vs vs
 //Uniforms
-uniform normal_texture_vs_params {
+uniform mesh_normal_texture_vs_params {
     mat4 un_mvp;
     mat4 model;
     mat4 tex0_mat;
 };
 
 //Vertex Buffer inputs
-in vec3 vs_position;
-in vec3 vs_normal;
-in vec2 vs_texcoord0;
+layout(location=0) in vec3 vs_position;
+layout(location=1) in vec3 vs_normal;
+layout(location=2) in vec2 vs_texcoord0;
 
 //Fragment shader outputs
 layout(location=0) out vec3 fs_normal;
@@ -25,10 +25,10 @@ void main() {
     fs_position = (model * vec4(vs_position, 0)).xyz;
 }
 @end
-
+ 
 @fs fs
 //Uniforms
-uniform normal_texture_fs_params {
+uniform mesh_normal_texture_fs_params {
     vec4 diffuse;
     vec4 ambient;
     vec4 specular;

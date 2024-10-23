@@ -123,6 +123,10 @@ windowClientSize_(1024, 768)
 {
 	gameShell = this;
 
+#ifdef PERIMETER_DEBUG
+    debugPrm_.load();
+#endif
+
 	scriptReelEnabled = false;
 
 	startedWithMainmenu = false;
@@ -228,7 +232,6 @@ windowClientSize_(1024, 768)
 	_shellCursorManager.Load();
 
 #ifdef PERIMETER_DEBUG
-    debugPrm_.load();
     if(check_command_line("explore")){
         debugPrm_.edit();
         ErrH.Exit();
@@ -1086,6 +1089,10 @@ void GameShell::EventHandler(SDL_Event& event) {
             }
             Vect2f where = convert(event.button.x, event.button.y);
             //printf("M %fx%f B %dn", where.x, where.y, event.button.button, pressed);
+            if (terRenderDevice->DebugUIIsEnabled()
+            && terRenderDevice->DebugUIMousePress(where, event.button.button, pressed)) {
+                break;
+            }
             switch (event.button.button) {
                 case SDL_BUTTON_LEFT:
                     if (doubleClick) {
@@ -1355,6 +1362,12 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 
 	case VK_F6:
+#ifdef PERIMETER_DEBUG
+		if (isShiftPressed()) {
+			terRenderDevice->StartCaptureFrame();
+			break;
+		}
+#endif
 		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		profiler_start_stop();
@@ -1365,6 +1378,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'N': 
 		debug_variation = 1 - debug_variation;
 		break;
+
+    case 'R' | KBD_CTRL:
+        terRenderDevice->DebugUISetEnable(!terRenderDevice->DebugUIIsEnabled());
+        break;
 
 	case 'M':
 		terCamera->setRestriction(!terCamera->restricted());
@@ -1571,9 +1588,15 @@ void GameShell::KeyPressed(sKey& Key)
         terminate();
         return;
     }
-    
-	if(missionEditor_ && missionEditor_->keyPressed(Key))
-		return;
+
+    if (terRenderDevice->DebugUIIsEnabled()
+    && terRenderDevice->DebugUIKeyPress(&Key, true)) {
+        return;
+    }
+
+    if (missionEditor_ && missionEditor_->keyPressed(Key)) {
+        return;
+    }
 
 	if (Key.fullkey == (VK_F1|KBD_SHIFT|KBD_CTRL)) {
 #ifndef PERIMETER_DEBUG
@@ -1680,6 +1703,12 @@ void GameShell::KeyPressed(sKey& Key)
 		case VK_F12 | KBD_CTRL:
 			MakeShot();
 			break;
+
+#ifdef PERIMETER_DEBUG
+		case VK_F6 | KBD_SHIFT:
+			terRenderDevice->StartCaptureFrame();
+			break;
+#endif
 	}
 
 	ControlPressed(Key.fullkey);
@@ -1801,8 +1830,14 @@ void GameShell::ControlPressed(int key)
 
 void GameShell::KeyUnpressed(sKey& Key)
 {
-	if(missionEditor_ && missionEditor_->keyUnpressed(Key))
-		return;
+    if (terRenderDevice->DebugUIIsEnabled()
+    && terRenderDevice->DebugUIKeyPress(&Key, false)) {
+        return;
+    }
+
+	if (missionEditor_ && missionEditor_->keyUnpressed(Key)) {
+        return;
+    }
 
 	if(_bMenuMode){
 		_shellIconManager.OnKeyUp(Key.fullkey);
@@ -1864,8 +1899,14 @@ void GameShell::updatePosition()
 
 void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 {
-	if(missionEditor_ && missionEditor_->mouseMove(pos))
-		return;
+    if (terRenderDevice->DebugUIIsEnabled()
+    && terRenderDevice->DebugUIMouseMove(pos)) {
+        return;
+    }
+
+	if (missionEditor_ && missionEditor_->mouseMove(pos)) {
+        return;
+    }
 
 	cameraCursorInWindow = true;
 

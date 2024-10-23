@@ -504,6 +504,7 @@ void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, c
     
     uint32_t zwrite = GetRenderState(RS_ZWRITEENABLE);
     SetRenderState(RS_ZWRITEENABLE, 1);
+    bool WireframeMode = GetRenderState(RS_WIREFRAME);
     if (wireframe && !WireframeMode) SetRenderState(RS_WIREFRAME, 1);
     SetWorldMatXf(Matrix);
     SetNoMaterial(ALPHA_BLEND);
@@ -720,3 +721,23 @@ void cInterfaceRenderDevice::DrawElasticSphere(ElasticSphere *es) {
 
     SetRenderState(RS_CULLMODE,cull);
 }
+
+bool cInterfaceRenderDevice::CreateShadowTexture(int xysize) {
+    return false;
+}
+
+void cInterfaceRenderDevice::DeleteShadowTexture() {
+}
+
+cTexture* cInterfaceRenderDevice::GetShadowMap() {
+    return nullptr;
+}
+
+cTexture* cInterfaceRenderDevice::GetLightMap() {
+    return nullptr;
+}
+
+#ifdef PERIMETER_DEBUG
+void cInterfaceRenderDevice::StartCaptureFrame() {
+}
+#endif
