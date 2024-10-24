@@ -18,8 +18,10 @@ sg_compare_func GetSokolCompareFunc(eCMPFUNC cmpfunc) {
             return SG_COMPAREFUNC_GREATER;
         case CMP_GREATEREQUAL:
             return SG_COMPAREFUNC_GREATER_EQUAL;
-        default:
         case CMP_ALWAYS:
+            return SG_COMPAREFUNC_ALWAYS;
+        default:
+            xassert(0);
             return SG_COMPAREFUNC_ALWAYS;
     }
 }

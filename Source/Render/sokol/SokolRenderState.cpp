@@ -1133,17 +1133,22 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
 
 uint32_t cSokolRender::GetRenderState(eRenderStateOption option) {
     switch(option) {
-        case RS_WIREFRAME:
-            return activePipelineMode.wireframe_mode;
         case RS_ZWRITEENABLE:
             return activePipelineMode.depth_write;
+        case RS_ZFUNC:
+            return activePipelineMode.depth_cmp;
+        case RS_WIREFRAME:
+            return activePipelineMode.wireframe_mode;
         case RS_CULLMODE:
             return activePipelineMode.cull;
         case RS_ALPHA_TEST_MODE:
             return activeCommandAlphaTest;
         case RS_BILINEAR:
             return 1;
+        case RS_FOGENABLE:
+            return 0;
         default:
+            xassert(0);
             return 0;
     }
 }
