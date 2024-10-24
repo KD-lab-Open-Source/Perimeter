@@ -43,7 +43,9 @@ layout(location=0) in vec2 fs_uv0;
 
 void main() {
     vec4 color = texture(sampler2D(un_tex0, un_sampler0), fs_uv0);
-    if (un_alpha_test >= color.a) discard;
+    if (un_alpha_test > color.a) {
+        discard;
+    }
 }
 @end
 

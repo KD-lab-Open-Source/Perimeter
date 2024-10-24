@@ -91,7 +91,9 @@ void main() {
     //Modulate each other
     frag_color = texture(sampler2D(un_tex0, un_sampler0), fs_uv0) * fs_color;
     #endif //SHADER_TEX_2
-    if (un_alpha_test >= frag_color.a) discard;
+    if (un_alpha_test > frag_color.a) {
+        discard;
+    }
 }
 @end
 

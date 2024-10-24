@@ -89,7 +89,7 @@ void main() {
     } else {
         frag_color.xyz = frag_color.xyz * ambient.xyz * ambient_k;
     }
-    if (un_alpha_test >= frag_color.a) {
+    if (un_alpha_test > frag_color.a) {
         discard;
     }
 }
