@@ -272,14 +272,32 @@ void cTileMap::Draw(cCamera *DrawNode)
 		if(Option_ShadowType==SHADOW_MAP_SELF) {
             render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_ALL, true);
         }
-	}
-	else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION))
-	{ // рисовать отражение
-		gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_254/*GetRefSurface()*/);
-        render->DrawBump(DrawNode, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
-		gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_0);
-	}else
-	{
+	} else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION)) {
+        //Draw tilemap reflection
+        uint32_t zfunc = gb_RenderDevice->GetRenderState(RS_ZFUNC);
+        uint32_t alpha = gb_RenderDevice->GetRenderState(RS_ALPHA_TEST_MODE);
+        
+        //Draw a bound box to set the depth buffer
+        gb_RenderDevice->SetNoMaterial(ALPHA_BLEND);
+        //Disable alpha test after setting blend mode so dx9 won't discard them
+        gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_NONE);
+        int z = terra->GetHZeroPlast();
+        gb_RenderDevice->SetWorldMatXf(MatXf::ID);
+        gb_RenderDevice->DrawBound(
+                Vect3f(0, 0, static_cast<float>(z+1)), //+1 to avoid depth conflicting with zero layer
+                Vect3f(static_cast<float>(terra->SizeX()), static_cast<float>(terra->SizeY()), 0),
+                sColor4c(0,0,0,0)
+        );
+        gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, alpha);
+        
+        //Draw the map reflection
+        gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_GREATEREQUAL);
+        render->DrawBump(DrawNode, ALPHA_NONE, TILEMAP_NOZEROPLAST, false);
+        gb_RenderDevice->SetRenderState(RS_ZFUNC, zfunc);
+        
+        //Remove the bound box depth so object reflections can be drawn
+        gb_RenderDevice->ClearZBuffer();
+	} else {
 		if(GetAttribute(ATTRUNKOBJ_REFLECTION)) {
 		    // рисовать прямое изображение
 			gb_RenderDevice->SetRenderState(RS_ALPHA_TEST_MODE, ALPHATEST_GT_1);
