@@ -251,7 +251,8 @@ public:
 
     virtual void DrawElasticSphere(class ElasticSphere *es);
     virtual void DrawScene(class cScene *Scene);
-    virtual void DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe=0, const sColor4c& Color=sColor4c(255,255,255,255));
+    virtual void DrawBound(const Vect3f &min, const Vect3f &max, const sColor4c& diffuse=sColor4c(255,255,255,255));
+    virtual void DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe=false, const sColor4c& diffuse=sColor4c(255,255,255,255));
     
     virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE);

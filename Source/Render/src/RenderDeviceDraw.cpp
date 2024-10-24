@@ -499,17 +499,9 @@ void cInterfaceRenderDevice::FlushPrimitive2D() {
 
 // 3D primitives
 
-void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe, const sColor4c &Color) {
+void cInterfaceRenderDevice::DrawBound(const Vect3f &min, const Vect3f &max, const sColor4c &diffuse) {
     VISASSERT(DrawNode);
     
-    uint32_t zwrite = GetRenderState(RS_ZWRITEENABLE);
-    SetRenderState(RS_ZWRITEENABLE, 1);
-    bool WireframeMode = GetRenderState(RS_WIREFRAME);
-    if (wireframe && !WireframeMode) SetRenderState(RS_WIREFRAME, 1);
-    SetWorldMatXf(Matrix);
-    SetNoMaterial(ALPHA_BLEND);
-
-    uint32_t diffuse = ConvertColor(sColor4c((150*Color.r)>>8,(155*Color.g)>>8,(155*Color.b)>>8,100));
     DrawBuffer* db = GetDrawBuffer(sVertexXYZDT1::fmt, PT_TRIANGLES);
     sPolygon* p = nullptr;
     sVertexXYZDT1* v = nullptr;
@@ -525,7 +517,7 @@ void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, c
     v[7].setPos(max.x,max.y,max.z);
     v[0].diffuse=v[1].diffuse=v[2].diffuse=
     v[3].diffuse=v[4].diffuse=v[5].diffuse=
-    v[6].diffuse=v[7].diffuse=diffuse;
+    v[6].diffuse=v[7].diffuse=ConvertColor(diffuse);
     p[0].p1=1, p[0].p2=2, p[0].p3=0;
     p[1].p1=1, p[1].p2=3, p[1].p3=2;
     p[2].p1=4, p[2].p2=6, p[2].p3=5;
@@ -540,7 +532,17 @@ void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, c
     p[11].p1=2, p[11].p2=7, p[11].p3=6;
     
     db->Unlock();
-    db->Draw();
+}
+
+void cInterfaceRenderDevice::DrawBound(const MatXf &Matrix, const Vect3f &min, const Vect3f &max, bool wireframe, const sColor4c& diffuse) {
+    uint32_t zwrite = GetRenderState(RS_ZWRITEENABLE);
+    SetRenderState(RS_ZWRITEENABLE, 1);
+    bool WireframeMode = GetRenderState(RS_WIREFRAME);
+    if (wireframe && !WireframeMode) SetRenderState(RS_WIREFRAME, 1);
+    SetWorldMatXf(Matrix);
+    SetNoMaterial(ALPHA_BLEND);
+
+    DrawBound(min, max, sColor4c((150*diffuse.r)>>8,(155*diffuse.g)>>8,(155*diffuse.b)>>8,100));
 
     if (wireframe) SetRenderState(RS_WIREFRAME, WireframeMode);
     SetRenderState(RS_ZWRITEENABLE, zwrite);

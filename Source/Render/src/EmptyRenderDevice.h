@@ -30,7 +30,8 @@ public:
     void DrawLine(int x1,int y1,int x2,int y2,const sColor4c& color, float width) override { }
     void DrawRectangle(int x,int y,int dx,int dy,const sColor4c& color, float outline) override { }
     void FlushPrimitive2D() override { }
-    void DrawBound(const MatXf &Matrix,const Vect3f &min,const Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
+    void DrawBound(const Vect3f &min,const Vect3f &max,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
+    void DrawBound(const MatXf &Matrix,const Vect3f &min,const Vect3f &max,bool wireframe=false,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
     void DrawLine(const Vect3f &v1,const Vect3f &v2,const sColor4c& color) override { }
     void FlushPrimitive3D() override { }
 
