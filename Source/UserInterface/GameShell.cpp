@@ -1368,7 +1368,6 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			break;
 		}
 #endif
-		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		profiler_start_stop();
         SDL_ShowCursor(SDL_FALSE);
