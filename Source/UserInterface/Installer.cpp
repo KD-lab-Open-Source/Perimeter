@@ -319,6 +319,7 @@ void terBuildingInstaller::ShowCircle()
 
 void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 {
+    MTAuto auto_lock(&lock);
 	if(plane)
 		plane->SetAttr(ATTRUNKOBJ_IGNORE);
 
