@@ -7,17 +7,25 @@
 ///Used for tracking what channel is playing what sample, if sample is not here then is not being played
 std::vector<SND_Sample*> channelSamples;
 
-/*
- * TODO replace this lock usage with proper SDL_LockAudioDevice/SDL_UnlockAudioDevice
- * once there is a way to obtain SDL_AudioDeviceID from SDL_Mixer (port game to SDL3?)
- */
+#if 2 < SDL_MAJOR_VERSION
+//TODO see how to set audioDevice from SDL_Mixer selected device
+//#define USE_SDL_AUDIO_LOCK
+#endif
+
+#ifdef USE_SDL_AUDIO_LOCK
+SDL_AudioDeviceID audioDevice = 1;
+#else
+///Avoid channelSamples being accessed by callback while iterating/modifying
 MTSection channelSamplesLock;
+#endif
 
 // make a channelDone function
 static void callbackChannelFinished(int channel)
 {
     //printf("Channel %d finished playing.\n", channel);
+#ifndef USE_SDL_AUDIO_LOCK
     MTAuto mtenter(&channelSamplesLock);
+#endif
     channelSamples[channel] = nullptr;
 }
 
@@ -134,12 +142,17 @@ int SND_Sample::play() {
             channel = SND_NO_CHANNEL;
         } else {
             //Store channel for callback
-            //SDL_LockAudioDevice();
             xassert(channel < channelSamples.size());
+#ifdef USE_SDL_AUDIO_LOCK
+            SDL_LockAudioDevice(audioDevice);
+#else
             MTAuto mtenter(&channelSamplesLock);
+#endif
             xassert(channelSamples[channel] == nullptr);
             channelSamples[channel] = this;
-            //SDL_UnlockAudioDevice();
+#ifdef USE_SDL_AUDIO_LOCK
+            SDL_UnlockAudioDevice(audioDevice);
+#endif
         }
         
     }
@@ -204,8 +217,11 @@ bool SND_Sample::updateEffects() {
 
 int SND_Sample::getChannel() const {
     if (!SND::has_sound_init) return SND_NO_CHANNEL;
-    //SDL_LockAudioDevice();
+#ifdef USE_SDL_AUDIO_LOCK
+    SDL_LockAudioDevice(audioDevice);
+#else
     MTAuto mtenter(&channelSamplesLock);
+#endif
     int channel = SND_NO_CHANNEL;
     for (int i = 0; i < channelSamples.size(); ++i) {
         if (channelSamples[i] == this) {
@@ -213,7 +229,9 @@ int SND_Sample::getChannel() const {
             break;
         }
     }
-    //SDL_UnlockAudioDevice();
+#ifdef USE_SDL_AUDIO_LOCK
+    SDL_UnlockAudioDevice(audioDevice);
+#endif
     return channel;
 }
 

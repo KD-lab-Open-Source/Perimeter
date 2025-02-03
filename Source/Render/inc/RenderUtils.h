@@ -54,7 +54,7 @@ static HWND get_hwnd_from_sdl_window(SDL_Window* sdl_window) {
     hWnd = wm_info.info.win.window;
     hWndVisGeneric = hWnd;
 #else
-    //dxvk-native uses HWND as SDL2 window handle, so this is allowed
+    //dxvk-native uses HWND as SDL window handle, so this is allowed
     hWnd = static_cast<HWND>(sdl_window);
 #endif
 
