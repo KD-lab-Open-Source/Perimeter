@@ -132,7 +132,7 @@ else()
 endif()
 
 #Required for SDL_GL_* and SDL_SetHint/SDL_GetHint funcs called during render init
-set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY})
+set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${PERIMETER_SDL_LIBRARY})
 
 set(RenderSokol_SRCS
     ${RenderSokol_SokolImpl}

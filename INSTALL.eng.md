@@ -75,7 +75,9 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
   - lld
   - libbacktrace
 
-Packages: `gcc cmake make ninja SDL2 SDL2_image SDL2_net SDL2_mixer boost lld libbacktrace zlib`
+Packages: `gcc cmake make ninja boost lld libbacktrace zlib`
+
+Packages for SDL2: `SDL2 SDL2_image SDL2_net SDL2_mixer`
 
 ### Instructions
 
@@ -105,9 +107,10 @@ Experimental support, it uses dxvk for D3D9 API and some libraries to supply Win
   - vulkan headers (for DXVK)
   - glsllang-tools (for DXVK which needs glslangValidator program) 
 
-Packages in Debian/Ubuntu: `build-essential ninja-build cmake meson libvulkan-dev glslang-tools lld cmake meson zlib1g-dev
-libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev
-libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev`
+Packages in Debian/Ubuntu: `build-essential ninja-build cmake meson libvulkan-dev glslang-tools lld cmake meson zlib1g-dev 
+libboost-dev libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev`
+
+Packages for SDL2: `libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev`
 
 ### Instructions
 
@@ -135,7 +138,9 @@ Experimental support, it uses dxvk for D3D9 API and some libraries to supply Win
   - libbacktrace
   - Vulkan SDK or MoltenVK (for DXVK)
 
-Packages in MacPorts: `ninja cmake meson ffmpeg boost libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev zlib`
+Packages in MacPorts: `ninja cmake meson ffmpeg boost zlib`
+
+Packages for SDL2: `libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev`
 
 ### Instructions
 

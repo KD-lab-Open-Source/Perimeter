@@ -136,15 +136,13 @@ SET(perimeter_LINK_LIBS
         #Libraries
         ${EXE_LINK_LIBS_PRE}
         ${perimeter_LINK_LIBS}
-        ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARY}
-        ${SDL2_MIXER_LIBRARY}
-        ${SDL2_NET_LIBRARY}
+        ${PERIMETER_SDL_LIBRARY}
+        ${PERIMETER_SDL_EXTRA_LIBRARIES}
         ${EXE_LINK_LIBS_POST}
 )
 
 IF(PERIMETER_WINDOWS)
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2MAIN_LIBRARY})
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${PERIMETER_SDL_MAIN_LIBRARY})
 ENDIF()
 
 IF(APPLE)
