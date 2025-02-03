@@ -364,6 +364,11 @@ Pete in his Jeep
 Тестирование,
 создание мода "True English Compaign"
 
+Александр "@!!ex" Басов
+Широкоэкранный патч
+Инструменты сообщества
+Реверс-инжиниринг игровых форматов данных
+
 &9966FFАссоциация KD-Lab&FFFFFF
 Менеджмент, маркетинг
 Юлия "Ylitka" Новикова
@@ -377,11 +382,7 @@ August
 ViHtor
 shikoist
 
-&9966FFСпециальные благодарности&FFFFFF
-Александр "@!!ex" Басов
-
-
-Сторонних библиотек
+&9966FFСторонних библиотек&FFFFFF
 SDL2
 SDL2_image
 SDL2_net
@@ -686,6 +687,11 @@ Pete in his Jeep
 Testing,
 "True English Campaign" mod creator
 
+Alexander "@!!ex" Basov
+Widescreen patch
+Community tools
+Reverse engineering of game file formats
+
 &9966FFKD-Lab Association&FFFFFF
 Management, marketing
 Yulia "Ylitka" Novikova
@@ -699,11 +705,7 @@ August
 ViHtor
 shikoist
 
-&9966FFSpecial Thanks&FFFFFF
-Alexander "@!!ex" Basov
-
-
-Third-party libraries
+&9966FFThird-party libraries&FFFFFF
 SDL2
 SDL2_image
 SDL2_net
