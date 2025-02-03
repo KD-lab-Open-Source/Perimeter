@@ -55,11 +55,16 @@ public:
             return false;
         }
 		const char* fname = gameShell->manualData().soundTracks[play].fileName();
-		if(fname==NULL)
-			fname=default_fname;
 
-		if(fname)
-			strMusic=fname;
+		if (!fname) {
+            fname = default_fname;
+        }
+
+		if (!fname || strMusic == fname) {
+            return false;
+        }
+            
+        strMusic = fname;
 
 		SetVolumeMusic( terMusicVolume );
 		bool b=mpeg->OpenToPlay(fname,true);
