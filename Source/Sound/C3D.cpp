@@ -330,7 +330,7 @@ void ScriptParam::LoadSound(const std::string& name)
     SND_Sample* sample = SNDLoadSound(name);
 
 	if (sample == nullptr) {
-        if (0 < SND::has_sound_init) {
+        if (SND::has_sound_init) {
             logs("Sound not loaded: %s\n", name.c_str());
         }
     } else {
