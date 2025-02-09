@@ -694,6 +694,10 @@ void PNetCenter::GameIsReady()
     }
 }
 
+size_t PNetCenter::getRelaysCount() const {
+    return serverList->getRelays().size();
+}
+
 const std::vector<GameInfo>& PNetCenter::getGameList() const {
 	return serverList->getList();
 }

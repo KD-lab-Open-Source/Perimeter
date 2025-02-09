@@ -327,6 +327,15 @@ void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, in
                 updateMultiplayerListUI();
             }
         } else {
+            //No active games
+            const char* msg;
+            if (0 < gameShell->getNetClient()->getRelaysCount()) {
+                msg = "Interface.Menu.Multiplayer.NoGameRunning";
+            } else {
+                msg = "Interface.Menu.Multiplayer.NoRelayAvailable";
+            }
+            listBox->SetCurSel(-1);
+            listBox->AddString(qdTextDB::instance().getText(msg), 0);
             selectGameInfo(nullptr);
             updateMultiplayerListUI();
         }
@@ -343,6 +352,7 @@ void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, in
             advance(it, pos);
             selectGameInfo(&(*it));
         } else {
+            listBox->SetCurSel(-1);
             selectGameInfo(nullptr);
         }
         updateMultiplayerListUI();

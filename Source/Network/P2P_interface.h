@@ -446,6 +446,7 @@ public:
 	void JoinDirectGame(const NetAddress& connection, const std::string& playerName, const std::string& password);
     void JoinPublicRoomGame(const NetAddress& connection, NetRoomID room_id, const std::string& playerName, const std::string& password);
 
+    size_t getRelaysCount() const;
 	const std::vector<struct GameInfo>& getGameList() const;
 
 	void SendEvent(const netCommandGeneral* event);
