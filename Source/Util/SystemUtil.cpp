@@ -473,7 +473,6 @@ bool create_directories(const std::string& path, std::error_code* error) {
 }
 
 // ---   Ini file   ---------------------
-//TODO move CSimpleIniA into IniManager so we avoid loading/saving file each time we read/write a key
 
 uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
                        char* returnBuffer, uint32_t bufferSize, const std::string& filePath) {
@@ -538,6 +537,14 @@ IniManager::IniManager(const char* fname, bool check_existence_, bool full_path)
     is_full_path = full_path;
 }
 
+IniManager::~IniManager() {
+    CSimpleIniA* ini = static_cast<CSimpleIniA*>(ini_instance);
+    if (ini) {
+        save();
+        delete ini;
+    }
+}
+
 std::string IniManager::getFilePath() {
     if (!is_full_path) {
         std::string pathres = convert_path_content(fname_);
@@ -554,25 +561,89 @@ std::string IniManager::getFilePath() {
     }
 }
 
+bool IniManager::load() {
+    CSimpleIniA* ini = static_cast<CSimpleIniA*>(ini_instance);
+    if (!ini) {
+        pending_changes = false;
+        ini_instance = ini = new CSimpleIniA();
+    }
+    if (pending_changes) {
+        save();
+    }
+    
+    std::string path = getFilePath();
+    std::ifstream istream(std::filesystem::u8path(path), std::ios::in | std::ios::binary);
+    SI_Error rc = ini->LoadData(istream);
+    istream.close();
+    if (rc < 0) {
+        fprintf(stderr, "Error reading %s file: %d\n", path.c_str(), rc);
+        return false;
+    }
+    
+    return true;
+}
+
+bool IniManager::save() {
+    if (!pending_changes) {
+        return false;
+    }
+    pending_changes = false;
+    
+    std::string path = getFilePath();
+    CSimpleIniA* ini = static_cast<CSimpleIniA*>(ini_instance);
+    if (!ini) {
+        fprintf(stderr, "No ini loaded to write %s file\n", path.c_str());
+        return false;
+    }
+
+    std::ofstream ostream(std::filesystem::u8path(path), std::ios::out | std::ios::binary);
+    SI_Error rc = ini->Save(ostream);
+    ostream.close();
+    if (rc < 0) {
+        fprintf(stderr, "Error writing %s file: %d\n", path.c_str(), rc);
+        return false;
+    }
+    
+    return true;
+}
+
+
 const char* IniManager::get(const char* section, const char* key)
 {
-	static char buf[256];
-    std::string path = getFilePath();
+    static const size_t BUF_SIZE = 256;
+	static char buf[BUF_SIZE];
+    *buf = 0;
+
+    if (!ini_instance && !load()) {
+        return buf;
+    }
     
-	if(!ReadIniString(section, key, nullptr, buf, 256, path)){
-		*buf = 0;
-		if (check_existence) {
-            fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);
-        }
-	}
+    CSimpleIniA* ini = static_cast<CSimpleIniA*>(ini_instance);
+    const char* val = ini->GetValue(section, key, nullptr);
+    if (val) {
+        strncpy(buf, val, BUF_SIZE);
+    } else if (check_existence) {
+        std::string path = getFilePath();
+        fprintf(stderr, "INI key not found [%s] %s in file %s\n", section, key, path.c_str());
+    }
 
 	return buf;
 }
+
 void IniManager::put(const char* section, const char* key, const char* val)
 {
-    std::string path = getFilePath();
-    
-    WriteIniString(section, key, val, path);
+    if (!ini_instance && !load()) {
+        return;
+    }
+
+    CSimpleIniA* ini = static_cast<CSimpleIniA*>(ini_instance);
+    SI_Error rc = ini->SetValue(section, key, val);
+    if (rc < 0) {
+        std::string path = getFilePath();
+        fprintf(stderr, "Error writing [%s] %s = %s in file %s: %d\n", section, key, val, path.c_str(), rc);
+        return;
+    }
+    pending_changes = true;
 }
 
 int IniManager::getInt(const char* section, const char* key) 

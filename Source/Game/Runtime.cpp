@@ -282,13 +282,14 @@ void HTManager::init()
 
 	allocation_tracking("before");
 
-	if (IniManager("Perimeter.ini").getInt("Game","ZIP")) {
+    IniManager perimeter_ini("Perimeter.ini");
+	if (perimeter_ini.getInt("Game","ZIP")) {
         ZIPOpen("resource.pak");
     }
 
 	PerimeterDataChannelLoad();
 
-	terMissionEdit = IniManager("Perimeter.ini").getInt("Game","MissionEdit");
+	terMissionEdit = perimeter_ini.getInt("Game","MissionEdit");
 	check_command_line_parameter("edit", terMissionEdit);
 
 	GameShell::preLoad();
@@ -657,10 +658,11 @@ void HTManager::initGraphics()
     terVisGeneric->SetFontRootDirectory(getLocRootPath());
 
 	terVisGeneric->SetEffectLibraryPath("RESOURCE\\FX","RESOURCE\\FX\\TEXTURES");
-
-	bool occlusion=IniManager("Perimeter.ini").getInt("Graphics","EnableOcclusion");
+    
+    IniManager perimeter_ini("Perimeter.ini");
+	bool occlusion=perimeter_ini.getInt("Graphics","EnableOcclusion");
 	terVisGeneric->EnableOcclusion(occlusion);
-	bool point_light=IniManager("Perimeter.ini").getInt("Graphics","EnablePointLight");
+	bool point_light=perimeter_ini.getInt("Graphics","EnablePointLight");
 	terVisGeneric->EnablePointLight(point_light);
 
 	terVisGeneric->SetFarDistanceLOD(terFarDistanceLOD);
@@ -1150,6 +1152,8 @@ int SDL_main(int argc, char *argv[])
         }
     }
 
+    printf("Starting main loop at: %" PRIu64 "\n", clock_us());
+
 #ifndef EMSCRIPTEN
     while (mainQuant())  {
         // pass
@@ -1157,6 +1161,8 @@ int SDL_main(int argc, char *argv[])
 #else
     emscripten_set_main_loop(mainLoop, 0, true);
 #endif
+    
+    printf("Stopped main loop at: %" PRIu64 "\n", clock_us());
 
     delete runtime_object;
 	

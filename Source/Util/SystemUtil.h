@@ -92,12 +92,17 @@ uint32_t WriteIniString(const char* section, const char* key, const char* value,
 class IniManager
 {
 private:
+    void* ini_instance = nullptr;
+    bool pending_changes = false;
 	std::string fname_;
     bool is_full_path;
     std::string getFilePath();
 public:
 	bool check_existence = true;
 	explicit IniManager(const char* fname, bool check_existence = true, bool full_path = false);
+    ~IniManager();
+    bool load();
+    bool save();
 	const char* get(const char* section, const char* key);
 	void put(const char* section, const char* key, const char* val);
 	int getInt(const char* section, const char* key);

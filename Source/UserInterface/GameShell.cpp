@@ -150,15 +150,18 @@ windowClientSize_(1024, 768)
 	reelAbortEnabled = true;
 	gamePausedByMenu = false;
 
-    IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
-    IniManager("Perimeter.ini", false).getInt("Game","DoubleClickDistance", doubleClickDistance);
+    IniManager perimeter_ini("Perimeter.ini");
+    IniManager perimeter_ini_nocheck("Perimeter.ini", false);
 
-	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
+    perimeter_ini_nocheck.getInt("Game","DoubleClickTime", doubleClickTime);
+    perimeter_ini_nocheck.getInt("Game","DoubleClickDistance", doubleClickDistance);
 
-    terShowFPS = IniManager("Perimeter.ini").getInt("Game","ShowFPS");
+	debug_allow_replay = true; //perimeter_ini_nocheck.getInt("Game","EnableReplay");
+
+    terShowFPS = perimeter_ini_nocheck.getInt("Game","ShowFPS");
     check_command_line_parameter("show_fps", terShowFPS);
 
-    MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
+    MainMenuEnable = perimeter_ini.getInt("Game","MainMenu");
 	check_command_line_parameter("mainmenu", MainMenuEnable);
 	if(mission_edit)
 		MainMenuEnable = false;
@@ -172,7 +175,7 @@ windowClientSize_(1024, 768)
 		currentSingleProfile.setCurrentProfileIndex(0);
 	}
 
-	float menuAnimSpeedCoeff = IniManager("Perimeter.ini").getFloat("Graphics","MenuAnimationSpeedFactor");
+	float menuAnimSpeedCoeff = perimeter_ini.getFloat("Graphics","MenuAnimationSpeedFactor");
 	_fEffectButtonTime1 *= menuAnimSpeedCoeff;
 	_fEffectButtonTime2 *= menuAnimSpeedCoeff;
 	_fEffectButtonTime3 *= menuAnimSpeedCoeff;
@@ -183,12 +186,12 @@ windowClientSize_(1024, 768)
 	bgEffectTime *= menuAnimSpeedCoeff;
 
 
-//	autoSwitchAIEnabled = check_command_line("autoSwitchAI") || IniManager("Perimeter.ini").getInt("Game","AutoSwitchAI");
+//	autoSwitchAIEnabled = check_command_line("autoSwitchAI") || perimeter_ini.getInt("Game","AutoSwitchAI");
 	autoSwitchAIEnabled = check_command_line("autoSwitchAI");
 
 	briefingEnabled = !(disableBriefing || check_command_line("disableBriefing"));
 
-	terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction") && !mission_edit);
+	terCamera->setRestriction(perimeter_ini.getInt("Game","CameraRestriction") && !mission_edit);
 	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial;
 
 	shotNumber_ = -1;
@@ -290,7 +293,7 @@ windowClientSize_(1024, 768)
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
         
-        int splash = IniManager("Perimeter.ini").getInt("Game","StartSplash");
+        int splash = perimeter_ini.getInt("Game","StartSplash");
         check_command_line_parameter("start_splash", splash);
         if (splash) {
 			_bCursorVisible = 0;
@@ -506,15 +509,16 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 //	SetShadowType(terShadowType,terDrawMeshShadow,false);
 
-	//vMap.fullLoad(IniManager("Perimeter.ini").getInt("TD","FastLoad"));
+	//vMap.fullLoad(perimeter_ini.getInt("TD","FastLoad"));
 
 //	IniManager world_ini(GetTargetName(vMap.worldIniFile));
 //	FogStart = world_ini.getFloat("Visualization Parameters","FogStart");
 //	FogEnd = world_ini.getFloat("Visualization Parameters","FogEnd");
 //	world_ini.getFloatArray("Visualization Parameters","FogColor", 3, &FogColor.r);
 //	FogColor /= 255;
-	
-	setSpeed(IniManager("Perimeter.ini").getFloat("Game", "GameSpeed"));
+
+    IniManager perimeter_ini("Perimeter.ini");
+	setSpeed(perimeter_ini.getFloat("Game", "GameSpeed"));
 
 	terCamera->reset();
 
@@ -567,10 +571,10 @@ void GameShell::GameStart(const MissionDescription& mission)
 	LoadProgressBlock(1);
 	LoadProgressUpdate(1);
 
-	bool occlusion=IniManager("Perimeter.ini").getInt("Graphics","EnableOcclusion");
+	bool occlusion=perimeter_ini.getInt("Graphics","EnableOcclusion");
 	terVisGeneric->EnableOcclusion(occlusion);
 
-//	float particle_rate=IniManager("Perimeter.ini").getFloat("Graphics","ParticleRate");
+//	float particle_rate=perimeter_ini.getFloat("Graphics","ParticleRate");
 //	xassert(particle_rate>=0 && particle_rate<=1);
 //	terVisGeneric->SetGlobalParticleRate(particle_rate);
 
@@ -2475,8 +2479,9 @@ bool CShellLogicDispatcher::ShowTerraform() const
 //------------------------------------------
 void GameShell::initResourceDispatcher()
 {
-	synchroByClock_ = IniManager("Perimeter.ini").getInt("Timer","SynchroByClock");
-    int sfr = IniManager("Perimeter.ini").getInt("Timer","StandartFrameRate");
+    IniManager perimeter_ini("Perimeter.ini");
+	synchroByClock_ = perimeter_ini.getInt("Timer","SynchroByClock");
+    int sfr = perimeter_ini.getInt("Timer","StandartFrameRate");
 	framePeriod_ = 1000/sfr;
 
 	check_command_line_parameter("synchro_by_clock", synchroByClock_);
@@ -2491,7 +2496,7 @@ void GameShell::initResourceDispatcher()
 	scale_time.set(synchroByClock_, framePeriod_, terMaxTimeInterval);
 
 
-	///setSpeed(IniManager("Perimeter.ini").getFloat("Game", "GameSpeed"));
+	///setSpeed(perimeter_ini.getFloat("Game", "GameSpeed"));
 }
 
 void GameShell::startResourceDispatcher()

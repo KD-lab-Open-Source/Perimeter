@@ -15,8 +15,9 @@ std::vector<std::string> localesAvailable;
 
 void saveLocale(const std::string& locale) {
     //Windows players are used to changing it in Locale, so keep behavior consistent if is present in Perimeter.ini
-    if (IniManager("Perimeter.ini", false).get("Game", "Language")) {
-        IniManager("Perimeter.ini", false).put("Game", "Language", locale.c_str());
+    IniManager perimeter_ini("Perimeter.ini", false);
+    if (perimeter_ini.get("Game", "Language")) {
+        perimeter_ini.put("Game", "Language", locale.c_str());
     }
     putStringSettings("Locale", locale);
 }
@@ -62,9 +63,10 @@ void initLocale() {
 #else
     localeCurrent = gpx()->sys()->getLanguage() == "ru" ? "russian" : "english";
 #endif
-
+    
+    IniManager perimeter_ini("Perimeter.ini", false);
     if (localeCurrent.empty()) {
-        localeCurrent = IniManager("Perimeter.ini", false).get("Game", "Language");
+        localeCurrent = perimeter_ini.get("Game", "Language");
         if (!localeCurrent.empty()) {
             fprintf(stdout, "Using game data locale: %s\n", localeCurrent.c_str());
         }
@@ -76,7 +78,7 @@ void initLocale() {
         }
     }
     //Clear language if requested
-    if (check_command_line("clearlocale") || IniManager("Perimeter.ini", false).getInt("Game","ClearLocale")) {
+    if (check_command_line("clearlocale") || perimeter_ini.getInt("Game","ClearLocale")) {
         fprintf(stdout, "Clearing previously selected locale\n");
         localeCurrent = "";
         saveLocale(localeCurrent);
