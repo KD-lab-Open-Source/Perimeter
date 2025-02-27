@@ -382,9 +382,9 @@ void terUniverse::makeCommand2D(CommandID command_id, const Vect3f& position, Co
 	select.makeCommand2D(command_id, position, mode);
 }
 
-void terUniverse::toggleHold()
+void terUniverse::toggleHold(bool pause)
 {
-	select.toggleHold();
+	select.toggleHold(pause);
 }
 
 void terUniverse::makeCommand(CommandID command_id, const Vect3f& position, CommandSelectionMode mode)

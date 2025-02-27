@@ -65,7 +65,7 @@ public:
 	void makeCommandSubtle(CommandID command_id, const Vect3f& position, CommandSelectionMode mode);
 	void makeCommand(CommandID command_id, const Vect3f& position, CommandSelectionMode mode);
 	void makeCommand(CommandID command_id, terUnitBase* actionObject, CommandSelectionMode mode);
-	void toggleHold();
+	void toggleHold(bool pause);
 
 	void setShouldIgnoreIntfCommands(bool shouldIgnoreIntfCommands) {
 		PlayerVect::iterator pi;

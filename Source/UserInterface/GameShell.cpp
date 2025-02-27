@@ -1867,7 +1867,10 @@ void GameShell::ControlUnpressed(uint32_t key)
             _shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SAVE_GAME_SCR);
             break;
         case CTRL_HOLD_PRODUCTION:
-            universe()->toggleHold();
+            universe()->toggleHold(true);
+            break;
+        case CTRL_RESUME_PRODUCTION:
+            universe()->toggleHold(false);
             break;
         case CTRL_TOGGLE_LIFEBARS:
             m_ShellDispatcher.toggleAlwaysShowLifebars();

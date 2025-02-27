@@ -29,7 +29,7 @@ public:
 	void makeCommandWithCanAttackFilter(const Vect3f& position);
 	void makeCommandWithCanAttackFilter(terUnitBase* actionObject);
 	void makeCommandSubtle(CommandID command_id, const Vect3f& position, CommandSelectionMode mode); // object or point
-	void toggleHold();
+	void toggleHold(bool status);
 
 	void ShowCircles();
 	int SelectUnit(terUnitBase* p);

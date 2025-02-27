@@ -421,24 +421,32 @@ void cSelectManager::makeCommandWithCanAttackFilter(terUnitBase* actionObject) {
 	}
 }
 
-void cSelectManager::toggleHold()
+void cSelectManager::toggleHold(bool pause)
 {
 	CSELECT_AUTOLOCK();
 	UnitList::iterator ui;
 	FOR_EACH(SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER],ui) {
 		terBuilding* building = dynamic_cast<terBuilding*>(*ui);
+        terUnitSquad* squad = building ? nullptr : dynamic_cast<terUnitSquad*>(*ui);
 		if (building) {
-			if (building->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION) {
+			if (!pause && building->buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION) {
 				building->commandOutcoming(UnitCommand(COMMAND_ID_CONTINUE_CONSTRUCTION, 0, COMMAND_SELECTED_MODE_NEGATIVE));
-			} else if (building->isUpgrading() || !building->isConstructed()) {
+			} else if (pause && (building->isUpgrading() || !building->isConstructed())) {
 				building->commandOutcoming(UnitCommand(COMMAND_ID_HOLD_CONSTRUCTION, 0, COMMAND_SELECTED_MODE_NEGATIVE));
 			} 
-		} else if (dynamic_cast<terUnitSquad*>(*ui)) {
-//			DamageMolecula a_req, a_progr, a_enabled, a_pause;
-//			pSquad->GetAtomPaused(a_pause);
-			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, MUTATION_ATOM_SOLDIER, COMMAND_SELECTED_MODE_NEGATIVE));
-			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, MUTATION_ATOM_OFFICER, COMMAND_SELECTED_MODE_NEGATIVE));
-			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, MUTATION_ATOM_TECHNIC, COMMAND_SELECTED_MODE_NEGATIVE));
+		} else if (squad) {
+			DamageMolecula a_pause;
+            squad->GetAtomPaused(a_pause);
+            CommandID cmd = pause ? COMMAND_ID_PRODUCTION_PAUSE_ON : COMMAND_ID_PRODUCTION_PAUSE_OFF;
+			if ((a_pause[0] != 0) != pause) {
+                squad->commandOutcoming(UnitCommand(cmd, MUTATION_ATOM_SOLDIER, COMMAND_SELECTED_MODE_NEGATIVE));
+            }
+			if ((a_pause[1] != 0) != pause) {
+                squad->commandOutcoming(UnitCommand(cmd, MUTATION_ATOM_OFFICER, COMMAND_SELECTED_MODE_NEGATIVE));
+            }
+			if ((a_pause[2] != 0) != pause) {
+                squad->commandOutcoming(UnitCommand(cmd, MUTATION_ATOM_TECHNIC, COMMAND_SELECTED_MODE_NEGATIVE));
+            }
 		}
 	}
 }
