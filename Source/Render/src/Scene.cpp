@@ -319,8 +319,11 @@ bool cScene::GetLighting(sColor4f &Ambient,sColor4f &Diffuse,sColor4f &Specular,
 #define PREC_TRACE_RAY						18
 bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace, bool ignore_height, bool ignore_bounds)
 { // тест на пересечение луча с объектами сцены, в том числе и с ландшафтом
-
-	TerraInterface* terra=TileMap->GetTerra();
+    TerraInterface* terra=TileMap ? TileMap->GetTerra() : nullptr;
+    if (!terra) {
+        xassert(0);
+        return false;
+    }
 
 	float xb=pStart.x,yb=pStart.y,zb=pStart.z;
 	float xe=pFinish.x,ye=pFinish.y,ze=pFinish.z;
