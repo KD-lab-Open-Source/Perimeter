@@ -6,47 +6,45 @@
 #include "GameShellSq.h"
 
 struct HotKey {
-	int actionNumber;
-	float threshold;
-	int key1;
-	int key2;
+	int actionNumber = -1;
+	float threshold = 0.0f;
+	uint32_t key1 = VK_NONE;
+	uint32_t key2 = VK_NONE;
+    bool custom = false;
 
-	HotKey();
-	HotKey(int actionNumber, float threshold, int key1, int key2);
+	HotKey() = default;
+	HotKey(int actionNumber, float threshold, uint32_t key1, uint32_t key2, bool custom);
 };
 
-class AbstractAction {
+class CtrlAction {
 	public:
-		virtual bool actionPerformed() = 0;
-		virtual const char* getName() = 0;
-		virtual ~AbstractAction() = default;
-};
-
-class CtrlAction : public AbstractAction {
-	public:
-		CtrlAction( int controlID, const ControlAction& action );
+		CtrlAction( int controlID, std::string  controlName, ControlAction  action );
 		bool actionPerformed();
-		const char* getName();
+		const char* getName() const;
+        const std::string& getControlName() const;
 	protected:
 		int controlID;
+        std::string controlName;
 		ControlAction action;
-
 };
 
 class HotKeyManager {
 	public:
 		HotKeyManager();
 		~HotKeyManager();
-		void keyPressed(int key);
+		bool keyPressed(uint32_t key);
 		std::string getKeyNameForControlAction(const ControlAction& action);
+        std::vector<CtrlAction*>& getActions();
+        std::vector<HotKey>& getHotKeys();
+        void fillActions();
+        void loadHotKeys();
 	protected:
-		void fillActions();
-		void loadHotKeys();
-		bool checkHotKey(const HotKey& hotKey, int key, float currTime);
+        bool loadHotKey(std::vector<HotKey>& simpleHotKeys, size_t i, IniManager& ini, bool custom);
+		bool checkHotKey(const HotKey& hotKey, uint32_t key, float currTime) const;
 
-		std::vector<AbstractAction*> actions;
+		std::vector<CtrlAction*> actions;
 		std::vector<HotKey> hotKeys;
-		int lastKey;
+        uint32_t lastKey;
 		float lastKeyTime;
 };
 

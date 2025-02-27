@@ -23,7 +23,6 @@ bool create_directories(const std::string& path, std::error_code* error = nullpt
 /////////////////////////////////////////////////////////////////////////////////
 #include "xkey.h"
 #include <SDL_events.h>
-//#define VK_TILDE	0xC0
 
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL (WM_MOUSELAST + 1)
@@ -33,31 +32,33 @@ bool applicationHasFocus();
 bool applicationIsGo();
 
 void initKeyboardMapping();
+SDL_Scancode getSDLScanCodeFromVK(uint32_t key);
+uint32_t getModFlagFromKey(uint32_t key);
 bool isPressed(uint32_t key);
 inline bool isShiftPressed() { return isPressed(VK_SHIFT); }
 inline bool isControlPressed() { return isPressed(VK_CONTROL); }
 inline bool isAltPressed() { return isPressed(VK_ALT); }
 
-const unsigned int KBD_CTRL = 1 << 8;
-const unsigned int KBD_SHIFT = 1 << 9;
-const unsigned int KBD_ALT = 1 << 10;
+const uint32_t KBD_CTRL = 1 << 8;
+const uint32_t KBD_SHIFT = 1 << 9;
+const uint32_t KBD_ALT = 1 << 10;
 
 struct sKey {
     union
     {
         struct
         {
-            unsigned char key;
-            unsigned char ctrl : 1;
-            unsigned char shift : 1;
-            unsigned char alt	: 1;
+            uint8_t key;
+            uint8_t ctrl : 1;
+            uint8_t shift : 1;
+            uint8_t alt	: 1;
         };
-        int fullkey;
+        uint32_t fullkey;
     };
 
     explicit sKey(SDL_Keysym keysym);
 
-    explicit sKey(int key_);
+    explicit sKey(uint32_t key_, bool set_mods_pressed);
 
     sKey();
 	
@@ -119,6 +120,7 @@ public:
 
 std::string setExtension(const std::string& file_name, const char* extension);
 std::string getExtension(const std::string& file_name, bool process);
+std::string getPrefFilePath(const std::string& file_name);
 
 // --- Settings ------
 IniManager* getSettings();

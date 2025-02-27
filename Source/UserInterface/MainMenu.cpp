@@ -1659,6 +1659,7 @@ void goToPreviousScreen(CShellWindow* pWnd, int current_screen_id) {
             break;
         case SQSH_MM_GAME_SCR:
         case SQSH_MM_SOUND_SCR:
+        case SQSH_MM_CONTROL_EDITOR_SCR:
             nShow = SQSH_MM_OPTIONS_SCR;
             break;
         case SQSH_MM_GRAPHICS_SCR:
@@ -1706,6 +1707,7 @@ void goToPreviousScreen(CShellWindow* pWnd, int current_screen_id) {
             break;
         case SQSH_MM_SCREEN_GAME:
         case SQSH_MM_SCREEN_SOUND:
+        case SQSH_MM_CONTROL_EDITOR_INGAME_SCR:
             nShow = SQSH_MM_SCREEN_OPTIONS;
             break;
         case SQSH_MM_INGAME_CUSTOM_SCR:

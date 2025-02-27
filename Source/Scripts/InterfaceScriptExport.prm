@@ -236,8 +236,8 @@ int battleUp = 405;
 int battleStep = 40;
 int startUp = 294;
 int startStep = 68;
-int optionsUp = 115 + 70;
-int optionsStep = 122;
+int optionsUp = 294;
+int optionsStep = 80;
 
 ///
 sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
@@ -2666,7 +2666,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 				_ix = (565.0f + 52.0f * 1); _iy = (0.0f + 45.0f * 1 + 89.0f * 0);
 			};
 			parent_id = SQSH_TAB_BUILD_ID;
-			popup = "<gun_gimlet>";
+			popup = "<gun_scum_disruptor>";
 			actions = {
 				{
 					name = "buildScumDisruptor";
@@ -5066,18 +5066,21 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 //	image = {texture="resource\\icons\\MainMenu\\t.avi";hasResolutionVersion=0;};
 //	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
 	controls = new sqshControl[] {
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 50)/1024; y=(optionsUp + 210 + optionsStep * 0)/768; sx=100/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 100; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
-		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 50)/1024; y=(optionsUp + 210 + optionsStep * 1)/768; sx=100/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 100; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 50)/1024; y=(optionsUp + optionsStep - 10 + optionsStep * 0)/768; sx=100/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 100; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 50)/1024; y=(optionsUp + optionsStep - 10 + optionsStep * 1)/768; sx=100/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 100; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
+		{type = SQSH_GENERAL_WND_TYPE; id = SQSH_MM_RAMKA;	 	 x=(509 - 50)/1024; y=(optionsUp + optionsStep - 10 + optionsStep * 2)/768; sx=100/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 100; iy = 3;}; state = SQSH_ENABLED; txt_dx =0.3f; },
 
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 x=(512 - 350 / 2)/1024; y=156/768; sx=350/1024; sy=139/768; state = SQSH_ENABLED; ystart=139/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_PORTRAIT_TYPE; id = SQSH_MM_RAMKA;	 x=(512 - 350 / 2)/1024; y=156/768; sx=350/1024; sy=139/768; image={texture="resource\\icons\\MainMenu\\main_menu_logo.tga";ix = 350; iy = 139;};image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 350; iy = 139;hasResolutionVersion=0;}; },
 
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 			x=leftSolidEdge; y=(optionsUp + optionsStep * 0)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_GAME_BTN;		x=leftSolidEdge; y=(optionsUp + optionsStep * 0)/768; sx=leftSolidWidth; sy=64/768; text="GAME"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 			x=leftSolidEdge; y=(optionsUp + optionsStep * 1)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_GAME_BTN;		x=leftSolidEdge; y=(optionsUp + optionsStep * 1)/768; sx=leftSolidWidth; sy=64/768; text="GAME"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_GRAPHICS_BTN;	x=leftSolidEdge; y=(optionsUp + optionsStep * 1)/768; sx=leftSolidWidth; sy=64/768; text="GRAPHICS"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 			x=leftSolidEdge; y=(optionsUp + optionsStep * 2)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_GRAPHICS_BTN;	x=leftSolidEdge; y=(optionsUp + optionsStep * 2)/768; sx=leftSolidWidth; sy=64/768; text="GRAPHICS"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_SOUND_BTN;		x=leftSolidEdge; y=(optionsUp + optionsStep * 2)/768; sx=leftSolidWidth; sy=64/768; text="SOUND"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;		 			x=leftSolidEdge; y=(optionsUp + optionsStep * 3)/768; sx=leftSolidWidth; sy=64/768;  state = SQSH_ENABLED; ystart=64/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_SOUND_BTN;		x=leftSolidEdge; y=(optionsUp + optionsStep * 3)/768; sx=leftSolidWidth; sy=64/768; text="SOUND"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_CONTROL_EDITOR_BTN;			x=leftSolidEdge; y=(optionsUp + optionsStep * 3)/768; sx=leftSolidWidth; sy=64/768; text="CONTROLS"; txt_dy = 7/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					x=leftBottomBtn.x;  y=leftBottomBtn.y; sx=leftBottomBtn.sx; sy=leftBottomBtn.sy; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_OPTIONS_BTN;	x=leftBottomBtn.x;  y=leftBottomBtn.y; sx=leftBottomBtn.sx; sy=leftBottomBtn.sy; text="BACK"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};}
 
@@ -5537,6 +5540,58 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
  	};
  	defaultEnterBtnID = SQSH_MM_CONTENT_CHOOSER_SELECT_BTN;
  	defaultEscBtnID = SQSH_MM_BACK_FROM_CONTENT_CHOOSER_BTN;
+},
+{
+ 	id = SQSH_MM_CONTROL_EDITOR_SCR;
+ 	load_group = SHELL_LOAD_GROUP_MENU;
+ 	x = 0;
+ 	y = 0;
+ 	sx = 1024;
+ 	sy = 768;
+ 	type = SQSH_MULTITEX_WINDOW;
+//	image = {texture="resource\\icons\\MainMenu\\t.avi";hasResolutionVersion=0;};
+//	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
+	controls = new sqshControl[] {
+	    //List border
+		//{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=186/1024; y=94/768; sx=400/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 0; ix = 300; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=186/1024; y=94/768; sx=10/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=(186+10)/1024; y=94/768; sx=615/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 10; _iy = 0; ix = 280; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=(186+10+615)/1024; y=94/768; sx=10/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 290; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		
+		//Scrollbar bg and list
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=790/1024; y=103/768; sx=24/1024; sy=452/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 302; _iy = 33; ix = 24; iy = 458;}; state = SQSH_ENABLED; ystart=458/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_LIST_BOX_TYPE;	   id = SQSH_MM_CONTROL_EDITOR_LIST;			x=189/1024; y=101/768; sx=625/1024; sy=454/768;
+																					image_check={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 24; iy = 24;dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
+											 										image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 992; ix = 226; iy = 26;};
+																					image_h={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328; _iy = 427; ix = 24; iy = 30;};
+																					txt_dx = listBoxTextLeftOffset;
+																					txt_dy = 7/768;
+																					xstart = 24/1024;
+																					ystart = 35/768;
+		},
+
+        //Change button
+        {type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					    x=(186 + 218 * 0)/1024;     y=574/768;   sx=200/1024; sy=45/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 340; _iy = 234; ix = 194; iy = 45;}; ystart=45/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_CONTROL_EDITOR_CHANGE_BTN;	x=(186 + 218 * 0 + 7)/1024; y=(574+2)/768; sx=(200-14)/1024; sy=(45-4)/768; text="CHANGE"; font_group=2; txt_dx=81; txt_dy = 11; sound = "mainmenu_button"; state = SQSH_ENABLED; },
+
+        //Restore button
+        {type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					    x=(186 + 218 * 1)/1024;     y=574/768;   sx=200/1024; sy=45/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 340; _iy = 234; ix = 194; iy = 45;}; ystart=45/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_CONTROL_EDITOR_RESTORE_BTN;	x=(186 + 218 * 1 + 7)/1024; y=(574+2)/768; sx=(200-14)/1024; sy=(45-4)/768; text="RESTORE"; font_group=2; txt_dx=81; txt_dy = 11; sound = "mainmenu_button"; state = SQSH_ENABLED; },
+
+        //Clear button
+        {type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					    x=(186 + 218 * 2)/1024;     y=574/768;   sx=200/1024; sy=45/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 340; _iy = 234; ix = 194; iy = 45;}; ystart=45/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_CONTROL_EDITOR_DELETE_BTN;	x=(186 + 218 * 2 + 7)/1024; y=(574+2)/768; sx=(200-14)/1024; sy=(45-4)/768; text="DELETE"; font_group=2; txt_dx=81; txt_dy = 11; sound = "mainmenu_button"; state = SQSH_ENABLED; },
+
+        //Back button
+		sqshControl_ScaleButton                                               { x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; ystart=42/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_CONTROL_EDITOR_BTN;	x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; text="BACK"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};}
+	};
+	bgObjects = new BGObj[] {
+		{name = "group battle"; chainName = "battle";},
+		{name = "group back2"; chainName = "back2";},
+		{name = "group background"; chainName = "background off";}
+	};
+ 	defaultEscBtnID = SQSH_MM_BACK_FROM_CONTROL_EDITOR_BTN;
 },
 {
 	id = SQSH_MM_SUBMIT_DIALOG_SCR;

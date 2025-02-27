@@ -118,6 +118,22 @@ _handlertbl[] = {
     {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
     {SQSH_MM_BACK_FROM_COMMUNITY_BTN, onMMBackButton},
 
+    //main menu control editor
+    {SQSH_MM_CONTROL_EDITOR_BTN, onMMControlEditorButton},
+    {SQSH_MM_CONTROL_EDITOR_LIST, onMMControlEditorList},
+    {SQSH_MM_CONTROL_EDITOR_CHANGE_BTN, onMMControlEditorChange},
+    {SQSH_MM_CONTROL_EDITOR_RESTORE_BTN, onMMControlEditorRestore},
+    {SQSH_MM_CONTROL_EDITOR_DELETE_BTN, onMMControlEditorDelete},
+    {SQSH_MM_BACK_FROM_CONTROL_EDITOR_BTN, onMMBackButton},
+
+    //ingame menu control editor
+    {SQSH_MM_CONTROL_EDITOR_INGAME_BTN, onMMControlEditorButton},
+    {SQSH_MM_CONTROL_EDITOR_INGAME_LIST, onMMControlEditorList},
+    {SQSH_MM_CONTROL_EDITOR_INGAME_CHANGE_BTN, onMMControlEditorChange},
+    {SQSH_MM_CONTROL_EDITOR_INGAME_RESTORE_BTN, onMMControlEditorRestore},
+    {SQSH_MM_CONTROL_EDITOR_INGAME_DELETE_BTN, onMMControlEditorDelete},
+    {SQSH_MM_BACK_FROM_CONTROL_EDITOR_INGAME_BTN, onMMBackButton},
+
 	//profile editor
 	{SQSH_MM_NEW_PROFILE_BTN, onMMNewProfileButton},
 	{SQSH_MM_DEL_PROFILE_BTN, onMMDelProfileButton},
@@ -3902,20 +3918,6 @@ bool CtrlAction::actionPerformed() {
         }
     }
 	return false;
-}
-
-void HotKeyManager::keyPressed(int key) {
-	float currTime = frame_time();
-	for (int i = 0, s = hotKeys.size(); i < s; i++) {
-		if ( checkHotKey(hotKeys[i], key, currTime) ) {
-			if (actions[ hotKeys[i].actionNumber ]->actionPerformed()) {
-				gameShell->updatePosition();
-				break;
-			}
-		}
-	}
-	lastKey = key;
-	lastKeyTime = currTime;
 }
 
 void LogicUpdater::updateIconsData() {

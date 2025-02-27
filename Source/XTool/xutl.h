@@ -114,7 +114,30 @@ std::string BreakLongLines(const char* ptext, size_t max_width, char endline = '
     std::u16string u16string_##VAR = utf8_to_utf16(VAL); \
     const wchar_t* wchar_##VAR = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>( u16string_##VAR.c_str());
 
-#endif
+
+static const char* ws = " \t\n\r\f\v";
+
+// trim from end of string (right)
+inline std::string& rtrim(std::string& s, const char* t = ws)
+{
+    s.erase(s.find_last_not_of(t) + 1);
+    return s;
+}
+
+// trim from beginning of string (left)
+inline std::string& ltrim(std::string& s, const char* t = ws)
+{
+    s.erase(0, s.find_first_not_of(t));
+    return s;
+}
+
+// trim from both ends of string (right then left)
+inline std::string& trim(std::string& s, const char* t = ws)
+{
+    return ltrim(rtrim(s, t), t);
+}
 
 ///Computes the arch flags for this build
 arch_flags computeArchFlags();
+
+#endif //__XUTL_H

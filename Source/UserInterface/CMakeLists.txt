@@ -42,6 +42,7 @@ add_library(UserInterface STATIC
         MonoSelect.cpp
         OptionsMenu.cpp
         Menu/MultiplayerCommon.cpp
+        Menu/ControlEditor.cpp
 )
 
 target_include_directories(UserInterface PRIVATE

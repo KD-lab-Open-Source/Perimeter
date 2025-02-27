@@ -1,6 +1,8 @@
 #ifndef __CONTROLS_H__
 #define __CONTROLS_H__
 
+const size_t KEY_MAX = 2048;
+
 enum eGameKeysControl
 {
 	CTRL_TIME_NORMAL			= 0,	// shift a, shift z 
@@ -33,7 +35,7 @@ enum eGameKeysControl
 
 	CTRL_CAMERA_TO_EVENT        =26,	// VK_CONTROL
 
-	CTRL_CAMERA_MAP_SHIFT       =27,	// VK_CONTROL
+	CTRL_CAMERA_MOUSE_MOVE      =27,	// VK_TILDE
 
 	CTRL_TOGGLE_MUSIC = 28,
 	CTRL_TOGGLE_SOUND = 29,
@@ -45,23 +47,26 @@ enum eGameKeysControl
 	CTRL_MAX
 };
 
+DECLARE_ENUM_DESCRIPTOR(eGameKeysControl);
+
 class ControlsConverter
 {
-	unsigned char KeyToCtrl[2048];		// таблица перехода от кнопок в команды
+	eGameKeysControl KeyToCtrl[KEY_MAX];		// таблица перехода от кнопок в команды
 	sKey CtrlToKey[CTRL_MAX];		// таблица перехода от команд к кнопкам
-	std::string KeyToName[2048];				// таблица перехода от кнопок в имена кнопок
-	std::string CtrlToDeclaration[CTRL_MAX];	// таблица перехода от команд в описание команд
+	std::string KeyToName[KEY_MAX];				// таблица перехода от кнопок в имена кнопок
+    bool CtrlIsCustom[CTRL_MAX];
 
 public:
 	ControlsConverter() = default;
-	void LoadKeyNameTable();
-	void LoadCtrlTable(const char *strMain);
-	void SaveControls(int ctrl, int key);
+	void LoadKeyNames();
+	void LoadCtrlTable();
 
-	const std::string& declaration(int ctrl) const { return CtrlToDeclaration[ctrl]; }
-	const std::string& name(int key) const { return KeyToName[key]; }
-	unsigned char control(int key) const { return KeyToCtrl[key]; }
-	bool pressed(int ctrl) const;
+    void set_key_control(uint32_t ctrl, uint32_t key, bool custom);
+	const std::string& key_name(uint32_t key) const;
+    eGameKeysControl key_control(uint32_t key) const;
+    const sKey& control_key(uint32_t ctrl) const;
+    bool is_custom(uint32_t ctrl) const;
+	bool pressed(uint32_t ctrl) const;
 };
 
 extern ControlsConverter g_controls_converter;

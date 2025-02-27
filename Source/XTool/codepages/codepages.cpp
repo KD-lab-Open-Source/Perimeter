@@ -22,7 +22,7 @@ uint16_t localeToCodepage(const std::string& locale) {
     }
 }
 
-std::string convertToCodepage(const char* utf8, uint16_t codepage) {
+std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_char) {
     if (!isCodepageInit) {
         initCodePages();
     }
@@ -48,15 +48,15 @@ std::string convertToCodepage(const char* utf8, uint16_t codepage) {
     for (char32_t input : conv) {
         if (map->count(input)) {
             result += static_cast<char>(map->at(input));
-        } else {
-            result += '?';
+        } else if (unknown_char) {
+            result += unknown_char;
         }
     }
 
     return result;
 }
 
-std::string convertToUnicode(const std::string& str, uint16_t codepage) {
+std::string convertToUnicode(const std::string& str, uint16_t codepage, char unknown_char) {
     if (!isCodepageInit) {
         initCodePages();
     }
@@ -69,8 +69,8 @@ std::string convertToUnicode(const std::string& str, uint16_t codepage) {
         uint32_t index = pageid | input;
         if (utf32_codepages.count(index)) {
             conv += utf32_codepages.at(index);
-        } else {
-            conv += '?';
+        } else if (unknown_char) {
+            conv += unknown_char;
         }
     }
 
@@ -81,12 +81,12 @@ std::string convertToUnicode(const std::string& str, uint16_t codepage) {
     return result;
 }
 
-std::string convertToCodepage(const char* utf8, const std::string& locale) {
-    return convertToCodepage(utf8, localeToCodepage(locale));
+std::string convertToCodepage(const char* utf8, const std::string& locale, char unknown_char) {
+    return convertToCodepage(utf8, localeToCodepage(locale), unknown_char);
 }
 
-std::string convertToUnicode(const std::string& str, const std::string& locale) {
-    return convertToUnicode(str, localeToCodepage(locale));
+std::string convertToUnicode(const std::string& str, const std::string& locale, char unknown_char) {
+    return convertToUnicode(str, localeToCodepage(locale), unknown_char);
 }
 
 ///Load UTF32 -> codepage as codepage + character -> UTF32

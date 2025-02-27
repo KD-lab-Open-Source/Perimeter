@@ -18,7 +18,6 @@
 #include "Config.h"
 
 #include "PerimeterSound.h"
-#include "Controls.h"
 
 #include "MusicManager.h"
 
@@ -1121,8 +1120,6 @@ int SDL_main(int argc, char *argv[])
     if (xprmcompiler) {
         reload_parameters();
     }
-
-    g_controls_converter.LoadKeyNameTable();
 
     int mt = 1;
     IniManager("Perimeter.ini").getInt("Game", "HT", mt);

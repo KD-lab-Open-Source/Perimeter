@@ -1938,6 +1938,13 @@ void onMMAddonsEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int para
 void onMMAddonsGuideButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMAddonsBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
+//control editor
+void onMMControlEditorButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMControlEditorList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMControlEditorChange(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMControlEditorRestore(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMControlEditorDelete(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
 //community
 void onMMCommunityButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
