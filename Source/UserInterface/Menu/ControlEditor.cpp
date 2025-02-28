@@ -87,7 +87,6 @@ void updateControlList(CListBoxWindow* list) {
     if (!list) {
         return;
     }
-    auto& items = list->GetItem(0).m_data;
     control_states.clear();
 
     const auto& hotKeyActions = gameShell->hotKeyManager->getActions();
@@ -114,27 +113,27 @@ void updateControlList(CListBoxWindow* list) {
         ctrlinput.inputs.emplace_back(skey.fullkey);
     }
     
-    //This hotkey is a bit special since each building has own hotkey copy that is identical
-    //So we find it and store the reference
-    control_input_t ctrlinput_upgrade;
+    //These hotkey are a bit special since they have separate copies with same hotkey
+    std::unordered_map<std::string, control_input_t> ctrlinput_mergeables;
+    //So we find them and store the reference
     for (size_t i = 0; i < hotKeys.size(); i++) {
         const HotKey& hotkey = hotKeys[i];
         const CtrlAction* action = hotKeyActions[hotkey.actionNumber];
-        if (strcmp(action->getName(), "tvUpgrade") != 0) {
-            continue;
+        std::string actionName = action->getName();
+        if (actionName == "tvUpgrade"
+        || actionName == "tvStop") {
+            control_input_t ctrlinput;
+            ctrlinput.name = action->getControlName();
+            if (ctrlinput.name.empty()) {
+                ctrlinput.name = actionName;
+            }
+            ctrlinput.hotkeys.emplace(i);
+            ctrlinput.inputs.emplace_back(hotkey.key1);
+            if (hotkey.key2 != VK_NONE) {
+                ctrlinput.inputs.emplace_back(hotkey.key2);
+            }
+            ctrlinput_mergeables.emplace(actionName, ctrlinput);
         }
-
-        ctrlinput_upgrade.name = action->getControlName();
-        if (ctrlinput_upgrade.name.empty()) {
-            ctrlinput_upgrade.name = "Upgrade (Name empty)";
-        }
-        ctrlinput_upgrade.hotkeys.emplace(i);
-        ctrlinput_upgrade.inputs.emplace_back(hotkey.key1);
-        if (hotkey.key2 != VK_NONE) {
-            ctrlinput_upgrade.inputs.emplace_back(hotkey.key2);
-        }
-        
-        break;
     }
     
     //Load the hotkey mappings
@@ -151,17 +150,25 @@ void updateControlList(CListBoxWindow* list) {
         if (hotkey.key2 != VK_NONE) {
             inputs.emplace_back(hotkey.key2);
         }
-        
-        if (startsWith(action->getName(), "tvUpgrade")) {
-            if (ctrlinput_upgrade.hotkeys.find(i) != ctrlinput_upgrade.hotkeys.end()) {
-                //Already added hotkey, just skip to next hotkey
-                continue;
+
+        bool skipControlInput = false;
+        for (auto& ctrlinput_pair : ctrlinput_mergeables) {
+            if (startsWith(action->getName(), ctrlinput_pair.first)) {
+                if (ctrlinput_pair.second.hotkeys.find(i) != ctrlinput_pair.second.hotkeys.end()) {
+                    //Already added hotkey, just skip to next hotkey
+                    skipControlInput = true;
+                    break;
+                }
+                if (ctrlinput_pair.second.inputs == inputs) {
+                    //Can be merged, add the action name to list if hotkey matches and continue
+                    ctrlinput_pair.second.hotkeys.emplace(i);
+                    skipControlInput = true;
+                    break;
+                }
             }
-            if (ctrlinput_upgrade.inputs == inputs) {
-                //This is another tvUpgrade*, add the action name to list if hotkey matches
-                ctrlinput_upgrade.hotkeys.emplace(i);
-                continue;
-            }
+        }
+        if (skipControlInput) {
+            continue;
         }
         
         control_input_t& ctrlinput = control_states.emplace_back();
@@ -172,15 +179,24 @@ void updateControlList(CListBoxWindow* list) {
 #endif
         ctrlinput.inputs = inputs;
     }
-    if (!ctrlinput_upgrade.hotkeys.empty()) {
-        control_states.emplace_back(ctrlinput_upgrade);
+    
+    //Add the mergeables
+    for (auto& ctrlinput_pair : ctrlinput_mergeables) {
+        if (!ctrlinput_pair.second.hotkeys.empty()) {
+            control_states.emplace_back(ctrlinput_pair.second);
+        }
     }
+    ctrlinput_mergeables.clear();
     
     //Sort
     std::sort(control_states.begin(), control_states.end());
 
     //Update UI with control strings
-    xassert(items.size() <= control_states.size());
+    if (list->GetItem(0).m_data.size() != control_states.size()) {
+        //We can't update in place, redo the whole list
+        list->Clear();
+    }
+    auto& items = list->GetItem(0).m_data;
     for (size_t i = 0; i < control_states.size(); i++) {
         auto& control_input = control_states[i];
         std::string line;
