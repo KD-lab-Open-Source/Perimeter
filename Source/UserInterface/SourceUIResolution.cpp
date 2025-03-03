@@ -10,6 +10,21 @@ Vect2f source_ui_factor;
 SHELL_ANCHOR shell_anchor = SHELL_ANCHOR_DEFAULT;
 std::vector<UIResolution> resolutions;
 
+void UIResolution::set(bool legacy_, int x_, int y_) {
+    this->legacy = legacy_;
+    this->x = x_;
+    this->y = y_;
+    this->mx = static_cast<float>(y_) * MAIN_MENU_RATIO;
+    //this->mx = xm::round(this->mx);
+}
+
+void UIResolution::set(const UIResolution& v) {
+    legacy = v.legacy;
+    x = v.x;
+    y = v.y;
+    mx = v.mx;
+}
+
 int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
     if (xm::abs(x) >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
     if (anchor == SHELL_ANCHOR_DEFAULT) anchor = shell_anchor;
@@ -40,11 +55,13 @@ int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
             break;
         }
     }
-    return xm::round(x);
+    return xm::floor(x);
 }
 
 int absoluteUIPosY(float y, SHELL_ANCHOR anchor) {
-    return absoluteUISizeY(y, anchor);
+    if (xm::abs(y) >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
+    y *= terRenderDevice->GetSizeY();
+    return xm::floor(y);
 }
 
 int absoluteUISizeX(float x, SHELL_ANCHOR anchor) {
@@ -55,13 +72,13 @@ int absoluteUISizeX(float x, SHELL_ANCHOR anchor) {
     } else {
         x *= getUIX(anchor) * source_ui_factor.y;
     }
-    return xm::round(x);
+    return xm::ceil(x);
 }
 
 int absoluteUISizeY(float y, SHELL_ANCHOR) {
     if (xm::abs(y) >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
     y *= terRenderDevice->GetSizeY();
-    return xm::round(y);
+    return xm::ceil(y);
 }
 
 void initSourceUIResolution() {

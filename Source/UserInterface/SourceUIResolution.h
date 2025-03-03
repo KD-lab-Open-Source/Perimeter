@@ -35,19 +35,9 @@ public:
         this->set(legacy_, x_, y_);
     }
     
-    FORCEINLINE void set(bool legacy_, int x_, int y_) {
-        this->legacy = legacy_;
-        this->x = x_;
-        this->y = y_;
-        this->mx = xm::round(static_cast<float>(y_) * MAIN_MENU_RATIO);
-    }
+    void set(bool legacy_, int x_, int y_);
 
-    FORCEINLINE void set(const UIResolution& v) {
-        legacy = v.legacy;
-        x = v.x;
-        y = v.y;
-        mx = v.mx;
-    }
+    void set(const UIResolution& v);
 
     FORCEINLINE int operator == (const UIResolution& v) const {
         return x == v.x && y == v.y && legacy == v.legacy;
