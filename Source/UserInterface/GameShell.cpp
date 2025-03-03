@@ -1024,15 +1024,6 @@ void GameShell::Show()
 }
 
 //--------------------------------------------------------
-inline int IsMapArea(const Vect2f& pos)
-{
-	if(!_shellIconManager.IsInterface())
-		return 1;
-
-	//return y < 580 && y > 10;
-	return pos.y < 0.255 && pos.y > -0.487;
-}
-
 Vect2f GameShell::convert(int x, int y) const 
 {
 	return Vect2f(float(x)/float(windowClientSize().x) - 0.5f, float(y)/float(windowClientSize().y) - 0.5f);
@@ -1733,7 +1724,7 @@ void GameShell::ControlPressed(uint32_t key)
             break;
 
 		case CTRL_CAMERA_MOUSE_LOOK:
-			if (IsMapArea(mousePosition()) && !cameraMouseTrack && !cameraMouseShift) {
+			if (!cameraMouseTrack && !cameraMouseShift) {
                 cameraMouseTrack = true;
                 mousePressControl_ = mousePosition();
                 _shellCursorManager.HideCursor();
@@ -2340,7 +2331,7 @@ void GameShell::CameraQuant()
 	
 	//смещение вслед за мышью
 	if (cameraMouseShift && MouseMoveFlag) {        
-        if (IsMapArea(mousePosition_) && abs(mousePosition_.x) <= 0.5f) {
+        if (abs(mousePosition_.x) <= 0.5f) {
             terCamera->shift(
                     mapMoveStartCamera_,
                     mapMoveStartCameraPos_,
@@ -2817,7 +2808,7 @@ bool GameShell::isCutSceneMode() {
 }
 
 void GameShell::prepareForInGameMenu() {
-	if (cameraMouseTrack && IsMapArea(mousePosition())) {
+	if (cameraMouseTrack) {
 		cameraMouseTrack = false;
 		setCursorPosition(mousePressControl_);
 
