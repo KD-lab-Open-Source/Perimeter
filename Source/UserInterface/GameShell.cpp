@@ -1742,19 +1742,25 @@ void GameShell::ControlPressed(uint32_t key)
 			break;
 
 		case CTRL_CAMERA_MOUSE_MOVE:
-            if (!cameraMouseShift && !cameraMouseTrack && !mouseLeftPressed_) {
+            if (!cameraMouseShift && !cameraMouseTrack) {
                 setCameraMouseShift(true);
             }
 			break;
 	}
     
-    if (handled) {
-        return;
+    if (!handled) {
+        handled = hotKeyManager->keyPressed(key);
+        if (handled) {
+            gameShell->updatePosition();
+        }
     }
     
-    bool hotKeyPerformed = hotKeyManager->keyPressed(key);
-    if (hotKeyPerformed) {
-        gameShell->updatePosition();
+    if (handled) {
+        if (lastActivatedControlKey != 0 && lastActivatedControlKey != key) {
+            //Release previous key
+            ControlUnpressed(lastActivatedControlKey);
+        }
+        lastActivatedControlKey = key;
     }
 }
 
@@ -1795,6 +1801,25 @@ void GameShell::ControlUnpressed(uint32_t key)
 	if (_bMenuMode || isScriptReelEnabled()) {
 		return;
 	}
+    
+    if (lastActivatedControlKey) {
+        //Check if base key is same and was unreleased
+        if ((lastActivatedControlKey & VK_MASK) == (key & VK_MASK)) {
+            key = lastActivatedControlKey;
+        }
+        /*
+        //If mod key was unpressed disable the control
+        uint32_t modflag = getModFlagFromKey(key & VK_MASK);
+        if (lastActivatedControlKey & modflag) {
+            key = lastActivatedControlKey;
+        }
+        */
+
+        if (lastActivatedControlKey == key) {
+            //Just unset
+            lastActivatedControlKey = 0;
+        }
+    }
     
 	int ctrl = g_controls_converter.key_control(key);
     if (ctrl == CTRL_ESCAPE) {
@@ -1965,9 +1990,10 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
 
-	if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack){
-		if(_pShellDispatcher->m_nState != STATE_TRACKING)
-			CursorOverInterface = _shellIconManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
+	if (!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack) {
+		if(_pShellDispatcher->m_nState != STATE_TRACKING) {
+            CursorOverInterface = _shellIconManager.OnMouseMove(mousePosition().x + 0.5f, mousePosition().y + 0.5f);
+        }
 
 		m_ShellDispatcher.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
 	}
@@ -2001,10 +2027,6 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
         return;
     }
 
-	if (!_bMenuMode && isPressed(VK_RBUTTON)) {
-		ControlPressed(sKey(VK_MBUTTON, true).fullkey);
-	}
-
 	if (missionEditor_ && missionEditor_->mouseLeftPressed(pos)) {
         return;
     }
@@ -2025,22 +2047,6 @@ void GameShell::MouseLeftPressed(const Vect2f& pos)
 		mouseLeftPressed_ = true;
 		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_= pos;
-
-        if (cameraMouseShift) {
-            if (terCameraType::cursorTrace(
-                    terCamera->GetCamera(),
-                    mousePosition_,
-                    &mapMoveStartWorldPos_,
-                    true,
-                    true
-            )) {
-                terCamera->GetCamera()->SetCopy(mapMoveStartCamera_);
-                mapMoveStartCameraPos_ = terCamera->coordinate().position();
-            } else {
-                setCameraMouseShift(false);
-            }
-            return;
-        }
 
 		if(!cameraMouseZoom && !cameraMouseShift && !cameraMouseTrack && !toolzerSizeTrack)
 		{
@@ -2065,10 +2071,6 @@ void GameShell::MouseRightPressed(const Vect2f& pos)
     if (CaptureControlInput && CaptureControlInput(key, true)) {
         return;
     }
-
-	if (!_bMenuMode && isPressed(VK_LBUTTON)) {
-		ControlPressed(sKey(VK_MBUTTON, true).fullkey);
-	}
 
 	if(missionEditor_ && missionEditor_->mouseRightPressed(pos))
 		return;
@@ -2109,10 +2111,6 @@ void GameShell::MouseLeftUnpressed(const Vect2f& pos)
         return;
     }
 
-	if (!_bMenuMode && cameraMouseTrack) {
-		ControlUnpressed(sKey(VK_MBUTTON, true).fullkey);
-	}
-
 	ControlUnpressed(key);
 
 	if (mouseLeftPressed()) {
@@ -2142,10 +2140,6 @@ void GameShell::MouseRightUnpressed(const Vect2f& pos)
         return;
     }
 
-	if (!_bMenuMode && cameraMouseTrack) {
-		ControlUnpressed(sKey(VK_MBUTTON, true).fullkey);
-	}
-
 	ControlUnpressed(key);
 
 	if(mouseRightPressed())
@@ -2168,7 +2162,7 @@ void GameShell::MouseRightUnpressed(const Vect2f& pos)
 
 void GameShell::MouseWheel(int delta)
 {
-	if(!_bMenuMode && GameActive && _shellIconManager.IsInterface() && !isScriptReelEnabled() && !(cameraMouseShift && mouseLeftPressed_)) {
+	if(!_bMenuMode && GameActive && _shellIconManager.IsInterface() && !isScriptReelEnabled() && !cameraMouseShift) {
         CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
         if (!chatInfo || !chatInfo->isVisible() || !chatInfo->HitTest(mousePosition().x+0.5f, mousePosition().y+0.5f)) {
             terCamera->mouseWheel(delta);
@@ -2345,8 +2339,7 @@ void GameShell::CameraQuant()
 	}
 	
 	//смещение вслед за мышью
-    bool mouseShiftActive = cameraMouseShift && mouseLeftPressed_;
-	if (mouseShiftActive && MouseMoveFlag) {
+	if (cameraMouseShift && MouseMoveFlag) {        
         if (IsMapArea(mousePosition_) && abs(mousePosition_.x) <= 0.5f) {
             terCamera->shift(
                     mapMoveStartCamera_,
@@ -2363,7 +2356,7 @@ void GameShell::CameraQuant()
 //	mousePositionDelta_ = Vect2f::ZERO;
 	MouseMoveFlag = 0;
 
-	if (!_bMenuMode && !mouseShiftActive && !isScriptReelEnabled()) {
+	if (!_bMenuMode && !cameraMouseShift && !isScriptReelEnabled()) {
 		terCamera->controlQuant();
 	}
 }
@@ -3050,6 +3043,21 @@ void GameShell::editParameters()
 }
 
 void GameShell::setCameraMouseShift(bool _cameraMouseShift) {
+    if (_cameraMouseShift) {
+        if (terCameraType::cursorTrace(
+                terCamera->GetCamera(),
+                mousePosition_,
+                &mapMoveStartWorldPos_,
+                true,
+                true
+        )) {
+            terCamera->GetCamera()->SetCopy(mapMoveStartCamera_);
+            mapMoveStartCameraPos_ = terCamera->coordinate().position();
+        } else {
+            //Couldn't pick raytrace, abort
+            _cameraMouseShift = false;
+        }
+    }
     if (cameraMouseShift == _cameraMouseShift) {
         return;
     }

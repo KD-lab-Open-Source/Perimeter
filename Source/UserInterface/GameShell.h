@@ -396,7 +396,9 @@ private:
 
 	DebugPrm debugPrm_;
 
-    bool (*CaptureControlInput)(uint32_t key, bool press) = nullptr; 
+    bool (*CaptureControlInput)(uint32_t key, bool press) = nullptr;
+
+    uint32_t lastActivatedControlKey = 0;
 };
 
 extern GameShell* gameShell;
