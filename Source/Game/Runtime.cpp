@@ -474,10 +474,10 @@ void PerimeterSetupDisplayMode() {
             if (SDL_GetWindowFlags(sdlWindow)&(SDL_WINDOW_MAXIMIZED|SDL_WINDOW_MINIMIZED)) {
                 SDL_RestoreWindow(sdlWindow);
             }
-            SDL_SetWindowSize(sdlWindow, mode.w, mode.h);
 #if PERIMETER_DEBUG
-            printf("SDL_SetWindowSize\n");
+            fprintf(stdout, "SDL_SetWindowSize %dx%d\n", mode.w, mode.h);
 #endif
+            SDL_SetWindowSize(sdlWindow, mode.w, mode.h);
             
             //Grab window
             if (terGrabInput) {

@@ -186,6 +186,7 @@ public:
 
 	bool hasAdvanceDrawType(){	return dtAdvanceOriginal != NULL;}
 
+    void WorkaroundWindowSize();
 	bool SetFocus(bool wait,bool focus_error=true);
 	int KillFocus();
 	IDirect3DTexture9* CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute);

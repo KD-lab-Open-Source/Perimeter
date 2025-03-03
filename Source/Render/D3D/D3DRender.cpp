@@ -330,21 +330,8 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
 	}
     
     gb_RenderDevice3D = this;
-    
-    //Workaround for some distros (Ubuntu?) setting window bigger than originally requested
-    //Since Steam Linux Runtime is based on ubuntu it affects there too
-    if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
-        Vect2i size;
-        SDL_GetWindowSize(sdl_window, &size.x, &size.y);
-        if (size != ScreenSize) {
-            //Set correct size
-            SDL_SetWindowSize(sdl_window, ScreenSize.x, ScreenSize.y);
-            //Put on center again
-            int screen = SDL_GetWindowDisplayIndex(sdl_window);
-            int windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
-            SDL_SetWindowPosition(sdlWindow, windowPos, windowPos);
-        }
-    }
+
+    WorkaroundWindowSize();
 
     RenderSubmitEvent(RenderEvent::INIT, "D3D9 end");
 	return 0;
@@ -522,6 +509,24 @@ void cD3DRender::UpdateRenderMode()
     }
 }
 
+void cD3DRender::WorkaroundWindowSize() {
+    //Workaround for some distros (Ubuntu?) setting window bigger than originally requested
+    //Since Steam Linux Runtime is based on ubuntu it affects there too
+    if (sdl_window && (RenderMode & RENDERDEVICE_MODE_WINDOW)) {
+        Vect2i size;
+        SDL_GetWindowSize(sdl_window, &size.x, &size.y);
+        if (size != ScreenSize) {
+            fprintf(stdout, "%s %dx%d\n", __func__, size.x, size.y);
+            //Set correct size
+            SDL_SetWindowSize(sdl_window, ScreenSize.x, ScreenSize.y);
+            //Put on center again
+            int screen = SDL_GetWindowDisplayIndex(sdl_window);
+            int windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
+            SDL_SetWindowPosition(sdlWindow, windowPos, windowPos);
+        }
+    }
+}
+
 bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 {
 	MTTexObjAutoLock lock;
@@ -534,10 +539,17 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
     ScreenSize.x = xscr;
     ScreenSize.y = yscr;
     
-    if (!same_size && ((RenderMode&mode_mask) == (mode&mode_mask)) 
+    if (((RenderMode&mode_mask) == (mode&mode_mask)) 
     && ScreenSize.x <= MaxScreenSize.x && ScreenSize.y <= MaxScreenSize.y) {
         //We can change window size without reinitializing graphics
-        UpdateRenderMode();
+#ifdef PERIMETER_DEBUG
+        fprintf(stdout, "cD3DRender::ChangeSize no reinit %dx%d\n", xscr, yscr);
+#endif
+        if (!same_size) {
+            //Only do if actually same size
+            UpdateRenderMode();
+            WorkaroundWindowSize();
+        }
         return true;
     }
 
@@ -573,6 +585,8 @@ bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
         RestoreDeviceIfLost();
         result = SetFocus(false,(mode&RENDERDEVICE_MODE_RETURNERROR)?false:true);
     }
+    
+    WorkaroundWindowSize();
     
     return result;
 }
