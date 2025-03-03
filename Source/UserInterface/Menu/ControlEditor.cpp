@@ -58,6 +58,9 @@ void updateControlEditorInputDialogText() {
         return;
     }
     const control_input_t& controlInput = control_states[cursel];
+    if (controlInput.name.empty()) {
+        return;
+    }
     std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.PressNewControlInput");
     text += "\n\n" + controlInput.name + "&FFFFFF\n\n";
     bool first_input = true;
@@ -113,6 +116,12 @@ void updateControlList(CListBoxWindow* list) {
         ctrlinput.inputs.emplace_back(skey.fullkey);
     }
     
+    //Sort the controls first
+    std::sort(control_states.begin(), control_states.end());
+
+    //Add empty line
+    control_states.emplace_back();
+    
     //These hotkey are a bit special since they have separate copies with same hotkey
     std::unordered_map<std::string, control_input_t> ctrlinput_mergeables;
     //So we find them and store the reference
@@ -137,6 +146,7 @@ void updateControlList(CListBoxWindow* list) {
     }
     
     //Load the hotkey mappings
+    std::vector<control_input_t> hotkey_control_inputs;
     for (size_t i = 0; i < hotKeys.size(); i++) {
         const HotKey& hotkey = hotKeys[i];
         const CtrlAction* action = hotKeyActions[hotkey.actionNumber];
@@ -171,7 +181,7 @@ void updateControlList(CListBoxWindow* list) {
             continue;
         }
         
-        control_input_t& ctrlinput = control_states.emplace_back();
+        control_input_t& ctrlinput = hotkey_control_inputs.emplace_back();
         ctrlinput.hotkeys.emplace(i);
         ctrlinput.name = controlName;
 #if 0 && defined(PERIMETER_DEBUG)
@@ -183,13 +193,16 @@ void updateControlList(CListBoxWindow* list) {
     //Add the mergeables
     for (auto& ctrlinput_pair : ctrlinput_mergeables) {
         if (!ctrlinput_pair.second.hotkeys.empty()) {
-            control_states.emplace_back(ctrlinput_pair.second);
+            hotkey_control_inputs.emplace_back(ctrlinput_pair.second);
         }
     }
     ctrlinput_mergeables.clear();
     
-    //Sort
-    std::sort(control_states.begin(), control_states.end());
+    //Sort hotkeys before adding
+    std::sort(hotkey_control_inputs.begin(), hotkey_control_inputs.end());
+    for (auto& ctrlinput : hotkey_control_inputs) {
+        control_states.emplace_back(ctrlinput);
+    }
 
     //Update UI with control strings
     if (list->GetItem(0).m_data.size() != control_states.size()) {
@@ -200,13 +213,18 @@ void updateControlList(CListBoxWindow* list) {
     for (size_t i = 0; i < control_states.size(); i++) {
         auto& control_input = control_states[i];
         std::string line;
-        for (auto& input : control_input.inputs) {
-            if (!line.empty()) {
-                line += "&DDDDDD > ";
+        if (!control_input.name.empty()) {
+            for (auto& input : control_input.inputs) {
+                if (!line.empty()) {
+                    line += "&DDDDDD > ";
+                }
+                line += getInputName(input);
             }
-            line += getInputName(input);
+            line = control_input.name + "&FFFFFF  -  " + line;
+        } else {
+            line = "&FFFFFF- - - - - - - - - - - - - - - - - - - - - - - - - "
+                   "- - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
         }
-        line = control_input.name + "&FFFFFF  -  " + line;
         if (i < items.size()) {
             items[i].text = line;
         } else {
@@ -273,6 +291,9 @@ void applyControlInputChange() {
         return;
     }
     control_input_t& controlInput = control_states[cursel];
+    if (controlInput.name.empty()) {
+        return;
+    }
     controlInput.inputs = captured_inputs;
     setControlInputState(controlInput, true);
     saveCustomControlInputs();    
@@ -316,6 +337,9 @@ bool controlEditorInputCallback(uint32_t key, bool pressed) {
         return true;
     }
     const control_input_t& controlInput = control_states[cursel];
+    if (controlInput.name.empty()) {
+        return true;
+    }
 
     //Handle modifier keys
     if (mod_flag != 0 && !(pressed_mod_keys & mod_flag)) {
@@ -344,9 +368,12 @@ void controlEditorDialog() {
         return;
     }
 
-    first_capture_input = true;
     const control_input_t& controlInput = control_states[cursel];
+    if (controlInput.name.empty()) {
+        return;
+    }
     captured_inputs = controlInput.inputs;
+    first_capture_input = true;
     
     gameShell->setCaptureInputCallback(controlEditorInputCallback);
     setupOkMessageBox(controlEditorInputDone, 0, "", MBOX_OK, true);
@@ -360,7 +387,21 @@ void onMMControlEditorList(CShellWindow* pWnd, InterfaceEventCode code, int para
         list->Clear();
         updateControlList(list);
         list->SetCurSel(0);
-    } else if (code == EVENT_DOUBLECLICK) {
+    } else if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
+        CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(pWnd);
+        int cursel = list ? list->GetCurSel() : -1;
+        if (cursel < 0) {
+            return;
+        } else if (cursel >= control_states.size()) {
+            list->SetCurSelPassive(-1);
+            return;
+        }
+        const control_input_t& controlInput = control_states[cursel];
+        if (controlInput.name.empty()) {
+            list->SetCurSelPassive(-1);
+            return;
+        }
+    } else if (code == EVENT_DOUBLECLICK && intfCanHandleInput()) {
         controlEditorDialog();
     }
 }
@@ -379,6 +420,9 @@ void onMMControlEditorRestore(CShellWindow* pWnd, InterfaceEventCode code, int p
             return;
         }
         const control_input_t& controlInput = control_states[cursel];
+        if (controlInput.name.empty()) {
+            return;
+        }
         setControlInputState(controlInput, false);
         saveCustomControlInputs();
         g_controls_converter.LoadCtrlTable();

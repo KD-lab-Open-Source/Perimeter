@@ -318,7 +318,9 @@ void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, in
                 }
                 i++;
             }
-            listBox->SetCurSel(selectIndex);
+            if (listBox->GetCurSel() != selectIndex) {
+                listBox->SetCurSelPassive(selectIndex);
+            }
             if (hasSelection) {
                 if (selectIndex == -1) {
                     //No longer in list
@@ -334,12 +336,12 @@ void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, in
             } else {
                 msg = "Interface.Menu.Multiplayer.NoRelayAvailable";
             }
-            listBox->SetCurSel(-1);
+            listBox->SetCurSelPassive(-1);
             listBox->AddString(qdTextDB::instance().getText(msg), 0);
             selectGameInfo(nullptr);
             updateMultiplayerListUI();
         }
-    } else if ( code == EVENT_DOUBLECLICK && param == VK_LBUTTON) {
+    } else if ( code == EVENT_DOUBLECLICK && param == VK_LBUTTON && intfCanHandleInput()) {
         if (canJoinSelectedGame()) {
             joinSelectedGame(pWnd);
         }
@@ -352,7 +354,7 @@ void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, in
             advance(it, pos);
             selectGameInfo(&(*it));
         } else {
-            listBox->SetCurSel(-1);
+            listBox->SetCurSelPassive(-1);
             selectGameInfo(nullptr);
         }
         updateMultiplayerListUI();

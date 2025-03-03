@@ -5553,9 +5553,9 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 //	image2 = {texture="resource\\icons\\MainMenu\\il.tga";};
 	controls = new sqshControl[] {
 	    //List border
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=186/1024; y=94/768; sx=10/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=(186+10)/1024; y=94/768; sx=615/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 10; _iy = 0; ix = 280; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=(186+10+615)/1024; y=94/768; sx=10/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 290; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=186/1024; y=94/768; sx=10/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=(186+10)/1024; y=94/768; sx=616/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 10; _iy = 0; ix = 280; iy = 515;}; state = SQSH_ENABLED; ystart=515/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=(186+10+616)/1024; y=94/768; sx=10/1024; sy=470/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 290; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768; hitTestMode = HITTEST_NONE; },
 		
 		//Scrollbar bg and list
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					x=790/1024; y=103/768; sx=24/1024; sy=452/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 302; _iy = 33; ix = 24; iy = 458;}; state = SQSH_ENABLED; ystart=458/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
@@ -5606,14 +5606,13 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{type = SQSH_MOVE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=0/1024; y=0/768; sx=1; sy=1; image={texture="resource\\icons\\MainMenu\\New_statistik.tga";_ix = 0; _iy = 0; ix = 1024; iy = 768;}; state = SQSH_ENABLED; xstart=521; ystart=-768; },
 		
 	    //List border
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=98/1024; y=94/768; sx=10/1024; sy=500/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=(98+10)/1024; y=94/768; sx=810/1024; sy=500/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 10; _iy = 0; ix = 280; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=(98+10+810)/1024; y=94/768; sx=10/1024; sy=500/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 290; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=98/1024; y=94/768; sx=10/1024; sy=500/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=(98+10)/1024; y=94/768; sx=810/1024; sy=500/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 10; _iy = 0; ix = 280; iy = 515;}; state = SQSH_ENABLED; ystart=515/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=(98+10+810)/1024; y=94/768; sx=10/1024; sy=500/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 290; _iy = 0; ix = 10; iy = 515;}; state = SQSH_ENABLED; ystart=515/768; hitTestMode = HITTEST_NONE; },
 		
 		//Scrollbar bg and list
-		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=(98+799)/1024; y=103/768; sx=24/1024; sy=482/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 302; _iy = 33; ix = 24; iy = 458;}; state = SQSH_ENABLED; ystart=458/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 								x=(98+799)/1024; y=103/768; sx=24/1024; sy=482/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 302; _iy = 33; ix = 24; iy = 458;}; state = SQSH_ENABLED; ystart=458/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_LIST_BOX_TYPE;	   id = SQSH_MM_CONTROL_EDITOR_INGAME_LIST;				x=(98+3)/1024; y=105/768; sx=820/1024; sy=478/768;
-																								image_check={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 24; iy = 24;dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
 											 													image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 992; ix = 226; iy = 26;};
 																								image_h={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328; _iy = 427; ix = 24; iy = 30;};
 																								txt_dx = listBoxTextLeftOffset;
