@@ -582,7 +582,7 @@ void terCameraType::RestoreCamera(int n)
 	if(!cameraSavePoints[n])
 		return;
 	
-	setTarget(*cameraSavePoints[n], 1000);
+	setTarget(*cameraSavePoints[n], 500);
 }
 
 void terCameraType::SetCameraFollow(terUnitBase* unit, int transitionTime)
