@@ -1456,17 +1456,6 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'X'|KBD_SHIFT:
 		universe()->activePlayer()->setAI(!universe()->activePlayer()->isAI());
         break;
-	case 'F':
-		terShowFPS ^= 1;
-//		gb_VisGeneric->SetShadowMapSelf4x4(terShowFPS);
-/*
-		if(terShowFPS)
-			terVisGeneric->SetFontDirectory("russian");
-		else
-			terVisGeneric->SetFontDirectory("courier");
-		terVisGeneric->ReloadAllFont();
-*/
-		break;
 	case 'G':
 		terEnableGDIPixel=!terEnableGDIPixel;
 		gb_VisGeneric->SetShadowMapSelf4x4(terEnableGDIPixel);
@@ -1890,6 +1879,9 @@ void GameShell::ControlUnpressed(uint32_t key)
             break;
         case CTRL_TOGGLE_LIFEBARS:
             m_ShellDispatcher.toggleAlwaysShowLifebars();
+            break;
+        case CTRL_TOGGLE_FPS:
+            terShowFPS ^= 1;
             break;
 	}
 
