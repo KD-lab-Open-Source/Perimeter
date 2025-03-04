@@ -13,6 +13,8 @@
 #define VK_RBUTTON        0x02
 //#define VK_CANCEL         0x03
 #define VK_MBUTTON        0x04    /* NOT contiguous with L & RBUTTON */
+#define VK_XBUTTON1       0x05
+#define VK_XBUTTON2       0x06
 
 #define VK_BACK           0x08
 #define VK_TAB            0x09

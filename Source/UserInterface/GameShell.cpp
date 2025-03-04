@@ -1104,13 +1104,6 @@ void GameShell::EventHandler(SDL_Event& event) {
                         }
                     }
                     break;
-                case SDL_BUTTON_MIDDLE:
-                    if (pressed) {
-                        MouseMidPressed(where);
-                    } else {
-                        MouseMidUnpressed(where);
-                    }
-                    break;
                 case SDL_BUTTON_RIGHT:
                     if (doubleClick) {
                         MouseRightPressed(where);
@@ -1123,6 +1116,15 @@ void GameShell::EventHandler(SDL_Event& event) {
                             MouseRightUnpressed(where);
                         }
                     }
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    MouseButton(where, VK_MBUTTON, pressed);
+                    break;
+                case SDL_BUTTON_X1:
+                    MouseButton(where, VK_XBUTTON1, pressed);
+                    break;
+                case SDL_BUTTON_X2:
+                    MouseButton(where, VK_XBUTTON2, pressed);
                     break;
                 default:
                     break;
@@ -1982,24 +1984,19 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 	}
 }
 
-void GameShell::MouseMidPressed(const Vect2f& pos) {
-    uint32_t key = sKey(VK_MBUTTON, true).fullkey;
-    if (CaptureControlInput && CaptureControlInput(key, true)) {
+void GameShell::MouseButton(const Vect2f& pos, uint32_t key, bool pressed) {
+    key = sKey(key, true).fullkey;
+
+    if (CaptureControlInput && CaptureControlInput(key, pressed)) {
         return;
     }
 
-	if(!_bMenuMode){
-		ControlPressed(key);
-	}
-}
-void GameShell::MouseMidUnpressed(const Vect2f& pos) {
-    uint32_t key = sKey(VK_MBUTTON, true).fullkey;
-    if (CaptureControlInput && CaptureControlInput(key, false)) {
-        return;
-    }
-
-	if(!_bMenuMode){
-		ControlUnpressed(key);
+	if (!_bMenuMode) {
+        if (pressed) {
+            ControlPressed(key);
+        } else {
+            ControlUnpressed(key);
+        }
 	}
 }
 

@@ -358,9 +358,15 @@ bool isPressed(uint32_t key) {
     //Handle special keys
     switch (key) {
         case VK_LBUTTON:
+            return SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_LMASK;
         case VK_MBUTTON:
+            return SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_MMASK;
         case VK_RBUTTON:
-            return SDL_GetMouseState(nullptr, nullptr) & key;
+            return SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_RMASK;
+        case VK_XBUTTON1:
+            return SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_X1MASK;
+        case VK_XBUTTON2:
+            return SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_X2MASK;
         case VK_SHIFT:
             return SDL_GetModState() & KMOD_SHIFT;
         case VK_LSHIFT:

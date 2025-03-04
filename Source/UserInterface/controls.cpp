@@ -61,6 +61,12 @@ void ControlsConverter::LoadKeyNames() {
             case VK_MBUTTON:
                 KeyToName[i] = qdTextDB::instance().getText("Controls.Input.MouseMiddleButton");
                 break;
+            case VK_XBUTTON1:
+                KeyToName[i] = qdTextDB::instance().getText("Controls.Input.MouseButton4");
+                break;
+            case VK_XBUTTON2:
+                KeyToName[i] = qdTextDB::instance().getText("Controls.Input.MouseButton5");
+                break;
             default:
                 SDL_Scancode code = getSDLScanCodeFromVK(i);
                 std::string name;

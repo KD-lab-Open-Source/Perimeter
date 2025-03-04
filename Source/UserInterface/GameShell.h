@@ -77,8 +77,7 @@ public:
 	void MouseRightUnpressed(const Vect2f& pos);
 	void MouseLeftUnpressed(const Vect2f& pos);
 
-	void MouseMidPressed(const Vect2f& pos);
-	void MouseMidUnpressed(const Vect2f& pos);
+	void MouseButton(const Vect2f& pos, uint32_t key, bool pressed);
 
 	void MouseMove(const Vect2f& pos, const Vect2f& rel);
 	void MouseLeftDoubleClick(const Vect2f& pos);
