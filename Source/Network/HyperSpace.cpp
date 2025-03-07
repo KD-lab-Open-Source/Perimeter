@@ -1,5 +1,6 @@
 #include "NetIncludes.h"
 
+#include <unordered_set>
 #include <SDL.h>
 
 #include "SystemUtil.h"
@@ -835,10 +836,20 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 
                     if (!chatTipDisplayed && CHAT_TIP_QUANT <= confirmQuant) {
                         chatTipDisplayed = true;
-                        LocalizedText text = LocalizedText(
-                                qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.ChatTip"),
-                                getLocale()
-                        );
+                        
+                        bool hasClanTeams = false;
+                        std::unordered_set<int> clans = {};
+                        for (const auto& player : gameShell->CurrentMission.playersData) {
+                            if ((player.realPlayerType == REAL_PLAYER_TYPE_PLAYER
+                                || player.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI
+                            ) && !clans.emplace(player.clan).second) {
+                                hasClanTeams = true;
+                                break;
+                            }
+                        }
+                        LocalizedText text = LocalizedText(qdTextDB::instance().getText(
+                            hasClanTeams ? "Interface.Menu.Messages.Multiplayer.ChatTipClan" : "Interface.Menu.Messages.Multiplayer.ChatTip" 
+                        ), getLocale());
                         gameShell->serverMessage(&text);
                     }
 				}

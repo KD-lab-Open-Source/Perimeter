@@ -1631,9 +1631,27 @@ void GameShell::KeyPressed(sKey& Key)
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
 		if (Key.fullkey == VK_INSERT) {
+			bool wantedAlliesMode = false;
+			terPlayer* activePlayer = universe() ? universe()->activePlayer() : nullptr;
+			if (activePlayer && activePlayer->frame()) {
+				for (const auto& player : universe()->Players) {
+					if (!player->frame()
+                    || player->clan() != activePlayer->clan()
+                    || player->playerID() == activePlayer->playerID()) {
+                        continue;
+                    }
+                    RealPlayerType playerType = CurrentMission.getPlayerData(player->playerID())->realPlayerType;
+                    if (playerType == REAL_PLAYER_TYPE_PLAYER
+                    || playerType == REAL_PLAYER_TYPE_PLAYER_AI) {
+						wantedAlliesMode = true;
+						break;
+					}
+				}
+			}
+			
 			if (chatEdit->isVisible()) {
-				if (!chatEdit->alliesOnlyMode) {
-					chatEdit->alliesOnlyMode = true;
+				if (chatEdit->alliesOnlyMode != wantedAlliesMode) {
+					chatEdit->alliesOnlyMode = wantedAlliesMode;
 				} else {
 					chatEdit->Show(0);
 					_shellIconManager.SetFocus(0);
@@ -1644,7 +1662,7 @@ void GameShell::KeyPressed(sKey& Key)
 				chatEdit->Show(1);
 				chatInfo->setTime(-1);
 				chatInfo->Show(1);
-				chatEdit->alliesOnlyMode = true;
+				chatEdit->alliesOnlyMode = wantedAlliesMode;
 			}
 			return;
 		} else if (Key.fullkey == (VK_INSERT | KBD_CTRL) || Key.fullkey == (VK_SPACE | KBD_CTRL)) {
