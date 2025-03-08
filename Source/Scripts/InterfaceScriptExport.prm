@@ -4200,12 +4200,10 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
         {type = SQSH_TEXT_SCROLLABLE_WINDOW_TYPE; id = SQSH_MM_BRIEFING_TXT;        x=(220 + 10)/1024;					y=(521 + 5)/768;
                                                                                     sx=(694 - 10)/1024;                 sy=(157 - 10)/768;
                                                                                     txt_align=SHELL_ALIGN_LEFT;
-                                                                                    image_check={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 24; iy = 24;dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
-                                                                                    image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 992; ix = 226; iy = 26;};
-                                                                                    image_h={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328; _iy = 427; ix = 24; iy = 30;};
+                                                                                    image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
                                                                                     xstart = 24/1024;
                                                                                     ystart = 22/768;
-                                                                                    txt_dx = 1;
+                                                                                    txt_dx = 0.7f;
                                                                                     txt_dy = 8/1024;
                                                                                     font_group = 6;
         },
@@ -5423,13 +5421,10 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
         //Scrollbar bg and description text
         {type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;	 					    x=896/1024; y=55/768; sx=24/1024; sy=410/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 302; _iy = 33; ix = 24; iy = 458;}; state = SQSH_ENABLED; ystart=458/768;image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_TEXT_SCROLLABLE_WINDOW_TYPE; id = SQSH_MM_ADDONS_DESCR_TXT;	x=630/1024; y=55/768; sx=290/1024; sy=410/768; txt_align=SHELL_ALIGN_LEFT;
-                                                                                    //image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
-																					image_check={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 24; iy = 24;dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
-											 										image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 992; ix = 226; iy = 26;};
-																					image_h={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328; _iy = 427; ix = 24; iy = 30;};
+                                                                                    image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
 																					xstart = 24/1024;
 																					ystart = 35/768;
-																					txt_dx = 1;
+																					txt_dx = 0.7f;
 																					txt_dy = 8/1024;
         },
 
