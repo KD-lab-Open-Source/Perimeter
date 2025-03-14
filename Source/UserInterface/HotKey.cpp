@@ -3,6 +3,7 @@
 #include "Controls.h"
 #include "HotKey.h"
 #include "qd_textdb.h"
+#include "GameContent.h"
 
 #include <utility>
 
@@ -111,6 +112,9 @@ std::string getIntfControlName(const char* cbTag) {
     }
     tag = tag.substr(1, tag.length() - 2);
     std::string text = qdTextDB::instance().getText(("Interface.Tips." + tag).c_str());
+    if (text.empty()) {
+        text = tag;
+    }
     if (startsWith(tag, "upgrade_") && endsWith(tag, "_btn")) {
         //Trim the text to first 2 lines
         std::vector<size_t> newlines;
@@ -161,7 +165,7 @@ std::string getIntfControlName(const char* cbTag) {
     std::string::size_type nli = text.find('\n');
     std::string::size_type stri = text.find("%s");
     if (nli != std::string::npos || stri != std::string::npos) {
-        printf("Unknown text for hotkey: '%s\n'", text.c_str());
+        fprintf(stderr, "Unknown text for hotkey '%s': '%s\n'", tag.c_str(), text.c_str());
         text = "";
     }
     trim(text);
@@ -171,6 +175,17 @@ std::string getIntfControlName(const char* cbTag) {
 void HotKeyManager::fillActions() {
 	for (auto& control_container : interfaceAttr().controls) {
 		for (auto& control : control_container.controls) {
+            if (!(terGameContentAvailable & GAME_CONTENT::PERIMETER_ET)) {
+                switch (control.id) {
+                    case SQSH_SELPANEL_UPGRADE_ELECTRO1_ID:
+                    case SQSH_SELPANEL_UPGRADE_ELECTRO2_ID:
+                    case SQSH_STATION_ELECTRO_LAB_ID:
+                    case SQSH_GUN_ELECTRO_ID:
+                        continue;
+                    default:
+                        break;
+                }
+            }
             std::string controlName;
             if (controlName.empty() && control.popup.value() != "<unit_base>") {
                 controlName = getIntfControlName(control.popup);

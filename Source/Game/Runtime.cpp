@@ -51,6 +51,7 @@
 #include "../HT/ht.h"
 #include "GraphicsOptions.h"
 #include "GameContent.h"
+#include "SoundScript.h"
 
 #ifdef GPX
 extern void pollGpxEvents();
@@ -758,6 +759,28 @@ void HTManager::finitGraphics()
 
 //--------------------------------
 
+void LoadSoundScriptTable() {
+    SingletonPrm<SoundScriptTable>::load();
+
+    //Remove the sounds that are ET specific
+    if (!(terGameContentAvailable & GAME_CONTENT::PERIMETER_ET)) {
+         for (auto& i: soundScriptTable().table) {
+            if (i.name.value() != "voices") {
+                continue;
+            }
+
+            auto it_removed = std::remove_if(
+                i.data.begin(),
+                i.data.end(),
+                [] (SoundSetupPrm& prm) {
+                    return startsWith(prm.name.value(), "Electro");
+                }
+            );
+            i.data.erase(it_removed, i.data.end());
+        }
+    }
+}
+
 void InitSound()
 {
     int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
@@ -798,6 +821,7 @@ void InitSound()
     if (terAudioEnable) {
         SNDEnableSound(0 < terSoundVolume);
         SNDEnableVoices(0 < terVoiceVolume);
+        LoadSoundScriptTable();
         SNDScriptPrmEnableAll();
         SND2DPanByX(1, fSoundWidthPower);
         snd_listener.SetZMultiple(fSoundZMultiple);

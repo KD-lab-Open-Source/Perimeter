@@ -105,16 +105,14 @@ const char* qdTextDB::getText(const char* text_id) const
             return texts_.at(id_str).text_.c_str();
         }
 
-#ifdef PERIMETER_DEBUG
         //Ignore certain missing texts
         if (!startsWith(id_str, "interface.tips.names.")
          && !startsWith(id_str, "interface.menu.buttonlabels.name")
          && !startsWith(id_str, "mission frames.")
          && !startsWith(id_str, "mapnames.")
          && !endsWith(id_str, "interface.menu.buttonlabels.")) {
-            fprintf(stderr, "getText missing: '%s'\n", id_str.c_str());
+            fprintf(stderr, "Attempted to fetch missing text ID: '%s'\n", id_str.c_str());
         }
-#endif
     }
     static const char* const str = "";
 	return str;

@@ -106,7 +106,7 @@ void ControlsConverter::LoadCtrlTable() {
     for (uint32_t i = 0; i < KEY_MAX; i++) {
         KeyToCtrl[i] = static_cast<eGameKeysControl>(-1);
     }
-    IniManager controls_ini = IniManager("RESOURCE\\controls.ini");
+    IniManager controls_ini = IniManager("RESOURCE\\controls.ini", false, false);
     IniManager custom_controls_ini = IniManager(getPrefFilePath("custom_controls.ini").c_str(), false, true);
 	for (uint32_t ctrl = 0; ctrl < CTRL_MAX; ctrl++) {
 		char ctrl_str[256];

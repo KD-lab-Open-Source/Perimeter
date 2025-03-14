@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "StdAfxSound.h"
 #include "PerimeterSound.h"
 #include "SoundInternal.h"
@@ -261,8 +262,7 @@ bool SNDScriptPrmEnable(const SoundScriptPrm& prm)
 
 bool SNDScriptPrmEnableAll()
 {
-    SingletonPrm<SoundScriptTable>::load();
-	for (const auto& i : soundScriptTable().table) {
+	for (auto& i : soundScriptTable().table) {
         SNDScriptPrmEnable(i);
     }
 
