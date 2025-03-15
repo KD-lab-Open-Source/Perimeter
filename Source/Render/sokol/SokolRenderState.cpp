@@ -464,6 +464,11 @@ void cSokolRender::ClearActiveBufferAndPassAction() {
 void cSokolRender::ClearZBuffer() {
     //Keep color and stencil buffers, clear depth buffer
     ClearActiveBufferAndPassAction();
+    
+    //Make sure viewport/clip is set
+    SetCommandViewportClip(false);
+
+    //Create pass action for clearing depth
     sg_pass_action* action = new sg_pass_action();
     action->colors[0].load_action = SG_LOADACTION_LOAD;
     action->colors[0].store_action = SG_STOREACTION_STORE;
