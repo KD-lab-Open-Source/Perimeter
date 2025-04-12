@@ -201,6 +201,11 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
 
     this->hWnd = get_hwnd_from_sdl_window(sdl_window);
 
+#ifndef _WIN32
+    //DXVK now needs DXVK_WSI_DRIVER to be set, we set SDL2 with replace=0 so that user may change it
+    setenv("DXVK_WSI_DRIVER", "SDL2", 0);
+#endif
+
 	if(!lpD3D)
 		RDERR((lpD3D=Direct3DCreate9(D3D_SDK_VERSION))==0);
 		//RDERR((lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION))==0);
