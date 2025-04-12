@@ -25,7 +25,7 @@
     ref = "master";
   } else {
     url = "https://github.com/doitsujin/dxvk.git";
-    rev = "80e075406b1b7d9d2508c9dc05e9745b3d3cf7e2";
+    rev = "2b1a284f8453baa2bd193709b67e5183074c74ba";
     ref = "master";
     submodules = true; 
   });

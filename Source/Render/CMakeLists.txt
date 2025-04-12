@@ -169,7 +169,7 @@ if(NEED_DXVK)
             set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
         endif ()
         if (NOT DXVK_GIT_TAG)
-            set(DXVK_GIT_TAG "80e075406b1b7d9d2508c9dc05e9745b3d3cf7e2") # v2.3
+            set(DXVK_GIT_TAG "2b1a284f8453baa2bd193709b67e5183074c74ba") # tag v2.6.1
         endif ()
         set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
     ENDIF()
