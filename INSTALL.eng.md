@@ -54,8 +54,8 @@ Recommended method on Windows.
 ### Instructions
 
 - Run `msvc\generate_msvc.bat` script
-- Open generate solution file for project
-- Compile project
+- Run `cmake --build build --config Release -- /m` from project root to generate Release build
+- Binaries will be generated at `build\Source\Release`
 
 ### Launching the game
 Copy generated perimeter.exe executable and required libraries .dll's to the game directory.
