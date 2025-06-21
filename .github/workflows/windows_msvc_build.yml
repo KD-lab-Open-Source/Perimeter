@@ -10,7 +10,7 @@ on:
       - ready_for_review
 
 env:
-  VCPKG_COMMIT_ID: 'd504de05dcd7b55df34976be1c824324ec6bca2b'
+  VCPKG_COMMIT_ID: '0cf34c184ce990471435b5b9c92edcf7424930b1'
   buildDir: '${{ github.workspace }}/build/'
   outDir: '${{ github.workspace }}/artifact/'
 
