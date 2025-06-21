@@ -142,13 +142,15 @@ connectionHandler(this)
         if (thread == nullptr) {
             SDL_FATAL_ERROR("SDL_CreateThread perimeter_server_thread failed");
         }
+        //Get thread id before detach
+        uint64_t thread_id = SDL_GetThreadID(thread);
         SDL_DetachThread(thread);
 
         if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {
             xassert(0&&"NetCenter:Error second thread init");
             ErrH.Abort("Network: General error 1!");
         }
-        xassert(net_thread_id == SDL_GetThreadID(thread));
+        xassert(net_thread_id == thread_id);
     } else {
         InternalServerThreadInit(this);
     }
