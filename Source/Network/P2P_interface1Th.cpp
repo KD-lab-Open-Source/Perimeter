@@ -138,19 +138,18 @@ connectionHandler(this)
 
     hSecondThread = CreateEvent(0, true, false, 0);
     if (MTConfig::multithreading()) {
+        xassert(net_thread_id == -1);
         SDL_Thread *thread = SDL_CreateThread(InternalServerThreadInit, "perimeter_server_thread", this);
         if (thread == nullptr) {
             SDL_FATAL_ERROR("SDL_CreateThread perimeter_server_thread failed");
         }
-        //Get thread id before detach
-        uint64_t thread_id = SDL_GetThreadID(thread);
         SDL_DetachThread(thread);
 
         if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {
             xassert(0&&"NetCenter:Error second thread init");
             ErrH.Abort("Network: General error 1!");
         }
-        xassert(net_thread_id == thread_id);
+        xassert(net_thread_id != -1);
     } else {
         InternalServerThreadInit(this);
     }
