@@ -308,7 +308,8 @@ bool NetConnectionHandler::startHost(uint16_t listen_port, bool start_public_roo
     ok = ok && start_public_room;
 #else
     if (ok && 0 < listen_port) {
-        NetAddress addr(INADDR_ANY, listen_port);
+        NetAddress addr;
+        NetAddress::resolve(addr, "0.0.0.0", listen_port);
         NetTransport* transport = NetTransport::create(addr);
         if (transport == nullptr || dynamic_cast<NetTransportTCP*>(transport) == nullptr) {
             ok = false;

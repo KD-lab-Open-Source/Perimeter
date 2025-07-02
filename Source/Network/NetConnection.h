@@ -49,12 +49,12 @@ public:
  */
 class NetAddress {
 private:
+    std::string host;
+    uint16_t port = 0;
 #ifndef EMSCRIPTEN
-    IPaddress addr;
-#else
-    std::string address;
+    uint32_t addr4 = INADDR_NONE; // 32-bit IPv4 host address
 #endif
-    
+
 public:
     static bool resolve(NetAddress& address, const std::string& host, uint16_t default_port = 0);
 
@@ -65,14 +65,14 @@ public:
     bool operator==(const NetAddress& other) const;
 
 #ifndef EMSCRIPTEN
-    NetAddress(uint32_t host, uint16_t port);
     TCPsocket openTCP() const;
 #endif
 
     void reset();
-    uint16_t port() const;
+    uint16_t get_port() const;
 
     std::string getString() const;
+    std::string getAddress() const;
 };
 
 /**

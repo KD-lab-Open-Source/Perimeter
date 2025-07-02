@@ -66,7 +66,7 @@ int creatingHostDialogQuant(float, float ) {
             bool isPublic = hostTypeCombo->pos == 0;
 
             putStringSettings("HostName", gameName);
-            putStringSettings("HostPort", std::to_string(conn.port()));
+            putStringSettings("HostPort", std::to_string(conn.get_port()));
             
             //Load multiplayer save or use first multiplayer map
             CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST);

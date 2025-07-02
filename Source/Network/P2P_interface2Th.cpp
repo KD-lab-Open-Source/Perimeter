@@ -197,7 +197,7 @@ void PNetCenter::SecondThreadQuant()
 #ifdef GPX
                 flag_connected = connectionHandler.startHost(0, isPublic);
 #else
-                flag_connected = connectionHandler.startHost(hostConnection.port(), isPublic);
+                flag_connected = connectionHandler.startHost(hostConnection.get_port(), isPublic);
 #endif
 
                 if (!isConnected()) {

@@ -14,115 +14,122 @@ constexpr uint32_t TRANSPORT_RECV_SLEEP = 10;
 
 ///////// NetAddress //////////////
 
+NetAddress::NetAddress() = default;
+
 #ifndef EMSCRIPTEN
-NetAddress::NetAddress(uint32_t host, uint16_t port): addr() {
-    addr.host = host;
-    SDLNet_Write16(port, &addr.port);
-}
-
-NetAddress::NetAddress(): NetAddress(INADDR_NONE, 0) {}
-
 TCPsocket NetAddress::openTCP() const {
-    TCPsocket socket = SDLNet_TCP_Open(const_cast<IPaddress*>(&addr));
+    if (addr4 == INADDR_NONE) {
+        fprintf(stderr, "NetAddress::openTCP ip4 address is NONE\n");
+        return nullptr;
+    }
+    IPaddress ipaddr;
+    ipaddr.host = addr4;
+    SDLNet_Write16(port, &ipaddr.port);
+    TCPsocket socket = SDLNet_TCP_Open(&ipaddr);
     if (socket == nullptr) {
         fprintf(stderr, "NetAddress::openTCP failed address %s error %s\n", getString().c_str(), SDLNet_GetError());
     }
     return socket;
 }
-#else
-NetAddress::NetAddress() {}
 #endif
 
 NetAddress::~NetAddress() = default;
 
 bool NetAddress::resolve(NetAddress& address, const std::string& host, uint16_t default_port) {
-#ifndef EMSCRIPTEN
-    std::string ip;
+    std::string host_tmp;
     uint16_t port;
     if (default_port == 0) {
         default_port = PERIMETER_IP_PORT_DEFAULT;
     }
     size_t pos = host.find(':');
     if (pos == std::string::npos) {
-        ip = host;
+        host_tmp = host;
         port = default_port;
     } else {
-        ip = host.substr(0, pos);
+        host_tmp = host.substr(0, pos);
         std::string port_str = host.substr(pos + 1);
         char* end;
         port = static_cast<uint16_t>(strtol(port_str.c_str(), &end, 10));
         if (!port) port = default_port;
     }
-    int32_t ret = SDLNet_ResolveHost(&address.addr, ip.c_str(), port) == 0;
-    if (ret < 0 || address.addr.host == INADDR_NONE) {
+
+#ifdef EMSCRIPTEN
+    address.host = host_tmp;
+    address.port = port;
+#else
+    IPaddress ipaddr;
+    int32_t ret = SDLNet_ResolveHost(&ipaddr, host_tmp.c_str(), port) == 0;
+    if (ret < 0 || ipaddr.host == INADDR_NONE) {
         fprintf(stderr, "Error resolving host %s: %s\n", host.c_str(), SDLNet_GetError());
         return false;
     }
-    return true;
-#else
-    address.address = host + ":" + std::to_string(NET_RELAY_DEFAULT_PORT);
-    return true;
+    address.host = host_tmp;
+    address.addr4 = ipaddr.host;
+    address.port = SDLNet_Read16(&ipaddr.port);
 #endif
+    return true;
 }
 
-uint16_t NetAddress::port() const {
-#ifndef EMSCRIPTEN
-    return SDLNet_Read16(&addr.port);
-#else
-    return NET_RELAY_DEFAULT_PORT;
-#endif
+uint16_t NetAddress::get_port() const {
+    return port;
 }
 
 NetAddress& NetAddress::operator=(const NetAddress& other) {
+    this->host = other.host;
+    this->port = other.port;
 #ifndef EMSCRIPTEN
-    this->addr.host = other.addr.host;
-    this->addr.port = other.addr.port;
-#else
-    this->address = other.address;
+    this->addr4 = other.addr4;
 #endif
     return *this;
 }
 
 bool NetAddress::operator==(const NetAddress& other) const {
-#ifndef EMSCRIPTEN
-    return this->addr.host == other.addr.host
-           && this->addr.port == other.addr.port;
-#else
-    return this->address == other.address;
-#endif
+    return this->host == other.host
+        && this->port == other.port;
 }
 
 void NetAddress::reset() {
+    host = "";
+    port = 0;
 #ifndef EMSCRIPTEN
-    addr.host = 0;
-    addr.port = 0;
-#else
-    address = "";
+    addr4 = INADDR_NONE;
 #endif
 }
 
-std::string NetAddress::getString() const {
-#ifndef EMSCRIPTEN
-    std::string text;
+std::string NetAddress::getAddress() const {
+    std::string address;
 
-    if (addr.host != INADDR_NONE) {
-        for (size_t i = 0; i < 4; ++i) {
-            if (i > 0) text += ".";
-            uint8_t v = (addr.host >> (8 * i)) & 0xff;
-            text += std::to_string(v);
-        }
+    if (!host.empty()) {
+        address += host;
 
-        if (addr.port) {
-            text += ":" + std::to_string(port());
+        if (port) {
+            address += ":" + std::to_string(port);
         }
     } else {
-        text = "none";
+        address = "none";
     }
 
-    return text;
-#else
     return address;
+}
+
+std::string NetAddress::getString() const {
+    std::string address = getAddress();
+
+#ifndef EMSCRIPTEN
+    if (!address.empty()) {
+        if (addr4 != INADDR_NONE) {
+            address += " (";
+            for (size_t i = 0; i < 4; ++i) {
+                if (i > 0) address += ".";
+                uint8_t v = (addr4 >> (8 * i)) & 0xff;
+                address += std::to_string(v);
+            }
+            address += ")";
+        }
+    }
 #endif
+
+    return address;
 }
 
 ///////// NetTransport //////////////
@@ -130,7 +137,7 @@ NetTransport* NetTransport::create(const NetAddress& address) {
 #ifdef EMSCRIPTEN
     int32_t handle = EM_ASM_INT((
         return Module.transportCreate($0);
-    ), address.getString().c_str());
+    ), address.getAddress().c_str());
 
     if (handle == -1) {
         return nullptr;
@@ -139,12 +146,13 @@ NetTransport* NetTransport::create(const NetAddress& address) {
     return new NetTransportWS(handle);
 #else
     TCPsocket socket = address.openTCP();
-    if (socket) {
-        return new NetTransportTCP(socket);
-    }
-#endif
 
-    return nullptr;
+    if (!socket) {
+        return nullptr;
+    }
+    
+    return new NetTransportTCP(socket);
+#endif
 }
 
 int32_t NetTransport::send(const void* buffer, uint32_t len, int32_t timeout) {
