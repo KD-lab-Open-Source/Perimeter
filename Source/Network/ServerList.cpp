@@ -9,7 +9,7 @@
 
 const int SERVER_LIST_INTERVAL = 3000;
 const float SERVER_LIST_ATTEMPT_BACKOFF_RATE = 2.0f;
-const int SERVER_LIST_ATTEMPT_BACKOFF_AMOUNT = 1500;
+const int SERVER_LIST_ATTEMPT_BACKOFF_AMOUNT = 30000;
 
 struct NetRelay_RoomInfoExtraData {
     std::string scenario = {};
@@ -119,13 +119,14 @@ void ServerList::closeRelayConnections(bool only_destroy) {
 }
 
 bool ServerList::processRelayConnection(ServerListRelay& relay) {
-    //Check if we are attempting too often, do a backoff
-    int steps = static_cast<int>(xm::ceil(static_cast<float>(relay.attempts) / SERVER_LIST_ATTEMPT_BACKOFF_RATE));
-    steps = steps * steps * SERVER_LIST_ATTEMPT_BACKOFF_AMOUNT;
-    if (relay.last_attempt + steps > clocki()) {
-        return false;
-    }
+    //Check if we are attempting connection too often, do a backoff
     if (!relay.operational) {
+        int steps = static_cast<int>(xm::ceil(static_cast<float>(relay.attempts) / SERVER_LIST_ATTEMPT_BACKOFF_RATE));
+        steps = steps * steps * SERVER_LIST_ATTEMPT_BACKOFF_AMOUNT;
+        if (relay.last_attempt + steps > clocki()) {
+            return false;
+        }
+        relay.last_attempt = clocki();
         relay.attempts += 1;
     }
     
@@ -133,7 +134,6 @@ bool ServerList::processRelayConnection(ServerListRelay& relay) {
     if (!relay.connection) {
         relay.connection = new NetConnection(nullptr, NETID_NONE);        
     }
-    relay.last_attempt = clocki();
     if (!relay.connection->hasTransport()) {
         if (!NetAddress::resolve(relay.net_address, relay.address, NET_RELAY_DEFAULT_PORT)) {
             fprintf(stderr, "Error connecting to relay: couldn't resolve address '%s'\n", relay.address.c_str());
@@ -217,11 +217,15 @@ void ServerList::fetchRelayHostInfoList() {
     for (auto& relay : relays) {
         bool operational_before = relay.operational;
         relay.operational = processRelayConnection(relay);
-        if (!relay.operational) {
-            relay.ping = 0;
-            closeNetRelay(relay.connection);
-        }
         if (operational_before != relay.operational) {
+            if (relay.operational) {
+                if (0 < relay.attempts) {
+                    relay.attempts -= 1;
+                }
+            } else {
+                relay.ping = 0;
+                closeNetRelay(relay.connection);
+            }
             printf(
                     "Relay '%s' status: %s ping: %" PRIu64 " attempts: %" PRIu32 "\n",
                     relay.address.c_str(),
