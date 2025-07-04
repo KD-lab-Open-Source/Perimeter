@@ -8,6 +8,7 @@ static const uint16_t NET_RELAY_DEFAULT_PORT = 8443;
 static const uint16_t NET_RELAY_DEFAULT_PORT = 11654;
 #endif
 
+static const uint16_t NET_RELAY_CONNECT_TIMEOUT = 1000;
 static const uint16_t NET_RELAY_MAX_STRING_LENGTH = 256;
 static const uint16_t NET_RELAY_MAX_LIST_ELEMENTS = 128;
 static const uint16_t NET_RELAY_MAX_MAP_ELEMENTS = 64;

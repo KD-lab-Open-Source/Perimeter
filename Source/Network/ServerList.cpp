@@ -140,7 +140,7 @@ bool ServerList::processRelayConnection(ServerListRelay& relay) {
             return false;
         }
 
-        NetTransport *transport = NetTransport::create(relay.net_address);
+        NetTransport *transport = NetTransport::create(relay.net_address, NET_RELAY_CONNECT_TIMEOUT);
         if (!transport) {
             fprintf(stderr, "Error connecting to relay '%s': no transport\n", relay.address.c_str());
             return false;

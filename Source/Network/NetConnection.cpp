@@ -17,7 +17,11 @@ constexpr uint32_t TRANSPORT_RECV_SLEEP = 10;
 NetAddress::NetAddress() = default;
 
 #ifndef EMSCRIPTEN
-TCPsocket NetAddress::openTCP() const {
+
+const static char* NET_ADDRESS_UDP_PING_DATA = "HostPing";
+const static char* NET_ADDRESS_UDP_PONG_DATA = "HostPong";
+
+TCPsocket NetAddress::openTCP(int32_t timeout) const {
     if (addr4 == INADDR_NONE) {
         fprintf(stderr, "NetAddress::openTCP ip4 address is NONE\n");
         return nullptr;
@@ -25,11 +29,70 @@ TCPsocket NetAddress::openTCP() const {
     IPaddress ipaddr;
     ipaddr.host = addr4;
     SDLNet_Write16(port, &ipaddr.port);
-    TCPsocket socket = SDLNet_TCP_Open(&ipaddr);
-    if (socket == nullptr) {
-        fprintf(stderr, "NetAddress::openTCP failed address %s error %s\n", getString().c_str(), SDLNet_GetError());
+
+    //Ping over UDP with reduced timeout in case host is down so that TCP open won't stay waiting all day
+    if (0 < timeout) {
+        UDPsocket udp_socket = SDLNet_UDP_Open(0);
+        if (udp_socket == nullptr) {
+            fprintf(stderr, "NetAddress::openTCP failed to open UDP address %s error %s\n", getString().c_str(), SDLNet_GetError());
+            return nullptr;
+        }
+        
+        const static size_t UPD_PACKET_DATA_LEN = 32;
+        size_t ping_str_len = strlen(NET_ADDRESS_UDP_PING_DATA);
+        size_t pong_str_len = strlen(NET_ADDRESS_UDP_PONG_DATA);
+        uint8_t upd_packet_data[UPD_PACKET_DATA_LEN] = {};
+        int32_t start_time = clocki();
+        while (true) {
+            if (start_time + timeout < clocki()) {
+                fprintf(stderr, "NetAddress::openTCP timeout waiting for UDP ping response address %s error %s\n",
+                        getString().c_str(), SDLNet_GetError());
+                return nullptr;
+            }
+            memcpy(reinterpret_cast<char*>(upd_packet_data), NET_ADDRESS_UDP_PING_DATA, ping_str_len);
+            UDPpacket udp_packet;
+            udp_packet.channel = -1;
+            udp_packet.data = upd_packet_data;
+            udp_packet.len = static_cast<int>(ping_str_len);
+            udp_packet.maxlen = UPD_PACKET_DATA_LEN - 1;
+            udp_packet.status = 0;
+            udp_packet.address = ipaddr;
+            int status = SDLNet_UDP_Send(udp_socket, -1, &udp_packet);
+            if (status != 1) {
+                fprintf(stderr, "NetAddress::openTCP failed to send UDP ping %d address %s error %s\n",
+                        status, getString().c_str(), SDLNet_GetError());
+                return nullptr;
+            }
+
+            Sleep(50);
+
+            status = SDLNet_UDP_Recv(udp_socket, &udp_packet);
+            if (status == 1) {
+                if (udp_packet.len != pong_str_len) {
+                    fprintf(stderr, "NetAddress::openTCP failed UDP pong len %" PRIi32 " address %s error %s\n",
+                            udp_packet.len, getString().c_str(), SDLNet_GetError());
+                    return nullptr;
+                }
+                if (memcmp(udp_packet.data, NET_ADDRESS_UDP_PONG_DATA, pong_str_len) != 0) {
+                    fprintf(stderr, "NetAddress::openTCP failed UDP pong data mismatch address %s error %s\n",
+                            getString().c_str(), SDLNet_GetError());
+                    return nullptr;
+                }
+                break;
+            } else if (status != 0) {
+                //Keep trying until timeout
+                fprintf(stderr, "NetAddress::openTCP failed to recv UDP ping %d address %s error %s\n",
+                        status, getString().c_str(), SDLNet_GetError());
+            }
+        }
     }
-    return socket;
+
+    //Do TCP connection
+    TCPsocket tcp_socket = SDLNet_TCP_Open(&ipaddr);
+    if (tcp_socket == nullptr) {
+        fprintf(stderr, "NetAddress::openTCP failed to open TCP address %s error %s\n", getString().c_str(), SDLNet_GetError());
+    }
+    return tcp_socket;
 }
 #endif
 
@@ -133,7 +196,7 @@ std::string NetAddress::getString() const {
 }
 
 ///////// NetTransport //////////////
-NetTransport* NetTransport::create(const NetAddress& address) {
+NetTransport* NetTransport::create(const NetAddress& address, int32_t timeout) {
 #ifdef EMSCRIPTEN
     int32_t handle = EM_ASM_INT((
         return Module.transportCreate($0);
@@ -145,7 +208,7 @@ NetTransport* NetTransport::create(const NetAddress& address) {
 
     return new NetTransportWS(handle);
 #else
-    TCPsocket socket = address.openTCP();
+    TCPsocket socket = address.openTCP(timeout);
 
     if (!socket) {
         return nullptr;

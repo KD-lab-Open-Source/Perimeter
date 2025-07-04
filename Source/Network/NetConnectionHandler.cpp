@@ -310,7 +310,7 @@ bool NetConnectionHandler::startHost(uint16_t listen_port, bool start_public_roo
     if (ok && 0 < listen_port) {
         NetAddress addr;
         NetAddress::resolve(addr, "0.0.0.0", listen_port);
-        NetTransport* transport = NetTransport::create(addr);
+        NetTransport* transport = NetTransport::create(addr, 0);
         if (transport == nullptr || dynamic_cast<NetTransportTCP*>(transport) == nullptr) {
             ok = false;
             delete transport;
@@ -343,7 +343,7 @@ bool NetConnectionHandler::startRelayRoom() {
         return false;
     }
     LogMsg("Current primary relay selected is '%s'\n", relay.address.c_str());
-    NetTransport* transport = NetTransport::create(relay.net_address);
+    NetTransport* transport = NetTransport::create(relay.net_address, NET_RELAY_CONNECT_TIMEOUT);
     if (!transport) {
         return false;
     }
@@ -404,7 +404,7 @@ bool NetConnectionHandler::startRelayRoom() {
         connection->close();
         LogMsg("Connecting to secondary relay '%s' for room creation\n", host_address_str.c_str());
 
-        transport = NetTransport::create(host_address);
+        transport = NetTransport::create(host_address, NET_RELAY_CONNECT_TIMEOUT);
         if (!transport) {
             return false;
         } else {
@@ -444,7 +444,7 @@ NetConnection* NetConnectionHandler::startRelayRoomConnection(const NetAddress& 
     max_connections = 1;
 
     //Start relay connection and assign as host since it will act as one after sending join room
-    NetTransport *transport = NetTransport::create(address);
+    NetTransport *transport = NetTransport::create(address, NET_RELAY_CONNECT_TIMEOUT);
     if (!transport) {
         return nullptr;
     }
@@ -514,7 +514,7 @@ void NetConnectionHandler::handleRelayDisconnected() {
 NetConnection* NetConnectionHandler::startDirectConnection(const NetAddress& address) {
     max_connections = 1;
 
-    NetTransport *transport = NetTransport::create(address);
+    NetTransport *transport = NetTransport::create(address, 0);
 	if (!transport) {
         return nullptr;
 	}

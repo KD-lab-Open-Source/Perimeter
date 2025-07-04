@@ -65,7 +65,7 @@ public:
     bool operator==(const NetAddress& other) const;
 
 #ifndef EMSCRIPTEN
-    TCPsocket openTCP() const;
+    TCPsocket openTCP(int32_t timeout) const;
 #endif
 
     void reset();
@@ -89,7 +89,7 @@ public:
     static const int32_t NT_STATUS_CLOSED  = -0x1000003;
     static const int32_t NT_STATUS_ERROR   = -0x1000004;
 
-    static NetTransport* create(const NetAddress&);
+    static NetTransport* create(const NetAddress&, int32_t);
 
     NetTransport() = default;
     virtual ~NetTransport() {
