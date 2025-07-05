@@ -28,6 +28,7 @@ void UserSingleProfile::setDifficulty(Difficulty newDifficulty) {
 	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man( path.c_str(), true );
 	man.putInt("General", "difficulty", newDifficulty);
+    man.save();
 }
 void UserSingleProfile::setCurrentMissionNumber(int newMissionNumber) {
 	currentMissionNumber = newMissionNumber;
@@ -39,6 +40,7 @@ void UserSingleProfile::setLastMissionNumber(int newMissionNumber) {
 	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man( path.c_str(), true );
 	man.putInt("General", getMissionNumberKey().c_str(), newMissionNumber);
+    man.save();
 }
 
 void UserSingleProfile::scanProfiles() {
@@ -113,6 +115,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
             IniManager man( path_data.c_str(), true );
             man.put("General", "name", name.c_str());
             man.putInt("General", getMissionNumberKey().c_str(), firstMissionNumber);
+            man.save();
             if (i == freeInds.size()) {
                 freeInds.push_back(true);
             } else {
@@ -213,6 +216,7 @@ void UserSingleProfile::setRecord(const std::string& name, int milis) {
 	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man(path.c_str(), false);
 	man.putInt("Records", name.c_str(), milis);
+    man.save();
 }
 
 int UserSingleProfile::getRecord(const std::string& name) {
