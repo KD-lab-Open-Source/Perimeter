@@ -20,7 +20,7 @@ jobs:
         env: [
           #{sys: mingw32, build_type: Debug,   arch: i686,   arch_zip: x86, packages: "},
           {sys: mingw64, build_type: Debug,   arch: x86_64, arch_zip: x64, packages: "libbacktrace:p"},
-          {sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86, packages: ""},
+          #{sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86, packages: ""},
           {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64, packages: "libbacktrace:p"},
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.sys}}
