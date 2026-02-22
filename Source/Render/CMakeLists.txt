@@ -169,9 +169,10 @@ if(NEED_DXVK)
             set(DXVK_GIT_URL https://github.com/doitsujin/dxvk)
         endif ()
         if (NOT DXVK_GIT_TAG)
-            set(DXVK_GIT_TAG "2b1a284f8453baa2bd193709b67e5183074c74ba") # tag v2.6.1
+            set(DXVK_GIT_TAG "c3dd74be6baec53786d4e064a572185b70347a17") # tag v2.7.1
         endif ()
-        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Ddxvk_native_wsi=sdl2)
+        #Disable SDL3 for now to avoid issues with game using SDL2
+        set(DXVK_BUILD_OPTIONS ${DXVK_BUILD_OPTIONS} -Denable_d3d8=false -Dnative_sdl2=enabled -Dnative_sdl3=disabled)
     ENDIF()
     IF("${DXVK_BUILD_COMMAND}" STREQUAL "")
         set(DXVK_BUILD_COMMAND meson setup)
