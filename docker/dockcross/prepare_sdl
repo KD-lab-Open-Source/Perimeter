@@ -5,12 +5,12 @@ SDL_ARCH=${CROSS_TRIPLE/.shared/}
 
 mkdir /opt/SDL2
 
-wget https://github.com/libsdl-org/SDL/releases/download/release-2.30.0/SDL2-devel-2.30.0-mingw.zip -O /opt/SDL2-mingw.zip
+wget https://github.com/libsdl-org/SDL/releases/download/release-2.32.10/SDL2-devel-2.32.10-mingw.zip -O /opt/SDL2-mingw.zip
 unzip /opt/SDL2-mingw.zip -d /opt/SDL2
 cd /opt/SDL2/SDL2-*
 make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
 
-wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.0/SDL2_mixer-devel-2.8.0-mingw.zip -O /opt/SDL2_mixer-mingw.zip
+wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.8/SDL2_mixer-devel-2.8.8-mingw.zip -O /opt/SDL2_mixer-mingw.zip
 unzip /opt/SDL2_mixer-mingw.zip -d /opt/SDL2
 cd /opt/SDL2/SDL2_mixer-*
 make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}

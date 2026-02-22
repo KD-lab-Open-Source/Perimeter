@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-# Add backports to sources and update
+# Setup sources and update
+rm /etc/apt/sources.list
+echo "deb http://archive.debian.org/debian buster main" >> /etc/apt/sources.list
+echo "deb http://archive.debian.org/debian-security buster/updates main" >> /etc/apt/sources.list
+echo "deb http://archive.debian.org/debian buster-updates main" >> /etc/apt/sources.list
 echo "deb http://archive.debian.org/debian buster-backports main" >> /etc/apt/sources.list
 apt-get update
 
