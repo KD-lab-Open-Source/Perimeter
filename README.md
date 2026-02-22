@@ -98,9 +98,6 @@ This file is automatically created/updated by the game.
 ## Repository contents
 
 * Source/ - Contains source code for the game and tools, most folders purpose can be guessed but some noteworthy:
-  * Configurator - _Unknown_ - GUI utility distributed with game that allows players to change language and other settings.
-  * EasyMap - _Unknown_ - Some kind of map demo.
-  * EFFECTTOOL - _Unknown_ - Seems to be a tool for editing effects
   * Exodus - _Working_ - Contains helper code and libraries for porting game outside Windows/DirectX
     (unrelated to game Exodus faction)
   * Game/ - _Working_ - Contains entry point for game in Runtime.cpp and other game related code.
@@ -118,7 +115,7 @@ This file is automatically created/updated by the game.
     * Triggers - Trigger chains containing maps and AI triggers/behaviors.
   * Sound - _Working_ - Provides sound effects abstraction and music control API, uses SDL_mixer.
   * Terra - _Working_ - Seems to contain deformable terrain related code.
-  * TriggerEditor - _Unknown_ - A GUI providing library which could be called from debug builds of game to edit Trigger chains.
+  * TriggerEditor - _Unknown_ - A GUI providing library which could be called from debug builds of game to edit Trigger chains. Part of it is used but UI is still not ported.
   * tx3d - _Working_ - "Procedural 3D Texture Library", used by Terra and SCodeInterpreter
   * UserInterface/ - _Working_ - Handles game UI such as main menu and submenus, ingame HUD and inputs. 
     * SCodeInterpreter - _Working_ - Interpreter for chain history files seen during main menu and campaign.
@@ -127,6 +124,12 @@ This file is automatically created/updated by the game.
   * XTool - _Working_ - Previously a separate library containing various X* named helpers for different projects,
     currently only the essential stuff for the game remain. Some removed stuff may be need to ported from original
     XTool/XUtil sources for the rest of tools.
+
+* Legacy/ - Contains legacy code that is no longer compiled or ported to modern C++ but still is of interest
+  * Configurator - GUI utility distributed with game that allows players to change language and other settings.
+  * EasyMap - Some kind of map demo.
+  * EFFECTTOOL - Seems to be a tool for editing effects
+  * GeoTool - To edit how terrain behaves visually during digging
   
 * XLibs.Net/ - Contains some library headers and binaries
 * MSDXSDK_02_06/ - DirectX SDK used by the game
