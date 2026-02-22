@@ -222,7 +222,6 @@ bool VideoPlayer::Init(const char* path) {
     if (sample) {
         //Tell wrapper to output audio in device format
         AVSampleFormat format = AVWrapper::fromSDLAudioFormat(SNDDeviceFormat(), false);
-        //wrapper->setupAudioConverter(format, SNDDeviceChannels(), 0);
         wrapper->setupAudioConverter(format, SNDDeviceChannels(), SNDDeviceFrequency());
     
         //Load a silent sound buffer, so we can get a looping sample that will poll our buffer

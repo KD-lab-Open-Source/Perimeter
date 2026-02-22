@@ -26,12 +26,8 @@ size_t AVWrapperFrame::getBufferSize() const {
         AVSampleFormat format = static_cast<AVSampleFormat>(frame->format);
         int channels = 1;
         if (av_sample_fmt_is_planar(format)) {
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
             channels = frame->ch_layout.nb_channels;
-#else
-            channels = frame->channels;
-#endif
-        };
+        }
         return frame->linesize[0] * channels;
     } else {
         xassert(0);
@@ -57,11 +53,7 @@ size_t AVWrapperFrame::copyBuffer(uint8_t** buffer) const {
         AVSampleFormat format = static_cast<AVSampleFormat>(frame->format);
         int channels = 1;
         if (av_sample_fmt_is_planar(format)) {
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
             channels = frame->ch_layout.nb_channels;
-#else
-            channels = frame->channels;
-#endif
         };
         if (1 < channels) {
             //We need to pack planar audio
@@ -109,9 +101,6 @@ int64_t AVWrapperFrame::getPTS() const {
 void AVWrapper::init() {
     if (avwrapper_init) return;
     avwrapper_init = true;
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 9, 100)
-    av_register_all();
-#endif
 }
 
 int AVWrapper::close() {
@@ -133,12 +122,7 @@ int AVWrapper::close() {
     if (filterGraph) {
         avfilter_graph_free(&filterGraph);
     }
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
     swrChannelLayout = {};
-#else
-    swrChannelLayout = 0;
-    swrChannels = 0;
-#endif
     swrSampleRate = 0;
     swrFormat = AV_SAMPLE_FMT_NONE;
 #endif
@@ -180,11 +164,7 @@ void AVWrapper::pullFilterAudio() {
             break;
         }
 
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
         int nb_channels = swrChannelLayout.nb_channels;
-#else
-        int nb_channels = av_get_channel_layout_nb_channels(swrChannelLayout);
-#endif
         int bytes_per_sample = av_get_bytes_per_sample(swrFormat);
         int data_size = converted->frame->nb_samples * nb_channels * bytes_per_sample;
         converted->frame->linesize[0] = data_size;
@@ -230,13 +210,8 @@ int AVWrapper::open(const std::string& path, AVWrapperType need) {
     }
     
     // Find video and/or audio stream
-#if LIBAVCODEC_VERSION_MAJOR < 59
-    videoStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_VIDEO, -1, -1, &videoCodec, 0);
-    audioStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_AUDIO, -1, -1, &audioCodec, 0);
-#else
     videoStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_VIDEO, -1, -1, const_cast<const AVCodec**>(&videoCodec), 0);
     audioStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_AUDIO, -1, -1, const_cast<const AVCodec**>(&audioCodec), 0);
-#endif
 
     //Attempt to load video codec
     if (videoStream < 0) {
@@ -352,56 +327,141 @@ bool AVWrapper::setupVideoScaler(int width, int height, AVPixelFormat format, in
     return false;
 #endif
 }
+
+#ifdef PERIMETER_FFMPEG_MOVIE
+/** Sources:
+ * Old: https://github.com/FFmpeg/FFmpeg/blob/master/doc/examples/filtering_audio.c
+ * New: https://github.com/FFmpeg/FFmpeg/blob/master/doc/examples/filter_audio.c
+ */
+static int init_filter_graph(
+    AVFilterGraph *filter_graph, AVFilterContext **abuffersrc_ctx_ptr, AVFilterContext **abuffersink_ctx_ptr,
+    AVFilterInOut **inputs_ptr, AVFilterInOut **outputs_ptr,
+    const char* src_args, const char* filter_descr
+) {
+    AVFilterContext* abuffersrc_ctx;
+    const AVFilter* abuffersrc;
+    AVFilterContext* abuffersink_ctx;
+    const AVFilter* abuffersink;
+    AVFilterInOut* inputs = *inputs_ptr;
+    AVFilterInOut* outputs = *outputs_ptr;
+
+    int err;
     
+    if (!filter_graph || !inputs || !outputs) {
+        fprintf(stderr, "init_filter_graph Not enough memory\n");
+        return AVERROR(ENOMEM);
+    }
+
+    /* Create the abuffer filter;
+     * it will be used for feeding the data into the graph. */
+    abuffersrc = avfilter_get_by_name("abuffer");
+    if (!abuffersrc) {
+        fprintf(stderr, "init_filter_graph Could not find the abuffer filter.\n");
+        return AVERROR_FILTER_NOT_FOUND;
+    }
+
+    abuffersrc_ctx = avfilter_graph_alloc_filter(filter_graph, abuffersrc, "src");
+    if (!abuffersrc_ctx) {
+        fprintf(stderr, "init_filter_graph Could not allocate the abuffer instance.\n");
+        return AVERROR(ENOMEM);
+    }
+
+    /* Now initialize the filter */
+    err = avfilter_init_str(abuffersrc_ctx, src_args);
+    if (err < 0) {
+        fprintf(stderr, "init_filter_graph Could not initialize the abuffer filter.\n");
+        return err;
+    }
+
+    /* Finally create the abuffersink filter;
+     * it will be used to get the filtered data out of the graph. */
+    abuffersink = avfilter_get_by_name("abuffersink");
+    if (!abuffersink) {
+        fprintf(stderr, "init_filter_graph Could not find the abuffersink filter.\n");
+        return AVERROR_FILTER_NOT_FOUND;
+    }
+
+    abuffersink_ctx = avfilter_graph_alloc_filter(filter_graph, abuffersink, "sink");
+    if (!abuffersink_ctx) {
+        fprintf(stderr, "init_filter_graph Could not allocate the abuffersink instance.\n");
+        return AVERROR(ENOMEM);
+    }
+
+    /* This filter takes no options. */
+    err = avfilter_init_str(abuffersink_ctx, nullptr);
+    if (err < 0) {
+        fprintf(stderr, "init_filter_graph Could not initialize the abuffersink instance.\n");
+        return err;
+    }
+    
+    /* Endpoints for the filter graph. */
+    outputs->name       = av_strdup("in");
+    outputs->filter_ctx = abuffersrc_ctx;
+    outputs->pad_idx    = 0;
+    outputs->next       = nullptr;
+
+    inputs->name       = av_strdup("out");
+    inputs->filter_ctx = abuffersink_ctx;
+    inputs->pad_idx    = 0;
+    inputs->next       = nullptr;
+    
+    if (!outputs->name || !inputs->name) {
+        return AVERROR(ENOMEM);
+    }
+
+    /* Configure the graph. */
+    if ((err = avfilter_graph_parse_ptr(filter_graph, filter_descr, inputs_ptr, outputs_ptr, nullptr)) < 0) {
+        fprintf(stderr, "init_filter_graph Error occurred at avfilter_graph_parse_ptr\n");
+        return err;
+    }
+    err = avfilter_graph_config(filter_graph, nullptr);
+    if (err < 0) {
+        fprintf(stderr, "init_filter_graph Error configuring the filter graph\n");
+        return err;
+    }
+
+    *abuffersrc_ctx_ptr = abuffersrc_ctx;
+    *abuffersink_ctx_ptr = abuffersink_ctx;
+
+    return 0;
+}
+#endif
+
 bool AVWrapper::setupAudioConverter(AVSampleFormat dst_format, int dst_channels, int dst_frequency) {
     if (!audioCodecCtx) {
         //Nothing to setup since there is no codec
         return false;
     }
+    if (filterGraph) {
+        avfilter_graph_free(&filterGraph);
+    }
+    filterGraph = nullptr;
+    buffersrcCtx = nullptr;
+    buffersinkCtx = nullptr;
 #ifdef PERIMETER_FFMPEG_MOVIE
     swrFormat = dst_format != 0 ? dst_format : audioCodecCtx->sample_fmt;
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
     int num_channel = dst_channels != 0 ? dst_channels : audioCodecCtx->ch_layout.nb_channels;
     av_channel_layout_default(&swrChannelLayout, num_channel);
-#else
-    swrChannels = dst_channels != 0 ? dst_channels : audioCodecCtx->channels;
-    swrChannelLayout = av_get_default_channel_layout(swrChannels);
-#endif
     swrSampleRate = dst_frequency != 0 ? dst_frequency : audioCodecCtx->sample_rate;
     if (swrFormat == AV_SAMPLE_FMT_NONE) {
         fprintf(stderr, "setupAudioConverter unsupported device output format %d at %s\n", dst_format, file_path.c_str());
         return false;
     }
-
-    //Source: https://github.com/FFmpeg/FFmpeg/blob/master/doc/examples/filtering_audio.c
-    const AVFilter *abuffersrc  = avfilter_get_by_name("abuffer");
-    const AVFilter *abuffersink = avfilter_get_by_name("abuffersink");
     AVFilterInOut *outputs = avfilter_inout_alloc();
     AVFilterInOut *inputs  = avfilter_inout_alloc();
-    const int out_sample_fmts[] = { swrFormat, -1 };
-    const int out_sample_rates[] = { swrSampleRate, -1 };
+    const AVFilterLink *inlink;
     const AVFilterLink *outlink;
     AVRational time_base = audioCodecCtx->time_base;
 
-    char channel_str[128];
-#if (LIBAVUTIL_VERSION_INT < AV_VERSION_INT(57, 28, 100))
-    const int64_t out_channel_layouts[] = { swrChannelLayout, -1 };
-    if (!audioCodecCtx->channel_layout) {
-        audioCodecCtx->channel_layout = av_get_default_channel_layout(audioCodecCtx->channels);
-    }
-    snprintf(channel_str, sizeof(channel_str), "0x%" PRIx64, audioCodecCtx->channel_layout);
-#else
-    av_channel_layout_describe(&swrChannelLayout, channel_str, sizeof(channel_str));
-#endif
+    char inChannelLayout_str[128];
+    char swrChannelLayout_str[128];
+    av_channel_layout_describe(&audioCodecCtx->ch_layout, inChannelLayout_str, sizeof(inChannelLayout_str));
+    av_channel_layout_describe(&swrChannelLayout, swrChannelLayout_str, sizeof(swrChannelLayout_str));
 
-    std::string args = "time_base=" + std::to_string(time_base.num) + "/" + std::to_string(time_base.den) +
+    std::string src_args = "time_base=" + std::to_string(time_base.num) + "/" + std::to_string(time_base.den) +
                        ":sample_rate=" + std::to_string(audioCodecCtx->sample_rate) +
                        ":sample_fmt=" + av_get_sample_fmt_name(audioCodecCtx->sample_fmt) +
-                       ":channel_layout=" + channel_str;
-
-#if (LIBAVUTIL_VERSION_INT < AV_VERSION_INT(57, 28, 100))
-    av_get_channel_layout_string(channel_str, sizeof(channel_str), swrChannels, swrChannelLayout);
-#endif
+                       ":channel_layout=" + inChannelLayout_str;
     std::string filters_descr;
 
     //Add aresample filter if sample rates mismatch
@@ -423,100 +483,42 @@ bool AVWrapper::setupAudioConverter(AVSampleFormat dst_format, int dst_channels,
         fprintf(stderr, "setupAudioConverter not enough memory\n");
         goto end;
     }
-    filters_descr += std::string("aformat=sample_fmts=") + swrFormatName + ":channel_layouts=" + channel_str;
-
+    filters_descr += std::string("aformat=sample_fmts=") + swrFormatName + ":channel_layouts=" + swrChannelLayout_str;
+    
+    fprintf(
+            stdout, "AVWrapper audio conv:\n- Input Args: %s\n- Filter args: %s\n",
+            src_args.c_str(), //Input Args
+            filters_descr.c_str() //Filter args
+    );
+    
+    /* Set up the filtergraph. */
     filterGraph = avfilter_graph_alloc();
-    if (!outputs || !inputs || !filterGraph) {
-        fprintf(stderr, "setupAudioConverter not enough memory\n");
-        goto end;
-    }
-
-    /* buffer audio source: the decoded frames from the decoder will be inserted here. */
-    ret = avfilter_graph_create_filter(&buffersrcCtx, abuffersrc, "in", args.c_str(), nullptr, filterGraph);
-    if (ret < 0) {
-        fprintf(stderr, "setupAudioConverter Cannot create audio buffer source\n");
-        goto end;
-    }
-
-    /* buffer audio sink: to terminate the filter chain. */
-    ret = avfilter_graph_create_filter(&buffersinkCtx, abuffersink, "out", nullptr, nullptr, filterGraph);
-    if (ret < 0) {
-        fprintf(stderr, "setupAudioConverter Cannot create audio buffer sink\n");
-        goto end;
-    }
-
-    ret = av_opt_set_int_list(buffersinkCtx, "sample_fmts", out_sample_fmts, -1, AV_OPT_SEARCH_CHILDREN);
-    if (ret < 0) {
-        fprintf(stderr, "setupAudioConverter Cannot set output sample format\n");
-        goto end;
-    }
-
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
-    ret = av_opt_set(buffersinkCtx, "ch_layouts", channel_str, AV_OPT_SEARCH_CHILDREN);
-#else
-    ret = av_opt_set_int_list(buffersinkCtx, "channel_layouts", out_channel_layouts, -1, AV_OPT_SEARCH_CHILDREN);
-#endif
-    if (ret < 0) {
-        fprintf(stderr, "setupAudioConverter Cannot set output channel layout\n");
-        goto end;
-    }
-
-    ret = av_opt_set_int_list(buffersinkCtx, "sample_rates", out_sample_rates, -1, AV_OPT_SEARCH_CHILDREN);
-    if (ret < 0) {
-        fprintf(stderr, "Cannot set output sample rate\n");
-        goto end;
-    }
-
-    /*
-     * Set the endpoints for the filter graph. The filter_graph will
-     * be linked to the graph described by filters_descr.
-     */
-
-    /*
-     * The buffer source output must be connected to the input pad of
-     * the first filter described by filters_descr; since the first
-     * filter input label is not specified, it is set to "in" by
-     * default.
-     */
-    outputs->name       = av_strdup("in");
-    outputs->filter_ctx = buffersrcCtx;
-    outputs->pad_idx    = 0;
-    outputs->next       = nullptr;
-
-    /*
-     * The buffer sink input must be connected to the output pad of
-     * the last filter described by filters_descr; since the last
-     * filter output label is not specified, it is set to "out" by
-     * default.
-     */
-    inputs->name       = av_strdup("out");
-    inputs->filter_ctx = buffersinkCtx;
-    inputs->pad_idx    = 0;
-    inputs->next       = nullptr;
-
-    if ((ret = avfilter_graph_parse_ptr(filterGraph, filters_descr.c_str(), &inputs, &outputs, nullptr)) < 0) {
-        fprintf(stderr, "setupAudioConverter Error occurred at avfilter_graph_parse_ptr\n");
-        goto end;
-    }
-
-    if ((ret = avfilter_graph_config(filterGraph, nullptr)) < 0) {
-        fprintf(stderr, "setupAudioConverter Error occurred at avfilter_graph_config\n");
+    ret = init_filter_graph(
+        filterGraph,
+        &buffersrcCtx, &buffersinkCtx,
+        &inputs, &outputs,
+        src_args.c_str(), filters_descr.c_str()
+    );
+    if (ret < 0 || !buffersrcCtx || !buffersinkCtx) {
+        fprintf(stderr, "setupAudioConverter Unable to init filter graph: %d\n", ret);
         goto end;
     }
 
     /* Print summary of the sink buffer */
+    inlink = buffersrcCtx->outputs[0];
     outlink = buffersinkCtx->inputs[0];
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
-    av_channel_layout_describe(&outlink->ch_layout, channel_str, sizeof(channel_str));
-#else
-    av_get_channel_layout_string(channel_str, sizeof(channel_str), -1, outlink->channel_layout);
-#endif
+    av_channel_layout_describe(&inlink->ch_layout, inChannelLayout_str, sizeof(inChannelLayout_str));
+    av_channel_layout_describe(&outlink->ch_layout, swrChannelLayout_str, sizeof(swrChannelLayout_str));
     fprintf(
-            stdout, "AVWrapper audio conv: %s\n -> %s\n -> %dHz %s %s\n",
-            args.c_str(), filters_descr.c_str(),
+            stdout, "- Input link: %dHz %s %s\n- Output link: %dHz %s %s\n",
+            //Input link
+            inlink->sample_rate,
+            static_cast<char*>(av_x_if_null(av_get_sample_fmt_name(static_cast<AVSampleFormat>(inlink->format)), "?")),
+            inChannelLayout_str,
+            //Output link
             outlink->sample_rate,
             static_cast<char*>(av_x_if_null(av_get_sample_fmt_name(static_cast<AVSampleFormat>(outlink->format)), "?")),
-            channel_str
+            swrChannelLayout_str
     );
     
     end:
@@ -551,7 +553,6 @@ void AVWrapper::readPacket(bool drain) {
     if (0 <= ret) {
         if (0 <= videoStream && (drain || packet->stream_index == videoStream)) {
             // Extract video frame
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 106, 102)
             ret = avcodec_send_packet(videoCodecCtx, packet);
             if (ret != 0) {
                 if (ret == AVERROR_EOF) {
@@ -577,29 +578,10 @@ void AVWrapper::readPacket(bool drain) {
                 delete frame;
                 break;
             }
-#else
-            if (!drain) {
-                AVWrapperFrame* frame = new AVWrapperFrame();
-                frame->type = AVWrapperType::Video;
-                frame->frame = AV_FRAME_ALLOC();
-                int frameFinished = 0;
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 23, 0)
-                avcodec_decode_video2(videoCodecCtx, frame->frame, &frameFinished, pkt);
-#else
-                avcodec_decode_video(videoCodecCtx, frame->frame, &frameFinished, packet->data, packet->size);
-#endif
-                if (frameFinished) {
-                    handleFrame(frame);
-                } else {
-                    delete frame;
-                }
-            }
-#endif
         }
         
         if (0 <= audioStream && (drain || packet->stream_index == audioStream)) {
             // Extract audio frame
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 106, 102)
             ret = avcodec_send_packet(audioCodecCtx, packet);
             if (ret != 0) {
                 if (ret == AVERROR_EOF) {
@@ -625,20 +607,6 @@ void AVWrapper::readPacket(bool drain) {
                 delete frame;
                 break;
             }
-#else
-            if (!drain) {
-                AVWrapperFrame* frame = new AVWrapperFrame();
-                frame->type = AVWrapperType::Audio;
-                frame->frame = AV_FRAME_ALLOC();
-                int frameFinished = 0;
-                avcodec_decode_audio4(audioCodecCtx, frame->frame, &frameFinished, packet);
-                if (frameFinished) {
-                    handleFrame(frame);
-                } else {
-                    delete frame;
-                }
-            }
-#endif
         }
         
         if (!drain) {

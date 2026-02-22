@@ -112,13 +112,7 @@ protected:
     ///Software scaler output frame format
     AVPixelFormat swsFormat = AV_PIX_FMT_NONE;
     ///Audio converter output channel layout
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
     AVChannelLayout swrChannelLayout = {};
-#else
-    int64_t swrChannelLayout = 0;
-    ///Audio converter output channels
-    int swrChannels = 0;
-#endif
     ///Audio converter output rate
     int swrSampleRate = 0;
     ///Audio converter output format
