@@ -35,6 +35,8 @@
 #include <SDL_hints.h>
 #include <SDL_image.h>
 #include <SDL_vulkan.h>
+#include <sstream>
+#include <thread>
 
 #ifdef GPX
 #include <c/gamepix.h>
@@ -1081,7 +1083,14 @@ int SDL_main(int argc, char *argv[])
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
-    printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n", currentVersion, computeArchFlags());
+    printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n",
+        currentVersion,
+        computeArchFlags()
+    );
+
+    std::ostringstream stream;
+    stream << "Main Thread: 0x" << std::hex << std::this_thread::get_id() << std::dec;
+    printf("%s - 0x%" PRIX64"\n", stream.str().c_str(), static_cast<uint64_t >(SDL_GetThreadID(nullptr)));
 
     //Decode stacktrace if requested
     decode_stacktrace();

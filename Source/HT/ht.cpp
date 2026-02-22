@@ -6,6 +6,7 @@
 #include "Config.h"
 #include "LagStatistic.h"
 #include <cstdlib>
+#include <sstream>
 #include <thread>
 #include <SDL_thread.h>
 
@@ -140,6 +141,10 @@ void HTManager::GameClose()
 void HTManager::logic_thread()
 {
     SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
+
+    std::ostringstream stream;
+    stream << "Logic Thread: 0x" << std::hex << std::this_thread::get_id() << std::
+    printf("%s - 0x%" PRIX64"\n", stream.str().c_str(), static_cast<uint64_t >(SDL_GetThreadID(nullptr)));
 
     if(!start_timer){
         start_timer = true;

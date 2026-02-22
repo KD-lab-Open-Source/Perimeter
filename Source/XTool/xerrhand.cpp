@@ -4,6 +4,7 @@
 #include <csignal>
 #include <sstream>
 #include <vector>
+#include <thread>
 #include <SDL.h>
 #include "files/files.h"
 #include "tweaks.h"
@@ -311,8 +312,8 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
         stream << "Subj: " << subj << std::endl;
     }
     stream << "Clock: " << clocki() << std::endl;
+    stream << "Thread: 0x" << std::hex << std::this_thread::get_id() << std::dec << std::endl;
 
-    std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
     if (startsWith(locale, "russian")) {
