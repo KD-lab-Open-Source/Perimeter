@@ -38,6 +38,8 @@
 #include <sstream>
 #include <thread>
 
+#include "../Integrations/integrations.h"
+
 #ifdef GPX
 #include <c/gamepix.h>
 #endif
@@ -213,6 +215,83 @@ void request_application_restart(std::vector<std::string>* args) {
     } else {
         applicationRestartArgs.clear();
     }
+}
+
+char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
+#ifdef _WIN32
+    //Workaround for win32 execv() getting confused when .exe is inside a path containing spaces
+    if (wrap_spaces && arg.find(' ') != std::string::npos) {
+        arg = "\"" + arg + "\"";
+    }
+#endif
+    size_t len = arg.length() + 1;
+    char* str = static_cast<char*>(malloc(len));
+    strcpy(str, arg.c_str());
+    return str;
+}
+
+void handle_application_restart() {
+    if (!applicationRestartFlag) {
+        xassert(0);
+        return;
+    }
+    
+    //NOTE: execv is used since is the only reasonable way to reset all state as launching again
+    //doesn't seem to work due to some parts of code not being properly cleanup during shutdown
+    applicationRestartFlag = false;
+    
+    //Copy the args that launched this game
+    const char* exec_path = nullptr;
+    std::vector<char*> exec_argv;
+    for (int i = 0; i < app_argc; ++i) {
+        std::string arg = app_argv[i];
+        if (startsWith(arg, "tmp_")) {
+            //These are passed internally and are not supposed to pass into next instance
+            continue;
+        }
+        if (startsWith(arg, "initial_menu") || startsWith(arg, "content_select")) {
+            //Ignore it as is only for first time, also some can cause game restart in a loop
+            continue;
+        }
+
+        if (i == 0) {
+            //Doesn't like "s
+            exec_path = alloc_exec_arg_string(arg, false);
+        }
+        exec_argv.emplace_back(alloc_exec_arg_string(arg, true));
+    }
+    
+    //Add extra args
+    for (auto const& arg : applicationRestartArgs) {
+        exec_argv.emplace_back(alloc_exec_arg_string(arg, true));
+    }
+    
+    //Shouldn't happen
+    if (!exec_path && !exec_argv.empty()) {
+        exec_path = exec_argv[0];
+    }
+
+    //execv last arg must be null for termination
+    exec_argv.emplace_back(nullptr);
+    
+    //launch ourselves again, execution of this process stops here
+    printf("Restarting: '%s' args:", exec_path);
+    for (auto const& str : exec_argv) {
+        if (str) {
+            printf(" '%s'", str);
+        } else {
+            printf(" NULL");
+        }
+    }
+    printf("\n");
+    int ret;
+#ifdef _WIN32
+    ret = _execv(exec_path, exec_argv.data());
+#else
+    ret = execv(exec_path, exec_argv.data());
+#endif
+    //We shouldn't reach this point        
+    ErrH.Abort("Error restarting the application", XERR_USER, ret, strerror(errno));
 }
 
 void InternalErrorHandler()
@@ -970,18 +1049,6 @@ int main(int argc, char *argv[]) {
 }
 #endif
 
-char* alloc_exec_arg_string(std::string arg, bool wrap_spaces) {
-#ifdef _WIN32
-    //Workaround for win32 execv() getting confused when .exe is inside a path containing spaces
-    if (wrap_spaces && arg.find(' ') != std::string::npos) {
-        arg = "\"" + arg + "\"";
-    }
-#endif
-    size_t len = arg.length() + 1;
-    char* str = static_cast<char*>(malloc(len));
-    strcpy(str, arg.c_str());
-    return str;
-}
 #ifdef GPX
 void pauseRuntime() {
     isRuntimePaused = true;
@@ -1098,6 +1165,34 @@ int SDL_main(int argc, char *argv[])
     //Parse version string
     decode_version(currentShortVersion, currentVersionNumbers);
 
+    //Do game content detection so we can access game files
+    detectGameContent();
+
+    //Check if store integration requests relaunching (some stores may request this to run within)
+    if (integrations::game_will_relaunch()) {
+        return 0;
+    }
+    
+    //Init integrations
+    integrations::init();
+    
+    //Check integrations if have a locale selected, skip store's locale if didn't change from last time
+    //since player might have changed it from game itself to one that is not in store (like from a mod)
+    std::string store_locale;
+    if (integrations::get_store()) {
+        store_locale = integrations::get_store()->get_selected_locale();
+    }
+    std::string old_store_locale = getStringSettings("StoreLocale");
+    if (!store_locale.empty() && old_store_locale != store_locale) {
+        fprintf(stdout, "Store selected locale changed: %s -> %s\n", old_store_locale.c_str(), store_locale.c_str());
+        putStringSettings("StoreLocale", store_locale);
+        std::vector<std::string> args;
+        args.push_back("tmp_locale=" + store_locale);
+        request_application_restart(&args);
+        handle_application_restart();
+        exit(1);
+    }
+
     //Set DPI awareness, must be done before initializing SDL video subsystem
     //Some old versions of SDL2 may not have this hint defined
 #ifdef SDL_HINT_WINDOWS_DPI_AWARENESS
@@ -1119,9 +1214,6 @@ int SDL_main(int argc, char *argv[])
     
     //Init keys
     initKeyboardMapping();
-
-    //Do game content detection
-    detectGameContent();
 
     //Create some folders
     std::vector<std::string> paths = {
@@ -1200,62 +1292,7 @@ int SDL_main(int argc, char *argv[])
 	SDL_Quit();
     
     if (applicationRestartFlag) {
-        //NOTE: execv is used since is the only reasonable way to reset all state as launching again
-        //doesn't seem to work due to some parts of code not being properly cleanup during shutdown
-        applicationRestartFlag = false;
-        
-        //Copy the args that launched this game
-        const char* exec_path = nullptr;
-        std::vector<char*> exec_argv;
-        for (int i = 0; i < app_argc; ++i) {
-            std::string arg = app_argv[i];
-            if (startsWith(arg, "tmp_")) {
-                //These are passed internally and are not supposed to pass into next instance
-                continue;
-            }
-            if (startsWith(arg, "initial_menu") || startsWith(arg, "content_select")) {
-                //Ignore it as is only for first time, also some can cause game restart in a loop
-                continue;
-            }
-
-            if (i == 0) {
-                //Doesn't like "s
-                exec_path = alloc_exec_arg_string(arg, false);
-            }
-            exec_argv.emplace_back(alloc_exec_arg_string(arg, true));
-        }
-        
-        //Add extra args
-        for (auto const& arg : applicationRestartArgs) {
-            exec_argv.emplace_back(alloc_exec_arg_string(arg, true));
-        }
-        
-        //Shouldn't happen
-        if (!exec_path && !exec_argv.empty()) {
-            exec_path = exec_argv[0];
-        }
-
-        //execv last arg must be null for termination
-        exec_argv.emplace_back(nullptr);
-        
-        //launch ourselves again, execution of this process stops here
-        printf("Restarting: '%s' args:", exec_path);
-        for (auto const& str : exec_argv) {
-            if (str) {
-                printf(" '%s'", str);
-            } else {
-                printf(" NULL");
-            }
-        }
-        printf("\n");
-        int ret;
-#ifdef _WIN32
-        ret = _execv(exec_path, exec_argv.data());
-#else
-        ret = execv(exec_path, exec_argv.data());
-#endif
-        //We shouldn't reach this point        
-        ErrH.Abort("Error restarting the application", XERR_USER, ret, strerror(errno));
+        handle_application_restart();
     }
 
 	return 0;

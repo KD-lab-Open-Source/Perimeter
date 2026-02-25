@@ -893,6 +893,7 @@ void putStringSettings(const std::string& keyName, const std::string& value) {
     IniManager* ini = getSettings();
     std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getGameContentEnumName(terGameContentBase); 
     ini->put(key.c_str(), keyName.c_str(), value.c_str());
+    ini->save();
 }
 
 // --- Formatting ------

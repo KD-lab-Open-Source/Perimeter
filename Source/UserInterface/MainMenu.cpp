@@ -27,6 +27,8 @@
 #include "codepages/codepages.h"
 #include "MainMenu.h"
 
+#include "../Integrations/integrations.h"
+
 extern char _bCursorVisible;
 extern char _bMenuMode;
 
@@ -948,6 +950,15 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						fillProfileList();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_NAME_INPUT);
+                        if (input->isEmptyText() && integrations::get_store()) {
+                            std::string store_name = integrations::get_store()->get_player_name();
+                            //We abort on any unknown character since profile names are more delicate due to
+                            //how is used by the game so is better to just use default player name "Legate"
+                            store_name = convertToCodepage(store_name.c_str(), getLocale(), 0, true);
+                            if (!store_name.empty()) {
+                                input->SetText(store_name.c_str());
+                            }
+                        }
 						if (input->isEmptyText()) {
 							input->SetText(qdTextDB::instance().getText("Interface.Menu.EmptyName.NewPlayer"));
 						}
@@ -1138,6 +1149,10 @@ int SwitchMenuScreenQuant1( float, float ) {
                         }
                         _shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN)->Enable(0);
                         std::string name = getStringSettings(regLanName);
+                        if (name.empty() && integrations::get_store()) {
+                            std::string store_name = integrations::get_store()->get_player_name();
+                            name = convertToCodepage(store_name.c_str(), getLocale(), '?');
+                        }
                         if (name.empty() && gameShell->currentSingleProfile.isValidProfile()) {
                             name = gameShell->currentSingleProfile.getCurrentProfile()->name;
                         }

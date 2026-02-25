@@ -11,9 +11,9 @@
  * uses windows-1250 codepage, 1252 would have been more correct for these but for now we use 1250
  */
 
-std::string convertToCodepage(const char* utf8, const std::string& locale, char unknown_char = '?');
-std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_char = '?');
-std::string convertToUnicode(const std::string& str, const std::string& locale, char unknown_char = '?');
-std::string convertToUnicode(const std::string& str, uint16_t codepage, char unknown_char = '?');
+std::string convertToCodepage(const char* utf8, const std::string& locale, char unknown_char = '?', bool fail_on_unknown = false);
+std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_char = '?', bool fail_on_unknown = false);
+std::string convertToUnicode(const std::string& str, const std::string& locale, char unknown_char = '?', bool fail_on_unknown = false);
+std::string convertToUnicode(const std::string& str, uint16_t codepage, char unknown_char = '?', bool fail_on_unknown = false);
 
 #endif //PERIMETER_CODEPAGES_H

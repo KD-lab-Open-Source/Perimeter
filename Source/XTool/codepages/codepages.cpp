@@ -22,7 +22,7 @@ uint16_t localeToCodepage(const std::string& locale) {
     }
 }
 
-std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_char) {
+std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_char, bool fail_on_unknown) {
     if (!isCodepageInit) {
         initCodePages();
     }
@@ -48,6 +48,8 @@ std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_
     for (char32_t input : conv) {
         if (map->count(input)) {
             result += static_cast<char>(map->at(input));
+        } else if (fail_on_unknown) {
+            return {};
         } else if (unknown_char) {
             result += unknown_char;
         }
@@ -56,7 +58,7 @@ std::string convertToCodepage(const char* utf8, uint16_t codepage, char unknown_
     return result;
 }
 
-std::string convertToUnicode(const std::string& str, uint16_t codepage, char unknown_char) {
+std::string convertToUnicode(const std::string& str, uint16_t codepage, char unknown_char, bool fail_on_unknown) {
     if (!isCodepageInit) {
         initCodePages();
     }
@@ -69,6 +71,8 @@ std::string convertToUnicode(const std::string& str, uint16_t codepage, char unk
         uint32_t index = pageid | input;
         if (utf32_codepages.count(index)) {
             conv += utf32_codepages.at(index);
+        } else if (fail_on_unknown) {
+            return {};
         } else if (unknown_char) {
             conv += unknown_char;
         }
@@ -81,12 +85,12 @@ std::string convertToUnicode(const std::string& str, uint16_t codepage, char unk
     return result;
 }
 
-std::string convertToCodepage(const char* utf8, const std::string& locale, char unknown_char) {
-    return convertToCodepage(utf8, localeToCodepage(locale), unknown_char);
+std::string convertToCodepage(const char* utf8, const std::string& locale, char unknown_char, bool fail_on_unknown) {
+    return convertToCodepage(utf8, localeToCodepage(locale), unknown_char, fail_on_unknown);
 }
 
-std::string convertToUnicode(const std::string& str, const std::string& locale, char unknown_char) {
-    return convertToUnicode(str, localeToCodepage(locale), unknown_char);
+std::string convertToUnicode(const std::string& str, const std::string& locale, char unknown_char, bool fail_on_unknown) {
+    return convertToUnicode(str, localeToCodepage(locale), unknown_char, fail_on_unknown);
 }
 
 ///Load UTF32 -> codepage as codepage + character -> UTF32
