@@ -950,6 +950,7 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Mods.ErrorRequiredContentMissing=Mod requires content that is not installed",
            "Interface.Menu.Mods.ErrorRequiredContentDisabled=Mod requires content that is disabled",
            "Interface.Menu.Mods.ErrorDisallowedContentEnabled=Mod is not compatible with currently enabled content",
+           "Interface.Menu.Mods.ErrorDisallowedFile=Mod contains file types that aren't allowed in those locations",
            "Interface.Menu.Messages.ReplayGameVersionDifferent=This replay was saved with a different version and may not display correctly, used game version:",
            "Interface.Menu.Messages.GameContentMissing=Contains game content that is not present or enabled in your installation, make sure these are installed and enabled in your game:\n",
            "Interface.Menu.Messages.GameContentSwitch=Contains game content that is not selected, please change the campaign to the following content:\n",

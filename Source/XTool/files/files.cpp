@@ -13,7 +13,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cstring>
-
+#include <algorithm>
 #include "xerrhand.h"
 #include "xutl.h"
 #include "xstream.h"
@@ -44,33 +44,37 @@ void filesystem_entry::set(filesystem_entry* entry) {
 }
 
 ///Prepares path to remove source path 
-void prepare_path(std::string& path, const std::string& source_path) {
+void strip_leading_path(std::string& path, const std::string& base_path) {
     path = convert_path_native(path);
-    if (path == "." || path == source_path) {
+    if (path == "." || path == base_path) {
         path.clear();
     }
     if (path.empty()) {
         return;
     }
 
-    if (!source_path.empty()) {
-        size_t root_pos = path.find(source_path);
+    if (!base_path.empty()) {
+        size_t root_pos = path.find(base_path);
         if (root_pos != std::string::npos && root_pos == 0) {
-            path.erase(0, source_path.size());
+            path.erase(0, base_path.size());
         }
     }
 
-    //Remove ./ since it screws with setExtension
+    //Remove ./ or / since it screws with setExtension
     size_t path_pos = path.find(curdir_path);
     if (path_pos != std::string::npos && path_pos == 0) {
         path.erase(0, curdir_path.size());
     }
+    path_pos = path.find('/');
+    if (path_pos != std::string::npos && path_pos == 0) {
+        path.erase(0, 1);
+    }
 }
 
-void split_path_parent(const std::string& path, std::string& parent, std::string* filename) {
+void split_path_parent(const std::string& path, std::string& parent, std::string* filename, bool content_root_if_empty) {
     std::filesystem::path path_fs = std::filesystem::u8path(convert_path_native(path));
     parent = path_fs.parent_path().u8string();
-    if (parent.empty()) {
+    if (content_root_if_empty && parent.empty()) {
         parent = content_root_path_str;
     }
     if (filename) {
@@ -151,13 +155,13 @@ std::string convert_path_content(const std::string& path, bool parent_only) {
 }
 
 filesystem_entry* get_content_entry(std::string path) {
-    prepare_path(path, content_root_path_str);
+    strip_leading_path(path, content_root_path_str);
     path = string_to_lower(path.c_str());
     return get_content_entry_internal(filesystem_entries, path).get();
 }
 
 std::vector<filesystem_entry*> get_content_entries_recursive(std::string path) {
-    prepare_path(path, content_root_path_str);
+    strip_leading_path(path, content_root_path_str);
     path = string_to_lower(path.c_str());
     std::vector<filesystem_entry*> paths;
     for (const auto& entry : filesystem_entries) {
@@ -168,8 +172,26 @@ std::vector<filesystem_entry*> get_content_entries_recursive(std::string path) {
     return paths;
 }
 
+bool content_entries_any_of(std::string path, const std::function<bool(filesystem_entry*)>& predicate) {
+    strip_leading_path(path, content_root_path_str);
+    path = string_to_lower(path.c_str());
+    std::vector<filesystem_entry*> paths;
+    return std::any_of(
+        filesystem_entries.begin(),
+        filesystem_entries.end(), 
+        [path, predicate](const auto& entry) {
+            if (path.empty() || startsWith(entry.first, path)) {
+                if (predicate(entry.second.get())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    );
+}
+
 std::vector<filesystem_entry*> get_content_entries_directory(std::string path) {
-    prepare_path(path, content_root_path_str);
+    strip_leading_path(path, content_root_path_str);
     path = string_to_lower(path.c_str());
     terminate_with_char(path, PATH_SEP);
     std::vector<filesystem_entry*> paths;
@@ -177,7 +199,7 @@ std::vector<filesystem_entry*> get_content_entries_directory(std::string path) {
         if (path.empty() || startsWith(entry.first, path)) {
             //Only add paths that don't have any separator
             std::string entry_path = entry.first;
-            prepare_path(entry_path, path);
+            strip_leading_path(entry_path, path);
             if (entry_path.empty()) continue;
 
             size_t pos = entry_path.find(PATH_SEP);
@@ -257,11 +279,11 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
 ) {
     //Remove ./ from res path since it can mess with some code dealing with extensions
     //Remove root since working directory is already there
-    prepare_path(path_content, "");
+    strip_leading_path(path_content, "");
 
     //Make relative path from path_content
     std::string path_source_relative = path_content;
-    prepare_path(path_source_relative, source_path);
+    strip_leading_path(path_source_relative, source_path);
 
     //Use destination path directly if not empty
     std::string entry_key = destination_path;
@@ -365,10 +387,10 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     bool same_paths = source_path == destination_path;
 
     //Remove root or any other stuff from source before adding
-    prepare_path(source_path, content_root_path_str);
+    strip_leading_path(source_path, content_root_path_str);
 
     //Prepare destination too
-    prepare_path(destination_path, content_root_path_str);
+    strip_leading_path(destination_path, content_root_path_str);
     destination_path = string_to_lower(destination_path.c_str());
 
     //Setup options

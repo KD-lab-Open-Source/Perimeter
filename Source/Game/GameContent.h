@@ -96,5 +96,7 @@ std::string getGameContentEnumName(const GAME_CONTENT& content);
 std::string getGameContentName(const GAME_CONTENT& content);
 ///Get game content for campaigns
 GAME_CONTENT getGameContentCampaign();
+///Checks files in mod for disallowed files
+bool containsDisallowedFilesMod(ModMetadata& mod, bool publishing);
 
 #endif //PERIMETER_GAMECONTENT_H

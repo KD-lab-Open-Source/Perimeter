@@ -19,6 +19,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <functional>
 
 //Use POSIX for MS funcs
 #ifdef PERIMETER_EXODUS
@@ -82,8 +83,11 @@ public:
     void set(filesystem_entry* entry);
 };
 
+//Removes leading base_path from path
+void strip_leading_path(std::string& path, const std::string& base_path);
+
 //Splits path into parent and filename
-void split_path_parent(const std::string& path, std::string& parent, std::string* filename = nullptr);
+void split_path_parent(const std::string& path, std::string& parent, std::string* filename = nullptr, bool content_root_if_empty = true);
 
 //Converts Windows/POSIX to native path
 std::string convert_path_native(const std::string& path);
@@ -99,6 +103,9 @@ filesystem_entry* get_content_entry(std::string path);
 
 //Obtain pairs of lowercase and original path from Resource paths cache which match the path start
 std::vector<filesystem_entry*> get_content_entries_recursive(std::string path);
+
+//Run a predicate for each entry until it returns true like std::any_of, will return false is predicate is never true
+bool content_entries_any_of(std::string path, const std::function<bool(filesystem_entry*)>& predicate);
 
 //Obtain pairs of lowercase and original path from Resource paths cache which match the path start,
 //only if

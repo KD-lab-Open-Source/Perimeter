@@ -15,7 +15,7 @@ when launching the game. This may be useful to test some options or use alternat
 
 Game now loads mods (each is a folder containing everything) that are located inside `mods` folder at game folder.
 
-Mods can be enabled/disabled in `Main Menu > Community > Mods` by adding `.off` at end of folder name, can be done manually too.
+Mods can be enabled/disabled in `Main Menu > Community > Mods`.
 
 Perimeter: Emperor Testament game folder can also be placed as a mod to include extra units in main game and missions,
 this case is handled in special manner to allow loading certain files only when switching to ET campaign.
