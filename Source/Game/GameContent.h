@@ -41,6 +41,16 @@ public:
     /// Example: Example mod description
     std::string mod_description = {};
 
+    /// Locale used for mod description
+    /// Optional
+    /// Example: english
+    std::string mod_description_locale = {};
+
+    /// Description for mod in english, this is the fallback description
+    /// Optional
+    /// Example: Example mod description
+    std::string mod_description_english = {};
+
     /// List of authors separated by comma
     /// Optional
     /// Example: AuthorA, AuthorB

@@ -29,17 +29,17 @@ The mod name acts as identifier so no mods with same name can exist, if this hap
 
 Each mod needs a file in the folder named "mod.ini" with at least "name" and "version" filled in "Mod" section.
 This allows players and the game to know some basic info about it.
+English should be used for "description" field.
 
-If current locale description as "description_LOCALE" like "description_english" isn't present the generic "description" will be used.
+If current locale description as "description_LOCALE" like "description_russian" isn't present the default "description" will be used.
 
-The following is a example for a mod having one generic description and translated descriptions while also having
+The following is a example for a mod having description in english and translated descriptions while also having
 minimum version for game required to run:
 ```
 [Mod]
 name=My first mod
 version=1.0.0
 description=&00FF00My first mod!\n&FFFFFFThis is a example of how to write &00FF00colored multiline\nmod description.
-description_english=&00FF00My first mod!\n&FFFFFFThis is a example of how to write &00FF00colored multiline\nmod description.
 description_russian=&00FF00Мой первый мод!\n&FFFFFFЭто пример написания цветного многострочного\nописания мода.
 description_spanish=&00FF00¡Mi primer mod!\n&FFFFFFEste es un ejemplo de cómo escribir una descripción de mod\nmultilínea coloreada.
 authors=First author name\nAnother author name\n3rd Author name

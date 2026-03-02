@@ -955,12 +955,18 @@ void detectGameContent() {
 
                 //Load optional fields
                 mod_ini.check_existence = false;
+                //First load english one, use legacy description_locale if present but description should be the prefered way
+                if ((ReadIniString("Mod", "description_english", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)
+                 || (ReadIniString("Mod", "description", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)) {
+                    data.mod_description_english = convertToCodepage(desc_buf, "english");
+                }
                 //Try loading in current locale, then description, then english
-                if (ReadIniString("Mod", ("description_" + locale).c_str(), nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf) {
+                if (locale != "english" && ReadIniString("Mod", ("description_" + locale).c_str(), nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf) {
                     data.mod_description = convertToCodepage(desc_buf, locale);
-                } else if ((ReadIniString("Mod", "description", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)
-                || (locale != "english" && ReadIniString("Mod", "description_english", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)) {
-                    data.mod_description = convertToCodepage(desc_buf, "english");
+                    data.mod_description_locale = locale;
+                } else if (!data.mod_description_english.empty()) {
+                    data.mod_description = data.mod_description_english;
+                    data.mod_description_locale = "english";
                 }
                 if (!data.mod_description.empty()) {
                     string_replace_all(data.mod_description, "\\r", "");
