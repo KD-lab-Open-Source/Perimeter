@@ -1,5 +1,3 @@
-add_definitions(-DPERIMETER_INTEGRATION_STEAM)
-
 add_library(IntegrationSteam STATIC 
     integration_steam.cpp
 )
@@ -34,6 +32,8 @@ target_include_directories(IntegrationSteam PRIVATE
         ..
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Units"
+        "${PROJECT_SOURCE_DIR}/Source/Game"
         "${OPTION_INTEGRATION_STEAM_SDK}/public/steam"
 )
 
@@ -41,6 +41,10 @@ install (FILES "${OPTION_INTEGRATION_STEAM_SDK}/redistributable_bin/${STEAM_LIB_
 
 target_link_libraries(IntegrationSteam PRIVATE "${OPTION_INTEGRATION_STEAM_SDK}/redistributable_bin/${STEAM_LIB_PATH}")
 
-target_compile_options(IntegrationSteam PRIVATE ${PERIMETER_COMPILE_OPTIONS})
+target_compile_options(IntegrationSteam PRIVATE 
+        ${PERIMETER_COMPILE_OPTIONS}
+        #STEAM_CALLBACK needs this
+        -Wno-overloaded-virtual
+)
 
 target_link_libraries(Integrations PRIVATE IntegrationSteam)

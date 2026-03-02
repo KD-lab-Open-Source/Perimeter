@@ -1089,6 +1089,8 @@ bool mainQuant() {
 //				gameShell->getNetClient()->pauseQuant(applicationIsGo()));
 //		}
 
+    integrations::quant();
+
     if (applicationIsGo()) {
         run = HTManager::instance()->Quant();
     } else {
@@ -1148,8 +1150,17 @@ int SDL_main(int argc, char *argv[])
     //Init clock
     initclock();
     
+    //Grab some CLI specifics
+    const char* store_selection = check_command_line("store");
+    const char* store_upload_mod = check_command_line("upload_mod");
+    if (store_upload_mod && !store_selection) {
+        fprintf(stderr, "No store selected, pass store=steam for example\n");
+        return 1;
+    }
+    
     //Redirect stdio and print version
-    ErrH.RedirectStdio();
+    bool no_console_redirect = check_command_line("no_console_redirect") != nullptr;
+    ErrH.RedirectStdio(no_console_redirect || store_upload_mod);
     printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n",
         currentVersion,
         computeArchFlags()
@@ -1175,22 +1186,62 @@ int SDL_main(int argc, char *argv[])
     
     //Init integrations
     integrations::init();
-    
-    //Check integrations if have a locale selected, skip store's locale if didn't change from last time
-    //since player might have changed it from game itself to one that is not in store (like from a mod)
-    std::string store_locale;
-    if (integrations::get_store()) {
-        store_locale = integrations::get_store()->get_selected_locale();
+    integration_store* store = integrations::get_store();
+    std::string store_id;
+    if (store) {
+        //Check integrations if have a locale selected, skip store's locale if didn't change from last time
+        //since player might have changed it from game itself to one that is not in store (like from a mod)
+        store_id = store->get_store_id();
+        if (store_selection != nullptr && store_id != store_selection) {
+            printf("Store integration is '%s' but expected '%s'\n", store_id.c_str(), store_selection);
+            exit(1);
+        }
+
+        //Check if store mod upload is requested
+        if (store_upload_mod) {
+            auto& mods = getGameMods();
+            if (!mods.count(store_upload_mod)) {
+                fprintf(stderr, "No mod loaded with name: %s\n", store_upload_mod);
+                return 0;
+            }
+            auto& mod = mods[store_upload_mod];
+            if (!mod.available) {
+                fprintf(stderr, "Mod was not loaded! please check the logs\n");
+                return 0;
+            }
+            std::string mod_config_path = convert_path_content(mod.path + PATH_SEP + "mod_config.ini");
+            if (!mod_config_path.empty()) {
+                std::filesystem::remove(mod_config_path);
+                scan_resource_paths(convert_path_content(mod.path));
+            }
+            if (containsDisallowedFilesMod(mod, true)) {
+                fprintf(stderr, "Mod contains disallowed files for uploading\n");
+                return 0;
+            }
+            store->upload_mod(&mod);
+            return 0;
+        }
+        
+        printf("Store integration: %s\n", store_id.c_str());
+        std::string store_locale = store->get_selected_locale();
+        std::string old_store_locale = getStringSettings("StoreLocale_" + store_id);
+        if (!store_locale.empty() && old_store_locale != store_locale) {
+            fprintf(stdout, "Store selected locale changed: %s -> %s\n", old_store_locale.c_str(), store_locale.c_str());
+            putStringSettings("StoreLocale_" + store_id, store_locale);
+            std::vector<std::string> args;
+            args.push_back("tmp_locale=" + store_locale);
+            request_application_restart(&args);
+            handle_application_restart();
+            return 0;
+        }
+    } else if (store_selection != nullptr) {
+        fprintf(stderr, "No store integration available and expected '%s'\n", store_selection);
+        return 1;
+    } else {
+        printf("No store integration available\n");
     }
-    std::string old_store_locale = getStringSettings("StoreLocale");
-    if (!store_locale.empty() && old_store_locale != store_locale) {
-        fprintf(stdout, "Store selected locale changed: %s -> %s\n", old_store_locale.c_str(), store_locale.c_str());
-        putStringSettings("StoreLocale", store_locale);
-        std::vector<std::string> args;
-        args.push_back("tmp_locale=" + store_locale);
-        request_application_restart(&args);
-        handle_application_restart();
-        exit(1);
+    if (store_upload_mod) {
+        return 0;
     }
 
     //Set DPI awareness, must be done before initializing SDL video subsystem

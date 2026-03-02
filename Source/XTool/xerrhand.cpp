@@ -260,12 +260,12 @@ XErrorHandler::XErrorHandler() {
 XErrorHandler::~XErrorHandler() {
 }
 
-void XErrorHandler::RedirectStdio() const {
+void XErrorHandler::RedirectStdio(bool disable_redirect) const {
 #ifdef GPX
     return;
 #endif
 
-    if (log_path.empty() || check_command_line("no_console_redirect") != nullptr) {
+    if (log_path.empty() || disable_redirect) {
         return;
     }
     //Check if we should redirect stdio
