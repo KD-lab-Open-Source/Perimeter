@@ -65,10 +65,6 @@ void strip_leading_path(std::string& path, const std::string& base_path) {
     if (path_pos != std::string::npos && path_pos == 0) {
         path.erase(0, curdir_path.size());
     }
-    path_pos = path.find('/');
-    if (path_pos != std::string::npos && path_pos == 0) {
-        path.erase(0, 1);
-    }
 }
 
 void split_path_parent(const std::string& path, std::string& parent, std::string* filename, bool content_root_if_empty) {

@@ -19,6 +19,8 @@ class integration_steam: public integration_store {
     bool SubmitItemUpdate_callback_called = false;
     EResult SubmitItemUpdate_callback_result = k_EResultNone;
     
+    bool process_workshop_mod(PublishedFileId_t item_id);
+    
     //Callbacks from steam
     STEAM_CALLBACK(integration_steam, OnIPCFailure, IPCFailure_t);
     STEAM_CALLBACK(integration_steam, OnSteamShutdown, SteamShutdown_t);    
@@ -29,6 +31,7 @@ public:
     std::string get_player_name() override;
     std::string get_selected_locale() override;
     void upload_mod(struct ModMetadata* mod) override;
+    bool process_enabled_mods() override;
 };
 
 #endif //PERIMETER_INTEGRATION_STEAM_H

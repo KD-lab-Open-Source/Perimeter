@@ -985,6 +985,8 @@ void show_help() {
     printf(
             "Perimeter %s\n%s\n\n"
             "Modding and debugging:\n"
+            "    upload_mod=\"NAME OF MOD\" - Attempts to upload mod using the selected store\n"
+            "    store=NAME - Selects the store integration for the game, for example store=steam\n"
             "    mods=0 - Disables mods folder loading\n"
             "    edit=1 - Enables mission editor mode, use map loading args or file open dialog will appear\n"
             "    mainmenu=0/1 - Enables/disables main menu, needs to obtain what map to load via args if not enabled\n"
@@ -1199,6 +1201,7 @@ int SDL_main(int argc, char *argv[])
 
         //Check if store mod upload is requested
         if (store_upload_mod) {
+            loadPendingMods();
             auto& mods = getGameMods();
             if (!mods.count(store_upload_mod)) {
                 fprintf(stderr, "No mod loaded with name: %s\n", store_upload_mod);
@@ -1234,6 +1237,11 @@ int SDL_main(int argc, char *argv[])
             handle_application_restart();
             return 0;
         }
+        
+        //Process any mods that may be enabled by store
+        if (store->process_enabled_mods()) {
+            return 0;
+        }
     } else if (store_selection != nullptr) {
         fprintf(stderr, "No store integration available and expected '%s'\n", store_selection);
         return 1;
@@ -1243,6 +1251,9 @@ int SDL_main(int argc, char *argv[])
     if (store_upload_mod) {
         return 0;
     }
+    
+    //Load the mods that are pending
+    loadPendingMods();
 
     //Set DPI awareness, must be done before initializing SDL video subsystem
     //Some old versions of SDL2 may not have this hint defined

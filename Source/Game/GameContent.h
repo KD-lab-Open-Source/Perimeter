@@ -8,6 +8,8 @@ extern GAME_CONTENT terGameContentAvailable;
 ///Current selected content, can be several or only one in available content (when user chooses one)
 extern GAME_CONTENT terGameContentSelect;
 
+#define MOD_ORIGIN_GAME_MODS "game_mods"
+
 /**
  * Contains each mod metadata
 */
@@ -24,6 +26,10 @@ public:
     bool available = false;
     /// Is enabled?
     bool enabled = false;
+    /// Is this ET content mod? (used to handle separately)
+    bool is_content_et = false;
+    /// Where was mod loaded from
+    std::string mod_origin = {};
 
     //Data from .ini
     /// Name to display in mod list and acts as identifier
@@ -108,5 +114,11 @@ std::string getGameContentName(const GAME_CONTENT& content);
 GAME_CONTENT getGameContentCampaign();
 ///Checks files in mod for disallowed files
 bool containsDisallowedFilesMod(ModMetadata& mod, bool publishing);
+///Parses mod from path and fills ModMetadata
+void parseModInPath(ModMetadata& mod, const char* mod_path, const char* mod_origin);
+///Adds mod as pending to load
+void addPendingMod(ModMetadata& mod);
+///Loads mods that were queued as pending
+void loadPendingMods();
 
 #endif //PERIMETER_GAMECONTENT_H

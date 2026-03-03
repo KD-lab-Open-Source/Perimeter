@@ -6,6 +6,10 @@ in a easier and cleaner manner than previously was possible when dealing with ga
 This file intends to document about some engine internals and changes done since open-source publication, 
 any corrections or updates to reflect current state of capabilities are welcomed.
 
+For some store integrations such as Steam Workshop the mod uploading is available using the following command line:
+
+`perimeter store=steam upload_mod=\"NAME OF MOD\"`
+
 ## Command line
 
 Running the game in console/terminal and adding /? or --help or -h displays available parameters that can be added

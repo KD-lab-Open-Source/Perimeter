@@ -10,7 +10,6 @@
 #include "xmath.h"
 #include "xerrhand.h"
 #include "tweaks.h"
-#include "exodus.h"
 #include "DebugUtil.h"
 #include "UnitAttribute.h"
 #include "GameContent.h"
@@ -329,6 +328,62 @@ void integration_steam::OnSteamCreateItem(CreateItemResult_t *pCallback, bool bI
         return;
     }
     published_file_id = pCallback->m_nPublishedFileId;
+}
+
+bool integration_steam::process_enabled_mods() {
+    if (steam_disconnected) {
+        return false;
+    }
+    ISteamUGC* ugc = SteamUGC();
+    uint32_t num_item_allocated = ugc->GetNumSubscribedItems();
+    if (0 == num_item_allocated) {
+        return false;
+    }
+    PublishedFileId_t* subscribed_items = static_cast<PublishedFileId_t*>(malloc(sizeof(PublishedFileId_t) * num_item_allocated));
+    uint32_t num_item = ugc->GetSubscribedItems(subscribed_items, num_item_allocated);
+    if (num_item != num_item_allocated) {
+        printf("GetSubscribedItems returned %u expected %u\n", num_item, num_item_allocated);
+    }
+    if (num_item > num_item_allocated) {
+        num_item = num_item_allocated;
+    }
+    for (uint32_t i = 0; i < num_item; ++i) {
+        this->process_workshop_mod(subscribed_items[i]);
+    }
+    
+    //Free the array
+    free(subscribed_items);
+    
+    return false;
+}
+
+bool integration_steam::process_workshop_mod(PublishedFileId_t item_id) {
+    static char item_path[4096];
+    if (item_id == k_PublishedFileIdInvalid) {
+        return false;
+    }
+    ISteamUGC* ugc = SteamUGC();
+    uint32 item_state = ugc->GetItemState(item_id);
+    if (!(item_state & k_EItemStateInstalled)) {
+        fprintf(stderr, "Item '%" PRIu64 "' is subscribed but not installed, skipping\n", (uint64_t) item_id);
+        return false;
+    }
+    if (item_state & k_EItemStateLegacyItem) {
+        fprintf(stderr, "Item '%" PRIu64 "' is marked as legacy, not supported\n", (uint64_t) item_id);
+        return false;
+    }
+
+    if (!ugc->GetItemInstallInfo(item_id, nullptr, item_path, sizeof(item_path), nullptr)) {
+        return false;
+    }
+    
+    std::string mod_content_path = "mods" PATH_SEP_STR "steam_" + std::to_string(item_id);
+    printf("Adding workshop item as mod at '%s'\n", item_path);
+    scan_resource_paths(mod_content_path, item_path);
+    ModMetadata mod;
+    parseModInPath(mod, mod_content_path.c_str(), get_store_id());
+    addPendingMod(mod);
+    return true;
 }
 
 //Callbacks

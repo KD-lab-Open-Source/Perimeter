@@ -21,6 +21,9 @@ extern bool content_debug_flag;
 
 int firstMissionNumber = 0;
 
+static int mods_enabled_flag = 1;
+
+static std::vector<ModMetadata> gameModsPending;
 static std::map<std::string, ModMetadata> gameMods;
 static std::map<std::string, std::set<std::string>> gameAllowedPaths;
 
@@ -29,6 +32,8 @@ const static char* GAME_ALLOWED_PATH_LIST[] = {
     "mod.ini",
     "mod_config.ini",
     "mod.png",
+    "readme.md",
+    "readme.txt",
     "content_mapping.txt",
     "scripts/rigidbodyprmlibrarycampaign",
     "scripts/rigidbodyprmlibraryextra",
@@ -248,10 +253,9 @@ std::string isNameAllowed(const std::string& name, const std::set<std::string>& 
     return "";
 }
 
-bool isPathAllowed(const char* path_to_test, bool publishing) {
-    std::string path = convert_path_posix(string_to_lower(path_to_test));
+bool isPathAllowed(const char* path, bool publishing) {
     if (publishing) {
-        if (path == "mod_config.ini") {
+        if (strncmp(path, "mod_config.ini", 14)) {
             return false;
         }
     }
@@ -272,7 +276,7 @@ bool isPathAllowed(const char* path_to_test, bool publishing) {
     //Check each path block
     std::string cumulative_path;
     std::string piece;
-    const char* path_ptr = path.c_str();
+    const char* path_ptr = path;
     while (true) {
         char c = *path_ptr;
         path_ptr++;
@@ -567,7 +571,8 @@ void loadLocalizedResources(const std::string& content_path = "") {
 ///Detects if path is Perimeter: ET
 bool isContentET(const std::string& path) {
     return get_content_entry(path + "Resource/Missions/01x4.spg")
-    && get_content_entry(path + "Resource/Missions/25x2.spg");
+    && get_content_entry(path + "Resource/Missions/25x2.spg")
+    && get_content_entry(path + "Resource/Battle/COMPASS.spg");
 }
 
 ///Load ET content selectively
@@ -816,12 +821,13 @@ void loadMod(const ModMetadata& mod) {
 
 bool containsDisallowedFilesMod(ModMetadata& mod, bool publishing) {
     const char* mod_name = mod.mod_name.c_str();
-    const std::string mod_path = convert_path_posix(string_to_lower(mod.path.c_str()));
+    std::string mod_path = convert_path_posix(string_to_lower(mod.path.c_str()));
+    terminate_with_char(mod_path, PATH_SEP);
     return content_entries_any_of(mod_path, [&mod_name, &mod_path, &publishing](const filesystem_entry* entry) {
-        std::string test_path = entry->key;
         if (entry->is_directory) {
             return false;
         }
+        std::string test_path = convert_path_posix(string_to_lower(entry->key.c_str()));
         strip_leading_path(test_path, mod_path);
         if (!isPathAllowed(test_path.c_str(), publishing)) {
             printf("Mod '%s' contains '%s' that is not allowed, if this seems like a mistake please report the issue.\n", mod_name, test_path.c_str());
@@ -831,9 +837,138 @@ bool containsDisallowedFilesMod(ModMetadata& mod, bool publishing) {
     });
 }
 
+void parseModInPath(ModMetadata& data, const char* mod_path, const char* mod_origin) {
+    const size_t DESC_BUF_LEN = 10240;
+    static char desc_buf[DESC_BUF_LEN];
+    const std::string& locale = getLocale();
+    std::filesystem::path entry_path = std::filesystem::u8path(mod_path);
+
+    data = {};
+    if (mod_origin) data.mod_origin = mod_origin;
+    data.available = false;
+    data.enabled = false;
+    data.path = entry_path.u8string();
+    data.mod_name = entry_path.filename().u8string();
+    data.is_content_et = data.mod_origin == MOD_ORIGIN_GAME_MODS && isContentET(data.path + PATH_SEP);
+
+    std::string path_ini = convert_path_content(data.path + PATH_SEP + "mod.ini");
+    if (!path_ini.empty()) {
+        //Load mandatory .ini fields
+        IniManager mod_ini = IniManager(path_ini.c_str(), true);
+        data.available = true;
+        data.mod_name = mod_ini.get("Mod", "name");
+        data.mod_version = mod_ini.get("Mod", "version");
+        if (data.mod_name.empty()) {
+            data.available = false;
+            fprintf(stderr, "Missing name in Mod section at %s, not loading\n", path_ini.c_str());
+            data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingAttribute");
+            data.errors.emplace_back("[Mod] name");
+        } else if (data.mod_version.empty()) {
+            data.available = false;
+            fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
+            data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingAttribute");
+            data.errors.emplace_back("[Mod] version");
+        }
+
+        //Load optional fields
+        mod_ini.check_existence = false;
+        //First load english one, use legacy description_locale if present but description should be the prefered way
+        if ((ReadIniString("Mod", "description_english", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)
+         || (ReadIniString("Mod", "description", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)) {
+            data.mod_description_english = convertToCodepage(desc_buf, "english");
+         }
+        if (!data.mod_description_english.empty()) {
+            string_replace_all(data.mod_description_english, "\\r", "");
+            string_replace_all(data.mod_description_english, "\\n", "\n");
+            string_replace_all(data.mod_description_english, "\\\\", "\\");
+        }
+        //Try loading in current locale, then description, then english
+        if (locale != "english" && ReadIniString("Mod", ("description_" + locale).c_str(), nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf) {
+            data.mod_description = convertToCodepage(desc_buf, locale);
+            data.mod_description_locale = locale;
+            if (!data.mod_description.empty()) {
+                string_replace_all(data.mod_description, "\\r", "");
+                string_replace_all(data.mod_description, "\\n", "\n");
+                string_replace_all(data.mod_description, "\\\\", "\\");
+            }
+        } else if (!data.mod_description_english.empty()) {
+            data.mod_description = data.mod_description_english;
+            data.mod_description_locale = "english";
+        }
+        data.mod_authors = mod_ini.get("Mod", "authors");
+        data.mod_license = mod_ini.get("Mod", "license");
+        data.mod_url = mod_ini.get("Mod", "url");
+        
+        //Check version
+        data.content_game_minimum_version = mod_ini.get("Content", "game_minimum_version");
+        if (data.available && !data.content_game_minimum_version.empty()) {
+            int diff = compare_versions(currentVersionNumbers, data.content_game_minimum_version.c_str());
+            if (0 < diff) {
+                fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
+                        data.content_game_minimum_version.c_str(), data.path.c_str());
+                data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorGameTooOld");
+                data.errors.emplace_back(data.content_game_minimum_version);
+                data.available = false;
+            }
+        }
+
+        //Check content requirements
+        data.content_required_content = mod_ini.get("Content", "required_content");
+        data.content_disallowed_content = mod_ini.get("Content", "disallowed_content");
+
+        //Load mod config .ini fields
+        data.enabled = true;
+        std::string path_config_ini = data.path + PATH_SEP + "mod_config.ini";
+        if (get_content_entry(path_config_ini)) {
+            IniManager mod_config_ini = IniManager(path_config_ini.c_str(), false);
+            const char* mod_enabled_chr = mod_config_ini.get("Mod", "enabled");
+            if (*mod_enabled_chr) {
+                std::string mod_enabled = string_to_lower(mod_enabled_chr);
+                data.enabled = mod_enabled != "0" && mod_enabled != "false";
+            }
+        }
+    } else if (data.is_content_et) {
+        //Provide adhoc mod info for legacy ET folder
+        bool isRussian = startsWith(locale, "russian");
+        data.available = true;
+        data.enabled = true;
+        data.mod_name = "Perimeter: Emperor's Testament";
+        data.mod_version = "2.0.0";
+        data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
+        data.mod_authors = "K-D LAB";
+        data.mod_url = "https://kdlab.com";
+    } else {
+        fprintf(stderr, "Mod folder %s has missing info file mod.ini, not loading\n", data.path.c_str());
+        data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingModInfo");
+    }
+    
+    //Force disable all mods
+    if (!mods_enabled_flag) {
+        data.available = false;
+    }
+
+    //Avoid possible duplicates of ET
+    if (data.available && data.is_content_et && (terGameContentAvailable & PERIMETER_ET)) {
+        fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading\n", data.path.c_str());
+        data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorDuplicateContent");
+        data.available = false;
+    }
+    
+    //Make sure is not available if any error is present
+    if (!data.errors.empty()) {
+        data.available = false;
+    }
+    
+    //Mark as enabled if available
+    data.enabled &= data.available;
+}
+
+void addPendingMod(ModMetadata& mod) {
+    gameModsPending.emplace_back(mod);
+}
+
 ///Common addon loading code
 void loadModCommon(ModMetadata& mod) {
-    
     //Check if all files are allowed
     if (containsDisallowedFilesMod(mod, false)) {
         mod.available = false;
@@ -850,7 +985,7 @@ void loadModCommon(ModMetadata& mod) {
     }
     
     mod.campaign = get_content_entry(mod.path + "/Resource/Missions") != nullptr; 
-    if (isContentET(mod.path + PATH_SEP)) {
+    if (mod.is_content_et) {
         loadAddonET(mod);
     } else {
         loadMod(mod);
@@ -861,20 +996,8 @@ void loadModCommon(ModMetadata& mod) {
         loadMappings(mapping);
     }
 
-    printf("Loaded mod: %s\n", mod.mod_name.c_str());
+    printf("Loaded mod '%s' from '%s'\n", mod.mod_name.c_str(), mod.mod_origin.c_str());
 }
-
-void applyWorkarounds() {
-    if (terGameContentBase == GAME_CONTENT::PERIMETER_ET) {
-        workaroundET();
-    }
-}
-
-struct SortModMetadatas {
-    inline bool operator ()(const ModMetadata& s1,const ModMetadata& s2) {
-        return s1.mod_name < s2.mod_name;
-    }
-};
 
 void detectGameContent() {
     //We may need to do some cleanup
@@ -917,129 +1040,17 @@ void detectGameContent() {
     loadLocalizedResources();
         
     //Detect if we have extra contents/mods
-    const size_t DESC_BUF_LEN = 10240;
-    static char desc_buf[DESC_BUF_LEN];
-    int loadMods = 1;
-    check_command_line_parameter("mods", loadMods);
-    std::vector<ModMetadata> foundMods;
-    const std::string& locale = getLocale();
+    check_command_line_parameter("mods", mods_enabled_flag);
+    ModMetadata data;
     for (const auto& entry: get_content_entries_directory("mods")) {
         if (entry->is_directory) {
-            std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
-            
-            ModMetadata data = {};
-            data.available = false;
-            data.enabled = false;
-            data.path = entry_path.u8string();
-            data.mod_name = entry_path.filename().u8string();
-
-            bool is_content_ET = isContentET(data.path + PATH_SEP);
-            std::string path_ini = convert_path_content(data.path + PATH_SEP + "mod.ini");
-            if (!path_ini.empty()) {
-                //Load mandatory .ini fields
-                IniManager mod_ini = IniManager(path_ini.c_str(), true);
-                data.available = true;
-                data.mod_name = mod_ini.get("Mod", "name");
-                data.mod_version = mod_ini.get("Mod", "version");
-                if (data.mod_name.empty()) {
-                    data.available = false;
-                    fprintf(stderr, "Missing name in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingAttribute");
-                    data.errors.emplace_back("[Mod] name");
-                } else if (data.mod_version.empty()) {
-                    data.available = false;
-                    fprintf(stderr, "Missing version in Mod section at %s, not loading\n", path_ini.c_str());
-                    data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingAttribute");
-                    data.errors.emplace_back("[Mod] version");
-                }
-
-                //Load optional fields
-                mod_ini.check_existence = false;
-                //First load english one, use legacy description_locale if present but description should be the prefered way
-                if ((ReadIniString("Mod", "description_english", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)
-                 || (ReadIniString("Mod", "description", nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf)) {
-                    data.mod_description_english = convertToCodepage(desc_buf, "english");
-                }
-                //Try loading in current locale, then description, then english
-                if (locale != "english" && ReadIniString("Mod", ("description_" + locale).c_str(), nullptr, desc_buf, DESC_BUF_LEN, path_ini) && *desc_buf) {
-                    data.mod_description = convertToCodepage(desc_buf, locale);
-                    data.mod_description_locale = locale;
-                } else if (!data.mod_description_english.empty()) {
-                    data.mod_description = data.mod_description_english;
-                    data.mod_description_locale = "english";
-                }
-                if (!data.mod_description.empty()) {
-                    string_replace_all(data.mod_description, "\\r", "");
-                    string_replace_all(data.mod_description, "\\n", "\n");
-                    string_replace_all(data.mod_description, "\\\\", "\\");
-                }
-                data.mod_authors = mod_ini.get("Mod", "authors");
-                data.mod_license = mod_ini.get("Mod", "license");
-                data.mod_url = mod_ini.get("Mod", "url");
-                
-                //Check version
-                data.content_game_minimum_version = mod_ini.get("Content", "game_minimum_version");
-                if (data.available && !data.content_game_minimum_version.empty()) {
-                    int diff = compare_versions(currentVersionNumbers, data.content_game_minimum_version.c_str());
-                    if (0 < diff) {
-                        fprintf(stderr, "Minimum game version '%s' requirement not satisfied for %s, not loading\n",
-                                data.content_game_minimum_version.c_str(), data.path.c_str());
-                        data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorGameTooOld");
-                        data.errors.emplace_back(data.content_game_minimum_version);
-                        data.available = false;
-                    }
-                }
-
-                //Check content requirements
-                data.content_required_content = mod_ini.get("Content", "required_content");
-                data.content_disallowed_content = mod_ini.get("Content", "disallowed_content");
-
-                //Load mod config .ini fields
-                data.enabled = true;
-                std::string path_config_ini = data.path + PATH_SEP + "mod_config.ini";
-                if (get_content_entry(path_config_ini)) {
-                    IniManager mod_config_ini = IniManager(path_config_ini.c_str(), false);
-                    const char* mod_enabled_chr = mod_config_ini.get("Mod", "enabled");
-                    if (*mod_enabled_chr) {
-                        std::string mod_enabled = string_to_lower(mod_enabled_chr);
-                        data.enabled = mod_enabled != "0" && mod_enabled != "false";
-                    }
-                }
-            } else if (is_content_ET) {
-                //Provide adhoc mod info for legacy ET folder
-                bool isRussian = startsWith(locale, "russian");
-                data.available = true;
-                data.enabled = true;
-                data.mod_name = "Perimeter: Emperor's Testament";
-                data.mod_version = "2.0.0";
-                data.mod_description = isRussian ? "Периметр: Завет Императора" : "Perimeter: Emperor's Testament";
-                data.mod_authors = "K-D LAB";
-                data.mod_url = "https://kdlab.com";
-            } else {
-                fprintf(stderr, "Mod folder %s has missing info file mod.ini, not loading\n", data.path.c_str());
-                data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorMissingModInfo");
-            }
-            
-            //Force disable all mods
-            if (!loadMods) {
-                data.available = false;
-            }
-
-            //Avoid possible duplicates of ET
-            if (data.available && is_content_ET && (terGameContentAvailable & PERIMETER_ET)) {
-                fprintf(stderr, "ET is already loaded when loading ET content at %s, not loading\n", data.path.c_str());
-                data.errors.emplace_back("TEXT=Interface.Menu.Mods.ErrorDuplicateContent");
-                data.available = false;
-            }
-            
-            //Mark as enabled if available and not named with .off at end
-            data.enabled &= data.available && !endsWith(entry_path.filename().u8string(), ".off");
-            
+            parseModInPath(data, entry->path_content.c_str(), MOD_ORIGIN_GAME_MODS);
+    
             //If is ET then load now so the rest of mods can act on content properly
-            if (data.enabled && is_content_ET) {
+            if (data.enabled && data.is_content_et) {
                 loadModCommon(data);
             } else {
-                foundMods.emplace_back(data);
+                addPendingMod(data);
             }
         }
     }
@@ -1049,13 +1060,39 @@ void detectGameContent() {
         terGameContentSelect = terGameContentAvailable;
     }
     
+    //Since Perimeter has tutorial, we need to set first mission as 1 (second) so the briefing is skipped
+    if (terGameContentSelect & GAME_CONTENT::PERIMETER) {
+        firstMissionNumber = 1;
+    }
+    
+    //Apply ET specific workarounds
+    if (terGameContentBase == GAME_CONTENT::PERIMETER_ET) {
+        workaroundET();
+    }
+
+    printf("Game content: base %s selected %s available %s\n",
+           getGameContentEnumName(terGameContentBase).c_str(),
+           getGameContentEnumName(terGameContentSelect).c_str(),
+           getGameContentEnumName(terGameContentAvailable).c_str()
+   );
+}
+
+struct SortModMetadatas {
+    inline bool operator ()(const ModMetadata& s1,const ModMetadata& s2) {
+        return s1.mod_name < s2.mod_name;
+    }
+};
+
+void loadPendingMods() {
+    printf("Loading %" PRIsize " pending mods\n", gameModsPending.size());
+    
     //Sort it
-    std::sort(foundMods.begin(), foundMods.end(), SortModMetadatas());
+    std::sort(gameModsPending.begin(), gameModsPending.end(), SortModMetadatas());
 
     //Load mods
-    for (ModMetadata& mod : foundMods) {
+    for (ModMetadata& mod : gameModsPending) {
         if (0 < gameMods.count(mod.mod_name)) {
-            fprintf(stderr, "Mod %s at %s was already loaded, not loading\n", mod.mod_name.c_str(), mod.path.c_str());
+            fprintf(stderr, "Mod '%s' at '%s' from '%s' was already loaded, not loading\n", mod.mod_name.c_str(), mod.mod_origin.c_str(),  mod.path.c_str());
             continue;
         }
         
@@ -1091,20 +1128,7 @@ void detectGameContent() {
         
         loadModCommon(mod);
     }
-    
-    //Do some workarounds
-    applyWorkarounds();
-    
-    //Since Perimeter has tutorial, we need to set first mission as 1 (second) so the briefing is skipped
-    if (terGameContentSelect & GAME_CONTENT::PERIMETER) {
-        firstMissionNumber = 1;
-    }
-
-    printf("Game content: base %s selected %s available %s\n",
-           getGameContentEnumName(terGameContentBase).c_str(),
-           getGameContentEnumName(terGameContentSelect).c_str(),
-           getGameContentEnumName(terGameContentAvailable).c_str()
-   );
+    gameModsPending.clear();
     
     //Dump full path list if requested
     if (check_command_line("content_dump_debug")) {
