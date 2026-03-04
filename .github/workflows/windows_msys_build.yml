@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          #{sys: mingw32, build_type: Debug,   arch: i686,   arch_zip: x86, packages: "},
+          #{sys: mingw32, build_type: Debug,   arch: i686,   arch_zip: x86, packages: ""},
           {sys: mingw64, build_type: Debug,   arch: x86_64, arch_zip: x64, packages: "libbacktrace:p"},
           #{sys: mingw32, build_type: Release, arch: i686,   arch_zip: x86, packages: ""},
           {sys: mingw64, build_type: Release, arch: x86_64, arch_zip: x64, packages: "libbacktrace:p"},
@@ -107,35 +107,43 @@ jobs:
         run: |
           mingw32-make install
         working-directory: ffmpeg
-      - name: perimeter -- create build dir
-        run: mkdir build
       - name: perimeter -- configure build
-        run: cmake -G Ninja
-          -S .. -B .
-          -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}}
-          -DOPTION_LINKER=lld
-          -DOPTION_LINK_LIBS="bcrypt;winpthread.a"
-        working-directory: build
+        run: |
+          mkdir build
+          cmake \
+            -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
+            -DCMAKE_INSTALL_DO_STRIP=OFF \
+            -DOPTION_LINKER=lld \
+            -DOPTION_LINK_LIBS="bcrypt;winpthread.a" \
+            -DOPTION_INTEGRATION_STEAM_SDK="${PWD}/Thirdparty/steamworks"
       - name: perimeter -- make
         run: ninja
         working-directory: build
+      - name: perimeter -- install
+        run: |
+          mkdir -p install_out
+          cmake --install . --prefix install_out
+        working-directory: build
       - name: perimeter -- prepare artifact folder
         run: |
-          mkdir -p perimeter/bin
-          cp /${{matrix.env.sys}}/bin/SDL2.dll perimeter/bin/
-          cp /${{matrix.env.sys}}/bin/SDL2_net.dll perimeter/bin/
+          mkdir -p output
+          cp install_out/lib/* output/
+          cp install_out/bin/* output/
+          cp /${{matrix.env.sys}}/bin/SDL2.dll output/
+          cp /${{matrix.env.sys}}/bin/SDL2_net.dll output/
           if [[ -n "${{matrix.env.arch_zip}}" ]]; then
-            cp downloads/SDL2_image/*.dll perimeter/bin/
-            cp downloads/SDL2_mixer/*.dll perimeter/bin/
+            cp ../downloads/SDL2_image/*.dll output/
+            cp ../downloads/SDL2_mixer/*.dll output/
           else
-            cp /${{matrix.env.sys}}/bin/SDL2_image.dll perimeter/bin/
-            cp /${{matrix.env.sys}}/bin/SDL2_mixer.dll perimeter/bin/
+            cp /${{matrix.env.sys}}/bin/SDL2_image.dll output/
+            cp /${{matrix.env.sys}}/bin/SDL2_mixer.dll output/
           fi
-          cp build/Source/perimeter.exe perimeter/bin/
+        working-directory: build
       - name: perimeter -- strip binary
-        run: strip -g -x perimeter/bin/perimeter.exe
+        run: strip -g -x build/output/perimeter.exe
         if: matrix.env.build_type == 'Release'
       - uses: actions/upload-artifact@v4
         with:
           name: Perimeter MSYS ${{matrix.env.build_type}} ${{matrix.env.sys}}
-          path: perimeter/bin/
+          path: build/output/

@@ -75,11 +75,14 @@ jobs:
       - name: ffmpeg -- install
         run: sudo make install
         working-directory: ffmpeg
-      - name: perimeter -- create build dir
-        run: mkdir build
       - name: perimeter -- configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DOPTION_D3D9=OFF ${{matrix.env.cmake}}
-        working-directory: build
+        run: |
+          mkdir build
+          cmake \
+            -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} \
+            -DOPTION_D3D9=OFF ${{matrix.env.cmake}} \
+            -DOPTION_INTEGRATION_STEAM_SDK="${PWD}/Thirdparty/steamworks"
       - name: perimeter -- build project
         run: ninja
         working-directory: build

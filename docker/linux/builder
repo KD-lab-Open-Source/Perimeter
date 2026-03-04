@@ -37,10 +37,10 @@ cmake -S $WORK_DIR -B $BUILD_DIR -G Ninja \
   -DOPTION_STATIC_LIB_STD=ON \
   -DOPTION_DEBUG_ASSERT=OFF \
   -DOPTION_DXVK_1=ON \
+  -DOPTION_INTEGRATION_STEAM_SDK="$WORK_DIR/Thirdparty/steamworks" \
   -DCMAKE_INSTALL_DO_STRIP=OFF \
   -DCMAKE_INSTALL_RPATH="\$ORIGIN" \
-  $@`
-`
+  "$@"
 
 # Build dependencies
 ninja dependencies

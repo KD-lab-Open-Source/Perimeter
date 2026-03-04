@@ -51,10 +51,16 @@ install (FILES "${OPTION_INTEGRATION_STEAM_SDK}/redistributable_bin/${STEAM_LIB_
 
 target_link_libraries(IntegrationSteam PRIVATE "${OPTION_INTEGRATION_STEAM_SDK}/redistributable_bin/${STEAM_LIB_PATH}")
 
-target_compile_options(IntegrationSteam PRIVATE 
+set(INTEGRATION_STEAM_COMPILE_OPTIONS ${PERIMETER_COMPILE_OPTIONS})
+
+if (NOT MSVC_CL_BUILD)
+    set(INTEGRATION_STEAM_COMPILE_OPTIONS 
         ${PERIMETER_COMPILE_OPTIONS}
         #STEAM_CALLBACK needs this
         -Wno-overloaded-virtual
-)
+    )
+endif ()
+
+target_compile_options(IntegrationSteam PRIVATE ${INTEGRATION_STEAM_COMPILE_OPTIONS})
 
 target_link_libraries(Integrations PRIVATE IntegrationSteam)

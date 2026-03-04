@@ -11,8 +11,8 @@ on:
 
 env:
   VCPKG_COMMIT_ID: '875109359320f9405fa222f303d9d0019323dd20'
-  buildDir: '${{ github.workspace }}/build/'
-  outDir: '${{ github.workspace }}/artifact/'
+  buildDir: '${{ github.workspace }}\build\'
+  outDir: '${{ github.workspace }}\artifact\'
 
 jobs:
   build:
@@ -46,11 +46,14 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{matrix.env.arch}}
+      - name: Create build dir
+        run: mkdir ${{ env.buildDir }}
       - name: Run cmake to install the dependencies specified in the vcpkg.json, generate project file
-        run: |
-          mkdir ${{ env.buildDir }}
-          cd ${{ env.buildDir }}
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+        run: cmake
+          -S . -B ${{ env.buildDir }} -G "NMake Makefiles"
+          -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}}
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake
+          -DOPTION_INTEGRATION_STEAM_SDK="${{ github.workspace }}\Thirdparty\steamworks"
       - name: Build the project
         run: |
           cd ${{ env.buildDir }}

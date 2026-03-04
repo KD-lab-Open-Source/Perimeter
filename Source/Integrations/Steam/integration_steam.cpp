@@ -7,6 +7,7 @@
 #include <cinttypes>
 
 #include "SystemUtil.h"
+#include "xbuffer.h"
 #include "xutl.h"
 #include "xmath.h"
 #include "xerrhand.h"

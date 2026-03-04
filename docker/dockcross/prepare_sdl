@@ -10,12 +10,12 @@ unzip /opt/SDL2-mingw.zip -d /opt/SDL2
 cd /opt/SDL2/SDL2-*
 make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
 
-wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.8/SDL2_mixer-devel-2.8.8-mingw.zip -O /opt/SDL2_mixer-mingw.zip
+wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.1/SDL2_mixer-devel-2.8.1-mingw.zip -O /opt/SDL2_mixer-mingw.zip
 unzip /opt/SDL2_mixer-mingw.zip -d /opt/SDL2
 cd /opt/SDL2/SDL2_mixer-*
 make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
 
-wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-mingw.zip -O /opt/SDL2_image-mingw.zip
+wget https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.8/SDL2_image-devel-2.8.8-mingw.zip -O /opt/SDL2_image-mingw.zip
 unzip /opt/SDL2_image-mingw.zip -d /opt/SDL2
 cd /opt/SDL2/SDL2_image-*
 make install-package arch=${SDL_ARCH} prefix=${DEPS_PREFIX}
