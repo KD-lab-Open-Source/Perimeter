@@ -93,15 +93,15 @@ if(OPTION_D3D9)
     #D3D9 Renderer enabled
     if(PERIMETER_WINDOWS)
         #DirectX SDK libs
-        target_include_directories(Render PUBLIC "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
+        target_include_directories(Render PUBLIC "${PROJECT_SOURCE_DIR}/Thirdparty/MSDXSDK_02_06/Include")
 
         #DirectX 64 or 32 libs
         IF(PERIMETER_ARCH_64)
             MESSAGE("Linking against DirectX 64 bits")
-            set(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
+            set(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/Thirdparty/MSDXSDK_02_06/Lib/x64)
         ELSE()
             MESSAGE("Linking against DirectX 32 bits")
-            set(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
+            set(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/Thirdparty/MSDXSDK_02_06/Lib/x86)
         ENDIF()
         target_link_directories(Render BEFORE PUBLIC ${LIBS_MSDXSDK})
 

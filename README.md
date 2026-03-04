@@ -131,8 +131,7 @@ This file is automatically created/updated by the game.
   * EFFECTTOOL - Seems to be a tool for editing effects
   * GeoTool - To edit how terrain behaves visually during digging
   
-* XLibs.Net/ - Contains some library headers and binaries
-* MSDXSDK_02_06/ - DirectX SDK used by the game
+* Thirdparty - Contains third party redistributable headers and binaries required for CI builds
 
 **Unknown** - Not tested, not compilable with modern compilers nor available in more platforms than Windows.`
 

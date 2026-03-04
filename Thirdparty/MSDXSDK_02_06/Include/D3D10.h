@@ -6543,9 +6543,9 @@ enum D3D10_CREATE_DEVICE_FLAG
 #define	D3D10_SDK_VERSION	( 20 )
 
 #if !defined( D3D10_IGNORE_SDK_LAYERS ) 
-#include "d3d10sdklayers.h" 
+#include "d3d10sdklayers.h"
 #endif 
-#include "d3d10misc.h" 
+#include "d3d10misc.h"
 #include "d3d10shader.h" 
 #include "d3d10effect.h" 
 
