@@ -26,6 +26,7 @@ target_include_directories(Network PRIVATE
         "${PROJECT_SOURCE_DIR}/Source/Render/client"
         "${PROJECT_SOURCE_DIR}/Source/Physics"
         "${PROJECT_SOURCE_DIR}/Source/AI"
+        "${PROJECT_SOURCE_DIR}/Source/Integrations"
         "${PROJECT_SOURCE_DIR}/Source/Sound"
         .
 )

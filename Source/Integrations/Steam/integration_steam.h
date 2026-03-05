@@ -32,6 +32,14 @@ public:
     std::string get_selected_locale() override;
     void upload_mod(struct ModMetadata* mod) override;
     bool process_enabled_mods() override;
+    ///Sets the rich presence state
+    void set_rich_presence(
+        integration_rich_presence_activity activity,
+        const char* activity_str,
+        const char* activity_extra,
+        const char* group_id,
+        size_t group_size
+    ) override;
 };
 
 #endif //PERIMETER_INTEGRATION_STEAM_H

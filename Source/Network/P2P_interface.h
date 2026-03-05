@@ -447,7 +447,10 @@ public:
     void JoinPublicRoomGame(const NetAddress& connection, NetRoomID room_id, const std::string& playerName, const std::string& password);
 
     size_t getRelaysCount() const;
-	const std::vector<struct GameInfo>& getGameList() const;
+    const std::vector<struct GameInfo>& getGameList() const;
+    const struct GameInfo* getGameInfo() const;
+    void setGameInfo(const struct GameInfo* game) const;
+    void updateIntegrationRichPresence() const;
 
 	void SendEvent(const netCommandGeneral* event);
 	void SendEventSync(const netCommandGeneral* event);
@@ -513,14 +516,14 @@ public:
 	unsigned int TIMEOUT_DISCONNECT;
 	unsigned int MAX_TIME_PAUSE_GAME;
 
-    bool isHost() { return (m_state&PNC_State_Host) != 0; }
-    bool isGameRun() { return (m_state&PNC_State_GameRun) != 0; }
-    bool isTuning() { 
+    bool isHost() const { return (m_state&PNC_State_Host) != 0; }
+    bool isGameRun() const { return (m_state&PNC_State_GameRun) != 0; }
+    bool isTuning() const { 
         return m_state == PNC_STATE__HOST_TUNING_GAME
             || m_state == PNC_STATE__CLIENT_TUNING_GAME;
     }
 
-    bool isSaveGame() {
+    bool isSaveGame() const {
         return lobbyMissionDescription.gameType_ == GT_MULTI_PLAYER_LOAD;
     }
 

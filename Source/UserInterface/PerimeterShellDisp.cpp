@@ -1063,7 +1063,9 @@ void CShellIconManager::fillTaskWnd() {
 	std::string taskTxt = gameShell->CurrentMission.missionDescription();
 
     if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
-        std::string name = qdTextDB::instance().getText(historyScene.getMissionToExecute().name.c_str());
+        std::string name;
+        const char* name_str = qdTextDB::instance().getText(historyScene.getMissionToExecute().name.c_str());
+        if (name_str) name = name_str;
         if (!name.empty()) {
             if (taskTxt.empty()) {
                 taskTxt = name;

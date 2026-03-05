@@ -4,6 +4,7 @@
 #include <list>
 #include <algorithm>
 #include <filesystem>
+#include <cinttypes>
 
 #include "SystemUtil.h"
 #include "xutl.h"
@@ -166,7 +167,7 @@ void integration_steam::upload_mod(ModMetadata* mod) {
         new_item = true;
     }
 
-    printf("Published file id: %" PRIu64"\n", (uint64_t) published_file_id);
+    printf("Published file id: %" PRIu64 "\n", (uint64_t) published_file_id);
     
     //Set data into item
     ISteamUGC* ugc = SteamUGC();
@@ -357,6 +358,29 @@ bool integration_steam::process_enabled_mods() {
     return false;
 }
 
+void integration_steam::set_rich_presence(
+    integration_rich_presence_activity activity,
+    const char* activity_str,
+    const char* activity_extra,
+    const char* group_id,
+    size_t group_size
+) {
+    if (steam_disconnected) {
+        return;
+    }
+    ISteamFriends* frens = SteamFriends();
+    frens->SetRichPresence("activity", activity_str);
+    frens->SetRichPresence("extra", activity_extra);
+    frens->SetRichPresence("steam_display", activity_extra ? "#Status_Extra" : "#Status");
+    if (group_id && 0 < group_size) {
+        frens->SetRichPresence("steam_player_group", group_id);
+        frens->SetRichPresence("steam_player_group_size", std::to_string(group_size).c_str());
+    }  else {
+        frens->SetRichPresence("steam_player_group", nullptr);
+        frens->SetRichPresence("steam_player_group_size", nullptr);
+    }
+}
+
 bool integration_steam::process_workshop_mod(PublishedFileId_t item_id) {
     static char item_path[4096];
     if (item_id == k_PublishedFileIdInvalid) {
@@ -395,6 +419,8 @@ void integration_steam::OnIPCFailure(IPCFailure_t* failure) {
 
 void integration_steam::OnSteamShutdown(SteamShutdown_t* callback) {
     (void) callback;
-    fprintf(stderr, "Steam shutdown request\n");
+    fprintf(stderr, "Steam shutdown requested\n");
     steam_disconnected = true;
+    integration_requested_shutdown = true;
 }
+

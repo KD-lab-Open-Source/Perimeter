@@ -63,10 +63,11 @@ bool showPlayerControls(const MissionDescription& mission, int number) {
 }
 
 void setupMultiplayerLobby() {
+    PNetCenter* pnc = gameShell->getNetClient();
     CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST);
     list->NewItem(1);
     list->Clear();
-    if (!gameShell->getNetClient()->isSaveGame()) {
+    if (!pnc->isSaveGame()) {
         for (int i = 0; i < multiplayerMaps.size(); i++) {
             std::string name = getMapName(multiplayerMaps[i].missionName().c_str());
             list->AddString(name.c_str(), 0);
@@ -79,6 +80,7 @@ void setupMultiplayerLobby() {
     }
 
     ((ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT))->Clear();
+	pnc->updateIntegrationRichPresence();
 }
 
 void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -95,7 +97,7 @@ void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[param].missionName();
 			gameShell->getNetClient()->changeMap(missionName.c_str());
 		}
-	}		
+	}
 }
 
 void setFrm(CComboWindow* combo, int number) {
@@ -121,10 +123,10 @@ void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 
 void setSlot(CComboWindow* combo, int number) {
     const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-    const PlayerData& pd = currMission.playersData[number];
     bool isSave = gameShell->getNetClient()->isSaveGame();
 	if ( 0 <= number && number < currMission.playerAmountScenarioMax) {
-		combo->Show(true);
+        const PlayerData& pd = currMission.playersData[number];
+        combo->Show(true);
         bool isHost = gameShell->getNetClient()->isHost();
         bool slotEnable = isHost && currMission.activePlayerID != number;
         if (slotEnable && isSave
@@ -175,8 +177,11 @@ void setSlot(CComboWindow* combo, int number) {
 }
 
 void setupSlot(CComboWindow* combo, int number, bool direction) {
+    const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
+    if ( number < 0 || number >= currMission.playerAmountScenarioMax) {
+        return;
+    }
     if (gameShell->getNetClient()->isSaveGame()) {
-        const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
         const PlayerData& pd = currMission.playersData[number];
         switch (pd.realPlayerType) {
             case REAL_PLAYER_TYPE_OPEN:
@@ -402,24 +407,27 @@ void onMMLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 
 void setName(CShellPushButton* btn, int number) {
 	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-    bool isSave = currMission.gameType_ == GT_MULTI_PLAYER_LOAD;
+    if (!showPlayerControls(currMission, number)) {
+        btn->Show(false);
+        return;
+    }
     const PlayerData& pd = currMission.playersData[number];
-    if (showPlayerControls(currMission, number)
-    && pd.realPlayerType != REAL_PLAYER_TYPE_AI) {
-		btn->Show(true);
-		btn->Enable(true);
-        std::string text = pd.name();
-        if (isSave) {
-            if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-                text = pd.nameInitial() + std::string(" &FFFFFF(") + pd.name() + "&FFFFFF)";
-            }
-        } else {
-            text = std::string("&FFFFFF") + text;
+    if (pd.realPlayerType != REAL_PLAYER_TYPE_AI) {
+        btn->Show(false);
+        return;
+    }
+	btn->Show(true);
+	btn->Enable(true);
+    std::string text = pd.name();
+    bool isSave = currMission.gameType_ == GT_MULTI_PLAYER_LOAD;
+    if (isSave) {
+        if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+            text = pd.nameInitial() + std::string(" &FFFFFF(") + pd.name() + "&FFFFFF)";
         }
-        btn->setText(text);
-	} else {
-		btn->Show(false);
-	}
+    } else {
+        text = std::string("&FFFFFF") + text;
+    }
+    btn->setText(text);
 }
 
 void setupName(CComboWindow* combo, int number) {

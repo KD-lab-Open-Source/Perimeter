@@ -38,7 +38,7 @@
 #include <sstream>
 #include <thread>
 
-#include "../Integrations/integrations.h"
+#include "integrations.h"
 
 #ifdef GPX
 #include <c/gamepix.h>
@@ -1091,9 +1091,9 @@ bool mainQuant() {
 //				gameShell->getNetClient()->pauseQuant(applicationIsGo()));
 //		}
 
-    integrations::quant();
+    run &= integrations::quant();
 
-    if (applicationIsGo()) {
+    if (run && applicationIsGo()) {
         run = HTManager::instance()->Quant();
     } else {
 #ifdef _WIN32

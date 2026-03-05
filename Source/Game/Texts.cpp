@@ -811,6 +811,10 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Controls.CTRL_TOGGLE_LIFEBARS=Переключить индикаторы здоровья",
            "Controls.CTRL_RESUME_PRODUCTION=Возобновить производство",
            "Controls.CTRL_TOGGLE_FPS=Показать/Скрыть FPS",
+           "Interface.Menu.Mods.MetadataOrigin=Источник:",
+           "Interface.Menu.Mods.ModOrigin.game_mods=Папка с модификациями",
+           "Interface.Menu.Mods.ModOrigin.steam=Мастерская Steam",
+           "Interface.Menu.Mods.ErrorDisallowedFile=Модификация содержит файлы, расположенные по недопустимым путям",
            "Interface.Menu.Mods.MetadataVersion=Версия:",
            "Interface.Menu.Mods.MetadataAuthors=Авторы:",
            "Interface.Menu.Mods.MetadataDescription=Описание:",
@@ -890,6 +894,12 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.Confirmations.PendingChanges=Отложенные изменения не будут применены, вернуться в главное меню?",
            "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Чтобы применить изменения, требуется перезапуск игры, вы уверены?",
            "Interface.Menu.Messages.Confirmations.OpenWeb=Открыть сайт?",
+           "Integrations.RichPresence.Activity.Menu=Меню",
+           "Integrations.RichPresence.Activity.Campaign=Кампания",
+           "Integrations.RichPresence.Location.Battle=Сражения",
+           "Integrations.RichPresence.Activity.MultiplayerList=Поиск серверов для мультиплеера",
+           "Integrations.RichPresence.Activity.MultiplayerWaiting=Ожидание начала многопользовательской сессии",
+           "Integrations.RichPresence.Activity.MultiplayerPlaying=Играет в многопользовательском режиме",
            //Empty to not mess with ,'s
            ""
        }, false, locale);
@@ -1020,6 +1030,12 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
            "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Game restart is required to apply changes, are you sure?",
            "Interface.Menu.Messages.Confirmations.OpenWeb=Open the website?",
+           "Integrations.RichPresence.Activity.Menu=Menu",
+           "Integrations.RichPresence.Activity.Campaign=Campaign",
+           "Integrations.RichPresence.Activity.Battle=Battle",
+           "Integrations.RichPresence.Activity.MultiplayerList=Searching for multiplayer servers",
+           "Integrations.RichPresence.Activity.MultiplayerWaiting=Waiting for multiplayer session to start",
+           "Integrations.RichPresence.Activity.MultiplayerPlaying=Playing in multiplayer mode",
            //Empty to not mess with ,'s
            ""
        }, false, locale);

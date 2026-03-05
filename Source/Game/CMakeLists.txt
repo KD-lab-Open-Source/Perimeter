@@ -28,6 +28,7 @@ target_include_directories(perimeter PRIVATE
         "${PROJECT_SOURCE_DIR}/Source/Terra"
         "${PROJECT_SOURCE_DIR}/Source/tx3d"
         "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+        "${PROJECT_SOURCE_DIR}/Source/Integrations"
         "${PROJECT_SOURCE_DIR}/Source/Network"
         "${PROJECT_SOURCE_DIR}/Source/Units"
         "${PROJECT_SOURCE_DIR}/Source/Physics"

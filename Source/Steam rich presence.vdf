@@ -1,0 +1,31 @@
+"lang"
+{
+	"english"
+	{
+		"tokens"
+		{
+			"#Status"	"{#Activity_%activity%}"
+			"#Status_Extra"	"{#Activity_%activity%} - %extra%"
+			"#Activity_Menu"	"Menu"
+			"#Activity_Campaign"	"Campaign"
+			"#Activity_Battle"	"Battle"
+			"#Activity_MultiplayerList"	"Searching for multiplayer servers"
+			"#Activity_MultiplayerWaiting"	"Waiting for multiplayer session to start"
+			"#Activity_MultiplayerPlaying"	"Playing in multiplayer mode"
+		}
+	}
+	"russian"
+	{
+		"tokens"
+		{
+			"#Status"	"{#Activity_%activity%}"
+			"#Status_Extra"	"{#Activity_%activity%} - %extra%"
+			"#Activity_Menu"	"Меню"
+			"#Activity_Campaign"	"Кампания"
+			"#Activity_Battle"	"Сражения"
+			"#Activity_MultiplayerList"	"Поиск серверов для мультиплеера"
+			"#Activity_MultiplayerWaiting"	"Ожидание начала многопользовательской сессии"
+			"#Activity_MultiplayerPlaying"	"Играет в многопользовательском режиме"
+		}
+	}
+}

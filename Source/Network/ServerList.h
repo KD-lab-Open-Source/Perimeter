@@ -58,6 +58,9 @@ private:
     void closeRelayConnections(bool only_destroy);
 
 public:
+    ///Active game info if any
+    GameInfo selectedGameInfo;
+
     ServerList();
     ~ServerList();
     void startFind();

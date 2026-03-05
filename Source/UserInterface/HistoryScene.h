@@ -64,6 +64,12 @@ class HistoryScene : public Commander {
 		void waitFor(Controller::WaitEventType event);
 
 		const Mission& getMission(int number) const {
+		    if (interpreter->missions.size() <= number) {
+		        number = interpreter->missions.size() - 1;
+		    }
+		    if (number < 0) {
+		        number = 0;
+		    }
 			return interpreter->missions[number];
 		}
 
@@ -72,7 +78,7 @@ class HistoryScene : public Commander {
 		}
 
 		const Mission& getMissionToExecute() const {
-			return interpreter->missions[missionNumberToExecute];
+			return getMission(missionNumberToExecute);
 		}
 		int getMissionNumberToExecute() const {
 			return missionNumberToExecute;

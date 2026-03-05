@@ -212,6 +212,7 @@ extern BGScene bgScene;
 extern bool menuChangingDone;
 double lastClockSound = 0;
 int currYear = -1;
+std::string currMission;
 
 void onMMBriefingText(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if ( code == EVENT_DRAWWND ) {
@@ -260,7 +261,7 @@ void onMMNomadNameBriefing(CShellWindow* pWnd, InterfaceEventCode code, int para
         if (frame) {
             txtWnd->setText(HistoryScene::getFrameNameFromBase(frame->getName()));
             txtWnd->colorIndex = frame->getColorIndex();
-        } else if (txtWnd->getText() != "") {
+        } else if (!txtWnd->getText().empty()) {
             txtWnd->setText("");
         }
         int index = frame ? frame->getColorIndex() : DEFAULT_NOMAD_COLOR_INDEX;

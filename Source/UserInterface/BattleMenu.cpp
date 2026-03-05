@@ -12,6 +12,7 @@
 #include "Controls.h"
 #include "../Sound/PerimeterSound.h"
 #include "GraphicsOptions.h"
+#include "integrations.h"
 
 #include "Silicon.h"
 #include "HistoryScene.h"
@@ -296,6 +297,7 @@ void onBattleMenuOpening() {
         setupBattleDescWnd(0, battleMaps, SQSH_MM_BATTLE_MAP, SQSH_MM_BATTLE_MAP_DESCR_TXT);
     }
 
+    integrations::set_rich_presence(RichPresenceActivityBattle);
     flagNeedRefresh = true;
 }
 

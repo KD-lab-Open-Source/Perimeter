@@ -13,8 +13,11 @@
 #include "../HT/mt_config.h"
 
 #include <algorithm>
+
+#include "integrations.h"
 #include "qd_textdb.h"
 #include "Localization.h"
+#include "codepages/codepages.h"
 
 extern const char* currentShortVersion;
 
@@ -379,6 +382,7 @@ void PNetCenter::HandlerInputNetCommand()
 			{
 				netCommand4C_CurrentMissionDescriptionInfo ncCMD(in_ClientBuf);
                 lobbyMissionDescription=ncCMD.missionDescription_;
+		        updateIntegrationRichPresence();
 			}
 			break;
 		case NETCOM_4C_ID_DISPLAY_DISTRINC_AREAS:
@@ -700,7 +704,48 @@ size_t PNetCenter::getRelaysCount() const {
 }
 
 const std::vector<GameInfo>& PNetCenter::getGameList() const {
-	return serverList->getList();
+    return serverList->getList();
+}
+
+const GameInfo* PNetCenter::getGameInfo() const {
+    return &serverList->selectedGameInfo;
+}
+
+void PNetCenter::setGameInfo(const GameInfo* game) const {
+    if (game) {
+        serverList->selectedGameInfo = *game;
+    } else {
+        serverList->selectedGameInfo = GameInfo();
+    }
+}
+
+void PNetCenter::updateIntegrationRichPresence() const {
+    integration_rich_presence_activity activity =
+        isGameRun() ? RichPresenceActivityMultiplayerPlaying :
+        isConnected() ? RichPresenceActivityMultiplayerWaiting :
+        RichPresenceActivityMultiplayerList;
+    
+    if (activity == RichPresenceActivityMultiplayerList) {
+        integrations::set_rich_presence(RichPresenceActivityMultiplayerList);
+    } else {
+        std::string  integration_text_extra = lobbyMissionDescription.worldName();
+        if (integration_text_extra.empty()) integration_text_extra = lobbyMissionDescription.missionName();
+        integration_text_extra = convertToUnicode(integration_text_extra, getLocale());
+        
+        std::string integration_group_id;
+        const GameInfo* currentGameInfo = getGameInfo();
+        if (currentGameInfo && currentGameInfo->gameHost.empty()) {
+            integration_group_id = std::to_string(currentGameInfo->computeKey());
+        }
+        
+        integrations::set_rich_presence(
+            activity,
+            integration_text_extra.c_str(),
+            integration_group_id.c_str(),
+            lobbyMissionDescription.playersAmount()
+        );
+    }
+
 }
 
 /////////////////////////////////////////////////////////////////
