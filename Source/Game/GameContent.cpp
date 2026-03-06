@@ -821,14 +821,15 @@ void loadMod(const ModMetadata& mod) {
 
 bool containsDisallowedFilesMod(ModMetadata& mod, bool publishing) {
     const char* mod_name = mod.mod_name.c_str();
-    std::string mod_path = convert_path_posix(string_to_lower(mod.path.c_str()));
+    std::string mod_path = convert_path_native(string_to_lower(mod.path.c_str()));
     terminate_with_char(mod_path, PATH_SEP);
     return content_entries_any_of(mod_path, [&mod_name, &mod_path, &publishing](const filesystem_entry* entry) {
         if (entry->is_directory) {
             return false;
         }
-        std::string test_path = convert_path_posix(string_to_lower(entry->key.c_str()));
+        std::string test_path = string_to_lower(entry->key.c_str());
         strip_leading_path(test_path, mod_path);
+        test_path = convert_path_posix(test_path);
         if (!isPathAllowed(test_path.c_str(), publishing)) {
             printf("Mod '%s' contains '%s' that is not allowed, if this seems like a mistake please report the issue.\n", mod_name, test_path.c_str());
             return true;
