@@ -42,7 +42,7 @@ struct XErrorHandler
      XErrorHandler();
     ~XErrorHandler();
 
-    void RedirectStdio(bool disable_redirect) const;
+    void SetupStdio(bool disable_redirect) const;
 	void	 SetPrefix(const char* s);
 	void	 SetRestore(void (*rf)());
     void	 SetCrash(void (*cf)());

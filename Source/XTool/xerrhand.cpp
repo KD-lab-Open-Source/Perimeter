@@ -27,7 +27,11 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 
 #endif
 
-#ifndef _WIN32
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#include <fcntl.h>
+#else
 #define APIENTRY
 #endif
 
@@ -260,35 +264,78 @@ XErrorHandler::XErrorHandler() {
 XErrorHandler::~XErrorHandler() {
 }
 
-void XErrorHandler::RedirectStdio(bool disable_redirect) const {
+void XErrorHandler::SetupStdio(bool disable_redirect) const {
 #ifdef GPX
     return;
 #endif
-
-    if (log_path.empty() || disable_redirect) {
-        return;
-    }
-    //Check if we should redirect stdio
-    printf("Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
-    fflush(stdout);
-
-    //Reopen streams, Win32 needs wide char version to handle cyrillic
-    
-    bool out_fail, err_fail;
 #ifdef _WIN32
-    UTF8_TO_WCHAR(log_path, log_path.c_str())
-    out_fail = _wfreopen(wchar_log_path, L"a", stdout) == nullptr;
-    err_fail = _wfreopen(wchar_log_path, L"a", stderr) == nullptr;
-#else
-    out_fail = freopen(log_path.c_str(), "a", stdout) == nullptr;
-    err_fail = freopen(log_path.c_str(), "a", stderr) == nullptr;
+    if (disable_redirect) {
+        //By default windows apps don't have console attached, fix it
+        //Source: https://stackoverflow.com/questions/24171017/win32-console-application-that-can-open-windows
+        int con_handle;
+        intptr_t std_handle;
+        FILE *fp;
+
+        if (!AttachConsole(ATTACH_PARENT_PROCESS)) {
+            if (!AllocConsole()) {
+                disable_redirect = false;
+            }
+        }
+
+        if (disable_redirect) {
+            // STDOUT to the console
+            std_handle = reinterpret_cast<intptr_t>(GetStdHandle(STD_OUTPUT_HANDLE));
+            con_handle = _open_osfhandle(std_handle, _O_TEXT);
+            fp = _fdopen(con_handle, "w");
+            *stdout = *fp;
+            setvbuf(stdout, NULL, _IONBF, 0);
+
+            // STDIN to the console
+            std_handle = reinterpret_cast<intptr_t>(GetStdHandle(STD_INPUT_HANDLE));
+            con_handle = _open_osfhandle(std_handle, _O_TEXT);
+            fp = _fdopen(con_handle, "r");
+            *stdin = *fp;
+            setvbuf(stdin, NULL, _IONBF, 0);
+
+            // STDERR to the console
+            std_handle = reinterpret_cast<intptr_t>(GetStdHandle(STD_ERROR_HANDLE));
+            con_handle = _open_osfhandle(std_handle, _O_TEXT);
+            fp = _fdopen(con_handle, "w");
+            *stderr = *fp;
+            setvbuf(stderr, NULL, _IONBF, 0);
+        }
+    }
 #endif
-    if (out_fail && err_fail) fprintf(stderr, "Error redirecting stdout and stderr\n");
-    else if (out_fail) fprintf(stderr, "Error redirecting stdout\n");
-    else if (err_fail) fprintf(stderr, "Error redirecting stderr\n");
+
+    //Check if we should redirect stdio
+    disable_redirect |= log_path.empty();
+    if (disable_redirect) {
+        printf("Using console stdio output\n");
+    } else {
+        fprintf(stdout, "Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
+        fflush(stdout);
+
+        //Reopen streams, Win32 needs wide char version to handle cyrillic
+        bool out_fail, err_fail;
+#ifdef _WIN32
+        UTF8_TO_WCHAR(log_path, log_path.c_str())
+        out_fail = _wfreopen(wchar_log_path, L"a", stdout) == nullptr;
+        err_fail = _wfreopen(wchar_log_path, L"a", stderr) == nullptr;
+#else
+        out_fail = freopen(log_path.c_str(), "a", stdout) == nullptr;
+        err_fail = freopen(log_path.c_str(), "a", stderr) == nullptr;
+#endif
+        if (out_fail && err_fail) fprintf(stderr, "Error redirecting stdout and stderr\n");
+        else if (out_fail) fprintf(stderr, "Error redirecting stdout\n");
+        else if (err_fail) fprintf(stderr, "Error redirecting stderr\n");
+    }
+
     //Disable buffering because we don't flush, specially if crash happens
     setvbuf(stdout, nullptr, _IONBF, 0);
     setvbuf(stderr, nullptr, _IONBF, 0);
+
+    //Sync with C++
+    std::ios_base::sync_with_stdio();
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)

@@ -28,6 +28,9 @@
 
 bool integration_steam_game_will_relaunch() {
     //This code can run before Steam's init
+    if (check_command_line("no_steam")) {
+        return false;
+    }
     IniManager ini("Perimeter.ini", false);
     if (ini.getInt("Integrations", "SteamRelaunchIfDirectly")) {
         if (SteamAPI_RestartAppIfNecessary(INTEGRATION_STEAM_APPID)) {
