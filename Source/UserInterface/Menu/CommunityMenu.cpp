@@ -49,7 +49,7 @@ void onMMOpenLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
             case SQSH_MM_COMMUNITY_4_BTN:
                 openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter";
                 break;
-            case SQSH_MM_ADDONS_GUIDE_BTN:
+            case SQSH_MM_MOD_GUIDE_BTN:
                 //TODO change when/if is translated
                 openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter/blob/cmake/MODDING.eng.md";
                 break;

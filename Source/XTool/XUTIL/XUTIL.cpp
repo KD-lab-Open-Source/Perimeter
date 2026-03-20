@@ -455,6 +455,29 @@ std::string BreakLongLines(const char* ptext, size_t max_width, char endline) {
     return text;
 }
 
+std::string string_remove_color_codes(const char* text) {
+    std::string output;
+    int skip_chars = 0;
+    const char* ptr = text;
+    while (ptr && *ptr != '\0') {
+        char c = *ptr;
+        ptr++;
+        if (c == '&') {
+            if (6 == skip_chars) {
+                skip_chars = 0;
+                output += c;
+            } else {
+                skip_chars = 6;
+            }
+        } else if (0 < skip_chars) {
+            skip_chars--;
+        } else {
+            output += c;
+        }
+    }
+    return output;
+}
+
 arch_flags computeArchFlags() {
     arch_flags val = 0;
 

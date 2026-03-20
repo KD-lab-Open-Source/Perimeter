@@ -26,6 +26,8 @@
 #include "codepages/codepages.h"
 #include "files/files.h"
 
+extern bool content_debug_flag;
+
 bool integration_steam_game_will_relaunch() {
     //This code can run before Steam's init
     if (check_command_line("no_steam")) {
@@ -39,6 +41,143 @@ bool integration_steam_game_will_relaunch() {
         }
     }
     return false;
+}
+
+const char* string_of_result(EResult result) {
+    switch (result) {
+        case k_EResultNone: return "None";
+        case k_EResultOK: return "OK";
+        case k_EResultFail: return "Fail"; 
+        case k_EResultNoConnection: return "NoConnection";
+        case k_EResultInvalidPassword: return "InvalidPassword";
+        case k_EResultLoggedInElsewhere: return "LoggedInElsewhere";
+        case k_EResultInvalidProtocolVer: return "InvalidProtocolVer";
+        case k_EResultInvalidParam: return "InvalidParam";
+        case k_EResultFileNotFound: return "FileNotFound";
+        case k_EResultBusy: return "Busy";
+        case k_EResultInvalidState: return "InvalidState";
+        case k_EResultInvalidName: return "InvalidName";
+        case k_EResultInvalidEmail: return "InvalidEmail";
+        case k_EResultDuplicateName: return "DuplicateName";
+        case k_EResultAccessDenied: return "AccessDenied";
+        case k_EResultTimeout: return "Timeout";
+        case k_EResultBanned: return "Banned";
+        case k_EResultAccountNotFound: return "AccountNotFound";
+        case k_EResultInvalidSteamID: return "InvalidSteamID";
+        case k_EResultServiceUnavailable: return "ServiceUnavailable";
+        case k_EResultNotLoggedOn: return "NotLoggedOn";
+        case k_EResultPending: return "Pending";
+        case k_EResultEncryptionFailure: return "EncryptionFailure";
+        case k_EResultInsufficientPrivilege: return "InsufficientPrivilege";
+        case k_EResultLimitExceeded: return "LimitExceeded";
+        case k_EResultRevoked: return "Revoked";
+        case k_EResultExpired: return "Expired";
+        case k_EResultAlreadyRedeemed: return "AlreadyRedeemed";
+        case k_EResultDuplicateRequest: return "DuplicateRequest";
+        case k_EResultAlreadyOwned: return "AlreadyOwned";
+        case k_EResultIPNotFound: return "IPNotFound";
+        case k_EResultPersistFailed: return "PersistFailed";
+        case k_EResultLockingFailed: return "LockingFailed";
+        case k_EResultLogonSessionReplaced: return "LogonSessionReplaced";
+        case k_EResultConnectFailed: return "ConnectFailed";
+        case k_EResultHandshakeFailed: return "HandshakeFailed";
+        case k_EResultIOFailure: return "IOFailure";
+        case k_EResultRemoteDisconnect: return "RemoteDisconnect";
+        case k_EResultShoppingCartNotFound: return "ShoppingCartNotFound";
+        case k_EResultBlocked: return "Blocked";
+        case k_EResultIgnored: return "Ignored";
+        case k_EResultNoMatch: return "NoMatch";
+        case k_EResultAccountDisabled: return "AccountDisabled";
+        case k_EResultServiceReadOnly: return "ServiceReadOnly";
+        case k_EResultAccountNotFeatured: return "AccountNotFeatured";
+        case k_EResultAdministratorOK: return "AdministratorOK";
+        case k_EResultContentVersion: return "ContentVersion";
+        case k_EResultTryAnotherCM: return "TryAnotherCM";
+        case k_EResultPasswordRequiredToKickSession: return "PasswordRequiredToKickSession";
+        case k_EResultAlreadyLoggedInElsewhere: return "AlreadyLoggedInElsewhere";
+        case k_EResultSuspended: return "Suspended";
+        case k_EResultCancelled: return "Cancelled";
+        case k_EResultDataCorruption: return "DataCorruption";
+        case k_EResultDiskFull: return "DiskFull";
+        case k_EResultRemoteCallFailed: return "RemoteCallFailed";
+        case k_EResultPasswordUnset: return "PasswordUnset";
+        case k_EResultExternalAccountUnlinked: return "ExternalAccountUnlinked";
+        case k_EResultPSNTicketInvalid: return "PSNTicketInvalid";
+        case k_EResultExternalAccountAlreadyLinked: return "ExternalAccountAlreadyLinked";
+        case k_EResultRemoteFileConflict: return "RemoteFileConflict";
+        case k_EResultIllegalPassword: return "IllegalPassword";
+        case k_EResultSameAsPreviousValue: return "SameAsPreviousValue";
+        case k_EResultAccountLogonDenied: return "AccountLogonDenied";
+        case k_EResultCannotUseOldPassword: return "CannotUseOldPassword";
+        case k_EResultInvalidLoginAuthCode: return "InvalidLoginAuthCode";
+        case k_EResultAccountLogonDeniedNoMail: return "AccountLogonDeniedNoMail";
+        case k_EResultHardwareNotCapableOfIPT: return "HardwareNotCapableOfIPT"; 
+        case k_EResultIPTInitError: return "IPTInitError"; 
+        case k_EResultParentalControlRestricted: return "ParentalControlRestricted";
+        case k_EResultFacebookQueryError: return "FacebookQueryError";
+        case k_EResultExpiredLoginAuthCode: return "ExpiredLoginAuthCode";
+        case k_EResultIPLoginRestrictionFailed: return "IPLoginRestrictionFailed";
+        case k_EResultAccountLockedDown: return "AccountLockedDown";
+        case k_EResultAccountLogonDeniedVerifiedEmailRequired: return "AccountLogonDeniedVerifiedEmailRequired";
+        case k_EResultNoMatchingURL: return "NoMatchingURL";
+        case k_EResultBadResponse: return "BadResponse";
+        case k_EResultRequirePasswordReEntry: return "RequirePasswordReEntry";
+        case k_EResultValueOutOfRange: return "ValueOutOfRange";
+        case k_EResultUnexpectedError: return "UnexpectedError";
+        case k_EResultDisabled: return "Disabled";
+        case k_EResultInvalidCEGSubmission: return "InvalidCEGSubmission";
+        case k_EResultRestrictedDevice: return "RestrictedDevice";
+        case k_EResultRegionLocked: return "RegionLocked";
+        case k_EResultRateLimitExceeded: return "RateLimitExceeded";
+        case k_EResultAccountLoginDeniedNeedTwoFactor: return "AccountLoginDeniedNeedTwoFactor";
+        case k_EResultItemDeleted: return "ItemDeleted";
+        case k_EResultAccountLoginDeniedThrottle: return "AccountLoginDeniedThrottle";
+        case k_EResultTwoFactorCodeMismatch: return "TwoFactorCodeMismatch";
+        case k_EResultTwoFactorActivationCodeMismatch: return "TwoFactorActivationCodeMismatch";
+        case k_EResultAccountAssociatedToMultiplePartners: return "AccountAssociatedToMultiplePartners";
+        case k_EResultNotModified: return "NotModified";
+        case k_EResultNoMobileDevice: return "NoMobileDevice";
+        case k_EResultTimeNotSynced: return "TimeNotSynced";
+        case k_EResultSmsCodeFailed: return "SmsCodeFailed";
+        case k_EResultAccountLimitExceeded: return "AccountLimitExceeded";
+        case k_EResultAccountActivityLimitExceeded: return "AccountActivityLimitExceeded";
+        case k_EResultPhoneActivityLimitExceeded: return "PhoneActivityLimitExceeded";
+        case k_EResultRefundToWallet: return "RefundToWallet";
+        case k_EResultEmailSendFailure: return "EmailSendFailure";
+        case k_EResultNotSettled: return "NotSettled";
+        case k_EResultNeedCaptcha: return "NeedCaptcha";
+        case k_EResultGSLTDenied: return "GSLTDenied";
+        case k_EResultGSOwnerDenied: return "GSOwnerDenied";
+        case k_EResultInvalidItemType: return "InvalidItemType";
+        case k_EResultIPBanned: return "IPBanned";
+        case k_EResultGSLTExpired: return "GSLTExpired";
+        case k_EResultInsufficientFunds: return "InsufficientFunds";
+        case k_EResultTooManyPending: return "TooManyPending";
+        case k_EResultNoSiteLicensesFound: return "NoSiteLicensesFound";
+        case k_EResultWGNetworkSendExceeded: return "WGNetworkSendExceeded";
+        case k_EResultAccountNotFriends: return "AccountNotFriends";
+        case k_EResultLimitedUserAccount: return "LimitedUserAccount";
+        case k_EResultCantRemoveItem: return "CantRemoveItem";
+        case k_EResultAccountDeleted: return "AccountDeleted";
+        case k_EResultExistingUserCancelledLicense: return "ExistingUserCancelledLicense";
+        case k_EResultCommunityCooldown: return "CommunityCooldown";
+        case k_EResultNoLauncherSpecified: return "NoLauncherSpecified";
+        case k_EResultMustAgreeToSSA: return "MustAgreeToSSA";
+        case k_EResultLauncherMigrated: return "LauncherMigrated";
+        case k_EResultSteamRealmMismatch: return "SteamRealmMismatch";
+        case k_EResultInvalidSignature: return "InvalidSignature";
+        case k_EResultParseFailure: return "ParseFailure";
+        case k_EResultNoVerifiedPhone: return "NoVerifiedPhone";
+        case k_EResultInsufficientBattery: return "InsufficientBattery";
+        case k_EResultChargerRequired: return "ChargerRequired";
+        case k_EResultCachedCredentialInvalid: return "CachedCredentialInvalid";
+        case K_EResultPhoneNumberIsVOIP: return "PhoneNumberIsVOIP";
+        case k_EResultNotSupported: return "NotSupported";
+        case k_EResultFamilySizeLimitExceeded: return "FamilySizeLimitExceeded";
+        case k_EResultOfflineAppCacheInvalid: return "OfflineAppCacheInvalid";
+        case k_EResultTryLater: return "TryLater";
+    }
+    return "???";
 }
 
 integration_store* integration_steam_init() {
@@ -111,113 +250,124 @@ std::string integration_steam::get_selected_locale() {
     return selected_locale;
 }
 
-void integration_steam::upload_mod(ModMetadata* mod) {
-    need_accept_workshop_legal_agreement = false;
+bool integration_steam::supports_mod_uploading() {
+    return true;
+}
+
+bool integration_steam::mod_already_uploaded(ModMetadata* mod) {
+    std::string path_ini = mod->path + PATH_SEP + "mod.ini";
+    IniManager mod_ini = IniManager(path_ini.c_str(), false);
+    const char* store_steam_file_id = mod_ini.get("Integrations", "store_steam_file_id");
+    return store_steam_file_id && 0 < strlen(store_steam_file_id);
+}
+
+integration_store_upload_mod_status integration_steam::upload_mod(ModMetadata* mod) {
+    integration_store_upload_mod_status status;
     //Get mod data
     std::string path_ini = mod->path + PATH_SEP + "mod.ini";
     IniManager mod_ini = IniManager(path_ini.c_str(), false);
-    if (mod->mod_name.length() >= k_cchPublishedDocumentTitleMax) {
-        fprintf(stderr, "Description is too long, max is '%d'!", k_cchPublishedDocumentDescriptionMax);
-        return;
-    }
-    std::string description;
-    //Remove all color codes
-    int skip_chars = 0;
-    for (char c : mod->mod_description_english) {
-        if (c == '&') {
-            if (6 == skip_chars) {
-                skip_chars = 0;
-                description += c;
-            } else {
-                skip_chars = 6;
-            }
-        } else if (0 < skip_chars) {
-            skip_chars--;
-        } else {
-            description += c;
-        }
+    
+    //Trim long text and remove all color codes
+    std::string title = string_remove_color_codes(mod->mod_name.c_str());
+    std::string description = string_remove_color_codes(mod->mod_description_english.c_str());
+    if (!title.empty()) {
+        title = convertToUnicode(title, "english", '?', true);
     }
     if (!description.empty()) {
         description = convertToUnicode(description, "english", '?', true);
     }
+    if (title.empty()) {
+        fprintf(stderr, "Mod title is empty after conversion!");
+        status.error = "ModTitleInvalid";
+        return status;
+    }
     if (description.empty()) {
-        fprintf(stderr, "Mod description is required!");
-        return;
+        fprintf(stderr, "Mod description is empty after conversion!");
+        status.error = "ModDescriptionInvalid";
+        return status;
+    }
+    if (title.length() >= k_cchPublishedDocumentTitleMax) {
+        title = title.substr(0, k_cchPublishedDocumentTitleMax);
     }
     if (description.length() >= k_cchPublishedDocumentDescriptionMax) {
-        fprintf(stderr, "Description is too long, max is '%d'!", k_cchPublishedDocumentDescriptionMax);
-        return;
+        description = description.substr(0, k_cchPublishedDocumentDescriptionMax);
     }
     
     //Retrieve file id if set already
     bool new_item = false;
     const char* store_steam_file_id = mod_ini.get("Integrations", "store_steam_file_id");
+    published_file_id = k_PublishedFileIdInvalid;
     if (store_steam_file_id && 0 < strlen(store_steam_file_id)) {
-        uint64_t val = strtol(store_steam_file_id, nullptr, 0);
+        uint64_t val = strtoull(store_steam_file_id, nullptr, 0);
         if (val == k_PublishedFileIdInvalid) {
-            fprintf(stderr, "File ID is k_PublishedFileIdInvalid\n");
-            return;
+            fprintf(stderr, "File ID in file is k_PublishedFileIdInvalid\n");
+        } else {
+            published_file_id = val;
         }
-        published_file_id = val;
-    } else {
+    } 
+
+    if (published_file_id == k_PublishedFileIdInvalid) {
         //Create new item and store the published id
         printf("No item ID present, creating new item\n");
         create_item();
         if (published_file_id == k_PublishedFileIdInvalid) {
-            return;
+            fprintf(stderr, "File ID is k_PublishedFileIdInvalid\n");
+            status.error = "ErrorGettingFileID";
+            return status;
         }
         mod_ini.put("Integrations", "store_steam_file_id", std::to_string(published_file_id).c_str());
         mod_ini.save();
         new_item = true;
     }
 
-    printf("Published file id: %" PRIu64 "\n", (uint64_t) published_file_id);
+    printf("Published file id to upload: %" PRIu64 "\n", (uint64_t) published_file_id);
     
     //Set data into item
     ISteamUGC* ugc = SteamUGC();
     UGCUpdateHandle_t update_handle = ugc->StartItemUpdate(INTEGRATION_STEAM_APPID, published_file_id);
-    //Sets a new title for an item.
-    std::string title = mod->mod_name;
-    if (!title.empty()) {
-        title = convertToUnicode(title, "english", '?', true);
-    }
-    if (title.empty()) {
-        fprintf(stderr, "Mod title is required!");
-        return;
-    }
     bool ok;
     //Sets the language of the title and description that will be set in this item update.
     ok = ugc->SetItemUpdateLanguage(update_handle, "english");
     if (!ok) {
         fprintf(stderr, "Error occurred setting item language\n");
-        return;
+        status.error = "ErrorSettingItemLanguage";
+        return status;
     }
     ok = ugc->SetItemTitle(update_handle, title.c_str());
     if (!ok) {
         fprintf(stderr, "Error occurred setting item title\n");
-        return;
+        status.error = "ErrorSettingItemTitle";
+        return status;
     }
     //Sets a new description for an item.
     ok = ugc->SetItemDescription(update_handle, description.c_str());
     if (!ok) {
         fprintf(stderr, "Error occurred setting item description\n");
-        return;
+        status.error = "ErrorSettingItemDescription";
+        return status;
     }
     //Sets the visibility of an item if new, otherwise leave as is.
     if (new_item) {
         ok = ugc->SetItemVisibility(update_handle, k_ERemoteStoragePublishedFileVisibilityPrivate);
         if (!ok) {
             fprintf(stderr, "Error occurred setting item visibility\n");
-            return;
+            status.error = "ErrorSettingItemVisibility";
+            return status;
         }
     }
     //Sets the folder that will be stored as the content for an item.
-    std::string item_content_path = get_content_root_path_str() + mod->path;
+    std::string item_content_path = get_content_root_path_str();
+    if (item_content_path.empty()) {
+        item_content_path = std::filesystem::current_path().u8string();
+    }
+    terminate_with_char(item_content_path, PATH_SEP);
+    item_content_path += mod->path;
     printf("Uploading mod content at: %s\n", item_content_path.c_str());
     ok = ugc->SetItemContent(update_handle, item_content_path.c_str());
     if (!ok) {
         fprintf(stderr, "Error occurred setting item content\n");
-        return;
+        status.error = "ErrorSettingItemContent";
+        return status;
     }
     //Sets the primary preview image for the item.
     filesystem_entry* mod_preview = get_content_entry(mod->path + "mod.png");
@@ -227,7 +377,8 @@ void integration_steam::upload_mod(ModMetadata* mod) {
         ok = ugc->SetItemPreview(update_handle, item_preview_path.c_str());
         if (!ok) {
             fprintf(stderr, "Error occurred setting item preview\n");
-            return;
+            status.error = "ErrorSettingItemPreview";
+            return status;
         }
     }
     //Start the upload to workshop
@@ -235,11 +386,14 @@ void integration_steam::upload_mod(ModMetadata* mod) {
     SubmitItemUpdate_callback_called = false;
     SubmitItemUpdate_callback_result = k_EResultNone;
     m_SubmitItemUpdateResult.Set(SubmitItemUpdateAPICall, this, &integration_steam::OnSteamSubmitItemUpdate);
-    while (true) {
-        SteamAPI_RunCallbacks();
-        if (SubmitItemUpdate_callback_called) {
-            break;
-        }
+    status.in_progress = true;
+    return status;
+}
+
+integration_store_upload_mod_status integration_steam::upload_mod_get_progress() {
+    integration_store_upload_mod_status status;
+    if (!SubmitItemUpdate_callback_called) {
+        /*
         uint64 bytesProcessed = 0;
         uint64 bytesTotal = 0;
         EItemUpdateStatus status = ugc->GetItemUpdateProgress(update_handle, &bytesProcessed, &bytesTotal);
@@ -247,49 +401,37 @@ void integration_steam::upload_mod(ModMetadata* mod) {
             "Uploading status '%d' - %" PRIu64 "/%" PRIu64 " bytes\n",
             status, (uint64_t) bytesProcessed, (uint64_t) bytesTotal
         );
-        Sleep(1000);
+        */
+        status.in_progress = true;
+        return status;
     }
+    
+    status.in_progress = false;
     
     //Print any info relevant to the process result
     if (SubmitItemUpdate_callback_result != k_EResultOK) {
-        printf("SubmitItemUpdateResult returned result '%d'\n", SubmitItemUpdate_callback_result);
-        return;
+        printf("Steam SubmitItemUpdateResult returned result: %d - %s\n", SubmitItemUpdate_callback_result, string_of_result(SubmitItemUpdate_callback_result));
+        status.error = string_of_result(SubmitItemUpdate_callback_result);
+        return status;
     }
-    if (need_accept_workshop_legal_agreement) {
-        printf(
-            "\n\nBy submitting this item, you agree to the workshop terms of service:\n"
-            "https://steamcommunity.com/sharedfiles/workshoplegalagreement\n"
-            "\n"
-            "Finished uploading mod!\n"
-            "Opening item in your Steam client to configure and accept the terms of service...\n"
-        );
-    } else {
-        printf(
-            "\n\nFinished uploading mod!\n"
-            "Opening item in your Steam client to configure...\n"
-        );
-    }
-    if (new_item) {
-        printf(
-            "NOTE: Item was created with private visibility\n"
-            "by default, change it to be visible for others\n"
-        );
-    }
+    
+    printf("Finished uploading mod! Opening item page to setup further\n");
     std::string steam_item_url = "steam://url/CommunityFilePage/" + std::to_string((uint64_t) published_file_id);
-    SDL_OpenURL(steam_item_url.c_str());
+    SteamFriends()->ActivateGameOverlayToWebPage(steam_item_url.c_str());
+    return status;
 }
 
 void integration_steam::OnSteamSubmitItemUpdate(SubmitItemUpdateResult_t* pCallback, bool bIOFailure) {
     SubmitItemUpdate_callback_called = true;
+    SubmitItemUpdate_callback_result = pCallback->m_eResult;
     if (bIOFailure) {
-        printf("SubmitItemUpdateResult returned IO failure!");
+        fprintf(stderr, "Steam SubmitItemUpdateResult returned IO failure!");
         return;
     }
-    SubmitItemUpdate_callback_result = pCallback->m_eResult;
-    need_accept_workshop_legal_agreement |= pCallback->m_bUserNeedsToAcceptWorkshopLegalAgreement;
     if (pCallback->m_nPublishedFileId != published_file_id) {
-        printf(
-            "SubmitItemUpdateResult_t->m_nPublishedFileId '%" PRIu64 "' doesn't match current file id '%" PRIu64 "'",
+        fprintf(
+            stderr,
+            "Steam SubmitItemUpdateResult_t->m_nPublishedFileId '%" PRIu64 "' doesn't match current file id '%" PRIu64 "'",
             (uint64_t) pCallback->m_nPublishedFileId, (uint64_t) published_file_id
         );
     }
@@ -320,16 +462,11 @@ void integration_steam::OnSteamCreateItem(CreateItemResult_t *pCallback, bool bI
     CreateItem_callback_called = true;
     published_file_id = k_PublishedFileIdInvalid;
     if (bIOFailure) {
-        printf("CreateItemResult returned IO failure!");
+        printf("Steam CreateItemResult returned IO failure!");
         return;
     }
     if (pCallback->m_eResult != k_EResultOK) {
-        printf("CreateItemResult returned result '%d'", pCallback->m_eResult);
-        return;
-    }
-    need_accept_workshop_legal_agreement |= pCallback->m_bUserNeedsToAcceptWorkshopLegalAgreement;
-    if (pCallback->m_bUserNeedsToAcceptWorkshopLegalAgreement) {
-        printf("CreateItemResult_t->m_bUserNeedsToAcceptWorkshopLegalAgreement unsupported currently!");
+        printf("Steam CreateItemResult returned result: %d - %s", pCallback->m_eResult, string_of_result(pCallback->m_eResult));
         return;
     }
     published_file_id = pCallback->m_nPublishedFileId;
@@ -406,8 +543,15 @@ bool integration_steam::process_workshop_mod(PublishedFileId_t item_id) {
     }
     
     std::string mod_content_path = "mods" PATH_SEP_STR "steam_" + std::to_string(item_id);
-    printf("Adding workshop item as mod at '%s'\n", item_path);
-    scan_resource_paths(mod_content_path, item_path);
+    printf("Adding workshop item as mod at '%s' as '%s'\n", item_path, mod_content_path.c_str());
+    //We set these options so that the remove_dir_content is set true and mod enable/disable works properly
+    filesystem_scan_options scanOptions;
+    scanOptions.verbose = content_debug_flag;
+    scanOptions.replace_files = true;
+    scanOptions.replace_dirs = false;
+    scanOptions.remove_dir_content = true;
+    scanOptions.prepend_destination_to_path = true;
+    scan_resource_paths(mod_content_path, item_path, &scanOptions);
     ModMetadata mod;
     parseModInPath(mod, mod_content_path.c_str(), get_store_id());
     addPendingMod(mod);

@@ -428,7 +428,7 @@ void onMMMultiplayerListBackButton(CShellWindow* pWnd, InterfaceEventCode code, 
             _shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_START_SCR );
         } else {
 //			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SHOW_LAST_SPLASH);
-            gameShell->GameContinue = 0;
+            gameShell->GameContinue = false;
         }
     }
 }

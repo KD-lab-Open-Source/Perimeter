@@ -10,6 +10,11 @@ enum integration_rich_presence_activity {
     RichPresenceActivityMultiplayerPlaying,
 };
 
+struct integration_store_upload_mod_status {
+    bool in_progress = false;
+    const char* error = nullptr;
+};
+
 class integration_store { 
 public:
     ///Flag to know if integration requests a shutdown
@@ -26,8 +31,15 @@ public:
     virtual std::string get_player_name() = 0;
     ///Return locale selected in store if any, empty if no value
     virtual std::string get_selected_locale() = 0;
+    ///Returns true if mod uploading is supported on this store
+    virtual bool supports_mod_uploading() = 0;
     ///Upload a new or update a mod to store
-    virtual void upload_mod(struct ModMetadata* mod) = 0;
+    ///Returns false if error, true if upload started, the progress will be reported by upload_mod_get_progress()
+    virtual integration_store_upload_mod_status upload_mod(struct ModMetadata* mod) = 0;
+    ///Upload mod status and progress
+    virtual integration_store_upload_mod_status upload_mod_get_progress() = 0;
+    ///Returns true if mod is already uploaded and we are simply updating
+    virtual bool mod_already_uploaded(struct ModMetadata* mod) = 0;
     ///Processes any mods enabled by store, returns true if restart is required
     virtual bool process_enabled_mods() = 0;
     ///Sets the rich presence state

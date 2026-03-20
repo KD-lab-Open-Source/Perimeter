@@ -6,7 +6,6 @@ static const uint32_t INTEGRATION_STEAM_APPID = 2530170;
 class integration_steam: public integration_store {
     bool steam_disconnected = false;
     PublishedFileId_t published_file_id = k_PublishedFileIdInvalid; 
-    bool need_accept_workshop_legal_agreement = false;
 
     void OnSteamCreateItem(CreateItemResult_t *pCallback, bool bIOFailure);
     CCallResult<integration_steam, CreateItemResult_t> m_CreateItemResult = {};
@@ -30,7 +29,10 @@ public:
     const char* get_store_id() override;
     std::string get_player_name() override;
     std::string get_selected_locale() override;
-    void upload_mod(struct ModMetadata* mod) override;
+    bool supports_mod_uploading() override;
+    integration_store_upload_mod_status upload_mod(struct ModMetadata* mod) override;
+    integration_store_upload_mod_status upload_mod_get_progress() override;
+    bool mod_already_uploaded(struct ModMetadata* mod) override;
     bool process_enabled_mods() override;
     ///Sets the rich presence state
     void set_rich_presence(

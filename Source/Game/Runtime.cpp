@@ -985,7 +985,6 @@ void show_help() {
     printf(
             "Perimeter %s\n%s\n\n"
             "Modding and debugging:\n"
-            "    upload_mod=\"NAME OF MOD\" - Attempts to upload mod using the selected store\n"
             "    store=NAME - Selects the store integration for the game, for example store=steam\n"
             "    mods=0 - Disables mods folder loading\n"
             "    edit=1 - Enables mission editor mode, use map loading args or file open dialog will appear\n"
@@ -1154,21 +1153,14 @@ int SDL_main(int argc, char *argv[])
     
     //Grab some CLI specifics
     const char* store_selection = check_command_line("store");
-    const char* store_upload_mod = check_command_line("upload_mod");
     
     //Redirect stdio and print version
     bool no_console_redirect = check_command_line("no_console_redirect") != nullptr;
-    ErrH.SetupStdio(no_console_redirect || store_upload_mod);
+    ErrH.SetupStdio(no_console_redirect);
     printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n",
         currentVersion,
         computeArchFlags()
     );
-    
-    //Force user to specify store if uploading mode 
-    if (store_upload_mod && !store_selection) {
-        fprintf(stderr, "No store selected, pass store=steam for example\n");
-        return 1;
-    }
 
     std::ostringstream stream;
     stream << "Main Thread: 0x" << std::hex << std::this_thread::get_id() << std::dec;
@@ -1200,32 +1192,6 @@ int SDL_main(int argc, char *argv[])
             printf("Store integration is '%s' but expected '%s'\n", store_id.c_str(), store_selection);
             exit(1);
         }
-
-        //Check if store mod upload is requested
-        if (store_upload_mod) {
-            loadPendingMods();
-            auto& mods = getGameMods();
-            if (!mods.count(store_upload_mod)) {
-                fprintf(stderr, "No mod loaded with name: %s\n", store_upload_mod);
-                return 0;
-            }
-            auto& mod = mods[store_upload_mod];
-            if (!mod.available) {
-                fprintf(stderr, "Mod was not loaded! please check the logs\n");
-                return 0;
-            }
-            std::string mod_config_path = convert_path_content(mod.path + PATH_SEP + "mod_config.ini");
-            if (!mod_config_path.empty()) {
-                std::filesystem::remove(mod_config_path);
-                scan_resource_paths(convert_path_content(mod.path));
-            }
-            if (containsDisallowedFilesMod(mod, true)) {
-                fprintf(stderr, "Mod contains disallowed files for uploading\n");
-                return 0;
-            }
-            store->upload_mod(&mod);
-            return 0;
-        }
         
         printf("Store integration: %s\n", store_id.c_str());
         std::string store_locale = store->get_selected_locale();
@@ -1249,9 +1215,6 @@ int SDL_main(int argc, char *argv[])
         return 1;
     } else {
         printf("No store integration available\n");
-    }
-    if (store_upload_mod) {
-        return 0;
     }
     
     //Load the mods that are pending
@@ -1284,6 +1247,7 @@ int SDL_main(int argc, char *argv[])
             CRASH_DIR,
             "cache/font",
             "cache/bump",
+            "Mods/Publish",
             REPLAY_PATH,
     };
     if(IniManager("Perimeter.ini", false).getInt("Game","AutoSavePlayReel")!=0){

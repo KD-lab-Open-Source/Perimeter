@@ -937,8 +937,9 @@ int SwitchMenuScreenQuant1( float, float ) {
                 case SQSH_MM_CONTENT_CHOOSER_SCR:
                     fillContentChooserList();
                     break;
-                case SQSH_MM_ADDONS_SCR:
-                    loadAddonsList();
+                case SQSH_MM_MOD_LIST_SCR:
+                case SQSH_MM_MOD_PUBLISH_SCR:
+                    loadModList(_id_on);
                     break;
 				case SQSH_MM_PROFILE_SCR:
 					{
@@ -1474,7 +1475,7 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
             //These are just in case
             case SQSH_MM_BATTLE_SCR:
             case SQSH_MM_MULTIPLAYER_LIST_SCR:
-            case SQSH_MM_ADDONS_SCR:
+            case SQSH_MM_MOD_LIST_SCR:
                 initial_menu = "START";
                 break;
             //Required if user clicks on Community from Credits menu
@@ -1687,10 +1688,14 @@ void goToPreviousScreen(CShellWindow* pWnd, int current_screen_id) {
         case SQSH_MM_MULTIPLAYER_LIST_SCR:
         case SQSH_MM_COMMUNITY_SCR:
         case SQSH_MM_OPTIONS_SCR:
-        case SQSH_MM_CREDITS_SCR:
+        case SQSH_MM_MOD_MENU_SCR:
             nShow = SQSH_MM_START_SCR;
             break;
-        case SQSH_MM_ADDONS_SCR:
+        case SQSH_MM_MOD_LIST_SCR:
+        case SQSH_MM_MOD_PUBLISH_SCR:
+            nShow = SQSH_MM_MOD_MENU_SCR;
+            break;
+        case SQSH_MM_CREDITS_SCR:
             nShow = SQSH_MM_COMMUNITY_SCR;
             break;
         case SQSH_MM_GAME_SCR:

@@ -110,6 +110,8 @@ void encode_raw_double(XBuffer* buffer, double value);
 //Breaks lines that exceed max_width by adding endline
 std::string BreakLongLines(const char* ptext, size_t max_width, char endline = '\n');
 
+std::string string_remove_color_codes(const char* text);
+
 #define UTF8_TO_WCHAR(VAR, VAL) \
     std::u16string u16string_##VAR = utf8_to_utf16(VAL); \
     const wchar_t* wchar_##VAR = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>( u16string_##VAR.c_str());

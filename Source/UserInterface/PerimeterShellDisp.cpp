@@ -103,19 +103,29 @@ _handlertbl[] = {
     {SQSH_MM_CONTENT_CHOOSER_SELECT_BTN, onMMContentChooserSelectButton},
     {SQSH_MM_BACK_FROM_CONTENT_CHOOSER_BTN, onMMBackButton},
 
-    //addons menu
-    {SQSH_MM_ADDONS_LIST, onMMAddonsList},
-    {SQSH_MM_ADDONS_APPLY_BTN, onMMAddonsApplyButton},
-    {SQSH_MM_ADDONS_ENABLE_COMBO, onMMAddonsEnableCombo},
-    {SQSH_MM_ADDONS_GUIDE_BTN, onMMOpenLinkButton},
-    {SQSH_MM_BACK_FROM_ADDONS_BTN, onMMAddonsBackButton},
+    //mods menu
+    {SQSH_MM_MOD_MENU_BTN, onMMModMenuButton},
+    {SQSH_MM_MOD_LIST_BTN, onMMModListButton},
+    {SQSH_MM_MOD_PUBLISH_BTN, onMMModPublishButton},
+    {SQSH_MM_MOD_GUIDE_BTN, onMMOpenLinkButton},
+    {SQSH_MM_BACK_FROM_MOD_MENU_BTN, onMMBackButton},
+
+    //mods list
+    {SQSH_MM_MOD_LIST_LIST, onMMModListList},
+    {SQSH_MM_MOD_LIST_APPLY_BTN, onMMModListApplyButton},
+    {SQSH_MM_MOD_LIST_ENABLE_COMBO, onMMModListEnableCombo},
+    {SQSH_MM_BACK_FROM_MOD_LIST_BTN, onMMModListBackButton},
+    
+    //mods publish
+    {SQSH_MM_MOD_PUBLISH_LIST, onMMModListList},
+    {SQSH_MM_MOD_PUBLISH_PUBLISH_BTN, onMMModPublishPublishButton},
+    {SQSH_MM_BACK_FROM_MOD_PUBLISH_BTN, onMMBackButton},
     
     //community menu
     {SQSH_MM_COMMUNITY_1_BTN, onMMOpenLinkButton},
     {SQSH_MM_COMMUNITY_2_BTN, onMMOpenLinkButton},
     {SQSH_MM_COMMUNITY_3_BTN, onMMOpenLinkButton},
     {SQSH_MM_COMMUNITY_4_BTN, onMMOpenLinkButton},
-    {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
     {SQSH_MM_BACK_FROM_COMMUNITY_BTN, onMMBackButton},
 
     //main menu control editor
@@ -184,7 +194,6 @@ _handlertbl[] = {
 	{SQSH_MM_MAP_LIST, onMMMapList},
 
 	//credits
-    {SQSH_MM_CREDITS_COMMUNITY_BTN, onMMCommunityButton},
 	{SQSH_MM_BACK_CREDITS_BTN, onMMBackButton},
     
 

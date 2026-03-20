@@ -1928,15 +1928,18 @@ void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOpenLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModMenuButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//addons
-void loadAddonsList();
-void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMAddonsApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMAddonsEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMAddonsGuideButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMAddonsBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//mods
+void loadModList(int current_id);
+void onMMModPublishButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModListButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModListList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModListApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModListEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModListGuideButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModListBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMModPublishPublishButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //control editor
 void onMMControlEditorButton(CShellWindow* pWnd, InterfaceEventCode code, int param);

@@ -41,7 +41,10 @@ void scanLocales() {
     }
     
     //Scan mods LocData
-    for (filesystem_entry* mod_entry : get_content_entries_directory("Mods")) {
+    for (filesystem_entry* mod_entry : get_content_entries_directory("mods")) {
+        if (mod_entry->key_content == ("mods" PATH_SEP_STR "publish")) {
+            continue;
+        }
         for (filesystem_entry* entry : get_content_entries_directory(mod_entry->path_content + PATH_SEP + "Resource/LocData")) {
             addLocaleEntry(locales, entry);
         }

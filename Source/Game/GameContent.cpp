@@ -255,7 +255,7 @@ std::string isNameAllowed(const std::string& name, const std::set<std::string>& 
 
 bool isPathAllowed(const char* path, bool publishing) {
     if (publishing) {
-        if (strncmp(path, "mod_config.ini", 14)) {
+        if (strncmp(path, "mod_config.ini", 14) == 0) {
             return false;
         }
     }
@@ -1045,6 +1045,9 @@ void detectGameContent() {
     ModMetadata data;
     for (const auto& entry: get_content_entries_directory("mods")) {
         if (entry->is_directory) {
+            if (entry->key_content == ("mods" PATH_SEP_STR "publish")) {
+                continue;
+            }
             parseModInPath(data, entry->path_content.c_str(), MOD_ORIGIN_GAME_MODS);
     
             //If is ET then load now so the rest of mods can act on content properly
