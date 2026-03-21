@@ -312,7 +312,7 @@ void XErrorHandler::SetupStdio(bool disable_redirect) const {
     if (disable_redirect) {
         printf("Using console stdio output\n");
     } else {
-        fprintf(stdout, "Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
+        fprintf(stdout, "Redirecting console stdio output into log file at %s, to prevent this pass arg console=1\n", log_path.c_str());
         fflush(stdout);
 
         //Reopen streams, Win32 needs wide char version to handle cyrillic

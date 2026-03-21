@@ -990,7 +990,7 @@ void show_help() {
             "    edit=1 - Enables mission editor mode, use map loading args or file open dialog will appear\n"
             "    mainmenu=0/1 - Enables/disables main menu, needs to obtain what map to load via args if not enabled\n"
             "    icon=path/of/icon - Provide alternate window/app icon to use\n"
-            "    no_console_redirect=1 - Prints logs in stdio instead of log file\n"
+            "    console=1 - Prints logs in stdio instead of log file\n"
             "    content_debug=1 - Shows debug info about content and mods loading\n"
             "    content_dump_debug=1 - Writes internal content filesystem mapping into a file\n"
             "    stack_frames/stack_reference - Parameters provided by crash dumps to allow reconstructing stacktrace using same binary\n"
@@ -1155,8 +1155,8 @@ int SDL_main(int argc, char *argv[])
     const char* store_selection = check_command_line("store");
     
     //Redirect stdio and print version
-    bool no_console_redirect = check_command_line("no_console_redirect") != nullptr;
-    ErrH.SetupStdio(no_console_redirect);
+    bool console = check_command_line("console") != nullptr || check_command_line("no_console_redirect") != nullptr;
+    ErrH.SetupStdio(console);
     printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n",
         currentVersion,
         computeArchFlags()
