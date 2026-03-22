@@ -1157,9 +1157,16 @@ int SDL_main(int argc, char *argv[])
     //Redirect stdio and print version
     bool console = check_command_line("console") != nullptr || check_command_line("no_console_redirect") != nullptr;
     ErrH.SetupStdio(console);
-    printf("Perimeter %s (Arch: 0x%" PRIX64 ")\n",
-        currentVersion,
-        computeArchFlags()
+    uint64_t arch_flags = computeArchFlags();
+    printf("Perimeter %s - Arch: 0x%" PRIX64 "\n", currentVersion, arch_flags);
+    const char* cpu_bits_str[4] = {"32<", "32", "64", "64>"};
+    printf(
+        "Type: %s - Compiler: 0x%" PRIX8 " - OS: 0x%" PRIX8 " - CPU: %s %s\n",
+        arch_flags & 1 ? "Release" :"Debug",
+        (uint8_t) (arch_flags >> 1) & 0x7F,
+        (uint8_t) (arch_flags >> 8) & 0xFF,
+        cpu_bits_str[(uint8_t) (arch_flags >> 16) & 3],
+        (uint8_t) (arch_flags >> 18) & 1 ? "LE" : "BE"
     );
 
     std::ostringstream stream;

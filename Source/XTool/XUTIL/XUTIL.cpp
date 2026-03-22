@@ -510,22 +510,22 @@ arch_flags computeArchFlags() {
 #elif defined(__APPLE__)
     os = 2;
 #elif defined(_WIN32)
-        os = 3;
+    os = 3;
 #elif defined(EMSCRIPTEN)
-        os = 4;
+    os = 4;
 #else
-        os = 0;
+    os = 0;
 #endif
     xassert(os <= 0xFF);
     val |= os<<8;
 
-    //CPU type - 16-23 (4) bits
+    //CPU type - 16-19 (4) bits
     arch_flags cpu = 0;
     //Arch - 16-17 bits (0 = under 32, 1 = 32, 2 = 64, 3 = above 64)
     cpu |= (sizeof(void*) / 4) & 3;
-    //CPU endianness - 23 bit
+    //CPU endianness - 18 bit
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-    cpu |= 1<<3;
+    cpu |= 1<<2;
 #endif
     xassert(cpu <= 0xF);
     val |= cpu<<16;
