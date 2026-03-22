@@ -491,8 +491,8 @@ void findGameContent() {
         if (rootPathStr.empty()) continue;
         terminate_with_char(rootPathStr, PATH_SEP);
         scannedPaths.insert(rootPathStr);
-        std::filesystem::path rootPath = std::filesystem::u8path(rootPathStr);
-        printf("Checking game content from: %s absolute: %s\n", rootPathStr.c_str(), std::filesystem::absolute(rootPath).u8string().c_str());
+        std::filesystem::path rootPath = std::filesystem::absolute(std::filesystem::u8path(rootPathStr));
+        printf("Checking game content from: '%s' absolute: '%s'\n", rootPathStr.c_str(), rootPath.u8string().c_str());
         if (std::filesystem::exists(rootPath)) {
             clear_content_entries();
             set_content_root_path(rootPath);

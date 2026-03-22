@@ -355,12 +355,12 @@ integration_store_upload_mod_status integration_steam::upload_mod(ModMetadata* m
             return status;
         }
     }
-    //Sets the folder that will be stored as the content for an item.
+    //Sets the folder that will be stored as the content for an item. Has to be absolute path
     std::string item_content_path = get_content_root_path_str();
     if (item_content_path.empty()) {
         item_content_path = std::filesystem::current_path().u8string();
+        terminate_with_char(item_content_path, PATH_SEP);
     }
-    terminate_with_char(item_content_path, PATH_SEP);
     item_content_path += mod->path;
     printf("Uploading mod content at: %s\n", item_content_path.c_str());
     ok = ugc->SetItemContent(update_handle, item_content_path.c_str());
@@ -415,8 +415,8 @@ integration_store_upload_mod_status integration_steam::upload_mod_get_progress()
         return status;
     }
     
-    printf("Finished uploading mod! Opening item page to setup further\n");
     std::string steam_item_url = "steam://url/CommunityFilePage/" + std::to_string((uint64_t) published_file_id);
+    printf("Finished uploading mod! Opening item page to setup further:\n%s\n", steam_item_url.c_str());
     SteamFriends()->ActivateGameOverlayToWebPage(steam_item_url.c_str());
     return status;
 }
