@@ -51,7 +51,7 @@ void onMMOpenLinkButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
                 break;
             case SQSH_MM_MOD_GUIDE_BTN:
                 //TODO change when/if is translated
-                openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter/blob/cmake/MODDING.eng.md";
+                openWebURL = "https://github.com/KD-lab-Open-Source/Perimeter/blob/main/MODDING.eng.md";
                 break;
         }
         if (openWebURL.empty()) {
