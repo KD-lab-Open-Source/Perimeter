@@ -263,6 +263,11 @@ bool integration_steam::mod_already_uploaded(ModMetadata* mod) {
 
 integration_store_upload_mod_status integration_steam::upload_mod(ModMetadata* mod) {
     integration_store_upload_mod_status status;
+    if (steam_disconnected) {
+        status.error = "NoConnection";
+        return status;
+    }
+
     //Get mod data
     std::string path_ini = mod->path + PATH_SEP + "mod.ini";
     IniManager mod_ini = IniManager(path_ini.c_str(), false);
@@ -370,9 +375,10 @@ integration_store_upload_mod_status integration_steam::upload_mod(ModMetadata* m
         return status;
     }
     //Sets the primary preview image for the item.
-    filesystem_entry* mod_preview = get_content_entry(mod->path + "mod.png");
-    if (mod_preview) {
-        std::string item_preview_path = get_content_root_path_str() + PATH_SEP + mod_preview->path_content;
+    std::string item_preview_path = item_content_path;
+    terminate_with_char(item_preview_path, PATH_SEP);
+    item_preview_path += "mod.png";
+    if (std::filesystem::exists(std::filesystem::u8path(item_preview_path))) {
         printf("Uploading mod preview image at: %s\n", item_preview_path.c_str());
         ok = ugc->SetItemPreview(update_handle, item_preview_path.c_str());
         if (!ok) {
@@ -392,6 +398,10 @@ integration_store_upload_mod_status integration_steam::upload_mod(ModMetadata* m
 
 integration_store_upload_mod_status integration_steam::upload_mod_get_progress() {
     integration_store_upload_mod_status status;
+    if (steam_disconnected) {
+        status.error = "NoConnection";
+        return status;
+    }
     if (!SubmitItemUpdate_callback_called) {
         /*
         uint64 bytesProcessed = 0;
@@ -414,8 +424,9 @@ integration_store_upload_mod_status integration_steam::upload_mod_get_progress()
         status.error = string_of_result(SubmitItemUpdate_callback_result);
         return status;
     }
-    
-    std::string steam_item_url = "steam://url/CommunityFilePage/" + std::to_string((uint64_t) published_file_id);
+
+    Sleep(1000); //Seems that it takes a bit for item to be available, wait a bit
+    std::string steam_item_url = "https://steamcommunity.com/sharedfiles/filedetails/?id=" + std::to_string((uint64_t) published_file_id);
     printf("Finished uploading mod! Opening item page to setup further:\n%s\n", steam_item_url.c_str());
     SteamFriends()->ActivateGameOverlayToWebPage(steam_item_url.c_str());
     return status;
@@ -442,12 +453,12 @@ void integration_steam::create_item() {
     CreateItem_callback_called = false;
     published_file_id = k_PublishedFileIdInvalid;
     m_CreateItemResult.Set(CreateItemAPICall, this, &integration_steam::OnSteamCreateItem);
-    for (int i = 0; i < 60; ++i) {
+    for (int i = 0; i < 20; ++i) {
         SteamAPI_RunCallbacks();
         if (CreateItem_callback_called) {
             break;
         }
-        Sleep(500);
+        Sleep(200);
     }
     if (!CreateItem_callback_called) {
         printf("Timeout waiting for CreateItem");

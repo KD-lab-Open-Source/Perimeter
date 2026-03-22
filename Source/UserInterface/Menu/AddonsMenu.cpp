@@ -402,6 +402,7 @@ int modPublishProgressQuant(float, float) {
         return 1;
     } else {
         //Done!
+        loadModList(SQSH_MM_MOD_PUBLISH_SCR);
         hideMessageBox();
         return 0;
     }
