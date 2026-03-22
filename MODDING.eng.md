@@ -221,3 +221,10 @@ and call the binary with it like:
 
 which should print us a stacktrace with function names if your OS works with them, on Linux+WINE it seems to be possible
 to reconstruct stacktraces with function names.
+
+## Publishing mods
+
+For publishing simply place your mod in Mods/Publish folder and go to Mods > Publish menu.
+Here select the mod to be published in the list and press Publish button, this will create or update existing published item with the contents of your mod folder.
+
+Currently Steam store integration supports publishing mods in the Steam Workshop, if there is no support for publishing by the active store integration (if any) the menu won't be available.
