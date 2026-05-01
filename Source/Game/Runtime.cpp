@@ -666,6 +666,8 @@ cInterfaceRenderDevice* SetGraph()
         deviceSelection = DEVICE_D3D9;
     } else if (graph == "sokol" || graph == "gl" || graph == "gles" || graph == "metal") {
         deviceSelection = DEVICE_SOKOL;
+    } else if (graph == "vulkan" || graph == "vk") {
+        deviceSelection = DEVICE_VULKAN;
     } else if (graph == "headless" || graph == "none" || graph == "null" || graph == "nowindow") {
         deviceSelection = DEVICE_HEADLESS;
     } else {
