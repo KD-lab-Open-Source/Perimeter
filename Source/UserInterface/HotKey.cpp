@@ -245,9 +245,9 @@ bool HotKeyManager::loadHotKey(std::vector<HotKey>& simpleHotKeys, size_t i, Ini
         key2 = VK_NONE;
     }
     if (key2 == VK_NONE) {
-        simpleHotKeys.emplace_back(i, threshold, key1, key2, custom);
+        simpleHotKeys.emplace_back(static_cast<int>(i), threshold, key1, key2, custom);
     } else {
-        hotKeys.emplace_back(i, threshold, key1, key2, custom);
+        hotKeys.emplace_back(static_cast<int>(i), threshold, key1, key2, custom);
     }
     return true;
 }
