@@ -226,6 +226,76 @@ IF (OPTION_SOKOL)
     SET(Render_LINK_LIBS ${Render_LINK_LIBS} RenderSokol)
 ENDIF()
 
+OPTION(OPTION_VULKAN "Enable Vulkan renderer" OFF)
+IF (OPTION_VULKAN)
+    find_package(Vulkan REQUIRED)
+    find_program(GLSLC_EXECUTABLE NAMES glslc
+        HINTS ENV VULKAN_SDK
+        PATH_SUFFIXES Bin bin)
+    IF(NOT GLSLC_EXECUTABLE)
+        MESSAGE(FATAL_ERROR "glslc not found - required for Vulkan shader compilation")
+    ENDIF()
+    MESSAGE("Found glslc: ${GLSLC_EXECUTABLE}")
+
+    set(VULKAN_SHADER_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/shaders_vk")
+    file(MAKE_DIRECTORY "${VULKAN_SHADER_OUT_DIR}")
+
+    # Helper to compile a GLSL shader pair to SPV
+    macro(add_vulkan_shader BASE_NAME VERTEX_GLSL FRAGMENT_GLSL)
+        set(_vert_spv "${VULKAN_SHADER_OUT_DIR}/${BASE_NAME}.vert.spv")
+        set(_frag_spv "${VULKAN_SHADER_OUT_DIR}/${BASE_NAME}.frag.spv")
+        add_custom_command(
+            OUTPUT "${_vert_spv}"
+            COMMAND "${GLSLC_EXECUTABLE}" -fshader-stage=vert
+                    "${CMAKE_CURRENT_SOURCE_DIR}/vulkan/shaders/${VERTEX_GLSL}"
+                    -o "${_vert_spv}" ${ARGN}
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/vulkan/shaders/${VERTEX_GLSL}"
+            COMMENT "Compiling vertex shader ${VERTEX_GLSL}"
+        )
+        add_custom_command(
+            OUTPUT "${_frag_spv}"
+            COMMAND "${GLSLC_EXECUTABLE}" -fshader-stage=frag
+                    "${CMAKE_CURRENT_SOURCE_DIR}/vulkan/shaders/${FRAGMENT_GLSL}"
+                    -o "${_frag_spv}" ${ARGN}
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/vulkan/shaders/${FRAGMENT_GLSL}"
+            COMMENT "Compiling fragment shader ${FRAGMENT_GLSL}"
+        )
+        list(APPEND VULKAN_SPV_FILES "${_vert_spv}" "${_frag_spv}")
+    endmacro()
+
+    set(VULKAN_SPV_FILES "")
+    add_vulkan_shader(mesh_color_tex1        mesh_color_tex.vert   mesh_color_tex.frag)
+    add_vulkan_shader(mesh_color_tex2        mesh_color_tex.vert   mesh_color_tex.frag  -DHAS_TEX2)
+    add_vulkan_shader(mesh_normal_tex1       mesh_normal_tex.vert  mesh_normal_tex.frag)
+    add_vulkan_shader(mesh_tex1              mesh_tex1.vert        mesh_tex1.frag)
+    add_vulkan_shader(shadow_tex1            shadow_tex.vert       shadow_tex.frag)
+    add_vulkan_shader(shadow_normal_tex1     shadow_tex.vert       shadow_tex.frag      -DHAS_NORMAL)
+    add_vulkan_shader(tile_map               tile_map.vert         tile_map.frag)
+    add_vulkan_shader(mesh_color_tex1_inst   mesh_color_tex.vert   mesh_color_tex.frag   -DUSE_INSTANCING)
+    add_vulkan_shader(mesh_color_tex2_inst   mesh_color_tex.vert   mesh_color_tex.frag   -DHAS_TEX2 -DUSE_INSTANCING)
+    add_vulkan_shader(mesh_normal_tex1_inst  mesh_normal_tex.vert  mesh_normal_tex.frag  -DUSE_INSTANCING)
+    add_vulkan_shader(mesh_tex1_inst         mesh_tex1.vert        mesh_tex1.frag        -DUSE_INSTANCING)
+    add_vulkan_shader(shadow_tex1_inst       shadow_tex.vert       shadow_tex.frag       -DUSE_INSTANCING)
+    add_vulkan_shader(shadow_normal_tex1_inst shadow_tex.vert      shadow_tex.frag       -DHAS_NORMAL -DUSE_INSTANCING)
+
+    add_custom_target(VulkanShaders DEPENDS ${VULKAN_SPV_FILES})
+    add_dependencies(Render VulkanShaders)
+
+    target_sources(Render PRIVATE
+        vulkan/VulkanRender.cpp
+        vulkan/VulkanRenderState.cpp
+        vulkan/VulkanRenderDraw.cpp
+        vulkan/VulkanRenderTexture.cpp
+        vulkan/VulkanResources.cpp
+        vulkan/VulkanPipeline.cpp
+    )
+    target_compile_definitions(Render PUBLIC PERIMETER_VULKAN)
+    target_include_directories(Render PRIVATE "vulkan"
+        "${PROJECT_SOURCE_DIR}/Source/Render/tilemap"
+    )
+    SET(Render_LINK_LIBS ${Render_LINK_LIBS} Vulkan::Vulkan)
+ENDIF()
+
 target_link_libraries(Render PRIVATE ${Render_LINK_LIBS})
 
 target_compile_options(Render PRIVATE ${PERIMETER_COMPILE_OPTIONS})

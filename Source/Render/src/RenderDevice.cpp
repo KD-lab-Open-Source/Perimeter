@@ -18,6 +18,9 @@
 #include "sokol/SokolResources.h"
 #include "sokol/SokolRender.h"
 #endif
+#ifdef PERIMETER_VULKAN
+#include "vulkan/VulkanRender.h"
+#endif
 
 static uint32_t ColorConvertABGR(const sColor4c& c) { return CONVERT_COLOR_TO_ABGR(c.v); };
 static size_t DRAW_BUFFER_DEFAULT_SIZE = 2048;
@@ -652,6 +655,12 @@ cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection) {
             device = new cSokolRender();
 #endif
             printf("Selected render: Sokol\n");
+            break;
+        case DEVICE_VULKAN:
+#ifdef PERIMETER_VULKAN
+            device = new cVulkanRender();
+#endif
+            printf("Selected render: Vulkan\n");
             break;
         case DEVICE_HEADLESS:
             device = new cEmptyRender();

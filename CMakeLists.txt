@@ -239,7 +239,12 @@ ENDIF()
 
 #Required for more compliant floating point math
 IF(MSVC_CL_BUILD)
+    add_compile_options(/MP)                                              # Parallel file compilation
+    add_compile_options(/FS)                                              # Sync PDB writes (needed for /MP)
     add_compile_options(/fp:precise)
+    add_compile_options(/arch:SSE2)
+    add_compile_options($<$<CONFIG:Release,MinSizeRel>:/Oi>)              # -O2 equivalent
+    add_compile_options($<$<CONFIG:Release,MinSizeRel>:/Gy>)              # Like -Wl,--gc-sections.
 ELSE()
     add_compile_options(-fno-fast-math -ffp-contract=off)
     
@@ -363,6 +368,14 @@ IF(NOT MSVC_CL_BUILD)
                 -Wno-class-memaccess
         )
     ENDIF()
+ELSE()
+    # MSVC warning-as-errors
+    SET(PERIMETER_COMPILE_OPTIONS
+            /we4715   # -Werror=return-type
+            /we4239   # -Werror=nonstandard-extension: reference to non-lvalue
+            /we4700   # -Werror=uninitialized-local-variable
+            /we4309   # -Werror=truncation-of-constant-value
+    )
 ENDIF()
 
 #Pass project version as a definition

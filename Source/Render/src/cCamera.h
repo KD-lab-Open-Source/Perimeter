@@ -46,6 +46,7 @@ public:
 
 	virtual void PreDrawScene();
 	virtual void DrawScene();
+	void PresortMaterialList();
 
 	virtual void ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe) const;
 	virtual void ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f *pe,int *ScreenRadius) const;
