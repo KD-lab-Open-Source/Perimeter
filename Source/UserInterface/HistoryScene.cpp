@@ -28,8 +28,15 @@ HistoryScene::HistoryScene() {
 	nomadMarker = 0;
 	timer = 0;
 
+	// initialMat is computed in init(), not here. This object is a global
+	// (MainMenu.cpp), and MatXf::ID / Mat3f::ID are dynamically initialized
+	// globals in another translation unit; C++ does not order the two, and on
+	// the Linux build this constructor ran first and copied zeros. The sky
+	// sphere then had a zero world matrix and the menu lost its rotating
+	// fog on every renderer (D3D9 via DXVK, D3D9 via any shim, sokol). The
+	// Windows build happened to link in the other order, which is why the
+	// fog was present under wine and looked like a renderer bug.
 	initialMat = MatXf::ID;
-	Rotate( initialMat, Vect3f(0, -30, 0) );
 
 	addBlendAlpha = false;
 
@@ -90,6 +97,11 @@ void HistoryScene::init(cVisGeneric* visGeneric, bool bw, bool addBlendAlphaMode
 	if (ready()) {
 		done();
 	}
+
+	// Static initialization is complete by the time init() runs, so the
+	// constants read here are the real ones. See the constructor.
+	initialMat = MatXf::ID;
+	Rotate( initialMat, Vect3f(0, -30, 0) );
 
 	bwMode = bw;
 
