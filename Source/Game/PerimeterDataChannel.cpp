@@ -74,9 +74,9 @@ void PerimeterDataChannelLoad()
 
 	terMipMapBlur = ini.getInt("Graphics","MipMapBlur");
 
-	terMipMapLevel = ini.getInt("Graphics","MipMapLevel");
-//	terMapReflection = ini.getInt("Graphics","MapReflection");
-//	terObjectReflection = ini.getInt("Graphics","ObjectReflection");
+//  terMipMapLevel = ini.getInt("Graphics","MipMapLevel");
+//  terMapReflection = ini.getInt("Graphics","MapReflection");
+	terObjectReflection = ini.getInt("Graphics","ObjectReflection");
 	terGraphicsGamma = ini.getFloat("Graphics","Gamma");
 	terShowTips = ini.getInt("Game","ShowTips");
     ini_no_check.getInt("Graphics","GrabInput", terGrabInput);

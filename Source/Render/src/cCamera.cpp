@@ -788,7 +788,8 @@ void cCamera::DrawSortMaterial()
 	if(ar.empty())
 		return;
 
-	std::sort(ar.begin(),ar.end(),SortMaterialByNodeBank());
+	// Already sorted by PresortMaterialList() - called once after PreDraw.
+	// No need for a second sort here.
 
 	sDataRenderMaterial Data;
 	//int change_mat=1,draw_object=0;
@@ -843,10 +844,17 @@ struct SortMaterialByShadowTexture
 	}
 };
 
+void cCamera::PresortMaterialList()
+{
+	std::sort(RootCamera->arSortMaterial.begin(), RootCamera->arSortMaterial.end(),
+	          SortMaterialByNodeBank());
+}
+
 void cCamera::DrawSortMaterialShadow()
 {
 	std::vector<cMeshSortingPhase*>& ar=RootCamera->arSortMaterial;
-	std::sort(ar.begin(),ar.end(),SortMaterialByShadowTexture());
+	// Pre-sorted by PresortMaterialList() (called once after PreDraw).
+	// Both shadow and main passes reuse this sort order.
 	cMeshBank *CurBank=NULL;
 
     gb_RenderDevice->BeginDrawShadow(GetAttribute(ATTRCAMERA_SHADOWMAP));

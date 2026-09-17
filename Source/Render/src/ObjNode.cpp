@@ -690,7 +690,24 @@ void cObjectNodeRoot::PreDraw(cCamera *DrawNode)
 		observer.UpdateLink();
 	}
 
-	if(!DrawNode->TestVisible(GetGlobalMatrix(),GlobalBound.min,GlobalBound.max) )
+	// Quick sphere pre-check: skip the expensive 8-corner frustum
+	// test (48 plane checks + 8 matrix xforms) when the object is clearly
+	// outside.  For edge cases do the full test.
+	const MatXf& m = GetGlobalMatrix();
+	float r = GlobalBound.GetRadius();
+	if (r > 0) {
+		float sx = Scale.x; if (sx < 0) sx = -sx;
+		float sy = Scale.y; if (sy < 0) sy = -sy;
+		float sz = Scale.z; if (sz < 0) sz = -sz;
+		float ms = sx;
+		if (sy > ms) ms = sy;
+		if (sz > ms) ms = sz;
+		if (ms > 0) r *= ms;
+		if (!DrawNode->TestVisible(m.trans(), r))
+			return;
+	}
+
+	if(!DrawNode->TestVisible(m, GlobalBound.min, GlobalBound.max) )
 		return;
 
 	DrawNode->AttachTestShadow(this);
