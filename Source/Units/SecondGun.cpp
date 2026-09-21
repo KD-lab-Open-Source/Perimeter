@@ -2211,6 +2211,12 @@ void terWeaponLighting::quant()
             //the fire is delayed thanks to startFireDelay() so it wont kill before arc is displayed
             if (!lighting_) {
                 lighting_ = new cLighting;
+                //Init before attaching so Animate() never sees empty pos_end
+                Vect3f v0,v1;
+                aimController()->getTargetingPosition(v0,v1);
+                std::vector<Vect3f> vect;
+                vect.push_back(target_pos);
+                lighting_->Init(v0, vect, setup().laserWidth / 2.0f);
                 terScene->AttachObj(lighting_);
             } else {
                 target_->SetHotCount(5);
