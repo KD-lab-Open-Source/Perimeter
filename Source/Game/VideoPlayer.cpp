@@ -347,16 +347,15 @@ bool VideoPlayer::InternalUpdate() {
 }
 
 void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
-    //Lock full texture height so we can fill padding rows below video
+    //Lock texture
     int pitch=0;
     static Vect2i size;
     getSize(size);
-    Vect2i lockSize(pTexture->GetWidth(), pTexture->GetHeight());
     uint8_t* ptr = static_cast<uint8_t*>(gb_VisGeneric->GetRenderDevice()->LockTextureRect(
             pTexture,
             pitch,
             Vect2i::ZERO,
-            lockSize
+            size
     ));
 
     if (!ptr || pitch < size.x * 4) {
@@ -374,22 +373,12 @@ void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
                     ptr + bufferPitch * y,
                     bufferPitch
             );
-            //Fill right padding with opaque black (BGRA: A=0xFF)
-            for (int x = bufferPitch; x < pitch; x += 4) {
-                ptr[pitch * y + x + 0] = 0x00; // B
-                ptr[pitch * y + x + 1] = 0x00; // G
-                ptr[pitch * y + x + 2] = 0x00; // R
-                ptr[pitch * y + x + 3] = 0xFF; // A
-            }
-        }
-    }
-    //Fill rows below video height with opaque black (prevents white/garbage bar)
-    for (int y = size.y; y < pTexture->GetHeight(); y++) {
-        for (int x = 0; x < pitch; x += 4) {
-            ptr[pitch * y + x + 0] = 0x00; // B
-            ptr[pitch * y + x + 1] = 0x00; // G
-            ptr[pitch * y + x + 2] = 0x00; // R
-            ptr[pitch * y + x + 3] = 0xFF; // A
+            //Avoid texture bleeding due to old relocated image data
+            memset(
+                ptr + pitch * y + bufferPitch,
+                0x0,
+                pitch - bufferPitch
+            );
         }
     }
 
