@@ -1,3 +1,41 @@
+# Keep headers and libraries from the same pkg-config search on macOS.
+# Independent framework/header searches can otherwise select GStreamer headers
+# while linking against Homebrew FFmpeg libraries with a different ABI.
+if(APPLE)
+    set(FFMPEG_ROOT "$ENV{FFMPEG_DIR}" CACHE PATH "Location of FFMPEG")
+    set(_ffmpeg_prefix_path "${CMAKE_PREFIX_PATH}")
+    if(FFMPEG_ROOT)
+        list(PREPEND CMAKE_PREFIX_PATH "${FFMPEG_ROOT}")
+    endif()
+    find_package(PkgConfig QUIET)
+    set(_ffmpeg_modules libavformat libavcodec libavutil)
+    if(OPTION_FFMPEG_MOVIES)
+        list(APPEND _ffmpeg_modules libswscale libavfilter)
+    endif()
+    if(PKG_CONFIG_FOUND)
+        pkg_check_modules(FFMPEG QUIET IMPORTED_TARGET ${_ffmpeg_modules})
+    else()
+        set(FFMPEG_FOUND FALSE)
+    endif()
+    set(CMAKE_PREFIX_PATH "${_ffmpeg_prefix_path}")
+    unset(_ffmpeg_prefix_path)
+    unset(_ffmpeg_modules)
+
+    # Clear component results left by the previous finder in an existing cache.
+    set(FFMPEG_LIBRARIES "")
+    set(FFMPEG_LIBSWSCALE_INCLUDE_DIRS "")
+    set(FFMPEG_LIBAVFILTER_INCLUDE_DIRS "")
+    set(FFMPEG_LIBSWSCALE_LIBRARIES "")
+    set(FFMPEG_LIBAVFILTER_LIBRARIES "")
+    set(FFMPEG_LIBSWRESAMPLE_FOUND FALSE)
+    if(FFMPEG_FOUND)
+        set(FFMPEG_LIBRARIES PkgConfig::FFMPEG)
+    endif()
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(FFMPEG REQUIRED_VARS FFMPEG_FOUND FFMPEG_LIBRARIES)
+    return()
+endif()
+
 # Locate ffmpeg
 # This module defines
 # FFMPEG_LIBRARIES
