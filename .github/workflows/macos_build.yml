@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: install libs
         run: |
-          brew install ninja yasm dylibbundler \
+          brew install ninja yasm dylibbundler pkgconf \
           libvpx boost cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
       - uses: actions/cache@v4
