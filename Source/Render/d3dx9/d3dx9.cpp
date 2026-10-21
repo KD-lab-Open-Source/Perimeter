@@ -60,7 +60,9 @@ Vect3f normalizeColor(DWORD d)
 }
 
 uint8_t conv(float val) {
-    return static_cast<uint8_t>(val * 0x7F) & 0xFF;
+    // Q8W8V8U8 stores signed normal components. Convert to a signed
+    // integer first: a negative float cannot be converted directly to uint8_t.
+    return static_cast<uint8_t>(static_cast<int8_t>(val * 0x7F));
 }
 
 uint32_t from_rgba_qwvu(uint32_t val) {
