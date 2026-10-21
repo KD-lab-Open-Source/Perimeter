@@ -14,9 +14,9 @@ Text or speech baked into a movie will only change if the installation includes 
 
 The language button in the main menu switches between installed languages and restarts the engine, skipping the startup splash. The choice is written when it is made, so an ordinary exit should not be needed to save it. On the next launch the engine reads the saved selection, unless a launcher supplies an explicit `locale=Russian` or `locale=English` argument. Leave that argument out of a normal launcher; use it only when you deliberately want to override the saved choice. `clearlocale=1` also clears the selection.
 
-Language switching was checked in the running macOS game. Persistence was checked separately with unchanged engine function bodies and real INI writes in a fixture harness: Russian → English → process exit → English, and English → Russian → process exit → Russian, for both base-game and Emperor's Testament settings. That test substitutes filesystem discovery and the preference directory; it is not a complete menu/quit/relaunch test of the packaged app, which remains outstanding. Legate Edition has not been tested.
+Language switching followed by a full exit and relaunch was checked in the packaged app with external game data. On macOS, the selected language is stored in the user's settings and takes precedence over the default in `Perimeter.ini`. Changing the language does not modify the game data. The command-line `locale` option still overrides the saved preference.
 
-The engine currently reads `[Game] Language` from `Perimeter.ini` before its saved preferences, and a menu selection updates both locations. If content is embedded in the app, changing languages can therefore rewrite a file inside the signed bundle and invalidate its resource seal. Use external game data while this packaging detail is unresolved; embedded-content language switching is still a draft feature.
+Use writable external game data under `~/Library/Application Support/K-D LAB/Perimeter/` for normal play. Saved games currently remain under `Resource/Saves` in the selected game directory. Embedded content still needs a separate writable-save path before it is suitable for normal play.
 
 ## Build the engine
 
@@ -26,7 +26,7 @@ Install Xcode Command Line Tools if needed, then install the build dependencies:
 
 ```sh
 xcode-select --install
-brew install cmake ninja meson pkgconf boost ffmpeg zlib lld sdl2 sdl2_image sdl2_mixer sdl2_net vulkan-headers vulkan-loader molten-vk
+brew install cmake ninja meson pkgconf boost ffmpeg zlib lld sdl2 sdl3 sdl2_image sdl2_mixer sdl2_net vulkan-headers vulkan-loader molten-vk
 ```
 
 From the repository root, configure a fresh build directory:
@@ -47,8 +47,10 @@ The macOS FFmpeg finder patch uses pkg-config for headers and libraries together
 `macos/bundle.py` copies the built app, recursively bundles its linked non-system libraries, adds MoltenVK and its ICD manifest, rewrites library paths, creates the Finder launcher, and applies an ad-hoc signature. It leaves the source build untouched and refuses to overwrite an existing destination.
 
 ```sh
-python3 macos/bundle.py --app build-macos/Source/perimeter.app --output dist/Perimeter.app --icd "$(brew --prefix molten-vk)/etc/vulkan/icd.d/MoltenVK_icd.json" --library-dir build-macos/Source/Render/dxvk-prefix/src/dxvk-build/src/d3d9
+python3 macos/bundle.py --app build-macos/Source/perimeter.app --output dist/Perimeter.app --icd "$(brew --prefix molten-vk)/etc/vulkan/icd.d/MoltenVK_icd.json" --library-dir build-macos/Source/Render/dxvk-prefix/src/dxvk-build/src/d3d9 --runtime-library "$(brew --prefix sdl3)/lib/libSDL3.dylib"
 ```
+
+`--runtime-library` includes libraries loaded dynamically and preserves their lookup filenames. Homebrew SDL2-compat needs SDL3 this way because it loads SDL3 with `dlopen`; the library is absent from its linked dependency list. Omit this argument when using native SDL2 instead of SDL2-compat.
 
 For experiments with embedded game data, add `--content "/absolute/path/to/Perimeter"` to that command. The data is copied into `Contents/Resources/Content` before signing. Use a separate output app for Emperor's Testament, with its own content directory. Game data is not included in this repository or in the patch.
 
@@ -58,7 +60,7 @@ For an app without embedded data, supply the directory on first launch:
 open dist/Perimeter.app --args "content=/absolute/path/to/Perimeter"
 ```
 
-The engine stores the selected content path in its preferences. The launcher also supports embedded data, subject to the language-switching limitation above. The launcher uses absolute paths so spaces in the app's location do not change how libraries or content are resolved.
+The engine stores the selected content path in its preferences. The launcher also supports embedded data, subject to the writable-save limitation above. The launcher uses absolute paths so spaces in the app's location do not change how libraries or content are resolved.
 
 The minimum macOS version comes from the newest requirement among the executable and bundled libraries, which the packager records in Info.plist. A low CMake deployment target does not make newer Homebrew libraries work on older macOS releases.
 
@@ -68,4 +70,4 @@ Homebrew's full FFmpeg build can bring many dependent libraries into the bundle.
 
 The packager verifies the signature and checks for remaining absolute non-system library dependencies. Move the app to a different directory, open it from Finder, and test the intro, a mission briefing, speech, language switching, and the exit movie. Test switching to another application and back as a separate case.
 
-Local validation has covered dependency bundling and loading the bundled DXVK and MoltenVK libraries. The engine and shader changes have also been exercised in the game, including Emperor's Testament, but a Finder launch of the newly packaged app and a run on a Mac without the build dependencies still need to be checked. The fullscreen recovery workaround is a separate unfinished patch and is not included here.
+Local validation has covered dependency bundling and loading the bundled DXVK and MoltenVK libraries. The engine and shader changes have also been exercised in the game, including Emperor's Testament, and the packaged app has been launched through macOS Launch Services. A run on a Mac without the build dependencies still needs to be checked. The fullscreen recovery workaround is a separate unfinished patch and is not included here.

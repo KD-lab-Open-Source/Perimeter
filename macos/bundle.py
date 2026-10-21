@@ -51,6 +51,8 @@ def main():
     parser.add_argument('--icd', required=True, type=Path, help='MoltenVK ICD JSON installed on the build host')
     parser.add_argument('--content', type=Path, help='optional complete game directory to copy for personal use')
     parser.add_argument('--library-dir', action='append', default=[], type=Path)
+    parser.add_argument('--runtime-library', action='append', default=[], type=Path,
+                        help='additional dlopen library to bundle, preserving its lookup filename')
     args = parser.parse_args()
     source_app = args.app.resolve()
     dest = args.output.absolute()
@@ -107,6 +109,15 @@ def main():
             visit(child)
     visit(executable)
     visit(molten)
+    runtime_aliases = {}
+    for library in args.runtime_library:
+        if not library.is_file():
+            parser.error(f'runtime library was not found: {library}')
+        resolved = library.resolve()
+        visit(resolved)
+        previous = runtime_aliases.setdefault(library.name, resolved)
+        if previous != resolved or (library.name in names and names[library.name] != resolved):
+            parser.error(f'conflicting runtime library name: {library.name}')
     shutil.copytree(source_app, dest)
     frameworks = dest / 'Contents/Frameworks'
     frameworks.mkdir(exist_ok=True)
@@ -127,6 +138,9 @@ def main():
             run('install_name_tool', '-change', old, prefix + child.name, target)
         for path in rpaths(target):
             run('install_name_tool', '-delete_rpath', path, target)
+    for name, source in runtime_aliases.items():
+        if name != source.name:
+            (frameworks / name).symlink_to(source.name)
     icd['ICD']['library_path'] = '../Frameworks/' + molten.name
     (resources / 'MoltenVK_icd.json').write_text(json.dumps(icd, indent=2) + '\n')
     launcher = dest / 'Contents/MacOS/start'
