@@ -10,6 +10,14 @@ Changing the language in Perimeter's main menu selects resources that are alread
 
 Text or speech baked into a movie will only change if the installation includes another version of that movie. A Russian-only video does not become English when the menu language changes.
 
+## Switching languages
+
+The language button in the main menu switches between installed languages and restarts the engine, skipping the startup splash. The choice is written when it is made, so an ordinary exit should not be needed to save it. On the next launch the engine reads the saved selection, unless a launcher supplies an explicit `locale=Russian` or `locale=English` argument. Leave that argument out of a normal launcher; use it only when you deliberately want to override the saved choice. `clearlocale=1` also clears the selection.
+
+Language switching was checked in the running macOS game. Persistence was checked separately with unchanged engine function bodies and real INI writes in a fixture harness: Russian → English → process exit → English, and English → Russian → process exit → Russian, for both base-game and Emperor's Testament settings. That test substitutes filesystem discovery and the preference directory; it is not a complete menu/quit/relaunch test of the packaged app, which remains outstanding. Legate Edition has not been tested.
+
+The engine currently reads `[Game] Language` from `Perimeter.ini` before its saved preferences, and a menu selection updates both locations. If content is embedded in the app, changing languages can therefore rewrite a file inside the signed bundle and invalidate its resource seal. Use external game data while this packaging detail is unresolved; embedded-content language switching is still a draft feature.
+
 ## Build the engine
 
 These commands target Apple Silicon and use Homebrew dependencies. Intel and universal builds need separate validation; selecting two architectures in CMake is not enough because DXVK uses a single-architecture Meson cross file.
@@ -42,7 +50,7 @@ The macOS FFmpeg finder patch uses pkg-config for headers and libraries together
 python3 macos/bundle.py --app build-macos/Source/perimeter.app --output dist/Perimeter.app --icd "$(brew --prefix molten-vk)/etc/vulkan/icd.d/MoltenVK_icd.json" --library-dir build-macos/Source/Render/dxvk-prefix/src/dxvk-build/src/d3d9
 ```
 
-To include your game data in a personal copy of the app, add `--content "/absolute/path/to/Perimeter"` to that command. The data is copied into `Contents/Resources/Content` before signing. Use a separate output app for Emperor's Testament, with its own content directory. Game data is not included in this repository or in the patch.
+For experiments with embedded game data, add `--content "/absolute/path/to/Perimeter"` to that command. The data is copied into `Contents/Resources/Content` before signing. Use a separate output app for Emperor's Testament, with its own content directory. Game data is not included in this repository or in the patch.
 
 For an app without embedded data, supply the directory on first launch:
 
@@ -50,7 +58,7 @@ For an app without embedded data, supply the directory on first launch:
 open dist/Perimeter.app --args "content=/absolute/path/to/Perimeter"
 ```
 
-The engine stores the selected content path in its preferences. An app with embedded data can be opened directly in Finder. The launcher uses absolute paths so spaces in the app's location do not change how libraries or content are resolved.
+The engine stores the selected content path in its preferences. The launcher also supports embedded data, subject to the language-switching limitation above. The launcher uses absolute paths so spaces in the app's location do not change how libraries or content are resolved.
 
 The minimum macOS version comes from the newest requirement among the executable and bundled libraries, which the packager records in Info.plist. A low CMake deployment target does not make newer Homebrew libraries work on older macOS releases.
 
