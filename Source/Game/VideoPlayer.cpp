@@ -62,79 +62,39 @@ AudioBuffer::AudioBuffer(double seconds) : XBuffer(0, false) {
     clear();
 }
 
-void AudioBuffer::updateAvailable() {
-    if (head <= offset) {
-        written = offset - head;
-    } else {
-        written = size - head + offset;
-    }
-}
-
 void AudioBuffer::writeAudio(const uint8_t* inbuf, size_t len) {
-    SDL_LockAudio();
-
-    //printf("writeAudio %f\n", SNDcomputeAudioLengthS(len));
-    
-    if (offset + len > size) {
-        //Write the len until reaches end and then continue from start
-        size_t first = size - offset; 
-        size_t second = len - first;
-        if (second > offset) {
-            fprintf(stderr, "Audio buffer second part overflow %" PRIsize " %" PRIsize " > %" PRIsize "\n", first, second, offset);
-            second = offset;
-            xassert(0);
-        }
-        if (inbuf) {
-            memcpy(buf + offset, inbuf, first);
-            memcpy(buf, inbuf + first, second);
-        }
-        bool head_ahead = head > offset;
-        offset = second;
-        if (head_ahead && head < offset) {
-            fprintf(stderr, "Audio buffer overflow %" PRIsize " %" PRIsize "\n", head, offset);
-        }
-    } else {
-        if (inbuf) {
-            memcpy(buf + offset, inbuf, len);
-        }
-        bool head_ahead = head > offset;
-        offset += len;
-        if (head_ahead && head < offset) {
-            fprintf(stderr, "Audio buffer overflow %" PRIsize " %" PRIsize "\n", head, offset);
-        }
+    std::lock_guard<std::mutex> lock(mutex);
+    if (len > size - written) {
+        fprintf(stderr, "Video audio buffer overflow\n");
+        return;
     }
-
-    updateAvailable();
-    
+    size_t first = std::min(len, size - offset);
+    if (inbuf) {
+        memcpy(buf + offset, inbuf, first);
+        memcpy(buf, inbuf + first, len - first);
+    } else {
+        memset(buf + offset, SNDDeviceFormat() == AUDIO_U8 ? 128 : 0, first);
+        memset(buf, SNDDeviceFormat() == AUDIO_U8 ? 128 : 0, len - first);
+    }
+    offset = (offset + len) % size;
+    written += len;
     write_counter += len;
-    
-    SDL_UnlockAudio();
 }
 
 size_t AudioBuffer::readAudio(uint8_t* outbuf, size_t len) {
-    //We assume this is called from audio thread and doesn't need locking as it already does beforehand
-    
+    std::lock_guard<std::mutex> lock(mutex);
     len = std::min(len, written);
-    if (0 < len) {
-        if (head + len > size) {
-            size_t first = size - head;
-            size_t second = len - first;
-            memcpy(outbuf, buf + head, first);
-            memcpy(outbuf + first, buf, second);
-            head = second;
-        } else {
-            memcpy(outbuf, buf + head, len);
-            head += len;
-        }
-
-        updateAvailable();
-        read_counter += len;
-    }
-    
+    size_t first = std::min(len, size - head);
+    memcpy(outbuf, buf + head, first);
+    memcpy(outbuf + first, buf, len - first);
+    head = (head + len) % size;
+    written -= len;
+    read_counter += len;
     return len;
 }
 
 void AudioBuffer::clear() {
+    std::lock_guard<std::mutex> lock(mutex);
     memset(buf, 0, size);
     head = 0;
     written = 0;
@@ -183,6 +143,7 @@ void VideoPlayer::getSize(Vect2i& vec) {
 bool VideoPlayer::Init(const char* path) {
 	Done();
 
+    paused = focusPaused = audioPlaybackFailed = false;
     lastUpdateTime = 0;
     audioBufferTime = currentTime = 0;
     
@@ -205,12 +166,15 @@ bool VideoPlayer::Init(const char* path) {
     int scalerHeight = 720;
     cfg.getInt("Graphics", "MaxVideoResolutionWidth", scalerWidth);
     cfg.getInt("Graphics", "MaxVideoResolutionHeight", scalerHeight);
-    wrapper->setupVideoScaler(
+    if (!wrapper->setupVideoScaler(
         min(scalerWidth, wrapper->getVideoCodecWidth()),
         min(scalerHeight, wrapper->getVideoCodecHeight()),
         gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9 ? AVPixelFormat::AV_PIX_FMT_BGRA : AVPixelFormat::AV_PIX_FMT_RGBA,
         SWS_BILINEAR
-    );
+    )) {
+        Done();
+        return false;
+    }
     
 	int dx_p2=Power2up(wrapper->getVideoWidth());
 	int dy_p2=Power2up(wrapper->getVideoHeight());
@@ -222,7 +186,11 @@ bool VideoPlayer::Init(const char* path) {
     if (sample) {
         //Tell wrapper to output audio in device format
         AVSampleFormat format = AVWrapper::fromSDLAudioFormat(SNDDeviceFormat(), false);
-        wrapper->setupAudioConverter(format, SNDDeviceChannels(), SNDDeviceFrequency());
+        if (wrapper->audioStream >= 0 &&
+            !wrapper->setupAudioConverter(format, SNDDeviceChannels(), SNDDeviceFrequency())) {
+            Done();
+            return false;
+        }
     
         //Load a silent sound buffer, so we can get a looping sample that will poll our buffer
         //This is a workaround since SDL_mixer doesn't have a way to stream audio continuously
@@ -231,7 +199,12 @@ bool VideoPlayer::Init(const char* path) {
         sample->looped = true;
         const int samples = SNDDeviceFrequency() / 10;
         size_t buf_len = SNDformatSampleSize(SNDDeviceFormat()) * SNDDeviceChannels() * samples;
-        void* buf = SDL_calloc(buf_len, 1);
+        void* buf = SDL_malloc(buf_len);
+        if (!buf) {
+            Done();
+            return false;
+        }
+        SDL_memset(buf, SNDDeviceFormat() == AUDIO_U8 ? 128 : 0, buf_len);
         sample->loadRawData(static_cast<uint8_t*>(buf), buf_len, false, path_str);
     }
     
@@ -273,16 +246,8 @@ void VideoPlayer::Draw(int x, int y, int dx, int dy, int alpha) {
 }
 
 bool VideoPlayer::IsEnd() {
-	bool end = wrapper->end && wrapper->getDuration() <= getPlayerTime();
-    if (end) {
-        if (!wrapper->videoFrames.empty()) {
-            fprintf(stderr, "Remaining video frames!\n");
-        }
-        if (!wrapper->audioFrames.empty()) {
-            fprintf(stderr, "Remaining audio frames!\n");
-        }
-    }
-    return end;
+    return wrapper->end && wrapper->videoFrames.empty()
+        && wrapper->audioFrames.empty() && audioBuffer->buffered() == 0;
 }
 
 void VideoPlayer::SetVolume(float vol) {
@@ -300,7 +265,7 @@ void VideoPlayer::setPause(bool state) {
         if (sample && sample->isPlaying()) {
             sample->stop();
         }
-    } else {
+    } else if (!focusPaused) {
         startAudioPlayer();
     }
 
@@ -308,12 +273,14 @@ void VideoPlayer::setPause(bool state) {
 }
 
 void VideoPlayer::startAudioPlayer() {
-    if (!sample) return;
+    if (!sample || audioPlaybackFailed || sample->isPlaying() || !audioBuffer->buffered()) return;
     int channel = sample->play();
-    if (channel != SND_NO_CHANNEL) {
-        if (!Mix_RegisterEffect(channel, VideoPlayer::channelBufferEffect, nullptr, audioBuffer)) {
-            fprintf(stderr, "VideoPlayer Mix_RegisterEffect error: %s\n", Mix_GetError());
-        }
+    if (channel == SND_NO_CHANNEL ||
+        !Mix_RegisterEffect(channel, VideoPlayer::channelBufferEffect, nullptr, audioBuffer)) {
+        fprintf(stderr, "Video audio unavailable: %s\n", Mix_GetError());
+        sample->stop();
+        audioPlaybackFailed = true;
+        audioBuffer->clear();
     }
 }
 
@@ -322,44 +289,37 @@ double VideoPlayer::getPlayerTime() const {
 }
 
 bool VideoPlayer::InternalUpdate() {
-    if (!paused && !applicationHasFocus()) {
-        setPause(true);
+    bool lostFocus = !applicationHasFocus();
+    if (focusPaused != lostFocus) {
+        focusPaused = lostFocus;
+        lastUpdateTime = 0;
+        if (focusPaused && sample) sample->stop();
+        else if (!paused) startAudioPlayer();
+    }
+    if (paused || focusPaused) {
+        Sleep(10);
+        return false;
     }
 
-    if (paused) {
-        Sleep(500);
-        return true;
-    }
-
-    //printf("Buffered audio %f\n", SNDcomputeAudioLengthS(audioBuffer->written));
+    //printf("Buffered audio %f\n", SNDcomputeAudioLengthS(audioBuffer->buffered()));
 
     //Decode frames
     decodeFrames();
     
-    double audioTime = SNDcomputeAudioLengthS(audioBuffer->read_counter);
+    double audioTime = SNDcomputeAudioLengthS(audioBuffer->consumed());
 
     //Update current time by update time
     if (lastUpdateTime) {
         double elapsed = static_cast<double>(getPerformanceCounter() - lastUpdateTime);
         elapsed /= static_cast<double>(getPerformanceFrequency());
-        //printf("FPS: %f\n", 1.0 / elapsed);
         elapsed = std::min(TIME_MAX_STEP, elapsed);
-        if (0 == audioBuffer->written || 0 <= wrapper->audioStream) {
-            //If video has no audio we just keep 
-            currentTime = currentTime + elapsed;
-        } else {
-            double nextTime = currentTime + elapsed;
-            if (audioTime > nextTime + TIME_AUDIO_AHEAD) {
-                //Audio is ahead of Video, use audio time and add our elapsed time
-                currentTime = audioTime + elapsed;
-            } else if (nextTime > audioTime + TIME_VIDEO_AHEAD) {
-                //Video is ahead of audio, slowdown
-                currentTime = currentTime + elapsed / 2.0;
-            } else {
-                //Synced
-                currentTime = nextTime;
-            }
+        // Follow the consumed audio while it is playing; retain wall time for
+        // silent videos or an exhausted audio track. Limit correction to avoid jumps.
+        if (sample && sample->isPlaying() && audioBuffer->buffered()) {
+            double drift = audioTime - currentTime;
+            elapsed *= drift > 0.05 ? 1.25 : (drift < -0.05 ? 0.75 : 1.0);
         }
+        currentTime += elapsed;
     }
     //printf("Time: %f %f\n", currentTime, audioTime);
 
@@ -375,7 +335,7 @@ bool VideoPlayer::InternalUpdate() {
         updatedTexture = true;
     }
 
-    if (0 < audioBuffer->written && sample && !sample->isPlaying()) {
+    if (0 < audioBuffer->buffered() && sample && !sample->isPlaying()) {
         startAudioPlayer();
     }
         
@@ -387,17 +347,21 @@ bool VideoPlayer::InternalUpdate() {
 }
 
 void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
-    //Lock texture
+    //Lock full texture height so we can fill padding rows below video
     int pitch=0;
     static Vect2i size;
     getSize(size);
+    Vect2i lockSize(pTexture->GetWidth(), pTexture->GetHeight());
     uint8_t* ptr = static_cast<uint8_t*>(gb_VisGeneric->GetRenderDevice()->LockTextureRect(
             pTexture,
             pitch,
             Vect2i::ZERO,
-            size
+            lockSize
     ));
 
+    if (!ptr || pitch < size.x * 4) {
+        ErrH.Abort("Cannot lock video texture");
+    }
     //Dump frame into texture
     frame->copyBuffer(&ptr);
 
@@ -410,12 +374,22 @@ void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
                     ptr + bufferPitch * y,
                     bufferPitch
             );
-            //Avoid texture bleeding due to old relocated image data
-            memset(
-                ptr + pitch * y + bufferPitch,
-                0x0,
-                pitch - bufferPitch
-            );
+            //Fill right padding with opaque black (BGRA: A=0xFF)
+            for (int x = bufferPitch; x < pitch; x += 4) {
+                ptr[pitch * y + x + 0] = 0x00; // B
+                ptr[pitch * y + x + 1] = 0x00; // G
+                ptr[pitch * y + x + 2] = 0x00; // R
+                ptr[pitch * y + x + 3] = 0xFF; // A
+            }
+        }
+    }
+    //Fill rows below video height with opaque black (prevents white/garbage bar)
+    for (int y = size.y; y < pTexture->GetHeight(); y++) {
+        for (int x = 0; x < pitch; x += 4) {
+            ptr[pitch * y + x + 0] = 0x00; // B
+            ptr[pitch * y + x + 1] = 0x00; // G
+            ptr[pitch * y + x + 2] = 0x00; // R
+            ptr[pitch * y + x + 3] = 0xFF; // A
         }
     }
 
@@ -424,8 +398,7 @@ void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
 }
 
 void VideoPlayer::WriteAudioFrame(AVWrapperFrame* frame) {
-    //No sample to output, just do nothing
-    if (!sample) return;
+    if (!sample || audioPlaybackFailed) return;
     
     size_t buf_size;
     uint8_t* buf = nullptr;
@@ -447,10 +420,7 @@ void VideoPlayer::WriteAudioFrame(AVWrapperFrame* frame) {
         buf_size *= SNDDeviceChannels() * SNDformatSampleSize(SNDDeviceFormat());
         if (0 < buf_size) {
             printf("Silence audio %f\n", SNDcomputeAudioLengthS(buf_size));
-            buf = static_cast<uint8_t*>(SDL_calloc(buf_size, 1));
-            audioBuffer->writeAudio(buf, buf_size);
-            SDL_free(buf);
-            buf = nullptr;
+            audioBuffer->writeAudio(nullptr, buf_size);
         }
     }
     buf_size = frame->copyBuffer(&buf);
@@ -475,6 +445,7 @@ AVWrapperFrame* VideoPlayer::popCurrentFrame(std::list<AVWrapperFrame*>& frames)
                 fprintf(stderr, "Too old frame: %f\n", pts);
             }
             it = frames.erase(it);
+            delete frame;
             continue;
         }
 
@@ -504,13 +475,8 @@ AVWrapperFrame* VideoPlayer::popCurrentFrame(std::list<AVWrapperFrame*>& frames)
 }
 
 void VideoPlayer::decodeFrames() {
-    double read_audio = SNDcomputeAudioLengthS(audioBuffer->read_counter);
-    
-    //Get enough video and audio frames
-    while (!wrapper->end && (
-            wrapper->videoFrames.size() < VIDEO_DECODE_AHEAD
-        || (wrapper->audioFrames.empty() || (wrapper->audioFrames.back()->getPresentationTime() - read_audio) < AUDIO_DECODE_AHEAD))
-    ) {
+    //Get enough video frames
+    while (!wrapper->end && wrapper->videoFrames.size() < VIDEO_DECODE_AHEAD) {
         wrapper->readPacket();
     }
 
@@ -523,8 +489,8 @@ void VideoPlayer::decodeFrames() {
     while (!wrapper->audioFrames.empty()) {
         //Check if we wrote enough in this loop or buffer is already full enough
         size_t write_loop = audioBuffer->write_counter - write_old;
-        //printf("Audio frame into buffer %" PRIsize " %" PRIsize "\n", write_loop, audioBuffer->written);
-        if (AUDIO_DECODE_AHEAD < SNDcomputeAudioLengthS(std::max(write_loop, audioBuffer->written))) {
+        //printf("Audio frame into buffer %" PRIsize " %" PRIsize "\n", write_loop, audioBuffer->buffered());
+        if (AUDIO_DECODE_AHEAD < SNDcomputeAudioLengthS(std::max(write_loop, audioBuffer->buffered()))) {
             break;
         }
         AVWrapperFrame* audioFrame = wrapper->audioFrames.front();
@@ -532,17 +498,16 @@ void VideoPlayer::decodeFrames() {
         WriteAudioFrame(audioFrame);
         delete audioFrame;
     }
-    //printf("decodedFrames %" PRIsize " %f\n", wrapper->videoFrames.size(), SNDcomputeAudioLengthS(audioBuffer->written));
+    //printf("decodedFrames %" PRIsize " %f\n", wrapper->videoFrames.size(), SNDcomputeAudioLengthS(audioBuffer->buffered()));
 }
 
 void VideoPlayer::channelBufferEffect(int _channel, void *stream, int len, void *udata) {
     AudioBuffer* audioBuffer = static_cast<AudioBuffer*>(udata);
-    if (!audioBuffer->written) return;
-    
+    memset(stream, SNDDeviceFormat() == AUDIO_U8 ? 128 : 0, len);
     size_t need = static_cast<size_t>(len);
 
 #ifdef PERIMETER_DEBUG
-    //printf("CBE %" PRIsize " %f -> %" PRIsize " %f\n", audioBuffer->written, SNDcomputeAudioLengthS(audioBuffer->written), need, SNDcomputeAudioLengthS(need));
+    //printf("CBE %" PRIsize " %f -> %" PRIsize " %f\n", audioBuffer->buffered(), SNDcomputeAudioLengthS(audioBuffer->buffered()), need, SNDcomputeAudioLengthS(need));
 #endif
 
     audioBuffer->readAudio(static_cast<uint8_t*>(stream), need);

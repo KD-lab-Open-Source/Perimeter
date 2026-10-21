@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 #ifdef PERIMETER_FFMPEG_MOVIE
 class AVWrapper;
@@ -10,7 +11,7 @@ class SND_Sample;
 class AudioBuffer : protected XBuffer {
 protected:
     size_t head = 0;
-    void updateAvailable();
+    mutable std::mutex mutex;
 public:
     ///Amount of bytes read in total
     size_t read_counter = 0;
@@ -22,7 +23,9 @@ public:
     void writeAudio(const uint8_t* buf, size_t len);
     size_t readAudio(uint8_t* buf, size_t len);
     void clear();
-    size_t space() const { return size - written; }
+    size_t buffered() const { std::lock_guard<std::mutex> lock(mutex); return written; }
+    size_t consumed() const { std::lock_guard<std::mutex> lock(mutex); return read_counter; }
+    size_t space() const { std::lock_guard<std::mutex> lock(mutex); return size - written; }
 };
 
 class VideoPlayer
@@ -52,6 +55,8 @@ protected:
     AVWrapper* wrapper = nullptr;
     cTexture* pTexture = nullptr;
     bool paused = false;
+    bool focusPaused = false;
+    bool audioPlaybackFailed = false;
     ///Internal time for video time in case audio is not available
     uint64_t lastUpdateTime = 0;
     ///Current time for player
