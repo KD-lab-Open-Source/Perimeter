@@ -1,3 +1,5 @@
+OPTION(OPTION_MACOS_D3D9_SHADERS "Enable experimental macOS D3D9 shaders with a patched DXVK" OFF)
+
 
 OPTION(OPTION_DXVK_1 "Use old DXVK-native (DXVK 1.x) instead of DXVK 2.x" OFF)
 OPTION(OPTION_DXVK_SOURCE_DIR "Path for predownloaded DXVK source code")
@@ -185,11 +187,22 @@ if(NEED_DXVK)
     ELSE()
         SET(DXVK_BUILD_COMMAND ${DXVK_BUILD_COMMAND} ../dxvk)
     ENDIF()
+    set(DXVK_PATCH_COMMAND "")
+    if(APPLE AND OPTION_D3D9 AND OPTION_MACOS_D3D9_SHADERS)
+        find_package(Git REQUIRED)
+        set(DXVK_PATCH_COMMAND ${CMAKE_COMMAND}
+            -DDXVK_SOURCE_DIR=<SOURCE_DIR>
+            -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
+            -DPATCH_FILE=${PROJECT_SOURCE_DIR}/macos/dxvk-moltenvk-color-samplers.patch
+            -P ${PROJECT_SOURCE_DIR}/cmake/PatchMacOSDXVK.cmake)
+        target_compile_definitions(Render PRIVATE PERIMETER_MACOS_D3D9_SHADERS)
+    endif()
     ExternalProject_Add(dxvk
             SOURCE_DIR        ${OPTION_DXVK_SOURCE_DIR}
             GIT_REPOSITORY    ${DXVK_GIT_URL}
             GIT_TAG           ${DXVK_GIT_TAG}
             GIT_SHALLOW       OFF
+            PATCH_COMMAND     ${DXVK_PATCH_COMMAND}
             BUILD_ALWAYS      OFF
             CONFIGURE_HANDLED_BY_BUILD ON
             CONFIGURE_COMMAND ${DXVK_BUILD_COMMAND} ${DXVK_BUILD_OPTIONS}

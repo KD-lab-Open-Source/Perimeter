@@ -23,10 +23,11 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 
 	if(enablebump_ && gb_RenderDevice3D)
 	{
-		if(gb_RenderDevice3D->DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(2,0))
+		if(gb_RenderDevice3D->DeviceCaps.VertexShaderVersion >= D3DVS_VERSION(1,1) &&
+           gb_RenderDevice3D->DeviceCaps.PixelShaderVersion >= D3DPS_VERSION(2,0))
 			enablebump=BUMP_PS14;
 		else
-		if(gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP)
+		if(gb_RenderDevice3D->DeviceCaps.TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAP)
 			enablebump=BUMP_RENDERTARGET;
 	}
 #endif
