@@ -31,6 +31,19 @@ def rpaths(binary):
             for i, line in enumerate(lines) if line.strip() == 'cmd LC_RPATH']
 
 
+def minimum_macos(binary):
+    command = ""
+    versions = []
+    for line in output('otool', '-l', binary).splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0] == 'cmd':
+            command = parts[1]
+        if len(parts) == 2 and ((command == 'LC_BUILD_VERSION' and parts[0] == 'minos')
+                              or (command == 'LC_VERSION_MIN_MACOSX' and parts[0] == 'version')):
+            versions.append(tuple(int(n) for n in parts[1].split('.')))
+    return max(versions, default=(10, 15))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--app', required=True, type=Path, help='CMake-built perimeter.app')
@@ -132,6 +145,9 @@ exec "$macos_dir/perimeter" "$@"
     with plist_path.open('rb') as f:
         plist = plistlib.load(f)
     plist['CFBundleExecutable'] = 'start'
+    declared_min = tuple(int(n) for n in plist.get('LSMinimumSystemVersion', '10.15').split('.'))
+    required_min = max([declared_min, *(minimum_macos(binary) for binary in graph)])
+    plist['LSMinimumSystemVersion'] = '.'.join(str(n) for n in required_min)
     with plist_path.open('wb') as f:
         plistlib.dump(plist, f)
     # Sign inside out after all install-name changes. This is a local ad-hoc
@@ -147,7 +163,7 @@ exec "$macos_dir/perimeter" "$@"
             for dep in dependencies(binary):
                 if not system(dep) and not dep.startswith(('@loader_path/', '@executable_path/', '@rpath/')):
                     raise RuntimeError(f'Unbundled dependency: {binary}: {dep}')
-    print(f'Bundled {len(names)} libraries into {dest}')
+    print(f'Bundled {len(names)} libraries into {dest}; minimum macOS {plist["LSMinimumSystemVersion"]}')
 
 
 if __name__ == '__main__':

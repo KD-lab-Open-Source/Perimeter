@@ -52,6 +52,8 @@ open dist/Perimeter.app --args "content=/absolute/path/to/Perimeter"
 
 The engine stores the selected content path in its preferences. An app with embedded data can be opened directly in Finder. The launcher uses absolute paths so spaces in the app's location do not change how libraries or content are resolved.
 
+The minimum macOS version comes from the newest requirement among the executable and bundled libraries, which the packager records in Info.plist. A low CMake deployment target does not make newer Homebrew libraries work on older macOS releases.
+
 Homebrew's full FFmpeg build can bring many dependent libraries into the bundle. A smaller release would need a separately configured FFmpeg build and a review of the bundled libraries' distribution requirements. Ad-hoc signing is for local use; it is not Developer ID signing or notarization.
 
 ## Check the result
