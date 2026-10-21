@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: install libs
         run: |
-          brew install ninja yasm dylibbundler \
+          brew install ninja yasm dylibbundler pkgconf \
           libvpx boost cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
       - uses: actions/cache@v4
@@ -40,7 +40,7 @@ jobs:
           key: MacOS-${{ env.GH_CACHE_KEY }}
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone --depth 1 --branch n8.0 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        run: git clone --depth 1 --branch n8.0 https://github.com/FFmpeg/FFmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./configure
