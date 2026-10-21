@@ -143,13 +143,18 @@ void cLighting::Animate(float dt)
 {
 	dt*=1e-3f;
 	time+=dt;
-	while(time>=param.generate_time)
-	{
-		time-=param.generate_time;
-		PreGenerate g;
-		g.pos_begin=pos_begin;
-		g.pos_end=pos_end[rnd() % pos_end.size()];
-		pre_generate.push_back(g);
+	if (pos_end.empty()) {
+		//Init() not called yet, nothing to generate arcs towards
+		time = min(time, param.generate_time);
+	} else {
+		while(time>=param.generate_time)
+		{
+			time-=param.generate_time;
+			PreGenerate g;
+			g.pos_begin=pos_begin;
+			g.pos_end=pos_end[rnd() % pos_end.size()];
+			pre_generate.push_back(g);
+		}
 	}
 
 	float fade_dt=dt/param.fade_time;
