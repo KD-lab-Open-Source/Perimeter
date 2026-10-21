@@ -109,6 +109,7 @@ protected:
     int swsWidth = 0;
     ///Software scaler output frame height
     int swsHeight = 0;
+    int swsFlags = 0;
     ///Software scaler output frame format
     AVPixelFormat swsFormat = AV_PIX_FMT_NONE;
     ///Audio converter output channel layout

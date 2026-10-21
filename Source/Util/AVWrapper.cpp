@@ -22,13 +22,10 @@ size_t AVWrapperFrame::getBufferSize() const {
     if (type == AVWrapperType::Video) {
         AVPixelFormat format = static_cast<AVPixelFormat>(frame->format);
         return av_image_get_buffer_size(format, frame->width, frame->height, 1);
-    } else if (AVWrapperType::Audio) {
+    } else if (type == AVWrapperType::Audio) {
         AVSampleFormat format = static_cast<AVSampleFormat>(frame->format);
-        int channels = 1;
-        if (av_sample_fmt_is_planar(format)) {
-            channels = frame->ch_layout.nb_channels;
-        }
-        return frame->linesize[0] * channels;
+        return static_cast<size_t>(frame->nb_samples) * frame->ch_layout.nb_channels
+            * av_get_bytes_per_sample(format);
     } else {
         xassert(0);
         return 0;
@@ -44,12 +41,12 @@ size_t AVWrapperFrame::copyBuffer(uint8_t** buffer) const {
         *buffer = new uint8_t[buffer_size];
     }
     if (type == AVWrapperType::Video) {
-        AVPixelFormat format = static_cast<AVPixelFormat>(frame->format);
-        int written = av_image_copy_to_buffer(*buffer, static_cast<int>(buffer_size), frame->data,
-                                              frame->linesize, format, frame->width, frame->height, 1);
-        xassert(written == buffer_size);
+        int written = av_image_copy_to_buffer(*buffer, static_cast<int>(buffer_size),
+            frame->data, frame->linesize, static_cast<AVPixelFormat>(frame->format),
+            frame->width, frame->height, 1);
+        if (written < 0) ErrH.Abort("Cannot copy video frame: " + wrapper->file_path);
         return buffer_size;
-    } else if (AVWrapperType::Audio) {
+    } else if (type == AVWrapperType::Audio) {
         AVSampleFormat format = static_cast<AVSampleFormat>(frame->format);
         int channels = 1;
         if (av_sample_fmt_is_planar(format)) {
@@ -58,7 +55,7 @@ size_t AVWrapperFrame::copyBuffer(uint8_t** buffer) const {
         if (1 < channels) {
             //We need to pack planar audio
             size_t bytes_sample = av_get_bytes_per_sample(format);
-            xassert(buffer_size == frame->linesize[0] * channels);
+
             //Store each plane sample as interleaved
             for (int si = 0; si < frame->nb_samples; ++si) {
                 size_t srcoff = si * bytes_sample;
@@ -66,12 +63,12 @@ size_t AVWrapperFrame::copyBuffer(uint8_t** buffer) const {
                 for (int pi = 0; pi < channels; pi++) {
                     size_t dstoff = (si * channels + pi) * bytes_sample;
                     xassert(dstoff + bytes_sample <= buffer_size);
-                    memcpy(*buffer + dstoff, frame->data[pi] + srcoff, bytes_sample);
+                    memcpy(*buffer + dstoff, frame->extended_data[pi] + srcoff, bytes_sample);
                 }
             }
         } else {
             //Copy all buffer directly
-            xassert(buffer_size == frame->linesize[0]);
+
             memcpy(*buffer, frame->data[0], buffer_size);
         }
         return buffer_size;
@@ -100,6 +97,17 @@ int64_t AVWrapperFrame::getPTS() const {
 
 void AVWrapper::init() {
     if (avwrapper_init) return;
+    if ((avcodec_version() >> 16) != LIBAVCODEC_VERSION_MAJOR ||
+        (avformat_version() >> 16) != LIBAVFORMAT_VERSION_MAJOR ||
+        (avutil_version() >> 16) != LIBAVUTIL_VERSION_MAJOR) {
+        ErrH.Abort("FFmpeg headers and runtime libraries have incompatible versions");
+    }
+#ifdef PERIMETER_FFMPEG_MOVIE
+    if ((swscale_version() >> 16) != LIBSWSCALE_VERSION_MAJOR ||
+        (avfilter_version() >> 16) != LIBAVFILTER_VERSION_MAJOR) {
+        ErrH.Abort("FFmpeg scaler/filter headers and runtime libraries are incompatible");
+    }
+#endif
     avwrapper_init = true;
 }
 
@@ -122,7 +130,8 @@ int AVWrapper::close() {
     if (filterGraph) {
         avfilter_graph_free(&filterGraph);
     }
-    swrChannelLayout = {};
+    av_channel_layout_uninit(&swrChannelLayout);
+    buffersrcCtx = buffersinkCtx = nullptr;
     swrSampleRate = 0;
     swrFormat = AV_SAMPLE_FMT_NONE;
 #endif
@@ -185,6 +194,12 @@ void AVWrapper::pullFilterAudio() {
 
 void AVWrapper::onEnd() {
     readPacket(true);
+#ifdef PERIMETER_FFMPEG_MOVIE
+    if (filterGraph) {
+        int ret = av_buffersrc_add_frame_flags(buffersrcCtx, nullptr, 0);
+        if (ret < 0) fprintf(stderr, "Cannot flush audio filter: %d\n", ret);
+    }
+#endif
     pullFilterAudio();
 }
 
@@ -311,18 +326,12 @@ bool AVWrapper::setupVideoScaler(int width, int height, AVPixelFormat format, in
     swsWidth = width != 0 ? width : videoCodecCtx->width;
     swsHeight = height != 0 ? height : videoCodecCtx->height;
     swsFormat = format != AV_PIX_FMT_NONE ? format : videoCodecCtx->pix_fmt;
-    if (swsCtx) {
-        sws_freeContext(swsCtx);
-    }
-    swsCtx = sws_getContext(
-            //Source
-            videoCodecCtx->width, videoCodecCtx->height, videoCodecCtx->pix_fmt,
-            //Destination
-            swsWidth, swsHeight, swsFormat,
-            //Params
-            flags, nullptr, nullptr, nullptr
-    );
-    return true;
+    swsFlags = flags;
+    // The decoder may not know its pixel format until the first frame arrives.
+    // Construct the scaler from that frame in handleFrame().
+    if (swsCtx) sws_freeContext(swsCtx);
+    swsCtx = nullptr;
+    return swsWidth > 0 && swsHeight > 0 && swsFormat != AV_PIX_FMT_NONE;
 #else
     return false;
 #endif
@@ -432,15 +441,16 @@ bool AVWrapper::setupAudioConverter(AVSampleFormat dst_format, int dst_channels,
         //Nothing to setup since there is no codec
         return false;
     }
+#ifdef PERIMETER_FFMPEG_MOVIE
     if (filterGraph) {
         avfilter_graph_free(&filterGraph);
     }
     filterGraph = nullptr;
     buffersrcCtx = nullptr;
     buffersinkCtx = nullptr;
-#ifdef PERIMETER_FFMPEG_MOVIE
-    swrFormat = dst_format != 0 ? dst_format : audioCodecCtx->sample_fmt;
+    swrFormat = dst_format != AV_SAMPLE_FMT_NONE ? dst_format : audioCodecCtx->sample_fmt;
     int num_channel = dst_channels != 0 ? dst_channels : audioCodecCtx->ch_layout.nb_channels;
+    av_channel_layout_uninit(&swrChannelLayout);
     av_channel_layout_default(&swrChannelLayout, num_channel);
     swrSampleRate = dst_frequency != 0 ? dst_frequency : audioCodecCtx->sample_rate;
     if (swrFormat == AV_SAMPLE_FMT_NONE) {
@@ -451,7 +461,7 @@ bool AVWrapper::setupAudioConverter(AVSampleFormat dst_format, int dst_channels,
     AVFilterInOut *inputs  = avfilter_inout_alloc();
     const AVFilterLink *inlink;
     const AVFilterLink *outlink;
-    AVRational time_base = audioCodecCtx->time_base;
+    AVRational time_base = av_make_q(1, audioCodecCtx->sample_rate);
 
     char inChannelLayout_str[128];
     char swrChannelLayout_str[128];
@@ -539,90 +549,68 @@ bool AVWrapper::setupAudioConverter(AVSampleFormat dst_format, int dst_channels,
 #endif
 }
 
-void AVWrapper::readPacket(bool drain) {    
-    int ret = 0;
-    AVPacket* packet = nullptr;
+void AVWrapper::readPacket(bool drain) {
+    AVPacket* packet = drain ? nullptr : streamPacket;
     if (!drain) {
-        packet = streamPacket;
-        //Attempt to get a packet
-        ret = av_read_frame(formatCtx, packet);
-        if (0 <= ret) {
-            end = false;
+        int ret = av_read_frame(formatCtx, packet);
+        if (ret < 0) {
+            if (ret != AVERROR_EOF) {
+                char error[AV_ERROR_MAX_STRING_SIZE];
+                av_strerror(ret, error, sizeof(error));
+                fprintf(stderr, "Video read error in %s: %s\n", file_path.c_str(), error);
+            }
+            // A failed local-file read must not spin in the player's decode loop.
+            if (!end) onEnd();
+            end = true;
+            return;
         }
     }
-    if (0 <= ret) {
-        if (0 <= videoStream && (drain || packet->stream_index == videoStream)) {
-            // Extract video frame
-            ret = avcodec_send_packet(videoCodecCtx, packet);
-            if (ret != 0) {
-                if (ret == AVERROR_EOF) {
-                    fprintf(stderr, "Already reached video EOF - file: %s\n", file_path.c_str());
-                } else if (ret != AVERROR(EAGAIN)) {
-                    fprintf(stderr, "Can't send video packet %d - file: %s\n", ret, file_path.c_str());
-                } else {
-                    ret = 0;
-                }
-            }
-            while (ret == 0) {
+
+    auto decode = [&](AVCodecContext* codec, AVWrapperType type) {
+        auto receive = [&]() {
+            int count = 0;
+            for (;;) {
                 AVWrapperFrame* frame = new AVWrapperFrame();
-                frame->type = AVWrapperType::Video;
+                frame->type = type;
                 frame->frame = AV_FRAME_ALLOC();
-                ret = avcodec_receive_frame(videoCodecCtx, frame->frame);
-                if (ret == 0) {
-                    handleFrame(frame);
-                    ret = 0;
-                    continue;
-                } else if (ret != AVERROR(EAGAIN) && ret != AVERROR_EOF) {
-                    fprintf(stderr, "Can't receive the video frame - file: %s\n", file_path.c_str());
+                int ret = avcodec_receive_frame(codec, frame->frame);
+                if (ret < 0) {
+                    delete frame;
+                    if (ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
+                        fprintf(stderr, "Decode error %d in %s\n", ret, file_path.c_str());
+                    return count;
                 }
-                delete frame;
-                break;
+                handleFrame(frame);
+                ++count;
             }
-        }
-        
-        if (0 <= audioStream && (drain || packet->stream_index == audioStream)) {
-            // Extract audio frame
-            ret = avcodec_send_packet(audioCodecCtx, packet);
-            if (ret != 0) {
-                if (ret == AVERROR_EOF) {
-                    fprintf(stderr, "Already reached audio EOF - file: %s\n", file_path.c_str());
-                } else if (ret != AVERROR(EAGAIN)) {
-                    fprintf(stderr, "Can't send audio packet %d - file: %s\n", ret, file_path.c_str());
-                } else {
-                    ret = 0;
-                }
+        };
+        int ret = avcodec_send_packet(codec, packet);
+        if (ret == AVERROR(EAGAIN)) {
+            // Receive pending output before retrying the SAME packet.
+            // No progress is a decoder error, not a reason to loop forever.
+            if (!receive()) {
+                fprintf(stderr, "Decoder made no progress in %s\n", file_path.c_str());
+                end = true;
+                return;
             }
-            while (true) {
-                AVWrapperFrame* frame = new AVWrapperFrame();
-                frame->type = AVWrapperType::Audio;
-                frame->frame = AV_FRAME_ALLOC();
-                ret = avcodec_receive_frame(audioCodecCtx, frame->frame);
-                if (ret == 0) {
-                    handleFrame(frame);
-                    ret = 0;
-                    continue;
-                } else if (ret != AVERROR(EAGAIN) && ret != AVERROR_EOF) {
-                    fprintf(stderr, "Can't receive the audio frame - file: %s\n", file_path.c_str());
-                }
-                delete frame;
-                break;
-            }
+            ret = avcodec_send_packet(codec, packet);
         }
-        
-        if (!drain) {
-            AV_PACKET_UNREF(packet);
+        if (ret < 0 && ret != AVERROR_EOF) {
+            fprintf(stderr, "Cannot send packet (%d) in %s\n", ret, file_path.c_str());
+            end = true;
+            return;
         }
-    } else {
-        if (!end) {
-            onEnd();
-        }
-        end = true;
-    }
-        
-    //pull filtered audio from the filtergraph
+        receive();
+    };
+    if (videoCodecCtx && (drain || packet->stream_index == videoStream))
+        decode(videoCodecCtx, AVWrapperType::Video);
+    if (audioCodecCtx && (drain || packet->stream_index == audioStream))
+        decode(audioCodecCtx, AVWrapperType::Audio);
+    if (packet) AV_PACKET_UNREF(packet);
     pullFilterAudio();
 }
     
+
 void AVWrapper::handleFrame(AVWrapperFrame* frame) {
     frame->wrapper = this;
     
@@ -637,7 +625,7 @@ void AVWrapper::handleFrame(AVWrapperFrame* frame) {
 
 #ifdef PERIMETER_FFMPEG_MOVIE
             //Do video scaling if scaler is setup
-            if (swsCtx) {
+            if (swsWidth > 0 && swsHeight > 0) {
                 AVWrapperFrame original;
                 original.frame = frame->frame;
                 frame->frame = AV_FRAME_ALLOC();
@@ -645,17 +633,16 @@ void AVWrapper::handleFrame(AVWrapperFrame* frame) {
                 frame->frame->width = swsWidth;
                 frame->frame->height = swsHeight;
                 frame->frame->format = swsFormat;
-                av_frame_make_writable(frame->frame);
-                int ret = av_frame_get_buffer(frame->frame, 1);
-                if (ret < 0) {
-                    ErrH.Abort("Can't alloc sws image - file: " + file_path);
-                }
-                sws_scale(
-                        swsCtx,
-                        original.frame->data, original.frame->linesize,
-                        0, videoCodecCtx->height,
-                        frame->frame->data, frame->frame->linesize
-                );
+                swsCtx = sws_getCachedContext(swsCtx,
+                    original.frame->width, original.frame->height,
+                    static_cast<AVPixelFormat>(original.frame->format),
+                    swsWidth, swsHeight, swsFormat, swsFlags, nullptr, nullptr, nullptr);
+                if (!swsCtx || av_frame_get_buffer(frame->frame, 32) < 0)
+                    ErrH.Abort("Cannot allocate video scaler/frame: " + file_path);
+                int rows = sws_scale(swsCtx, original.frame->data, original.frame->linesize,
+                    0, original.frame->height, frame->frame->data, frame->frame->linesize);
+                if (rows != swsHeight)
+                    ErrH.Abort("Incomplete scaled video frame: " + file_path);
             }
 #endif
 
@@ -668,7 +655,7 @@ void AVWrapper::handleFrame(AVWrapperFrame* frame) {
             if (frame->frame->pts != AV_NOPTS_VALUE) {
                 frame->frame->pts = av_rescale_q(frame->frame->pts, frame->time_base, tb);
             } else if (audioNextPTS != AV_NOPTS_VALUE) {
-                frame->frame->pts = av_rescale_q(audioNextPTS, frame->time_base, tb);
+                frame->frame->pts = audioNextPTS;
             }
             
             if (frame->frame->pts != AV_NOPTS_VALUE) {
@@ -677,6 +664,7 @@ void AVWrapper::handleFrame(AVWrapperFrame* frame) {
                 fprintf(stderr, "Audio frame without PTS\n");
             }
             
+            frame->time_base = tb;
             //Do audio conversion
 #ifdef PERIMETER_FFMPEG_MOVIE
             if (filterGraph) {
@@ -724,11 +712,19 @@ int AVWrapper::getVideoCodecHeight() const {
 }
 
 int AVWrapper::getVideoWidth() const {
-    return swsCtx ? swsWidth : videoCodecCtx->width;
+#ifdef PERIMETER_FFMPEG_MOVIE
+    return swsWidth > 0 ? swsWidth : videoCodecCtx->width;
+#else
+    return videoCodecCtx->width;
+#endif
 }
 
 int AVWrapper::getVideoHeight() const {
-    return swsCtx ? swsHeight : videoCodecCtx->height;
+#ifdef PERIMETER_FFMPEG_MOVIE
+    return swsHeight > 0 ? swsHeight : videoCodecCtx->height;
+#else
+    return videoCodecCtx->height;
+#endif
 }
 
 int AVWrapper::getVideoBPP() const {
