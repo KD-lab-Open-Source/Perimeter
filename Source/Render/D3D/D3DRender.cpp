@@ -204,6 +204,11 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
 #ifndef _WIN32
     //DXVK now needs DXVK_WSI_DRIVER to be set, we set SDL2 with replace=0 so that user may change it
     setenv("DXVK_WSI_DRIVER", "SDL2", 0);
+#if defined(__APPLE__) && defined(PERIMETER_MACOS_D3D9_SHADERS)
+    // The R32F shader path does its own shadow comparison. Opt out of DXVK's
+    // aliased color/depth samplers, which generate invalid MSL in MoltenVK.
+    setenv("DXVK_D3D9_DISABLE_DEPTH_COMPARE", "1", 0);
+#endif
 #endif
 
 	if(!lpD3D)
@@ -306,12 +311,20 @@ int cD3DRender::Init(int xscr,int yscr,int Mode, SDL_Window* wnd, int RefreshRat
 
 	dtFixed=new DrawTypeFixedPipeline;
 
-    /*
-     * These don't work properly under Vulkan in MacOS, disable them for now
-     * Bump mapping and Self shadow are disabled by not loading shaders
-     * Bump chaos is disabled manually elsewhere
-     */
-#ifndef __APPLE__
+    // Use the explicit floating-point shadow map on Metal/DXVK. The legacy
+    // GeForce path relies on vendor-specific depth-texture sampling.
+#if defined(__APPLE__) && defined(PERIMETER_MACOS_D3D9_SHADERS)
+    if (DeviceCaps.VertexShaderVersion >= D3DVS_VERSION(1,1) &&
+        DeviceCaps.PixelShaderVersion >= D3DPS_VERSION(2,0) &&
+        SUCCEEDED(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,
+            D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_R32F)) &&
+        SUCCEEDED(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,
+            D3DUSAGE_DEPTHSTENCIL,D3DRTYPE_SURFACE,D3DFMT_D16)) &&
+        SUCCEEDED(lpD3D->CheckDepthStencilMatch(Adapter,D3DDEVTYPE_HAL,
+            d3ddm.Format,D3DFMT_R32F,D3DFMT_D16))) {
+        dtAdvanceOriginal = new DrawTypeRadeon9700;
+    }
+#elif !defined(__APPLE__)
 	if(DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(2,0) && lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_D16)==0)
 		dtAdvanceOriginal=new DrawTypeGeforceFX;
 	else
