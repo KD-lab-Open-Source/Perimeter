@@ -290,7 +290,8 @@ IF(NOT MSVC_CL_BUILD)
         ENDIF()
     ENDIF()
     IF(MACOS)
-        SET(CMAKE_BUILD_RPATH "./Render/dxvk-prefix/src/dxvk-build/src/d3d9/;/usr/local/lib/")
+        # Resolve DXVK relative to the app executable, not the caller's cwd.
+        SET(CMAKE_BUILD_RPATH "@loader_path/../../../Render/dxvk-prefix/src/dxvk-build/src/d3d9;@loader_path;@loader_path/../Frameworks")
     ELSE()
         SET(CMAKE_BUILD_RPATH "$ORIGIN") #let binary find libs on own dir
     ENDIF()
