@@ -14,11 +14,13 @@ std::string localePath;
 std::vector<std::string> localesAvailable;
 
 void saveLocale(const std::string& locale) {
+#ifndef __APPLE__
     //Windows players are used to changing it in Locale, so keep behavior consistent if is present in Perimeter.ini
     IniManager perimeter_ini("Perimeter.ini", false);
     if (perimeter_ini.get("Game", "Language")) {
         perimeter_ini.put("Game", "Language", locale.c_str());
     }
+#endif
     putStringSettings("Locale", locale);
 }
 
@@ -68,6 +70,12 @@ void initLocale() {
 #endif
     
     IniManager perimeter_ini("Perimeter.ini", false);
+#ifdef __APPLE__
+    // User preferences take precedence over the read-only game defaults.
+    if (localeCurrent.empty()) {
+        localeCurrent = getStringSettings("Locale");
+    }
+#endif
     if (localeCurrent.empty()) {
         localeCurrent = perimeter_ini.get("Game", "Language");
         if (!localeCurrent.empty()) {
