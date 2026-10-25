@@ -667,7 +667,7 @@ void terPlayer::updateField()
 	// Оставить только стационарные кластера 
 	int cluster_id = 0;
 	ClusterList::iterator ci;
-	FOR_EACH(clusters_, ci){
+	for (ci = clusters_.begin(); ci != clusters_.end();) {
 		if(ci->fieldCluster() && cluster_id < ci->fieldCluster()->get_cluster_id())
 			cluster_id = ci->fieldCluster()->get_cluster_id();
 
@@ -687,24 +687,34 @@ void terPlayer::updateField()
 				break;
 		}
 		
-		if(ci->region() && ci->fieldCluster()){
+		if (ci->region() && ci->fieldCluster()) {
 			bool stop = false;
 			ProtectorList::iterator gi;
-			FOR_EACH(freeGenerators, gi){
+			for (gi = freeGenerators.begin(); gi != freeGenerators.end();) {
 				if(field_region_.locateEdit((*gi)->position2D()) == ci->region()){
 					if(find(ci->generators().begin(), ci->generators().end(), *gi) == ci->generators().end())
 						stop = true;
 					gi = freeGenerators.erase(gi);
-					--gi;
+					// Ignore loop entirely if nothing to scan anymore
+					if (freeGenerators.empty())
+						break;
+				}
+				else {
+					++gi;
 				}
 			}
 
 			if(stop)
 				ci->stopField(true);
+
+			++ci;
 		}
 		else{
 			ci = clusters_.erase(ci);
-			--ci;
+			if (clusters_.empty())
+			{
+				break;
+			}
 		}
 	}
 

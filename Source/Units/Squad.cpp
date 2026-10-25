@@ -311,12 +311,18 @@ void terUnitSquad::DestroyLink()
 		squadToFollow_ = 0;
 
 	AttackPointList::iterator ai;
-	FOR_EACH(attack_points, ai)
-		if(ai->obsolete()){
+	for (ai = attack_points.begin(); ai != attack_points.end();)
+	{
+		if (ai->obsolete()) {
 			ai = attack_points.erase(ai);
-			--ai;
+			// If attack points are empty --ai causes VS 2026 build to have assert, since ai is already at begin, also no reason to scan any further
+			if (attack_points.empty())
+				break;
 		}
-		
+		else {
+			++ai;
+		}
+	}
 	SquadUnitList::iterator ui;
 	FOR_EACH(Units, ui){
 		terUnitLegionary& unit = **ui;
