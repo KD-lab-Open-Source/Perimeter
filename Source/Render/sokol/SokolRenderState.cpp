@@ -517,8 +517,8 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
             buffer_ptr->release_buffer();
         }
         SokolResourceKey resource_key = get_sokol_resource_key_buffer(len, type);
-        auto nh = bufferPool.extract(resource_key);
-        if (nh.empty()) {
+        SokolResourceBuffer* pooled = TakePooledResource(bufferPool, resource_key);
+        if (!pooled) {
             sg_buffer_desc desc = {};
             desc.size = len;
             desc.type = type;
@@ -530,12 +530,21 @@ void cSokolRender::PrepareSokolBuffer(SokolBuffer*& buffer_ptr, MemoryResource* 
             }
 
             sg_buffer sg_buffer = sg_make_buffer(&desc);
+            if (sg_query_buffer_state(sg_buffer) != SG_RESOURCESTATE_VALID) {
+                //Sokol buffer pool is out of slots, free idle pooled buffers and retry once
+                if (sg_buffer.id != SG_INVALID_ID) {
+                    sg_destroy_buffer(sg_buffer);
+                }
+                ReleaseIdlePooledBuffers();
+                sg_buffer = sg_make_buffer(&desc);
+                xassert(sg_query_buffer_state(sg_buffer) == SG_RESOURCESTATE_VALID);
+            }
             buffer = new SokolResourceBuffer(
                 resource_key,
                 sg_buffer
             );
         } else {
-            buffer = nh.mapped().resource;
+            buffer = pooled;
             xassert(buffer->res.id != SG_INVALID_ID);
             xassert(buffer->pooled);
             buffer->burned = false;
@@ -607,14 +616,14 @@ void cSokolRender::PrepareSokolTexture(SokolTexture2D* tex) {
         }
         
         //Get already created resource if exists or create
-        auto nh = imagePool.extract(tex->resource_key);
-        if (nh.empty()) {
+        SokolResourceImage* pooled = TakePooledResource(imagePool, tex->resource_key);
+        if (!pooled) {
             tex->image = new SokolResourceImage(
                 tex->resource_key,
                 sg_make_image(desc)
             );
         } else {
-            tex->image = nh.mapped().resource;
+            tex->image = pooled;
             xassert(tex->image->res.id != SG_INVALID_ID);
             xassert(tex->image->pooled);
             tex->image->burned = false;

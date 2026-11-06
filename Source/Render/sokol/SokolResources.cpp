@@ -13,6 +13,10 @@ uint16_t get_chunk_amount(T& len) {
         return 0;
     }
     size_t chunks = (len >> CHUNK_LEN_SHIFT) + 1; //Divide by LEN_SHIFT and add one extra chunk
+    //Round up to power of two so pooled resources of similar sizes can be reused instead of piling up
+    size_t pow2 = 1;
+    while (pow2 < chunks) pow2 <<= 1;
+    if (pow2 <= 0xFFFF) chunks = pow2;
     len = chunks * (1 << CHUNK_LEN_SHIFT);
     xassert(chunks <= 0xFFFF);
     return static_cast<uint16_t>(chunks);
