@@ -13,7 +13,8 @@ struct DrawRange {
 enum eRenderDeviceSelection {
     DEVICE_D3D9,
     DEVICE_HEADLESS,
-    DEVICE_SOKOL
+    DEVICE_SOKOL,
+    DEVICE_VULKAN
 };
 
 //Возвращает минимальное число,являющееся степенью двойки и не меньше, чем n
@@ -34,6 +35,9 @@ public:
 #endif
 #ifdef PERIMETER_SOKOL
         struct SokolBuffer* sg;
+#endif
+#ifdef PERIMETER_VULKAN
+        struct VulkanBuffer* vk;
 #endif
     };
     bool dynamic = false;
@@ -59,6 +63,9 @@ public:
 #endif
 #ifdef PERIMETER_SOKOL
         struct SokolBuffer* sg;
+#endif
+#ifdef PERIMETER_VULKAN
+        struct VulkanBuffer* vk;
 #endif
     };
     bool dynamic = false;

@@ -4,6 +4,8 @@
 /.idea
 /*.iml
 
+
+
 # Game runtime stuff
 /perimeter
 /Source/cache_font
@@ -17,6 +19,7 @@ CrashData
 /result
 /result-*
 cmake-build-*
+vcpkg_installed
 
 # MacOS...
 .DS_Store

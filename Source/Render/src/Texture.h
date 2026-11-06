@@ -10,6 +10,9 @@ struct TextureImage {
 #ifdef PERIMETER_SOKOL
         struct SokolTexture2D* sg;
 #endif
+#ifdef PERIMETER_VULKAN
+        struct VulkanTexture2D* vk;
+#endif
     };
 
     TextureImage() : ptr(nullptr) {
@@ -27,6 +30,9 @@ union SurfaceImage {
 #endif
 #ifdef PERIMETER_SOKOL
     struct SokolTexture2D* sg;
+#endif
+#ifdef PERIMETER_VULKAN
+    struct VulkanTexture2D* vk;
 #endif
     
     //Don't make me type all that each time I want a null

@@ -228,6 +228,8 @@ void cScene::Draw(cCamera *DrawNode)
     }
     grid.DisableChanges(false);
 
+    DrawNode->PresortMaterialList();
+
     UnkLightArray.DisableChanges(true);
     for (i=0;i<GetNumberLight();i++) {
         cUnkLight* light = GetLight(i);

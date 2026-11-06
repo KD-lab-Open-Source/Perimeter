@@ -532,10 +532,18 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
         
         gb_RenderDevice->SetMaterialTilemapShadow();
     } else {
-        if(pShadowMapCamera && !reflection)
-        {
-            gb_RenderDevice->SetMaterialTilemap(tilemap);
-            use_shadow_map=true;
+        if (!reflection) {
+            bool isD3D = gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9;
+            if (!isD3D || pShadowMapCamera) {
+                gb_RenderDevice->SetMaterialTilemap(tilemap);
+                use_shadow_map=true;
+            }
+        } else {
+            bool isD3D = gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9;
+            if (!isD3D) {
+                gb_RenderDevice->SetMaterialTilemap(tilemap);
+                use_shadow_map = true;
+            }
         }
     }
 

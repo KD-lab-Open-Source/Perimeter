@@ -5,7 +5,10 @@
 		"zlib",
 		"boost-stacktrace",
 		"libvpx",
-		"sdl2",
+		{
+			"name": "sdl2",
+			"features": [ "vulkan" ]
+		},
 		"sdl2-image",
 		"sdl2-mixer",
 		"sdl2-net",
