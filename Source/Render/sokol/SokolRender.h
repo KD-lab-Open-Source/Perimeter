@@ -7,6 +7,7 @@
 
 #include <SDL_video.h>
 
+#include <deque>
 #include "SokolTypes.h"
 
 const int PERIMETER_SOKOL_TEXTURES = 4;
@@ -108,8 +109,15 @@ private:
     
     //Stores resources for reusing
     void ClearPooledResources(uint32_t max_life);
-    std::unordered_multimap<uint64_t, SokolResourcePooled<sg_buffer>> bufferPool;
-    std::unordered_multimap<uint64_t, SokolResourcePooled<sg_image>> imagePool;
+    ///Releases every idle pooled buffer, used when sokol buffer pool runs out of slots
+    void ReleaseIdlePooledBuffers();
+    //Key -> FIFO queue of free resources. Not unordered_multimap: libc++ walks the whole group of
+    //equal keys on every insert, which made pooling O(n^2) per frame with thousands of
+    //same-sized buffers, stalling the main thread on far camera zoom.
+    template<typename T>
+    using SokolResourcePool = std::unordered_map<uint64_t, std::deque<SokolResourcePooled<T>>>;
+    SokolResourcePool<sg_buffer> bufferPool;
+    SokolResourcePool<sg_image> imagePool;
     
     //For swapchain pass that renders into final device
     sg_swapchain swapchain = {};
@@ -190,7 +198,7 @@ private:
     std::vector<SokolCommand*>& getActiveCommands();
     template<typename T>
     void StorePooledResource(
-            std::unordered_multimap<uint64_t, SokolResourcePooled<T>>& res_pool,
+            SokolResourcePool<T>& res_pool,
             SokolResource<T>*& res
     ) {
         if (!res || res->pooled || res->key == SokolResourceKeyNone
@@ -199,10 +207,20 @@ private:
         }
         res->IncRef();
         res->pooled = true;
-        res_pool.emplace(
-                res->key,
-                SokolResourcePooled<T>(res)
-        );
+        res_pool[res->key].emplace_back(res);
+    }
+
+    ///Takes the oldest pooled resource with this key, or nullptr if none.
+    ///Oldest-first (FIFO) matches the previous multimap behavior and must be kept.
+    template<typename T>
+    SokolResource<T>* TakePooledResource(SokolResourcePool<T>& res_pool, uint64_t key) {
+        auto it = res_pool.find(key);
+        if (it == res_pool.end() || it->second.empty()) {
+            return nullptr;
+        }
+        SokolResource<T>* res = it->second.front().resource;
+        it->second.pop_front();
+        return res;
     }
 
     ///Assigns unused sokol buffer to buffer_ptr with requested 

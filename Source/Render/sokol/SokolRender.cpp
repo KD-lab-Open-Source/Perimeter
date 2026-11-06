@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <unordered_set>
 #include "StdAfxRD.h"
@@ -76,7 +77,8 @@ int cSokolRender::Init(int xScr, int yScr, int mode, SDL_Window* wnd, int Refres
     sg_desc desc = {};
     desc.pipeline_pool_size = PERIMETER_SOKOL_PIPELINES_MAX,
     desc.shader_pool_size = 64,
-    desc.buffer_pool_size = 1024 * 32;
+    //Far zoom can submit 10k+ stream buffers per frame, use the max sokol allows (must be < 1<<16)
+    desc.buffer_pool_size = 0xFFFF;
     desc.uniform_buffer_size = 1024 * 1024 * 32;
     desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
     desc.logger.func = slog_func;
@@ -467,48 +469,61 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
 }
 
 #define ClearPooledResources_Debug 0
+
+template<typename T>
+static size_t pooled_resources_count(const std::unordered_map<uint64_t, std::deque<SokolResourcePooled<T>>>& pool) {
+    size_t count = 0;
+    for (auto& entry : pool) {
+        count += entry.second.size();
+    }
+    return count;
+}
+
+///Ages every pooled resource by one frame and releases the ones unused for max_life frames
+template<typename T>
+static void age_pooled_resources(std::unordered_map<uint64_t, std::deque<SokolResourcePooled<T>>>& pool, uint32_t max_life) {
+    auto it = pool.begin();
+    while (it != pool.end()) {
+        auto& list = it->second;
+        list.erase(std::remove_if(list.begin(), list.end(), [max_life](SokolResourcePooled<T>& res) {
+            res.unused_since++;
+            if (res.unused_since >= max_life) {
+                res.resource->DecRef();
+                res.resource = nullptr;
+                return true;
+            }
+            return false;
+        }), list.end());
+        if (list.empty()) {
+            it = pool.erase(it);
+        } else {
+            it++;
+        }
+    }
+}
+
+void cSokolRender::ReleaseIdlePooledBuffers() {
+    age_pooled_resources(bufferPool, 0);
+}
+
 void cSokolRender::ClearPooledResources(uint32_t max_life) {
     if (bufferPool.empty() && imagePool.empty()) {
         return;
     }
 #if defined(PERIMETER_DEBUG) && ClearPooledResources_Debug
-    size_t bufferCount = bufferPool.size();
-    size_t imageCount = imagePool.size();
+    size_t bufferCount = pooled_resources_count(bufferPool);
+    size_t imageCount = pooled_resources_count(imagePool);
 #endif
-    {
-        auto it = bufferPool.begin();
-        while (it != bufferPool.end()) {
-            auto& res = it->second;
-            res.unused_since++;
-            if (res.unused_since >= max_life) {
-                res.resource->DecRef();
-                res.resource = nullptr;
-                it = bufferPool.erase(it);
-            } else {
-                it++;
-            }
-        }
-    }
-    {
-        auto it = imagePool.begin();
-        while (it != imagePool.end()) {
-            auto& res = it->second;
-            res.unused_since++;
-            if (res.unused_since >= max_life) {
-                res.resource->DecRef();
-                res.resource = nullptr;
-                it = imagePool.erase(it);
-            } else {
-                it++;
-            }
-        }
-    }
+    age_pooled_resources(bufferPool, max_life);
+    age_pooled_resources(imagePool, max_life);
 #if defined(PERIMETER_DEBUG) && ClearPooledResources_Debug
-    if (bufferCount != bufferPool.size()) {
-        printf("ClearPooledResources buffers %" PRIsize " -> %" PRIsize "\n", bufferCount, bufferPool.size());
+    size_t bufferCountAfter = pooled_resources_count(bufferPool);
+    size_t imageCountAfter = pooled_resources_count(imagePool);
+    if (bufferCount != bufferCountAfter) {
+        printf("ClearPooledResources buffers %" PRIsize " -> %" PRIsize "\n", bufferCount, bufferCountAfter);
     }
-    if (imageCount != imagePool.size()) {
-        printf("ClearPooledResources images %" PRIsize " -> %" PRIsize "\n", imageCount, imagePool.size());
+    if (imageCount != imageCountAfter) {
+        printf("ClearPooledResources images %" PRIsize " -> %" PRIsize "\n", imageCount, imageCountAfter);
     }
 #endif
 }
